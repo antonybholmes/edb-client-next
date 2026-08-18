@@ -4,7 +4,7 @@ import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
 import { OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
 
-import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
+import { UnderlineTabs } from '../tabs/underline-tabs'
 import {
   ResizableSidebar,
   useResizableSidebarContext,
@@ -24,7 +24,7 @@ export function SideBarTabs() {
     <BaseCol className="gap-y-2 h-full grow">
       <UnderlineTabs
         groupId={id}
-        selectedMouseOverSize={getSelectedMouseOverSize}
+        //selectedMouseOverSize={getSelectedMouseOverSize}
         tabButtonProps={{ variant: 'default' }}
         //onTabChange={onTabChange}
         //tabListCls="gap-x-0.5"

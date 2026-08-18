@@ -59,7 +59,7 @@ import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import {
   PLOT_ZOOM_CHANNEL,
-  useGseaPlotStore,
+  useGsea,
   type IGseaPathway,
 } from './gsea-plot-store'
 import { GseaPropsPanel } from './gsea-props-panel'
@@ -89,12 +89,10 @@ export function GseaPlotPage() {
     datasetsForUse,
 
     setDatasetsForUse,
-    loadGseaZip,
-  } = useGseaPlotStore()
+    loadGseaZipWithErrorHandling,
+  } = useGsea()
 
   const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
-
-  const [toolbarTab, setToolbarTab] = useState('Home')
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
@@ -149,7 +147,7 @@ export function GseaPlotPage() {
                   if (!success) {
                     return
                   }
-                  loadGseaZip(files)
+                  loadGseaZipWithErrorHandling(files)
                 })
               },
             })
@@ -200,7 +198,7 @@ export function GseaPlotPage() {
       ext: 'zip',
     }
 
-    loadGseaZip([file])
+    loadGseaZipWithErrorHandling([file])
   }
 
   function handleSearch(query: string) {
@@ -316,7 +314,7 @@ export function GseaPlotPage() {
                     if (!success) {
                       return
                     }
-                    loadGseaZip(files)
+                    loadGseaZipWithErrorHandling(files)
                   })
                 }
               }}
@@ -334,7 +332,7 @@ export function GseaPlotPage() {
                     if (!success) {
                       return
                     }
-                    loadGseaZip(files)
+                    loadGseaZipWithErrorHandling(files)
                   })
                 }
               }}

@@ -127,6 +127,15 @@ export const DEFAULT_STROKE_PROPS: IStrokeProps = {
   dasharray: '0',
 }
 
+/**
+ * A default dashed line stroke
+ */
+export const DEFAULT_DASH_PROPS: IStrokeProps = {
+  ...DEFAULT_STROKE_PROPS,
+
+  dasharray: '5',
+}
+
 export const NO_STROKE_PROPS: IStrokeProps = {
   ...DEFAULT_STROKE_PROPS,
   show: false,

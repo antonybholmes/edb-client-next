@@ -28,7 +28,7 @@ export const tabButtonVariants = cva('group overflow-hidden', {
   variants: {
     variant: {
       none: '',
-      default: 'h-8 px-2',
+      default: 'h-8 px-1.5',
       toolbar: 'h-8',
       sheet:
         'py-1.5 px-3 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-checked:bg-muted',
@@ -198,7 +198,7 @@ interface IProps extends IChildrenProps, ITabMenu {
   buttonClassName?: string
   maxNameLength?: number
   tabButtonProps?: VariantProps<typeof tabButtonVariants>
-  selectedMouseOverSize?: SelectedMouseOverSize
+  //selectedMouseOverSize?: SelectedMouseOverSize
   tabListCls?: string
 }
 

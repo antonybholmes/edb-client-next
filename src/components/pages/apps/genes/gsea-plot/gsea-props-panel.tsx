@@ -7,8 +7,10 @@ import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 
+const ID = 'gsea-plot-props-panel'
+
 export function GseaPropsPanel() {
-  const { selectedTab, setTabs } = useTabs('gsea-plot-props-panel')
+  const { selectedTab, setTabs } = useTabs(ID)
 
   useEffect(() => {
     setTabs([
@@ -27,6 +29,15 @@ export function GseaPropsPanel() {
 
   return (
     <BaseCol className="grow">
+      {/* <UnderlineTabs
+        groupId={ID}
+        tabButtonProps={{ variant: 'default' }}
+        className="text-xs"
+      >
+        <TabIndicatorFollowBlock groupId={ID} />
+        <TabIndicatorSelectedH />
+      </UnderlineTabs> */}
+
       <Tabs
         orientation="vertical"
         value={selectedTab?.id ?? ''}
@@ -49,10 +60,7 @@ export function GseaPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      <OutlookTabs
-        id="gsea-plot-props-panel"
-        className="border-t border-border/50 py-2"
-      />
+      <OutlookTabs id={ID} className="border-t border-border/50 py-2" />
     </BaseCol>
   )
 }

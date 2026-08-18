@@ -1,6 +1,6 @@
 import {
+  DEFAULT_DASH_PROPS,
   DEFAULT_FILL_PROPS,
-  DEFAULT_STROKE_PROPS,
   IMarginProps,
   IPaintProps,
   IStrokeProps,
@@ -11,7 +11,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v4`
+const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v6`
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
@@ -50,7 +50,7 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
   pvalue: {
     show: true,
     threshold: 0.05,
-    line: { ...DEFAULT_STROKE_PROPS, show: true },
+    line: { ...DEFAULT_DASH_PROPS, show: true },
   },
   logFc: {
     show: true,

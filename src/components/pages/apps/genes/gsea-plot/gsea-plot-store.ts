@@ -1,3 +1,4 @@
+import { useDialogs } from '@/components/dialogs/dialogs'
 import type { IBinaryFileOpen } from '@/components/pages/open-files'
 import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
@@ -42,7 +43,7 @@ export interface IGseaPlotStore {
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
   setReports: (reports: IGseaPathway[]) => void
-  loadGseaZip: (files: IBinaryFileOpen[]) => void
+  loadGseaZip: (files: IBinaryFileOpen[]) => Promise<void>
 }
 
 export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
@@ -80,6 +81,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
     const entries = unzipSync(file.data)
 
     for (const [filename, content] of Object.entries(entries)) {
+      const lcfilename = filename.toLowerCase()
       const text = new TextDecoder().decode(content)
       let lines = textToTokens(text)
       const headings = lines[0]!
@@ -87,7 +89,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
 
       //console.log('Processing file:', filename)
 
-      if (filename.includes('ranked_gene_list')) {
+      if (lcfilename.includes('ranked_gene_list')) {
         // Check if the entry is a file, not a directory
 
         const matcher = filename.match(
@@ -119,7 +121,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       }
 
       // alternative method of determining phenotypes
-      if (filename.endsWith('rpt') && phenotypes.length === 0) {
+      if (lcfilename.endsWith('rpt') && phenotypes.length === 0) {
         // Check if the entry is a file, not a directory
 
         lines = lines.filter((tokens) => tokens.includes('cls'))
@@ -166,17 +168,16 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
             rank: Number(tokens[rankIdx]!),
           }
 
-          //console.log('report', report)
-
           reportsMap[phen]!.push(report)
         }
       }
 
       if (
-        !filename.includes('ranked_gene_list') &&
-        !filename.includes('gsea_report') &&
-        !filename.includes('gene_set_sizes') &&
-        (filename.includes('tsv') || filename.includes('xls'))
+        !lcfilename.includes('ranked_gene_list') &&
+        !lcfilename.includes('gsea_report') &&
+        !lcfilename.includes('gene_set_sizes') &&
+        !lcfilename.includes('symbol_to_probe') &&
+        (lcfilename.includes('tsv') || lcfilename.includes('xls'))
       ) {
         const name = filename
           .replace(/^.+\//, '')
@@ -186,6 +187,8 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
         const rankIdx = headings.findIndex((h) => h === 'RANK IN GENE LIST')
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
         const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
+
+        console.log('Processing file:', filename)
 
         const es: IGseaGeneRankScore[] = rows.map((tokens) => {
           return {
@@ -220,7 +223,9 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
   },
 }))
 
-export function useGsea(): IGseaPlotStore {
+export function useGsea(): IGseaPlotStore & {
+  loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
+} {
   const phenotypes = useGseaPlotStore((state) => state.phenotypes)
   const rankedGenes = useGseaPlotStore((state) => state.rankedGenes)
   const searchResults = useGseaPlotStore((state) => state.searchResults)
@@ -229,6 +234,23 @@ export function useGsea(): IGseaPlotStore {
   const resultsMap = useGseaPlotStore((state) => state.resultsMap)
   const reports = useGseaPlotStore((state) => state.reports)
   const allowSelectAll = useGseaPlotStore((state) => state.allowSelectAll)
+  const loadGseaZip = useGseaPlotStore((state) => state.loadGseaZip)
+
+  const { open: openDialog } = useDialogs()
+
+  async function loadGseaZipWithErrorHandling(files: IBinaryFileOpen[]) {
+    console.log('Loading GSEA zip with files:', files)
+    try {
+      await loadGseaZip(files)
+    } catch (error) {
+      console.error('Failed to load GSEA zip:', error)
+
+      openDialog({
+        type: 'error',
+        payload: { content: 'Failed to load GSEA zip' },
+      })
+    }
+  }
 
   return {
     phenotypes,
@@ -244,6 +266,7 @@ export function useGsea(): IGseaPlotStore {
     setAllowSelectAll: useGseaPlotStore((state) => state.setAllowSelectAll),
     setReports: useGseaPlotStore((state) => state.setReports),
 
-    loadGseaZip: useGseaPlotStore((state) => state.loadGseaZip),
+    loadGseaZip,
+    loadGseaZipWithErrorHandling,
   }
 }
