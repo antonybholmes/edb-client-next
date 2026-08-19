@@ -64,6 +64,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { useStableId } from '@/hooks/stable-id'
 import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
@@ -122,7 +123,7 @@ export function SingleCellPage() {
 
   //const [scale, setScale] = useState(1)
 
-  const { settings, updateSettings } = useSingleCellSettings()
+  const { settings, hasHydrated, updateSettings } = useSingleCellSettings()
   const { setAppInfo } = useAppInfo()
 
   const { settings: edbSettings } = useEdbSettings()
@@ -195,13 +196,17 @@ export function SingleCellPage() {
     ])
   }, [setSideTabs])
 
-  useEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
+  useHydratedEffect(
+    () => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+    [zoom],
+    hasHydrated
+  )
 
   const fileMenuTabs: ITab[] = [
     {

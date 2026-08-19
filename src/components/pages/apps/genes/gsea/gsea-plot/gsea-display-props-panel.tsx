@@ -19,7 +19,6 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
@@ -33,7 +32,7 @@ export function GseaDisplayPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2">
-      <SideBarHeader className="justify-end">
+      <VCenterRow className="justify-end">
         <LinkButton
           onClick={() => {
             openDialog({
@@ -54,7 +53,7 @@ export function GseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </SideBarHeader>
+      </VCenterRow>
       <ScrollAccordion
         value={[
           'page',

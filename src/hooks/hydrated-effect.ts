@@ -1,12 +1,16 @@
-import { useEffect } from 'react'
+import { DependencyList, EffectCallback } from 'react'
+import { useUpdateEffect } from './update-effect'
 
 export function useHydratedEffect(
-  effect: React.EffectCallback,
-  deps: React.DependencyList,
+  effect: EffectCallback,
+  deps: DependencyList,
   hasHydrated: boolean
 ) {
-  useEffect(() => {
-    if (!hasHydrated) return
+  useUpdateEffect(() => {
+    if (!hasHydrated) {
+      return
+    }
+
     return effect()
   }, [hasHydrated, ...deps])
 }

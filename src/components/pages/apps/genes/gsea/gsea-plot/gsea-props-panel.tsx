@@ -30,7 +30,7 @@ export function GseaPropsPanel() {
   }, [setTabs])
 
   return (
-    <BaseCol className="grow">
+    <BaseCol className="grow gap-y-2">
       <UnderlineTabs groupId={ID} tabListCls="gap-x-3" className="text-xs">
         <TabIndicatorFollowH />
         <TabIndicatorSelectedH />

@@ -192,7 +192,7 @@ export interface IGseaSettingsStore extends IGseaDisplayProps {
 
 export const useGseaSettingsStore = create<IGseaSettingsStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
       hasHydrated: false,
       setHasHydrated: (hasHydrated: boolean) => {
@@ -214,7 +214,6 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-        console.log('rehydrating gsea settings from storage')
         state?.setHasHydrated(true)
       },
     }

@@ -89,7 +89,6 @@ export function GseaPlotPage() {
     rankedGenes,
     reportsMap,
     datasetsForUse,
-
     setDatasetsForUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()

@@ -74,6 +74,8 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useHydratedEffect } from '@/hooks/hydrated-effect'
+import { produce } from 'immer'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { VennPropsPanel } from './venn-props-panel'
 import {
@@ -101,13 +103,13 @@ function VennPage() {
 
   const [, setKeyPressed] = useState<string | null>(null)
 
-  const { settings, updateSettings } = useVennSettings()
+  const { settings, hasHydrated, updateSettings } = useVennSettings()
   const { setAppInfo } = useAppInfo()
 
   const {
     vennLists,
     setVennLists,
-    originalNames,
+
     vennElemMap,
     setVennElemMap,
     vennListsInUse,
@@ -391,9 +393,17 @@ function VennPage() {
     openFile(`Venn Sets`, { sheets: [df] })
   }, [vennElemMap])
 
-  useEffect(() => {
-    updateSettings({ scale: zoom })
-  }, [zoom])
+  useHydratedEffect(
+    () => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+    [zoom],
+    hasHydrated
+  )
 
   function save(format: 'txt' | 'csv') {
     const sep = format === 'csv' ? ',' : '\t'

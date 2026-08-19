@@ -84,6 +84,8 @@ const DEFAULT_SETTINGS: ISankeySettings = {
 }
 
 export interface ISankeySettingsStore extends ISankeySettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: ISankeySettings) => void
 }
 
@@ -91,7 +93,10 @@ export const useSankeySettingsStore = create<ISankeySettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
-
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
       updateSettings: (settings: ISankeySettings) => {
         set({
           ...settings,
@@ -101,16 +106,21 @@ export const useSankeySettingsStore = create<ISankeySettingsStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
 
 export function useSankeySettings(): {
   settings: ISankeySettingsStore
+  hasHydrated: boolean
   updateSettings: (settings: ISankeySettingsStore) => void
   resetSettings: () => void
 } {
   const settings = useSankeySettingsStore((state) => state)
+  const hasHydrated = useSankeySettingsStore((state) => state.hasHydrated)
   const updateSettings = useSankeySettingsStore((state) => state.updateSettings)
 
   const resetSettings = useCallback(() => {
@@ -119,6 +129,7 @@ export function useSankeySettings(): {
 
   return {
     settings,
+    hasHydrated,
     updateSettings,
     resetSettings,
   }

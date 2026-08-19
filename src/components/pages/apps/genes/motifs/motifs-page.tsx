@@ -66,7 +66,7 @@ import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
+import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -92,7 +92,7 @@ export function MotifsPage() {
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
-  const { settings, updateSettings } = useMotifSettings()
+  const { settings, hasHydrated, updateSettings } = useMotifSettings()
 
   const { settings: edbSettings } = useEdbSettings()
 
@@ -165,13 +165,17 @@ export function MotifsPage() {
   //   )
   // }, [debouncedQ])
 
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.zoom = zoom
-      })
-    )
-  }, [zoom])
+  useHydratedEffect(
+    () => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+    [zoom],
+    hasHydrated
+  )
 
   // function loadTestData() {
   //   setSearch({

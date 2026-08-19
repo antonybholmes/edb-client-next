@@ -17,7 +17,7 @@ export type Mode = 'prob' | 'bits'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v36`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v38`
 
 export type MotifSortBy = 'dataset,motif-id' | 'motif-id'
 
@@ -33,7 +33,7 @@ export interface IMotifSettings {
   letterWidth: number
   cols: number
   mode: Mode
-  zoom: number
+  scale: number
   margin: IMarginProps
   bases: Record<string, ITextProps>
   title: { text: ITextProps; offset: number }
@@ -51,7 +51,7 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   view: 'bits',
   plotHeight: 100,
   letterWidth: LW,
-  zoom: 1,
+  scale: 1,
   cols: 1,
   mode: 'bits',
   gap: 80,
@@ -104,6 +104,8 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
 }
 
 export interface IMotifStore extends IMotifSettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IMotifSettings>) => void
 }
 
@@ -111,6 +113,10 @@ export const useMotifStore = create<IMotifStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set((state) => ({ ...state, hasHydrated }))
+      },
       updateSettings: (settings: Partial<IMotifSettings>) => {
         set((state) => ({ ...state, ...settings }))
       },
@@ -118,6 +124,9 @@ export const useMotifStore = create<IMotifStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
@@ -143,15 +152,17 @@ export const useMotifStore = create<IMotifStore>()(
 
 export function useMotifSettings(): {
   settings: IMotifSettings
+  hasHydrated: boolean
   updateSettings: (settings: Partial<IMotifSettings>) => void
   resetSettings: () => void
 } {
   const settings = useMotifStore((state) => state)
+  const hasHydrated = useMotifStore((state) => state.hasHydrated)
   const updateSettings = useMotifStore((state) => state.updateSettings)
   const resetSettings = () =>
     updateSettings({
       ...DEFAULT_SETTINGS,
     })
 
-  return { settings, updateSettings, resetSettings }
+  return { settings, hasHydrated, updateSettings, resetSettings }
 }

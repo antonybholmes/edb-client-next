@@ -54,12 +54,12 @@ import { produce } from 'immer'
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
-import { PLOT_ZOOM_CHANNEL, useGseaWebStore } from './gsea-web-store'
+import { PLOT_ZOOM_CHANNEL, useGsea } from './gsea-web-store'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
+import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -75,7 +75,7 @@ const LI_CLS =
 
 export function GseaWebPage() {
   const { settings: edbSettings } = useEdbSettings()
-  const { settings, updateSettings } = useGseaSettings()
+  const { settings, hasHydrated, updateSettings } = useGseaSettings()
 
   const [showSideBar, setShowSideBar] = useState(true)
   const { setAppInfo } = useAppInfo()
@@ -90,7 +90,7 @@ export function GseaWebPage() {
 
     setDatasetsForUse,
     loadGseaZip,
-  } = useGseaWebStore()
+  } = useGsea()
 
   const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
 
@@ -138,13 +138,17 @@ export function GseaWebPage() {
     setReportTabs(['gsea-results', ...phenotypes])
   }, [phenotypes])
 
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.page.scale = zoom
-      })
-    )
-  }, [zoom])
+  useHydratedEffect(
+    () => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
+    },
+    [zoom],
+    hasHydrated
+  )
 
   const searchIndex = useMemo(() => {
     return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added hydration checks to stores.
 - Added hydrated effect for loading stores without sync issues.
 - Simplified sidebars to stop context problems on hot loading.
 - GSEA plot now works with affymetrix data.
