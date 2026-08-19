@@ -59,7 +59,6 @@ import { PLOT_ZOOM_CHANNEL, useGsea } from './gsea-web-store'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -75,7 +74,7 @@ const LI_CLS =
 
 export function GseaWebPage() {
   const { settings: edbSettings } = useEdbSettings()
-  const { settings, hasHydrated, updateSettings } = useGseaSettings()
+  const { settings, updateSettings } = useGseaSettings()
 
   const [showSideBar, setShowSideBar] = useState(true)
   const { setAppInfo } = useAppInfo()
@@ -96,7 +95,16 @@ export function GseaWebPage() {
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
+    },
+  })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
@@ -138,17 +146,17 @@ export function GseaWebPage() {
     setReportTabs(['gsea-results', ...phenotypes])
   }, [phenotypes])
 
-  useHydratedEffect(
-    () => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
-    },
-    [zoom],
-    hasHydrated
-  )
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.page.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   const searchIndex = useMemo(() => {
     return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {

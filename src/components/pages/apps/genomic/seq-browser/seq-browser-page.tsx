@@ -53,7 +53,6 @@ import { AssemblySelect } from '@/components/edb/assembly-select'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { locStr } from '@/lib/genomic/genomic'
 import {
@@ -78,9 +77,18 @@ function SeqBrowserPage() {
   const { locations, binSizes, setLocations, dispatch } = useTracks()
   const { settings: edbSettings } = useEdbSettings()
   const { setAppInfo } = useAppInfo()
-  const { settings, hasHydrated, updateSettings } = useSeqBrowserSettings()
+  const { settings, updateSettings } = useSeqBrowserSettings()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const { setSettingsTabs, setDefaultTab: setDefaultSettingsTab } =
     useSettingsTabs()
@@ -164,17 +172,17 @@ function SeqBrowserPage() {
     setQuery(['chr3:187441954-187466041'])
   }, [setQuery])
 
-  useHydratedEffect(
-    () => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-    [zoom],
-    hasHydrated
-  )
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   useEffect(() => {
     // When the genome changes, reset tracks and locations

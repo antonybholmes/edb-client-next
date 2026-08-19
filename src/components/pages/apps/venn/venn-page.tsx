@@ -74,7 +74,6 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { produce } from 'immer'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { VennPropsPanel } from './venn-props-panel'
@@ -88,8 +87,6 @@ import {
 const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
 
 function VennPage() {
-  const { selectedItems } = useVenn()
-
   const { openFiles } = useOpen()
   const { svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
@@ -99,11 +96,20 @@ function VennPage() {
 
   //const [selectedSideTab, setSelectedSideTab] = useState(0)
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const [, setKeyPressed] = useState<string | null>(null)
 
-  const { settings, hasHydrated, updateSettings } = useVennSettings()
+  const { settings, updateSettings } = useVennSettings()
   const { setAppInfo } = useAppInfo()
 
   const {
@@ -393,17 +399,17 @@ function VennPage() {
     openFile(`Venn Sets`, { sheets: [df] })
   }, [vennElemMap])
 
-  useHydratedEffect(
-    () => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-    [zoom],
-    hasHydrated
-  )
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   function save(format: 'txt' | 'csv') {
     const sep = format === 'csv' ? ',' : '\t'

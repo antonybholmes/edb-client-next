@@ -55,7 +55,6 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 
-import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -95,7 +94,16 @@ export function GseaPlotPage() {
 
   const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
 
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
+    },
+  })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
@@ -123,17 +131,17 @@ export function GseaPlotPage() {
     setZoom(zoom)
   }, [settings.page.scale])
 
-  useHydratedEffect(
-    () => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
-    },
-    [zoom],
-    hasHydrated
-  )
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.page.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   const searchIndex = useMemo(() => {
     return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {

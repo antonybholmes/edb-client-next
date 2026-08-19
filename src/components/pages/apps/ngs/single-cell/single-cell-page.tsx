@@ -64,19 +64,13 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useHydratedEffect } from '@/hooks/hydrated-effect'
-import { useStableId } from '@/hooks/stable-id'
 import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
-import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useSave } from '../../matcalc/hooks/save'
 import { DisplayPropsPanel } from './display-props-panel'
 import { usePlotGrid } from './plot-grid-store'
@@ -88,11 +82,6 @@ import { UmapPlotSvg } from './umap-plot-svg'
 const PLOT_ZOOM_CHANNEL = 'single-cell-plot-zoom'
 
 export function SingleCellPage() {
-  const _id = useStableId('single-cell-page')
-
-  const { goto } = useHistory()
-
-  const { file } = useFiles()
   const { sheets } = useCurrentSheets()
 
   const { open: openDialog } = useDialogs()
@@ -108,7 +97,16 @@ export function SingleCellPage() {
 
   //const [search, setSearch] = useState('=aicda')
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   //const [selectedTab, setSelectedTab] = useState('Data')
   //const [selectedRightTab, setSelectedRightTab] = useState(0)
@@ -196,17 +194,17 @@ export function SingleCellPage() {
     ])
   }, [setSideTabs])
 
-  useHydratedEffect(
-    () => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-    [zoom],
-    hasHydrated
-  )
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   const fileMenuTabs: ITab[] = [
     {

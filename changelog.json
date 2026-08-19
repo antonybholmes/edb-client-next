@@ -2424,6 +2424,10 @@
         {
           "msg": "Added hydration checks to stores",
           "date": "2026-08-19T01:39:35.039Z"
+        },
+        {
+          "msg": "Added zoom callback to get rid of need for hydrated listeners",
+          "date": "2026-08-19T15:09:40.847Z"
         }
       ]
     },

@@ -66,7 +66,6 @@ import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useHydratedEffect } from '@/hooks/hydrated-effect'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -90,9 +89,18 @@ export function MotifsPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
-  const { settings, hasHydrated, updateSettings } = useMotifSettings()
+  const { settings, updateSettings } = useMotifSettings()
 
   const { settings: edbSettings } = useEdbSettings()
 
@@ -165,17 +173,17 @@ export function MotifsPage() {
   //   )
   // }, [debouncedQ])
 
-  useHydratedEffect(
-    () => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-    [zoom],
-    hasHydrated
-  )
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   // function loadTestData() {
   //   setSearch({

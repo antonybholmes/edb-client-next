@@ -2,9 +2,9 @@
   "name": "Seq Browser",
   "description": "Plot NGS data and make figures.",
   "color": "#FF0000",
-  "version": "32.2.8",
+  "version": "32.4.0",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-08-19T01:39:32.720Z",
-  "hash": "7f1281a0b9253bc5f128bac1e3d121726a4d7dcb24b8fb6eae1915c0ccc7255d",
-  "build": 1118
+  "modified": "2026-08-19T15:09:39.691Z",
+  "hash": "8938ce46d87372f7bb74d5976eabc8d784bc4da1ad955c67ba2d1ebaa98cd7b4",
+  "build": 1120
 }

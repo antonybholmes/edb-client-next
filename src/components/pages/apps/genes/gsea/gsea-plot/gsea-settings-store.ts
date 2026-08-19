@@ -192,22 +192,15 @@ export interface IGseaSettingsStore extends IGseaDisplayProps {
 
 export const useGseaSettingsStore = create<IGseaSettingsStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
       hasHydrated: false,
       setHasHydrated: (hasHydrated: boolean) => {
-        set((state) => ({
-          ...state,
-          hasHydrated,
-        }))
+        set({ hasHydrated })
       },
 
       updateSettings: (settings: Partial<IGseaDisplayProps>) => {
-        console.log('updating gsea settings', settings)
-        set((state) => ({
-          ...state,
-          ...settings,
-        }))
+        set(settings)
       },
     }),
     {
