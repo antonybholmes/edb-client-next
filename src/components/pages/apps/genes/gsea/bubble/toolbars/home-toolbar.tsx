@@ -2,6 +2,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
+import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import { useMatcalcDialogs } from '@/components/pages/apps/matcalc/matcalc-dialogs'
 import {
@@ -36,6 +37,7 @@ export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles()
   const { svgRef } = useSVG()
   const { setPlot } = useGseaBubbleContext()
+  const { addPlots } = useHistory()
 
   return (
     <>
@@ -82,6 +84,7 @@ export function HomeToolbar() {
                 callback: (plot) => {
                   console.log('GSEA Bubble dialog returned plot', plot)
                   setPlot(plot as IGseaBubblePlot)
+                  addPlots([plot])
                 },
               },
             })

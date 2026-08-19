@@ -48,7 +48,7 @@ export interface GseaBubblePropsContextType {
   points: IBubblePoint[]
 
   setPlot: (plot: IGseaBubblePlot) => void
-  //updatePlotSettings: (newSettings: Partial<IGseaBubbleDisplayOptions>) => void
+  updatePlotSettings: (newSettings: Partial<IGseaBubbleDisplayOptions>) => void
 }
 
 export const GseaBubbleContext = createContext<
@@ -159,20 +159,20 @@ export function GseaBubbleProvider({
     setPlot(plot)
   }, [plot])
 
-  // function updatePlotSettings(newSettings: Partial<IGseaBubbleDisplayOptions>) {
-  //   if (!_plot) {
-  //     return
-  //   }
+  function updatePlotSettings(newSettings: Partial<IGseaBubbleDisplayOptions>) {
+    if (!_plot) {
+      return
+    }
 
-  //   const newPlot = {
-  //     ..._plot,
-  //     props: produce(_plot.props, (draft) => {
-  //       Object.assign(draft, newSettings)
-  //     }),
-  //   }
+    const newPlot = {
+      ..._plot,
+      props: produce(_plot.props, (draft) => {
+        Object.assign(draft, newSettings)
+      }),
+    }
 
-  //   setPlot(newPlot)
-  // }
+    setPlot(newPlot)
+  }
 
   const points = useMemo(() => {
     if (!_plot) {
@@ -249,7 +249,7 @@ export function GseaBubbleProvider({
         plot: _plot,
         points,
         displayProps: _plot?.props ?? DEFAULT_GSEA_DOT_PROPS,
-        // updatePlotSettings,
+        updatePlotSettings,
         setPlot,
       }}
     >
