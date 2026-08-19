@@ -81,7 +81,15 @@ export function GseaBubblePage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const { settings: edbSettings } = useEdbSettings()
 
@@ -149,17 +157,17 @@ export function GseaBubblePage() {
     setZoom(settings.scale)
   }, [settings.scale])
 
-  useEffect(() => {
-    if (!plot || settings.scale === zoom) {
-      return
-    }
+  // useEffect(() => {
+  //   if (!plot || settings.scale === zoom) {
+  //     return
+  //   }
 
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [plot, zoom])
+  //   updateSettings(
+  //     produce(settings, (draft) => {
+  //       draft.scale = zoom
+  //     })
+  //   )
+  // }, [plot, zoom])
 
   const fileMenuTabs: ITab[] = [
     {

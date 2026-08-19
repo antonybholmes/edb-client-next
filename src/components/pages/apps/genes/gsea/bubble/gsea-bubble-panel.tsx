@@ -8,10 +8,8 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -19,7 +17,6 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { PLOT_ZOOM_CHANNEL } from '../../../matcalc/apps/heatmap/heatmap-panel'
 import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
 import { useGseaBubbleContext } from './gsea-bubble-provider'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import { GseaBubblePlotSvg } from './gsea-bubble-svg'
 
 export function GseaBubblePanel() {
@@ -30,10 +27,6 @@ export function GseaBubblePanel() {
   // if (!plot) {
   //   return null
   // }
-
-  const { settings, updateSettings } = useGseaBubbleSettings()
-
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
   const { plot } = useGseaBubbleContext()
   const displayProps = plot.props
@@ -65,25 +58,6 @@ export function GseaBubblePanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  // load saved zoom from settings
-  useEffect(() => {
-    setZoom(settings.scale)
-  }, [settings.scale])
-
-  // when the zoom changes, update the settings
-  useEffect(() => {
-    if (zoom === settings.scale) {
-      return
-    }
-
-    updateSettings(
-      produce(settings, (draft) => {
-        //console.log('Updating plot with zoom:', zoom)
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
 
   return (
     <>

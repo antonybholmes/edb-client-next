@@ -125,6 +125,8 @@ const DEFAULT_SETTINGS: IVennSettings = {
 }
 
 export interface IVennStore extends IVennSettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IVennSettings>) => void
   updateRadius: (radius: number) => void
   updateCircles: (circles: Record<string, IVennCircleProps>) => void
@@ -132,25 +134,28 @@ export interface IVennStore extends IVennSettings {
 
 export const useVennSettingsStore = create<IVennStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_SETTINGS,
-
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
       updateSettings: (settings: Partial<IVennSettings>) => {
-        set(state => ({
+        set((state) => ({
           ...state,
           ...settings,
         }))
       },
       updateCircles: (circles: Record<string, IVennCircleProps>) => {
         set(
-          produce(state => {
+          produce((state) => {
             state.circles = circles
           })
         )
       },
       updateRadius: (radius: number) => {
         set(
-          produce(state => {
+          produce((state) => {
             state.radius = radius
           })
         )
@@ -159,11 +164,15 @@ export const useVennSettingsStore = create<IVennStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
 
 export function useVennSettings(): {
+  hasHydrated: boolean
   settings: IVennSettings
   updateSettings: (settings: Partial<IVennSettings>) => void
   resetSettings: () => void
@@ -172,12 +181,13 @@ export function useVennSettings(): {
   resetCircles: () => void
   updateRadius: (radius: number) => void
 } {
-  const settings = useVennSettingsStore(state => state)
-  const updateSettings = useVennSettingsStore(state => state.updateSettings)
+  const settings = useVennSettingsStore((state) => state)
+  const hasHydrated = useVennSettingsStore((state) => state.hasHydrated)
+  const updateSettings = useVennSettingsStore((state) => state.updateSettings)
 
-  const circles = useVennSettingsStore(state => state.circles)
-  const updateCircles = useVennSettingsStore(state => state.updateCircles)
-  const updateRadius = useVennSettingsStore(state => state.updateRadius)
+  const circles = useVennSettingsStore((state) => state.circles)
+  const updateCircles = useVennSettingsStore((state) => state.updateCircles)
+  const updateRadius = useVennSettingsStore((state) => state.updateRadius)
 
   function resetSettings() {
     updateSettings({ ...DEFAULT_SETTINGS })
@@ -192,6 +202,7 @@ export function useVennSettings(): {
     updateSettings,
     resetSettings,
     circles,
+    hasHydrated,
     updateCircles,
     resetCircles,
     updateRadius,

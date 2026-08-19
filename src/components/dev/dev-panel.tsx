@@ -17,6 +17,7 @@ import {
 } from '../tabs/tab-indicator-provider'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
 
+import { BoldableSpan } from '../boldable-span'
 import { useDevSettings } from './dev-setting-store'
 
 const TABS = [
@@ -96,11 +97,11 @@ function _DevPanel() {
               }}
               className="z-10 h-6"
             >
-              {tab.label}
+              <BoldableSpan>{tab.label}</BoldableSpan>
             </TabsTrigger>
           ))}
 
-          <TabIndicatorFollowBlock rounded={false} />
+          <TabIndicatorFollowBlock />
           <TabIndicatorSelectedH />
         </TabsList>
 

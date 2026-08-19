@@ -237,6 +237,8 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
 }
 
 export interface ISingleCellSettingsStore extends ISingleCellSettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<ISingleCellSettings>) => void
 }
 
@@ -244,6 +246,10 @@ export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
       updateSettings: (settings: Partial<ISingleCellSettings>) => {
         set((state) => ({ ...state, ...settings }))
       },
@@ -251,6 +257,9 @@ export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
@@ -276,14 +285,16 @@ export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
 
 export function useSingleCellSettings(): {
   settings: ISingleCellSettings
+  hasHydrated: boolean
   updateSettings: (settings: Partial<ISingleCellSettings>) => void
   resetSettings: () => void
 } {
   const settings = useSingleCellSettingsStore((state) => state)
+  const hasHydrated = useSingleCellSettingsStore((state) => state.hasHydrated)
   const updateSettings = useSingleCellSettingsStore(
     (state) => state.updateSettings
   )
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
-  return { settings, updateSettings, resetSettings }
+  return { settings, hasHydrated, updateSettings, resetSettings }
 }

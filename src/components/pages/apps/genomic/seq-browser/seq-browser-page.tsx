@@ -7,7 +7,6 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { useEffect, useState } from 'react'
 
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import {
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
@@ -26,8 +25,6 @@ import { type ITab } from '@/components/tabs/tab-provider'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import APP_INFO from './manifest.json'
-
-import { TracksPropsPanel } from './tracks-props-panel'
 
 import { CompassIcon } from '@/icons/compass-icon'
 import { CubeIcon } from '@/icons/cube-icon'
@@ -54,7 +51,8 @@ import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 
 import { AssemblySelect } from '@/components/edb/assembly-select'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { locStr } from '@/lib/genomic/genomic'
 import {
@@ -63,8 +61,8 @@ import {
 } from '@/lib/genomic/genomic-location'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { LocationAutocomplete } from './location-autocomplete'
-import { LocationsPropsPanel } from './locations/locations-props-panel'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
+import { SeqBrowserPropsPanel } from './seq-browser-props-panel'
 import { useSeqBrowserSettings, type BinSize } from './seq-browser-settings'
 import { SettingsCytobandPanel } from './settings/settings-cytoband-panel'
 import { SettingsPlotPanel } from './settings/settings-plot-panel'
@@ -81,19 +79,25 @@ function SeqBrowserPage() {
   const { setAppInfo } = useAppInfo()
   const { settings, updateSettings } = useSeqBrowserSettings()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const { setSettingsTabs, setDefaultTab: setDefaultSettingsTab } =
     useSettingsTabs()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  const { setTabs: setSideTabs } = useSideTabs()
 
   const { query, setQuery, resetQuery } = useSearch()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
-
-  const [showSideBar, setShowSideBar] = useState(true)
 
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
 
@@ -150,31 +154,35 @@ function SeqBrowserPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Tracks',
-        component: TracksPropsPanel,
-      },
-      {
-        id: 'Locations',
-        component: LocationsPropsPanel,
-      },
-    ])
-  }, [setSideTabs])
+  // useEffect(() => {
+  //   setSideTabs([
+  //     {
+  //       id: 'Tracks',
+  //       component: TracksPropsPanel,
+  //     },
+  //     {
+  //       id: 'Locations',
+  //       component: LocationsPropsPanel,
+  //     },
+  //   ])
+  // }, [setSideTabs])
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     // set initial location
     setQuery(['chr3:187441954-187466041'])
   }, [setQuery])
 
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.zoom = zoom
-      })
-    )
-  }, [zoom])
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   useEffect(() => {
     // When the genome changes, reset tracks and locations
@@ -313,11 +321,10 @@ function SeqBrowserPage() {
           />
         </Toolbar>
 
-        <TabSlideBar
-          limits={[50, 85]}
+        <ResizableSidebar
           side="right"
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
+          //open={showSideBar}
+          //onOpenChange={setShowSideBar}
         >
           <ExtScrollCard
             variant="content"
@@ -333,7 +340,9 @@ function SeqBrowserPage() {
               }}
             />
           </ExtScrollCard>
-        </TabSlideBar>
+
+          <SeqBrowserPropsPanel />
+        </ResizableSidebar>
 
         <FooterPortal className="justify-between">
           <VCenterRow className="gap-x-2 px-1 h-7">

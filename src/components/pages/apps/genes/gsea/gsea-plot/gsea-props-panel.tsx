@@ -1,9 +1,11 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
+import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
+import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { List, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
-import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 
@@ -28,15 +30,11 @@ export function GseaPropsPanel() {
   }, [setTabs])
 
   return (
-    <BaseCol className="grow">
-      {/* <UnderlineTabs
-        groupId={ID}
-        tabButtonProps={{ variant: 'default' }}
-        className="text-xs"
-      >
-        <TabIndicatorFollowBlock groupId={ID} />
+    <BaseCol className="grow gap-y-2">
+      <UnderlineTabs groupId={ID} tabListCls="gap-x-3" className="text-xs">
+        <TabIndicatorFollowH />
         <TabIndicatorSelectedH />
-      </UnderlineTabs> */}
+      </UnderlineTabs>
 
       <Tabs
         orientation="vertical"
@@ -60,7 +58,7 @@ export function GseaPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      <OutlookTabs id={ID} className="border-t border-border/50 py-2" />
+      {/* <OutlookTabs id={ID} className="border-t border-border/50 py-2" /> */}
     </BaseCol>
   )
 }

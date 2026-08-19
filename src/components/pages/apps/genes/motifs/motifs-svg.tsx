@@ -269,7 +269,7 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
   const svg = (
     <SvgBase
       ref={ref}
-      scale={settings.zoom}
+      scale={settings.scale}
       width={width}
       height={height}
       shapeRendering={SVG_CRISP_EDGES}

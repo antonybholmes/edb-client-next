@@ -1,7 +1,7 @@
 'use client'
 
 import { clamp } from '@/lib/math/clamp'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useShallow } from 'zustand/react/shallow'
@@ -36,10 +36,11 @@ export const DEFAULT_ZOOM_CHANNEL: IZoomChannel = {
 
 export interface IZoomStore {
   zooms: Record<string, IZoomChannel>
-  setZoom: (id: string, value: number) => void
+  initializeZoom: (id: string, defaults?: IZoomChannel) => void
+  setZoom: (id: string, value: number) => number
   resetZoom: (id: string) => void
-  increaseZoom: (id: string) => void
-  decreaseZoom: (id: string) => void
+  increaseZoom: (id: string) => { index: number; zoom: number }
+  decreaseZoom: (id: string) => { index: number; zoom: number }
   resetAll: () => void
 }
 
@@ -47,59 +48,85 @@ export const DEFAULT_ZOOM = 1
 
 export const useZoomStore = create<IZoomStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       zooms: {},
 
-      setZoom: (id, value) =>
+      initializeZoom: (id, defaults = DEFAULT_ZOOM_CHANNEL) => {
         set((state) => {
-          const zc = state.zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
+          if (state.zooms[id]) return state
 
-          // limit range
-          value = clamp(value, zc.levels[0]!, zc.levels[zc.levels.length - 1]!)
+          return {
+            zooms: {
+              ...state.zooms,
+              [id]: { ...defaults, id },
+            },
+          }
+        })
+      },
 
+      setZoom: (id, value) => {
+        const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
+
+        const newZoom = clamp(
+          value,
+          zc.levels[0]!,
+          zc.levels[zc.levels.length - 1]!
+        )
+
+        set((state) => {
           return {
             zooms: {
               ...state.zooms,
               [id]: {
                 ...zc,
-                zoom: value,
-                index: zoomToIndex(value, zc.levels),
+                zoom: newZoom,
+                index: zoomToIndex(newZoom, zc.levels),
               },
             },
           }
-        }),
-      increaseZoom: (id) =>
-        set((state) => {
-          const zc = state.zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
-          const { index, zoom: newZoom } = increaseZoom(zc)
+        })
+        return newZoom
+      },
+      increaseZoom: (id) => {
+        const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
+        const { index, zoom: newZoom } = increaseZoom(zc)
 
+        set((state) => {
           return {
             zooms: {
               ...state.zooms,
               [id]: { ...zc, index, zoom: newZoom },
             },
           }
-        }),
-      decreaseZoom: (id) =>
-        set((state) => {
-          const zc = state.zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
-          const { index, zoom: newZoom } = decreaseZoom(zc)
+        })
 
+        return { index, zoom: newZoom }
+      },
+      decreaseZoom: (id) => {
+        const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
+        const { index, zoom: newZoom } = decreaseZoom(zc)
+
+        set((state) => {
           return {
             zooms: {
               ...state.zooms,
               [id]: { ...zc, index, zoom: newZoom },
             },
           }
-        }),
-      resetZoom: (channel) =>
+        })
+
+        return { index, zoom: newZoom }
+      },
+      resetZoom: (channel) => {
         set((state) => {
           const zooms = { ...state.zooms }
           delete zooms[channel]
 
           return { zooms }
-        }),
+        })
 
+        //return 1
+      },
       resetAll: () => set({ zooms: {} }),
     }),
     {
@@ -107,6 +134,11 @@ export const useZoomStore = create<IZoomStore>()(
     }
   )
 )
+
+interface IZoomOpts {
+  defaultZoom?: IZoomChannel
+  onChange?: ({ zoom }: { zoom: number }) => void
+}
 
 /**
  * A hook for accessing a zoom channel from a zoom store.
@@ -117,8 +149,10 @@ export const useZoomStore = create<IZoomStore>()(
  */
 export function useZoom(
   channel: string = DEFAULT_ZOOM_CHANNEL_NAME,
-  defaultZoom: IZoomChannel = DEFAULT_ZOOM_CHANNEL
+  opts: IZoomOpts = {}
 ): IZoomContext {
+  const { defaultZoom = DEFAULT_ZOOM_CHANNEL, onChange } = opts
+
   const z = useZoomStore(
     useShallow(
       (state) => state.zooms[channel] ?? { ...defaultZoom, id: channel }
@@ -128,26 +162,46 @@ export function useZoom(
   const resetZoom = useZoomStore((state) => state.resetZoom)
   const increaseZoom = useZoomStore((state) => state.increaseZoom)
   const decreaseZoom = useZoomStore((state) => state.decreaseZoom)
+  const initializeZoom = useZoomStore((state) => state.initializeZoom)
+
+  useEffect(() => {
+    initializeZoom(channel, { ...defaultZoom, id: channel })
+  }, [channel, defaultZoom, initializeZoom])
 
   const setChannelZoom = useCallback(
-    (value: number) => setZoom(channel, value),
-    [z, channel, setZoom]
+    (value: number) => {
+      setZoom(channel, value)
+    },
+    [channel, setZoom]
   )
 
-  const incrementChannelZoom = useCallback(
-    () => increaseZoom(channel),
-    [channel, increaseZoom]
-  )
+  const incrementChannelZoom = useCallback(() => {
+    increaseZoom(channel)
+  }, [channel, increaseZoom])
 
-  const decrementChannelZoom = useCallback(
-    () => decreaseZoom(channel),
-    [channel, decreaseZoom]
-  )
+  const decrementChannelZoom = useCallback(() => {
+    decreaseZoom(channel)
+  }, [channel, decreaseZoom])
 
   const resetChannelZoom = useCallback(
     () => resetZoom(channel),
     [channel, resetZoom]
   )
+
+  useEffect(() => {
+    if (!onChange) {
+      return
+    }
+
+    return useZoomStore.subscribe((state, previousState) => {
+      const nextZoom = state.zooms[channel]?.zoom
+      const previousZoom = previousState.zooms[channel]?.zoom
+
+      if (nextZoom !== previousZoom && nextZoom !== undefined) {
+        onChange({ zoom: nextZoom })
+      }
+    })
+  }, [channel, onChange])
 
   return {
     zoom: z.zoom,

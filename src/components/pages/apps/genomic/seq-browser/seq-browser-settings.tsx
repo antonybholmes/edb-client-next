@@ -25,7 +25,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import APP_INFO from './manifest.json'
 import type { BandStyle, GeneArrowStyle } from './tracks-provider'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v102`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v104`
 
 const DEFAULT_LOCATIONS = [
   parseGenomicLocation('chr3:187441954-187466041'),
@@ -57,7 +57,7 @@ export const GENE_DISPLAY_OPTIONS = [
 export interface ISeqBrowserSettings {
   plot: { width: number; gap: number }
 
-  zoom: number
+  scale: number
   reverse: boolean
   locations: IGenomicLocation[]
   tracks: {
@@ -149,7 +149,7 @@ export interface ISeqBrowserSettings {
 }
 
 export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
-  zoom: 1,
+  scale: 1,
   //gap: 20,
   margin: { top: 20, left: 250, bottom: 20, right: 250 },
   titles: {
@@ -279,6 +279,8 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
 }
 
 export interface ISeqBrowserStore extends ISeqBrowserSettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
 }
 
@@ -286,6 +288,10 @@ export const useSeqBrowserStore = create<ISeqBrowserStore>()(
   persist(
     (set) => ({
       ...DEFAULT_TRACKS_DISPLAY_PROPS,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
       updateSettings: (settings: Partial<ISeqBrowserSettings>) => {
         set({ ...settings })
       },
@@ -293,6 +299,9 @@ export const useSeqBrowserStore = create<ISeqBrowserStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
@@ -318,10 +327,12 @@ export const useSeqBrowserStore = create<ISeqBrowserStore>()(
 
 export function useSeqBrowserSettings(): {
   settings: ISeqBrowserSettings
+  hasHydrated: boolean
   updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
   resetSettings: () => void
 } {
   const settings = useSeqBrowserStore((state) => state)
+  const hasHydrated = useSeqBrowserStore((state) => state.hasHydrated)
   const updateSettings = useSeqBrowserStore((state) => state.updateSettings)
   const resetSettings = () =>
     updateSettings({ ...DEFAULT_TRACKS_DISPLAY_PROPS })
@@ -338,7 +349,7 @@ export function useSeqBrowserSettings(): {
   //   })
   // }, [settings])
 
-  return { settings, updateSettings, resetSettings }
+  return { settings, hasHydrated, updateSettings, resetSettings }
 }
 
 // export const SeqBrowserSettingsContext = createContext<{

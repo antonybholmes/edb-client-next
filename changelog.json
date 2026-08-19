@@ -2412,6 +2412,28 @@
         {
           "msg": "GSEA plot now works with affymetrix data",
           "date": "2026-08-18T14:24:57.203Z"
+        },
+        {
+          "msg": "Simplified sidebars to stop context problems on hot loading",
+          "date": "2026-08-18T22:08:54.959Z"
+        },
+        {
+          "msg": "Added hydrated effect for loading stores without sync issues",
+          "date": "2026-08-18T23:14:01.563Z"
+        },
+        {
+          "msg": "Added hydration checks to stores",
+          "date": "2026-08-19T01:39:35.039Z"
+        },
+        {
+          "msg": "Added zoom callback to get rid of need for hydrated listeners",
+          "date": "2026-08-19T15:09:40.847Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "GSEA bubble nes axis can now be set by user",
+          "date": "2026-08-19T16:22:52.985Z"
         }
       ]
     },

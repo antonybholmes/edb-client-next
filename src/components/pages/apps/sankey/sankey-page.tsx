@@ -58,7 +58,6 @@ import { useHistory } from '../matcalc/history/history-provider/history-provider
 import { useSave } from '../matcalc/hooks/save'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -79,7 +78,16 @@ export function SankeyPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const { settings, updateSettings } = useSankeySettings()
 
@@ -141,13 +149,17 @@ export function SankeyPage() {
   //   )
   // }, [debouncedQ])
 
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   const fileMenuTabs: ITab[] = [
     {

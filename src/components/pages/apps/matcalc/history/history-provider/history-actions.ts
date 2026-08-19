@@ -539,12 +539,11 @@ function handleUpdatePlot(
     'Update group',
     '',
     (draft: IHistoryState) => {
-      console.log('Updating plot with id:', plot.id, plot)
       const filePlots = draft.plots[file] ?? []
 
       for (let i = 0; i < filePlots.length; i++) {
         if (filePlots![i].id === plot.id) {
-          console.log('Found plot at index', i)
+          // console.log('Found plot at index', i)
           filePlots![i] = plot
         }
       }
@@ -558,8 +557,6 @@ function handleAddGroups(
 ): IHistoryData {
   const { groupRows, opts } = action
   const { file = state.present.currentFile.id, mode = 'set' } = opts
-
-  //console.log('Adding groups with mode:', mode, 'to file:', file)
 
   // cannot add groups to default file and empty groups array does not require update
   if (groupRows.length === 0 || file === DEFAULT_FILE.id) {
@@ -642,14 +639,10 @@ export function openGroupFiles(files: ITextFileOpen[]): IClusterGroupRow[] {
 
   const f0 = files[0]!
 
-  console.log(f0)
-
   let groupRows: IClusterGroupRow[] = []
 
   if (f0.ext === 'json') {
     const g = JSON.parse(f0.text)
-
-    console.log(g)
 
     // v1
     if (Array.isArray(g)) {

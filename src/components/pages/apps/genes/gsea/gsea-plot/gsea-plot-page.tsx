@@ -53,10 +53,11 @@ import { produce } from 'immer'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
-import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+
+import { useUpdateEffect } from '@/hooks/update-effect'
+import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
+import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import {
   PLOT_ZOOM_CHANNEL,
   useGsea,
@@ -77,7 +78,7 @@ export function GseaPlotPage() {
   //const _id = useStableId('gsea-page')
 
   const { settings: edbSettings } = useEdbSettings()
-  const { settings, updateSettings } = useGseaSettings()
+  const { settings, updateSettings, hasHydrated } = useGseaSettings()
   const { setAppInfo } = useAppInfo()
 
   const [search, setSearch] = useState('')
@@ -87,14 +88,22 @@ export function GseaPlotPage() {
     rankedGenes,
     reportsMap,
     datasetsForUse,
-
     setDatasetsForUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()
 
   const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
+    },
+  })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
@@ -119,12 +128,20 @@ export function GseaPlotPage() {
   }, [setToolbarTabs])
 
   useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.page.scale = zoom
-      })
-    )
-  }, [zoom])
+    setZoom(zoom)
+  }, [settings.page.scale])
+
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.page.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   const searchIndex = useMemo(() => {
     return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {

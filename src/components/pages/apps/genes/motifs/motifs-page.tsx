@@ -64,9 +64,8 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -75,7 +74,6 @@ import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../matcalc/hooks/save'
 import { DatasetFilter } from './dataset-filter'
-import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 import { useMotifSettings } from './motifs-settings'
 import { useMotifs } from './motifs-store'
@@ -91,7 +89,16 @@ export function MotifsPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const { settings, updateSettings } = useMotifSettings()
 
@@ -100,7 +107,7 @@ export function MotifsPage() {
   const { openFile, addSheets } = useHistory()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  const { setTabs: setSideTabs } = useSideTabs()
+
   const { svgRef } = useSVG()
 
   const { save } = useSave()
@@ -139,18 +146,18 @@ export function MotifsPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Tracks',
-        component: MotifsPropsPanel,
-      },
-      {
-        id: 'Display',
-        component: DisplayPropsPanel,
-      },
-    ])
-  }, [setSideTabs])
+  // useEffect(() => {
+  //   setSideTabs([
+  //     {
+  //       id: 'Tracks',
+  //       component: MotifsTrackPropsPanel,
+  //     },
+  //     {
+  //       id: 'Display',
+  //       component: DisplayPropsPanel,
+  //     },
+  //   ])
+  // }, [setSideTabs])
 
   // // sync local query state when the global search query changes
   // useEffect(() => {
@@ -166,13 +173,17 @@ export function MotifsPage() {
   //   )
   // }, [debouncedQ])
 
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.zoom = zoom
-      })
-    )
-  }, [zoom])
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   // function loadTestData() {
   //   setSearch({
@@ -476,7 +487,7 @@ export function MotifsPage() {
           />
         </Toolbar>
 
-        <TabSlideBar side="right">
+        <ResizableSidebar side="right">
           <ResizablePanelGroup
             orientation="vertical"
             className="px-2 h-full"
@@ -528,7 +539,9 @@ export function MotifsPage() {
               </BaseRow>
             </ResizablePanel>
           </ResizablePanelGroup>
-        </TabSlideBar>
+
+          <MotifsPropsPanel />
+        </ResizableSidebar>
 
         <FooterPortal className="justify-between">
           <></>

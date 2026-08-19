@@ -50,18 +50,18 @@ import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
-import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
-import { PLOT_ZOOM_CHANNEL, useGseaWebStore } from './gsea-web-store'
+import { PLOT_ZOOM_CHANNEL, useGsea } from './gsea-web-store'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
+import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import { IGseaPathway } from '../gsea-plot/gsea-plot-store'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
 import APP_INFO from './manifest.json'
@@ -89,13 +89,22 @@ export function GseaWebPage() {
 
     setDatasetsForUse,
     loadGseaZip,
-  } = useGseaWebStore()
+  } = useGsea()
 
   const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
+    },
+  })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
@@ -137,13 +146,17 @@ export function GseaWebPage() {
     setReportTabs(['gsea-results', ...phenotypes])
   }, [phenotypes])
 
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.page.scale = zoom
-      })
-    )
-  }, [zoom])
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.page.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   const searchIndex = useMemo(() => {
     return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {

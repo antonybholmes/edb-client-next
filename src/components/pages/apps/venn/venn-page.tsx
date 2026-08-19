@@ -3,12 +3,7 @@
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { BaseCol } from '@/layout/base-col'
-import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -27,7 +22,6 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import {
@@ -36,7 +30,6 @@ import {
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_SAVE_AS,
-  TEXT_SETTINGS,
 } from '@/consts'
 import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
@@ -54,15 +47,11 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useAppInfo } from '@/components/edb/edb-settings'
+import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { BaseRow } from '@/components/layout/base-row'
-import {
-  useSideTabs,
-  useToolbarTabs,
-  type ITab,
-} from '@/components/tabs/tab-provider'
+import { useToolbarTabs, type ITab } from '@/components/tabs/tab-provider'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
@@ -74,12 +63,8 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../matcalc/history/history-provider/history-contexts'
+import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import APP_INFO from './manifest.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGOneWayVenn } from './svg-one-way-venn'
@@ -87,7 +72,10 @@ import { SVGThreeWayVenn } from './svg-three-way-venn'
 import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
-import { VennLists } from './venn-lists'
+
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { produce } from 'immer'
+import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { VennPropsPanel } from './venn-props-panel'
 import {
   makeVennList,
@@ -99,8 +87,6 @@ import {
 const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
 
 function VennPage() {
-  const { selectedItems } = useVenn()
-
   const { openFiles } = useOpen()
   const { svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
@@ -110,7 +96,16 @@ function VennPage() {
 
   //const [selectedSideTab, setSelectedSideTab] = useState(0)
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+    onChange: ({ zoom }) => {
+      console.log('Zoom changed:', zoom)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = zoom
+        })
+      )
+    },
+  })
 
   const [, setKeyPressed] = useState<string | null>(null)
 
@@ -120,7 +115,7 @@ function VennPage() {
   const {
     vennLists,
     setVennLists,
-    originalNames,
+
     vennElemMap,
     setVennElemMap,
     vennListsInUse,
@@ -163,13 +158,12 @@ function VennPage() {
 
   //const [sets, setSets] = useState<ISet[]>([])
 
-  const { setTabs: setSideTabs } = useSideTabs()
+  // const { setTabs: setSideTabs } = useSideTabs()
 
-  const [showSideBar, setShowSideBar] = useState(true)
+  const { settings: edbSettings } = useEdbSettings()
 
-  const { openFile, goto } = useHistory()
+  const { openFile } = useHistory()
 
-  const { file } = useFiles()
   const { sheets } = useCurrentSheets()
 
   // function onFileChange(_message: string, files: FileList | null) {
@@ -242,19 +236,19 @@ function VennPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Lists',
-        component: VennLists,
-      },
-      {
-        //id: nanoid(),
-        id: TEXT_SETTINGS,
-        component: VennPropsPanel,
-      },
-    ])
-  }, [setSideTabs])
+  // useEffect(() => {
+  //   setSideTabs([
+  //     {
+  //       id: 'Lists',
+  //       component: VennLists,
+  //     },
+  //     {
+  //       //id: nanoid(),
+  //       id: TEXT_SETTINGS,
+  //       component: VennPropsPanel,
+  //     },
+  //   ])
+  // }, [setSideTabs])
 
   // useEffect(() => {
 
@@ -405,9 +399,17 @@ function VennPage() {
     openFile(`Venn Sets`, { sheets: [df] })
   }, [vennElemMap])
 
-  useUpdateEffect(() => {
-    updateSettings({ scale: zoom })
-  }, [zoom])
+  // useHydratedUpdateEffect(
+  //   () => {
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  //   [zoom],
+  //   hasHydrated
+  // )
 
   function save(format: 'txt' | 'csv') {
     const sep = format === 'csv' ? ',' : '\t'
@@ -544,22 +546,17 @@ function VennPage() {
           />
           <ToolbarPanel
             tabShortcutMenu={
-              <ShowOptionsMenu
-                show={showSideBar}
-                onClick={() => {
-                  setShowSideBar(!showSideBar)
-                }}
-              />
+              <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }
           />
         </Toolbar>
 
-        <TabSlideBar
-          limits={[50, 85]}
+        <ResizableSidebar
+          //limits={[50, 85]}
           side="right"
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
-          className="mx-2"
+          //open={showSideBar}
+          //onOpenChange={setShowSideBar}
+          //className="mx-2"
         >
           <ResizablePanelGroup orientation="vertical" className="h-full">
             <ResizablePanel
@@ -623,7 +620,8 @@ function VennPage() {
               </BaseRow>
             </ResizablePanel>
           </ResizablePanelGroup>
-        </TabSlideBar>
+          <VennPropsPanel />
+        </ResizableSidebar>
       </ShortcutLayout>
 
       <FooterPortal>

@@ -116,11 +116,7 @@ export function TabIndicatorFollowBlock({
   return (
     <span
       ref={blockRef}
-      className={cn(
-        `absolute left-0 top-0 bottom-0  z-0 opacity-0`,
-        color,
-        className
-      )}
+      className={cn(`absolute top-0 bottom-0 z-0 opacity-0`, color, className)}
     />
   )
 }

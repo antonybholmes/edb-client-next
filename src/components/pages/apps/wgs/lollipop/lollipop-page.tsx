@@ -51,10 +51,10 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
@@ -62,7 +62,6 @@ import { useCurrentSheets } from '../../matcalc/history/history-provider/history
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { DatasetMenu } from './dataset-menu'
-import { FeaturePropsPanel } from './feature-props-panel'
 import { LollipopPropsPanel } from './lollipop-props-panel'
 import { LollipopSingleSvg } from './lollipop-single-svg'
 import { LollipopStackSvg } from './lollipop-stack-svg'
@@ -205,24 +204,24 @@ function LollipopPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    setSideTabs([
-      // {
-      //   //id: nanoid(),
-      //   icon: <LayersIcon />,
-      //   id: 'Protein',
-      //   content: ()=> <ProteinPropsPanel />,
-      // },
-      {
-        id: 'Display',
-        component: LollipopPropsPanel,
-      },
-      {
-        id: 'Features',
-        component: FeaturePropsPanel,
-      },
-    ])
-  }, [setSideTabs])
+  // useEffect(() => {
+  //   setSideTabs([
+  //     // {
+  //     //   //id: nanoid(),
+  //     //   icon: <LayersIcon />,
+  //     //   id: 'Protein',
+  //     //   content: ()=> <ProteinPropsPanel />,
+  //     // },
+  //     {
+  //       id: 'Display',
+  //       component: LollipopDisplayPropsPanel,
+  //     },
+  //     {
+  //       id: 'Features',
+  //       component: FeaturePropsPanel,
+  //     },
+  //   ])
+  // }, [setSideTabs])
 
   useEffect(() => {
     if (sheets[0].name !== 'Variants' || !protein) {
@@ -455,11 +454,7 @@ function LollipopPage() {
           />
         </Toolbar>
 
-        <TabSlideBar
-          side="right"
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
-        >
+        <ResizableSidebar>
           <ResizablePanelGroup orientation="vertical" className="px-2 h-full">
             <ResizablePanel
               id="chart"
@@ -499,7 +494,8 @@ function LollipopPage() {
               />
             </ResizablePanel>
           </ResizablePanelGroup>
-        </TabSlideBar>
+          <LollipopPropsPanel />
+        </ResizableSidebar>
       </ShortcutLayout>
 
       <FooterPortal>

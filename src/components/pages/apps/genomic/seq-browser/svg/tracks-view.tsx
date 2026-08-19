@@ -122,9 +122,11 @@ export function TracksView({ ref, className, style }: ISVGProps) {
     if (isCtrlPressed.current && innerRef.current) {
       const startX =
         (innerRef.current.getBoundingClientRect().left + settings.margin.left) *
-        settings.zoom
+        settings.scale
 
-      const col = Math.floor((e.clientX - startX) / settings.zoom / columnWidth)
+      const col = Math.floor(
+        (e.clientX - startX) / settings.scale / columnWidth
+      )
       column.current = { x: col * columnWidth, col }
 
       //offset within a column
@@ -132,12 +134,12 @@ export function TracksView({ ref, className, style }: ISVGProps) {
         (column.current.x +
           settings.margin.left +
           innerRef.current.getBoundingClientRect().left) *
-        settings.zoom
+        settings.scale
 
       dragStartPositionRef.current = {
         x: Math.max(
           0,
-          Math.min(settings.plot.width, (e.clientX - offset) / settings.zoom)
+          Math.min(settings.plot.width, (e.clientX - offset) / settings.scale)
         ),
         y: 0,
       }
@@ -184,12 +186,12 @@ export function TracksView({ ref, className, style }: ISVGProps) {
       (column.current.x +
         settings.margin.left +
         innerRef.current.getBoundingClientRect().left) *
-      settings.zoom
+      settings.scale
 
     dragPositionRef.current = {
       x: Math.max(
         0,
-        Math.min(settings.plot.width, (e.clientX - offset) / settings.zoom)
+        Math.min(settings.plot.width, (e.clientX - offset) / settings.scale)
       ),
       y: 0,
     }
@@ -487,7 +489,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
   const svg = (
     <SvgBase
       ref={innerRef}
-      scale={settings.zoom}
+      scale={settings.scale}
       width={width}
       height={height}
       style={style}

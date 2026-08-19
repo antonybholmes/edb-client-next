@@ -16,7 +16,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { useEffect, useState } from 'react'
 
 import { SelectAll } from '@/components/select-all'
-import { usePathways } from '../pathway/pathway-store'
+import { usePathways } from '../../pathway/pathway-store'
 
 export function GeneSetsPropsPanel() {
   const {

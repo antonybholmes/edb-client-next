@@ -185,6 +185,8 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
 }
 
 export interface IGseaSettingsStore extends IGseaDisplayProps {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
 }
 
@@ -192,18 +194,21 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
 
       updateSettings: (settings: Partial<IGseaDisplayProps>) => {
-        console.log('updating gsea settings', settings)
-        set((state) => ({
-          ...state,
-          ...settings,
-        }))
+        set(settings)
       },
     }),
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
@@ -212,14 +217,16 @@ export function useGseaSettings(): {
   settings: IGseaDisplayProps
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
   reset: () => void
+  hasHydrated: boolean
 } {
   const settings = useGseaSettingsStore((state) => state)
   const updateSettings = useGseaSettingsStore((state) => state.updateSettings)
+  const hasHydrated = useGseaSettingsStore((state) => state.hasHydrated)
 
   function reset() {
     console.log('resetting useGseaSettings to default')
     updateSettings({ ...DEFAULT_GSEA_DISPLAY_PROPS })
   }
 
-  return { settings, updateSettings, reset }
+  return { settings, updateSettings, reset, hasHydrated }
 }

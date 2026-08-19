@@ -28,7 +28,6 @@ import { produce } from 'immer'
 import { HistoryLayout } from '../../matcalc/history/history-layout'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { useOncoplotSettings } from './oncoplot-settings-store'
@@ -85,7 +84,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
     }
   }, [messages])
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     setDisplayProps(
       produce(displayProps, (draft) => {
         draft.scale = zoom

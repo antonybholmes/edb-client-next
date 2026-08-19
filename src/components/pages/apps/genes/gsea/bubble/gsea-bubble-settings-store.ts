@@ -15,7 +15,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v6`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v10`
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
