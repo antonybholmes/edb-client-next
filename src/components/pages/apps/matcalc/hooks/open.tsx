@@ -5,11 +5,14 @@ import {
   ITextFileOpen,
 } from '@/components/pages/open-files'
 import { produce } from 'immer'
+import { AppendMode } from '../history/history-provider/history-types'
 
 import { useHistory } from '../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
-export function useOpenFiles() {
+export function useOpenFiles(opts: { mode?: AppendMode } = {}) {
+  const { mode } = opts
+
   const { open: openDialog } = useDialogs()
 
   const { openFile } = useHistory()
@@ -22,8 +25,9 @@ export function useOpenFiles() {
       onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, {
-            mode: settings.files.open.multiFileView ? 'append' : 'set',
             sheets: tables,
+            mode:
+              mode ?? (settings.files.open.multiFileView ? 'append' : 'set'),
           })
         }
       },

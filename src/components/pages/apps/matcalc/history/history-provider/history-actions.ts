@@ -274,6 +274,11 @@ function handleOpenFile(
         const files = draft.files.filter((file) => file.id !== DEFAULT_FILE.id)
         draft.files = [...files, action.file]
       } else {
+        console.log('Resetting draft for new file')
+        draft.sheets = {}
+        draft.plots = {}
+        draft.groupRows = {}
+        draft.genesets = {}
         draft.files = [action.file]
       }
 
