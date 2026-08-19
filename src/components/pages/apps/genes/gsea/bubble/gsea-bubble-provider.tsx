@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -45,7 +46,9 @@ export interface GseaBubblePropsContextType {
   displayProps: IGseaBubbleDisplayOptions
   plot: IGseaBubblePlot
   points: IBubblePoint[]
+
   setPlot: (plot: IGseaBubblePlot) => void
+  //updatePlotSettings: (newSettings: Partial<IGseaBubbleDisplayOptions>) => void
 }
 
 export const GseaBubbleContext = createContext<
@@ -64,29 +67,26 @@ export function useGseaBubbleContext() {
 
 export function newGseaBubblePlot(
   name: string,
-  gseaDot: IGseaBubble,
+  gseaBubble: IGseaBubble,
   opts: Partial<IGseaBubblePlot> = {}
 ): IGseaBubblePlot {
-  const maxNes = Math.ceil(
-    Math.max(
-      ...gseaDot.nes.values.filter((v) => v >= 0).map((v) => Math.abs(v))
-    )
-  )
+  const posNes = gseaBubble.nes.values.filter((v) => v >= 0)
 
-  const negNes = gseaDot.nes.values.filter((v) => v < 0)
+  const maxNes =
+    posNes.length > 0
+      ? Math.ceil(
+          Math.max(...posNes.filter((v) => v >= 0).map((v) => Math.abs(v)))
+        )
+      : 0
+
+  const negNes = gseaBubble.nes.values.filter((v) => v < 0)
 
   const minNes =
     negNes.length > 0
       ? Math.ceil(Math.max(...negNes.map((v) => Math.abs(v))))
       : 0
 
-  console.log('maxNes:', maxNes, 'minNes:', minNes)
-
-  let {
-    style = 'gsea-bubble-plot',
-    props = { ...DEFAULT_GSEA_DOT_PROPS },
-    actions = [],
-  } = opts
+  let { props = { ...DEFAULT_GSEA_DOT_PROPS }, actions = [] } = opts
 
   props = produce(props, (draft) => {
     draft.axes.xaxis.domain = [-minNes, maxNes]
@@ -94,9 +94,9 @@ export function newGseaBubblePlot(
 
   return {
     id: makeUuid(),
-    style,
+    style: 'gsea-bubble-plot',
     name,
-    gseaBubble: gseaDot,
+    gseaBubble,
     groupRows: [],
     props,
     actions,
@@ -122,11 +122,57 @@ export function GseaBubbleProvider({
   children,
 }: {
   plot?: IGseaBubblePlot
-
   children: ReactNode
 }) {
   const [_plot, setPlot] = useState<IGseaBubblePlot | undefined>(plot)
+
   const { settings } = useGseaBubbleSettings()
+
+  useEffect(() => {
+    if (!plot) {
+      return
+    }
+
+    // const posNes = plot.gseaBubble.nes.values.filter((v) => v >= 0)
+
+    // const maxNes =
+    //   posNes.length > 0
+    //     ? Math.ceil(
+    //         Math.max(...posNes.filter((v) => v >= 0).map((v) => Math.abs(v)))
+    //       )
+    //     : 0
+
+    // const negNes = plot.gseaBubble.nes.values.filter((v) => v < 0)
+
+    // const minNes =
+    //   negNes.length > 0
+    //     ? Math.ceil(Math.max(...negNes.map((v) => Math.abs(v))))
+    //     : 0
+
+    // const newPlot = {
+    //   ...plot,
+    //   props: produce(plot.props, (draft) => {
+    //     draft.axes.xaxis.domain = [-minNes, maxNes]
+    //   }),
+    // }
+
+    setPlot(plot)
+  }, [plot])
+
+  // function updatePlotSettings(newSettings: Partial<IGseaBubbleDisplayOptions>) {
+  //   if (!_plot) {
+  //     return
+  //   }
+
+  //   const newPlot = {
+  //     ..._plot,
+  //     props: produce(_plot.props, (draft) => {
+  //       Object.assign(draft, newSettings)
+  //     }),
+  //   }
+
+  //   setPlot(newPlot)
+  // }
 
   const points = useMemo(() => {
     if (!_plot) {
@@ -195,12 +241,15 @@ export function GseaBubbleProvider({
     settings.sortBy,
   ])
 
+  console.log('bubble plot props', _plot?.props)
+
   return (
     <GseaBubbleContext.Provider
       value={{
         plot: _plot,
         points,
         displayProps: _plot?.props ?? DEFAULT_GSEA_DOT_PROPS,
+        // updatePlotSettings,
         setPlot,
       }}
     >

@@ -15,6 +15,10 @@
 - Bubble plot now supports add-hoc sorting.
 - Bug fixes and updates.
 
+### Fixed
+
+- GSEA bubble nes axis can now be set by user.
+
 
 ## 87.2 (Aug, 2026)
 

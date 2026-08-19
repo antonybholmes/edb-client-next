@@ -41,7 +41,7 @@ export function GseaBubblePropsPanel() {
 
   return (
     <PropsPanel>
-      <ScrollAccordion value={['plot', 'p-value', 'bubble', 'size']}>
+      <ScrollAccordion value={['plot', 'nes', 'p-value', 'bubble', 'size']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
@@ -73,40 +73,6 @@ export function GseaBubblePropsPanel() {
                 )
               }}
             />
-
-            <PropRow title="X-axis">
-              <DoubleNumericalInput
-                id="x-limit"
-                v1={displayProps.axes.xaxis.domain[0]}
-                v2={displayProps.axes.xaxis.domain[1]}
-                placeholder="Limit..."
-                dp={1}
-                limit={[-10000, 10000]}
-                w="xxs"
-                onNumChanged1={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.domain = [
-                        v,
-                        round(displayProps.axes.xaxis.domain[1], 1),
-                      ]
-                    })
-                  )
-                }}
-                onNumChanged2={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.domain = [
-                        round(draft.props.axes.xaxis.domain[0], 1),
-                        v,
-                      ]
-                    })
-                  )
-                }}
-              >
-                <span>to</span>
-              </DoubleNumericalInput>
-            </PropRow>
 
             <PropRow title="Border">
               <FillButton
@@ -142,6 +108,50 @@ export function GseaBubblePropsPanel() {
               /> */}
 
               <MarginPopover />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="nes">
+          <AccordionTrigger>NES</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="X-axis">
+              <DoubleNumericalInput
+                id="x-limit"
+                v1={displayProps.axes.xaxis.domain[0]}
+                v2={displayProps.axes.xaxis.domain[1]}
+                placeholder="Limit..."
+                dp={1}
+                limit={[-10000, 10000]}
+                w="xxs"
+                onNumChanged1={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.axes.xaxis.domain = [
+                        v,
+                        round(displayProps.axes.xaxis.domain[1], 1),
+                      ]
+                    })
+                  )
+                }}
+                onNumChanged2={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.axes.xaxis.domain = [
+                        round(draft.props.axes.xaxis.domain[0], 1),
+                        v,
+                      ]
+
+                      console.log([
+                        round(draft.props.axes.xaxis.domain[0], 1),
+                        v,
+                      ])
+                    })
+                  )
+                }}
+              >
+                <span>to</span>
+              </DoubleNumericalInput>
             </PropRow>
           </AccordionContent>
         </AccordionItem>

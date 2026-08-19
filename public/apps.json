@@ -53,9 +53,9 @@
     "color": "#4169E1",
     "version": "1.0.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-19T15:09:39.689Z",
-    "hash": "7dda306442050bccfddff1507dad557d06b384a0f53729507178e3fd2d5df1c8",
-    "build": 24
+    "modified": "2026-08-19T16:22:51.987Z",
+    "hash": "56511826006a070cbccfa1f1fa3d924b36d1eb5dae16136b064ca71e82945f83",
+    "build": 26
   },
   {
     "name": "GSEA Plot",
@@ -119,11 +119,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.8.8",
+    "version": "50.0.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-18T23:14:00.696Z",
-    "hash": "2de3fcbc4ae4c2a29e5b7ddfe3fd6f1c50f44517d6569e3c2f9e079937ee5376",
-    "build": 1928
+    "modified": "2026-08-19T16:22:51.991Z",
+    "hash": "be3b615447267db4d6b8d6d506993c0e4820d7a27c3d78bcca776a584d25f02a",
+    "build": 1930
   },
   {
     "name": "Motifs",
