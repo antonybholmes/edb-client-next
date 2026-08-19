@@ -2429,6 +2429,12 @@
           "msg": "Added zoom callback to get rid of need for hydrated listeners",
           "date": "2026-08-19T15:09:40.847Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "GSEA bubble nes axis can now be set by user",
+          "date": "2026-08-19T16:22:52.985Z"
+        }
       ]
     },
     "author": "Antony Holmes",

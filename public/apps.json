@@ -53,9 +53,9 @@
     "color": "#4169E1",
     "version": "1.0.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-19T16:22:51.987Z",
-    "hash": "56511826006a070cbccfa1f1fa3d924b36d1eb5dae16136b064ca71e82945f83",
-    "build": 26
+    "modified": "2026-08-19T23:13:38.307Z",
+    "hash": "767151b3b62d219dddcb57cc8fc5977cacd0ac6c7dfb37e74950a65615f13833",
+    "build": 28
   },
   {
     "name": "GSEA Plot",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "50.0.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-19T16:22:51.991Z",
-    "hash": "be3b615447267db4d6b8d6d506993c0e4820d7a27c3d78bcca776a584d25f02a",
-    "build": 1930
+    "modified": "2026-08-19T23:13:38.337Z",
+    "hash": "807d9ec2647a3448c8656f41eda7ef3a9dd2d325a01cf2fb7b45172b80dbae8b",
+    "build": 1932
   },
   {
     "name": "Motifs",
