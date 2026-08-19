@@ -1,7 +1,7 @@
 'use client'
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { IGseaBubblePlot, useGseaBubbleContext } from './gsea-bubble-provider'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -64,6 +64,7 @@ import { GseaBubbleProvider } from './gsea-bubble-provider'
 
 import { produce } from 'immer'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
+import { useAllPlots } from '../../../matcalc/history/history-provider/history-hooks'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
@@ -81,7 +82,7 @@ export function GseaBubblePage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
     onChange: ({ zoom }) => {
       updateSettings(
         produce(settings, (draft) => {
@@ -330,14 +331,24 @@ export function GseaBubblePage() {
   )
 }
 
+export function GseaBubblePlotPage() {
+  const allPlots = useAllPlots()
+
+  return (
+    <GseaBubbleProvider
+      plot={allPlots.length > 0 ? (allPlots[0] as IGseaBubblePlot) : undefined}
+    >
+      <GseaBubblePage />
+    </GseaBubbleProvider>
+  )
+}
+
 export function GseaBubbleQueryPage() {
   return (
     <CoreProviders>
-      <GseaBubbleProvider>
-        <SVGProvider>
-          <GseaBubblePage />
-        </SVGProvider>
-      </GseaBubbleProvider>
+      <SVGProvider>
+        <GseaBubblePlotPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }
