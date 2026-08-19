@@ -231,6 +231,7 @@ export function GseaBubblePage() {
 
     openFile(`GSEA Bubble Test`, {
       sheets: [table.setName('GSEA Bubble Test') as AnnotationDataFrame],
+      mode: 'set',
     })
   }
 

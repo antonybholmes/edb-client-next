@@ -27,16 +27,15 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
-import { IGseaBubblePlot, useGseaBubbleContext } from '../gsea-bubble-provider'
 import { SortBy, useGseaBubbleSettings } from '../gsea-bubble-settings-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { settings, updateSettings } = useGseaBubbleSettings()
-  const { openDataFrames } = useOpenFiles()
+  const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { svgRef } = useSVG()
-  const { setPlot } = useGseaBubbleContext()
+
   const { addPlots } = useHistory()
 
   return (
@@ -83,7 +82,7 @@ export function HomeToolbar() {
               payload: {
                 callback: (plot) => {
                   console.log('GSEA Bubble dialog returned plot', plot)
-                  setPlot(plot as IGseaBubblePlot)
+
                   addPlots([plot])
                 },
               },
