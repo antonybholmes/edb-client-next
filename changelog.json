@@ -2463,6 +2463,10 @@
         {
           "msg": "GSEA plot can now draw bubble plots",
           "date": "2026-08-21T17:50:10.694Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-21T17:56:30.383Z"
         }
       ]
     },
