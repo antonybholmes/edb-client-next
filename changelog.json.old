@@ -2451,5 +2451,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-08-08T04:33:33.325Z"
+  },
+  {
+    "version": "87.6",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "GSEA bubble now supports grid layout",
+          "date": "2026-08-21T16:54:46.452Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-21T16:54:46.452Z"
   }
 ]
