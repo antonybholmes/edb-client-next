@@ -7,7 +7,7 @@ import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 
 import { MarginIcon } from '@/components/icons/margin-icon'
 import { produce } from 'immer'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
 
 export function MarginPopover() {
   const { settings, updateSettings } = useGseaBubbleSettings()

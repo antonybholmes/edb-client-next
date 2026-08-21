@@ -15,9 +15,9 @@ import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { PLOT_ZOOM_CHANNEL } from '../../../matcalc/apps/heatmap/heatmap-panel'
-import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
-import { GseaBubblePlotSvg } from './gsea-bubble-svg'
+import { GseaBubblePropsPanel } from '../gsea-plot/bubble/gsea-bubble-props-panel'
+import { useGseaBubbleContext } from '../gsea-plot/bubble/gsea-bubble-provider'
+import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 
 export function GseaBubblePanel() {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)

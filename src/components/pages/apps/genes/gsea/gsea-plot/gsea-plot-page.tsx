@@ -62,7 +62,7 @@ import { GeneSetFilter } from './gene-set-filter'
 import {
   PLOT_ZOOM_CHANNEL,
   useGsea,
-  type IGseaPathway,
+  type IGseaGeneSet,
 } from './gsea-plot-store'
 import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
@@ -93,7 +93,7 @@ export function GseaPlotPage() {
     loadGseaZipWithErrorHandling,
   } = useGsea()
 
-  const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
+  const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
 
   const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
     onChange: ({ zoom }) => {

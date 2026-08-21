@@ -15,10 +15,10 @@ import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { IGseaPathway } from '../gsea-plot/gsea-plot-store'
+import { IGseaGeneSet } from '../gsea-plot/gsea-plot-store'
 import { useGsea } from './gsea-web-store'
 
-function PlotItem({ report, index }: { report: IGseaPathway; index: number }) {
+function PlotItem({ report, index }: { report: IGseaGeneSet; index: number }) {
   const { datasetsForUse, allowSelectAll, setDatasetsForUse } = useGsea()
 
   return (

@@ -2436,6 +2436,10 @@
         {
           "msg": "Redesigned gsea plot gene set selection ui",
           "date": "2026-08-21T14:14:54.973Z"
+        },
+        {
+          "msg": "Started to merge bubble plot with gsea plot as can generate both from gsea output",
+          "date": "2026-08-21T15:08:10.355Z"
         }
       ],
       "Fixed": [

@@ -10,14 +10,28 @@ import { useGseaSettings } from './gsea-settings-store'
 
 export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
 
-export interface IGseaPathway {
+export const MAX_NEG_LOG10_P = 50
+
+/**
+ * Represents a gene set in the GSEA report.
+ */
+export interface IGseaGeneSet {
   id: string
   phen: string
   name: string
   size: number
   nes: number
   q: number
+  log10q: number
   maxRank: number
+}
+
+export interface IGseaBubble {
+  genesets: IGseaGeneSet[]
+
+  nes: { label: string }
+  size: { label: string }
+  log10q: { label: string }
 }
 
 export interface IGseaGeneRankScore {
@@ -35,18 +49,31 @@ export interface IGseaResult {
 export interface IGseaPlotStore {
   phenotypes: string[]
   rankedGenes: IGseaGeneRankScore[]
-  searchResults: IGseaPathway[]
-  reportsMap: Record<string, IGseaPathway[]>
+  searchResults: IGseaGeneSet[]
+  reportsMap: Record<string, IGseaGeneSet[]>
   datasetsForUse: Record<string, boolean>
   resultsMap: Record<string, IGseaResult>
-  allReports: IGseaPathway[]
-  reports: IGseaPathway[]
+  allReports: IGseaGeneSet[]
+  reports: IGseaGeneSet[]
   allowSelectAll: boolean
 
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
-  setReports: (reports: IGseaPathway[]) => void
+  setReports: (reports: IGseaGeneSet[]) => void
   loadGseaZip: (files: IBinaryFileOpen[]) => Promise<void>
+}
+
+/**
+ * For plotting purposes, we often need to convert the q-value to -log10(q) for visualization.
+ * This function takes a q-value and returns its -log10 transformation.
+ * If the q-value is 0 or negative, it returns a predefined maximum value to avoid issues with
+ * logarithmic calculations.
+ *
+ * @param q
+ * @returns
+ */
+export function getGseaLog10q(q: number): number {
+  return q > 0 ? -Math.log10(q) : MAX_NEG_LOG10_P
 }
 
 export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
@@ -63,7 +90,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
     set({ datasetsForUse }),
 
-  setReports: (reports: IGseaPathway[]) => set({ reports }),
+  setReports: (reports: IGseaGeneSet[]) => set({ reports }),
 
   setAllowSelectAll: (allowSelectAll: boolean) => set({ allowSelectAll }),
 
@@ -74,7 +101,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       return
     }
 
-    const reportsMap: Record<string, IGseaPathway[]> = {}
+    const reportsMap: Record<string, IGseaGeneSet[]> = {}
 
     const resultsMap: Record<string, IGseaResult> = {}
 
@@ -163,13 +190,17 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
           const qIdx = headings.findIndex((h) => h === 'FDR q-val')
           const rankIdx = headings.findIndex((h) => h === 'RANK AT MAX')
 
-          const report: IGseaPathway = {
+          const q = Number(tokens[qIdx]!)
+          const log10q = getGseaLog10q(q)
+
+          const report: IGseaGeneSet = {
             id: makeUuid(),
             name,
             phen,
             size: Number(tokens[sizeIdx]!),
             nes: Number(tokens[nesIdx]!),
-            q: Number(tokens[qIdx]!),
+            q,
+            log10q,
             maxRank: Number(tokens[rankIdx]!),
           }
 
@@ -208,7 +239,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       }
     }
 
-    const allReports: IGseaPathway[] = phenotypes
+    const allReports: IGseaGeneSet[] = phenotypes
       .filter((phen) => phen in reportsMap)
       .map((phen) => reportsMap[phen]!)
       .flat()
@@ -281,7 +312,14 @@ export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
     } else {
       setReports(allReports)
     }
-  }, [settings.genesets.filters])
+  }, [
+    settings.genesets.filters.nes.on,
+    settings.genesets.filters.nes.value,
+    settings.genesets.filters.q.on,
+    settings.genesets.filters.q.value,
+    allReports,
+    setReports,
+  ])
 
   return {
     phenotypes,

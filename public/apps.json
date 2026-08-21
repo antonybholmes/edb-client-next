@@ -51,11 +51,11 @@
     "name": "GSEA Bubble Plot",
     "description": "GSEA bubble plots.",
     "color": "#4169E1",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-19T23:13:38.307Z",
-    "hash": "767151b3b62d219dddcb57cc8fc5977cacd0ac6c7dfb37e74950a65615f13833",
-    "build": 28
+    "modified": "2026-08-21T15:08:09.420Z",
+    "hash": "fd6471f40b6d6d40c15d100a09f027e8272492dcf8ff7fa88a66ce5cb517e1ec",
+    "build": 30
   },
   {
     "name": "GSEA Plot",
@@ -63,19 +63,19 @@
     "color": "#ffb366",
     "version": "23.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-21T14:14:54.033Z",
-    "hash": "a42f17b0fc2ca43a5ba220a4725873494d5b38da1fbc587116ad6e321c684b19",
-    "build": 822
+    "modified": "2026-08-21T15:08:09.420Z",
+    "hash": "113e0670c91ba81e8c84a0a37546340719beca78d48cbba3dd7d31bdfb1b62f3",
+    "build": 824
   },
   {
     "name": "GSEA Web",
     "description": "GSEA in a web app.",
     "color": "#4169E1",
-    "version": "3.4.4",
+    "version": "3.4.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-21T01:55:36.901Z",
-    "hash": "5834d9ffc8859e9a9b9fd9b966a519ee3399459d1415348e346e8e6881737f93",
-    "build": 98
+    "modified": "2026-08-21T15:08:09.421Z",
+    "hash": "0630af129390868f1b35c1c194ea79c65d718c77ccca06dcbb55311810feed56",
+    "build": 100
   },
   {
     "name": "History Viewer",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "50.0.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-19T23:13:38.337Z",
-    "hash": "807d9ec2647a3448c8656f41eda7ef3a9dd2d325a01cf2fb7b45172b80dbae8b",
-    "build": 1932
+    "modified": "2026-08-21T15:08:09.424Z",
+    "hash": "898a2cc8dd415f9cfdec2878f1ce32f52211fb5c6e1ffccea500d26a846bf990",
+    "build": 1934
   },
   {
     "name": "Motifs",

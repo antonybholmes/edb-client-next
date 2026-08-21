@@ -11,19 +11,13 @@ import { makeUuid } from '@/lib/id'
 import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { argsort } from '@/lib/math/argsort'
 import { produce } from 'immer'
-import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
+import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
+import { IGseaBubble } from '../gsea-plot-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import {
   DEFAULT_GSEA_DOT_PROPS,
   type IGseaBubbleDisplayOptions,
 } from './gsea-bubble-svg'
-
-export interface IGseaBubble {
-  ids: string[]
-  nes: { values: number[]; label: string }
-  log10pvalues: { values: number[]; label: string }
-  sizes: { values: number[]; label: string }
-}
 
 export interface IGseaBubblePlot extends IBasePlot {
   style: 'gsea-bubble-plot'
@@ -69,7 +63,7 @@ export function newGseaBubblePlot(
   gseaBubble: IGseaBubble,
   opts: Partial<IGseaBubblePlot> = {}
 ): IGseaBubblePlot {
-  const posNes = gseaBubble.nes.values.filter((v) => v >= 0)
+  const posNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v >= 0)
 
   const maxNes =
     posNes.length > 0
@@ -78,7 +72,7 @@ export function newGseaBubblePlot(
         )
       : 0
 
-  const negNes = gseaBubble.nes.values.filter((v) => v < 0)
+  const negNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v < 0)
 
   const minNes =
     negNes.length > 0
@@ -169,10 +163,10 @@ export function GseaBubbleProvider({
       return []
     }
 
-    let ids = plot.gseaBubble.ids
-    let nes = plot.gseaBubble.nes.values
-    let sizes = plot.gseaBubble.sizes.values
-    let log10pvalues = plot.gseaBubble.log10pvalues.values
+    let names = plot.gseaBubble.genesets.map((gs) => gs.name)
+    let nes = plot.gseaBubble.genesets.map((gs) => gs.nes)
+    let sizes = plot.gseaBubble.genesets.map((gs) => gs.size)
+    let log10pvalues = plot.gseaBubble.genesets.map((gs) => gs.log10q)
 
     let idx: number[] = []
 
@@ -196,7 +190,7 @@ export function GseaBubbleProvider({
       nes = idx.map((i) => nes[i])
       sizes = idx.map((i) => sizes[i])
       log10pvalues = idx.map((i) => log10pvalues[i])
-      ids = idx.map((i) => ids[i])
+      names = idx.map((i) => names[i])
     }
 
     return nes.map((x, i) => {
@@ -213,12 +207,11 @@ export function GseaBubbleProvider({
         ),
         size: sizeF,
         r: sizeF * settings.bubbles.size,
-        label: ids[i]!,
+        label: names[i]!,
       }
     })
   }, [
-    plot?.gseaBubble.nes.values,
-    plot?.gseaBubble.sizes.values,
+    plot?.gseaBubble.genesets,
     settings.size.maxSize,
     settings.bubbles.size,
     settings.p,

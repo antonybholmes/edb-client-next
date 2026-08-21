@@ -62,7 +62,7 @@ import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
-import { IGseaPathway } from '../gsea-plot/gsea-plot-store'
+import { IGseaGeneSet } from '../gsea-plot/gsea-plot-store'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home'
@@ -91,7 +91,7 @@ export function GseaWebPage() {
     loadGseaZip,
   } = useGsea()
 
-  const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
+  const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 

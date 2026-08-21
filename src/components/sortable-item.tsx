@@ -154,14 +154,14 @@ export function SortableItem<T extends ElementType = 'li'>({
       data-group={group}
       ref={ref}
       className={cn(
-        'flex flex-row items-center gap-x-1.5 grow min-w-0',
+        'flex flex-row items-center gap-x-1.5 grow min-w-0  ',
         className
       )}
     >
       <VCenterRow
         data-is-dragging={present(isDragging)}
         className={cn(
-          'gap-x-1 pl-1 pr-1.5 py-1.5 h-full border border-transparent hover:bg-muted/30 data-is-dragging:bg-background data-is-dragging:border-border/20 data-is-dragging:shadow-lg grow rounded-theme min-h-10',
+          'gap-x-1.5 pl-1 pr-1.5 py-1.5 h-full hover:bg-muted/30 data-is-dragging:bg-background data-is-dragging:shadow-lg grow rounded-theme min-h-10',
           innerCls
         )}
       >

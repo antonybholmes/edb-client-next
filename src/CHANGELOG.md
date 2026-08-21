@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Started to merge bubble plot with gsea plot as can generate both from gsea output.
 - Redesigned gsea plot gene set selection ui.
 - Added pathway filter feature.
 - Added zoom callback to get rid of need for hydrated listeners.

@@ -7,14 +7,18 @@ import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
 
+import { makeUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { HistoryPlot } from '../../../matcalc/history/history-provider/history-types'
-import { newGseaBubblePlot } from './gsea-bubble-provider'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { newGseaBubblePlot } from '../gsea-plot/bubble/gsea-bubble-provider'
+import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
+import {
+  getGseaLog10q,
+  IGseaBubble,
+  IGseaGeneSet,
+} from '../gsea-plot/gsea-plot-store'
 
 const MAX_COLS = 10
-
-const MAX_NEG_LOG10_P = 50
 
 export const SORT_BY_ITEMS = [
   { value: 'none', label: 'None' },
@@ -136,11 +140,9 @@ export function GseaBubbleDialog({
       return
     }
 
-    let log10pvalues: number[] = df
-      .col(idx[0]!)!
-      .nums.map((v) => (v > 0 ? -Math.log10(v) : MAX_NEG_LOG10_P))
+    let log10q: number[] = df.col(idx[0]!)!.nums.map((v) => getGseaLog10q(v))
 
-    let ids = df.index.strs
+    let names = df.index.strs
 
     idx = []
 
@@ -153,7 +155,7 @@ export function GseaBubbleDialog({
         idx = argsort(sizes, true)
         break
       case 'pvalue':
-        idx = argsort(log10pvalues, true)
+        idx = argsort(log10q, true)
         break
 
       default:
@@ -163,16 +165,31 @@ export function GseaBubbleDialog({
     if (idx.length > 0) {
       nes = idx.map((i) => nes[i])
       sizes = idx.map((i) => sizes[i])
-      log10pvalues = idx.map((i) => log10pvalues[i])
-      ids = idx.map((i) => ids[i])
+      log10q = idx.map((i) => log10q[i])
+      names = idx.map((i) => names[i])
     }
 
-    const plot = newGseaBubblePlot('GSEA Bubble Plot', {
-      nes: { values: nes, label: nesCol },
-      sizes: { values: sizes, label: sizeCol },
-      log10pvalues: { values: log10pvalues, label: pValueCol },
-      ids,
+    const genesets: IGseaGeneSet[] = names.map((name, i) => {
+      return {
+        id: makeUuid(),
+        name,
+        phen: '',
+        size: sizes[i]!,
+        nes: nes[i]!,
+        q: 10 ** -log10q[i]!,
+        log10q: log10q[i]!,
+        maxRank: 0,
+      }
     })
+
+    const bubblePlot: IGseaBubble = {
+      genesets,
+      nes: { label: nesCol },
+      size: { label: sizeCol },
+      log10q: { label: pValueCol },
+    }
+
+    const plot = newGseaBubblePlot('GSEA Bubble Plot', bubblePlot)
 
     onResponse?.(TEXT_OK, plot)
   }

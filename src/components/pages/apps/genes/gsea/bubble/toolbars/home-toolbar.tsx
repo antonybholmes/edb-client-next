@@ -26,8 +26,11 @@ import {
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
+import {
+  SortBy,
+  useGseaBubbleSettings,
+} from '../../gsea-plot/bubble/gsea-bubble-settings-store'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
-import { SortBy, useGseaBubbleSettings } from '../gsea-bubble-settings-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()

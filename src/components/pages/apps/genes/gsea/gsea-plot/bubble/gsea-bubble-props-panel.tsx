@@ -20,12 +20,12 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
-import { ColorMapMenu } from '../../../matcalc/color-map-menu'
-import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
-import { SORT_BY_ITEMS } from './gsea-bubble-dialog'
+import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
+import { useHistory } from '../../../../matcalc/history/history-provider/history-provider'
+import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
+import { MarginPopover } from '../../bubble/margin-popover'
 import { useGseaBubbleContext } from './gsea-bubble-provider'
 import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
-import { MarginPopover } from './margin-popover'
 
 export function GseaBubblePropsPanel() {
   const { updatePlot } = useHistory()

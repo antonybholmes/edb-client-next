@@ -13,14 +13,14 @@ import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { GeneSetFilter } from './gene-set-filter'
-import { useGsea, type IGseaPathway } from './gsea-plot-store'
+import { useGsea, type IGseaGeneSet } from './gsea-plot-store'
 
 function GseaReportItem({
   index,
   report,
 }: {
   index: number
-  report: IGseaPathway
+  report: IGseaGeneSet
 }) {
   const { datasetsForUse, allowSelectAll, setDatasetsForUse } = useGsea()
 
@@ -86,7 +86,7 @@ export function GeneSetsPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-1 text-xs">
-      <VCenterRow className="gap-x-2 ml-6">
+      <VCenterRow className="gap-x-2 pl-6.5">
         <Checkbox
           aria-label="Select all gene sets"
           checked={selectAllDatasets}

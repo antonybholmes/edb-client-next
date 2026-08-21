@@ -13,7 +13,7 @@ import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
 import { SvgText } from '@/components/plot/svg-text'
-import { IGseaGeneRankScore, IGseaPathway, useGsea } from './gsea-plot-store'
+import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
 /**
@@ -290,7 +290,7 @@ function EsSvg({
   xax,
   yax,
 }: {
-  pathway: IGseaPathway
+  pathway: IGseaGeneSet
   es: IGseaGeneRankScore[]
   sortedRankedGenes: IGseaGeneRankScore[]
   maxRank: number
