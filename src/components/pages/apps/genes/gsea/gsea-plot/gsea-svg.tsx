@@ -27,7 +27,7 @@ import { useGseaSettings } from './gsea-settings-store'
 export function GseaSvg({ ref }: ISVGProps) {
   const { settings } = useGseaSettings()
 
-  const { rankedGenes, reports, resultsMap, datasetsForUse } = useGsea()
+  const { rankedGenes, inUseReports, resultsMap } = useGsea()
 
   // size of plot with padding
   const plotSize = [
@@ -42,11 +42,8 @@ export function GseaSvg({ ref }: ISVGProps) {
   // keep only pathways for which we have results, i.e. with
   // suitable q values. If q == 1, unlikely GSEA generated it
   // so we cannot plot it
-  const pathways = reports.filter(
-    (report) =>
-      (datasetsForUse[report.id] ?? false) &&
-      report.q < 1 &&
-      report.name in resultsMap
+  const pathways = inUseReports.filter(
+    (report) => report.q < 1 && report.name in resultsMap
   )
 
   const rows = Math.ceil(pathways.flat().length / settings.page.columns)

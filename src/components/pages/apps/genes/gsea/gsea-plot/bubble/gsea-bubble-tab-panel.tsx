@@ -10,19 +10,19 @@ export function GseaBubbleTabPanel({
 }: {
   svgRef: React.RefObject<SVGSVGElement>
 }) {
-  const {
-    reports,
-
-    phenotypesFilter,
-  } = useGsea()
+  const { inUseReports, phenotypesFilter } = useGsea()
 
   const bubblePlots: IGseaBubble[] = useMemo(() => {
+    console.log(
+      'Generating bubble plots for phenotypes filter:',
+      phenotypesFilter
+    )
     return Object.entries(phenotypesFilter)
       .filter(([_, show]) => show)
       .map(([phen, _]) => phen)
       .sort()
       .map((phen) => {
-        const genesets = reports.filter((r) => r.phen === phen)
+        const genesets = inUseReports.filter((r) => r.phen === phen)
 
         const bubble: IGseaBubble = {
           id: makeUuid(),
@@ -35,7 +35,11 @@ export function GseaBubbleTabPanel({
         return bubble
       })
       .filter((bubble) => bubble.genesets.length > 0)
-  }, [reports, phenotypesFilter])
+  }, [inUseReports, phenotypesFilter])
+
+  if (bubblePlots.length === 0) {
+    return null
+  }
 
   return (
     <ExtScrollCard className="px-2 pb-2">

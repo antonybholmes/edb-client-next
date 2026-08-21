@@ -914,8 +914,6 @@ function handleGoto(
         draft.currentFile = draft.files.find((f) => f.id === file)!
       }
 
-      //console.log('aha', sheet, 'file', file)
-
       if (plot) {
         if (draft.plots[file].some((p) => p.id === plot)) {
           draft.currentPlot = draft.plots[file].filter((p) => p.id === plot)[0]

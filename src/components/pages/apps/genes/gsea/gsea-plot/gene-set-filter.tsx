@@ -44,11 +44,8 @@ export function GeneSetFilter() {
               title={p}
               checked={phenotypesFilter[p]}
               onCheckedChange={(v) => {
-                setPhenotypesFilter(
-                  produce(phenotypesFilter, (draft) => {
-                    draft[p] = v
-                  })
-                )
+                console.log('Setting phenotype filter for', p, 'to', v)
+                setPhenotypesFilter({ ...phenotypesFilter, [p]: v })
               }}
             />
           ))}

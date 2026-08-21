@@ -2467,6 +2467,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-08-21T17:56:30.383Z"
+        },
+        {
+          "msg": "Fixed gsea store not showing filtered genesets. Added sort order to filtered list. Display props now context aware for the view",
+          "date": "2026-08-21T20:19:30.264Z"
         }
       ]
     },

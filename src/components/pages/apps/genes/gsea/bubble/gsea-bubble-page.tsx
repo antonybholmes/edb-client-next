@@ -71,7 +71,7 @@ import { useAllPlots } from '../../../matcalc/history/history-provider/history-h
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
-import { GseaBubblePropsPanel } from '../gsea-plot/bubble/gsea-bubble-props-panel'
+import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
 import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
 import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
@@ -322,7 +322,7 @@ export function GseaBubblePage() {
             </ResizablePanel>
           </ResizablePanelGroup>
 
-          <GseaBubblePropsPanel />
+          <GseaBubbleDisplayPropsPanel />
         </ResizableSidebar>
 
         <FooterPortal className="justify-between">
@@ -340,7 +340,9 @@ export function GseaBubblePlotPage() {
 
   return (
     <GseaBubbleProvider
-      plots={allPlots.length > 0 ? [(allPlots[0] as IGseaBubblePlot).gseaBubble] : []}
+      plots={
+        allPlots.length > 0 ? [(allPlots[0] as IGseaBubblePlot).gseaBubble] : []
+      }
     >
       <GseaBubblePage />
     </GseaBubbleProvider>

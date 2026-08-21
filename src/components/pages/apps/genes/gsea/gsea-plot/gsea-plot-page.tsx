@@ -87,10 +87,10 @@ export function GseaPlotPage() {
   const {
     phenotypes,
     rankedGenes,
-    reports,
-    datasetsForUse,
+    filteredReports,
+    geneSetsInUse,
 
-    setDatasetsForUse,
+    setGeneSetsInUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()
 
@@ -142,11 +142,11 @@ export function GseaPlotPage() {
   // )
 
   const searchIndex = useMemo(() => {
-    return new Fuse(reports, {
+    return new Fuse(filteredReports, {
       keys: ['phen', 'name'], // Fields to search
       threshold: 0.3, // Fuzzy match level
     })
-  }, [reports])
+  }, [filteredReports])
 
   const fileMenuTabs: ITab[] = [
     {
@@ -230,7 +230,9 @@ export function GseaPlotPage() {
 
     const q = new BoolSearchQuery(query)
 
-    setSearchResults(reports.filter((r) => q.match(r.phen) || q.match(r.name)))
+    setSearchResults(
+      filteredReports.filter((r) => q.match(r.phen) || q.match(r.name))
+    )
   }
 
   return (
@@ -265,12 +267,12 @@ export function GseaPlotPage() {
 
                       <Checkbox
                         aria-label="Select gene set"
-                        checked={datasetsForUse[item.id] ?? false}
+                        checked={geneSetsInUse[item.id] ?? false}
                         onCheckedChange={() => {
-                          setDatasetsForUse(
+                          setGeneSetsInUse(
                             Object.fromEntries([
-                              ...Object.entries(datasetsForUse),
-                              [item.id, !datasetsForUse[item.id]],
+                              ...Object.entries(geneSetsInUse),
+                              [item.id, !geneSetsInUse[item.id]],
                             ])
                           )
                         }}

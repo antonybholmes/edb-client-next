@@ -84,11 +84,6 @@ function GseaBubbleLegendSvg() {
     }
   }
 
-  console.log(
-    settings.colorbar.show,
-    settings.colorbar.position.includes('right')
-  )
-
   return (
     <>
       {settings.colorbar.show &&

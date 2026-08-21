@@ -26,7 +26,7 @@ import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
 import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
-export function GseaBubblePropsPanel() {
+export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
 
   return (

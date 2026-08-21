@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixed gsea store not showing filtered genesets. Added sort order to filtered list. Display props now context aware for the view.
 - Bug fixes and updates.
 - GSEA plot can now draw bubble plots.
 - GSEA bubble now supports grid layout.

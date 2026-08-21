@@ -22,46 +22,15 @@ function GseaReportItem({
   index: number
   report: IGseaGeneSet
 }) {
-  const { datasetsForUse, allowSelectAll, setDatasetsForUse } = useGsea()
+  const { geneSetsInUse, setGeneSetsInUse } = useGsea()
 
   return (
-    <SortableItem
-      index={index}
-      id={report.id}
-      key={report.id}
-      // dragHandle={
-      //   allowSelectAll ? (
-      //     <Checkbox
-      //       checked={datasetsForUse[report.id] ?? false}
-      //       onCheckedChange={(checked) => {
-      //         setDatasetsForUse(
-      //           produce(datasetsForUse, (draft) => {
-      //             draft[report.id] = checked ?? false
-      //           })
-      //         )
-      //       }}
-      //     />
-      //   ) : undefined
-      // }
-    >
-      {/* {allowSelectAll && (
-        <Checkbox
-          checked={datasetsForUse[report.id] ?? false}
-          onCheckedChange={(checked) => {
-            setDatasetsForUse(
-              produce(datasetsForUse, (draft) => {
-                draft[report.id] = checked ?? false
-              })
-            )
-          }}
-        />
-      )} */}
-
+    <SortableItem index={index} id={report.id} key={report.id}>
       <Checkbox
-        checked={datasetsForUse[report.id] ?? false}
+        checked={geneSetsInUse[report.id] ?? false}
         onCheckedChange={(checked) => {
-          setDatasetsForUse(
-            produce(datasetsForUse, (draft) => {
+          setGeneSetsInUse(
+            produce(geneSetsInUse, (draft) => {
               draft[report.id] = checked ?? false
             })
           )
@@ -74,34 +43,30 @@ function GseaReportItem({
 }
 
 export function GeneSetsPropsPanel() {
-  const [selectAllDatasets, setSelectAllDatasets] = useState(true)
+  const [selectAllGeneSets, setSelectAllGeneSets] = useState(true)
 
-  const {
-    reports,
-    setReports,
-    setDatasetsForUse,
-    allowSelectAll,
-    setAllowSelectAll,
-  } = useGsea()
+  const { filteredReports, setFilteredReports, setGeneSetsInUse } = useGsea()
+
+  console.log('GeneSetsPropsPanel', filteredReports.length)
 
   return (
     <PropsPanel className="gap-y-1 text-xs">
       <VCenterRow className="gap-x-2 pl-6.5">
         <Checkbox
           aria-label="Select all gene sets"
-          checked={selectAllDatasets}
+          checked={selectAllGeneSets}
           onCheckedChange={() => {
-            const selected = !selectAllDatasets
+            const selected = !selectAllGeneSets
 
-            setDatasetsForUse(
+            setGeneSetsInUse(
               Object.fromEntries(
-                reports.map(
+                filteredReports.map(
                   (pathway) => [pathway.id, selected] as [string, boolean]
                 )
               )
             )
 
-            setSelectAllDatasets(selected)
+            setSelectAllGeneSets(selected)
           }}
           title={TEXT_SELECT_ALL}
         />
@@ -132,7 +97,7 @@ export function GeneSetsPropsPanel() {
           //for the moment do not allow to be re-arranged as it messes up
           //cluster color rendering
           onDragEnd={(event) => {
-            const newOrder = move(reports, event)
+            const newOrder = move(filteredReports, event)
 
             // const { active, over } = event
 
@@ -151,14 +116,14 @@ export function GeneSetsPropsPanel() {
             //   //   newOrder.map(id => plots.find(plot => plot.id === id)!)
             //   // )
 
-            setReports(newOrder)
+            setFilteredReports(newOrder)
             //}
 
             //setActiveId(null)
           }}
         >
           <ul className="flex flex-col">
-            {reports.map((report, ri) => {
+            {filteredReports.map((report, ri) => {
               return (
                 <GseaReportItem key={report.id} index={ri} report={report} />
               )
