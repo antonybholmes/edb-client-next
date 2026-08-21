@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v36`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v38`
 
 import {
   DEFAULT_BOLD_FONT_PROPS,
@@ -94,6 +94,16 @@ export interface IGseaDisplayProps {
     }
     fill: IPaintProps
   }
+  filters: {
+    q: {
+      on: boolean
+      value: number
+    }
+    nes: {
+      on: boolean
+      value: number
+    }
+  }
 }
 
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
@@ -182,10 +192,34 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       line: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
     },
   },
+  filters: {
+    q: {
+      on: false,
+      value: 0.25,
+    },
+    nes: {
+      on: false,
+      value: 1,
+    },
+  },
+}
+
+interface IFilters {
+  q: {
+    on: boolean
+    value: number
+  }
+  nes: {
+    on: boolean
+    value: number
+  }
 }
 
 export interface IGseaSettingsStore extends IGseaDisplayProps {
   hasHydrated: boolean
+  filters: IFilters
+
+  setFilters: (filters: Partial<IFilters>) => void
   setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
 }
@@ -195,6 +229,12 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
     (set) => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
       hasHydrated: false,
+
+      setFilters: (filters: Partial<IFilters>) =>
+        set((state) => ({
+          filters: { ...state.filters, ...filters },
+        })),
+
       setHasHydrated: (hasHydrated: boolean) => {
         set({ hasHydrated })
       },

@@ -131,7 +131,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
             size: Number(tokens[sizeIdx]!),
             nes: Number(tokens[nesIdx]!),
             q: Number(tokens[qIdx]!),
-            rank: Number(tokens[rankIdx]!),
+            maxRank: Number(tokens[rankIdx]!),
           }
 
           reportsMap[phen]!.push(report)

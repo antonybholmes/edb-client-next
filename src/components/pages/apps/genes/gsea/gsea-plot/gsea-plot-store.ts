@@ -4,7 +4,9 @@ import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
+import { useEffect } from 'react'
 import { create } from 'zustand'
+import { useGseaSettings } from './gsea-settings-store'
 
 export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
 
@@ -15,7 +17,7 @@ export interface IGseaPathway {
   size: number
   nes: number
   q: number
-  rank: number
+  maxRank: number
 }
 
 export interface IGseaGeneRankScore {
@@ -37,6 +39,7 @@ export interface IGseaPlotStore {
   reportsMap: Record<string, IGseaPathway[]>
   datasetsForUse: Record<string, boolean>
   resultsMap: Record<string, IGseaResult>
+  allReports: IGseaPathway[]
   reports: IGseaPathway[]
   allowSelectAll: boolean
 
@@ -53,6 +56,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
   reportsMap: {},
   datasetsForUse: {},
   resultsMap: {},
+  allReports: [],
   reports: [],
   allowSelectAll: false,
 
@@ -65,6 +69,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
 
   loadGseaZip: async (files: IBinaryFileOpen[]) => {
     console.log('load zip', files)
+
     if (files.length === 0) {
       return
     }
@@ -165,7 +170,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
             size: Number(tokens[sizeIdx]!),
             nes: Number(tokens[nesIdx]!),
             q: Number(tokens[qIdx]!),
-            rank: Number(tokens[rankIdx]!),
+            maxRank: Number(tokens[rankIdx]!),
           }
 
           reportsMap[phen]!.push(report)
@@ -203,38 +208,45 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       }
     }
 
-    const reports: IGseaPathway[] = phenotypes
+    const allReports: IGseaPathway[] = phenotypes
       .filter((phen) => phen in reportsMap)
       .map((phen) => reportsMap[phen]!)
       .flat()
 
     const datasetsForUse: Record<string, boolean> = Object.fromEntries(
-      reports.map((report) => [report.id, true] as [string, boolean])
+      allReports.map((report) => [report.id, true] as [string, boolean])
     )
+
+    const reports = [...allReports]
 
     set({
       reportsMap,
       resultsMap,
       rankedGenes,
       phenotypes,
+      allReports,
       reports,
       datasetsForUse,
     })
   },
 }))
 
-export function useGsea(): IGseaPlotStore & {
+export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
   loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
 } {
   const phenotypes = useGseaPlotStore((state) => state.phenotypes)
   const rankedGenes = useGseaPlotStore((state) => state.rankedGenes)
   const searchResults = useGseaPlotStore((state) => state.searchResults)
-  const reportsMap = useGseaPlotStore((state) => state.reportsMap)
+  //const reportsMap = useGseaPlotStore((state) => state.reportsMap)
   const datasetsForUse = useGseaPlotStore((state) => state.datasetsForUse)
   const resultsMap = useGseaPlotStore((state) => state.resultsMap)
+  const allReports = useGseaPlotStore((state) => state.allReports)
   const reports = useGseaPlotStore((state) => state.reports)
   const allowSelectAll = useGseaPlotStore((state) => state.allowSelectAll)
   const loadGseaZip = useGseaPlotStore((state) => state.loadGseaZip)
+  const setReports = useGseaPlotStore((state) => state.setReports)
+
+  const { settings } = useGseaSettings()
 
   const { open: openDialog } = useDialogs()
 
@@ -252,11 +264,29 @@ export function useGsea(): IGseaPlotStore & {
     }
   }
 
+  useEffect(() => {
+    if (settings.filters.nes.on || settings.filters.q.on) {
+      const filteredReports = allReports.filter((report) => {
+        const nesPass =
+          !settings.filters.nes.on ||
+          report.nes >= settings.filters.nes.value ||
+          report.nes <= -settings.filters.nes.value
+
+        const qPass =
+          !settings.filters.q.on || report.q <= settings.filters.q.value
+        return nesPass && qPass
+      })
+      setReports(filteredReports)
+    } else {
+      setReports(allReports)
+    }
+  }, [settings.filters])
+
   return {
     phenotypes,
     rankedGenes,
     searchResults,
-    reportsMap,
+    //reportsMap,
     datasetsForUse,
     resultsMap,
     reports,
@@ -264,7 +294,7 @@ export function useGsea(): IGseaPlotStore & {
 
     setDatasetsForUse: useGseaPlotStore((state) => state.setDatasetsForUse),
     setAllowSelectAll: useGseaPlotStore((state) => state.setAllowSelectAll),
-    setReports: useGseaPlotStore((state) => state.setReports),
+    setReports,
 
     loadGseaZip,
     loadGseaZipWithErrorHandling,

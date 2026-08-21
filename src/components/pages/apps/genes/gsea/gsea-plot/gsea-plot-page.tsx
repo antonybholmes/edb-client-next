@@ -67,6 +67,7 @@ import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
 import { GseaSvg } from './gsea-svg'
 import APP_INFO from './manifest.json'
+import { PathwayFilter } from './pathway-filter'
 import { HomeToolbar } from './toolbars/home'
 
 const HELP_URL = DOCS_URL + '/apps/gsea'
@@ -86,7 +87,7 @@ export function GseaPlotPage() {
   const {
     phenotypes,
     rankedGenes,
-    reportsMap,
+    reports,
     datasetsForUse,
     setDatasetsForUse,
     loadGseaZipWithErrorHandling,
@@ -144,11 +145,11 @@ export function GseaPlotPage() {
   // )
 
   const searchIndex = useMemo(() => {
-    return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {
+    return new Fuse(reports, {
       keys: ['phen', 'name'], // Fields to search
       threshold: 0.3, // Fuzzy match level
     })
-  }, [reportsMap])
+  }, [reports])
 
   const fileMenuTabs: ITab[] = [
     {
@@ -232,17 +233,7 @@ export function GseaPlotPage() {
 
     const q = new BoolSearchQuery(query)
 
-    setSearchResults(
-      phenotypes
-        .map((k) =>
-          reportsMap[k]!.filter(
-            (r) => q.match(k) || q.match(r.phen) || q.match(r.name)
-          )
-        )
-        .flat()
-    )
-
-    //setSearchResults(results.map(result => result.item))
+    setSearchResults(reports.filter((r) => q.match(r.phen) || q.match(r.name)))
   }
 
   return (
@@ -303,6 +294,11 @@ export function GseaPlotPage() {
 
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
+            fileMenuShortcuts={
+              <>
+                <PathwayFilter />
+              </>
+            }
             rightShortcuts={
               <>
                 <ToolbarButton

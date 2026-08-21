@@ -36,6 +36,7 @@ export function HomeToolbar() {
                   if (!success) {
                     return
                   }
+
                   loadGseaZipWithErrorHandling(files)
                 })
               },

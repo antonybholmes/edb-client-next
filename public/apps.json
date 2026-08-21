@@ -61,11 +61,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "21.8.8",
+    "version": "23.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-19T15:09:39.689Z",
-    "hash": "b4aeadd71338540085d1c0c8d0d9e7171065c6186a7bd8c9d0682cc7375f8548",
-    "build": 818
+    "modified": "2026-08-21T01:55:36.901Z",
+    "hash": "af7979a4c3d61fa1834b776aaecab5d37a32b1bb24b43acb3f235f6c5b59e5ac",
+    "build": 820
   },
   {
     "name": "GSEA Web",
@@ -73,9 +73,9 @@
     "color": "#4169E1",
     "version": "3.4.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-19T15:09:39.689Z",
-    "hash": "8014bbafa50432fe53865418a205c38bbd74b716e369ba74c76e2064ba13f747",
-    "build": 96
+    "modified": "2026-08-21T01:55:36.901Z",
+    "hash": "5834d9ffc8859e9a9b9fd9b966a519ee3399459d1415348e346e8e6881737f93",
+    "build": 98
   },
   {
     "name": "History Viewer",

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added pathway filter feature.
 - Added zoom callback to get rid of need for hydrated listeners.
 - Added hydration checks to stores.
 - Added hydrated effect for loading stores without sync issues.
