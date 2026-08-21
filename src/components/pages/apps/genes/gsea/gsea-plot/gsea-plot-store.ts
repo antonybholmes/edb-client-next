@@ -265,22 +265,23 @@ export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
   }
 
   useEffect(() => {
-    if (settings.filters.nes.on || settings.filters.q.on) {
+    if (settings.genesets.filters.nes.on || settings.genesets.filters.q.on) {
       const filteredReports = allReports.filter((report) => {
         const nesPass =
-          !settings.filters.nes.on ||
-          report.nes >= settings.filters.nes.value ||
-          report.nes <= -settings.filters.nes.value
+          !settings.genesets.filters.nes.on ||
+          report.nes >= settings.genesets.filters.nes.value ||
+          report.nes <= -settings.genesets.filters.nes.value
 
         const qPass =
-          !settings.filters.q.on || report.q <= settings.filters.q.value
+          !settings.genesets.filters.q.on ||
+          report.q <= settings.genesets.filters.q.value
         return nesPass && qPass
       })
       setReports(filteredReports)
     } else {
       setReports(allReports)
     }
-  }, [settings.filters])
+  }, [settings.genesets.filters])
 
   return {
     phenotypes,

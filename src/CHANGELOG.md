@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Redesigned gsea plot gene set selection ui.
 - Added pathway filter feature.
 - Added zoom callback to get rid of need for hydrated listeners.
 - Added hydration checks to stores.

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useUpdateEffect } from './update-effect'
 
 export const DEFAULT_DEBOUNCE_DELAY_MS = 100
 
@@ -54,7 +55,7 @@ export function useDebounce<T>(value: T, opts: IDebounceOptions<T> = {}): T {
     latestFnRef.current = fn
   }, [fn])
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (equalityFn(prevValueRef.current, value)) {
       return
     }

@@ -11,7 +11,7 @@ import { ListFilter } from 'lucide-react'
 import { useState } from 'react'
 import { useGseaSettings } from './gsea-settings-store'
 
-export function PathwayFilter() {
+export function GeneSetFilter() {
   const { settings, updateSettings } = useGseaSettings()
 
   const [open, setOpen] = useState(false)
@@ -20,7 +20,7 @@ export function PathwayFilter() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         render={
-          <ToolbarIconButton checked={open} title="Filter Pathways">
+          <ToolbarIconButton checked={open} title="Filter Gene Sets">
             <ListFilter size={14} />
           </ToolbarIconButton>
         }
@@ -32,20 +32,20 @@ export function PathwayFilter() {
         //align="end"
         className="px-3 py-3 gap-y-2"
       >
-        <h2 className="font-bold">Pathway Filters</h2>
+        <h2 className="font-bold">Gene Set Filters</h2>
         <CheckPropRow
           title={<span>NES &ge;</span>}
-          checked={settings.filters.nes.on}
+          checked={settings.genesets.filters.nes.on}
           onCheckedChange={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.filters.nes.on = v
+                draft.genesets.filters.nes.on = v
               })
             )
           }}
         >
           <NumericalInput
-            value={settings.filters.nes.value}
+            value={settings.genesets.filters.nes.value}
             h="md"
             placeholder="NES"
             limit={[0, 100]}
@@ -54,7 +54,7 @@ export function PathwayFilter() {
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.filters.nes.value = v
+                  draft.genesets.filters.nes.value = v
                 })
               )
             }}
@@ -63,17 +63,17 @@ export function PathwayFilter() {
         </CheckPropRow>
         <CheckPropRow
           title={<span>FDR q-value &le;</span>}
-          checked={settings.filters.q.on}
+          checked={settings.genesets.filters.q.on}
           onCheckedChange={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.filters.q.on = v
+                draft.genesets.filters.q.on = v
               })
             )
           }}
         >
           <NumericalInput
-            value={settings.filters.q.value}
+            value={settings.genesets.filters.q.value}
             h="md"
             placeholder="FDR q-value"
             limit={[0, 1]}
@@ -82,7 +82,7 @@ export function PathwayFilter() {
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.filters.q.value = v
+                  draft.genesets.filters.q.value = v
                 })
               )
             }}

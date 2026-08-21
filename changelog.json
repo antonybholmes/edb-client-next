@@ -2432,6 +2432,10 @@
         {
           "msg": "Added pathway filter feature",
           "date": "2026-08-21T01:55:39.015Z"
+        },
+        {
+          "msg": "Redesigned gsea plot gene set selection ui",
+          "date": "2026-08-21T14:14:54.973Z"
         }
       ],
       "Fixed": [

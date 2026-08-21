@@ -2428,6 +2428,10 @@
         {
           "msg": "Added zoom callback to get rid of need for hydrated listeners",
           "date": "2026-08-19T15:09:40.847Z"
+        },
+        {
+          "msg": "Added pathway filter feature",
+          "date": "2026-08-21T01:55:39.015Z"
         }
       ],
       "Fixed": [

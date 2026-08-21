@@ -58,6 +58,7 @@ import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
+import { GeneSetFilter } from './gene-set-filter'
 import {
   PLOT_ZOOM_CHANNEL,
   useGsea,
@@ -67,7 +68,6 @@ import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
 import { GseaSvg } from './gsea-svg'
 import APP_INFO from './manifest.json'
-import { PathwayFilter } from './pathway-filter'
 import { HomeToolbar } from './toolbars/home'
 
 const HELP_URL = DOCS_URL + '/apps/gsea'
@@ -296,7 +296,7 @@ export function GseaPlotPage() {
             leftShortcuts={<UndoShortcuts />}
             fileMenuShortcuts={
               <>
-                <PathwayFilter />
+                <GeneSetFilter />
               </>
             }
             rightShortcuts={

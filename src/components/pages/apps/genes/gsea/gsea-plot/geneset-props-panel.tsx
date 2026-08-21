@@ -1,19 +1,18 @@
 import { PropsPanel } from '@/components/props-panel'
 
-import { MultiSelectIcon } from '@/components/icons/multi-select-icon'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { TEXT_SELECT, TEXT_SELECT_ALL } from '@/consts'
+import { TEXT_SELECT_ALL } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
+import { GeneSetFilter } from './gene-set-filter'
 import { useGsea, type IGseaPathway } from './gsea-plot-store'
 
 function GseaReportItem({
@@ -30,20 +29,20 @@ function GseaReportItem({
       index={index}
       id={report.id}
       key={report.id}
-      dragHandle={
-        allowSelectAll ? (
-          <Checkbox
-            checked={datasetsForUse[report.id] ?? false}
-            onCheckedChange={(checked) => {
-              setDatasetsForUse(
-                produce(datasetsForUse, (draft) => {
-                  draft[report.id] = checked ?? false
-                })
-              )
-            }}
-          />
-        ) : undefined
-      }
+      // dragHandle={
+      //   allowSelectAll ? (
+      //     <Checkbox
+      //       checked={datasetsForUse[report.id] ?? false}
+      //       onCheckedChange={(checked) => {
+      //         setDatasetsForUse(
+      //           produce(datasetsForUse, (draft) => {
+      //             draft[report.id] = checked ?? false
+      //           })
+      //         )
+      //       }}
+      //     />
+      //   ) : undefined
+      // }
     >
       {/* {allowSelectAll && (
         <Checkbox
@@ -57,6 +56,17 @@ function GseaReportItem({
           }}
         />
       )} */}
+
+      <Checkbox
+        checked={datasetsForUse[report.id] ?? false}
+        onCheckedChange={(checked) => {
+          setDatasetsForUse(
+            produce(datasetsForUse, (draft) => {
+              draft[report.id] = checked ?? false
+            })
+          )
+        }}
+      />
 
       <TruncateSpan className="h-8 grow">{report.name}</TruncateSpan>
     </SortableItem>
@@ -76,30 +86,35 @@ export function GeneSetsPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-1 text-xs">
-      <SideBarHeader className="gap-x-2 justify-between">
+      <VCenterRow className="gap-x-2 ml-6">
+        <Checkbox
+          aria-label="Select all gene sets"
+          checked={selectAllDatasets}
+          onCheckedChange={() => {
+            const selected = !selectAllDatasets
+
+            setDatasetsForUse(
+              Object.fromEntries(
+                reports.map(
+                  (pathway) => [pathway.id, selected] as [string, boolean]
+                )
+              )
+            )
+
+            setSelectAllDatasets(selected)
+          }}
+          title={TEXT_SELECT_ALL}
+        />
+
+        <ToolbarSeparator />
+
+        <GeneSetFilter />
+      </VCenterRow>
+      {/* <SideBarHeader className="gap-x-2 justify-between">
         <VCenterRow
           data-visible={allowSelectAll}
           className="data-[visible=false]:invisible ml-1"
-        >
-          <Checkbox
-            aria-label="Select all gene sets"
-            checked={selectAllDatasets}
-            onCheckedChange={() => {
-              const selected = !selectAllDatasets
-
-              setDatasetsForUse(
-                Object.fromEntries(
-                  reports.map(
-                    (pathway) => [pathway.id, selected] as [string, boolean]
-                  )
-                )
-              )
-
-              setSelectAllDatasets(selected)
-            }}
-            title={TEXT_SELECT_ALL}
-          />
-        </VCenterRow>
+        ></VCenterRow>
 
         <IconButton
           checked={allowSelectAll}
@@ -108,7 +123,7 @@ export function GeneSetsPropsPanel() {
         >
           <MultiSelectIcon checked={allowSelectAll} />
         </IconButton>
-      </SideBarHeader>
+      </SideBarHeader> */}
 
       <VScrollPanel className="mb-2">
         <DragDropProvider

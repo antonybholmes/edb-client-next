@@ -25,6 +25,17 @@ import {
   COLOR_RED,
 } from '@/lib/color/color'
 
+interface IFilters {
+  q: {
+    on: boolean
+    value: number
+  }
+  nes: {
+    on: boolean
+    value: number
+  }
+}
+
 export interface IGseaDisplayProps {
   phenotypes: {
     invert: boolean
@@ -94,15 +105,8 @@ export interface IGseaDisplayProps {
     }
     fill: IPaintProps
   }
-  filters: {
-    q: {
-      on: boolean
-      value: number
-    }
-    nes: {
-      on: boolean
-      value: number
-    }
+  genesets: {
+    filters: IFilters
   }
 }
 
@@ -192,34 +196,24 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       line: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
     },
   },
-  filters: {
-    q: {
-      on: false,
-      value: 0.25,
-    },
-    nes: {
-      on: false,
-      value: 1,
+  genesets: {
+    filters: {
+      q: {
+        on: false,
+        value: 0.25,
+      },
+      nes: {
+        on: false,
+        value: 1,
+      },
     },
   },
 }
 
-interface IFilters {
-  q: {
-    on: boolean
-    value: number
-  }
-  nes: {
-    on: boolean
-    value: number
-  }
-}
-
 export interface IGseaSettingsStore extends IGseaDisplayProps {
   hasHydrated: boolean
-  filters: IFilters
 
-  setFilters: (filters: Partial<IFilters>) => void
+  //setFilters: (filters: Partial<IFilters>) => void
   setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
 }
@@ -230,10 +224,11 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
       ...DEFAULT_GSEA_DISPLAY_PROPS,
       hasHydrated: false,
 
-      setFilters: (filters: Partial<IFilters>) =>
-        set((state) => ({
-          filters: { ...state.filters, ...filters },
-        })),
+      // setFilters: (filters: Partial<IFilters>) => {
+      //   set((state) => {
+      //     Object.assign(state.genesets.filters, filters)
+      //   })
+      // },
 
       setHasHydrated: (hasHydrated: boolean) => {
         set({ hasHydrated })
