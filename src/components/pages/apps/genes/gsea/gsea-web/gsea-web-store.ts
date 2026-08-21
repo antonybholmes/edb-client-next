@@ -5,6 +5,7 @@ import { unzipSync } from 'fflate'
 
 import { create } from 'zustand'
 import {
+  getGseaLog10q,
   IGseaGeneRankScore,
   IGseaGeneSet,
   IGseaResult,
@@ -124,13 +125,17 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
           const qIdx = headings.findIndex((h) => h === 'FDR q-val')
           const rankIdx = headings.findIndex((h) => h === 'RANK AT MAX')
 
+          const q = Number(tokens[qIdx]!)
+          const log10q = getGseaLog10q(q)
+
           const report: IGseaGeneSet = {
             id: makeUuid(),
             name,
             phen,
             size: Number(tokens[sizeIdx]!),
             nes: Number(tokens[nesIdx]!),
-            q: Number(tokens[qIdx]!),
+            q,
+            log10q,
             maxRank: Number(tokens[rankIdx]!),
           }
 

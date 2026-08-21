@@ -1,5 +1,12 @@
 # Changelog
 
+## 87.6 (Aug, 2026)
+
+### Changed
+
+- GSEA bubble now supports grid layout.
+
+
 ## 87.4 (Aug, 2026)
 
 ### Changed

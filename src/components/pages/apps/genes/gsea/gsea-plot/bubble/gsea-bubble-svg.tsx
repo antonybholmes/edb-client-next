@@ -3,7 +3,6 @@ import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 
-import { Axis } from '../../../../../../plot/axis'
 import { AxisBottomSvg } from '../../../../../../plot/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
@@ -14,11 +13,18 @@ import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
-import { linspace } from '@/lib/math/linspace'
 
+import { Axis } from '@/components/plot/axis'
+import { IPos } from '@/interfaces/pos'
+import { ILim } from '@/lib/math/math'
 import type { ITooltip } from '../../../../matcalc/apps/heatmap/heatmap-svg'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { IGseaBubble } from '../gsea-plot-store'
+import {
+  IBubblePoint,
+  IGseaBubblePlot,
+  useGseaBubbleContext,
+} from './gsea-bubble-provider'
 
 const TOOLTIP_OFFSET = 10
 
@@ -32,11 +38,9 @@ export interface IGseaBubbleDisplayOptions {
   axes: {
     xaxis: IDisplayAxis
   }
-
-  scale: number
 }
 
-export const DEFAULT_GSEA_DOT_PROPS: IGseaBubbleDisplayOptions = {
+export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
   axes: {
     xaxis: {
       name: 'Log2 fold change',
@@ -50,43 +54,238 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaBubbleDisplayOptions = {
       color: COLOR_BLACK,
     },
   },
-
-  scale: 1,
 }
 
-interface IProps extends ISVGProps {
-  size?: string
-  sizeFunc?: (x: number) => number
+function GseaBubbleLegendSvg() {
+  const { plots } = useGseaBubbleContext()
+  const { settings } = useGseaBubbleSettings()
 
-  //displayProps?: IVolcanodisplayProps
+  const sizes = settings.legend.bubbles.sizes
+
+  const plot = plots[0]
+
+  const cmap = COLOR_MAPS[settings.p.cmap]!
+
+  const dotLegendPos = []
+
+  let y = 0
+
+  for (const [si, s] of sizes.entries()) {
+    const d = Math.min(s, settings.size.maxSize)
+
+    const r1 = Math.min(d / settings.size.maxSize, 1) * settings.bubbles.size
+    dotLegendPos.push({ label: d.toFixed(0), r: r1, y })
+
+    if (si < sizes.length - 1) {
+      const r2 =
+        Math.min(sizes[si + 1]! / settings.size.maxSize, 1) *
+        settings.bubbles.size
+      y += r1 + r2 + settings.padding
+    }
+  }
+
+  console.log(
+    settings.colorbar.show,
+    settings.colorbar.position.includes('right')
+  )
+
+  return (
+    <>
+      {settings.colorbar.show &&
+        settings.colorbar.position.includes('right') && (
+          <>
+            <g id="p-legend">
+              <SvgText
+                x={settings.colorbar.size.h / 2}
+                y={0}
+                textAnchor="middle"
+              >
+                {`-log10(${plot.gseaBubble.log10q.label})`}
+              </SvgText>
+              <g transform={`translate(0, ${settings.padding * 2})`}>
+                <VColorBarSvg
+                  domain={settings.p.range}
+                  cmap={cmap}
+                  size={settings.colorbar.size}
+                  ticks={[
+                    settings.p.range[0],
+                    settings.p.range[1] / 2,
+                    settings.p.range[1],
+                  ]}
+                  //stroke={displayProps.colorbar.stroke}
+                  //font={displayProps.legend}
+                />
+              </g>
+            </g>
+            <g
+              id="dot-legend"
+              transform={`translate(0, ${settings.colorbar.size.w + settings.padding * 5})`}
+            >
+              <SvgText
+                x={settings.colorbar.size.h / 2}
+                y={0}
+                textAnchor="middle"
+              >
+                {plot.gseaBubble.size.label}
+              </SvgText>
+              <g
+                transform={`translate(0, ${settings.padding + settings.bubbles.size})`}
+              >
+                {dotLegendPos.map((d, di) => (
+                  <g key={di}>
+                    <SvgCircle
+                      key={di}
+                      cx={settings.colorbar.size.h / 2}
+                      cy={d.y}
+                      r={d.r}
+                      stroke="black"
+                    />
+                    <SvgText
+                      x={
+                        settings.colorbar.size.h / 2 +
+                        settings.bubbles.size +
+                        settings.padding
+                      }
+                      y={d.y}
+                      //textAnchor="start"
+                      //dominantBaseline="central"
+                    >
+                      {d.label}
+                    </SvgText>
+                  </g>
+                ))}
+              </g>
+            </g>
+          </>
+        )}
+    </>
+  )
 }
 
-export function GseaBubblePlotSvg({
-  ref,
+function GseaPlot({
+  points,
+  plot,
+  xlim,
+  innerPlotWidth,
+  innerPlotHeight,
+  handleVariantEnter,
+  handleVariantLeave,
+}: {
+  points: IBubblePoint[]
+  plot: IGseaBubblePlot
+  xlim: ILim
+  innerPlotWidth: number
+  innerPlotHeight: number
+  handleVariantEnter: (
+    plot: IGseaBubble,
+    row: number,
+    x1: number,
+    y1: number
+  ) => void
+  handleVariantLeave: () => void
+}) {
+  const { settings } = useGseaBubbleSettings()
 
-  sizeFunc = (x: number) => x,
-}: IProps) {
-  const { plot, points, displayProps } = useGseaBubbleContext()
+  const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
+
+  // offer per plot x-axis domain
+  const xax = new Axis()
+    .autoDomain(domain)
+    //.setDomain(displayProps.xdomain)
+    .setLength(settings.axes.x.length)
+
+  return (
+    <>
+      <SvgMargin margin={settings.plot.margin}>
+        {points.map((point, xi) => {
+          const x1 = xax!.domainToRange(point.x)
+          const y1 = point.y * settings.axes.y.rowHeight
+
+          return (
+            <SvgCircle
+              cx={x1}
+              cy={y1}
+              r={point.r}
+              fill={point.color}
+              fp={settings.bubbles.fill}
+              sp={settings.bubbles.stroke}
+              key={xi}
+              onMouseLeave={handleVariantLeave}
+              onMouseEnter={() => {
+                handleVariantEnter(plot.gseaBubble, xi, x1, y1)
+              }}
+            />
+          )
+        })}
+      </SvgMargin>
+
+      <g
+        transform={`translate(${settings.plot.margin.left - settings.padding}, ${settings.plot.margin.top})`}
+      >
+        {points.map((p, xi) => {
+          const y1 = p.y * settings.axes.y.rowHeight
+
+          return (
+            <SvgText key={xi} y={y1} textAnchor="end">
+              {p.label}
+            </SvgText>
+          )
+        })}
+      </g>
+
+      {settings.border.show && (
+        <SvgMargin margin={settings.plot.margin}>
+          <rect
+            width={innerPlotWidth}
+            height={innerPlotHeight}
+            stroke={settings.border.value}
+            strokeWidth={settings.border.width}
+            fill="none"
+          />
+        </SvgMargin>
+      )}
+
+      <AxisBottomSvg
+        ax={xax}
+        showLine={!settings.border.show}
+        pos={{
+          x: settings.plot.margin.left,
+          y: settings.plot.margin.top + innerPlotHeight,
+        }}
+        tickSize={settings.axes.x.tickSize}
+        strokeWidth={settings.axes.x.strokeWidth}
+        title={plot.gseaBubble.nes.label}
+        color={settings.axes.x.color}
+      />
+    </>
+  )
+}
+
+export function GseaBubblePlotSvg({ ref }: ISVGProps) {
+  const { plots, points, xlims } = useGseaBubbleContext()
 
   const { settings } = useGseaBubbleSettings()
 
   const tooltipRef = useRef<HTMLDivElement>(null)
 
-  const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
+  const [toolTipInfo, setToolTipInfo] = useState<
+    (ITooltip & { plot: IGseaBubble }) | null
+  >(null)
 
   const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const handleVariantEnter = useCallback(
-    (row: number, x1: number, y1: number) => {
+    (plot: IGseaBubble, row: number, x1: number, y1: number) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
 
       setToolTipInfo({
         ...toolTipInfo,
+        plot,
         pos: {
-          x: x1 + settings.margin.left + TOOLTIP_OFFSET,
-          y: y1 + settings.margin.top + TOOLTIP_OFFSET,
+          x: x1 + settings.plot.margin.left + TOOLTIP_OFFSET,
+          y: y1 + settings.plot.margin.top + TOOLTIP_OFFSET,
         },
         cell: { row: row, col: 0 },
       })
@@ -108,368 +307,90 @@ export function GseaBubblePlotSvg({
   const svg = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
-    const xax = new Axis()
-      .autoDomain(displayProps.axes.xaxis.domain)
-      //.setDomain(displayProps.xdomain)
-      .setLength(settings.axes.x.length)
+    const cols = Math.min(settings.grid.cols, plots.length)
+    const rows = Math.ceil(plots.length / cols)
 
-    const innerWidth = xax.length
-    const innerHeight =
-      settings.axes.y.rowHeight * (plot.gseaBubble.genesets.length + 1)
+    // inner height is determined by the size of the largest bubble plot
+    const innerPlotHeight =
+      settings.axes.y.rowHeight *
+      (Math.max(...plots.map((p) => p.gseaBubble.genesets.length)) + 1)
+
+    const innerPlotWidth = settings.axes.x.length
+
+    const plotWidth =
+      innerPlotWidth + settings.plot.margin.left + settings.plot.margin.right
+    const plotHeight =
+      innerPlotHeight + settings.plot.margin.top + settings.plot.margin.bottom
+
+    const innerWidth = plotWidth * cols
+    const innerHeight = plotHeight * rows
+
     const width = innerWidth + settings.margin.left + settings.margin.right
     const height = innerHeight + settings.margin.top + settings.margin.bottom
-    const cmap = COLOR_MAPS[settings.p.cmap]!
 
-    //console.log('innerWidth:', innerWidth, 'innerHeight:', innerHeight)
-
-    let sizes = settings.legend.bubbles.sizes
-
-    if (sizes.length === 0) {
-      // skip 0
-      sizes = linspace(0, settings.size.maxSize, 5).slice(1)
-    }
-
-    const dotLegendPos = []
+    const plotGrid: {
+      plot: IGseaBubblePlot
+      points: IBubblePoint[]
+      xlim: ILim
+      pos: IPos
+    }[][] = []
 
     let y = 0
+    for (let ri = 0; ri < rows; ri++) {
+      const row: {
+        plot: IGseaBubblePlot
+        points: IBubblePoint[]
+        xlim: ILim
+        pos: IPos
+      }[] = []
+      let x = 0
+      for (let ci = 0; ci < cols; ci++) {
+        const pi = ri * cols + ci
+        if (pi < plots.length) {
+          row.push({
+            plot: plots[pi]!,
+            points: points[pi]!,
+            xlim: xlims[pi]!,
+            pos: { x, y },
+          })
+        }
 
-    for (const [si, s] of sizes.entries()) {
-      const d = Math.min(s, settings.size.maxSize)
-
-      const r1 = Math.min(d / settings.size.maxSize, 1) * settings.bubbles.size
-      dotLegendPos.push({ label: d.toFixed(0), r: r1, y })
-
-      if (si < sizes.length - 1) {
-        const r2 =
-          Math.min(sizes[si + 1]! / settings.size.maxSize, 1) *
-          settings.bubbles.size
-        y += r1 + r2 + settings.padding
+        x += plotWidth
       }
+      plotGrid.push(row)
+      y += plotHeight
     }
 
     return (
       <SvgBase ref={ref} width={width} height={height} scale={settings.scale}>
         <SvgMargin margin={settings.margin}>
-          {points.map((p, xi) => {
-            const x1 = xax!.domainToRange(p.x)
-            const y1 = p.y * settings.axes.y.rowHeight
-
-            return (
-              <SvgCircle
-                cx={x1}
-                cy={y1}
-                r={p.r}
-                fill={p.color}
-                fp={settings.bubbles.fill}
-                sp={settings.bubbles.stroke}
-                key={xi}
-                onMouseLeave={handleVariantLeave}
-                onMouseEnter={() => {
-                  handleVariantEnter(xi, x1, y1)
-                }}
-              />
-            )
-          })}
-        </SvgMargin>
-
-        <g
-          transform={`translate(${settings.margin.left - settings.padding}, ${settings.margin.top})`}
-        >
-          {points.map((p, xi) => {
-            const y1 = p.y * settings.axes.y.rowHeight
-
-            return (
-              <SvgText key={xi} y={y1} textAnchor="end">
-                {p.label}
-              </SvgText>
-            )
-          })}
-        </g>
-
-        {settings.border.show && (
-          <SvgMargin margin={settings.margin}>
-            <rect
-              width={innerWidth}
-              height={innerHeight}
-              stroke={settings.border.value}
-              strokeWidth={settings.border.width}
-              fill="none"
-            />
-          </SvgMargin>
-        )}
-
-        <AxisBottomSvg
-          ax={xax}
-          pos={{
-            x: settings.margin.left,
-            y: settings.margin.top + innerHeight,
-          }}
-          tickSize={displayProps.axes.xaxis.tickSize}
-          strokeWidth={displayProps.axes.xaxis.strokeWidth}
-          title={plot.gseaBubble.nes.label}
-          color={displayProps.axes.xaxis.color}
-        />
-
-        {settings.colorbar.show &&
-          settings.colorbar.position.includes('right') && (
-            <g
-              transform={`translate(${settings.margin.left + innerWidth + settings.padding * 5}, ${settings.margin.top})`}
-            >
-              <g id="p-legend">
-                <SvgText
-                  x={settings.colorbar.size.h / 2}
-                  y={0}
-                  textAnchor="middle"
-                >
-                  {`-log10(${plot.gseaBubble.log10q.label})`}
-                </SvgText>
-                <g transform={`translate(0, ${settings.padding * 2})`}>
-                  <VColorBarSvg
-                    domain={settings.p.range}
-                    cmap={cmap}
-                    size={settings.colorbar.size}
-                    ticks={[
-                      settings.p.range[0],
-                      settings.p.range[1] / 2,
-                      settings.p.range[1],
-                    ]}
-                    //stroke={displayProps.colorbar.stroke}
-                    //font={displayProps.legend}
+          {plotGrid.map((row, ri) => (
+            <g key={ri} transform={`translate(0, ${row[0]!.pos.y})`}>
+              {row.map((p, ci) => (
+                <g key={ci} transform={`translate(${p.pos.x}, 0)`}>
+                  <GseaPlot
+                    points={p.points}
+                    plot={p.plot}
+                    xlim={p.xlim}
+                    innerPlotWidth={innerPlotWidth}
+                    innerPlotHeight={innerPlotHeight}
+                    handleVariantEnter={handleVariantEnter}
+                    handleVariantLeave={handleVariantLeave}
                   />
                 </g>
-              </g>
-              <g
-                id="dot-legend"
-                transform={`translate(0, ${settings.colorbar.size.w + settings.padding * 5})`}
-              >
-                <SvgText
-                  x={settings.colorbar.size.h / 2}
-                  y={0}
-                  textAnchor="middle"
-                >
-                  {plot.gseaBubble.size.label}
-                </SvgText>
-                <g
-                  transform={`translate(0, ${settings.padding + settings.bubbles.size})`}
-                >
-                  {dotLegendPos.map((d, di) => (
-                    <g key={di}>
-                      <SvgCircle
-                        key={di}
-                        cx={settings.colorbar.size.h / 2}
-                        cy={d.y}
-                        r={d.r}
-                        stroke="black"
-                      />
-                      <SvgText
-                        x={
-                          settings.colorbar.size.h / 2 +
-                          settings.bubbles.size +
-                          settings.padding
-                        }
-                        y={d.y}
-                        //textAnchor="start"
-                        //dominantBaseline="central"
-                      >
-                        {d.label}
-                      </SvgText>
-                    </g>
-                  ))}
-                </g>
-              </g>
+              ))}
             </g>
-          )}
+          ))}
 
-        {/* {displayProps.colorbar.show &&
-          displayProps.colorbar.position.includes('bottom') && (
-            <g
-              transform={`translate(${displayProps.margin.left}, ${displayProps.margin.top + innerHeight + 100})`}
-            >
-              <HColorBarSvg
-                domain={displayProps.p.range}
-                cmap={cmap}
-                size={displayProps.colorbar.size}
-                //stroke={displayProps.colorbar.stroke}
-                //font={displayProps.legend}
-              />
-            </g>
-          )} */}
+          <g
+            transform={`translate(${settings.margin.left + innerWidth + settings.padding * 5}, ${settings.margin.top})`}
+          >
+            <GseaBubbleLegendSvg />
+          </g>
+        </SvgMargin>
       </SvgBase>
     )
-  }, [plot, points, displayProps, settings])
-
-  // useEffect(() => {
-  //   //if (dataFiles.length > 0) {
-
-  //   async function fetch() {
-  //     const svg = d3.select(svgRef.current) //.attr("width", 700).attr("height", 300);
-
-  //     svg.selectAll("*").remove()
-
-  //     const g = svg.append("g")
-
-  //     // set the dimensions and margins of the graph
-  //     var margin = { top: 10, right: 200, bottom: 30, left: 100 }
-
-  //     g.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-  //     //   .attr("height", height + margin.top + margin.bottom)
-
-  //     const innerWidth = 1000 - margin.left - marginRight
-  //     const innerHeight = 1000 - margin.top - margin.bottom
-
-  //     // append the svg object to the body of the page
-  //     // svg
-  //     //   .attr("width", width + margin.left + marginRight)
-  //     //   .attr("height", height + margin.top + margin.bottom)
-  //     //   .append("g")
-  //     //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-  //     //Read the data
-  //     //const data = await d3.csv(
-  //     //  "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv"
-  //     //)
-
-  //     let df: IDataFrame = dataFile
-
-  //     if (search.length > 0) {
-  //       const idxMap = rowIdxMap(df, true)
-
-  //       const idx = search
-  //         .map(term => idxMap[term])
-  //         .filter(x => x !== undefined)
-
-  //       df = filterRows(df, idx)
-  //     }
-
-  //     df = sliceCols(sliceRows(df))
-
-  //     // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
-  //     // var myGroups = d3.map(data, (d, i) => {
-
-  //     //   return d.group
-  //     // })
-
-  //     const myGroups: string[] = range(df.data[0].length).map(i => `col${i}`) //data.colIndex //Array.from(
-  //     // new Set(data.colIndex)) //.map((d, i) => d.group || "").filter(x => x !== ""))
-
-  //     const myVars = df.rowIndex[0].ids.map(rowId => rowId)
-  //     myVars.toReversed()
-  //     //Array.from(
-  //     //new Set(data.rowIndex)) //data.map((d, i) => d.variable || "").filter(x => x !== ""))
-  //     //d3.map(data, (d, i) => d.variable)
-
-  //     const plotData: {
-  //       group: string
-  //       colId: string
-  //       variable: string
-  //       value: number
-  //     }[] = []
-
-  //     df.data.forEach((row, ri) => {
-  //       row.forEach((cell, ci) => {
-  //         plotData.push({
-  //           group: df.colIndex[0].ids[ci],
-  //           colId: `col${ci}`,
-  //           variable: df.rowIndex[0].ids[ri],
-  //           value: getCellValue(cell),
-  //         })
-  //       })
-  //     })
-
-  //     // Build X scales and axis:
-  //     var x = d3
-  //       .scaleBand()
-  //       .range([0, innerWidth])
-  //       .domain(myGroups)
-  //       .padding(0.05)
-
-  //     g.append("g")
-  //       .style("font-size", 15)
-  //       .attr("font-family", "Arial, Helvetica, sans-serif")
-  //       .attr("transform", "translate(0," + innerHeight + ")")
-  //       .call(
-  //         d3
-  //           .axisBottom(x)
-  //           .tickSize(0)
-  //           .tickFormat((x, xi) => df.colIndex[0].ids[xi])
-  //       )
-  //       .select(".domain")
-  //       .remove()
-
-  //     // Build Y scales and axis:
-  //     var y = d3
-  //       .scaleBand()
-  //       .range([innerHeight, 0])
-  //       .domain(myVars)
-  //       .padding(0.05)
-
-  //     g.append("g")
-  //       .style("font-size", 15)
-
-  //       .attr("font-family", "Arial, Helvetica, sans-serif")
-  //       .call(d3.axisLeft(y).tickSize(0))
-  //       .select(".domain")
-  //       .remove()
-
-  //     // Build color scale
-  //     // var myColor = d3
-  //     //   .scaleSequential()
-  //     //   .interpolator(["blue", "white", "red"]) //d3.interpolateRdBu)
-  //     //   .domain([1, 100])
-
-  //     var myColor = d3
-  //       .scaleLinear()
-  //       .domain([-3, 0, 3])
-  //
-  //       .range(["blue", "white", "red"])
-
-  //     // Three function that change the tooltip when user hover / move / leave a cell
-  //     function mouseover(e:unknown, d:unknown) {
-  //       d3.select(tooltipRef.current).style("opacity", 1)
-  //       d3.select(e.target).style("stroke", "black").style("opacity", 1)
-  //     }
-
-  //     function mousemove(e:unknown, d:unknown) {
-  //       d3.select(tooltipRef.current)
-  //         .html(`${d.group}<br/>${d.variable}<br/>${d.value.toFixed(4)}`)
-  //         .style("Left", e.offsetX + 5 + "px")
-  //         .style("top", e.offsetY + 5 + "px")
-  //     }
-
-  //     function mouseleave(e:unknown, d:unknown) {
-  //       d3.select(tooltipRef.current).style("opacity", 0)
-  //       //d3.select(this).style("stroke", "none").style("opacity", 0.8)
-  //       d3.select(e.target).style("stroke", "none").style("opacity", 0.8)
-  //     }
-
-  //     // add the squares
-  //     const g2 = g.append("g")
-  //     g2.selectAll()
-  //       .data(plotData)
-  //       .enter()
-  //       .append("rect")
-  //       .attr("x", (d, i) => x(d.colId || "") || "")
-  //       .attr("y", (d, i) => y(d.variable || "") || "")
-  //       .attr("width", x.bandwidth())
-  //       .attr("height", y.bandwidth())
-  //       .style("fill", (d, i) => (d.value ? myColor(d.value) : "white"))
-  //       .style("stroke-width", 1)
-  //       .style("stroke", "none")
-  //       .style("opacity", 1)
-  //       .on("mouseover", mouseover)
-  //       .on("mousemove", mousemove)
-  //       .on("mouseleave", mouseleave)
-
-  //     addVColorBar(g, [-3, 3], myColor).attr(
-  //       "transform",
-  //       `translate(${innerWidth + 20}, 0)`
-  //     )
-  //   }
-
-  //   if (dataFile) {
-  //     fetch()
-  //   }
-  // }, [dataFile, search])
+  }, [plots, points, settings])
 
   return (
     <>
@@ -484,10 +405,10 @@ export function GseaBubblePlotSvg({
             top: toolTipInfo.pos.y,
           }}
         >
-          <p className="font-semibold">{`${points[toolTipInfo.cell.row]!.label}`}</p>
-          <p>{`${plot.gseaBubble.nes.label}: ${plot.gseaBubble.genesets[toolTipInfo.cell.row]!.nes.toFixed(2)}`}</p>
-          <p>{`-log10(${plot.gseaBubble.log10q.label}): ${points[toolTipInfo.cell.row]!.p.toFixed(2)}`}</p>
-          <p>{`${plot.gseaBubble.size.label}: ${plot.gseaBubble.genesets[toolTipInfo.cell.row]!.size}`}</p>
+          <p className="font-semibold">{`${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.name}`}</p>
+          <p>{`${toolTipInfo.plot.nes.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.nes.toFixed(2)}`}</p>
+          <p>{`-log10(${toolTipInfo.plot.log10q.label}): ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.log10q.toFixed(2)}`}</p>
+          <p>{`${toolTipInfo.plot.size.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.size}`}</p>
         </div>
       )}
     </>

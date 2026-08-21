@@ -1,3 +1,4 @@
+import { IDisplayAxis } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import {
   ColorBarPos,
   DEFAULT_COLOR_PROPS,
@@ -8,6 +9,7 @@ import {
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { IDim } from '@/interfaces/dim'
+import { COLOR_BLACK } from '@/lib/color/color'
 import { ColorMapName } from '@/lib/color/colormap'
 import { ILim } from '@/lib/math/math'
 import { useCallback } from 'react'
@@ -15,16 +17,18 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v10`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v14`
 
-const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
+const MARGIN = { top: 10, right: 200, bottom: 10, left: 10 }
+
+const PLOT_MARGIN = { top: 10, right: 10, bottom: 100, left: 400 }
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
 
 export interface IGseaBubbleSettings {
   sortBy: SortBy
   axes: {
-    x: { length: number }
+    x: IDisplayAxis & { auto: boolean }
     y: { rowHeight: number }
   }
   size: {
@@ -56,14 +60,27 @@ export interface IGseaBubbleSettings {
     }
   }
   margin: IMarginProps
+  plot: { margin: IMarginProps }
   scale: number
+  grid: {
+    cols: number
+  }
 }
 
 const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   sortBy: 'none',
   axes: {
     x: {
+      name: 'Log2 fold change',
+
+      domain: [-2, 2],
       length: 300,
+      ticks: [],
+      tickLabels: [],
+      tickSize: 4,
+      strokeWidth: 1,
+      color: COLOR_BLACK,
+      auto: true,
     },
     y: {
       rowHeight: 24,
@@ -99,7 +116,11 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     },
   },
   margin: { ...MARGIN },
+  plot: { margin: { ...PLOT_MARGIN } },
   scale: 1,
+  grid: {
+    cols: 3,
+  },
 }
 
 export interface IGseaBubbleSettingsStore extends IGseaBubbleSettings {

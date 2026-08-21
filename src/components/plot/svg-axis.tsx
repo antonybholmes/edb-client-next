@@ -21,6 +21,10 @@ interface IAxisProps {
   title?: string
   titleOffset?: number
   color?: string
+  /**
+   * Whether to show the axis line. Default is true.
+   */
+  showLine?: boolean
 }
 
 export function AxisLeftSvg({
@@ -111,6 +115,7 @@ export function AxisBottomSvg({
   ax,
   showTicks = true,
   showTickLabels = true,
+  showLine = true,
   tickSize = 5,
   strokeWidth = 1,
   color = COLOR_BLACK,
@@ -127,12 +132,14 @@ export function AxisBottomSvg({
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      <line
-        x1={-0.5 * strokeWidth}
-        x2={ax.length + 0.5 * strokeWidth}
-        stroke={color}
-        strokeWidth={strokeWidth}
-      />
+      {showLine && (
+        <line
+          x1={-0.5 * strokeWidth}
+          x2={ax.length + 0.5 * strokeWidth}
+          stroke={color}
+          strokeWidth={strokeWidth}
+        />
+      )}
 
       {title && titleFont.show && (
         <SvgText

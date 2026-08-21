@@ -154,7 +154,7 @@ function plotElem(plot: HistoryPlot): ReactElement {
       )
     case 'gsea-bubble-plot':
       return (
-        <GseaBubbleProvider plot={plot}>
+        <GseaBubbleProvider plots={[plot]}>
           <GseaBubblePanel />
         </GseaBubbleProvider>
       )

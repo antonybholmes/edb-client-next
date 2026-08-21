@@ -29,7 +29,7 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Top"
           limit={[0, 1000]}
-          value={settings.margin.top}
+          value={settings.plot.margin.top}
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
@@ -41,7 +41,7 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Left"
           limit={[0, 1000]}
-          value={settings.margin.left}
+          value={settings.plot.margin.left}
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
@@ -53,7 +53,7 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Bottom"
           limit={[0, 1000]}
-          value={settings.margin.bottom}
+          value={settings.plot.margin.bottom}
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
@@ -65,7 +65,7 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Right"
           limit={[0, 1000]}
-          value={settings.margin.right}
+          value={settings.plot.margin.right}
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {

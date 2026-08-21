@@ -97,7 +97,7 @@ export function GseaBubblePage() {
 
   const { settings: edbSettings } = useEdbSettings()
 
-  const { plot } = useGseaBubbleContext()
+  const { plots } = useGseaBubbleContext()
   const { settings, updateSettings } = useGseaBubbleSettings()
 
   const { openFile } = useHistory()
@@ -287,7 +287,7 @@ export function GseaBubblePage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                {plot && <GseaBubblePlotSvg ref={svgRef} />}
+                {plots.length > 0 && <GseaBubblePlotSvg ref={svgRef} />}
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
@@ -340,7 +340,7 @@ export function GseaBubblePlotPage() {
 
   return (
     <GseaBubbleProvider
-      plot={allPlots.length > 0 ? (allPlots[0] as IGseaBubblePlot) : undefined}
+      plots={allPlots.length > 0 ? [allPlots[0] as IGseaBubblePlot] : []}
     >
       <GseaBubblePage />
     </GseaBubbleProvider>

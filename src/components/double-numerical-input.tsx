@@ -27,6 +27,7 @@ export interface InputProps extends IInputProps {
 
   dp?: number
   leftChildren?: ReactNode
+  disabled?: boolean
 }
 
 export function DoubleNumericalInput({
@@ -44,6 +45,7 @@ export function DoubleNumericalInput({
   h,
   inc = 1,
   dp = 3,
+  disabled = false,
   leftChildren,
 
   children,
@@ -77,6 +79,7 @@ export function DoubleNumericalInput({
         onNumChanged={onNumChanged1}
         w={w}
         h={h}
+        disabled={disabled}
       />
 
       {children && children}
@@ -97,6 +100,7 @@ export function DoubleNumericalInput({
         onNumChanged={onNumChanged2}
         w={w}
         h={h}
+        disabled={disabled}
       />
     </VCenterRow>
   )

@@ -1,21 +1,16 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  type ReactNode,
-} from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 
 import { makeUuid } from '@/lib/id'
 
 import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { argsort } from '@/lib/math/argsort'
+import { ILim } from '@/lib/math/math'
 import { produce } from 'immer'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 import { IGseaBubble } from '../gsea-plot-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import {
-  DEFAULT_GSEA_DOT_PROPS,
+  DEFAULT_GSEA_BUBBLE_PROPS,
   type IGseaBubbleDisplayOptions,
 } from './gsea-bubble-svg'
 
@@ -36,12 +31,9 @@ export interface IBubblePoint {
 }
 
 export interface GseaBubblePropsContextType {
-  displayProps: IGseaBubbleDisplayOptions
-  plot: IGseaBubblePlot
-  points: IBubblePoint[]
-
-  //setPlot: (plot: IGseaBubblePlot) => void
-  updatePlotSettings: (newSettings: Partial<IGseaBubbleDisplayOptions>) => void
+  plots: IGseaBubblePlot[]
+  points: IBubblePoint[][]
+  xlims: ILim[]
 }
 
 export const GseaBubbleContext = createContext<
@@ -58,11 +50,7 @@ export function useGseaBubbleContext() {
   return ctx
 }
 
-export function newGseaBubblePlot(
-  name: string,
-  gseaBubble: IGseaBubble,
-  opts: Partial<IGseaBubblePlot> = {}
-): IGseaBubblePlot {
+function getXLim(gseaBubble: IGseaBubble): ILim {
   const posNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v >= 0)
 
   const maxNes =
@@ -79,10 +67,18 @@ export function newGseaBubblePlot(
       ? Math.ceil(Math.max(...negNes.map((v) => Math.abs(v))))
       : 0
 
-  let { props = { ...DEFAULT_GSEA_DOT_PROPS }, actions = [] } = opts
+  return [-minNes, maxNes]
+}
+
+export function newGseaBubblePlot(
+  name: string,
+  gseaBubble: IGseaBubble,
+  opts: Partial<IGseaBubblePlot> = {}
+): IGseaBubblePlot {
+  let { props = { ...DEFAULT_GSEA_BUBBLE_PROPS }, actions = [] } = opts
 
   props = produce(props, (draft) => {
-    draft.axes.xaxis.domain = [-minNes, maxNes]
+    draft.axes.xaxis.domain = getXLim(gseaBubble)
   })
 
   return {
@@ -111,110 +107,78 @@ function getColor(
 }
 
 export function GseaBubbleProvider({
-  plot,
+  plots,
   children,
 }: {
-  plot?: IGseaBubblePlot
+  plots: IGseaBubblePlot[]
   children: ReactNode
 }) {
   //const [_plot, setPlot] = useState<IGseaBubblePlot | undefined>(plot)
 
   const { settings } = useGseaBubbleSettings()
 
-  useEffect(() => {
-    // const posNes = plot.gseaBubble.nes.values.filter((v) => v >= 0)
-    // const maxNes =
-    //   posNes.length > 0
-    //     ? Math.ceil(
-    //         Math.max(...posNes.filter((v) => v >= 0).map((v) => Math.abs(v)))
-    //       )
-    //     : 0
-    // const negNes = plot.gseaBubble.nes.values.filter((v) => v < 0)
-    // const minNes =
-    //   negNes.length > 0
-    //     ? Math.ceil(Math.max(...negNes.map((v) => Math.abs(v))))
-    //     : 0
-    // const newPlot = {
-    //   ...plot,
-    //   props: produce(plot.props, (draft) => {
-    //     draft.axes.xaxis.domain = [-minNes, maxNes]
-    //   }),
-    // }
-    //setPlot(plot)
-  }, [plot])
-
-  function updatePlotSettings(newSettings: Partial<IGseaBubbleDisplayOptions>) {
-    if (!plot) {
-      return
-    }
-
-    const newPlot = {
-      ...plot,
-      props: produce(plot.props, (draft) => {
-        Object.assign(draft, newSettings)
-      }),
-    }
-
-    //setPlot(newPlot)
-  }
+  const xlims = useMemo(() => plots.map((p) => getXLim(p.gseaBubble)), [plots])
 
   const points = useMemo(() => {
-    if (!plot) {
+    if (plots.length === 0) {
       return []
     }
 
-    let names = plot.gseaBubble.genesets.map((gs) => gs.name)
-    let nes = plot.gseaBubble.genesets.map((gs) => gs.nes)
-    let sizes = plot.gseaBubble.genesets.map((gs) => gs.size)
-    let log10pvalues = plot.gseaBubble.genesets.map((gs) => gs.log10q)
+    return plots.map((plot) => {
+      let names = plot.gseaBubble.genesets.map((gs) => gs.name)
+      let nes = plot.gseaBubble.genesets.map((gs) => gs.nes)
+      let sizes = plot.gseaBubble.genesets.map((gs) => gs.size)
+      let log10pvalues = plot.gseaBubble.genesets.map((gs) => gs.log10q)
 
-    let idx: number[] = []
+      let idx: number[] = []
 
-    switch (settings.sortBy) {
-      case 'nes':
-        idx = argsort(nes, true)
+      switch (settings.sortBy) {
+        case 'nes':
+          idx = argsort(nes, true)
 
-        break
-      case 'size':
-        idx = argsort(sizes, true)
-        break
-      case 'pvalue':
-        idx = argsort(log10pvalues, true)
-        break
+          break
+        case 'size':
+          idx = argsort(sizes, true)
+          break
+        case 'pvalue':
+          idx = argsort(log10pvalues, true)
+          break
 
-      default:
-        break
-    }
-
-    if (idx.length > 0) {
-      nes = idx.map((i) => nes[i])
-      sizes = idx.map((i) => sizes[i])
-      log10pvalues = idx.map((i) => log10pvalues[i])
-      names = idx.map((i) => names[i])
-    }
-
-    return nes.map((x, i) => {
-      const size = sizes[i]!
-      const sizeF = Math.min(size / settings.size.maxSize, 1)
-      return {
-        x,
-        y: i + 1,
-        p: log10pvalues[i]!,
-        color: getColor(
-          log10pvalues[i]!,
-          settings.p.range[1],
-          getColorMap(settings.p.cmap)
-        ),
-        size: sizeF,
-        r: sizeF * settings.bubbles.size,
-        label: names[i]!,
+        default:
+          break
       }
+
+      if (idx.length > 0) {
+        nes = idx.map((i) => nes[i])
+        sizes = idx.map((i) => sizes[i])
+        log10pvalues = idx.map((i) => log10pvalues[i])
+        names = idx.map((i) => names[i])
+      }
+
+      return nes.map((x, i) => {
+        const size = sizes[i]!
+        const sizeF = Math.min(size / settings.size.maxSize, 1)
+        return {
+          x,
+          y: i + 1,
+          p: log10pvalues[i]!,
+          color: getColor(
+            log10pvalues[i]!,
+            settings.p.range[1],
+            getColorMap(settings.p.cmap)
+          ),
+          size: sizeF,
+          r: sizeF * settings.bubbles.size,
+          label: names[i]!,
+        }
+      })
     })
   }, [
-    plot?.gseaBubble.genesets,
+    plots,
     settings.size.maxSize,
     settings.bubbles.size,
     settings.p,
+    settings.plot.margin,
     settings.margin,
     settings.padding,
     settings.legend,
@@ -224,15 +188,14 @@ export function GseaBubbleProvider({
     settings.sortBy,
   ])
 
-  console.log('bubble plot props', plot?.props)
+  console.log('bubble plot props', plots[0]?.props)
 
   return (
     <GseaBubbleContext.Provider
       value={{
-        plot,
+        plots,
         points,
-        displayProps: plot?.props ?? DEFAULT_GSEA_DOT_PROPS,
-        updatePlotSettings,
+        xlims,
       }}
     >
       {children}
