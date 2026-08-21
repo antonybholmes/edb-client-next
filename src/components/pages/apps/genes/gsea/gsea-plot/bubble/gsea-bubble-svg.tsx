@@ -20,11 +20,7 @@ import { ILim } from '@/lib/math/math'
 import type { ITooltip } from '../../../../matcalc/apps/heatmap/heatmap-svg'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../gsea-plot-store'
-import {
-  IBubblePoint,
-  IGseaBubblePlot,
-  useGseaBubbleContext,
-} from './gsea-bubble-provider'
+import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
 
 const TOOLTIP_OFFSET = 10
 
@@ -62,7 +58,11 @@ function GseaBubbleLegendSvg() {
 
   const sizes = settings.legend.bubbles.sizes
 
-  const plot = plots[0]
+  if (plots.length === 0) {
+    return null
+  }
+
+  const plot = plots[0]!
 
   const cmap = COLOR_MAPS[settings.p.cmap]!
 
@@ -100,7 +100,7 @@ function GseaBubbleLegendSvg() {
                 y={0}
                 textAnchor="middle"
               >
-                {`-log10(${plot.gseaBubble.log10q.label})`}
+                {`-log10(${plot.log10q.label})`}
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
                 <VColorBarSvg
@@ -126,7 +126,7 @@ function GseaBubbleLegendSvg() {
                 y={0}
                 textAnchor="middle"
               >
-                {plot.gseaBubble.size.label}
+                {plot.size.label}
               </SvgText>
               <g
                 transform={`translate(0, ${settings.padding + settings.bubbles.size})`}
@@ -172,7 +172,7 @@ function GseaPlot({
   handleVariantLeave,
 }: {
   points: IBubblePoint[]
-  plot: IGseaBubblePlot
+  plot: IGseaBubble
   xlim: ILim
   innerPlotWidth: number
   innerPlotHeight: number
@@ -212,7 +212,7 @@ function GseaPlot({
               key={xi}
               onMouseLeave={handleVariantLeave}
               onMouseEnter={() => {
-                handleVariantEnter(plot.gseaBubble, xi, x1, y1)
+                handleVariantEnter(plot, xi, x1, y1)
               }}
             />
           )
@@ -245,6 +245,16 @@ function GseaPlot({
         </SvgMargin>
       )}
 
+      {settings.title.show && plot.name && (
+        <g
+          transform={`translate(${settings.plot.margin.left + innerPlotWidth / 2}, ${settings.plot.margin.top - 10})`}
+        >
+          <SvgText textAnchor="middle" fontWeight="bold">
+            {plot.name}
+          </SvgText>
+        </g>
+      )}
+
       <AxisBottomSvg
         ax={xax}
         showLine={!settings.border.show}
@@ -254,7 +264,7 @@ function GseaPlot({
         }}
         tickSize={settings.axes.x.tickSize}
         strokeWidth={settings.axes.x.strokeWidth}
-        title={plot.gseaBubble.nes.label}
+        title={plot.nes.label}
         color={settings.axes.x.color}
       />
     </>
@@ -313,7 +323,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
     // inner height is determined by the size of the largest bubble plot
     const innerPlotHeight =
       settings.axes.y.rowHeight *
-      (Math.max(...plots.map((p) => p.gseaBubble.genesets.length)) + 1)
+      (Math.max(...plots.map((p) => p.genesets.length)) + 1)
 
     const innerPlotWidth = settings.axes.x.length
 
@@ -329,7 +339,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
     const height = innerHeight + settings.margin.top + settings.margin.bottom
 
     const plotGrid: {
-      plot: IGseaBubblePlot
+      plot: IGseaBubble
       points: IBubblePoint[]
       xlim: ILim
       pos: IPos
@@ -338,7 +348,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
     let y = 0
     for (let ri = 0; ri < rows; ri++) {
       const row: {
-        plot: IGseaBubblePlot
+        plot: IGseaBubble
         points: IBubblePoint[]
         xlim: ILim
         pos: IPos

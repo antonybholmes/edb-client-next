@@ -7,6 +7,10 @@ import {
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -120,6 +124,31 @@ export function HomeToolbar() {
             Invert Phenotypes
           </ToolbarButton>
         </ToolbarCol>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Letters">
+        <ToggleGroup
+          //direction="toolbar"
+          className="overflow-hidden rounded-theme"
+          //rounded="none"
+          size="toolbar"
+          value={[settings.view.tab]}
+          onValueChange={(v) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.view.tab = v[0] as 'gsea' | 'bubble'
+              })
+            )
+          }}
+        >
+          <GroupToggle value="gsea" className="px-2">
+            GSEA
+          </GroupToggle>
+
+          <GroupToggle value="bubble" className="px-2">
+            Bubble
+          </GroupToggle>
+        </ToggleGroup>
       </ToolbarTabGroup>
     </>
   )

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- GSEA plot can now draw bubble plots.
 - GSEA bubble now supports grid layout.
 
 

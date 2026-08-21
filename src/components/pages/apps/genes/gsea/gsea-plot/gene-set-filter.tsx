@@ -9,10 +9,12 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
 import { ListFilter } from 'lucide-react'
 import { useState } from 'react'
+import { useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
 export function GeneSetFilter() {
   const { settings, updateSettings } = useGseaSettings()
+  const { phenotypesFilter, setPhenotypesFilter } = useGsea()
 
   const [open, setOpen] = useState(false)
 
@@ -32,7 +34,27 @@ export function GeneSetFilter() {
         //align="end"
         className="px-3 py-3 gap-y-2"
       >
-        <h2 className="font-bold">Gene Set Filters</h2>
+        <h2 className="font-bold">Phenotypes</h2>
+
+        {Object.keys(phenotypesFilter)
+          .toSorted()
+          .map((p, pi) => (
+            <CheckPropRow
+              key={pi}
+              title={p}
+              checked={phenotypesFilter[p]}
+              onCheckedChange={(v) => {
+                setPhenotypesFilter(
+                  produce(phenotypesFilter, (draft) => {
+                    draft[p] = v
+                  })
+                )
+              }}
+            />
+          ))}
+
+        <h2 className="font-bold">Statistics</h2>
+
         <CheckPropRow
           title={<span>NES &ge;</span>}
           checked={settings.genesets.filters.nes.on}

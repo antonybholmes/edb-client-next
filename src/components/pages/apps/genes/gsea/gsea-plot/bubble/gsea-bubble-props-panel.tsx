@@ -24,20 +24,10 @@ import { produce } from 'immer'
 import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
 import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 export function GseaBubblePropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
-
-  const { plots } = useGseaBubbleContext()
-
-  if (plots.length === 0) {
-    return null
-  }
-
-  const plot = plots[0]
-  const displayProps = plot.props
 
   return (
     <PropsPanel>

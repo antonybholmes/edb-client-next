@@ -2459,6 +2459,10 @@
         {
           "msg": "GSEA bubble now supports grid layout",
           "date": "2026-08-21T16:54:46.452Z"
+        },
+        {
+          "msg": "GSEA plot can now draw bubble plots",
+          "date": "2026-08-21T17:50:10.694Z"
         }
       ]
     },

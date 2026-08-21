@@ -4,7 +4,7 @@ import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { create } from 'zustand'
 import { useGseaSettings } from './gsea-settings-store'
 
@@ -27,8 +27,9 @@ export interface IGseaGeneSet {
 }
 
 export interface IGseaBubble {
+  id: string
+  name: string
   genesets: IGseaGeneSet[]
-
   nes: { label: string }
   size: { label: string }
   log10q: { label: string }
@@ -263,6 +264,8 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
 }))
 
 export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
+  phenotypesFilter: Record<string, boolean>
+  setPhenotypesFilter: (filter: Record<string, boolean>) => void
   loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
 } {
   const phenotypes = useGseaPlotStore((state) => state.phenotypes)
@@ -276,6 +279,10 @@ export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
   const allowSelectAll = useGseaPlotStore((state) => state.allowSelectAll)
   const loadGseaZip = useGseaPlotStore((state) => state.loadGseaZip)
   const setReports = useGseaPlotStore((state) => state.setReports)
+
+  const [phenotypesFilter, setPhenotypesFilter] = useState<
+    Record<string, boolean>
+  >({})
 
   const { settings } = useGseaSettings()
 
@@ -296,27 +303,33 @@ export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
   }
 
   useEffect(() => {
-    if (settings.genesets.filters.nes.on || settings.genesets.filters.q.on) {
-      const filteredReports = allReports.filter((report) => {
-        const nesPass =
-          !settings.genesets.filters.nes.on ||
-          report.nes >= settings.genesets.filters.nes.value ||
-          report.nes <= -settings.genesets.filters.nes.value
+    setPhenotypesFilter(
+      Object.fromEntries(phenotypes.map((phen) => [phen, true]))
+    )
+  }, [phenotypes])
 
-        const qPass =
-          !settings.genesets.filters.q.on ||
-          report.q <= settings.genesets.filters.q.value
-        return nesPass && qPass
-      })
-      setReports(filteredReports)
-    } else {
-      setReports(allReports)
-    }
+  useEffect(() => {
+    const filteredReports = allReports.filter((report) => {
+      const nesPass =
+        !settings.genesets.filters.nes.on ||
+        report.nes >= settings.genesets.filters.nes.value ||
+        report.nes <= -settings.genesets.filters.nes.value
+
+      const qPass =
+        !settings.genesets.filters.q.on ||
+        report.q <= settings.genesets.filters.q.value
+
+      const phenPass = phenotypesFilter[report.phen] ?? true
+
+      return nesPass && qPass && phenPass
+    })
+    setReports(filteredReports)
   }, [
     settings.genesets.filters.nes.on,
     settings.genesets.filters.nes.value,
     settings.genesets.filters.q.on,
     settings.genesets.filters.q.value,
+    phenotypesFilter,
     allReports,
     setReports,
   ])
@@ -330,7 +343,8 @@ export function useGsea(): Omit<IGseaPlotStore, 'allReports' | 'reportsMap'> & {
     resultsMap,
     reports,
     allowSelectAll,
-
+    phenotypesFilter,
+    setPhenotypesFilter,
     setDatasetsForUse: useGseaPlotStore((state) => state.setDatasetsForUse),
     setAllowSelectAll: useGseaPlotStore((state) => state.setAllowSelectAll),
     setReports,

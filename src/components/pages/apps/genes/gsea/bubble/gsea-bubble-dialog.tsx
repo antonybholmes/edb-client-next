@@ -183,6 +183,8 @@ export function GseaBubbleDialog({
     })
 
     const bubblePlot: IGseaBubble = {
+      id: makeUuid(),
+      name: '',
       genesets,
       nes: { label: nesCol },
       size: { label: sizeCol },

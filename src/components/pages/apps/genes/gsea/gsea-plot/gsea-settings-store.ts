@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v38`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v40`
 
 import {
   DEFAULT_BOLD_FONT_PROPS,
@@ -108,6 +108,9 @@ export interface IGseaDisplayProps {
   genesets: {
     filters: IFilters
   }
+  view: {
+    tab: 'gsea' | 'bubble'
+  }
 }
 
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
@@ -207,6 +210,9 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
         value: 1,
       },
     },
+  },
+  view: {
+    tab: 'gsea',
   },
 }
 

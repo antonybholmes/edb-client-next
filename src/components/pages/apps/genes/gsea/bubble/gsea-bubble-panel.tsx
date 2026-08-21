@@ -82,10 +82,7 @@ export function GseaBubblePanel() {
 
       <ResizableSidebar side="right">
         <ExtScrollCard className="pb-2">
-          <GseaBubblePlotSvg
-            ref={svgRef}
-            //displayProps={displayOptions}
-          />
+          <GseaBubblePlotSvg ref={svgRef} />
         </ExtScrollCard>
         <GseaBubblePropsPanel />
       </ResizableSidebar>

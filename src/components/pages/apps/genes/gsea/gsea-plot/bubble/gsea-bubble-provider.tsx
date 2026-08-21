@@ -5,19 +5,14 @@ import { makeUuid } from '@/lib/id'
 import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { argsort } from '@/lib/math/argsort'
 import { ILim } from '@/lib/math/math'
-import { produce } from 'immer'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 import { IGseaBubble } from '../gsea-plot-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
-import {
-  DEFAULT_GSEA_BUBBLE_PROPS,
-  type IGseaBubbleDisplayOptions,
-} from './gsea-bubble-svg'
 
 export interface IGseaBubblePlot extends IBasePlot {
   style: 'gsea-bubble-plot'
   gseaBubble: IGseaBubble
-  props: IGseaBubbleDisplayOptions
+  //props: IGseaBubbleDisplayOptions
 }
 
 export interface IBubblePoint {
@@ -31,7 +26,7 @@ export interface IBubblePoint {
 }
 
 export interface GseaBubblePropsContextType {
-  plots: IGseaBubblePlot[]
+  plots: IGseaBubble[]
   points: IBubblePoint[][]
   xlims: ILim[]
 }
@@ -75,11 +70,7 @@ export function newGseaBubblePlot(
   gseaBubble: IGseaBubble,
   opts: Partial<IGseaBubblePlot> = {}
 ): IGseaBubblePlot {
-  let { props = { ...DEFAULT_GSEA_BUBBLE_PROPS }, actions = [] } = opts
-
-  props = produce(props, (draft) => {
-    draft.axes.xaxis.domain = getXLim(gseaBubble)
-  })
+  let { actions = [] } = opts
 
   return {
     id: makeUuid(),
@@ -87,7 +78,7 @@ export function newGseaBubblePlot(
     name,
     gseaBubble,
     groupRows: [],
-    props,
+
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),
@@ -110,14 +101,14 @@ export function GseaBubbleProvider({
   plots,
   children,
 }: {
-  plots: IGseaBubblePlot[]
+  plots: IGseaBubble[]
   children: ReactNode
 }) {
   //const [_plot, setPlot] = useState<IGseaBubblePlot | undefined>(plot)
 
   const { settings } = useGseaBubbleSettings()
 
-  const xlims = useMemo(() => plots.map((p) => getXLim(p.gseaBubble)), [plots])
+  const xlims = useMemo(() => plots.map((p) => getXLim(p)), [plots])
 
   const points = useMemo(() => {
     if (plots.length === 0) {
@@ -125,10 +116,10 @@ export function GseaBubbleProvider({
     }
 
     return plots.map((plot) => {
-      let names = plot.gseaBubble.genesets.map((gs) => gs.name)
-      let nes = plot.gseaBubble.genesets.map((gs) => gs.nes)
-      let sizes = plot.gseaBubble.genesets.map((gs) => gs.size)
-      let log10pvalues = plot.gseaBubble.genesets.map((gs) => gs.log10q)
+      let names = plot.genesets.map((gs) => gs.name)
+      let nes = plot.genesets.map((gs) => gs.nes)
+      let sizes = plot.genesets.map((gs) => gs.size)
+      let log10pvalues = plot.genesets.map((gs) => gs.log10q)
 
       let idx: number[] = []
 
@@ -187,8 +178,6 @@ export function GseaBubbleProvider({
     settings.bubbles,
     settings.sortBy,
   ])
-
-  console.log('bubble plot props', plots[0]?.props)
 
   return (
     <GseaBubbleContext.Provider

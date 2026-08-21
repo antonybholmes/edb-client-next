@@ -55,11 +55,16 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useUpdateEffect } from '@/hooks/update-effect'
+import { makeUuid } from '@/lib/id'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
+import { GseaBubbleProvider } from './bubble/gsea-bubble-provider'
+import { GseaBubblePlotSvg } from './bubble/gsea-bubble-svg'
 import { GeneSetFilter } from './gene-set-filter'
 import {
+  IGseaBubble,
   PLOT_ZOOM_CHANNEL,
   useGsea,
   type IGseaGeneSet,
@@ -79,7 +84,7 @@ export function GseaPlotPage() {
   //const _id = useStableId('gsea-page')
 
   const { settings: edbSettings } = useEdbSettings()
-  const { settings, updateSettings, hasHydrated } = useGseaSettings()
+  const { settings, updateSettings } = useGseaSettings()
   const { setAppInfo } = useAppInfo()
 
   const [search, setSearch] = useState('')
@@ -89,6 +94,7 @@ export function GseaPlotPage() {
     rankedGenes,
     reports,
     datasetsForUse,
+    phenotypesFilter,
     setDatasetsForUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()
@@ -113,7 +119,25 @@ export function GseaPlotPage() {
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   //const { setTabs: setSideTabs } = useSideTabs()
 
-  //const isHydrated = useStoreHydration(useGseaPlotStore)
+  const bubblePlots: IGseaBubble[] = useMemo(() => {
+    return Object.entries(phenotypesFilter)
+      .filter(([phen, show]) => show)
+      .map(([phen, show]) => phen)
+      .sort()
+      .map((phen) => {
+        const genesets = reports.filter((r) => r.phen === phen)
+
+        const bubble: IGseaBubble = {
+          id: makeUuid(),
+          name: phen,
+          genesets,
+          nes: { label: '' },
+          size: { label: '' },
+          log10q: { label: '' },
+        }
+        return bubble
+      }) as IGseaBubble[]
+  }, [reports, phenotypesFilter])
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -332,9 +356,33 @@ export function GseaPlotPage() {
                 }
               }}
             >
-              <ExtScrollCard className="px-2 pb-2">
-                <GseaSvg ref={svgRef} />
-              </ExtScrollCard>
+              <Tabs
+                //orientation="vertical"
+                value={settings.view.tab}
+                onValueChange={() => {}}
+                className="grow"
+              >
+                <TabsContent value="gsea">
+                  <ExtScrollCard className="px-2 pb-2">
+                    <GseaSvg ref={svgRef} />
+                  </ExtScrollCard>
+                </TabsContent>
+                <TabsContent value="bubble">
+                  <ExtScrollCard className="px-2 pb-2">
+                    <GseaBubbleProvider plots={bubblePlots}>
+                      <GseaBubblePlotSvg ref={svgRef} />
+                    </GseaBubbleProvider>
+                  </ExtScrollCard>
+                </TabsContent>
+                {/* <TabsList className="py-1">
+                        <TabsTrigger value="genesets" className="grow" variant="sidebar">
+                          Gene Sets
+                        </TabsTrigger>
+                        <TabsTrigger value="display" className="grow" variant="sidebar">
+                          Display
+                        </TabsTrigger>
+                      </TabsList> */}
+              </Tabs>
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel

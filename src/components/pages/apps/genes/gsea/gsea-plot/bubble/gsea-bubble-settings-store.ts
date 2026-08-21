@@ -19,9 +19,9 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v14`
 
-const MARGIN = { top: 10, right: 200, bottom: 10, left: 10 }
+const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
-const PLOT_MARGIN = { top: 10, right: 10, bottom: 100, left: 400 }
+const PLOT_MARGIN = { top: 20, right: 10, bottom: 100, left: 400 }
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
 
@@ -47,6 +47,9 @@ export interface IGseaBubbleSettings {
     cmap: ColorMapName
   }
   border: IStrokeProps
+  title: {
+    show: boolean
+  }
   padding: number
   colorbar: {
     show: boolean
@@ -101,7 +104,9 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     fill: { ...DEFAULT_COLOR_PROPS },
     stroke: { ...DEFAULT_STROKE_PROPS, show: false },
   },
-
+  title: {
+    show: true,
+  },
   border: { ...DEFAULT_STROKE_PROPS },
   padding: 10,
   colorbar: {
