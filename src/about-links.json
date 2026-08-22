@@ -14,5 +14,18 @@
   { "name": "Valkey", "url": "https://valkey.io/" },
   { "name": "nginx", "url": "https://nginx.org/" },
   { "name": "Auth0", "url": "https://auth0.com/" },
-  { "name": "PostgreSQL", "url": "https://www.postgresql.org/" }
+  { "name": "PostgreSQL", "url": "https://www.postgresql.org/" },
+  { "name": "TypeScript", "url": "https://www.typescriptlang.org/" },
+  { "name": "D3.js", "url": "https://d3js.org/" },
+  { "name": "Vite", "url": "https://vitejs.dev/" },
+  { "name": "JavaScript", "url": "https://www.javascript.com/" },
+  { "name": "Python", "url": "https://www.python.org/" },
+  { "name": "Sqlite3", "url": "https://sqlite.org" },
+  { "name": "NPM", "url": "https://www.npmjs.com/" },
+  { "name": "pnpm", "url": "https://pnpm.io/" },
+  { "name": "Docker", "url": "https://www.docker.com/" },
+  { "name": "OAuth2", "url": "https://oauth.net/2/" },
+  { "name": "JWT", "url": "https://jwt.io/" },
+  { "name": "SVG", "url": "https://www.w3.org/Graphics/SVG/" },
+  { "name": "JSON", "url": "https://www.json.org/json-en.html" }
 ]

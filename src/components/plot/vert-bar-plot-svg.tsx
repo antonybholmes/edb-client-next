@@ -164,7 +164,7 @@ export function VertBarPlotSvg({
             margin.left + innerWidth + _displayProps.padding
           }, ${margin.top})`}
         >
-          {VColorBarSvg({ domain: [0, 10], cmap })}
+          {VColorBarSvg({ axis: new Axis().setDomain([0, 10]), cmap })}
         </g>
       </>
     )

@@ -339,8 +339,11 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
                   transform={`translate(-${settings.legend.colorbar.size.h / 2}, ${legendHeight + 4 * settings.legend.gap})`}
                 >
                   <VColorBarSvg
+                    axis={new Axis()
+                      .setDomain(range)
+                      .setLength(settings.legend.colorbar.size.w)}
                     size={settings.legend.colorbar.size}
-                    domain={range}
+
                     cmap={COLOR_MAPS[settings.cmap]!}
                     //size={displayOptions.colorbar.size}
                     //stroke={displayOptions.colorbar.stroke}

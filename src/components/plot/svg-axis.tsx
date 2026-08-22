@@ -2,6 +2,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { Axis } from './axis'
+import { SvgLine } from './svg-line'
 import {
   DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_TEXT_PROPS,
@@ -133,7 +134,7 @@ export function AxisBottomSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {showLine && (
-        <line
+        <SvgLine
           x1={-0.5 * strokeWidth}
           x2={ax.length + 0.5 * strokeWidth}
           stroke={color}
@@ -156,7 +157,7 @@ export function AxisBottomSvg({
           <g>
             {ax.ticks.map((tick, ticki) => {
               return (
-                <line
+                <SvgLine
                   y2={tickSize}
                   stroke={color}
                   transform={`translate(${ax.domainToRange(tick.v)}, 0)`}
@@ -208,7 +209,7 @@ export function AxisTopSvg({
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      <line
+      <SvgLine
         x2={ax.length - 0.5 * strokeWidth}
         stroke={color}
         strokeWidth={strokeWidth}
@@ -227,7 +228,7 @@ export function AxisTopSvg({
       <g>
         {ax.ticks.map((tick, ticki) => {
           return (
-            <line
+            <SvgLine
               y1={-tickSize}
               y2={0.5 * strokeWidth}
               stroke={color}

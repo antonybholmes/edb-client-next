@@ -5,17 +5,18 @@ import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { range } from '@/lib/math/range'
 import { Axis, YAxis } from './axis'
 import { DEFAULT_COLORBAR_SIZE } from './heatmap/heatmap-svg-props'
+import { SvgLine } from './svg-line'
 import {
   DEFAULT_STROKE_PROPS,
   type IStrokeProps,
   type ITextProps,
 } from './svg-props'
+import { SvgRect } from './svg-rect'
 import { SvgText } from './svg-text'
 
 interface IColorBarSvgProps {
   axis: Axis
-  //domain?: ILim
-  //ticks?: number[]
+
   cmap?: ColorMap
   stroke?: IStrokeProps
   steps?: number
@@ -28,8 +29,7 @@ interface IColorBarSvgProps {
 
 export function HColorBarSvg({
   axis,
-  //domain = [0, 100],
-  //ticks,
+
   cmap = BWR_CMAP_V2,
   steps,
   size = { ...DEFAULT_COLORBAR_SIZE },
@@ -76,7 +76,7 @@ export function HColorBarSvg({
           x2 += step < steps - 1 ? xinc : 0
 
           return (
-            <rect
+            <SvgRect
               key={step}
               x={x2}
               height={size.h}
@@ -87,7 +87,7 @@ export function HColorBarSvg({
         })}
 
         {stroke.show && (
-          <rect
+          <SvgRect
             width={size.w}
             height={size.h}
             stroke={stroke.value}
@@ -102,12 +102,27 @@ export function HColorBarSvg({
           const x = axis.domainToRange(tick.v)
 
           return (
-            <g transform={`translate(${x}, ${size.h + 2})`} key={ti}>
-              <line
+            <g
+              transform={`translate(${x}, ${size.h + axis.tickPadding})`}
+              key={ti}
+            >
+              <SvgLine
                 y2={axis.minorTickSize}
                 stroke={stroke.value}
                 strokeWidth={stroke.width}
               />
+
+              {tick.label && (
+                <g transform={`translate(0, ${axis.tickSize + 8})`}>
+                  <SvgText
+                    font={font}
+                    textAnchor="middle"
+                    dominantBaseline="hanging"
+                  >
+                    {tick.label}
+                  </SvgText>
+                </g>
+              )}
             </g>
           )
         })}
@@ -116,8 +131,11 @@ export function HColorBarSvg({
         const x = axis.domainToRange(tick.v)
 
         return (
-          <g transform={`translate(${x}, ${size.h + 2})`} key={ti}>
-            <line
+          <g
+            transform={`translate(${x}, ${size.h + axis.tickPadding})`}
+            key={ti}
+          >
+            <SvgLine
               y2={axis.tickSize}
               stroke={stroke.value}
               strokeWidth={stroke.width}
@@ -157,8 +175,6 @@ export function VColorBarSvg({
     steps = 15
   }
 
-  console.log('VColorBarSvg: axis:', axis.length)
-
   axis = YAxis.fromAxis(axis) //.setTicks(ticks)
 
   // const xscl = d3
@@ -193,7 +209,7 @@ export function VColorBarSvg({
           y2 -= step < steps - 1 ? yinc : 0 //const y2 = axis.domainToRange(start)
 
           return (
-            <rect
+            <SvgRect
               key={step}
               y={y2}
               width={size.h}
@@ -204,7 +220,7 @@ export function VColorBarSvg({
         })}
 
         {stroke.show && (
-          <rect
+          <SvgRect
             width={size.h}
             height={size.w}
             stroke={stroke.value}
@@ -223,11 +239,18 @@ export function VColorBarSvg({
               transform={`translate(${size.h + axis.tickPadding}, ${y})`}
               key={ti}
             >
-              <line
+              <SvgLine
                 x2={axis.minorTickSize}
                 stroke={stroke.value}
                 strokeWidth={stroke.width}
               />
+              {tick.label && (
+                <g transform={`translate(${axis.tickSize + 5}, 0)`}>
+                  <SvgText font={font} dominantBaseline="central">
+                    {tick.label}
+                  </SvgText>
+                </g>
+              )}
             </g>
           )
         })}
@@ -240,7 +263,7 @@ export function VColorBarSvg({
             transform={`translate(${size.h + axis.tickPadding}, ${y})`}
             key={ti}
           >
-            <line
+            <SvgLine
               x2={axis.tickSize}
               stroke={stroke.value}
               strokeWidth={stroke.width}

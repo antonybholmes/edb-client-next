@@ -63,6 +63,7 @@ import {
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
+import { useGseaBubbleSettings } from './bubble/gsea-bubble-settings-store'
 import { GseaBubbleTabPanel } from './bubble/gsea-bubble-tab-panel'
 import { GeneSetFilter } from './gene-set-filter'
 import {
@@ -84,6 +85,8 @@ const LI_CLS =
 export function GseaPlotPage() {
   const { settings: edbSettings } = useEdbSettings()
   const { settings, updateSettings } = useGseaSettings()
+  const { settings: bubbleSettings, updateSettings: updateBubbleSettings } =
+    useGseaBubbleSettings()
   const { setAppInfo } = useAppInfo()
 
   const [search, setSearch] = useState('')
@@ -105,6 +108,12 @@ export function GseaPlotPage() {
       console.log('Zoom changed:', zoom)
       updateSettings(
         produce(settings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
+
+      updateBubbleSettings(
+        produce(bubbleSettings, (draft) => {
           draft.page.scale = zoom
         })
       )

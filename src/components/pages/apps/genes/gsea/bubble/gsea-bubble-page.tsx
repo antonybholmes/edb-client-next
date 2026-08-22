@@ -89,7 +89,7 @@ export function GseaBubblePage() {
     onChange: ({ zoom }) => {
       updateSettings(
         produce(settings, (draft) => {
-          draft.scale = zoom
+          draft.page.scale = zoom
         })
       )
     },
@@ -158,8 +158,8 @@ export function GseaBubblePage() {
 
   // load saved zoom from settings
   useEffect(() => {
-    setZoom(settings.scale)
-  }, [settings.scale])
+    setZoom(settings.page.scale)
+  }, [settings.page.scale])
 
   // useEffect(() => {
   //   if (!plot || settings.scale === zoom) {

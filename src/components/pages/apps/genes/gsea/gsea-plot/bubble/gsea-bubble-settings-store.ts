@@ -17,7 +17,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v14`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v18`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
@@ -53,6 +53,7 @@ export interface IGseaBubbleSettings {
   padding: number
   colorbar: {
     show: boolean
+    showMinorTicks: boolean
     position: ColorBarPos
     size: IDim
   }
@@ -64,9 +65,11 @@ export interface IGseaBubbleSettings {
   }
   margin: IMarginProps
   plot: { margin: IMarginProps }
-  scale: number
-  grid: {
-    cols: number
+  page: {
+    scale: number
+    grid: {
+      cols: number
+    }
   }
 }
 
@@ -112,7 +115,8 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   colorbar: {
     show: true,
     position: 'right',
-    size: { w: 100, h: 14 },
+    size: { w: 100, h: 12 },
+    showMinorTicks: true,
   },
   legend: {
     bubbles: {
@@ -122,9 +126,11 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   },
   margin: { ...MARGIN },
   plot: { margin: { ...PLOT_MARGIN } },
-  scale: 1,
-  grid: {
-    cols: 3,
+  page: {
+    scale: 1,
+    grid: {
+      cols: 3,
+    },
   },
 }
 

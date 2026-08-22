@@ -33,9 +33,12 @@ export class Axis {
 
   protected _tickSize: number = 5
   protected _minorTickSize: number = 3
-  protected _tickPadding: number = 2
+  protected _tickPadding: number = 1
 
-  private _makeTicks(ticks: number[] | string[] | TickItem[]): TickItem[] {
+  private _makeTicks(
+    ticks: number[] | string[] | TickItem[],
+    addLabels: boolean = true
+  ): TickItem[] {
     if (ticks.length === 0) {
       return []
     }
@@ -51,13 +54,13 @@ export class Axis {
       // if ticks are just numbers, convert to TickItem
       return ticks.map((v) => ({
         v,
-        label: format(v),
+        label: addLabels ? format(v) : '',
       }))
     } else if (ticks.every((item) => typeof item === 'string')) {
       // if ticks are just strings, convert to TickItem
       return ticks.map((v) => ({
         v: parseFloat(v),
-        label: v,
+        label: addLabels ? v : '',
       }))
     } else if (
       ticks.every(
@@ -79,7 +82,6 @@ export class Axis {
    * @returns the axis object.
    */
   _clone(a: Axis): Axis {
-    //a._range = this._range
     this._scale = a._scale.copy()
     this._clip = a._clip
     this._title = a._title
@@ -117,21 +119,7 @@ export class Axis {
 
     a._userFormat = dp >= 0 ? d3.format(`.${dp}f`) : undefined
 
-    a._updateTickLabels()
-
     return a
-  }
-
-  private _updateTickLabels() {
-    this._ticks = this._ticks?.map((t) => ({
-      v: t.v,
-      label: this._userFormat ? this._userFormat(t.v) : this._format!(t.v),
-    }))
-
-    this._minorTicks = this._minorTicks?.map((t) => ({
-      v: t.v,
-      label: this._userFormat ? this._userFormat(t.v) : this._format!(t.v),
-    }))
   }
 
   setNumTicks(numTicks: number): Axis {
@@ -151,6 +139,8 @@ export class Axis {
     const a = this.copy()
 
     a._scale = d3.scaleLinear().domain(lim).range([0, a._scale.range()[1]!])
+    a._ticks = undefined
+    a._minorTicks = undefined
     a._format = undefined // reset the format so that it will be auto generated for the new domain
 
     return a
@@ -212,7 +202,7 @@ export class Axis {
 
     //const tickSet = new Set(this.ticks.map((t) => t.v))
 
-    a._minorTicks = this._makeTicks(ticks) //.filter((t) => !tickSet.has(t.v))
+    a._minorTicks = this._makeTicks(ticks, false) //.filter((t) => !tickSet.has(t.v))
 
     return a
   }
@@ -295,10 +285,9 @@ export class Axis {
 
   get minorTicks(): TickItem[] {
     if (!this._minorTicks) {
-      const tickSet = new Set(this.ticks.map((t) => t.v))
       this._minorTicks = this.generateTicks(
         this._numTicks * MINOR_TICK_MULTIPLIER
-      ).filter((t) => !tickSet.has(t.v))
+      )
     }
 
     return this._minorTicks

@@ -15,6 +15,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { Axis } from '@/components/plot/axis'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { IPos } from '@/interfaces/pos'
 import { ILim } from '@/lib/math/math'
 import type { ITooltip } from '../../../../matcalc/apps/heatmap/heatmap-svg'
@@ -106,8 +107,12 @@ function GseaBubbleLegendSvg() {
                       settings.p.range[0],
                       settings.p.range[1] / 2,
                       settings.p.range[1],
+                    ])
+                    .setMinorTicks([
+                      settings.p.range[1] * 0.25,
+                      settings.p.range[1] * 0.75,
                     ])}
-                  //domain={settings.p.range}
+                  showMinorTicks={settings.colorbar.showMinorTicks}
                   cmap={cmap}
                   size={settings.colorbar.size}
                   // ticks={[
@@ -238,7 +243,7 @@ function GseaPlot({
 
       {settings.border.show && (
         <SvgMargin margin={settings.plot.margin}>
-          <rect
+          <SvgRect
             width={innerPlotWidth}
             height={innerPlotHeight}
             stroke={settings.border.value}
@@ -320,7 +325,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
   const svg = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
-    const cols = Math.min(settings.grid.cols, plots.length)
+    const cols = Math.min(settings.page.grid.cols, plots.length)
     const rows = Math.ceil(plots.length / cols)
 
     // inner height is determined by the size of the largest bubble plot
@@ -375,7 +380,12 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
     }
 
     return (
-      <SvgBase ref={ref} width={width} height={height} scale={settings.scale}>
+      <SvgBase
+        ref={ref}
+        width={width}
+        height={height}
+        scale={settings.page.scale}
+      >
         <SvgMargin margin={settings.margin}>
           {plotGrid.map((row, ri) => (
             <g key={ri} transform={`translate(0, ${row[0]!.pos.y})`}>

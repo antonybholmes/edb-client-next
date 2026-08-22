@@ -2471,6 +2471,10 @@
         {
           "msg": "Fixed gsea store not showing filtered genesets. Added sort order to filtered list. Display props now context aware for the view",
           "date": "2026-08-21T20:19:30.264Z"
+        },
+        {
+          "msg": "Improved axis objects with minor tick support",
+          "date": "2026-08-22T04:47:24.606Z"
         }
       ]
     },

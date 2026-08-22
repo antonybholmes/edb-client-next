@@ -7,7 +7,7 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_SELECT_ALL } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
@@ -48,8 +48,8 @@ export function GeneSetsPropsPanel() {
   const { filteredReports, setFilteredReports, setGeneSetsInUse } = useGsea()
 
   return (
-    <PropsPanel className="gap-y-1 text-xs">
-      <VCenterRow className="gap-x-2 pl-6.5">
+    <PropsPanel className="text-xs">
+      <VCenterRow className="gap-x-1 justify-between pl-6.5">
         <Checkbox
           aria-label="Select all gene sets"
           checked={selectAllGeneSets}
@@ -71,10 +71,10 @@ export function GeneSetsPropsPanel() {
           className="invisible data-visible:visible"
         />
 
-        <ToolbarSeparator />
-
         <GeneSetFilter />
       </VCenterRow>
+
+      <LineSeparator />
 
       <VScrollPanel className="mb-2">
         <DragDropProvider

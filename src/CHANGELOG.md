@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Colorbar now uses axes to set size. Expanded about dialog.
 - Improved axis objects with minor tick support.
 - Fixed gsea store not showing filtered genesets. Added sort order to filtered list. Display props now context aware for the view.
 - Bug fixes and updates.
