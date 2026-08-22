@@ -23,6 +23,7 @@ import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
+import { Axis } from '@/components/plot/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { useMergeRefs } from '@/hooks/merge-refs'
@@ -436,7 +437,10 @@ export function HeatMapSvg({ ref }: IProps) {
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('right') && (
             <VColorBarSvg
-              domain={displayOptions.range}
+              axis={new Axis()
+                .setDomain(displayOptions.range)
+                .setLength(displayOptions.colorbar.size.w)}
+              // domain={displayOptions.range}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
               size={displayOptions.colorbar.size}
               stroke={displayOptions.colorbar.stroke}
@@ -463,7 +467,9 @@ export function HeatMapSvg({ ref }: IProps) {
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
             <HColorBarSvg
-              domain={displayOptions.range}
+              axis={new Axis()
+                .setDomain(displayOptions.range)
+                .setLength(displayOptions.colorbar.size.w)}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
               size={displayOptions.colorbar.size}
               stroke={displayOptions.colorbar.stroke}

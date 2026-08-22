@@ -2,9 +2,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import type { IDim } from '@/interfaces/dim'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
-import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
-import * as d3 from 'd3'
 import { Axis, YAxis } from './axis'
 import { DEFAULT_COLORBAR_SIZE } from './heatmap/heatmap-svg-props'
 import {
@@ -15,8 +13,9 @@ import {
 import { SvgText } from './svg-text'
 
 interface IColorBarSvgProps {
-  domain?: ILim
-  ticks?: number[]
+  axis: Axis
+  //domain?: ILim
+  //ticks?: number[]
   cmap?: ColorMap
   stroke?: IStrokeProps
   steps?: number
@@ -24,16 +23,18 @@ interface IColorBarSvgProps {
   size?: IDim
   tickSize?: number
   pos?: IPos
+  showMinorTicks?: boolean
 }
 
 export function HColorBarSvg({
-  domain = [0, 100],
-  ticks,
+  axis,
+  //domain = [0, 100],
+  //ticks,
   cmap = BWR_CMAP_V2,
   steps,
   size = { ...DEFAULT_COLORBAR_SIZE },
   stroke = { ...DEFAULT_STROKE_PROPS },
-  tickSize = 5,
+  showMinorTicks = false,
   pos = { ...ZERO_POS },
   font,
 }: IColorBarSvgProps) {
@@ -45,29 +46,22 @@ export function HColorBarSvg({
     steps = 15
   }
 
-  const xscl = d3
-    .scaleLinear()
-    .domain(domain) // This is what is written on the Axis: from 0 to 100
-    .range([0, size.w])
-
-  const inc = (domain[1] - domain[0]) / steps
-  const inc2 = 2 * inc
-  let start = domain[0] - inc
+  // const xscl = d3
+  //   .scaleLinear()
+  //   .domain(domain) // This is what is written on the Axis: from 0 to 100
+  //   .range([0, size.w])
 
   const colorStep = 1 / (steps - 1)
+  const inc = (axis.domain[1] - axis.domain[0]) / steps
+  const inc2 = 2 * inc
+
   let colorStart = -colorStep
 
-  let axis = new Axis().setDomain(domain).setLength(size.w) //.setTicks(ticks)
+  let x2 = axis.domainToRange(axis.domain[0])
+  const xinc = axis.domainToRange(axis.domain[0] + inc) - x2
+  const xinc2 = axis.domainToRange(axis.domain[0] + inc2) - x2
 
-  if (ticks) {
-    //axis = axis.setTicks([domain[0], 0.5 * (domain[0] + domain[1]), domain[1]])
-    //axis = axis.autoDomain(domain)
-    console.log('ticks:', ticks)
-    axis.setTicks(ticks)
-  } else {
-    const dx = (domain[1] - domain[0]) / 4
-    axis = axis.setTicks(range(0, 5).map((x) => domain[0] + x * dx))
-  }
+  x2 -= xinc
 
   return (
     <g
@@ -77,17 +71,16 @@ export function HColorBarSvg({
     >
       <g>
         {range(steps).map((step) => {
-          start += inc
           colorStart += colorStep
-          const x1 = xscl(start)
-          const x2 = xscl(start + (step < steps - 1 ? inc2 : inc))
+
+          x2 += step < steps - 1 ? xinc : 0
 
           return (
             <rect
               key={step}
-              x={x1}
+              x={x2}
               height={size.h}
-              width={x2 - x1}
+              width={step < steps - 1 ? xinc2 : xinc}
               fill={cmap.getHexColor(colorStart, false)}
             />
           )
@@ -104,17 +97,32 @@ export function HColorBarSvg({
         )}
       </g>
 
+      {showMinorTicks &&
+        axis.minorTicks.map((tick, ti) => {
+          const x = axis.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${x}, ${size.h + 2})`} key={ti}>
+              <line
+                y2={axis.minorTickSize}
+                stroke={stroke.value}
+                strokeWidth={stroke.width}
+              />
+            </g>
+          )
+        })}
+
       {axis.ticks.map((tick, ti) => {
         const x = axis.domainToRange(tick.v)
 
         return (
           <g transform={`translate(${x}, ${size.h + 2})`} key={ti}>
             <line
-              y2={tickSize}
+              y2={axis.tickSize}
               stroke={stroke.value}
               strokeWidth={stroke.width}
             />
-            <g transform={`translate(0, ${tickSize + 8})`}>
+            <g transform={`translate(0, ${axis.tickSize + 8})`}>
               <SvgText
                 font={font}
                 textAnchor="middle"
@@ -126,44 +134,17 @@ export function HColorBarSvg({
           </g>
         )
       })}
-
-      {/* <g transform={`translate(0, ${size.h + 2})`}>
-        <line y2={5} stroke={COLOR_BLACK} shapeRendering={SVG_CRISP_EDGES} />
-        <line
-          y2={5}
-          transform={`translate(${0.5 * size.w}, 0)`}
-          stroke={stroke.value}
-            strokeWidth={stroke.width}
-          shapeRendering={SVG_CRISP_EDGES}
-        />
-        <line
-          y2={5}
-          transform={`translate(${size.w}, 0)`}
-          stroke={stroke.value}
-            strokeWidth={stroke.width}
-          shapeRendering={SVG_CRISP_EDGES}
-        />
-      </g>
-      <g transform={`translate(0, ${size.h + 25})`}>
-        <text textAnchor="middle">{domain[0]}</text>
-        <text textAnchor="middle" transform={`translate(${0.5 * size.w}, 0)`}>
-          0
-        </text>
-        <text textAnchor="middle" transform={`translate(${size.w}, 0)`}>
-          {domain[1]}
-        </text>
-      </g> */}
     </g>
   )
 }
 
 export function VColorBarSvg({
-  domain = [0, 100],
-  ticks,
+  axis,
+
   cmap = BWR_CMAP_V2,
   steps,
   size = { ...DEFAULT_COLORBAR_SIZE },
-  tickSize = 5,
+  showMinorTicks = false,
   stroke = { ...DEFAULT_STROKE_PROPS },
   pos = { ...ZERO_POS },
   font,
@@ -176,22 +157,28 @@ export function VColorBarSvg({
     steps = 15
   }
 
-  const xscl = d3
-    .scaleLinear()
-    .domain(domain) // This is what is written on the Axis: from 0 to 100
-    .range([0, size.w])
+  console.log('VColorBarSvg: axis:', axis.length)
+
+  axis = YAxis.fromAxis(axis) //.setTicks(ticks)
+
+  // const xscl = d3
+  //   .scaleLinear()
+  //   .domain(domain) // This is what is written on the Axis: from 0 to 100
+  //   .range([0, size.w])
+
+  //  steps = 5
 
   const colorStep = 1 / (steps - 1)
-  const inc = (domain[1] - domain[0]) / steps
+  const inc = (axis.domain[1] - axis.domain[0]) / steps
   const inc2 = 2 * inc
-  let start = domain[0] - inc
-  let colorStart = 1 + colorStep
 
-  const dx = (domain[1] - domain[0]) / 4
-  let axis = new YAxis()
-    .setDomain(domain)
-    .setLength(size.w)
-    .setTicks(ticks ? ticks : range(0, 5).map((x) => domain[0] + x * dx))
+  let colorStart = -colorStep
+
+  let y2 = axis.domainToRange(axis.domain[0])
+  const yinc = y2 - axis.domainToRange(axis.domain[0] + inc)
+  const yinc2 = y2 - axis.domainToRange(axis.domain[0] + inc2)
+
+  y2 -= yinc
 
   return (
     <g
@@ -201,17 +188,16 @@ export function VColorBarSvg({
     >
       <g>
         {range(steps).map((step) => {
-          start += inc
-          colorStart -= colorStep
-          const y1 = xscl(start)
-          const y2 = xscl(start + (step < steps - 1 ? inc2 : inc))
+          colorStart += colorStep
+
+          y2 -= step < steps - 1 ? yinc : 0 //const y2 = axis.domainToRange(start)
 
           return (
             <rect
               key={step}
-              y={y1}
+              y={y2}
               width={size.h}
-              height={y2 - y1}
+              height={step < steps - 1 ? yinc2 : yinc}
               fill={cmap.getHexColor(colorStart, false)}
             />
           )
@@ -228,17 +214,38 @@ export function VColorBarSvg({
         )}
       </g>
 
+      {showMinorTicks &&
+        axis.minorTicks.map((tick, ti) => {
+          const y = axis.domainToRange(tick.v)
+
+          return (
+            <g
+              transform={`translate(${size.h + axis.tickPadding}, ${y})`}
+              key={ti}
+            >
+              <line
+                x2={axis.minorTickSize}
+                stroke={stroke.value}
+                strokeWidth={stroke.width}
+              />
+            </g>
+          )
+        })}
+
       {axis.ticks.map((tick, ti) => {
         const y = axis.domainToRange(tick.v)
 
         return (
-          <g transform={`translate(${size.h + 2}, ${y})`} key={ti}>
+          <g
+            transform={`translate(${size.h + axis.tickPadding}, ${y})`}
+            key={ti}
+          >
             <line
-              x2={tickSize}
+              x2={axis.tickSize}
               stroke={stroke.value}
               strokeWidth={stroke.width}
             />
-            <g transform={`translate(${tickSize + 5}, 0)`}>
+            <g transform={`translate(${axis.tickSize + 5}, 0)`}>
               <SvgText font={font} dominantBaseline="central">
                 {tick.label}
               </SvgText>

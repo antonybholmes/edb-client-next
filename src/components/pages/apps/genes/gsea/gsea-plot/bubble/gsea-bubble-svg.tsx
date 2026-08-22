@@ -99,14 +99,22 @@ function GseaBubbleLegendSvg() {
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
                 <VColorBarSvg
-                  domain={settings.p.range}
+                  axis={new Axis()
+                    .setDomain(settings.p.range)
+                    .setLength(settings.colorbar.size.w)
+                    .setTicks([
+                      settings.p.range[0],
+                      settings.p.range[1] / 2,
+                      settings.p.range[1],
+                    ])}
+                  //domain={settings.p.range}
                   cmap={cmap}
                   size={settings.colorbar.size}
-                  ticks={[
-                    settings.p.range[0],
-                    settings.p.range[1] / 2,
-                    settings.p.range[1],
-                  ]}
+                  // ticks={[
+                  //   settings.p.range[0],
+                  //   settings.p.range[1] / 2,
+                  //   settings.p.range[1],
+                  // ]}
                   //stroke={displayProps.colorbar.stroke}
                   //font={displayProps.legend}
                 />
