@@ -100,46 +100,52 @@ export class Axis {
   }
 
   /**
-   * Clones the properties of this axis onto an axis
-   * parameter for the purposes of copying an axis object.
-   * This method is not designed for external calling.
+   * Clones the properties of an axis onto this axis
+   * for the purposes of copying. This method is not
+   * designed for external calling.
    *
-   * @param a an axis object to add cloned properties to
+   * @param target an axis object to add cloned properties to
    * @returns the axis object.
    */
-  _clone(a: Axis): Axis {
-    this._scale = a._scale.copy()
-    this._clip = a._clip
-    this._title = a._title
-    this._format = a._format
-    this._ticks = a._ticks
-    this._numTicks = a._numTicks
-    this._userFormat = a._userFormat
-    this._minorTicks = a._minorTicks
-    this._tickParams = a._tickParams
+  _copy<T extends Axis>(target: T): T {
+    target._scale = this._scale.copy()
+    target._clip = this._clip
+    target._title = this._title
+    target._format = this._format
+    target._numTicks = this._numTicks
+    target._userFormat = this._userFormat
+    target._tickParams = { ...this._tickParams }
 
-    return this
+    if (this._ticks) {
+      target._ticks = [...this._ticks]
+    }
+
+    if (this._minorTicks) {
+      target._minorTicks = [...this._minorTicks]
+    }
+
+    return target
   }
 
-  copy(): Axis {
+  clone(): Axis {
     const a = new Axis()
-    return a._clone(this)
+    return this._copy(a)
   }
 
   setTitle(title: string): Axis {
-    const a = this.copy()
+    const a = this.clone()
     a._title = title
     return a
   }
 
   setClip(clip: boolean): Axis {
-    const a = this.copy()
+    const a = this.clone()
     a._clip = clip
     return a
   }
 
   setDP(dp: number): Axis {
-    const a = this.copy()
+    const a = this.clone()
 
     a._userFormat = dp >= 0 ? d3.format(`.${dp}f`) : undefined
 
@@ -147,7 +153,7 @@ export class Axis {
   }
 
   setNumTicks(numTicks: number): Axis {
-    const a = this.copy()
+    const a = this.clone()
     a._numTicks = numTicks
     return a
   }
@@ -155,7 +161,7 @@ export class Axis {
   setTickParams(ticks: Partial<ITickProps> = {}): Axis {
     const { show, line, labels: label, which = 'both' } = ticks
 
-    const a = this.copy()
+    const a = this.clone()
 
     const props = definedProps({ show, line, label })
 
@@ -185,7 +191,7 @@ export class Axis {
    * @returns
    */
   setDomain(lim: ILim): Axis {
-    const a = this.copy()
+    const a = this.clone()
 
     a._scale = d3.scaleLinear().domain(lim).range([0, a._scale.range()[1]!])
     a._ticks = undefined
@@ -204,7 +210,7 @@ export class Axis {
    * @returns
    */
   setRange(lim: ILim): Axis {
-    const a = this.copy()
+    const a = this.clone()
 
     a._scale = d3.scaleLinear().domain(a._scale.domain()).range(lim)
 
@@ -223,7 +229,7 @@ export class Axis {
    * @returns
    */
   autoDomain(lim: ILim): Axis {
-    const a = this.copy()
+    const a = this.clone()
 
     a._scale = d3
       .scaleLinear()
@@ -235,7 +241,7 @@ export class Axis {
   }
 
   setTicks(ticks: number[] | string[] | TickItem[]): Axis {
-    const a = this.copy()
+    const a = this.clone()
 
     a._ticks = this._makeTicks(ticks)
 
@@ -247,7 +253,7 @@ export class Axis {
   }
 
   setMinorTicks(ticks: number[] | string[] | TickItem[]): Axis {
-    const a = this.copy()
+    const a = this.clone()
 
     //const tickSet = new Set(this.ticks.map((t) => t.v))
 
@@ -375,9 +381,8 @@ export class Axis {
 }
 
 export class YAxis extends Axis {
-  override copy(): Axis {
-    const a = new YAxis()
-    return a._clone(this)
+  override clone(): Axis {
+    return this._copy(new YAxis())
   }
 
   override domainToRange(x: number): number {
@@ -387,8 +392,7 @@ export class YAxis extends Axis {
   }
 
   static fromAxis(axis: Axis): YAxis {
-    const y = new YAxis()
-    return y._clone(axis)
+    return axis._copy(new YAxis())
   }
 }
 

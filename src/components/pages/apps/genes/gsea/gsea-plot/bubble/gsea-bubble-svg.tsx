@@ -12,6 +12,7 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { Axis } from '@/components/plot/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
@@ -54,6 +55,7 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
 function GseaBubbleLegendSvg() {
   const { plots } = useGseaBubbleContext()
   const { settings } = useGseaBubbleSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const sizes = settings.legend.bubbles.sizes
 
@@ -83,6 +85,24 @@ function GseaBubbleLegendSvg() {
     }
   }
 
+  const xax = new Axis()
+    .setDomain(settings.p.range)
+    .setLength(settings.colorbar.size.w)
+    .setTicks([
+      settings.p.range[0],
+      settings.p.range[1] / 2,
+      settings.p.range[1],
+    ])
+    .setMinorTicks([settings.p.range[1] * 0.25, settings.p.range[1] * 0.75])
+    .setTickParams({
+      which: 'major',
+      show: edbSettings.plots.axes.ticks.major.show,
+    })
+    .setTickParams({
+      which: 'minor',
+      show: edbSettings.plots.axes.ticks.minor.show,
+    })
+
   return (
     <>
       {settings.colorbar.show &&
@@ -98,18 +118,7 @@ function GseaBubbleLegendSvg() {
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
                 <SvgVColorBar
-                  ax={new Axis()
-                    .setDomain(settings.p.range)
-                    .setLength(settings.colorbar.size.w)
-                    .setTicks([
-                      settings.p.range[0],
-                      settings.p.range[1] / 2,
-                      settings.p.range[1],
-                    ])
-                    .setMinorTicks([
-                      settings.p.range[1] * 0.25,
-                      settings.p.range[1] * 0.75,
-                    ])}
+                  ax={xax}
 
                   cmap={cmap}
 
@@ -191,15 +200,25 @@ function BubblePlot({
   handleVariantLeave: () => void
 }) {
   const { settings } = useGseaBubbleSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
+
+  console.log('BubblePlot', edbSettings.plots.axes.ticks.minor.show)
 
   // offer per plot x-axis domain
   const xax = new Axis()
     .autoDomain(domain)
     //.setDomain(displayProps.xdomain)
     .setLength(settings.axes.x.length)
-    .setTickParams({ which: 'minor', show: true })
+    .setTickParams({
+      which: 'major',
+      show: edbSettings.plots.axes.ticks.major.show,
+    })
+    .setTickParams({
+      which: 'minor',
+      show: edbSettings.plots.axes.ticks.minor.show,
+    })
 
   return (
     <>

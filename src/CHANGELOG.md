@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Some axes now correctly respond to tick props panel changes.
 - Axis now has proper tick params to control when shown.
 - Standardizing more axis properties.
 - Integration of centralized settings to control axis appearances.

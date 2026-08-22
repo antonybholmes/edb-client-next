@@ -25,12 +25,6 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
     settings.plots.axes.ticks.major.line.size +
     settings.plots.axes.ticks.major.labels.offset
 
-  console.log(
-    'AxisBottomTicksSvg',
-    ax.tickParams.minor.show,
-    ax.tickParams.major.show
-  )
-
   return (
     <>
       {ax.tickParams.minor.show && (
@@ -138,12 +132,6 @@ export function AxisRightTicksSvg({ ax }: IAxisProps) {
   const tickLabelOffset =
     settings.plots.axes.ticks.major.line.size +
     settings.plots.axes.ticks.major.labels.offset
-
-  console.log(
-    'AxisRightTicksSvg',
-    ax.tickParams.minor.show,
-    ax.tickParams.major.show
-  )
 
   return (
     <>

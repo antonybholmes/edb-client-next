@@ -11,11 +11,11 @@ export function TickPropsPanel() {
     <>
       <CheckPropRow
         title="Major"
-        checked={settings.plots.axes.ticks.major.line.show}
+        checked={settings.plots.axes.ticks.major.show}
         onCheckedChange={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.ticks.major.line.show = v
+              draft.plots.axes.ticks.major.show = v
             })
           )
         }}
@@ -37,12 +37,12 @@ export function TickPropsPanel() {
 
       <CheckPropRow
         title="Minor"
-        checked={settings.plots.axes.ticks.minor.line.show}
+        checked={settings.plots.axes.ticks.minor.show}
         onCheckedChange={(v) => {
           updateSettings(
             produce(settings, (draft) => {
               console.log('mmmm2', v)
-              draft.plots.axes.ticks.minor.line.show = v
+              draft.plots.axes.ticks.minor.show = v
             })
           )
         }}

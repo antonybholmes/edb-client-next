@@ -179,6 +179,7 @@ interface IAxisLineProps extends IStrokeProps {
 }
 
 interface IAxisTickProps {
+  show: boolean
   labels: IAxisLabel
   line: IAxisLineProps
 }
@@ -204,6 +205,7 @@ export const DEFAULT_AXIS_LINE_PROPS: IAxisLineProps = {
 }
 
 export const DEFAULT_AXIS_TICK_PROPS: IAxisTickProps = {
+  show: true,
   labels: { ...DEFAULT_AXIS_LABEL_PROPS },
   line: { ...DEFAULT_AXIS_LINE_PROPS },
 }
