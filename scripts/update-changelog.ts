@@ -22,7 +22,7 @@ const minor = parseInt(v[1]!)
 //const patch = parseInt(v[2]!)
 //const build = info.build
 
-const version = `${major}.${minor}`
+const version = `${major}.${minor}.0`
 
 const changelogFile = 'changelog.json'
 

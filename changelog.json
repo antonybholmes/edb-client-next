@@ -2484,5 +2484,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-08-21T16:54:46.452Z"
+  },
+  {
+    "version": "87.6.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-22T06:20:33.129Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-22T06:20:33.129Z"
   }
 ]
