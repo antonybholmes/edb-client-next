@@ -25,13 +25,16 @@ import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
 import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { TickPropsPanel } from './tick-props-panel'
 
 export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
 
   return (
     <PropsPanel>
-      <ScrollAccordion value={['plot', 'nes', 'p-value', 'bubble', 'size']}>
+      <ScrollAccordion
+        value={['plot', 'ticks', 'nes', 'p-value', 'bubble', 'size']}
+      >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
@@ -99,6 +102,13 @@ export function GseaBubbleDisplayPropsPanel() {
 
               <MarginPopover />
             </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="ticks">
+          <AccordionTrigger>Ticks</AccordionTrigger>
+          <AccordionContent>
+            <TickPropsPanel />
           </AccordionContent>
         </AccordionItem>
 

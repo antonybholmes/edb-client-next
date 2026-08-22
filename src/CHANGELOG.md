@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Axis now has proper tick params to control when shown.
 - Standardizing more axis properties.
 - Integration of centralized settings to control axis appearances.
 - Bug fixes and updates.

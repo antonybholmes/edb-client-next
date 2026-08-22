@@ -199,6 +199,7 @@ function BubblePlot({
     .autoDomain(domain)
     //.setDomain(displayProps.xdomain)
     .setLength(settings.axes.x.length)
+    .setTickParams({ which: 'minor', show: true })
 
   return (
     <>
@@ -242,6 +243,7 @@ function BubblePlot({
       {settings.border.show && (
         <SvgMargin margin={settings.plot.margin}>
           <SvgRect
+            shapeRendering="crispEdges"
             width={innerPlotWidth}
             height={innerPlotHeight}
             stroke={settings.border.value}

@@ -1,6 +1,8 @@
 import type { ILim } from '@/lib/math/math'
+import { definedProps } from '@/lib/utils'
 import type { ScaleLinear } from 'd3'
 import * as d3 from 'd3'
+import { produce } from 'immer'
 export type TickLabel = string | number
 
 const MINOR_TICK_MULTIPLIER = 5
@@ -8,6 +10,21 @@ const MINOR_TICK_MULTIPLIER = 5
 export type TickItem = {
   v: number
   label: string
+}
+
+interface ITickParams {
+  show: boolean
+  line: { show: boolean }
+  labels: { show: boolean }
+}
+
+interface IMajorMinorTickParams {
+  major: ITickParams
+  minor: ITickParams
+}
+
+interface ITickProps extends ITickParams {
+  which: 'major' | 'minor' | 'both'
 }
 
 export class Axis {
@@ -31,9 +48,18 @@ export class Axis {
 
   protected _numTicks: number = 5
 
-  protected _tickSize: number = 5
-  protected _minorTickSize: number = 3
-  protected _tickPadding: number = 1
+  protected _tickParams: IMajorMinorTickParams = {
+    major: {
+      show: true,
+      line: { show: true },
+      labels: { show: true },
+    },
+    minor: {
+      show: false,
+      line: { show: true },
+      labels: { show: false },
+    },
+  }
 
   private _makeTicks(
     ticks: number[] | string[] | TickItem[],
@@ -90,9 +116,7 @@ export class Axis {
     this._numTicks = a._numTicks
     this._userFormat = a._userFormat
     this._minorTicks = a._minorTicks
-    this._tickSize = a._tickSize
-    this._minorTickSize = a._minorTickSize
-    this._tickPadding = a._tickPadding
+    this._tickParams = a._tickParams
 
     return this
   }
@@ -126,6 +150,31 @@ export class Axis {
     const a = this.copy()
     a._numTicks = numTicks
     return a
+  }
+
+  setTickParams(ticks: Partial<ITickProps> = {}): Axis {
+    const { show, line, labels: label, which = 'both' } = ticks
+
+    const a = this.copy()
+
+    const props = definedProps({ show, line, label })
+
+    if (which === 'major' || which === 'both') {
+      a._tickParams.major = {
+        ...a._tickParams.major,
+        ...props,
+      }
+    }
+
+    if (which === 'minor' || which === 'both') {
+      a._tickParams.minor = { ...a._tickParams.minor, ...props }
+    }
+
+    return a
+  }
+
+  get tickParams(): IMajorMinorTickParams {
+    return this._tickParams
   }
 
   /**
@@ -202,39 +251,14 @@ export class Axis {
 
     //const tickSet = new Set(this.ticks.map((t) => t.v))
 
-    a._minorTicks = this._makeTicks(ticks, false) //.filter((t) => !tickSet.has(t.v))
+    a._minorTicks = this._makeTicks(ticks, false)
+
+    // turn on minor ticks if they are set
+    a._tickParams = produce(a._tickParams, (draft) => {
+      draft.minor.show = a._minorTicks.length > 0
+    })
 
     return a
-  }
-
-  setTickSize(size: number): Axis {
-    const a = this.copy()
-    a._tickSize = size
-    return a
-  }
-
-  setMinorTickSize(size: number): Axis {
-    const a = this.copy()
-    a._minorTickSize = size
-    return a
-  }
-
-  setTickPadding(padding: number): Axis {
-    const a = this.copy()
-    a._tickPadding = padding
-    return a
-  }
-
-  get tickPadding(): number {
-    return this._tickPadding
-  }
-
-  get tickSize(): number {
-    return this._tickSize
-  }
-
-  get minorTickSize(): number {
-    return this._minorTickSize
   }
 
   get title(): string {
@@ -347,10 +371,6 @@ export class Axis {
     }
 
     return n
-    // return (
-    //   (this.domain[0] > this.domain[1] ? this.domain[1] : this.domain[0]) +
-    //   this.rangeNorm(x, clip) * this._domainDiff
-    // )
   }
 }
 

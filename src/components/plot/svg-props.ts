@@ -1,4 +1,7 @@
+import { IDim } from '@/interfaces/dim'
+import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { Axis } from './axis'
 
 export const FONT_SIZE_SMALL = 12
 export const FONT_SIZE_MEDIUM = 14
@@ -77,7 +80,6 @@ export interface ITextProps {
 
 export const DEFAULT_TEXT_PROPS: ITextProps = {
   show: true,
-  //text: '',
   font: { ...DEFAULT_FONT_PROPS },
 }
 
@@ -165,4 +167,90 @@ export const DEFAULT_MARGIN: IMarginProps = {
   left: 100,
   bottom: 100,
   right: 100,
+}
+
+interface IAxisLabel extends ITextProps {
+  offset: number
+}
+
+interface IAxisLineProps extends IStrokeProps {
+  size: number
+  offset: number
+}
+
+interface IAxisTickProps {
+  labels: IAxisLabel
+  line: IAxisLineProps
+}
+
+export interface IAxisDisplayProps {
+  title: IAxisLabel
+  line: IStrokeProps
+  ticks: {
+    major: IAxisTickProps
+    minor: IAxisTickProps
+  }
+}
+
+export const DEFAULT_AXIS_LABEL_PROPS: IAxisLabel = {
+  ...DEFAULT_TEXT_PROPS,
+  offset: 5,
+}
+
+export const DEFAULT_AXIS_LINE_PROPS: IAxisLineProps = {
+  ...DEFAULT_STROKE_PROPS,
+  size: 6,
+  offset: 1,
+}
+
+export const DEFAULT_AXIS_TICK_PROPS: IAxisTickProps = {
+  labels: { ...DEFAULT_AXIS_LABEL_PROPS },
+  line: { ...DEFAULT_AXIS_LINE_PROPS },
+}
+
+export const DEFAULT_MINOR_AXIS_TICK_PROPS: IAxisTickProps = {
+  ...DEFAULT_AXIS_TICK_PROPS,
+  labels: { ...DEFAULT_AXIS_LABEL_PROPS, show: false },
+  line: { ...DEFAULT_AXIS_TICK_PROPS.line, size: 3 },
+}
+
+export const DEFAULT_AXIS_DISPLAY_PROPS: IAxisDisplayProps = {
+  title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 25 },
+  line: { ...DEFAULT_STROKE_PROPS },
+  ticks: {
+    major: { ...DEFAULT_AXIS_TICK_PROPS },
+    minor: { ...DEFAULT_MINOR_AXIS_TICK_PROPS },
+  },
+}
+
+export interface IColorBarProps {
+  show: boolean
+  stroke: IStrokeProps
+  size: IDim
+  //axis: IAxisDisplayProps
+}
+
+export const DEFAULT_COLORBAR_PROPS: IColorBarProps = {
+  show: true,
+  stroke: { ...DEFAULT_STROKE_PROPS },
+  size: { w: 150, h: 12 },
+  //axis: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+}
+
+export interface IAxisProps {
+  ax: Axis
+  pos?: IPos
+  font?: ITextProps
+  labelFont?: ITextProps
+  showTicks?: boolean
+  showTickLabels?: boolean
+  tickSize?: number
+  strokeWidth?: number
+  title?: string
+  titleOffset?: number
+  color?: string
+  /**
+   * Whether to show the axis line. Default is true.
+   */
+  showLine?: boolean
 }

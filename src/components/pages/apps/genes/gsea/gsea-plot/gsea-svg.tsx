@@ -87,6 +87,7 @@ export function GseaSvg({ ref }: ISVGProps) {
     let xax = new Axis()
       .setDomain([0, maxRank])
       .setLength(settings.axes.x.length)
+      .setTickParams({ which: 'major', show: false })
 
     xax = xax.setTicks(xax.ticks.slice(1))
 

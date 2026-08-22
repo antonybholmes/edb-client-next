@@ -147,3 +147,16 @@ export function deepMergeDefaults<T>(
 
   return result
 }
+
+/**
+ * Returns a new object containing only the properties of the input object
+ * that are defined (not undefined).
+ *
+ * @param obj The input object.
+ * @returns A new object with only defined properties.
+ */
+export function definedProps<T>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined)
+  ) as Partial<T>
+}

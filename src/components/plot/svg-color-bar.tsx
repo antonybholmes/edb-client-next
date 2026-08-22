@@ -1,40 +1,17 @@
 import { SVG_CRISP_EDGES } from '@/consts'
-import { IDim } from '@/interfaces/dim'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { range } from '@/lib/math/range'
 import { useEdbSettings } from '../edb/edb-settings'
 import { Axis, YAxis } from './axis'
-import {
-  AxisBottomTicksSvg,
-  AxisRightTicksSvg,
-  DEFAULT_AXIS_DISPLAY_PROPS,
-  IAxisDisplayProps,
-} from './svg-axis'
-import { DEFAULT_STROKE_PROPS, type IStrokeProps } from './svg-props'
+
+import { AxisBottomTicksSvg, AxisRightTicksSvg } from './svg-axis-ticks'
 import { SvgRect } from './svg-rect'
-
-export interface IColorBarProps {
-  show: boolean
-  stroke: IStrokeProps
-  size: IDim
-  axis: IAxisDisplayProps
-}
-
-export const DEFAULT_COLORBAR_PROPS: IColorBarProps = {
-  show: true,
-  stroke: { ...DEFAULT_STROKE_PROPS },
-  size: { w: 150, h: 12 },
-  axis: { ...DEFAULT_AXIS_DISPLAY_PROPS },
-}
 
 interface ISvgColorBarProps {
   ax: Axis
-
   cmap?: ColorMap
-
   steps?: number
-
   pos?: IPos
 }
 
@@ -141,20 +118,6 @@ export function SvgVColorBar({
   const inc2 = 2 * inc
 
   let colorStart = -colorStep
-
-  const minorTickOffset =
-    settings.plots.colorbar.size.h +
-    settings.plots.colorbar.axis.ticks.minor.line.offset
-  const minorLabelOffset =
-    settings.plots.colorbar.axis.ticks.minor.line.size +
-    settings.plots.colorbar.axis.ticks.minor.labels.offset
-
-  const tickOffset =
-    settings.plots.colorbar.size.h +
-    settings.plots.colorbar.axis.ticks.major.line.offset
-  const tickLabelOffset =
-    settings.plots.colorbar.axis.ticks.major.line.size +
-    settings.plots.colorbar.axis.ticks.major.labels.offset
 
   let y2 = ax.domainToRange(ax.domain[0])
   const yinc = y2 - ax.domainToRange(ax.domain[0] + inc)
