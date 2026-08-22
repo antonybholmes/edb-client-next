@@ -2475,6 +2475,10 @@
         {
           "msg": "Improved axis objects with minor tick support",
           "date": "2026-08-22T04:47:24.606Z"
+        },
+        {
+          "msg": "Colorbar now uses axes to set size. Expanded about dialog",
+          "date": "2026-08-22T06:11:00.233Z"
         }
       ]
     },
