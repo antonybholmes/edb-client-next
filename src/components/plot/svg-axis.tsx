@@ -1,7 +1,8 @@
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { Axis } from './axis'
+import { useEdbSettings } from '../edb/edb-settings'
+import { Axis, YAxis } from './axis'
 import { SvgLine } from './svg-line'
 import {
   DEFAULT_BOLD_TEXT_PROPS,
@@ -28,6 +29,7 @@ interface IAxisTickProps {
 
 export interface IAxisDisplayProps {
   title: IAxisLabel
+  line: IStrokeProps
   ticks: {
     major: IAxisTickProps
     minor: IAxisTickProps
@@ -52,11 +54,13 @@ export const DEFAULT_AXIS_TICK_PROPS: IAxisTickProps = {
 
 export const DEFAULT_MINOR_AXIS_TICK_PROPS: IAxisTickProps = {
   ...DEFAULT_AXIS_TICK_PROPS,
+  labels: { ...DEFAULT_AXIS_LABEL_PROPS, show: false },
   line: { ...DEFAULT_AXIS_TICK_PROPS.line, size: 3 },
 }
 
 export const DEFAULT_AXIS_DISPLAY_PROPS: IAxisDisplayProps = {
-  title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 10 },
+  title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 20 },
+  line: { ...DEFAULT_STROKE_PROPS },
   ticks: {
     major: { ...DEFAULT_AXIS_TICK_PROPS },
     minor: { ...DEFAULT_MINOR_AXIS_TICK_PROPS },
@@ -167,77 +171,41 @@ export function AxisLeftSvg({
 
 export function AxisBottomSvg({
   ax,
-  showTicks = true,
-  showTickLabels = true,
-  showLine = true,
-  tickSize = 5,
-  strokeWidth = 1,
-  color = COLOR_BLACK,
   pos = { ...ZERO_POS },
-  titleOffset,
   title,
-  font = { ...DEFAULT_TEXT_PROPS },
-  labelFont: titleFont = { ...DEFAULT_BOLD_TEXT_PROPS },
 }: IAxisProps) {
-  const _titleOffset = titleOffset ?? tickSize * 10
+  const { settings } = useEdbSettings()
+
+  const titleOffset =
+    settings.plots.axes.x.ticks.major.line.offset +
+    settings.plots.axes.x.ticks.major.line.size +
+    settings.plots.axes.x.ticks.major.labels.offset +
+    settings.plots.axes.x.title.offset
 
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {showLine && (
+      {settings.plots.axes.x.line.show && (
         <SvgLine
-          x1={-0.5 * strokeWidth}
-          x2={ax.length + 0.5 * strokeWidth}
-          stroke={color}
-          strokeWidth={strokeWidth}
+          x1={-0.5 * settings.plots.axes.x.line.width}
+          x2={ax.length + 0.5 * settings.plots.axes.x.line.width}
+
+          s={settings.plots.axes.x.line}
         />
       )}
 
-      {title && titleFont.show && (
+      <AxisBottomTicksSvg ax={ax} />
+
+      {settings.plots.axes.x.title.show && title && (
         <SvgText
-          transform={`translate(${0.5 * ax.length}, ${_titleOffset})`}
+          transform={`translate(${0.5 * ax.length}, ${titleOffset})`}
           textAnchor="middle"
-          font={titleFont}
+          font={settings.plots.axes.x.title}
         >
           {title}
         </SvgText>
-      )}
-
-      {showTicks && (
-        <g>
-          <g>
-            {ax.ticks.map((tick, ticki) => {
-              return (
-                <SvgLine
-                  y2={tickSize}
-                  stroke={color}
-                  transform={`translate(${ax.domainToRange(tick.v)}, 0)`}
-                  key={ticki}
-                  strokeWidth={strokeWidth}
-                />
-              )
-            })}
-          </g>
-
-          {showTickLabels && font.show && (
-            <g transform={`translate(0, ${tickSize * 2})`}>
-              {ax.ticks.map((tick, ticki) => (
-                <SvgText
-                  key={ticki}
-                  x={ax.domainToRange(tick.v)}
-                  fill={color}
-                  dominantBaseline="hanging"
-                  textAnchor="middle"
-                  font={font}
-                >
-                  {tick.label}
-                </SvgText>
-              ))}
-            </g>
-          )}
-        </g>
       )}
     </g>
   )
@@ -307,5 +275,195 @@ export function AxisTopSvg({
         ))}
       </g>
     </g>
+  )
+}
+
+/**
+ * Standard bottom axis ticks for a horizontal axis.
+ *
+ * @param param0
+ * @returns
+ */
+export function AxisBottomTicksSvg({ ax }: IAxisProps) {
+  const { settings } = useEdbSettings()
+
+  const minorTickOffset = settings.plots.colorbar.axis.ticks.minor.line.offset
+
+  const minorLabelOffset =
+    settings.plots.colorbar.axis.ticks.minor.line.size +
+    settings.plots.colorbar.axis.ticks.minor.labels.offset
+
+  const tickOffset = settings.plots.colorbar.axis.ticks.major.line.offset
+
+  const tickLabelOffset =
+    settings.plots.colorbar.axis.ticks.major.line.size +
+    settings.plots.colorbar.axis.ticks.major.labels.offset
+
+  return (
+    <>
+      {settings.plots.colorbar.axis.ticks.minor.line.show &&
+        ax.minorTicks.map((tick, ti) => {
+          const x = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${x}, ${minorTickOffset})`} key={ti}>
+              <SvgLine
+                y2={settings.plots.colorbar.axis.ticks.minor.line.size}
+                s={settings.plots.colorbar.axis.ticks.minor.line}
+              />
+            </g>
+          )
+        })}
+
+      {settings.plots.colorbar.axis.ticks.minor.labels.show &&
+        ax.minorTicks.map((tick, ti) => {
+          const x = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${x}, ${minorTickOffset})`} key={ti}>
+              {tick.label && (
+                <g transform={`translate(0, ${minorLabelOffset})`}>
+                  <SvgText
+                    font={settings.plots.colorbar.axis.ticks.minor.labels}
+                    textAnchor="middle"
+                    dominantBaseline="hanging"
+                  >
+                    {tick.label}
+                  </SvgText>
+                </g>
+              )}
+            </g>
+          )
+        })}
+
+      {settings.plots.colorbar.axis.ticks.major.line.show &&
+        ax.ticks.map((tick, ti) => {
+          const x = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${x}, ${tickOffset})`} key={ti}>
+              <SvgLine
+                y2={settings.plots.colorbar.axis.ticks.major.line.size}
+                s={settings.plots.colorbar.axis.ticks.major.line}
+              />
+            </g>
+          )
+        })}
+
+      {settings.plots.colorbar.axis.ticks.major.labels.show &&
+        ax.ticks.map((tick, ti) => {
+          const x = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${x}, ${tickOffset})`} key={ti}>
+              {tick.label && (
+                <g transform={`translate(0, ${tickLabelOffset})`}>
+                  <SvgText
+                    font={settings.plots.colorbar.axis.ticks.major.labels}
+                    textAnchor="middle"
+                    dominantBaseline="hanging"
+                  >
+                    {tick.label}
+                  </SvgText>
+                </g>
+              )}
+            </g>
+          )
+        })}
+    </>
+  )
+}
+
+/**
+ * Standard right axis ticks for a vertical axis.
+ * @param param0
+ * @returns
+ */
+export function AxisRightTicksSvg({ ax }: IAxisProps) {
+  const { settings } = useEdbSettings()
+
+  ax = YAxis.fromAxis(ax)
+
+  const minorTickOffset = settings.plots.colorbar.axis.ticks.minor.line.offset
+  const minorLabelOffset =
+    settings.plots.colorbar.axis.ticks.minor.line.size +
+    settings.plots.colorbar.axis.ticks.minor.labels.offset
+
+  const tickOffset = settings.plots.colorbar.axis.ticks.major.line.offset
+
+  const tickLabelOffset =
+    settings.plots.colorbar.axis.ticks.major.line.size +
+    settings.plots.colorbar.axis.ticks.major.labels.offset
+
+  return (
+    <>
+      {settings.plots.colorbar.axis.ticks.minor.line.show &&
+        ax.minorTicks.map((tick, ti) => {
+          const y = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
+              <SvgLine
+                x2={settings.plots.colorbar.axis.ticks.minor.line.size}
+                s={settings.plots.colorbar.axis.ticks.minor.line}
+              />
+            </g>
+          )
+        })}
+
+      {settings.plots.colorbar.axis.ticks.minor.labels.show &&
+        ax.minorTicks.map((tick, ti) => {
+          const y = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
+              {tick.label && (
+                <g transform={`translate(${minorLabelOffset}, 0)`}>
+                  <SvgText
+                    font={settings.plots.colorbar.axis.ticks.minor.labels}
+                    dominantBaseline="central"
+                  >
+                    {tick.label}
+                  </SvgText>
+                </g>
+              )}
+            </g>
+          )
+        })}
+
+      {settings.plots.colorbar.axis.ticks.major.line.show &&
+        ax.ticks.map((tick, ti) => {
+          const y = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
+              <SvgLine
+                x2={settings.plots.colorbar.axis.ticks.major.line.size}
+                s={settings.plots.colorbar.axis.ticks.major.line}
+              />
+            </g>
+          )
+        })}
+
+      {settings.plots.colorbar.axis.ticks.major.labels.show &&
+        ax.ticks.map((tick, ti) => {
+          const y = ax.domainToRange(tick.v)
+
+          return (
+            <g transform={`translate(${tickOffset}, ${y})`} key={ti}>
+              {tick.label && (
+                <g transform={`translate(${tickLabelOffset}, 0)`}>
+                  <SvgText
+                    font={settings.plots.colorbar.axis.ticks.major.labels}
+                    dominantBaseline="central"
+                  >
+                    {tick.label}
+                  </SvgText>
+                </g>
+              )}
+            </g>
+          )
+        })}
+    </>
   )
 }

@@ -98,7 +98,7 @@ function GseaBubbleLegendSvg() {
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
                 <SvgVColorBar
-                  axis={new Axis()
+                  ax={new Axis()
                     .setDomain(settings.p.range)
                     .setLength(settings.colorbar.size.w)
                     .setTicks([
@@ -168,7 +168,7 @@ function GseaBubbleLegendSvg() {
   )
 }
 
-function GseaPlot({
+function BubblePlot({
   points,
   plot,
   xlim,
@@ -263,15 +263,13 @@ function GseaPlot({
 
       <AxisBottomSvg
         ax={xax}
-        showLine={!settings.border.show}
+
         pos={{
           x: settings.plot.margin.left,
           y: settings.plot.margin.top + innerPlotHeight,
         }}
-        tickSize={settings.axes.x.tickSize}
-        strokeWidth={settings.axes.x.stroke.width}
+
         title={plot.nes.label}
-        color={settings.axes.x.stroke.value}
       />
     </>
   )
@@ -389,7 +387,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
             <g key={ri} transform={`translate(0, ${row[0]!.pos.y})`}>
               {row.map((p, ci) => (
                 <g key={ci} transform={`translate(${p.pos.x}, 0)`}>
-                  <GseaPlot
+                  <BubblePlot
                     points={p.points}
                     plot={p.plot}
                     xlim={p.xlim}

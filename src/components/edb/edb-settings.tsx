@@ -6,6 +6,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
 import type { IAppInfo } from '../../lib/app-info'
+import { DEFAULT_AXIS_DISPLAY_PROPS, IAxisDisplayProps } from '../plot/svg-axis'
 import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-color-bar'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
@@ -56,6 +57,10 @@ export interface IEdbSettings {
       custom: { id: string; color: string; opacity: number }[]
     }
     colorbar: IColorBarProps
+    axes: {
+      x: IAxisDisplayProps
+      y: IAxisDisplayProps
+    }
   }
 }
 
@@ -104,6 +109,10 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   plots: {
     colors: { custom: [] },
     colorbar: { ...DEFAULT_COLORBAR_PROPS },
+    axes: {
+      x: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+      y: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+    },
   },
 }
 

@@ -339,7 +339,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
                   transform={`translate(-${settings.legend.colorbar.size.h / 2}, ${legendHeight + 4 * settings.legend.gap})`}
                 >
                   <SvgVColorBar
-                    axis={new Axis()
+                    ax={new Axis()
                       .setDomain(range)
                       .setLength(settings.legend.colorbar.size.w)}
 

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Standardizing more axis properties.
 - Integration of centralized settings to control axis appearances.
 - Bug fixes and updates.
 

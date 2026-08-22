@@ -5,11 +5,14 @@ import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { range } from '@/lib/math/range'
 import { useEdbSettings } from '../edb/edb-settings'
 import { Axis, YAxis } from './axis'
-import { DEFAULT_AXIS_DISPLAY_PROPS, IAxisDisplayProps } from './svg-axis'
-import { SvgLine } from './svg-line'
+import {
+  AxisBottomTicksSvg,
+  AxisRightTicksSvg,
+  DEFAULT_AXIS_DISPLAY_PROPS,
+  IAxisDisplayProps,
+} from './svg-axis'
 import { DEFAULT_STROKE_PROPS, type IStrokeProps } from './svg-props'
 import { SvgRect } from './svg-rect'
-import { SvgText } from './svg-text'
 
 export interface IColorBarProps {
   show: boolean
@@ -26,7 +29,7 @@ export const DEFAULT_COLORBAR_PROPS: IColorBarProps = {
 }
 
 interface ISvgColorBarProps {
-  axis: Axis
+  ax: Axis
 
   cmap?: ColorMap
 
@@ -36,7 +39,7 @@ interface ISvgColorBarProps {
 }
 
 export function SvgHColorBar({
-  axis,
+  ax,
 
   cmap = BWR_CMAP_V2,
   steps,
@@ -59,30 +62,16 @@ export function SvgHColorBar({
   //   .range([0, size.w])
 
   const colorStep = 1 / (steps - 1)
-  const inc = (axis.domain[1] - axis.domain[0]) / steps
+  const inc = (ax.domain[1] - ax.domain[0]) / steps
   const inc2 = 2 * inc
 
   let colorStart = -colorStep
 
-  let x2 = axis.domainToRange(axis.domain[0])
-  const xinc = axis.domainToRange(axis.domain[0] + inc) - x2
-  const xinc2 = axis.domainToRange(axis.domain[0] + inc2) - x2
+  let x2 = ax.domainToRange(ax.domain[0])
+  const xinc = ax.domainToRange(ax.domain[0] + inc) - x2
+  const xinc2 = ax.domainToRange(ax.domain[0] + inc2) - x2
 
   x2 -= xinc
-
-  const minorTickOffset =
-    settings.plots.colorbar.size.h +
-    settings.plots.colorbar.axis.ticks.minor.line.offset
-  const minorLabelOffset =
-    settings.plots.colorbar.axis.ticks.minor.line.size +
-    settings.plots.colorbar.axis.ticks.minor.labels.offset
-
-  const tickOffset =
-    settings.plots.colorbar.size.h +
-    settings.plots.colorbar.axis.ticks.major.line.offset
-  const tickLabelOffset =
-    settings.plots.colorbar.axis.ticks.major.line.size +
-    settings.plots.colorbar.axis.ticks.major.labels.offset
 
   return (
     <g
@@ -109,95 +98,27 @@ export function SvgHColorBar({
 
         {settings.plots.colorbar.stroke.show && (
           <SvgRect
-            width={axis.length}
+            width={ax.length}
             height={settings.plots.colorbar.size.h}
             sp={settings.plots.colorbar.stroke}
           />
         )}
       </g>
-
-      {settings.plots.colorbar.axis.ticks.minor.line.show &&
-        axis.minorTicks.map((tick, ti) => {
-          const x = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${x}, ${minorTickOffset})`} key={ti}>
-              <SvgLine
-                y2={settings.plots.colorbar.axis.ticks.minor.line.size}
-                s={settings.plots.colorbar.axis.ticks.minor.line}
-              />
-            </g>
-          )
-        })}
-
-      {settings.plots.colorbar.axis.ticks.minor.labels.show &&
-        axis.minorTicks.map((tick, ti) => {
-          const x = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${x}, ${minorTickOffset})`} key={ti}>
-              {tick.label && (
-                <g transform={`translate(0, ${minorLabelOffset})`}>
-                  <SvgText
-                    font={settings.plots.colorbar.axis.ticks.minor.labels}
-                    textAnchor="middle"
-                    dominantBaseline="hanging"
-                  >
-                    {tick.label}
-                  </SvgText>
-                </g>
-              )}
-            </g>
-          )
-        })}
-
-      {settings.plots.colorbar.axis.ticks.major.line.show &&
-        axis.ticks.map((tick, ti) => {
-          const x = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${x}, ${tickOffset})`} key={ti}>
-              <SvgLine
-                y2={settings.plots.colorbar.axis.ticks.major.line.size}
-                s={settings.plots.colorbar.axis.ticks.major.line}
-              />
-            </g>
-          )
-        })}
-
-      {settings.plots.colorbar.axis.ticks.major.labels.show &&
-        axis.ticks.map((tick, ti) => {
-          const x = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${x}, ${tickOffset})`} key={ti}>
-              {tick.label && (
-                <g transform={`translate(0, ${tickLabelOffset})`}>
-                  <SvgText
-                    font={settings.plots.colorbar.axis.ticks.major.labels}
-                    textAnchor="middle"
-                    dominantBaseline="hanging"
-                  >
-                    {tick.label}
-                  </SvgText>
-                </g>
-              )}
-            </g>
-          )
-        })}
+      <g transform={`translate(0, ${settings.plots.colorbar.size.h})`}>
+        <AxisBottomTicksSvg ax={ax} />
+      </g>
     </g>
   )
 }
 
 export function SvgVColorBar({
-  axis,
-
+  ax,
   cmap = BWR_CMAP_V2,
   steps,
-
   pos = { ...ZERO_POS },
 }: ISvgColorBarProps) {
   const { settings } = useEdbSettings()
+
   if (!steps) {
     steps = cmap.colors
   }
@@ -206,7 +127,7 @@ export function SvgVColorBar({
     steps = 15
   }
 
-  axis = YAxis.fromAxis(axis) //.setTicks(ticks)
+  ax = YAxis.fromAxis(ax) //.setTicks(ticks)
 
   // const xscl = d3
   //   .scaleLinear()
@@ -216,7 +137,7 @@ export function SvgVColorBar({
   //  steps = 5
 
   const colorStep = 1 / (steps - 1)
-  const inc = (axis.domain[1] - axis.domain[0]) / steps
+  const inc = (ax.domain[1] - ax.domain[0]) / steps
   const inc2 = 2 * inc
 
   let colorStart = -colorStep
@@ -235,9 +156,9 @@ export function SvgVColorBar({
     settings.plots.colorbar.axis.ticks.major.line.size +
     settings.plots.colorbar.axis.ticks.major.labels.offset
 
-  let y2 = axis.domainToRange(axis.domain[0])
-  const yinc = y2 - axis.domainToRange(axis.domain[0] + inc)
-  const yinc2 = y2 - axis.domainToRange(axis.domain[0] + inc2)
+  let y2 = ax.domainToRange(ax.domain[0])
+  const yinc = y2 - ax.domainToRange(ax.domain[0] + inc)
+  const yinc2 = y2 - ax.domainToRange(ax.domain[0] + inc2)
 
   y2 -= yinc
 
@@ -267,80 +188,16 @@ export function SvgVColorBar({
         {settings.plots.colorbar.stroke.show && (
           <SvgRect
             width={settings.plots.colorbar.size.h}
-            height={axis.length}
+            height={ax.length}
 
             sp={settings.plots.colorbar.stroke}
           />
         )}
       </g>
 
-      {settings.plots.colorbar.axis.ticks.minor.line.show &&
-        axis.minorTicks.map((tick, ti) => {
-          const y = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
-              <SvgLine
-                x2={settings.plots.colorbar.axis.ticks.minor.line.size}
-                s={settings.plots.colorbar.axis.ticks.minor.line}
-              />
-            </g>
-          )
-        })}
-
-      {settings.plots.colorbar.axis.ticks.minor.labels.show &&
-        axis.minorTicks.map((tick, ti) => {
-          const y = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
-              {tick.label && (
-                <g transform={`translate(${minorLabelOffset}, 0)`}>
-                  <SvgText
-                    font={settings.plots.colorbar.axis.ticks.minor.labels}
-                    dominantBaseline="central"
-                  >
-                    {tick.label}
-                  </SvgText>
-                </g>
-              )}
-            </g>
-          )
-        })}
-
-      {settings.plots.colorbar.axis.ticks.major.line.show &&
-        axis.ticks.map((tick, ti) => {
-          const y = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
-              <SvgLine
-                x2={settings.plots.colorbar.axis.ticks.major.line.size}
-                s={settings.plots.colorbar.axis.ticks.major.line}
-              />
-            </g>
-          )
-        })}
-
-      {settings.plots.colorbar.axis.ticks.major.labels.show &&
-        axis.ticks.map((tick, ti) => {
-          const y = axis.domainToRange(tick.v)
-
-          return (
-            <g transform={`translate(${tickOffset}, ${y})`} key={ti}>
-              {tick.label && (
-                <g transform={`translate(${tickLabelOffset}, 0)`}>
-                  <SvgText
-                    font={settings.plots.colorbar.axis.ticks.major.labels}
-                    dominantBaseline="central"
-                  >
-                    {tick.label}
-                  </SvgText>
-                </g>
-              )}
-            </g>
-          )
-        })}
+      <g transform={`translate(${settings.plots.colorbar.size.h}, 0)`}>
+        <AxisRightTicksSvg ax={ax} />
+      </g>
     </g>
   )
 }

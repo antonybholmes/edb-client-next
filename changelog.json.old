@@ -2492,6 +2492,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-08-22T06:20:33.129Z"
+        },
+        {
+          "msg": "Integration of centralized settings to control axis appearances",
+          "date": "2026-08-22T15:07:28.039Z"
         }
       ]
     },

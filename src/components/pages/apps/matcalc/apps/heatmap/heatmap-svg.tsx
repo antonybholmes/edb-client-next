@@ -437,14 +437,12 @@ export function HeatMapSvg({ ref }: IProps) {
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('right') && (
             <SvgVColorBar
-              axis={new Axis()
+              ax={new Axis()
                 .setDomain(displayOptions.range)
                 .setLength(displayOptions.colorbar.size.w)}
               // domain={displayOptions.range}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
 
-              stroke={displayOptions.colorbar.stroke}
-              font={displayOptions.legend}
               pos={{
                 x:
                   margin.left +
@@ -467,13 +465,11 @@ export function HeatMapSvg({ ref }: IProps) {
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
             <SvgHColorBar
-              axis={new Axis()
+              ax={new Axis()
                 .setDomain(displayOptions.range)
                 .setLength(displayOptions.colorbar.size.w)}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
 
-              stroke={displayOptions.colorbar.stroke}
-              font={displayOptions.legend}
               pos={{
                 x: margin.left,
                 y:

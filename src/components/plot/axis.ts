@@ -3,7 +3,7 @@ import type { ScaleLinear } from 'd3'
 import * as d3 from 'd3'
 export type TickLabel = string | number
 
-const MINOR_TICK_MULTIPLIER = 10
+const MINOR_TICK_MULTIPLIER = 5
 
 export type TickItem = {
   v: number
