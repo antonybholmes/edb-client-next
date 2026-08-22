@@ -13,7 +13,7 @@ export function GseaDisplayPropsPanel() {
       onValueChange={() => {}}
       className="grow"
     >
-      <TabsContent value="gsea">
+      <TabsContent value="graph">
         <GseaPlotDisplayPropsPanel />
       </TabsContent>
       <TabsContent value="bubble">

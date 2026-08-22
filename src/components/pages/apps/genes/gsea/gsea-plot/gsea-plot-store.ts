@@ -237,8 +237,6 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
         const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
-        console.log('Processing file 2:', filename)
-
         const es: IGseaGeneRankScore[] = rows.map((tokens) => {
           return {
             gene: tokens[1]!,
@@ -255,7 +253,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
     // fall back to the report filenames if the ranked/rpt files didn't
     // yield a phenotype pair, otherwise allReports stays empty
     if (phenotypes.length === 0) {
-      phenotypes = Object.keys(reportsMap)
+      phenotypes = Object.keys(reportsMap).sort()
     }
 
     const allReports: IGseaGeneSet[] = phenotypes

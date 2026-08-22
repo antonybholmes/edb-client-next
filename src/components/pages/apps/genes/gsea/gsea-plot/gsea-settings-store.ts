@@ -109,7 +109,7 @@ export interface IGseaDisplayProps {
     filters: IFilters
   }
   view: {
-    tab: 'gsea' | 'bubble'
+    tab: 'graph' | 'bubble'
   }
 }
 
@@ -212,7 +212,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     },
   },
   view: {
-    tab: 'gsea',
+    tab: 'graph',
   },
 }
 

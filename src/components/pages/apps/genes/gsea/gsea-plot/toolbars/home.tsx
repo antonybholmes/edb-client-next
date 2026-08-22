@@ -7,10 +7,6 @@ import {
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
-import {
-  GroupToggle,
-  ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -126,7 +122,7 @@ export function HomeToolbar() {
         </ToolbarCol>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Letters">
+      {/* <ToolbarTabGroup title="View">
         <ToggleGroup
           //direction="toolbar"
           className="overflow-hidden rounded-theme"
@@ -149,7 +145,7 @@ export function HomeToolbar() {
             Bubble
           </GroupToggle>
         </ToggleGroup>
-      </ToolbarTabGroup>
+      </ToolbarTabGroup> */}
     </>
   )
 }

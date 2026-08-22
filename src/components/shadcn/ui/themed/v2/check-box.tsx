@@ -36,6 +36,7 @@ export function Checkbox({
   onCheckedChange = () => {},
   disabled = false,
   children,
+  className,
   ...props
 }: ICheckboxProps) {
   const [hover, setHover] = useState(false)
@@ -46,7 +47,7 @@ export function Checkbox({
       checked={checked}
       data-hover={present(hover)}
       onCheckedChange={onCheckedChange}
-      className={CHECK_CLS}
+      className={cn(CHECK_CLS, className)}
       disabled={disabled}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}

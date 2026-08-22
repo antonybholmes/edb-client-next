@@ -80,7 +80,7 @@ export function Autocomplete({
       <VCenterRow
         data-open={present(_isOpen)}
         data-has-right-children={present(hasRightChildren)}
-        className={`z-20 data-open:z-40 ml-3 mr-3 data-has-right-children:mr-2 h-10 border-b gap-x-2
+        className={`z-20 data-open:z-40 ml-3 mr-3 data-has-right-children:mr-2 h-9 border-b gap-x-2
           data-open:border-border/50 
            border-transparent`}
         onFocus={() => {
@@ -120,7 +120,7 @@ export function Autocomplete({
         //data-focus={focus}
         className={`absolute  
           rounded-theme border border-border/50 data-open:shadow-lg bg-background
-          w-full min-h-10 data-open:pt-11 data-open:pb-3 
+          w-full min-h-9 data-open:pt-11 data-open:pb-3 
           z-10 data-open:z-30 top-0 
           overflow-hidden`}
       >

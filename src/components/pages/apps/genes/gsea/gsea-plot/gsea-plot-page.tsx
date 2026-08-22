@@ -56,6 +56,10 @@ import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -283,6 +287,30 @@ export function GseaPlotPage() {
             )
           })}
         </Autocomplete>
+        <>
+          <ToggleGroup
+            //direction="toolbar"
+            className="text-xs"
+            //rounded="none"
+            size="lg"
+            value={[settings.view.tab]}
+            onValueChange={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.view.tab = v[0] as 'graph' | 'bubble'
+                })
+              )
+            }}
+          >
+            <GroupToggle value="graph" className="px-2">
+              Graph
+            </GroupToggle>
+
+            <GroupToggle value="bubble" className="px-2">
+              Bubble
+            </GroupToggle>
+          </ToggleGroup>
+        </>
       </HeaderPortal>
 
       <ShortcutLayout signinRequired={false}>
@@ -337,7 +365,7 @@ export function GseaPlotPage() {
                 onValueChange={() => {}}
                 className="grow"
               >
-                <TabsContent value="gsea">
+                <TabsContent value="graph">
                   <ExtScrollCard className="px-2 pb-2">
                     <GseaSvg ref={svgRef} />
                   </ExtScrollCard>

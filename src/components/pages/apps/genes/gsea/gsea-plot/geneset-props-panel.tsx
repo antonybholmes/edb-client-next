@@ -47,8 +47,6 @@ export function GeneSetsPropsPanel() {
 
   const { filteredReports, setFilteredReports, setGeneSetsInUse } = useGsea()
 
-  console.log('GeneSetsPropsPanel', filteredReports.length)
-
   return (
     <PropsPanel className="gap-y-1 text-xs">
       <VCenterRow className="gap-x-2 pl-6.5">
@@ -69,26 +67,14 @@ export function GeneSetsPropsPanel() {
             setSelectAllGeneSets(selected)
           }}
           title={TEXT_SELECT_ALL}
+          data-visible={filteredReports.length > 0 ? 'true' : undefined}
+          className="invisible data-visible:visible"
         />
 
         <ToolbarSeparator />
 
         <GeneSetFilter />
       </VCenterRow>
-      {/* <SideBarHeader className="gap-x-2 justify-between">
-        <VCenterRow
-          data-visible={allowSelectAll}
-          className="data-[visible=false]:invisible ml-1"
-        ></VCenterRow>
-
-        <IconButton
-          checked={allowSelectAll}
-          onClick={() => setAllowSelectAll(!allowSelectAll)}
-          title={TEXT_SELECT}
-        >
-          <MultiSelectIcon checked={allowSelectAll} />
-        </IconButton>
-      </SideBarHeader> */}
 
       <VScrollPanel className="mb-2">
         <DragDropProvider

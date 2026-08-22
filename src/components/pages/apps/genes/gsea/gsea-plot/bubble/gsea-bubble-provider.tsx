@@ -123,17 +123,6 @@ export function GseaBubbleProvider({
 
       let idx: number[] = []
 
-      console.log(
-        'settings.sortBy',
-        settings.sortBy,
-        'nes',
-        nes,
-        'sizes',
-        sizes,
-        'log10pvalues',
-        log10pvalues
-      )
-
       switch (settings.sortBy) {
         case 'nes':
           idx = argsort(nes, true)

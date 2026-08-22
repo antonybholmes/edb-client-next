@@ -13,10 +13,6 @@ export function GseaBubbleTabPanel({
   const { inUseReports, phenotypesFilter } = useGsea()
 
   const bubblePlots: IGseaBubble[] = useMemo(() => {
-    console.log(
-      'Generating bubble plots for phenotypes filter:',
-      phenotypesFilter
-    )
     return Object.entries(phenotypesFilter)
       .filter(([_, show]) => show)
       .map(([phen, _]) => phen)
@@ -28,9 +24,9 @@ export function GseaBubbleTabPanel({
           id: makeUuid(),
           name: phen,
           genesets,
-          nes: { label: '' },
-          size: { label: '' },
-          log10q: { label: '' },
+          nes: { label: 'NES' },
+          size: { label: 'Size' },
+          log10q: { label: 'FDR q-val' },
         }
         return bubble
       })
