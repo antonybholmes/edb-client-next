@@ -5,8 +5,8 @@ import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import { Axis, YAxis, type TickLabel } from './axis'
-import { VColorBarSvg } from './color-bar-svg'
 import { AxisBottomSvg, AxisLeftSvg } from './svg-axis'
+import { SvgVColorBar } from './svg-color-bar'
 
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { vfill } from '@/lib/fill'
@@ -164,7 +164,7 @@ export function VertBarPlotSvg({
             margin.left + innerWidth + _displayProps.padding
           }, ${margin.top})`}
         >
-          {VColorBarSvg({ axis: new Axis().setDomain([0, 10]), cmap })}
+          {SvgVColorBar({ axis: new Axis().setDomain([0, 10]), cmap })}
         </g>
       </>
     )

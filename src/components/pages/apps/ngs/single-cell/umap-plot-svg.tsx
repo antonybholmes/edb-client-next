@@ -8,7 +8,7 @@ import {
 } from 'react'
 
 import { Axis, YAxis } from '@/components/plot/axis'
-import { VColorBarSvg } from '@/components/plot/color-bar-svg'
+import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
@@ -338,11 +338,10 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
                   id="colorbar"
                   transform={`translate(-${settings.legend.colorbar.size.h / 2}, ${legendHeight + 4 * settings.legend.gap})`}
                 >
-                  <VColorBarSvg
+                  <SvgVColorBar
                     axis={new Axis()
                       .setDomain(range)
                       .setLength(settings.legend.colorbar.size.w)}
-                    size={settings.legend.colorbar.size}
 
                     cmap={COLOR_MAPS[settings.cmap]!}
                     //size={displayOptions.colorbar.size}

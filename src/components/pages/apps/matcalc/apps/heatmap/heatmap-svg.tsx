@@ -5,7 +5,6 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
-import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { CellsSvg, DotsSvg, GridSvg } from '@/components/plot/heatmap/cell-svg'
 import {
   ColGroupsSvg,
@@ -16,6 +15,7 @@ import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
 } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -436,13 +436,13 @@ export function HeatMapSvg({ ref }: IProps) {
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('right') && (
-            <VColorBarSvg
+            <SvgVColorBar
               axis={new Axis()
                 .setDomain(displayOptions.range)
                 .setLength(displayOptions.colorbar.size.w)}
               // domain={displayOptions.range}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
-              size={displayOptions.colorbar.size}
+
               stroke={displayOptions.colorbar.stroke}
               font={displayOptions.legend}
               pos={{
@@ -466,12 +466,12 @@ export function HeatMapSvg({ ref }: IProps) {
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
-            <HColorBarSvg
+            <SvgHColorBar
               axis={new Axis()
                 .setDomain(displayOptions.range)
                 .setLength(displayOptions.colorbar.size.w)}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
-              size={displayOptions.colorbar.size}
+
               stroke={displayOptions.colorbar.stroke}
               font={displayOptions.legend}
               pos={{

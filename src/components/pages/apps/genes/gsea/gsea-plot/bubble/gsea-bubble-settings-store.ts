@@ -9,7 +9,6 @@ import {
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { IDim } from '@/interfaces/dim'
-import { COLOR_BLACK } from '@/lib/color/color'
 import { ColorMapName } from '@/lib/color/colormap'
 import { ILim } from '@/lib/math/math'
 import { useCallback } from 'react'
@@ -84,8 +83,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
       ticks: [],
       tickLabels: [],
       tickSize: 4,
-      strokeWidth: 1,
-      color: COLOR_BLACK,
+      stroke: { ...DEFAULT_STROKE_PROPS },
       auto: true,
     },
     y: {

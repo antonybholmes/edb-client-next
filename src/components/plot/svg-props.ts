@@ -10,7 +10,7 @@ export type TopBottomPos = 'top' | 'bottom'
 export type LegendPos = 'right' | 'upper-right' | 'bottom'
 
 export interface IPaintProps {
-  show?: boolean | undefined
+  show: boolean
   value: string
   opacity: number
 }

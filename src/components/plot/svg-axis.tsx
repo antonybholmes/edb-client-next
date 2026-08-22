@@ -5,12 +5,65 @@ import { Axis } from './axis'
 import { SvgLine } from './svg-line'
 import {
   DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_STROKE_PROPS,
   DEFAULT_TEXT_PROPS,
+  IStrokeProps,
   type ITextProps,
 } from './svg-props'
 import { SvgText } from './svg-text'
 
-interface IAxisProps {
+interface IAxisLabel extends ITextProps {
+  offset: number
+}
+
+interface IAxisLineProps extends IStrokeProps {
+  size: number
+  offset: number
+}
+
+interface IAxisTickProps {
+  labels: IAxisLabel
+  line: IAxisLineProps
+}
+
+export interface IAxisDisplayProps {
+  title: IAxisLabel
+  ticks: {
+    major: IAxisTickProps
+    minor: IAxisTickProps
+  }
+}
+
+export const DEFAULT_AXIS_LABEL_PROPS: IAxisLabel = {
+  ...DEFAULT_TEXT_PROPS,
+  offset: 5,
+}
+
+export const DEFAULT_AXIS_LINE_PROPS: IAxisLineProps = {
+  ...DEFAULT_STROKE_PROPS,
+  size: 6,
+  offset: 1,
+}
+
+export const DEFAULT_AXIS_TICK_PROPS: IAxisTickProps = {
+  labels: { ...DEFAULT_AXIS_LABEL_PROPS },
+  line: { ...DEFAULT_AXIS_LINE_PROPS },
+}
+
+export const DEFAULT_MINOR_AXIS_TICK_PROPS: IAxisTickProps = {
+  ...DEFAULT_AXIS_TICK_PROPS,
+  line: { ...DEFAULT_AXIS_TICK_PROPS.line, size: 3 },
+}
+
+export const DEFAULT_AXIS_DISPLAY_PROPS: IAxisDisplayProps = {
+  title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 10 },
+  ticks: {
+    major: { ...DEFAULT_AXIS_TICK_PROPS },
+    minor: { ...DEFAULT_MINOR_AXIS_TICK_PROPS },
+  },
+}
+
+export interface IAxisProps {
   ax: Axis
   pos?: IPos
   font?: ITextProps

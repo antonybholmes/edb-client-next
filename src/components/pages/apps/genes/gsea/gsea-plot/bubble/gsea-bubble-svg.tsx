@@ -1,20 +1,19 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
-import { COLOR_BLACK } from '@/lib/color/color'
-
 import { AxisBottomSvg } from '../../../../../../plot/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
 
-import { VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { Axis } from '@/components/plot/axis'
+import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { IPos } from '@/interfaces/pos'
 import { ILim } from '@/lib/math/math'
@@ -47,8 +46,7 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
       ticks: [],
       tickLabels: [],
       tickSize: 4,
-      strokeWidth: 1,
-      color: COLOR_BLACK,
+      stroke: { ...DEFAULT_STROKE_PROPS },
     },
   },
 }
@@ -99,7 +97,7 @@ function GseaBubbleLegendSvg() {
                 {`-log10(${plot.log10q.label})`}
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
-                <VColorBarSvg
+                <SvgVColorBar
                   axis={new Axis()
                     .setDomain(settings.p.range)
                     .setLength(settings.colorbar.size.w)
@@ -112,9 +110,9 @@ function GseaBubbleLegendSvg() {
                       settings.p.range[1] * 0.25,
                       settings.p.range[1] * 0.75,
                     ])}
-                  showMinorTicks={settings.colorbar.showMinorTicks}
+
                   cmap={cmap}
-                  size={settings.colorbar.size}
+
                   // ticks={[
                   //   settings.p.range[0],
                   //   settings.p.range[1] / 2,
@@ -271,9 +269,9 @@ function GseaPlot({
           y: settings.plot.margin.top + innerPlotHeight,
         }}
         tickSize={settings.axes.x.tickSize}
-        strokeWidth={settings.axes.x.strokeWidth}
+        strokeWidth={settings.axes.x.stroke.width}
         title={plot.nes.label}
-        color={settings.axes.x.color}
+        color={settings.axes.x.stroke.value}
       />
     </>
   )

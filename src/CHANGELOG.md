@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Integration of centralized settings to control axis appearances.
 - Bug fixes and updates.
 
 

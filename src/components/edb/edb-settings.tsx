@@ -6,10 +6,11 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
 import type { IAppInfo } from '../../lib/app-info'
+import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-color-bar'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v42`
+const SETTINGS_KEY = `${config.appId}:settings:v44`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -54,6 +55,7 @@ export interface IEdbSettings {
     colors: {
       custom: { id: string; color: string; opacity: number }[]
     }
+    colorbar: IColorBarProps
   }
 }
 
@@ -99,7 +101,10 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   genomic: {
     assembly: 'grch37',
   },
-  plots: { colors: { custom: [] } },
+  plots: {
+    colors: { custom: [] },
+    colorbar: { ...DEFAULT_COLORBAR_PROPS },
+  },
 }
 
 export interface IEdbSettingsStore extends IEdbSettings {
