@@ -21,6 +21,7 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { useGseaSettings } from './gsea-settings-store'
@@ -28,6 +29,8 @@ import APP_INFO from './manifest.json'
 
 export function GseaPlotDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
+  const { settings: edbSettings, updateSettings: updateEdbSettings } =
+    useEdbSettings()
   const { open: openDialog } = useDialogs()
 
   return (
@@ -94,21 +97,21 @@ export function GseaPlotDisplayPropsPanel() {
                 fonts={[
                   {
                     title: 'Labels',
-                    textProps: settings.axes.labels,
+                    textProps: edbSettings.plots.axes.ticks.major.labels,
                     update: (f) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.axes.labels = f
+                      updateEdbSettings(
+                        produce(edbSettings, (draft) => {
+                          Object.assign(draft.plots.axes.ticks.major.labels, f)
                         })
                       ),
                   },
                   {
                     title: 'Ticks',
-                    textProps: settings.axes.ticks,
+                    textProps: edbSettings.plots.axes.ticks.major.labels,
                     update: (f) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.axes.ticks = f
+                      updateEdbSettings(
+                        produce(edbSettings, (draft) => {
+                          Object.assign(draft.plots.axes.ticks.major.labels, f)
                         })
                       ),
                   },

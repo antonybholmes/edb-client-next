@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v40`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v42`
 
 import {
   DEFAULT_BOLD_FONT_PROPS,
@@ -41,15 +41,15 @@ export interface IGseaDisplayProps {
     invert: boolean
   }
   axes: {
-    show: boolean
-    labels: ITextProps
-    ticks: ITextProps
+    //show: boolean
+    //labels: ITextProps
+    //ticks: ITextProps
     x: {
       length: number
-      labels: {
-        rotate: boolean
-        truncate: number
-      }
+      // labels: {
+      //   rotate: boolean
+      //   truncate: number
+      // }
     }
   }
   genes: {
@@ -123,7 +123,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   },
 
   title: {
-    offset: 20,
+    offset: 10,
     ...DEFAULT_BOLD_TEXT_PROPS,
     font: {
       ...DEFAULT_BOLD_FONT_PROPS,
@@ -139,14 +139,14 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     },
   },
   axes: {
-    show: true,
-    labels: { ...DEFAULT_BOLD_TEXT_PROPS },
-    ticks: { ...DEFAULT_TEXT_PROPS },
+    //show: true,
+    //labels: { ...DEFAULT_BOLD_TEXT_PROPS },
+    //ticks: { ...DEFAULT_TEXT_PROPS },
     x: {
-      labels: {
-        rotate: false,
-        truncate: -2,
-      },
+      // labels: {
+      //   rotate: false,
+      //   truncate: -2,
+      // },
       length: 220,
     },
   },

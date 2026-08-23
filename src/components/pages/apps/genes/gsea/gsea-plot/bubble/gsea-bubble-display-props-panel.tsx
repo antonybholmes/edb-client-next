@@ -25,7 +25,7 @@ import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
 import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
-import { TickPropsPanel } from './tick-props-panel'
+import { TickPropsPopover } from './tick-props-popover'
 
 export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
@@ -102,13 +102,9 @@ export function GseaBubbleDisplayPropsPanel() {
 
               <MarginPopover />
             </PropRow>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="ticks">
-          <AccordionTrigger>Ticks</AccordionTrigger>
-          <AccordionContent>
-            <TickPropsPanel />
+            <PropRow title="Axes">
+              <TickPropsPopover />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 

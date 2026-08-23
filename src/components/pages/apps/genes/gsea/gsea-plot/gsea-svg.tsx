@@ -12,6 +12,7 @@ import type { ISVGProps } from '@/interfaces/svg-props'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { SvgText } from '@/components/plot/svg-text'
 import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
@@ -299,6 +300,7 @@ function EsSvg({
   yax: YAxis
 }) {
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
   const { phenotypes } = useGsea()
   const nes = settings.phenotypes.invert ? -pathway.nes : pathway.nes
 
@@ -360,30 +362,23 @@ function EsSvg({
         s={settings.es.line}
       />
 
-      {settings.axes.show && (
-        <AxisLeftSvg
-          ax={yax}
-          title="ES"
-          font={settings.axes.ticks}
-          labelFont={settings.axes.labels}
-        />
-      )}
+      {edbSettings.plots.axes.show && (
+        <>
+          <AxisLeftSvg ax={yax} title="ES" />
 
-      {settings.axes.show && (
-        <g transform={`translate(0, ${yax.domainToRange(0)})`}>
-          <AxisBottomSvg
-            ax={xax}
-            showTicks={settings.es.axes.x.showTicks}
-            font={settings.axes.ticks}
-            labelFont={settings.axes.labels}
-          />
-        </g>
+          <g transform={`translate(0, ${yax.domainToRange(0)})`}>
+            <AxisBottomSvg ax={xax} showTicks={settings.es.axes.x.showTicks} />
+          </g>
+        </>
       )}
 
       <g
         transform={`translate(${settings.axes.x.length + settings.plot.gap.x / 4}, ${yax.domainToRange(0)})`}
       >
-        <SvgText dominantBaseline="central" font={settings.axes.ticks}>
+        <SvgText
+          dominantBaseline="central"
+          font={edbSettings.plots.axes.ticks.major.labels}
+        >
           {sortedRankedGenes.length.toLocaleString()}
         </SvgText>
       </g>
@@ -635,6 +630,7 @@ function RankingSvg({
   pos: IPos
 }) {
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const yMin = Math.min(...sortedRankedGenes.map((e) => e.score))
   const yMax = Math.max(...sortedRankedGenes.map((e) => e.score))
@@ -682,20 +678,16 @@ function RankingSvg({
           <g
             transform={`translate(0, ${settings.ranking.axes.y.length + settings.plot.gap.y})`}
           >
-            <SvgText textAnchor="middle" font={settings.axes.ticks}>
+            <SvgText
+              textAnchor="middle"
+              font={edbSettings.plots.axes.ticks.major.labels}
+            >
               Zero cross at {crossing.index.toLocaleString()}
             </SvgText>
           </g>
         </g>
       )}
-      {settings.axes.show && (
-        <AxisLeftSvg
-          ax={yax}
-          title="SNR"
-          labelFont={settings.axes.labels}
-          font={settings.axes.ticks}
-        />
-      )}
+      {edbSettings.plots.axes.show && <AxisLeftSvg ax={yax} title="SNR" />}
     </g>
   )
 }

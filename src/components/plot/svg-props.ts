@@ -190,6 +190,7 @@ export interface IMajorMinorTickProps {
 }
 
 export interface IAxisDisplayProps {
+  show: boolean
   title: IAxisLabelProps
   line: IStrokeProps
   ticks: IMajorMinorTickProps
@@ -197,7 +198,7 @@ export interface IAxisDisplayProps {
 
 export const DEFAULT_AXIS_LABEL_PROPS: IAxisLabelProps = {
   ...DEFAULT_TEXT_PROPS,
-  offset: 5,
+  offset: 4,
 }
 
 export const DEFAULT_AXIS_LINE_PROPS: IAxisLineProps = {
@@ -219,7 +220,8 @@ export const DEFAULT_MINOR_AXIS_TICK_PROPS: IAxisTickProps = {
 }
 
 export const DEFAULT_AXIS_DISPLAY_PROPS: IAxisDisplayProps = {
-  title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 25 },
+  show: true,
+  title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 30 },
   line: { ...DEFAULT_STROKE_PROPS },
   ticks: {
     major: { ...DEFAULT_AXIS_TICK_PROPS },

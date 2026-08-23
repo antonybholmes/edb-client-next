@@ -16,6 +16,7 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 import { Axis } from '@/components/plot/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
+import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
 import { ILim } from '@/lib/math/math'
 import type { ITooltip } from '../../../../matcalc/apps/heatmap/heatmap-svg'
@@ -246,7 +247,7 @@ function BubblePlot({
       {settings.border.show && (
         <SvgMargin margin={settings.plot.margin}>
           <SvgRect
-            shapeRendering="crispEdges"
+            shapeRendering={SVG_CRISP_EDGES}
             width={innerPlotWidth}
             height={innerPlotHeight}
             stroke={settings.border.value}
