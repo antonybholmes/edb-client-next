@@ -91,9 +91,6 @@ function GseaBubbleLegendSvg() {
     .setTickParams({
       which: 'major',
       show: edbSettings.plots.axes.ticks.major.show,
-      line: {
-        offset: 20,
-      },
     })
     .setTickParams({
       which: 'minor',
@@ -261,7 +258,7 @@ function BubblePlot({
 
       {settings.title.show && plot.name && (
         <g
-          transform={`translate(${settings.plot.margin.left + innerPlotWidth / 2}, ${settings.plot.margin.top - 10})`}
+          transform={`translate(${settings.plot.margin.left + innerPlotWidth / 2}, ${settings.plot.margin.top - settings.padding * 1.5})`}
         >
           <SvgText textAnchor="middle" fontWeight="bold">
             {plot.name}
@@ -410,7 +407,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
           ))}
 
           <g
-            transform={`translate(${settings.margin.left + innerWidth + settings.padding * 5}, ${settings.margin.top})`}
+            transform={`translate(${settings.margin.left + innerWidth + settings.padding * 3.5}, ${settings.margin.top + settings.padding})`}
           >
             <GseaBubbleLegendSvg />
           </g>
@@ -418,6 +415,10 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
       </SvgBase>
     )
   }, [plots, points, settings])
+
+  if (plots.length === 0) {
+    return null
+  }
 
   return (
     <>

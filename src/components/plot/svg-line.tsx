@@ -1,8 +1,9 @@
 import type { IStrokeProps } from '@/components/plot/svg-props'
+import { DeepPartial } from '@/lib/utils'
 import type { SVGProps } from 'react'
 
 interface ISvgLineProps extends SVGProps<SVGLineElement> {
-  s?: IStrokeProps | undefined
+  s?: DeepPartial<IStrokeProps> | undefined
 }
 
 /**

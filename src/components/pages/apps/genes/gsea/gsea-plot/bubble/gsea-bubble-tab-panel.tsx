@@ -33,10 +33,6 @@ export function GseaBubbleTabPanel({
       .filter((bubble) => bubble.genesets.length > 0)
   }, [inUseReports, phenotypesFilter])
 
-  if (bubblePlots.length === 0) {
-    return null
-  }
-
   return (
     <ExtScrollCard className="px-2 pb-2">
       <GseaBubbleProvider plots={bubblePlots}>

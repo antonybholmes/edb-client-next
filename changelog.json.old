@@ -2508,6 +2508,10 @@
         {
           "msg": "Some axes now correctly respond to tick props panel changes",
           "date": "2026-08-22T19:17:48.402Z"
+        },
+        {
+          "msg": "Added deepmerge to unify axis edb settings and settings in axis with axis obj taking priority if props are present so we can have unified axes, but optionally customize them adhoc as needed",
+          "date": "2026-08-23T00:02:00.636Z"
         }
       ]
     },
