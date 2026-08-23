@@ -4,8 +4,8 @@ import { useMemo } from 'react'
 import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { Axis, YAxis, type TickLabel } from './axis'
-import { AxisBottomSvg, AxisLeftSvg } from './svg-axis'
+import { Axis, YAxis, type TickLabel } from './axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from './axis/svg-axis'
 import { SvgVColorBar } from './svg-color-bar'
 
 import type { ISVGProps } from '@/interfaces/svg-props'

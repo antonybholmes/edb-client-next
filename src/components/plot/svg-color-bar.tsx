@@ -3,9 +3,10 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { range } from '@/lib/math/range'
 import { useEdbSettings } from '../edb/edb-settings'
-import { Axis, YAxis } from './axis'
+import { Axis, YAxis } from './axis/axis'
 
-import { AxisBottomTicksSvg, AxisRightTicksSvg } from './svg-axis-ticks'
+import { AxisRightSvg } from './axis/svg-axis'
+import { AxisBottomTicksSvg } from './axis/svg-axis-ticks'
 import { SvgRect } from './svg-rect'
 
 interface ISvgColorBarProps {
@@ -128,7 +129,7 @@ export function SvgVColorBar({
         {range(steps).map((step) => {
           colorStart += colorStep
 
-          y2 -= step < steps - 1 ? yinc : 0 //const y2 = axis.domainToRange(start)
+          y2 -= step < steps - 1 ? yinc : 0
 
           return (
             <SvgRect
@@ -145,14 +146,14 @@ export function SvgVColorBar({
           <SvgRect
             width={settings.plots.colorbar.size.h}
             height={ax.length}
-
             sp={settings.plots.colorbar.stroke}
+            shapeRendering={SVG_CRISP_EDGES}
           />
         )}
       </g>
 
       <g transform={`translate(${settings.plots.colorbar.size.h}, 0)`}>
-        <AxisRightTicksSvg ax={ax} />
+        <AxisRightSvg ax={ax} />
       </g>
     </g>
   )

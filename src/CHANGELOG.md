@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Greater integration of axis and settings properties. Axis props now optional and only override global settings if present.
 - Added deepmerge to unify axis edb settings and settings in axis with axis obj taking priority if props are present so we can have unified axes, but optionally customize them adhoc as needed.
 - Some axes now correctly respond to tick props panel changes.
 - Axis now has proper tick params to control when shown.

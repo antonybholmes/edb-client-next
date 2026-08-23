@@ -1,7 +1,7 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { type Axis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { type Axis } from '@/components/plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { Axis, YAxis } from '@/components/plot/axis'
+import { Axis, YAxis } from '@/components/plot/axis/axis'
 import {
   DEFAULT_COLOR_PROPS,
   NO_STROKE_PROPS,

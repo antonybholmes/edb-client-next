@@ -9,10 +9,9 @@ import type { IAppInfo } from '../../lib/app-info'
 
 import {
   DEFAULT_AXIS_DISPLAY_PROPS,
-  DEFAULT_COLORBAR_PROPS,
-  IAxisDisplayProps,
-  IColorBarProps,
-} from '../plot/svg-props'
+  IXYAxisDisplayProps,
+} from '../plot/axis/svg-axis-props'
+import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
@@ -62,7 +61,7 @@ export interface IEdbSettings {
       custom: { id: string; color: string; opacity: number }[]
     }
     colorbar: IColorBarProps
-    axes: IAxisDisplayProps
+    axes: IXYAxisDisplayProps
   }
 }
 
@@ -111,7 +110,10 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   plots: {
     colors: { custom: [] },
     colorbar: { ...DEFAULT_COLORBAR_PROPS },
-    axes: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+    axes: {
+      x: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+      y: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+    },
   },
 }
 

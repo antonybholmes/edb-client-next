@@ -2,65 +2,104 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
+import { TEXT_SHOW } from '@/consts'
+import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
-import { Move3d } from 'lucide-react'
+import { MoveRight, MoveUp } from 'lucide-react'
 import { useState } from 'react'
 
-export function TickPropsPopover() {
+export function TickPropsPopover({
+  axis,
+  which,
+}: {
+  axis: 'x' | 'y'
+  which: 'major' | 'minor'
+}) {
   const { settings, updateSettings } = useEdbSettings()
   const [open, setOpen] = useState(false)
+
+  const title = `${capitalCase(which)} ${capitalCase(axis)}-Axis`
+
+  const icon =
+    axis === 'x' ? (
+      <MoveUp size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
+    ) : (
+      <MoveRight size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
+    )
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         className="text-foreground/70 hover:text-foreground data-pressed:text-foreground"
-        title="Tick Properties"
+        title={`${title} Tick Properties`}
       >
-        <Move3d size={18} strokeWidth={1.5} />
+        {icon}
       </PopoverTrigger>
       <PopoverContent className="gap-y-1">
         <CheckPropRow
-          className="font-bold"
-          title="Major"
-          checked={settings.plots.axes.ticks.major.show}
+          title={title}
+          checked={settings.plots.axes[axis].ticks[which].show}
           onCheckedChange={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.plots.axes.ticks.major.show = v
+                draft.plots.axes[axis].ticks[which].show = v
               })
             )
           }}
         />
+        <PropRow title="Labels">
+          <FontPopover
+            fonts={[
+              {
+                title: TEXT_SHOW,
+                textProps: settings.plots.axes[axis].ticks[which].labels,
+                showRotation: true,
+                update: (f) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plots.axes[axis].ticks[which].labels =
+                        Object.assign(
+                          draft.plots.axes[axis].ticks[which].labels,
+                          f
+                        )
+                    })
+                  ),
+              },
+            ]}
+          />
+        </PropRow>
+
         <PropRow title="Size / Offset">
           <NumericalInput
             title="Size"
 
-            value={settings.plots.axes.ticks.major.line.size}
+            value={settings.plots.axes[axis].ticks[which].line.size}
 
             limit={[1, 1000]}
             dp={0}
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.plots.axes.ticks.major.line.size = v
+                  draft.plots.axes[axis].ticks[which].line.size = v
                 })
               )
             }}
           />
 
           <NumericalInput
-            value={settings.plots.axes.ticks.major.line.offset}
+            value={settings.plots.axes[axis].ticks[which].line.offset}
             title="Offset"
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.plots.axes.ticks.major.line.offset = v
+                  draft.plots.axes[axis].ticks[which].line.offset = v
                 })
               )
             }}
@@ -68,70 +107,12 @@ export function TickPropsPopover() {
         </PropRow>
 
         <NumericalPropRow
-          value={settings.plots.axes.ticks.major.labels.offset}
+          value={settings.plots.axes[axis].ticks[which].labels.offset}
           title="Label Offset"
           onNumChanged={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.plots.axes.ticks.major.labels.offset = v
-              })
-            )
-          }}
-        />
-
-        <LineSeparator />
-
-        <CheckPropRow
-          title="Minor"
-          className="font-bold"
-          checked={settings.plots.axes.ticks.minor.show}
-          onCheckedChange={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                console.log('mmmm2', v)
-                draft.plots.axes.ticks.minor.show = v
-              })
-            )
-          }}
-        />
-
-        <PropRow title="Size / Offset">
-          <NumericalInput
-            title="Size"
-
-            value={settings.plots.axes.ticks.minor.line.size}
-
-            limit={[1, 1000]}
-            dp={0}
-            onNumChanged={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.plots.axes.ticks.minor.line.size = v
-                })
-              )
-            }}
-          />
-
-          <NumericalInput
-            value={settings.plots.axes.ticks.minor.line.offset}
-            title="Offset"
-            onNumChanged={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.plots.axes.ticks.minor.line.offset = v
-                })
-              )
-            }}
-          />
-        </PropRow>
-
-        <NumericalPropRow
-          value={settings.plots.axes.ticks.minor.labels.offset}
-          title="Label Offset"
-          onNumChanged={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.plots.axes.ticks.minor.labels.offset = v
+                draft.plots.axes[axis].ticks[which].labels.offset = v
               })
             )
           }}

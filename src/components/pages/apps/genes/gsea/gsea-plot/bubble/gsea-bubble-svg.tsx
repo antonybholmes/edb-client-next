@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
-import { AxisBottomSvg } from '../../../../../../plot/svg-axis'
+import { AxisBottomSvg } from '../../../../../../plot/axis/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -13,7 +13,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { Axis } from '@/components/plot/axis'
+import { Axis } from '@/components/plot/axis/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
@@ -91,11 +91,11 @@ function GseaBubbleLegendSvg() {
     .setMinorTicks([settings.p.range[1] * 0.25, settings.p.range[1] * 0.75])
     .setTickParams({
       which: 'major',
-      show: edbSettings.plots.axes.ticks.major.show,
+      show: edbSettings.plots.axes.x.ticks.major.show,
     })
     .setTickParams({
       which: 'minor',
-      show: edbSettings.plots.axes.ticks.minor.show,
+      show: edbSettings.plots.axes.x.ticks.minor.show,
     })
 
   return (
@@ -191,6 +191,8 @@ function BubblePlot({
 
   const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
 
+  console.log('cheese', edbSettings.plots.axes.x)
+
   // offer per plot x-axis domain
   const xax = new Axis()
     .autoDomain(domain)
@@ -198,11 +200,11 @@ function BubblePlot({
     .setLength(settings.axes.x.length)
     .setTickParams({
       which: 'major',
-      show: edbSettings.plots.axes.ticks.major.show,
+      show: edbSettings.plots.axes.x.ticks.major.show,
     })
     .setTickParams({
       which: 'minor',
-      show: edbSettings.plots.axes.ticks.minor.show,
+      show: edbSettings.plots.axes.x.ticks.minor.show,
     })
 
   return (
@@ -237,7 +239,12 @@ function BubblePlot({
           const y1 = p.y * settings.axes.y.rowHeight
 
           return (
-            <SvgText key={xi} y={y1} textAnchor="end">
+            <SvgText
+              key={xi}
+              y={y1}
+              textAnchor="end"
+              font={edbSettings.plots.axes.y.ticks.major.labels}
+            >
               {p.label}
             </SvgText>
           )
@@ -267,16 +274,18 @@ function BubblePlot({
         </g>
       )}
 
-      <AxisBottomSvg
-        ax={xax}
+      {edbSettings.plots.axes.x.show && (
+        <AxisBottomSvg
+          ax={xax}
 
-        pos={{
-          x: settings.plot.margin.left,
-          y: settings.plot.margin.top + innerPlotHeight,
-        }}
+          pos={{
+            x: settings.plot.margin.left,
+            y: settings.plot.margin.top + innerPlotHeight,
+          }}
 
-        title={plot.nes.label}
-      />
+          title={plot.nes.label}
+        />
+      )}
     </>
   )
 }

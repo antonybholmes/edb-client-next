@@ -3,8 +3,8 @@ import { DeepPartial, definedProps } from '@/lib/utils'
 import * as d3 from 'd3'
 import { type ScaleLinear } from 'd3'
 import { deepmerge } from 'deepmerge-ts'
-import { produce } from 'immer'
-import { IAxisTickProps } from './svg-props'
+import { IAxisDisplayProps, IAxisTickProps } from './svg-axis-props'
+
 export type TickLabel = string | number
 
 const MINOR_TICK_MULTIPLIER = 5
@@ -44,16 +44,13 @@ export class Axis {
 
   protected _numTicks: number = 5
 
-  protected _tickParams: IMajorMinorTickParams = {
-    major: {
-      show: true,
-      line: { show: true },
-      labels: { show: true },
-    },
-    minor: {
-      show: false,
-      line: { show: true },
-      labels: { show: false },
+  protected _params: DeepPartial<IAxisDisplayProps> = {
+    //show: true,
+    title: {},
+    line: {},
+    ticks: {
+      major: {},
+      minor: {},
     },
   }
 
@@ -114,7 +111,7 @@ export class Axis {
     target._format = this._format
     target._numTicks = this._numTicks
     target._userFormat = this._userFormat
-    target._tickParams = { ...this._tickParams }
+    target._params = structuredClone(this._params)
 
     if (this._ticks) {
       target._ticks = [...this._ticks]
@@ -166,18 +163,22 @@ export class Axis {
     const props = definedProps({ show, line, labels })
 
     if (which === 'major' || which === 'both') {
-      a._tickParams.major = deepmerge(a._tickParams.major, props)
+      a._params.ticks.major = deepmerge(a._params.ticks.major, props)
     }
 
     if (which === 'minor' || which === 'both') {
-      a._tickParams.minor = deepmerge(a._tickParams.minor, props)
+      a._params.ticks.minor = deepmerge(a._params.ticks.minor, props)
     }
 
     return a
   }
 
-  get tickParams(): IMajorMinorTickParams {
-    return this._tickParams
+  get params(): DeepPartial<IAxisDisplayProps> {
+    return this._params
+  }
+
+  get tickParams(): DeepPartial<IMajorMinorTickParams> {
+    return this._params.ticks
   }
 
   /**
@@ -265,9 +266,9 @@ export class Axis {
     a._minorTicks = a._makeTicks(ticks, false)
 
     // turn on minor ticks if they are set
-    a._tickParams = produce(a._tickParams, (draft) => {
-      draft.minor.show = a._minorTicks.length > 0
-    })
+    // we can directly set in partial object
+    // as show key will be created if it does not exist
+    a._params.ticks.minor.show = a._minorTicks.length > 0
 
     return a
   }

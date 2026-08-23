@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
@@ -88,7 +88,7 @@ export function GseaSvg({ ref }: ISVGProps) {
     let xax = new Axis()
       .setDomain([0, maxRank])
       .setLength(settings.axes.x.length)
-      .setTickParams({ which: 'major', show: false })
+      .setTickParams({ which: 'both', show: false })
 
     xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -107,7 +107,10 @@ export function GseaSvg({ ref }: ISVGProps) {
       Math.max(...es.map((e) => e.score)),
     ]
 
-    let yax = new YAxis().autoDomain(ylim).setLength(settings.es.axes.y.length)
+    let yax = new YAxis()
+      .autoDomain(ylim)
+      .setLength(settings.es.axes.y.length)
+      .setTickParams({ which: 'minor', show: false })
 
     const points: IPos[] = es.map((e) => ({
       x: xax.domainToRange(e.rank),
@@ -362,14 +365,12 @@ function EsSvg({
         s={settings.es.line}
       />
 
-      {edbSettings.plots.axes.show && (
-        <>
-          <AxisLeftSvg ax={yax} title="ES" />
+      {edbSettings.plots.axes.y.show && <AxisLeftSvg ax={yax} title="ES" />}
 
-          <g transform={`translate(0, ${yax.domainToRange(0)})`}>
-            <AxisBottomSvg ax={xax} showTicks={settings.es.axes.x.showTicks} />
-          </g>
-        </>
+      {edbSettings.plots.axes.x.show && (
+        <g transform={`translate(0, ${yax.domainToRange(0)})`}>
+          <AxisBottomSvg ax={xax} showTicks={settings.es.axes.x.showTicks} />
+        </g>
       )}
 
       <g
@@ -377,7 +378,7 @@ function EsSvg({
       >
         <SvgText
           dominantBaseline="central"
-          font={edbSettings.plots.axes.ticks.major.labels}
+          font={edbSettings.plots.axes.x.ticks.major.labels}
         >
           {sortedRankedGenes.length.toLocaleString()}
         </SvgText>
@@ -639,6 +640,7 @@ function RankingSvg({
     .autoDomain([yMin, yMax])
     //.setDomain([0, plot.dna.seq.length])
     .setLength(settings.ranking.axes.y.length)
+    .setTickParams({ which: 'minor', show: false })
 
   const y0 = yax.domainToRange(0)
 
@@ -680,14 +682,14 @@ function RankingSvg({
           >
             <SvgText
               textAnchor="middle"
-              font={edbSettings.plots.axes.ticks.major.labels}
+              font={edbSettings.plots.axes.x.ticks.major.labels}
             >
               Zero cross at {crossing.index.toLocaleString()}
             </SvgText>
           </g>
         </g>
       )}
-      {edbSettings.plots.axes.show && <AxisLeftSvg ax={yax} title="SNR" />}
+      <AxisLeftSvg ax={yax} title="SNR" />
     </g>
   )
 }

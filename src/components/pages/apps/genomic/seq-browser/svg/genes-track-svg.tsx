@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import type { Axis } from '@/components/plot/axis'
+import type { Axis } from '@/components/plot/axis/axis'
 
 import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'

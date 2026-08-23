@@ -13,24 +13,24 @@ export function TickPropsPanel() {
     <>
       <CheckPropRow
         title="Major"
-        checked={settings.plots.axes.ticks.major.show}
+        checked={settings.plots.axes.x.ticks.major.show}
         onCheckedChange={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.ticks.major.show = v
+              draft.plots.axes.x.ticks.major.show = v
             })
           )
         }}
       >
         <NumericalInput
-          value={settings.plots.axes.ticks.major.line.size}
+          value={settings.plots.axes.x.ticks.major.line.size}
 
           limit={[1, 1000]}
           dp={0}
           onNumChanged={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.plots.axes.ticks.major.line.size = v
+                draft.plots.axes.x.ticks.major.line.size = v
               })
             )
           }}
@@ -38,24 +38,24 @@ export function TickPropsPanel() {
       </CheckPropRow>
 
       <NumericalPropRow
-        value={settings.plots.axes.ticks.major.line.offset}
+        value={settings.plots.axes.x.ticks.major.line.offset}
         title="Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.ticks.major.line.offset = v
+              draft.plots.axes.x.ticks.major.line.offset = v
             })
           )
         }}
       />
 
       <NumericalPropRow
-        value={settings.plots.axes.ticks.major.labels.offset}
+        value={settings.plots.axes.x.ticks.major.labels.offset}
         title="Label Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.ticks.major.labels.offset = v
+              draft.plots.axes.x.ticks.major.labels.offset = v
             })
           )
         }}
@@ -65,25 +65,25 @@ export function TickPropsPanel() {
 
       <CheckPropRow
         title="Minor"
-        checked={settings.plots.axes.ticks.minor.show}
+        checked={settings.plots.axes.x.ticks.minor.show}
         onCheckedChange={(v) => {
           updateSettings(
             produce(settings, (draft) => {
               console.log('mmmm2', v)
-              draft.plots.axes.ticks.minor.show = v
+              draft.plots.axes.x.ticks.minor.show = v
             })
           )
         }}
       >
         <NumericalInput
-          value={settings.plots.axes.ticks.minor.line.size}
+          value={settings.plots.axes.x.ticks.minor.line.size}
 
           limit={[1, 1000]}
           dp={0}
           onNumChanged={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.plots.axes.ticks.minor.line.size = v
+                draft.plots.axes.x.ticks.minor.line.size = v
               })
             )
           }}
@@ -91,24 +91,24 @@ export function TickPropsPanel() {
       </CheckPropRow>
 
       <NumericalPropRow
-        value={settings.plots.axes.ticks.minor.line.offset}
+        value={settings.plots.axes.x.ticks.minor.line.offset}
         title="Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.ticks.minor.line.offset = v
+              draft.plots.axes.x.ticks.minor.line.offset = v
             })
           )
         }}
       />
 
       <NumericalPropRow
-        value={settings.plots.axes.ticks.minor.labels.offset}
+        value={settings.plots.axes.x.ticks.minor.labels.offset}
         title="Label Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.ticks.minor.labels.offset = v
+              draft.plots.axes.x.ticks.minor.labels.offset = v
             })
           )
         }}

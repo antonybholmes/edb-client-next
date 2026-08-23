@@ -24,6 +24,7 @@ import { produce } from 'immer'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { AxesPropsPopover } from './bubble/axes-props-popover'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 
@@ -93,30 +94,38 @@ export function GseaPlotDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Axes">
-              <FontPopover
+              <AxesPropsPopover />
+
+              {/* <FontPopover
                 fonts={[
                   {
                     title: 'Labels',
-                    textProps: edbSettings.plots.axes.ticks.major.labels,
+                    textProps: edbSettings.plots.axes.x.ticks.major.labels,
                     update: (f) =>
                       updateEdbSettings(
                         produce(edbSettings, (draft) => {
-                          Object.assign(draft.plots.axes.ticks.major.labels, f)
+                          Object.assign(
+                            draft.plots.axes.x.ticks.major.labels,
+                            f
+                          )
                         })
                       ),
                   },
                   {
                     title: 'Ticks',
-                    textProps: edbSettings.plots.axes.ticks.major.labels,
+                    textProps: edbSettings.plots.axes.x.ticks.major.labels,
                     update: (f) =>
                       updateEdbSettings(
                         produce(edbSettings, (draft) => {
-                          Object.assign(draft.plots.axes.ticks.major.labels, f)
+                          Object.assign(
+                            draft.plots.axes.x.ticks.major.labels,
+                            f
+                          )
                         })
                       ),
                   },
                 ]}
-              />
+              /> */}
             </PropRow>
             <CheckPropRow
               title="Invert Phenotypes"

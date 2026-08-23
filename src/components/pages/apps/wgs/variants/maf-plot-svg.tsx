@@ -1,5 +1,5 @@
-import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgPath } from '@/components/plot/svg-path'
 import { SvgText } from '@/components/plot/svg-text'

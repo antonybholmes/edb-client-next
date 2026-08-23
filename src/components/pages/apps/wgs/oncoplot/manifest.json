@@ -2,9 +2,9 @@
   "name": "Oncoplot",
   "description": "Create oncoplots.",
   "color": "#ff99cc",
-  "version": "30.0.2",
+  "version": "30.0.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-08-18T23:14:00.697Z",
-  "hash": "62a562501f40398aee233d7316e23053c99c7ceffc562dee6bb3d4955b6cfb2d",
-  "build": 1098
+  "modified": "2026-08-23T23:39:56.589Z",
+  "hash": "e0e9983eab227e8364f3c24753563f4f4db9537f06c6430dbcfd9e540bfb1b13",
+  "build": 1100
 }
