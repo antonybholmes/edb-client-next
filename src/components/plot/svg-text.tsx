@@ -2,11 +2,12 @@ import {
   DEFAULT_TEXT_PROPS,
   type ITextProps,
 } from '@/components/plot/svg-props'
+import { DeepPartial } from '@/lib/utils'
 import type { SVGProps } from 'react'
 import { getFontFamilies } from './svg-base'
 
 export interface ISvgTextProps extends SVGProps<SVGTextElement> {
-  font?: ITextProps | undefined
+  font?: DeepPartial<ITextProps> | undefined
 }
 
 /**

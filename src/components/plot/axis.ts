@@ -1,8 +1,10 @@
 import type { ILim } from '@/lib/math/math'
-import { definedProps } from '@/lib/utils'
-import type { ScaleLinear } from 'd3'
+import { DeepPartial, definedProps } from '@/lib/utils'
 import * as d3 from 'd3'
+import { type ScaleLinear } from 'd3'
+import { deepmerge } from 'deepmerge-ts'
 import { produce } from 'immer'
+import { IAxisTickProps } from './svg-props'
 export type TickLabel = string | number
 
 const MINOR_TICK_MULTIPLIER = 5
@@ -12,18 +14,12 @@ export type TickItem = {
   label: string
 }
 
-interface ITickParams {
-  show: boolean
-  line: { show: boolean }
-  labels: { show: boolean }
-}
-
 interface IMajorMinorTickParams {
-  major: ITickParams
-  minor: ITickParams
+  major: DeepPartial<IAxisTickProps>
+  minor: DeepPartial<IAxisTickProps>
 }
 
-interface ITickProps extends ITickParams {
+interface ITickProps extends DeepPartial<IAxisTickProps> {
   which: 'major' | 'minor' | 'both'
 }
 
@@ -61,6 +57,15 @@ export class Axis {
     },
   }
 
+  private _makeFormatter(n: number): (d: d3.NumberValue) => string {
+    if (!this._format) {
+      // auto format the ticks if not set
+      this._format = this._scale.tickFormat(n, 'f') //  d3.format('.2f')
+    }
+
+    return this._format
+  }
+
   private _makeTicks(
     ticks: number[] | string[] | TickItem[],
     addLabels: boolean = true
@@ -69,14 +74,9 @@ export class Axis {
       return []
     }
 
-    if (!this._format) {
-      // auto format the ticks if not set
-      this._format = this._scale.tickFormat(ticks.length, 'f') //  d3.format('.2f')
-    }
-
-    const format = this._userFormat ? this._userFormat : this._format
-
     if (ticks.every((item) => typeof item === 'number')) {
+      const format = this._makeFormatter(ticks.length) ?? this._format
+
       // if ticks are just numbers, convert to TickItem
       return ticks.map((v) => ({
         v,
@@ -159,21 +159,18 @@ export class Axis {
   }
 
   setTickParams(ticks: Partial<ITickProps> = {}): Axis {
-    const { show, line, labels: label, which = 'both' } = ticks
+    const { show, line, labels, which = 'both' } = ticks
 
     const a = this.clone()
 
-    const props = definedProps({ show, line, label })
+    const props = definedProps({ show, line, labels })
 
     if (which === 'major' || which === 'both') {
-      a._tickParams.major = {
-        ...a._tickParams.major,
-        ...props,
-      }
+      a._tickParams.major = deepmerge(a._tickParams.major, props)
     }
 
     if (which === 'minor' || which === 'both') {
-      a._tickParams.minor = { ...a._tickParams.minor, ...props }
+      a._tickParams.minor = deepmerge(a._tickParams.minor, props)
     }
 
     return a
@@ -181,6 +178,21 @@ export class Axis {
 
   get tickParams(): IMajorMinorTickParams {
     return this._tickParams
+  }
+
+  /**
+   * Invalidate the cached ticks and formatters. This is called
+   * when the domain or range changes, so that the ticks can be
+   * recalculated. This is an internal method and should not be
+   * called directly. It is called automatically when the
+   * domain or range changes.
+   *
+   * @private
+   */
+  private _invalidateCache() {
+    this._ticks = undefined
+    this._minorTicks = undefined
+    this._format = undefined
   }
 
   /**
@@ -194,9 +206,7 @@ export class Axis {
     const a = this.clone()
 
     a._scale = d3.scaleLinear().domain(lim).range([0, a._scale.range()[1]!])
-    a._ticks = undefined
-    a._minorTicks = undefined
-    a._format = undefined // reset the format so that it will be auto generated for the new domain
+    a._invalidateCache()
 
     return a
   }
@@ -213,6 +223,7 @@ export class Axis {
     const a = this.clone()
 
     a._scale = d3.scaleLinear().domain(a._scale.domain()).range(lim)
+    a._invalidateCache()
 
     return a
   }
@@ -243,11 +254,7 @@ export class Axis {
   setTicks(ticks: number[] | string[] | TickItem[]): Axis {
     const a = this.clone()
 
-    a._ticks = this._makeTicks(ticks)
-
-    //const tickSet = new Set(this.ticks.map((t) => t.v))
-
-    //a._minorTicks = a.minorTicks //.filter((t) => !tickSet.has(t.v))
+    a._ticks = a._makeTicks(ticks)
 
     return a
   }
@@ -255,9 +262,7 @@ export class Axis {
   setMinorTicks(ticks: number[] | string[] | TickItem[]): Axis {
     const a = this.clone()
 
-    //const tickSet = new Set(this.ticks.map((t) => t.v))
-
-    a._minorTicks = this._makeTicks(ticks, false)
+    a._minorTicks = a._makeTicks(ticks, false)
 
     // turn on minor ticks if they are set
     a._tickParams = produce(a._tickParams, (draft) => {
@@ -292,9 +297,11 @@ export class Axis {
   }
 
   private generateTicks(n: number): TickItem[] {
+    const format = this._makeFormatter(n) ?? this._format
+
     const ticks = this._scale.ticks(n).map((v) => ({
       v,
-      label: this._scale.tickFormat?.()(v) ?? v.toString(),
+      label: format?.(v) ?? v.toString(),
     }))
 
     return ticks
@@ -304,10 +311,6 @@ export class Axis {
     if (!this._ticks) {
       // if ticks are not set, generate them from the scale
       this._ticks = this.generateTicks(this._numTicks)
-
-      const tickSet = new Set(this._ticks.map((t) => t.v))
-
-      this._minorTicks = this.minorTicks.filter((t) => !tickSet.has(t.v))
     }
 
     return this._ticks

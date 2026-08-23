@@ -104,14 +104,7 @@ export function SvgVColorBar({
     steps = 15
   }
 
-  ax = YAxis.fromAxis(ax) //.setTicks(ticks)
-
-  // const xscl = d3
-  //   .scaleLinear()
-  //   .domain(domain) // This is what is written on the Axis: from 0 to 100
-  //   .range([0, size.w])
-
-  //  steps = 5
+  ax = YAxis.fromAxis(ax)
 
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps

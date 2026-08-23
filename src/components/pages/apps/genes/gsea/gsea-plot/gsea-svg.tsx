@@ -221,8 +221,6 @@ export function GseaSvg({ ref }: ISVGProps) {
     )
   })
 
-  console.log(settings.page.scale, 'ssss')
-
   const svg = (
     <SvgBase
       ref={ref}

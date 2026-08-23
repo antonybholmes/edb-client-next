@@ -25,12 +25,6 @@ import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
 
 const TOOLTIP_OFFSET = 10
 
-// export const COLOR_MAP = new ColorMap('Volcano', [
-//   '#3366cc',
-//   '#cccccc',
-//   '#e62e00',
-// ])
-
 export interface IGseaBubbleDisplayOptions {
   axes: {
     xaxis: IDisplayAxis
@@ -97,6 +91,9 @@ function GseaBubbleLegendSvg() {
     .setTickParams({
       which: 'major',
       show: edbSettings.plots.axes.ticks.major.show,
+      line: {
+        offset: 20,
+      },
     })
     .setTickParams({
       which: 'minor',
@@ -121,14 +118,6 @@ function GseaBubbleLegendSvg() {
                   ax={xax}
 
                   cmap={cmap}
-
-                  // ticks={[
-                  //   settings.p.range[0],
-                  //   settings.p.range[1] / 2,
-                  //   settings.p.range[1],
-                  // ]}
-                  //stroke={displayProps.colorbar.stroke}
-                  //font={displayProps.legend}
                 />
               </g>
             </g>
@@ -203,8 +192,6 @@ function BubblePlot({
   const { settings: edbSettings } = useEdbSettings()
 
   const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
-
-  console.log('BubblePlot', edbSettings.plots.axes.ticks.minor.show)
 
   // offer per plot x-axis domain
   const xax = new Axis()

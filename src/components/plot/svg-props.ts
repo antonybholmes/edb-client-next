@@ -169,31 +169,33 @@ export const DEFAULT_MARGIN: IMarginProps = {
   right: 100,
 }
 
-interface IAxisLabel extends ITextProps {
+export interface IAxisLabelProps extends ITextProps {
   offset: number
 }
 
-interface IAxisLineProps extends IStrokeProps {
+export interface IAxisLineProps extends IStrokeProps {
   size: number
   offset: number
 }
 
-interface IAxisTickProps {
+export interface IAxisTickProps {
   show: boolean
-  labels: IAxisLabel
+  labels: IAxisLabelProps
   line: IAxisLineProps
 }
 
-export interface IAxisDisplayProps {
-  title: IAxisLabel
-  line: IStrokeProps
-  ticks: {
-    major: IAxisTickProps
-    minor: IAxisTickProps
-  }
+export interface IMajorMinorTickProps {
+  major: IAxisTickProps
+  minor: IAxisTickProps
 }
 
-export const DEFAULT_AXIS_LABEL_PROPS: IAxisLabel = {
+export interface IAxisDisplayProps {
+  title: IAxisLabelProps
+  line: IStrokeProps
+  ticks: IMajorMinorTickProps
+}
+
+export const DEFAULT_AXIS_LABEL_PROPS: IAxisLabelProps = {
   ...DEFAULT_TEXT_PROPS,
   offset: 5,
 }
