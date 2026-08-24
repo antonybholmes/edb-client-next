@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -14,6 +14,7 @@ import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useSVG } from '@/providers/svg-provider'
 import { PLOT_ZOOM_CHANNEL } from '../../../matcalc/apps/heatmap/heatmap-panel'
 import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
 import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
@@ -29,9 +30,9 @@ export function GseaBubblePanel() {
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
-  const svgRef = useRef<SVGSVGElement>(null)
-
   const { open: openDialog } = useDialogs()
+
+  const { ref: svgRef } = useSVG()
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -57,32 +58,9 @@ export function GseaBubblePanel() {
 
   return (
     <>
-      {/* <TabSlideBar
-        side="right"
-        open={settings.sidebar.show}
-        onOpenChange={(v) => {
-          const newSettings = produce(settings, (draft) => {
-            draft.sidebar.show = v
-          })
-
-          updateSettings(newSettings)
-        }}
-      >
-        <Card variant="content" className="ml-2 mb-2 grow">
-          <div className={PLOT_CLS}>
-            <VolcanoPlotSvg
-              ref={svgRef}
-              //displayProps={displayOptions}
-              x={displayProps.axes.xaxis.name}
-              y={displayProps.axes.yaxis.name}
-            />
-          </div>
-        </Card>
-      </TabSlideBar> */}
-
       <ResizableSidebar side="right">
         <ExtScrollCard className="pb-2">
-          <GseaBubblePlotSvg ref={svgRef} />
+          <GseaBubblePlotSvg />
         </ExtScrollCard>
         <GseaBubbleDisplayPropsPanel />
       </ResizableSidebar>

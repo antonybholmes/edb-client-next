@@ -57,7 +57,7 @@ import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
@@ -96,7 +96,7 @@ function LollipopPage() {
   //   isOpen: true,
   // }
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   //const [foldersTab, setFoldersTab] = useState<ITab>(dataTab)
   //const [tab, setTab] = useState<ITab | undefined>(dataTab)
 
@@ -467,9 +467,9 @@ function LollipopPage() {
                 {aaStats.length > 0 && (
                   <div className={PLOT_CLS}>
                     {plotStyle === 'stack' ? (
-                      <LollipopStackSvg ref={svgRef} />
+                      <LollipopStackSvg />
                     ) : (
-                      <LollipopSingleSvg ref={svgRef} />
+                      <LollipopSingleSvg />
                     )}
                   </div>
                 )}
@@ -511,9 +511,7 @@ function LollipopPage() {
 export function LollipopQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <LollipopPage />
-      </SVGProvider>
+      <LollipopPage />
     </CoreProviders>
   )
 }

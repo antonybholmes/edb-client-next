@@ -48,7 +48,6 @@ import { useMessages } from '@/providers/message-provider'
 import { HistoryShowButton } from '../../matcalc/history/history-layout'
 
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { SVGProvider } from '@/providers/svg-provider'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
@@ -423,9 +422,7 @@ function OncoplotPage() {
 export function OncoplotQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <OncoplotPage />
-      </SVGProvider>
+      <OncoplotPage />
     </CoreProviders>
   )
 }

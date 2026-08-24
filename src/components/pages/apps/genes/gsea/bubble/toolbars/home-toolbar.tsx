@@ -37,7 +37,7 @@ export function HomeToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { settings, updateSettings } = useGseaBubbleSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { addPlots } = useHistory()
 
@@ -154,11 +154,11 @@ export function HomeToolbar() {
             </SelectList>
           </ToolbarRow>
           <ColorMapToolbarMenu
-            cmap={getColorMap(settings.p.cmap)}
+            cmap={getColorMap(settings.scale.cmap)}
             onChange={(cmap) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.p.cmap = cmap.id as ColorMapName
+                  draft.scale.cmap = cmap.id as ColorMapName
                 })
               )
             }}

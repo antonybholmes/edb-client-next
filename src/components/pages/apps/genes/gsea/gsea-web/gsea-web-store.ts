@@ -38,7 +38,6 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
   resultsMap: {},
   reports: [],
   allowSelectAll: false,
-  svgRef: { current: null },
 
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
     set({ datasetsForUse }),

@@ -290,6 +290,7 @@ export function useGsea(): Omit<
   phenotypesFilter: Record<string, boolean>
   filteredReports: IGseaGeneSet[]
   inUseReports: IGseaGeneSet[]
+  inUsePhenotypes: string[]
   setPhenotypesFilter: (filter: Record<string, boolean>) => void
   setFilteredReports: (reports: IGseaGeneSet[]) => void
   loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
@@ -393,11 +394,15 @@ export function useGsea(): Omit<
     return filteredReports.filter((report) => geneSetsInUse[report.id] ?? false)
   }, [filteredReports, geneSetsInUse])
 
+  const inUsePhenotypes = useMemo(() => {
+    return phenotypes.filter((phen) => phenotypesFilter[phen] ?? false)
+  }, [phenotypes, phenotypesFilter])
+
   return {
     phenotypes,
+    inUsePhenotypes,
     rankedGenes,
     searchResults,
-    //reportsMap,
     geneSetsInUse,
     resultsMap,
     filteredReports,
@@ -408,7 +413,6 @@ export function useGsea(): Omit<
     setPhenotypesFilter,
     setGeneSetsInUse: useGseaPlotStore((state) => state.setGeneSetsInUse),
     setAllowSelectAll: useGseaPlotStore((state) => state.setAllowSelectAll),
-
     loadGseaZip,
     loadGseaZipWithErrorHandling,
   }

@@ -66,7 +66,7 @@ import {
 
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../matcalc/hooks/save'
@@ -109,7 +109,7 @@ export function VariantsPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { save } = useSave()
 
@@ -422,11 +422,11 @@ export function VariantsPage() {
                   >
                     <TabsContent value="pileup" className="flex-col grow ">
                       <ExtScrollCard>
-                        <PileupPlotPanel ref={svgRef} />
+                        <PileupPlotPanel />
                       </ExtScrollCard>
                     </TabsContent>
                     <TabsContent value="maf">
-                      <MAFPanel ref={svgRef} />
+                      <MAFPanel />
                     </TabsContent>
                   </Tabs>
                 </ResizablePanel>
@@ -486,9 +486,7 @@ export function VariantsPage() {
 export function VariantsQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <VariantsPage />
-      </SVGProvider>
+      <VariantsPage />
     </CoreProviders>
   )
 }

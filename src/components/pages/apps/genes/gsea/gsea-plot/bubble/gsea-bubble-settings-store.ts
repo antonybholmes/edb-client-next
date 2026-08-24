@@ -15,13 +15,20 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v18`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v22`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
 const PLOT_MARGIN = { top: 20, right: 10, bottom: 100, left: 400 }
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
+
+export type Mode = 'p' | 'nes'
+
+export const MODE_ITEMS = [
+  { value: 'p', label: 'P-value' },
+  { value: 'nes', label: 'NES' },
+]
 
 export interface IGseaBubbleSettings {
   sortBy: SortBy
@@ -33,14 +40,17 @@ export interface IGseaBubbleSettings {
     label: string
     maxSize: number
   }
+  phenotypes: {
+    merge: boolean
+  }
   bubbles: {
     size: number
-
     fill: IPaintProps
     stroke: IStrokeProps
   }
-  p: {
-    range: ILim
+  scale: {
+    mode: 'p' | 'nes'
+    p: { range: ILim }
     label: string
     cmap: ColorMapName
   }
@@ -89,10 +99,14 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     },
   },
 
-  p: {
-    range: [0, 10],
+  scale: {
+    mode: 'p',
+    p: { range: [0, 10] },
     label: '-log10(p)',
     cmap: 'bwr-v2',
+  },
+  phenotypes: {
+    merge: false,
   },
   size: {
     label: 'Size',
@@ -111,7 +125,6 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   colorbar: {
     show: true,
     position: 'right',
-
     showMinorTicks: true,
   },
   legend: {

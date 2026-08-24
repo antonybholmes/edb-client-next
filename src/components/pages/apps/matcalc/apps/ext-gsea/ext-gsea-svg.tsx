@@ -13,7 +13,6 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgPolyLine } from '@/components/plot/svg-poly-line'
 import { SvgText } from '@/components/plot/svg-text'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
 import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { end, type ILim } from '@/lib/math/math'
@@ -21,7 +20,7 @@ import { where } from '@/lib/math/where'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { IExtGseaDisplayOptions } from './ext-gsea-store'
 
-export function ExtGseaSvg({ ref }: ISVGProps) {
+export function ExtGseaSvg() {
   const { plot } = useExtGseaContext()
   const displayProps: IExtGseaDisplayOptions = plot.props
 
@@ -32,8 +31,6 @@ export function ExtGseaSvg({ ref }: ISVGProps) {
   const extGseaRes: IExtGseaResult = plot.extGseaRes
   const gseaRes1: IGseaResult = plot.gseaRes1
   const gseaRes2: IGseaResult = plot.gseaRes2
-
-  //const extGsea: ExtGSEA = plot!.customProps.extGsea as ExtGSEA
 
   const svg = useMemo(() => {
     // size of plot with padding
@@ -394,7 +391,6 @@ export function ExtGseaSvg({ ref }: ISVGProps) {
 
     return (
       <SvgBase
-        ref={ref}
         width={pageSize[0]!}
         height={pageSize[1]!}
         scale={displayProps.page.scale}

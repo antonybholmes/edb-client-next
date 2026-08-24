@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
@@ -27,6 +27,7 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
 //import { getPlot } from '../../history/history-provider/history-hooks'
+import { useSVG } from '@/providers/svg-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
@@ -34,13 +35,12 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 
 function LollipopPanel() {
   //const [selectedTab, setSelectedTab] = useState('Display')
-  const svgRef = useRef<SVGSVGElement>(null)
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'heatmap')
 
   const { settings, updateSettings } = useMatcalcSettings()
 
-  //const { plotState, plotDispatch } = useContext(PlotContext)
+  const { ref: svgRef } = useSVG()
 
   const { aaStats } = useLollipopStore()
 
@@ -137,7 +137,7 @@ function LollipopPanel() {
         <Card variant="content" className=" grow">
           {aaStats.length > 0 && (
             <div className={PLOT_CLS}>
-              <LollipopStackSvg ref={svgRef} />
+              <LollipopStackSvg />
             </div>
           )}
         </Card>

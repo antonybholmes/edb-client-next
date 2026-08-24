@@ -8,7 +8,6 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgPolyLine } from '@/components/plot/svg-poly-line'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { IPos } from '@/interfaces/pos'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
@@ -25,7 +24,7 @@ import { useGseaSettings } from './gsea-settings-store'
  * @param param0
  * @returns
  */
-export function GseaSvg({ ref }: ISVGProps) {
+export function GseaSvg() {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
 
@@ -227,22 +226,17 @@ export function GseaSvg({ ref }: ISVGProps) {
     )
   })
 
-  const svg = (
-    <SvgBase
-      ref={ref}
-      scale={settings.page.scale}
-      width={pageSize[0]!}
-      height={pageSize[1]!}
-      //shapeRendering={SVG_CRISP_EDGES}
-      //className="absolute"
-    >
-      {plots}
-    </SvgBase>
-  )
-
   return (
     <>
-      {svg}
+      <SvgBase
+        scale={settings.page.scale}
+        width={pageSize[0]!}
+        height={pageSize[1]!}
+        //shapeRendering={SVG_CRISP_EDGES}
+        //className="absolute"
+      >
+        {plots}
+      </SvgBase>
 
       {/* {toolTipInfo && (
           <>

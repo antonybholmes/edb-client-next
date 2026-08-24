@@ -53,7 +53,7 @@ import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
@@ -104,7 +104,7 @@ export function GseaBubblePage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -287,7 +287,7 @@ export function GseaBubblePage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                {plots.length > 0 && <GseaBubblePlotSvg ref={svgRef} />}
+                {plots.length > 0 && <GseaBubblePlotSvg />}
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
@@ -352,9 +352,7 @@ export function GseaBubblePlotPage() {
 export function GseaBubbleQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <GseaBubblePlotPage />
-      </SVGProvider>
+      <GseaBubblePlotPage />
     </CoreProviders>
   )
 }

@@ -11,7 +11,6 @@ import {
   DEFAULT_STROKE_PROPS,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
-import type { ISVGProps } from '@/interfaces/svg-props'
 
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
@@ -217,7 +216,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
   border: { ...DEFAULT_STROKE_PROPS, width: 2, show: false },
 }
 
-interface IProps extends ISVGProps {
+interface IProps {
   x: string
   y: string
   size?: string
@@ -227,7 +226,6 @@ interface IProps extends ISVGProps {
 }
 
 export function VolcanoPlotSvg({
-  ref,
   x,
   y,
   size,
@@ -316,7 +314,6 @@ export function VolcanoPlotSvg({
 
     return (
       <SvgBase
-        ref={ref}
         width={width}
         height={height}
         scale={settings.scale}

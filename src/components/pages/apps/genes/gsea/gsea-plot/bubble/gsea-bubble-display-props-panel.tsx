@@ -10,7 +10,6 @@ import {
 } from '@/themed/v2/accordion'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
-import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
@@ -25,7 +24,12 @@ import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
 import { AxesPropsPopover } from './axes-props-popover'
-import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import {
+  Mode,
+  MODE_ITEMS,
+  SortBy,
+  useGseaBubbleSettings,
+} from './gsea-bubble-settings-store'
 
 export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
@@ -33,13 +37,39 @@ export function GseaBubbleDisplayPropsPanel() {
   return (
     <PropsPanel>
       <ScrollAccordion
-        value={['plot', 'ticks', 'nes', 'p-value', 'bubble', 'size']}
+        value={['plot', 'style', 'nes', 'p-value', 'bubbles', 'size']}
       >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Width">
-              <NumericalInput
+            <PropRow title="Size">
+              <DoubleNumericalInput
+                id="size"
+                v1={settings.axes.x.length}
+                v2={settings.axes.y.rowHeight}
+                placeholder="Size..."
+
+                dp={0}
+                inc={1}
+                limit={[1, 1000]}
+                w="xxs"
+                onNumChanged1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.length = v
+                    })
+                  )
+                }}
+                onNumChanged2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.y.rowHeight = v
+                    })
+                  )
+                }}
+              />
+
+              {/* <NumericalInput
                 value={settings.axes.x.length}
 
                 limit={[1, 1000]}
@@ -52,10 +82,10 @@ export function GseaBubbleDisplayPropsPanel() {
                     })
                   )
                 }}
-              />
+              /> */}
             </PropRow>
 
-            <NumericalPropRow
+            {/* <NumericalPropRow
               title="Row Height"
               value={settings.axes.y.rowHeight}
               onNumChanged={(v) => {
@@ -65,7 +95,7 @@ export function GseaBubbleDisplayPropsPanel() {
                   })
                 )
               }}
-            />
+            /> */}
 
             <PropRow title="Border">
               <FillButton
@@ -107,6 +137,75 @@ export function GseaBubbleDisplayPropsPanel() {
             </PropRow>
           </AccordionContent>
         </AccordionItem>
+
+        <AccordionItem value="style">
+          <AccordionTrigger>Style</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Mode">
+              <SelectList
+                items={MODE_ITEMS}
+                onValueChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.scale.mode = v as Mode
+                    })
+                  )
+                }
+                value={settings.scale.mode}
+                w="sm"
+              >
+                {MODE_ITEMS.map((item) => (
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
+            </PropRow>
+            <CheckPropRow
+              title="Merge Phenotypes"
+              checked={settings.phenotypes.merge}
+              onCheckedChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.merge = v
+                  })
+                )
+              }}
+            />
+
+            <PropRow title="Colormap">
+              <ColorMapMenu
+                align="end"
+                cmap={getColorMap(settings.scale.cmap)}
+                onChange={(cmap) => {
+                  // store the cmap the user likes
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.scale.cmap = cmap.id as ColorMapName
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* <AccordionItem value="phenotypes">
+          <AccordionTrigger>Phenotypes</AccordionTrigger>
+          <AccordionContent>
+            <CheckPropRow
+              title="Merge"
+              checked={settings.phenotypes.merge}
+              onCheckedChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.merge = v
+                  })
+                )
+              }}
+            />
+          </AccordionContent>
+        </AccordionItem> */}
 
         <AccordionItem value="nes">
           <AccordionTrigger>NES</AccordionTrigger>
@@ -162,45 +261,17 @@ export function GseaBubbleDisplayPropsPanel() {
         <AccordionItem value="p-value">
           <AccordionTrigger>P-value</AccordionTrigger>
           <AccordionContent>
-            {/* <TextPropRow
-              title="Label"
-              value={displayProps.p.label}
-              onTextChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.p.label = v
-                  })
-                )
-              }}
-              w="md"
-            /> */}
-
             <PropRow title="Max">
               <NumericalInput
                 id="size"
-                value={settings.p.range[1]}
+                value={settings.scale.p.range[1]}
                 placeholder="Size..."
                 dp={0}
                 limit={[1, 1000]}
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.p.range[1] = v
-                    })
-                  )
-                }}
-              />
-            </PropRow>
-
-            <PropRow title="Colormap">
-              <ColorMapMenu
-                align="end"
-                cmap={getColorMap(settings.p.cmap)} // COLOR_MAPS[settings.cmap]!}
-                onChange={(cmap) => {
-                  // store the cmap the user likes
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.p.cmap = cmap.id as ColorMapName
+                      draft.scale.p.range[1] = v
                     })
                   )
                 }}
@@ -209,7 +280,7 @@ export function GseaBubbleDisplayPropsPanel() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="bubble">
+        <AccordionItem value="bubbles">
           <AccordionTrigger>Bubbles</AccordionTrigger>
           <AccordionContent>
             <PropRow title={TEXT_SORT_BY}>

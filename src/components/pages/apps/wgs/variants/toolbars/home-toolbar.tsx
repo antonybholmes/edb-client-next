@@ -14,7 +14,7 @@ import { useVariantSettings } from '../variant-settings-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   const { settings, updateSettings } = useVariantSettings()
 
   return (

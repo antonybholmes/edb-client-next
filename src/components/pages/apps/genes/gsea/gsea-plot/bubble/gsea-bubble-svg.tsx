@@ -4,7 +4,6 @@ import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import { AxisBottomSvg } from '../../../../../../plot/axis/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
-import type { ISVGProps } from '@/interfaces/svg-props'
 
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
@@ -48,7 +47,7 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
 }
 
 function GseaBubbleLegendSvg() {
-  const { plots } = useGseaBubbleContext()
+  const { plots, globalXLim } = useGseaBubbleContext()
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
@@ -60,7 +59,7 @@ function GseaBubbleLegendSvg() {
 
   const plot = plots[0]!
 
-  const cmap = COLOR_MAPS[settings.p.cmap]!
+  const cmap = COLOR_MAPS[settings.scale.cmap]!
 
   const dotLegendPos = []
 
@@ -80,15 +79,35 @@ function GseaBubbleLegendSvg() {
     }
   }
 
-  const xax = new Axis()
-    .setDomain(settings.p.range)
-    .setLength(edbSettings.plots.colorbar.size.w)
-    .setTicks([
-      settings.p.range[0],
-      settings.p.range[1] / 2,
-      settings.p.range[1],
-    ])
-    .setMinorTicks([settings.p.range[1] * 0.25, settings.p.range[1] * 0.75])
+  const range =
+    settings.scale.mode === 'p'
+      ? settings.scale.p.range[1] - settings.scale.p.range[0]
+      : globalXLim[1] - globalXLim[0]
+
+  let xax =
+    settings.scale.mode === 'p'
+      ? new Axis()
+          .setDomain(settings.scale.p.range)
+          .setLength(edbSettings.plots.colorbar.size.w)
+          .setTicks([
+            settings.scale.p.range[0],
+            settings.scale.p.range[0] + range / 2,
+            settings.scale.p.range[1],
+          ])
+          .setMinorTicks([
+            settings.scale.p.range[0] + range * 0.25,
+            settings.scale.p.range[0] + range * 0.75,
+          ])
+      : new Axis()
+          .setDomain(globalXLim)
+          .setLength(edbSettings.plots.colorbar.size.w)
+          .setTicks([globalXLim[0], globalXLim[0] + range / 2, globalXLim[1]])
+          .setMinorTicks([
+            globalXLim[0] + range * 0.25,
+            globalXLim[0] + range * 0.75,
+          ])
+
+  xax = xax
     .setTickParams({
       which: 'major',
       show: edbSettings.plots.axes.x.ticks.major.show,
@@ -97,6 +116,9 @@ function GseaBubbleLegendSvg() {
       which: 'minor',
       show: edbSettings.plots.axes.x.ticks.minor.show,
     })
+
+  const label =
+    settings.scale.mode === 'p' ? `-log10(${plot.log10q.label})` : 'NES'
 
   return (
     <>
@@ -109,7 +131,7 @@ function GseaBubbleLegendSvg() {
                 y={0}
                 textAnchor="middle"
               >
-                {`-log10(${plot.log10q.label})`}
+                {label}
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
                 <SvgVColorBar
@@ -193,8 +215,8 @@ function BubblePlot({
 
   // offer per plot x-axis domain
   const xax = new Axis()
-    .autoDomain(domain)
-    //.setDomain(displayProps.xdomain)
+    //.autoDomain(domain)
+    .setDomain(domain)
     .setLength(settings.axes.x.length)
     .setTickParams({
       which: 'major',
@@ -288,7 +310,7 @@ function BubblePlot({
   )
 }
 
-export function GseaBubblePlotSvg({ ref }: ISVGProps) {
+export function GseaBubblePlotSvg() {
   const { plots, points, xlims } = useGseaBubbleContext()
 
   const { settings } = useGseaBubbleSettings()
@@ -331,7 +353,7 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
     timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
   }, [])
 
-  const svg = useMemo(() => {
+  const { svg, width, height } = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     const cols = Math.min(settings.page.grid.cols, plots.length)
@@ -388,40 +410,35 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
       y += plotHeight
     }
 
-    return (
-      <SvgBase
-        ref={ref}
-        width={width}
-        height={height}
-        scale={settings.page.scale}
-      >
-        <SvgMargin margin={settings.margin}>
-          {plotGrid.map((row, ri) => (
-            <g key={ri} transform={`translate(0, ${row[0]!.pos.y})`}>
-              {row.map((p, ci) => (
-                <g key={ci} transform={`translate(${p.pos.x}, 0)`}>
-                  <BubblePlot
-                    points={p.points}
-                    plot={p.plot}
-                    xlim={p.xlim}
-                    innerPlotWidth={innerPlotWidth}
-                    innerPlotHeight={innerPlotHeight}
-                    handleVariantEnter={handleVariantEnter}
-                    handleVariantLeave={handleVariantLeave}
-                  />
-                </g>
-              ))}
-            </g>
-          ))}
-
-          <g
-            transform={`translate(${settings.margin.left + innerWidth + settings.padding * 3.5}, ${settings.margin.top + settings.padding})`}
-          >
-            <GseaBubbleLegendSvg />
+    const svg = (
+      <SvgMargin margin={settings.margin}>
+        {plotGrid.map((row, ri) => (
+          <g key={ri} transform={`translate(0, ${row[0]!.pos.y})`}>
+            {row.map((p, ci) => (
+              <g key={ci} transform={`translate(${p.pos.x}, 0)`}>
+                <BubblePlot
+                  points={p.points}
+                  plot={p.plot}
+                  xlim={p.xlim}
+                  innerPlotWidth={innerPlotWidth}
+                  innerPlotHeight={innerPlotHeight}
+                  handleVariantEnter={handleVariantEnter}
+                  handleVariantLeave={handleVariantLeave}
+                />
+              </g>
+            ))}
           </g>
-        </SvgMargin>
-      </SvgBase>
+        ))}
+
+        <g
+          transform={`translate(${settings.margin.left + innerWidth + settings.padding * 3.5}, ${settings.margin.top + settings.padding})`}
+        >
+          <GseaBubbleLegendSvg />
+        </g>
+      </SvgMargin>
     )
+
+    return { svg, width, height }
   }, [plots, points, settings])
 
   if (plots.length === 0) {
@@ -430,7 +447,9 @@ export function GseaBubblePlotSvg({ ref }: ISVGProps) {
 
   return (
     <>
-      {svg}
+      <SvgBase width={width} height={height} scale={settings.page.scale}>
+        {svg}
+      </SvgBase>
 
       {toolTipInfo && (
         <div

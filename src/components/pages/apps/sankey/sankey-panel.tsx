@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -17,10 +17,9 @@ import { MESSAGE_CHANNEL } from '../matcalc/data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
+import { useSVG } from '@/providers/svg-provider'
 import { PLOT_ZOOM_CHANNEL } from '../matcalc/apps/heatmap/heatmap-panel'
-import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'
-import { useSankey } from './sankey-provider'
 import { useSankeySettings } from './sankey-settings-store'
 import { SankeySvg } from './sankey-svg'
 
@@ -35,13 +34,10 @@ export function SankeyPanel() {
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
-  const { updatePlot } = useHistory()
-  const { plot } = useSankey()
+  const { ref: svgRef } = useSVG()
   const { settings, updateSettings } = useSankeySettings()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
-
-  const svgRef = useRef<SVGSVGElement>(null)
 
   const { open: openDialog } = useDialogs()
 
@@ -79,7 +75,7 @@ export function SankeyPanel() {
     <>
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <SankeySvg ref={svgRef} />
+          <SankeySvg />
         </ExtScrollCard>
         <SankeyPropsPanel />
       </ResizableSidebar>

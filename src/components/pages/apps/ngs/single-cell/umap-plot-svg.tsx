@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-  type ComponentProps,
-  type ReactNode,
-} from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import { Axis, YAxis } from '@/components/plot/axis/axis'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
@@ -42,7 +35,7 @@ import { drawUmap } from './umap-plot-canvas'
 //   palette: ColorMap
 // }
 
-interface IProps extends ComponentProps<'svg'>, IDrawScatterOptions {
+interface IProps extends IDrawScatterOptions {
   //plot: IUmapPlot
 
   //onCanvasChange?: (canvas: HTMLCanvasElement) => void
@@ -50,18 +43,14 @@ interface IProps extends ComponentProps<'svg'>, IDrawScatterOptions {
   options?: IDrawScatterOptions
 }
 
-export function UmapPlotSvg({ ref, size = undefined }: IProps) {
+export function UmapPlotSvg({ size = undefined }: IProps) {
   //const _canvasRef = useRef<HTMLCanvasElement>(null)
-
-  const _svgRef = useRef<SVGSVGElement>(null)
 
   const { settings } = useSingleCellSettings()
 
   const { plots, points, clusterInfo } = usePlotGrid() //useContext(PlotGridContext)!
 
-  useImperativeHandle(ref, () => _svgRef.current as SVGSVGElement)
-
-  const [svg, setSvg] = useState<{ svg: ReactNode; dim: IDim }>({
+  const [svgContent, setSvgContent] = useState<{ svg: ReactNode; dim: IDim }>({
     svg: null,
     dim: { w: 0, h: 0 },
   })
@@ -353,7 +342,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
         </g>
       )
 
-      setSvg({ svg, dim: { w: svgWidth, h: height } })
+      setSvgContent({ svg, dim: { w: svgWidth, h: height } })
     }
 
     render(plots)
@@ -361,13 +350,12 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
 
   return (
     <SvgBase
-      ref={_svgRef}
-      width={svg.dim.w}
-      height={svg.dim.h}
+      width={svgContent.dim.w}
+      height={svgContent.dim.h}
       scale={settings.scale}
       className="absolute"
     >
-      {svg.svg && svg.svg}
+      {svgContent.svg && svgContent.svg}
     </SvgBase>
   )
 }

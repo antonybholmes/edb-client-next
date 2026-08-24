@@ -40,7 +40,7 @@ import { IS_DEV_MODE, TEXT_SAVE, TEXT_SIGNED_IN } from '@/consts'
 import { ReloadIcon } from '@/icons/reload-icon'
 import { Textarea } from '@/themed/textarea'
 
-import { formattedList } from '@/lib/text/text'
+import { textJoin } from '@/lib/text/text'
 import { CoreProviders } from '@/providers/core-providers'
 
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
@@ -383,7 +383,7 @@ export function MyAccountPage() {
                     <FormItem className="col-span-1 md:col-span-3">
                       <Textarea
                         id="groups"
-                        value={formattedList(
+                        value={textJoin(
                           field.value.map((group) => group.name).sort()
                         )}
                         placeholder="Groups..."
@@ -406,7 +406,7 @@ export function MyAccountPage() {
                     <FormItem className="col-span-1 md:col-span-3">
                       <Textarea
                         id="roles"
-                        value={formattedList(flattenRoles(field.value))}
+                        value={textJoin(flattenRoles(field.value))}
                         placeholder="Roles..."
                         readOnly
                         //variant="underline"

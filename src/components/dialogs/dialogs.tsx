@@ -240,6 +240,7 @@ function DialogRenderer({
           title={title}
           name={name}
           onResponse={(response, data) => {
+            console.log('here', svgRef.current)
             if (response !== TEXT_CANCEL && svgRef.current) {
               downloadSvgAutoFormat(svgRef, (data as ISaveAsResponse).name)
             }

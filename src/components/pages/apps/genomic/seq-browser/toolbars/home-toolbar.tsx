@@ -32,7 +32,7 @@ export function HomeToolbar() {
   const { locations, setLocations } = useTracks()
   const { settings, updateSettings } = useSeqBrowserSettings()
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   function setLocationZoom(scale: number) {
     setLocations(

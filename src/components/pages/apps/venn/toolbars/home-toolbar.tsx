@@ -16,7 +16,7 @@ import { useOpen } from '../use-open'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { openFiles } = useOpen()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   return (
     <>

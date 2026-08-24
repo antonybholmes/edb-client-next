@@ -49,7 +49,7 @@ export function GeneSetsPropsPanel() {
 
   return (
     <PropsPanel className="text-xs">
-      <VCenterRow className="gap-x-1 justify-between pl-6.5 pr-2">
+      <VCenterRow className="gap-x-1 justify-between pl-6.5 pr-1">
         <Checkbox
           aria-label="Select all gene sets"
           checked={selectAllGeneSets}

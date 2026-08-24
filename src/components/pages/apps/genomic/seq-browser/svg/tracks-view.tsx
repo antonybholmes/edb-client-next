@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Axis } from '@/components/plot/axis/axis'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -31,6 +25,7 @@ import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { makeUuid } from '@/lib/id'
 import { cumsum } from '@/lib/math/cumsum'
 import { zeros } from '@/lib/math/zeros'
+import { useSVG } from '@/providers/svg-provider'
 import { TracksColumnSvg } from './tracks-column-svg'
 
 const SELECTION_RECT_GAP = 3
@@ -67,8 +62,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
 
   const columnWidth = settings.plot.width + settings.plot.gap //settings.margin.left+settings.margin.right+settings.plot.width
 
-  const innerRef = useRef<SVGSVGElement>(null)
-  useImperativeHandle(ref, () => innerRef.current!)
+  const { ref: innerRef } = useSVG()
 
   const axes = useMemo(() => {
     return locations.map((location) => {
@@ -488,7 +482,6 @@ export function TracksView({ ref, className, style }: ISVGProps) {
 
   const svg = (
     <SvgBase
-      ref={innerRef}
       scale={settings.scale}
       width={width}
       height={height}

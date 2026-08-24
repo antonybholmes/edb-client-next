@@ -43,7 +43,7 @@ interface IOncoplotPanelProps {
 export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
   const { zoom } = useZoom() //PLOT_ZOOM_CHANNEL) //Ctx()
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { open: openDialog } = useDialogs()
   const { messages, removeMessage } = useMessages('oncoplot') //'onco-panel')
@@ -124,7 +124,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
               collapsible={true}
             >
               <ExtScrollCard>
-                <OncoplotSvg ref={svgRef} />
+                <OncoplotSvg />
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />

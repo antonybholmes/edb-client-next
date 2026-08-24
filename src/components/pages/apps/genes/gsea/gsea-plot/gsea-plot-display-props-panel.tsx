@@ -343,63 +343,44 @@ export function GseaPlotDisplayPropsPanel() {
         <AccordionItem value="rank-plot">
           <AccordionTrigger
             rightChildren={
-              <>
-                {/* <ColorPickerButton
-                  colors={[
-                    {
-                      color: settings.ranking.fill.value,
-                      opacity: settings.ranking.fill.opacity,
-                      onColorChange: ({ color, opacity }) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.ranking.fill.value = color
-                            draft.ranking.fill.opacity = opacity ?? 1
-                          })
-                        )
-                      },
-                    },
-                  ]}
-                  disabled={!settings.ranking.show}
-                  className={SIMPLE_COLOR_EXT_CLS}
-                  title="Ranked genes color"
-                /> */}
-                <FillButton
-                  colors={[
-                    {
-                      color: settings.ranking.fill.value,
-                      opacity: settings.ranking.fill.opacity,
-                      onColorChange: ({ color, opacity, show }) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.ranking.fill.value = color
-                            draft.ranking.fill.opacity = opacity ?? 1
-                            draft.ranking.fill.show =
-                              show ?? draft.ranking.fill.show
-                          })
-                        )
-                      },
-                    },
-                  ]}
-
-                  title="Ranked Genes Fill"
-                />
-                <Switch
-                  title="Show"
-                  checked={settings.ranking.show}
-                  onCheckedChange={(state) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.ranking.show = state
-                      })
-                    )
-                  }}
-                />
-              </>
+              <Switch
+                title="Show"
+                checked={settings.ranking.show}
+                onCheckedChange={(state) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.ranking.show = state
+                    })
+                  )
+                }}
+              />
             }
           >
             Ranked Genes
           </AccordionTrigger>
           <AccordionContent>
+            <PropRow title="Fill">
+              <FillButton
+                colors={[
+                  {
+                    color: settings.ranking.fill.value,
+                    opacity: settings.ranking.fill.opacity,
+                    onColorChange: ({ color, opacity, show }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.ranking.fill.value = color
+                          draft.ranking.fill.opacity = opacity ?? 1
+                          draft.ranking.fill.show =
+                            show ?? draft.ranking.fill.show
+                        })
+                      )
+                    },
+                  },
+                ]}
+
+                title="Ranked Genes Fill"
+              />
+            </PropRow>
             <PropRow title="Zero Crossing">
               <OutlineButton
                 colors={[

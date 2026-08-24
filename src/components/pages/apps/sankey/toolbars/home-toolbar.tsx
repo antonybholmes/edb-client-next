@@ -23,7 +23,7 @@ import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
 
 export function HomeToolbar() {
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   const { open: openDialog } = useDialogs()
   const { openDataFrames } = useOpenFiles()
   const { open: openMatcalcDialog } = useMatcalcDialogs()

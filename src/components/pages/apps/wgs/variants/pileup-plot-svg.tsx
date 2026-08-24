@@ -1,12 +1,11 @@
 import { Axis } from '@/components/plot/axis/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
-import { useMergeRefs } from '@/hooks/merge-refs'
 import type { IPos } from '@/interfaces/pos'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { formatChr } from '@/lib/genomic/dna'
 import { locStr } from '@/lib/genomic/genomic'
 import { svgPointToScreen } from '@/lib/graphics/svg'
+import { useSVG } from '@/providers/svg-provider'
 import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
@@ -38,7 +37,7 @@ export interface ITooltip {
   variant: IVariant
 }
 
-export function PileupPlotSvg({ ref }: ISVGProps) {
+export function PileupPlotSvg() {
   const { sampleMap, datasetMap } = useDatasets()
 
   const { settings } = useVariantSettings()
@@ -48,8 +47,7 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
 
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
-  const innerRef = useRef<SVGSVGElement>(null)
-  const setRefs = useMergeRefs(innerRef, ref)
+  const { ref } = useSVG()
 
   const scaledBlockSize = {
     w: BASE_W * settings.scale,
@@ -148,12 +146,12 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
         clearTimeout(timeoutRef.current)
       }
 
-      if (!innerRef.current) {
+      if (!ref.current) {
         return
       }
 
       const pos = svgPointToScreen(
-        innerRef.current,
+        ref.current,
         MARGIN.left + x,
         MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset
       )
@@ -290,7 +288,6 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
   return (
     <>
       <SvgBase
-        ref={setRefs}
         width={width} //* settings.scale}
         height={height} //* settings.scale}
         scale={settings.scale}

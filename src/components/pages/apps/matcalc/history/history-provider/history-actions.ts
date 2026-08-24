@@ -15,7 +15,7 @@ import type { IGeneSet } from '@/lib/gsea/geneset'
 import { PATH_SEP } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
-import { formattedList, UndefNullStr } from '@/lib/text/text'
+import { textJoin, UndefNullStr } from '@/lib/text/text'
 import { HistoryManager } from '../history-manager'
 import { DEFAULT_FILE, DEFAULT_SHEET, init } from './history-init'
 import {
@@ -570,7 +570,7 @@ function handleAddGroups(
 
   return applyHistoryUpdate(
     state,
-    `Add ${formattedList(groupRows.map((gs) => gs.name))} group${
+    `Add ${textJoin(groupRows.map((gs) => gs.name))} group${
       groupRows.length > 1 ? 's' : ''
     }`,
     '',
@@ -775,7 +775,7 @@ function handleAddGenesets(
 
   return applyHistoryUpdate(
     state,
-    `Add ${formattedList(genesets.map((gs) => gs.name))} geneset${
+    `Add ${textJoin(genesets.map((gs) => gs.name))} geneset${
       genesets.length > 1 ? 's' : ''
     }`,
     '',

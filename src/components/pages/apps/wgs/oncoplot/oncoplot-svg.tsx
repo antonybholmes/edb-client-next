@@ -7,16 +7,10 @@ import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
-import {
-  useImperativeHandle,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react'
+import { useSVG } from '@/providers/svg-provider'
+import { useRef, useState, type ReactElement, type ReactNode } from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
@@ -592,13 +586,15 @@ function vLegendSvg(
 //   oncoProps: IOncoProps
 // }
 
-export function OncoplotSvg({ ref }: ISVGProps) {
+export function OncoplotSvg() {
+  const { ref } = useSVG()
+
   function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!innerRef.current) {
+    if (!ref.current) {
       return
     }
 
-    const rect = innerRef.current.getBoundingClientRect()
+    const rect = ref.current.getBoundingClientRect()
 
     let x =
       e.pageX - marginLeft * displayProps.scale - rect.left - window.scrollX
@@ -650,9 +646,6 @@ export function OncoplotSvg({ ref }: ISVGProps) {
     x: spacing.x * displayProps.scale,
     y: spacing.y * displayProps.scale,
   }
-
-  const innerRef = useRef<SVGSVGElement>(null)
-  useImperativeHandle(ref, () => innerRef.current! as SVGSVGElement)
 
   const tooltipRef = useRef<HTMLDivElement>(null)
   const highlightRef = useRef<HTMLSpanElement>(null)
@@ -744,7 +737,6 @@ export function OncoplotSvg({ ref }: ISVGProps) {
 
   const svg = (
     <SvgBase
-      ref={innerRef}
       width={width}
       height={height}
       scale={displayProps.scale}

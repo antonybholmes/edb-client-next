@@ -53,7 +53,7 @@ import { produce } from 'immer'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
@@ -96,7 +96,6 @@ export function GseaPlotPage() {
     rankedGenes,
     filteredReports,
     geneSetsInUse,
-
     setGeneSetsInUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()
@@ -122,7 +121,7 @@ export function GseaPlotPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   useEffect(() => {
@@ -141,18 +140,6 @@ export function GseaPlotPage() {
   useUpdateEffect(() => {
     setZoom(zoom)
   }, [settings.page.scale])
-
-  // useHydratedUpdateEffect(
-  //   () => {
-  //     updateSettings(
-  //       produce(settings, (draft) => {
-  //         draft.page.scale = zoom
-  //       })
-  //     )
-  //   },
-  //   [zoom],
-  //   hasHydrated
-  // )
 
   const searchIndex = useMemo(() => {
     return new Fuse(filteredReports, {
@@ -376,11 +363,11 @@ export function GseaPlotPage() {
               >
                 <TabsContent value="graph">
                   <ExtScrollCard className="px-2 pb-2">
-                    <GseaSvg ref={svgRef} />
+                    <GseaSvg />
                   </ExtScrollCard>
                 </TabsContent>
                 <TabsContent value="bubble">
-                  <GseaBubbleTabPanel svgRef={svgRef} />
+                  <GseaBubbleTabPanel />
                 </TabsContent>
               </Tabs>
             </FileDropZonePanel>
@@ -449,9 +436,7 @@ export function GseaPlotPage() {
 export function GseaPlotQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <GseaPlotPage />
-      </SVGProvider>
+      <GseaPlotPage />
     </CoreProviders>
   )
 }

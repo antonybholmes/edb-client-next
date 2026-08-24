@@ -5,7 +5,7 @@ import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { formattedList, truncate } from '@/lib/text/text'
+import { textJoin, truncate } from '@/lib/text/text'
 import * as d3 from 'd3'
 import { useContext, useMemo } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
@@ -183,7 +183,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             >
               {/* Estimate a reasonable label length as length px /10 so 800 gives 80 chars of space */}
               {truncate(
-                formattedList(
+                textJoin(
                   tracks.map(
                     (t) =>
                       `${t.track.name} ${'platform' in t.track ? `(${t.track.platform})` : ''}`

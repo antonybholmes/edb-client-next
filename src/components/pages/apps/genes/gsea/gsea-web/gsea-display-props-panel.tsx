@@ -337,25 +337,6 @@ export function GseaDisplayPropsPanel() {
           <AccordionTrigger
             rightChildren={
               <>
-                <ColorPickerButton
-                  colors={[
-                    {
-                      color: settings.ranking.fill.value,
-                      opacity: settings.ranking.fill.opacity,
-                      onColorChange: ({ color, opacity }) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.ranking.fill.value = color
-                            draft.ranking.fill.opacity = opacity ?? 1
-                          })
-                        )
-                      },
-                    },
-                  ]}
-                  disabled={!settings.ranking.show}
-                  className={SIMPLE_COLOR_EXT_CLS}
-                  title="Ranked genes color"
-                />
                 <Switch
                   title="Show"
                   checked={settings.ranking.show}

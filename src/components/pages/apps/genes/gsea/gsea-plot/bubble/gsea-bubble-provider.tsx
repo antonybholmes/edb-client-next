@@ -18,6 +18,7 @@ export interface IGseaBubblePlot extends IBasePlot {
 export interface IBubblePoint {
   x: number
   y: number
+  nes: number
   p: number
   color: string
   size: number
@@ -29,6 +30,7 @@ export interface GseaBubblePropsContextType {
   plots: IGseaBubble[]
   points: IBubblePoint[][]
   xlims: ILim[]
+  globalXLim: ILim
 }
 
 export const GseaBubbleContext = createContext<
@@ -48,21 +50,39 @@ export function useGseaBubbleContext() {
 function getXLim(gseaBubble: IGseaBubble): ILim {
   const posNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v >= 0)
 
-  const maxNes =
-    posNes.length > 0
-      ? Math.ceil(
-          Math.max(...posNes.filter((v) => v >= 0).map((v) => Math.abs(v)))
-        )
-      : 0
+  let maxNes = 0
+
+  if (posNes.length > 0) {
+    maxNes = Math.max(...posNes.filter((v) => v >= 0).map((v) => Math.abs(v)))
+    // round up to nearest multiple of 0.5
+    let ceilNes = Math.ceil(maxNes * 2) / 2
+
+    // Add a small buffer to the positive NES to make the axis look nicer
+    if (ceilNes - maxNes < 0.25) {
+      ceilNes += 0.5
+    }
+
+    maxNes = ceilNes
+  }
 
   const negNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v < 0)
 
-  const minNes =
-    negNes.length > 0
-      ? Math.ceil(Math.max(...negNes.map((v) => Math.abs(v))))
-      : 0
+  let minNes = 0
 
-  return [-minNes, maxNes]
+  if (negNes.length > 0) {
+    minNes = Math.max(...negNes.map((v) => Math.abs(v)))
+    let ceilNes = Math.ceil(minNes * 2) / 2
+    // Add a small buffer to the negative NES to make the axis look nicer
+    if (ceilNes - minNes < 0.25) {
+      ceilNes += 0.5
+    }
+
+    minNes = ceilNes
+  }
+
+  const m = Math.max(minNes, maxNes)
+
+  return [-minNes, maxNes] //[-m, m]
 }
 
 export function newGseaBubblePlot(
@@ -85,12 +105,9 @@ export function newGseaBubblePlot(
   }
 }
 
-function getColor(
-  log10pvalue: number,
-  maxlog10pvalue: number,
-  colorMap: ColorMap
-) {
-  const f = Math.min(log10pvalue / maxlog10pvalue, 1)
+function getColor(v: number, lim: ILim, colorMap: ColorMap) {
+  const r = lim[1] - lim[0]
+  const f = Math.min((v - lim[0]) / r, 1)
 
   const color = colorMap.getHexColor(f)
 
@@ -110,16 +127,26 @@ export function GseaBubbleProvider({
 
   const xlims = useMemo(() => plots.map((p) => getXLim(p)), [plots])
 
-  const points = useMemo(() => {
+  const globalXLim: ILim = useMemo(
+    () => [
+      Math.min(...xlims.map((lim) => lim[0])),
+      Math.max(...xlims.map((lim) => lim[1])),
+    ],
+    [xlims]
+  )
+
+  const points: IBubblePoint[][] = useMemo(() => {
     if (plots.length === 0) {
       return []
     }
 
-    return plots.map((plot) => {
+    return plots.map((plot, pi) => {
       let names = plot.genesets.map((gs) => gs.name)
       let nes = plot.genesets.map((gs) => gs.nes)
       let sizes = plot.genesets.map((gs) => gs.size)
       let log10pvalues = plot.genesets.map((gs) => gs.log10q)
+
+      const xlim = xlims[pi]
 
       let idx: number[] = []
 
@@ -146,18 +173,27 @@ export function GseaBubbleProvider({
         names = idx.map((i) => names[i])
       }
 
-      return nes.map((x, i) => {
+      return nes.map((score, i) => {
         const size = sizes[i]!
         const sizeF = Math.min(size / settings.size.maxSize, 1)
+        const p = log10pvalues[i]!
+        const color =
+          settings.scale.mode === 'p'
+            ? getColor(
+                log10pvalues[i]!,
+                settings.scale.p.range,
+                getColorMap(settings.scale.cmap)
+              )
+            : getColor(nes[i]!, globalXLim, getColorMap(settings.scale.cmap))
+
+        console.log('mode', settings.scale.mode)
+
         return {
-          x,
+          x: score,
           y: i + 1,
-          p: log10pvalues[i]!,
-          color: getColor(
-            log10pvalues[i]!,
-            settings.p.range[1],
-            getColorMap(settings.p.cmap)
-          ),
+          nes: score,
+          p,
+          color,
           size: sizeF,
           r: sizeF * settings.bubbles.size,
           label: names[i]!,
@@ -168,7 +204,7 @@ export function GseaBubbleProvider({
     plots,
     settings.size.maxSize,
     settings.bubbles.size,
-    settings.p,
+    settings.scale,
     settings.plot.margin,
     settings.margin,
     settings.padding,
@@ -185,6 +221,7 @@ export function GseaBubbleProvider({
         plots,
         points,
         xlims,
+        globalXLim,
       }}
     >
       {children}

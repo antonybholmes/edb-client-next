@@ -8,7 +8,6 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_SAVE_IMAGE, TEXT_SEARCH } from '@/consts'
-import { useFooter } from '@/providers/footer-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { ArrowLeftRight } from 'lucide-react'
@@ -18,9 +17,8 @@ import { useMotifs } from '../motifs-store'
 export function HomeToolbar() {
   const { settings, updateSettings } = useMotifSettings()
 
-  const { addIndicator, remove: removeFooter } = useFooter()
   const { search, updateSearch } = useMotifs()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   const { open: openDialog } = useDialogs()
 
   return (

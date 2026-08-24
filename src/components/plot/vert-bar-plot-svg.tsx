@@ -8,7 +8,6 @@ import { Axis, YAxis, type TickLabel } from './axis/axis'
 import { AxisBottomSvg, AxisLeftSvg } from './axis/svg-axis'
 import { SvgVColorBar } from './svg-color-bar'
 
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { vfill } from '@/lib/fill'
 import type { ILim } from '@/lib/math/math'
 import { ones } from '@/lib/math/ones'
@@ -53,7 +52,7 @@ export const DEFAULT_DISPLAY_PROPS: IDisplayProps = {
   barWidth: 2,
 }
 
-interface IProps extends ISVGProps {
+interface IProps {
   df: BaseDataFrame
   x: string
   y: string
@@ -65,7 +64,6 @@ interface IProps extends ISVGProps {
 }
 
 export function VertBarPlotSvg({
-  ref,
   df,
   x,
   y,
@@ -345,7 +343,6 @@ export function VertBarPlotSvg({
 
   return (
     <SvgBase
-      ref={ref}
       width={width}
       height={height}
       scale={_displayProps.scale}
