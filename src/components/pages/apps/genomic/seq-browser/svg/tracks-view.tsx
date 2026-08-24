@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 
-import { Axis } from '@/components/plot/axis'
+import { Axis } from '@/components/plot/axis/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { TEXT_ZOOM } from '@/consts'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'

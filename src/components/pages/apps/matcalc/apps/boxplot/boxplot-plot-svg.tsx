@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import { YAxis } from '@/components/plot/axis'
-import { AxisLeftSvg } from '@/components/plot/svg-axis'
+import { YAxis } from '@/components/plot/axis/axis'
+import { AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import type { IPos } from '@/interfaces/pos'
 import { linspace } from '@/lib/math/linspace'
 import { median } from '@/lib/math/median'

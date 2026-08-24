@@ -1,7 +1,10 @@
 'use client'
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
-import { IGseaBubblePlot, useGseaBubbleContext } from './gsea-bubble-provider'
+import {
+  IGseaBubblePlot,
+  useGseaBubbleContext,
+} from '../gsea-plot/bubble/gsea-bubble-provider'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -60,7 +63,7 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 
-import { GseaBubbleProvider } from './gsea-bubble-provider'
+import { GseaBubbleProvider } from '../gsea-plot/bubble/gsea-bubble-provider'
 
 import { produce } from 'immer'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
@@ -68,9 +71,9 @@ import { useAllPlots } from '../../../matcalc/history/history-provider/history-h
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
-import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
-import { GseaBubblePlotSvg } from './gsea-bubble-svg'
+import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
+import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
+import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 const PLOT_ZOOM_CHANNEL = 'gsea-bubble-zoom'
@@ -86,7 +89,7 @@ export function GseaBubblePage() {
     onChange: ({ zoom }) => {
       updateSettings(
         produce(settings, (draft) => {
-          draft.scale = zoom
+          draft.page.scale = zoom
         })
       )
     },
@@ -94,7 +97,7 @@ export function GseaBubblePage() {
 
   const { settings: edbSettings } = useEdbSettings()
 
-  const { plot } = useGseaBubbleContext()
+  const { plots } = useGseaBubbleContext()
   const { settings, updateSettings } = useGseaBubbleSettings()
 
   const { openFile } = useHistory()
@@ -155,8 +158,8 @@ export function GseaBubblePage() {
 
   // load saved zoom from settings
   useEffect(() => {
-    setZoom(settings.scale)
-  }, [settings.scale])
+    setZoom(settings.page.scale)
+  }, [settings.page.scale])
 
   // useEffect(() => {
   //   if (!plot || settings.scale === zoom) {
@@ -284,7 +287,7 @@ export function GseaBubblePage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                {plot && <GseaBubblePlotSvg ref={svgRef} />}
+                {plots.length > 0 && <GseaBubblePlotSvg ref={svgRef} />}
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
@@ -319,7 +322,7 @@ export function GseaBubblePage() {
             </ResizablePanel>
           </ResizablePanelGroup>
 
-          <GseaBubblePropsPanel />
+          <GseaBubbleDisplayPropsPanel />
         </ResizableSidebar>
 
         <FooterPortal className="justify-between">
@@ -337,7 +340,9 @@ export function GseaBubblePlotPage() {
 
   return (
     <GseaBubbleProvider
-      plot={allPlots.length > 0 ? (allPlots[0] as IGseaBubblePlot) : undefined}
+      plots={
+        allPlots.length > 0 ? [(allPlots[0] as IGseaBubblePlot).gseaBubble] : []
+      }
     >
       <GseaBubblePage />
     </GseaBubbleProvider>

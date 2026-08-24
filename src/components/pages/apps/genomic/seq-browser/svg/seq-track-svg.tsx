@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { YAxis } from '@/components/plot/axis'
+import { YAxis } from '@/components/plot/axis/axis'
 import { locStr } from '@/lib/genomic/genomic'
 
 import { useEffect, useState } from 'react'

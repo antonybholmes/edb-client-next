@@ -1,6 +1,7 @@
 import { VCenterCol } from '@/components/layout/v-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { useDebounce } from '@/hooks/debounce'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { clamp } from '@/lib/math/clamp'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -13,11 +14,14 @@ const BUTTON_CLS = `w-4 flex h-3 min-h-0 overflow-hidden shrink-0 flex-row justi
 
 const UPDATE_INTERVAL_MS = 150
 
+const REMOVE_TRAILING_ZEROS_REGEX = /\.?0+$/
+
 export interface INumericalInputProps extends Omit<IInputProps, 'value'> {
   value: number
   limit?: [number, number]
   step?: number
   dp?: number
+  removeTrailingZeros?: boolean
   /**
    * Callback that is run as you type. The returned number is
    * the valid number you typed. If what you type is translates
@@ -38,6 +42,7 @@ export function NumericalInput({
   limit = [0, 100],
   step = 1,
   dp = 0,
+  removeTrailingZeros = true,
   placeholder,
   onNumChange,
   onNumChanged,
@@ -59,7 +64,7 @@ export function NumericalInput({
   // spinner, and then debounce the updates to the outside
   const numValue = useRef<number>(value)
 
-  const [textValue, setTextValue] = useState<string>(value.toFixed(dp))
+  const [textValue, setTextValue] = useState<string>('')
 
   //const [numValue, setNumValue] = useState<number>(value)
 
@@ -67,32 +72,6 @@ export function NumericalInput({
   const debouncedTextValue = useDebounce(textValue, {
     delayMs: 1000,
   })
-
-  // const debouncedNumValue = useDebounce(numValue, {
-  //   delayMs: 500,
-  //   fn: v => _clampValue(v),
-  // })
-
-  // user provides a new value, we update the internal value immediately
-  useEffect(() => {
-    const v = _clampValue(value)
-    setTextValue(v.toFixed(dp))
-    numValue.current = v
-  }, [value])
-
-  // the internal number value is clamped to the limit
-  //const _n = useRef(Number(value) || limit?.[0] || 0)
-
-  useEffect(() => {
-    _onChange(debouncedTextValue, 'change')
-  }, [debouncedTextValue])
-
-  // useEffect(() => {
-  //   onNumChange?.(debouncedNumValue)
-  //   onNumChanged?.(debouncedNumValue)
-  // }, [debouncedNumValue])
-
-  const ariaLabel = props['aria-label'] ?? title ?? 'Numerical input'
 
   function _clampValue(v: number): number {
     if (limit?.length === 2) {
@@ -102,7 +81,51 @@ export function NumericalInput({
     return v
   }
 
-  function _onChange(text: string, mode: 'change' | 'changed') {
+  /**
+   * Formats the number to the correct number of decimal places and removes trailing zeros if requested.
+   * @param v
+   */
+  function _setShowValue(v: number) {
+    let formattedValue = dp > -1 ? v.toFixed(dp) : v.toString()
+
+    if (removeTrailingZeros && dp > 0) {
+      formattedValue = formattedValue.replace(REMOVE_TRAILING_ZEROS_REGEX, '')
+    }
+
+    setTextValue(formattedValue)
+  }
+
+  // const debouncedNumValue = useDebounce(numValue, {
+  //   delayMs: 500,
+  //   fn: v => _clampValue(v),
+  // })
+
+  // user provides a new value, we update the internal value immediately
+  useEffect(() => {
+    const v = _clampValue(value)
+
+    _setShowValue(v)
+    numValue.current = v
+  }, [value])
+
+  // the internal number value is clamped to the limit
+  //const _n = useRef(Number(value) || limit?.[0] || 0)
+
+  useUpdateEffect(() => {
+    if (debouncedTextValue === '') {
+      return
+    }
+    _onChange(debouncedTextValue)
+  }, [debouncedTextValue])
+
+  // useEffect(() => {
+  //   onNumChange?.(debouncedNumValue)
+  //   onNumChanged?.(debouncedNumValue)
+  // }, [debouncedNumValue])
+
+  const ariaLabel = props['aria-label'] ?? title ?? 'Numerical input'
+
+  function _onChange(text: string, triggerChanged: boolean = false) {
     // remove commas for thousands separators, since they interfere with parsing
     let v = Number(text.replaceAll(',', ''))
 
@@ -112,42 +135,18 @@ export function NumericalInput({
 
     v = _clampValue(v)
 
-    if (v === value) {
-      // if value hasn't changed, do nothing
-      return
+    _setShowValue(v) // ensure value is formatted correctly as user types
+
+    if (v !== value) {
+      // only trigger updates if the value is different from the last value we sent to the parent
+      numValue.current = v
+
+      onNumChange?.(v)
+
+      if (triggerChanged) {
+        onNumChanged?.(v)
+      }
     }
-
-    numValue.current = v
-
-    setTextValue(v.toFixed(dp))
-
-    onNumChange?.(v)
-
-    if (mode === 'changed') {
-      onNumChanged?.(v)
-    }
-
-    // setValue(text)
-
-    // // Clear the previous timeout
-    // if (timeoutRef.current) {
-    //   clearTimeout(timeoutRef.current)
-    // }
-
-    // // Set a new timeout to format after delay
-    // timeoutRef.current = setTimeout(() => {
-    //   let v = Number(text)
-
-    //   if (!Number.isNaN(v)) {
-    //     v = _clampValue(v)
-    //     _n.current = v
-
-    //     onNumChange?.(v)
-    //   }
-    // }, delay)
-
-    // also call more realtime update, just in case
-    //onNumChange?.(_getValue(v))
   }
 
   // function _onNumChanged(v: number): number {
@@ -179,7 +178,7 @@ export function NumericalInput({
     // force ui to update immediately so user can see the change as they hold down the button
     // but since this value is debounced, the onNumChange/onNumChanged callbacks won't be called until
     // user releases the button or stops typing for a moment.
-    setTextValue(numValue.current.toFixed(dp))
+    _setShowValue(numValue.current)
   }
 
   function startUpdating(delta: number) {
@@ -202,7 +201,7 @@ export function NumericalInput({
     //_onNumChanged(numValue.current)
 
     const v = numValue.current
-    setTextValue(v.toFixed(dp)) // ensure value is formatted correctly after user finishes changing
+    _setShowValue(v) // ensure value is formatted correctly after user finishes changing
     onNumChanged?.(v)
   }
 
@@ -240,7 +239,7 @@ export function NumericalInput({
         inputCls="text-right"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            _onChange(e.currentTarget.value, 'changed') //onNumChanged?.(Math.min(limit[1], Math.max(limit[0], v)))
+            _onChange(e.currentTarget.value, true) //onNumChanged?.(Math.min(limit[1], Math.max(limit[0], v)))
           }
         }}
 

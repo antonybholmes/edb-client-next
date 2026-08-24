@@ -5,6 +5,7 @@ import {
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
 import { MarginIcon } from '../../../../../icons/margin-icon'
 import { useGseaSettings } from './gsea-settings-store'
@@ -18,36 +19,12 @@ export function MarginPopover() {
     <Popover>
       <PopoverTrigger
         title="Margins"
-        aria-label="Margins"
-        w="none"
-        className="opacity-50 hover:opacity-100 data-popup-open:opacity-100 transition-opacity text-xs"
-        // render={
-        //   <div className="grid grid-cols-[auto_1fr_auto] gap-x-1 items-center justify-center">
-        //     <span></span>
-        //     <span className="text-center hover:font-bold">
-        //       {settings.plot.margin.top}
-        //     </span>
-        //     <span></span>
-        //     <span className="text-right hover:font-bold">
-        //       {settings.plot.margin.left}
-        //     </span>
-        //     <span className="w-7 bg-background h-4 border border-border/50"></span>
-        //     <span className="text-left hover:font-bold">
-        //       {settings.plot.margin.right}
-        //     </span>
-        //     <span></span>
-        //     <span className="text-center hover:font-bold">
-        //       {settings.plot.margin.bottom}
-        //     </span>
-        //     <span></span>
-        //   </div>
-        // }
-      >
-        {/* {settings.plot.margin.top}&nbsp;|&nbsp;{settings.plot.margin.left}
-        &nbsp;|&nbsp;{settings.plot.margin.bottom}&nbsp;|&nbsp;
-        {settings.plot.margin.right} */}
-        <MarginIcon />
-      </PopoverTrigger>
+        render={
+          <ToolbarIconButton>
+            <MarginIcon />
+          </ToolbarIconButton>
+        }
+      />
 
       <PopoverContent
         //alignOffset={4}

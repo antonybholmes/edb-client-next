@@ -1,5 +1,5 @@
-import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import {
@@ -23,6 +23,7 @@ import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { SVG_CRISP_EDGES } from '@/consts'
 import { gsap } from 'gsap'
 import { useLollipopSettings, type IAAColor } from './lollipop-settings-store'
 import { aaSum } from './lollipop-stats'
@@ -269,7 +270,7 @@ export function seqSvg(
                 //stroke={aaColor.invert ? COLOR_BLACK : 'none'}
                 //strokeWidth={aaColor.invert ? 1 : 0}
                 //strokeOpacity={1}
-                shapeRendering="crispEdges"
+                shapeRendering={SVG_CRISP_EDGES}
               >
                 <title>{`Position ${aai + 1}: ${aa}`}</title>
               </SvgRect>

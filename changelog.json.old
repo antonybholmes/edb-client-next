@@ -1,6 +1,6 @@
 [
   {
-    "version": "19.6",
+    "version": "19.6.0",
     "messages": {
       "Changed": [
         {
@@ -47,7 +47,7 @@
     "date": "2024-12-09T19:34:13.061Z"
   },
   {
-    "version": "19.8",
+    "version": "19.8.0",
     "messages": {
       "Added": [
         {
@@ -78,7 +78,7 @@
     "date": "2024-12-11T19:34:13.061Z"
   },
   {
-    "version": "20.4",
+    "version": "20.4.0",
     "messages": {
       "Added": [
         {
@@ -117,7 +117,7 @@
     "date": "2024-12-11T19:34:13.061Z"
   },
   {
-    "version": "20.7",
+    "version": "20.7.0",
     "messages": {
       "Added": [
         {
@@ -144,7 +144,7 @@
     "date": "2025-01-11T19:34:13.061Z"
   },
   {
-    "version": "21.3",
+    "version": "21.3.0",
     "messages": {
       "Added": [
         {
@@ -199,7 +199,7 @@
     "date": "2025-03-11T19:34:13.061Z"
   },
   {
-    "version": "21.6",
+    "version": "21.6.0",
     "messages": {
       "Added": [
         {
@@ -222,7 +222,7 @@
     "date": "2025-05-11T19:34:13.061Z"
   },
   {
-    "version": "22.2",
+    "version": "22.2.0",
     "messages": {
       "Changed": [
         {
@@ -245,7 +245,7 @@
     "date": "2025-05-30T19:34:13.061Z"
   },
   {
-    "version": "22.3",
+    "version": "22.3.0",
     "messages": {
       "Fixed": [
         {
@@ -302,7 +302,7 @@
     "date": "2025-05-30T19:34:13.061Z"
   },
   {
-    "version": "22.4",
+    "version": "22.4.0",
     "messages": {
       "Fixed": [
         {
@@ -351,7 +351,7 @@
     "date": "2025-05-30T22:53:36.075Z"
   },
   {
-    "version": "22.5",
+    "version": "22.5.0",
     "messages": {
       "Changed": [
         {
@@ -392,7 +392,7 @@
     "date": "2025-05-31T17:14:27.952Z"
   },
   {
-    "version": "22.6",
+    "version": "22.6.0",
     "messages": {
       "Fixed": [
         {
@@ -437,7 +437,7 @@
     "date": "2025-06-03T02:02:54.802Z"
   },
   {
-    "version": "22.7",
+    "version": "22.7.0",
     "messages": {
       "Changed": [
         {
@@ -484,7 +484,7 @@
     "date": "2025-06-04T01:48:19.094Z"
   },
   {
-    "version": "22.8",
+    "version": "22.8.0",
     "messages": {
       "Added": [
         {
@@ -529,7 +529,7 @@
     "date": "2025-06-05T02:06:13.311Z"
   },
   {
-    "version": "22.9",
+    "version": "22.9.0",
     "messages": {
       "Fixed": [
         {
@@ -627,7 +627,7 @@
     "date": "2025-06-12T21:58:21.829Z"
   },
   {
-    "version": "23.1",
+    "version": "23.1.0",
     "messages": {
       "Added": [
         {
@@ -672,7 +672,7 @@
     "date": "2025-06-15T18:29:11.103Z"
   },
   {
-    "version": "23.2",
+    "version": "23.2.0",
     "messages": {
       "Fixed": [
         {
@@ -709,7 +709,7 @@
     "date": "2025-06-20T23:51:28.105Z"
   },
   {
-    "version": "23.3",
+    "version": "23.3.0",
     "messages": {
       "Changed": [
         {
@@ -754,7 +754,7 @@
     "date": "2025-06-23T02:12:22.765Z"
   },
   {
-    "version": "23.4",
+    "version": "23.4.0",
     "messages": {
       "Fixed": [
         {
@@ -789,7 +789,7 @@
     "date": "2025-06-27T22:03:49.855Z"
   },
   {
-    "version": "23.5",
+    "version": "23.5.0",
     "messages": {
       "Added": [
         {
@@ -834,7 +834,7 @@
     "date": "2025-07-01T03:06:48.399Z"
   },
   {
-    "version": "23.6",
+    "version": "23.6.0",
     "messages": {
       "Fixed": [
         {
@@ -883,7 +883,7 @@
     "date": "2025-07-01T22:33:49.564Z"
   },
   {
-    "version": "23.7",
+    "version": "23.7.0",
     "messages": {
       "Changed": [
         {
@@ -924,7 +924,7 @@
     "date": "2025-07-02T23:31:49.396Z"
   },
   {
-    "version": "23.8",
+    "version": "23.8.0",
     "messages": {
       "Added": [
         {
@@ -973,7 +973,7 @@
     "date": "2025-07-03T20:11:39.839Z"
   },
   {
-    "version": "23.9",
+    "version": "23.9.0",
     "messages": {
       "Added": [
         {
@@ -1071,7 +1071,7 @@
     "date": "2025-07-10T22:54:21.277Z"
   },
   {
-    "version": "24.1",
+    "version": "24.1.0",
     "messages": {
       "Changed": [
         {
@@ -1102,7 +1102,7 @@
     "date": "2025-07-13T00:25:33.287Z"
   },
   {
-    "version": "24.2",
+    "version": "24.2.0",
     "messages": {
       "Fixed": [
         {
@@ -1141,7 +1141,7 @@
     "date": "2025-07-17T13:28:33.636Z"
   },
   {
-    "version": "24.3",
+    "version": "24.3.0",
     "messages": {
       "Fixed": [
         {
@@ -1174,7 +1174,7 @@
     "date": "2025-07-25T02:00:37.184Z"
   },
   {
-    "version": "24.4",
+    "version": "24.4.0",
     "messages": {
       "Changed": [
         {
@@ -1213,7 +1213,7 @@
     "date": "2025-07-28T17:26:58.630Z"
   },
   {
-    "version": "24.5",
+    "version": "24.5.0",
     "messages": {
       "Fixed": [
         {
@@ -1246,7 +1246,7 @@
     "date": "2025-07-30T23:06:22.540Z"
   },
   {
-    "version": "24.6",
+    "version": "24.6.0",
     "messages": {
       "Fixed": [
         {
@@ -1281,7 +1281,7 @@
     "date": "2025-08-01T22:07:30.899Z"
   },
   {
-    "version": "24.7",
+    "version": "24.7.0",
     "messages": {
       "Changed": [
         {
@@ -1320,7 +1320,7 @@
     "date": "2025-08-06T23:03:48.579Z"
   },
   {
-    "version": "24.8",
+    "version": "24.8.0",
     "messages": {
       "Changed": [
         {
@@ -1392,7 +1392,7 @@
     "date": "2025-09-12T22:04:43.786Z"
   },
   {
-    "version": "26.2",
+    "version": "26.2.0",
     "messages": {
       "Changed": [
         {
@@ -1423,7 +1423,7 @@
     "date": "2025-09-15T18:07:14.111Z"
   },
   {
-    "version": "26.4",
+    "version": "26.4.0",
     "messages": {
       "Changed": [
         {
@@ -1450,7 +1450,7 @@
     "date": "2025-09-16T23:24:43.880Z"
   },
   {
-    "version": "26.6",
+    "version": "26.6.0",
     "messages": {
       "Changed": [
         {
@@ -1479,7 +1479,7 @@
     "date": "2025-09-17T20:45:06.866Z"
   },
   {
-    "version": "26.8",
+    "version": "26.8.0",
     "messages": {
       "changed": [
         {
@@ -1539,7 +1539,7 @@
     "date": "2025-09-19T16:49:32.178Z"
   },
   {
-    "version": "28.2",
+    "version": "28.2.0",
     "messages": {
       "Fixed": [
         {
@@ -1564,7 +1564,7 @@
     "date": "2025-09-19T22:42:30.395Z"
   },
   {
-    "version": "28.4",
+    "version": "28.4.0",
     "messages": {
       "Changed": [
         {
@@ -1591,7 +1591,7 @@
     "date": "2025-09-20T22:07:33.621Z"
   },
   {
-    "version": "28.6",
+    "version": "28.6.0",
     "messages": {
       "Changed": [
         {
@@ -1616,7 +1616,7 @@
     "date": "2025-09-22T22:28:41.609Z"
   },
   {
-    "version": "28.8",
+    "version": "28.8.0",
     "messages": {
       "Changed": [
         {
@@ -1670,7 +1670,7 @@
     "date": "2025-09-24T16:27:26.657Z"
   },
   {
-    "version": "30.2",
+    "version": "30.2.0",
     "messages": {
       "Changed": [
         {
@@ -1697,7 +1697,7 @@
     "date": "2025-09-25T23:13:29.302Z"
   },
   {
-    "version": "30.4",
+    "version": "30.4.0",
     "messages": {
       "Changed": [
         {
@@ -1724,7 +1724,7 @@
     "date": "2025-09-26T23:00:43.001Z"
   },
   {
-    "version": "30.6",
+    "version": "30.6.0",
     "messages": {
       "Added": [
         {
@@ -1753,7 +1753,7 @@
     "date": "2025-09-29T01:07:45.751Z"
   },
   {
-    "version": "30.8",
+    "version": "30.8.0",
     "messages": {
       "Changed": [
         {
@@ -1793,7 +1793,7 @@
     "date": "2026-04-04T01:31:04.172Z"
   },
   {
-    "version": "32.2",
+    "version": "32.2.0",
     "messages": {
       "Changed": [
         {
@@ -1806,7 +1806,7 @@
     "date": "2026-04-04T22:33:12.548Z"
   },
   {
-    "version": "32.4",
+    "version": "32.4.0",
     "messages": {
       "Changed": [
         {
@@ -1827,7 +1827,7 @@
     "date": "2026-04-07T01:47:16.712Z"
   },
   {
-    "version": "32.6",
+    "version": "32.6.0",
     "messages": {
       "Changed": [
         {
@@ -1844,7 +1844,7 @@
     "date": "2026-04-07T22:26:12.228Z"
   },
   {
-    "version": "32.8",
+    "version": "32.8.0",
     "messages": {
       "Changed": [
         {
@@ -2004,7 +2004,7 @@
     "date": "2026-06-18T19:24:32.131Z"
   },
   {
-    "version": "85.2",
+    "version": "85.2.0",
     "messages": {
       "Changed": [
         {
@@ -2059,7 +2059,7 @@
     "date": "2026-07-01T19:37:22.869Z"
   },
   {
-    "version": "85.4",
+    "version": "85.4.0",
     "messages": {
       "Changed": [
         {
@@ -2122,7 +2122,7 @@
     "date": "2026-07-05T01:29:49.434Z"
   },
   {
-    "version": "85.6",
+    "version": "85.6.0",
     "messages": {
       "Changed": [
         {
@@ -2181,7 +2181,7 @@
     "date": "2026-07-08T20:28:10.117Z"
   },
   {
-    "version": "85.8",
+    "version": "85.8.0",
     "messages": {
       "Changed": [
         {
@@ -2309,7 +2309,7 @@
     "date": "2026-07-23T16:28:52.384Z"
   },
   {
-    "version": "87.2",
+    "version": "87.2.0",
     "messages": {
       "Changed": [
         {
@@ -2386,7 +2386,7 @@
     "date": "2026-08-04T20:41:33.794Z"
   },
   {
-    "version": "87.4",
+    "version": "87.4.0",
     "messages": {
       "Changed": [
         {
@@ -2428,10 +2428,102 @@
         {
           "msg": "Added zoom callback to get rid of need for hydrated listeners",
           "date": "2026-08-19T15:09:40.847Z"
+        },
+        {
+          "msg": "Added pathway filter feature",
+          "date": "2026-08-21T01:55:39.015Z"
+        },
+        {
+          "msg": "Redesigned gsea plot gene set selection ui",
+          "date": "2026-08-21T14:14:54.973Z"
+        },
+        {
+          "msg": "Started to merge bubble plot with gsea plot as can generate both from gsea output",
+          "date": "2026-08-21T15:08:10.355Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "GSEA bubble nes axis can now be set by user",
+          "date": "2026-08-19T16:22:52.985Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-08-08T04:33:33.325Z"
+  },
+  {
+    "version": "87.6.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "GSEA bubble now supports grid layout",
+          "date": "2026-08-21T16:54:46.452Z"
+        },
+        {
+          "msg": "GSEA plot can now draw bubble plots",
+          "date": "2026-08-21T17:50:10.694Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-21T17:56:30.383Z"
+        },
+        {
+          "msg": "Fixed gsea store not showing filtered genesets. Added sort order to filtered list. Display props now context aware for the view",
+          "date": "2026-08-21T20:19:30.264Z"
+        },
+        {
+          "msg": "Improved axis objects with minor tick support",
+          "date": "2026-08-22T04:47:24.606Z"
+        },
+        {
+          "msg": "Colorbar now uses axes to set size. Expanded about dialog",
+          "date": "2026-08-22T06:11:00.233Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-21T16:54:46.452Z"
+  },
+  {
+    "version": "87.6.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-22T06:20:33.129Z"
+        },
+        {
+          "msg": "Integration of centralized settings to control axis appearances",
+          "date": "2026-08-22T15:07:28.039Z"
+        },
+        {
+          "msg": "Standardizing more axis properties",
+          "date": "2026-08-22T15:46:34.830Z"
+        },
+        {
+          "msg": "Axis now has proper tick params to control when shown",
+          "date": "2026-08-22T17:45:44.745Z"
+        },
+        {
+          "msg": "Some axes now correctly respond to tick props panel changes",
+          "date": "2026-08-22T19:17:48.402Z"
+        },
+        {
+          "msg": "Added deepmerge to unify axis edb settings and settings in axis with axis obj taking priority if props are present so we can have unified axes, but optionally customize them adhoc as needed",
+          "date": "2026-08-23T00:02:00.636Z"
+        },
+        {
+          "msg": "Greater integration of axis and settings properties. Axis props now optional and only override global settings if present.",
+          "date": "2026-08-23T23:39:58.453Z"
+        },
+        {
+          "msg": "New axis UI with colorbar axis separate from x y",
+          "date": "2026-08-24T00:08:33.800Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-22T06:20:33.129Z"
   }
 ]

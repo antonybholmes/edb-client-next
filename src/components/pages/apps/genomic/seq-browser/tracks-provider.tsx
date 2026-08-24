@@ -20,7 +20,7 @@ import {
 import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 
-import { Axis } from '@/components/plot/axis'
+import { Axis } from '@/components/plot/axis/axis'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'

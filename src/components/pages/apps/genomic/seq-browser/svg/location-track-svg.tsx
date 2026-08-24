@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { type Axis } from '@/components/plot/axis'
+import { type Axis } from '@/components/plot/axis/axis'
 import { SvgText } from '@/components/plot/svg-text'
 import { locStr } from '@/lib/genomic/genomic'
 import { useContext } from 'react'

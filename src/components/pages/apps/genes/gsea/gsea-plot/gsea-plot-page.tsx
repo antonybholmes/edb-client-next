@@ -55,13 +55,21 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
+import { useGseaBubbleSettings } from './bubble/gsea-bubble-settings-store'
+import { GseaBubbleTabPanel } from './bubble/gsea-bubble-tab-panel'
+import { GeneSetFilter } from './gene-set-filter'
 import {
   PLOT_ZOOM_CHANNEL,
   useGsea,
-  type IGseaPathway,
+  type IGseaGeneSet,
 } from './gsea-plot-store'
 import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
@@ -75,10 +83,10 @@ const LI_CLS =
   'border border-border/25 p-4 rounded-lg bg-background shadow-xs hover:shadow-lg trans-shadow'
 
 export function GseaPlotPage() {
-  //const _id = useStableId('gsea-page')
-
   const { settings: edbSettings } = useEdbSettings()
-  const { settings, updateSettings, hasHydrated } = useGseaSettings()
+  const { settings, updateSettings } = useGseaSettings()
+  const { settings: bubbleSettings, updateSettings: updateBubbleSettings } =
+    useGseaBubbleSettings()
   const { setAppInfo } = useAppInfo()
 
   const [search, setSearch] = useState('')
@@ -86,13 +94,14 @@ export function GseaPlotPage() {
   const {
     phenotypes,
     rankedGenes,
-    reportsMap,
-    datasetsForUse,
-    setDatasetsForUse,
+    filteredReports,
+    geneSetsInUse,
+
+    setGeneSetsInUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()
 
-  const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
+  const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
 
   const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
     onChange: ({ zoom }) => {
@@ -102,17 +111,19 @@ export function GseaPlotPage() {
           draft.page.scale = zoom
         })
       )
+
+      updateBubbleSettings(
+        produce(bubbleSettings, (draft) => {
+          draft.page.scale = zoom
+        })
+      )
     },
   })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
-  //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
 
   const { svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  //const { setTabs: setSideTabs } = useSideTabs()
-
-  //const isHydrated = useStoreHydration(useGseaPlotStore)
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -144,11 +155,11 @@ export function GseaPlotPage() {
   // )
 
   const searchIndex = useMemo(() => {
-    return new Fuse(phenotypes.map((k) => reportsMap[k]!).flat(), {
+    return new Fuse(filteredReports, {
       keys: ['phen', 'name'], // Fields to search
       threshold: 0.3, // Fuzzy match level
     })
-  }, [reportsMap])
+  }, [filteredReports])
 
   const fileMenuTabs: ITab[] = [
     {
@@ -233,16 +244,8 @@ export function GseaPlotPage() {
     const q = new BoolSearchQuery(query)
 
     setSearchResults(
-      phenotypes
-        .map((k) =>
-          reportsMap[k]!.filter(
-            (r) => q.match(k) || q.match(r.phen) || q.match(r.name)
-          )
-        )
-        .flat()
+      filteredReports.filter((r) => q.match(r.phen) || q.match(r.name))
     )
-
-    //setSearchResults(results.map(result => result.item))
   }
 
   return (
@@ -277,12 +280,12 @@ export function GseaPlotPage() {
 
                       <Checkbox
                         aria-label="Select gene set"
-                        checked={datasetsForUse[item.id] ?? false}
+                        checked={geneSetsInUse[item.id] ?? false}
                         onCheckedChange={() => {
-                          setDatasetsForUse(
+                          setGeneSetsInUse(
                             Object.fromEntries([
-                              ...Object.entries(datasetsForUse),
-                              [item.id, !datasetsForUse[item.id]],
+                              ...Object.entries(geneSetsInUse),
+                              [item.id, !geneSetsInUse[item.id]],
                             ])
                           )
                         }}
@@ -293,6 +296,30 @@ export function GseaPlotPage() {
             )
           })}
         </Autocomplete>
+        <>
+          <ToggleGroup
+            //direction="toolbar"
+            className="text-xs"
+            //rounded="none"
+            size="lg"
+            value={[settings.view.tab]}
+            onValueChange={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.view.tab = v[0] as 'graph' | 'bubble'
+                })
+              )
+            }}
+          >
+            <GroupToggle value="graph" className="px-2">
+              Graph
+            </GroupToggle>
+
+            <GroupToggle value="bubble" className="px-2">
+              Bubble
+            </GroupToggle>
+          </ToggleGroup>
+        </>
       </HeaderPortal>
 
       <ShortcutLayout signinRequired={false}>
@@ -303,6 +330,11 @@ export function GseaPlotPage() {
 
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
+            fileMenuShortcuts={
+              <>
+                <GeneSetFilter />
+              </>
+            }
             rightShortcuts={
               <>
                 <ToolbarButton
@@ -336,9 +368,21 @@ export function GseaPlotPage() {
                 }
               }}
             >
-              <ExtScrollCard className="px-2 pb-2">
-                <GseaSvg ref={svgRef} />
-              </ExtScrollCard>
+              <Tabs
+                //orientation="vertical"
+                value={settings.view.tab}
+                onValueChange={() => {}}
+                className="grow"
+              >
+                <TabsContent value="graph">
+                  <ExtScrollCard className="px-2 pb-2">
+                    <GseaSvg ref={svgRef} />
+                  </ExtScrollCard>
+                </TabsContent>
+                <TabsContent value="bubble">
+                  <GseaBubbleTabPanel svgRef={svgRef} />
+                </TabsContent>
+              </Tabs>
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel

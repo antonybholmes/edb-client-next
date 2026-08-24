@@ -1,7 +1,8 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { type Axis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { type Axis } from '@/components/plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
+import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { formattedList, truncate } from '@/lib/text/text'
@@ -306,7 +307,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             stroke="black"
             strokeDasharray="4,4"
             strokeWidth="1"
-            shapeRendering="crispEdges"
+            shapeRendering={SVG_CRISP_EDGES}
           />
           <rect
             x={tooltip.x - 20}
@@ -320,7 +321,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             fill="white"
             fillOpacity="0.8"
             //stroke="green"
-            //shapeRendering="crispEdges"
+            //shapeRendering={SVG_CRISP_EDGES}
           />
           <rect
             x={tooltip.x - 20}
@@ -334,7 +335,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             fill="green"
             fillOpacity="0.2"
             stroke="darkgreen"
-            //shapeRendering="crispEdges"
+            //shapeRendering={SVG_CRISP_EDGES}
           />
           <text
             x={tooltip.x}

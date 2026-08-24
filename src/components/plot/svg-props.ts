@@ -1,4 +1,8 @@
+import { IDim } from '@/interfaces/dim'
+import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { Axis } from './axis/axis'
+import { AxisType } from './axis/svg-axis-props'
 
 export const FONT_SIZE_SMALL = 12
 export const FONT_SIZE_MEDIUM = 14
@@ -10,7 +14,7 @@ export type TopBottomPos = 'top' | 'bottom'
 export type LegendPos = 'right' | 'upper-right' | 'bottom'
 
 export interface IPaintProps {
-  show?: boolean | undefined
+  show: boolean
   value: string
   opacity: number
 }
@@ -54,8 +58,8 @@ export const DEFAULT_FONT_PROPS: IFontProps = {
   fontWeight: 'normal',
   fontStyle: 'normal',
   decoration: 'none',
-  textAnchor: 'start',
   fontFamily: 'Arial',
+  textAnchor: 'start',
 }
 
 export const DEFAULT_BOLD_FONT_PROPS: IFontProps = {
@@ -73,11 +77,11 @@ export interface ITextProps {
   //text: string
   font: IFontProps
   rotation?: number
+  textAnchor?: 'start' | 'middle' | 'end'
 }
 
 export const DEFAULT_TEXT_PROPS: ITextProps = {
   show: true,
-  //text: '',
   font: { ...DEFAULT_FONT_PROPS },
 }
 
@@ -165,4 +169,34 @@ export const DEFAULT_MARGIN: IMarginProps = {
   left: 100,
   bottom: 100,
   right: 100,
+}
+
+export interface IColorBarProps {
+  show: boolean
+  stroke: IStrokeProps
+  size: IDim
+  //axis: IAxisDisplayProps
+}
+
+export const DEFAULT_COLORBAR_PROPS: IColorBarProps = {
+  show: true,
+  stroke: { ...DEFAULT_STROKE_PROPS },
+  size: { w: 100, h: 12 },
+  //axis: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+}
+
+export interface IAxisProps {
+  ax: Axis
+  pos?: IPos
+  font?: ITextProps
+  labelFont?: ITextProps
+  showTicks?: boolean
+  showTickLabels?: boolean
+  tickSize?: number
+  strokeWidth?: number
+  title?: string
+  titleOffset?: number
+  color?: string
+  axis?: AxisType
+  showLine?: boolean
 }

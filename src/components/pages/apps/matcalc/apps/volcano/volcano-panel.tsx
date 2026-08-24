@@ -3,7 +3,7 @@ import {
   VolcanoPlotSvg,
   type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
-import { autoLim } from '@/components/plot/axis'
+import { autoLim } from '@/components/plot/axis/axis'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'

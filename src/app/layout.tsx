@@ -6,10 +6,17 @@ import { BaseCol } from '@/components/layout/base-col'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
+
 const primaryFont = Geist({
   subsets: ['latin'],
   variable: '--font-primary',
+  weight: ['400', '500', '600', '700'],
 })
+
+// const primaryFont = Mona_Sans({
+//   subsets: ['latin'],
+//   variable: '--font-primary',
+// })
 
 // const geistMono = Geist_Mono({
 //   variable: "--font-geist-mono",

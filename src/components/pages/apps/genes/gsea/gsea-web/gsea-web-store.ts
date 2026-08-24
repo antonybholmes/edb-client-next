@@ -5,8 +5,9 @@ import { unzipSync } from 'fflate'
 
 import { create } from 'zustand'
 import {
+  getGseaLog10q,
   IGseaGeneRankScore,
-  IGseaPathway,
+  IGseaGeneSet,
   IGseaResult,
 } from '../gsea-plot/gsea-plot-store'
 
@@ -15,16 +16,16 @@ export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
 export interface IGseaWebStore {
   phenotypes: string[]
   rankedGenes: IGseaGeneRankScore[]
-  searchResults: IGseaPathway[]
-  reportsMap: Record<string, IGseaPathway[]>
+  searchResults: IGseaGeneSet[]
+  reportsMap: Record<string, IGseaGeneSet[]>
   datasetsForUse: Record<string, boolean>
   resultsMap: Record<string, IGseaResult>
-  reports: IGseaPathway[]
+  reports: IGseaGeneSet[]
   allowSelectAll: boolean
 
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
-  setReports: (reports: IGseaPathway[]) => void
+  setReports: (reports: IGseaGeneSet[]) => void
   loadGseaZip: (files: IBinaryFileOpen[]) => void
 }
 
@@ -42,7 +43,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
     set({ datasetsForUse }),
 
-  setReports: (reports: IGseaPathway[]) => set({ reports }),
+  setReports: (reports: IGseaGeneSet[]) => set({ reports }),
 
   setAllowSelectAll: (allowSelectAll: boolean) => set({ allowSelectAll }),
 
@@ -51,7 +52,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
       return
     }
 
-    const reportsMap: Record<string, IGseaPathway[]> = {}
+    const reportsMap: Record<string, IGseaGeneSet[]> = {}
 
     const resultsMap: Record<string, IGseaResult> = {}
 
@@ -124,14 +125,18 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
           const qIdx = headings.findIndex((h) => h === 'FDR q-val')
           const rankIdx = headings.findIndex((h) => h === 'RANK AT MAX')
 
-          const report: IGseaPathway = {
+          const q = Number(tokens[qIdx]!)
+          const log10q = getGseaLog10q(q)
+
+          const report: IGseaGeneSet = {
             id: makeUuid(),
             name,
             phen,
             size: Number(tokens[sizeIdx]!),
             nes: Number(tokens[nesIdx]!),
-            q: Number(tokens[qIdx]!),
-            rank: Number(tokens[rankIdx]!),
+            q,
+            log10q,
+            maxRank: Number(tokens[rankIdx]!),
           }
 
           reportsMap[phen]!.push(report)
@@ -166,7 +171,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
       }
     }
 
-    const reports: IGseaPathway[] = phenotypes
+    const reports: IGseaGeneSet[] = phenotypes
       .filter((phen) => phen in reportsMap)
       .map((phen) => reportsMap[phen]!)
       .flat()

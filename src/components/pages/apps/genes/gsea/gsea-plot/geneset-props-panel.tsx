@@ -1,62 +1,41 @@
 import { PropsPanel } from '@/components/props-panel'
 
-import { MultiSelectIcon } from '@/components/icons/multi-select-icon'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { TEXT_SELECT, TEXT_SELECT_ALL } from '@/consts'
+import { TEXT_SELECT_ALL } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { useGsea, type IGseaPathway } from './gsea-plot-store'
+import { GeneSetFilter } from './gene-set-filter'
+import { useGsea, type IGseaGeneSet } from './gsea-plot-store'
 
 function GseaReportItem({
   index,
   report,
 }: {
   index: number
-  report: IGseaPathway
+  report: IGseaGeneSet
 }) {
-  const { datasetsForUse, allowSelectAll, setDatasetsForUse } = useGsea()
+  const { geneSetsInUse, setGeneSetsInUse } = useGsea()
 
   return (
-    <SortableItem
-      index={index}
-      id={report.id}
-      key={report.id}
-      dragHandle={
-        allowSelectAll ? (
-          <Checkbox
-            checked={datasetsForUse[report.id] ?? false}
-            onCheckedChange={(checked) => {
-              setDatasetsForUse(
-                produce(datasetsForUse, (draft) => {
-                  draft[report.id] = checked ?? false
-                })
-              )
-            }}
-          />
-        ) : undefined
-      }
-    >
-      {/* {allowSelectAll && (
-        <Checkbox
-          checked={datasetsForUse[report.id] ?? false}
-          onCheckedChange={(checked) => {
-            setDatasetsForUse(
-              produce(datasetsForUse, (draft) => {
-                draft[report.id] = checked ?? false
-              })
-            )
-          }}
-        />
-      )} */}
+    <SortableItem index={index} id={report.id} key={report.id}>
+      <Checkbox
+        checked={geneSetsInUse[report.id] ?? false}
+        onCheckedChange={(checked) => {
+          setGeneSetsInUse(
+            produce(geneSetsInUse, (draft) => {
+              draft[report.id] = checked ?? false
+            })
+          )
+        }}
+      />
 
       <TruncateSpan className="h-8 grow">{report.name}</TruncateSpan>
     </SortableItem>
@@ -64,51 +43,38 @@ function GseaReportItem({
 }
 
 export function GeneSetsPropsPanel() {
-  const [selectAllDatasets, setSelectAllDatasets] = useState(true)
+  const [selectAllGeneSets, setSelectAllGeneSets] = useState(true)
 
-  const {
-    reports,
-    setReports,
-    setDatasetsForUse,
-    allowSelectAll,
-    setAllowSelectAll,
-  } = useGsea()
+  const { filteredReports, setFilteredReports, setGeneSetsInUse } = useGsea()
 
   return (
-    <PropsPanel className="gap-y-1 text-xs">
-      <SideBarHeader className="gap-x-2 justify-between">
-        <VCenterRow
-          data-visible={allowSelectAll}
-          className="data-[visible=false]:invisible ml-1"
-        >
-          <Checkbox
-            aria-label="Select all gene sets"
-            checked={selectAllDatasets}
-            onCheckedChange={() => {
-              const selected = !selectAllDatasets
+    <PropsPanel className="text-xs">
+      <VCenterRow className="gap-x-1 justify-between pl-6.5">
+        <Checkbox
+          aria-label="Select all gene sets"
+          checked={selectAllGeneSets}
+          onCheckedChange={() => {
+            const selected = !selectAllGeneSets
 
-              setDatasetsForUse(
-                Object.fromEntries(
-                  reports.map(
-                    (pathway) => [pathway.id, selected] as [string, boolean]
-                  )
+            setGeneSetsInUse(
+              Object.fromEntries(
+                filteredReports.map(
+                  (pathway) => [pathway.id, selected] as [string, boolean]
                 )
               )
+            )
 
-              setSelectAllDatasets(selected)
-            }}
-            title={TEXT_SELECT_ALL}
-          />
-        </VCenterRow>
+            setSelectAllGeneSets(selected)
+          }}
+          title={TEXT_SELECT_ALL}
+          data-visible={filteredReports.length > 0 ? 'true' : undefined}
+          className="invisible data-visible:visible"
+        />
 
-        <IconButton
-          checked={allowSelectAll}
-          onClick={() => setAllowSelectAll(!allowSelectAll)}
-          title={TEXT_SELECT}
-        >
-          <MultiSelectIcon checked={allowSelectAll} />
-        </IconButton>
-      </SideBarHeader>
+        <GeneSetFilter />
+      </VCenterRow>
+
+      <LineSeparator />
 
       <VScrollPanel className="mb-2">
         <DragDropProvider
@@ -117,7 +83,7 @@ export function GeneSetsPropsPanel() {
           //for the moment do not allow to be re-arranged as it messes up
           //cluster color rendering
           onDragEnd={(event) => {
-            const newOrder = move(reports, event)
+            const newOrder = move(filteredReports, event)
 
             // const { active, over } = event
 
@@ -136,14 +102,14 @@ export function GeneSetsPropsPanel() {
             //   //   newOrder.map(id => plots.find(plot => plot.id === id)!)
             //   // )
 
-            setReports(newOrder)
+            setFilteredReports(newOrder)
             //}
 
             //setActiveId(null)
           }}
         >
           <ul className="flex flex-col">
-            {reports.map((report, ri) => {
+            {filteredReports.map((report, ri) => {
               return (
                 <GseaReportItem key={report.id} index={ri} report={report} />
               )

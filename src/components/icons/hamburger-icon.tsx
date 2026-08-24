@@ -80,7 +80,7 @@ export function HamburgerIcon({
         ref={line1Ref}
         //initial={false}
         //animate={{ y1: y1, y2: y1 }}
-        //shapeRendering="crispEdges"
+        //shapeRendering={SVG_CRISP_EDGES}
       />
 
       <line
@@ -90,7 +90,7 @@ export function HamburgerIcon({
         y1="12"
         y2="12"
         className="opacity-0 left-1/2 -translate-x-1/2"
-        //shapeRendering="crispEdges"
+        //shapeRendering={SVG_CRISP_EDGES}
       />
 
       <line
@@ -99,7 +99,7 @@ export function HamburgerIcon({
         x2="22"
         y1="17"
         y2="17"
-        //shapeRendering="crispEdges"
+        //shapeRendering={SVG_CRISP_EDGES}
         //initial={false}
         //animate={{ y1: y2, y2: y2 }}
       />

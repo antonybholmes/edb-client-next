@@ -1,4 +1,4 @@
-import { Axis } from '@/components/plot/axis'
+import { Axis } from '@/components/plot/axis/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { useMergeRefs } from '@/hooks/merge-refs'

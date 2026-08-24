@@ -12,7 +12,8 @@ export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
 interface IProps extends INumericalInputProps {
   title: string
-  labelClassName?: string
+  titleCls?: string
+
   leftChildren?: ReactNode
   rightChildren?: ReactNode
   breakpoint?: number
@@ -20,7 +21,7 @@ interface IProps extends INumericalInputProps {
 
 export function NumericalPropRow({
   title = '',
-  labelClassName,
+  titleCls,
 
   breakpoint = 200,
 
@@ -31,7 +32,7 @@ export function NumericalPropRow({
   //const id = useStableId('text-prop-row')
 
   return (
-    <PropRow title={title}>
+    <PropRow title={title} className={titleCls}>
       <NumericalInput className={cn('rounded-theme', className)} {...props} />
     </PropRow>
   )

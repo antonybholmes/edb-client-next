@@ -20,9 +20,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { CenterRow } from '@/components/layout/center-row'
 import { IS_DEV_MODE } from '@/consts'
+import { useBreakpointSizeObserver } from '@/hooks/resize-observer'
 import { formatString } from '@/lib/text/format-string'
 import { format } from 'date-fns'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { BaseImage } from '../../../base-image'
 import { HCenterCol } from '../../../layout/h-center-col'
 import { VCenterCol } from '../../../layout/v-center-col'
@@ -41,9 +42,13 @@ export function InfoPage({ children }: IChildrenProps) {
       ),
   })
 
+  const ref = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
+
+  const breakPoint = useBreakpointSizeObserver(ref)
 
   return (
     <>
@@ -52,7 +57,11 @@ export function InfoPage({ children }: IChildrenProps) {
       </HeaderSlotPortal> */}
 
       <SignInLayout title="Info" signinRequired={false}>
-        <HCenterCol className="w-9/10 md:w-3/4 lg:w-1/2 2xl:w-1/3 mx-auto gap-y-12 mt-16">
+        <HCenterCol
+          ref={ref}
+
+          className="w-9/10 md:w-3/4 lg:w-1/2 2xl:w-1/3 mx-auto gap-y-12 mt-16"
+        >
           <Card className="text-sm w-full" shadow="xl" rounded="2xl">
             <VCenterRow className="gap-x-4 py-2">
               <BaseImage
@@ -141,10 +150,13 @@ export function InfoPage({ children }: IChildrenProps) {
           <BaseCol className="gap-y-2 text-sm w-full px-4">
             <p>
               This application is made possible by open source software and
-              other services:
+              other services and technologies:
             </p>
 
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+            <ul
+              data-breakpoint={breakPoint}
+              className="grid data-[breakpoint=320]:grid-cols-1 data-[breakpoint=480]:grid-cols-2 data-[breakpoint=640]:grid-cols-3 data-[breakpoint=768]:grid-cols-4 gap-1 w-full"
+            >
               {LINKS.sort((a, b) =>
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
               ).map((link, li) => {

@@ -116,7 +116,6 @@ export function ColorMapMenu({
   const [open, setOpen] = useState(false)
 
   function _onChange(cmap: ColorMap) {
-    //setOpen(false)
     onChange?.(cmap)
   }
 
@@ -166,9 +165,12 @@ export function ColorMapMenu({
       <DropdownMenuTrigger
         title="Change colormap"
         onClick={() => setOpen(true)}
-      >
-        <ColorMapMenuIcon cmap={cmap} />
-      </DropdownMenuTrigger>
+        render={
+          <ToolbarIconButton>
+            <ColorMapMenuIcon cmap={cmap} />
+          </ToolbarIconButton>
+        }
+      ></DropdownMenuTrigger>
       <ColorMapMenuContent cmap={cmap} onChange={_onChange} />
     </DropdownMenu>
   )

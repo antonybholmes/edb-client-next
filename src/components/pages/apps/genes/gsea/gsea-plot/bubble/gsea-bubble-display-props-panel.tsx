@@ -9,6 +9,7 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
@@ -20,28 +21,20 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
-import { ColorMapMenu } from '../../../matcalc/color-map-menu'
-import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
-import { SORT_BY_ITEMS } from './gsea-bubble-dialog'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
+import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
+import { MarginPopover } from '../../bubble/margin-popover'
+import { AxesPropsPopover } from './axes-props-popover'
 import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
-import { MarginPopover } from './margin-popover'
 
-export function GseaBubblePropsPanel() {
-  const { updatePlot } = useHistory()
+export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
-
-  const { plot } = useGseaBubbleContext()
-
-  if (!plot) {
-    return null
-  }
-
-  const displayProps = plot.props
 
   return (
     <PropsPanel>
-      <ScrollAccordion value={['plot', 'nes', 'p-value', 'bubble', 'size']}>
+      <ScrollAccordion
+        value={['plot', 'ticks', 'nes', 'p-value', 'bubble', 'size']}
+      >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
@@ -109,43 +102,53 @@ export function GseaBubblePropsPanel() {
 
               <MarginPopover />
             </PropRow>
+            <PropRow title="Axes">
+              <AxesPropsPopover />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="nes">
           <AccordionTrigger>NES</AccordionTrigger>
           <AccordionContent>
+            <CheckPropRow
+              title="Auto X-axis"
+              checked={settings.axes.x.auto}
+              onCheckedChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.x.auto = v
+                  })
+                )
+              }}
+            />
             <PropRow title="X-axis">
               <DoubleNumericalInput
                 id="x-limit"
-                v1={displayProps.axes.xaxis.domain[0]}
-                v2={displayProps.axes.xaxis.domain[1]}
+                v1={settings.axes.x.domain[0]}
+                v2={settings.axes.x.domain[1]}
                 placeholder="Limit..."
+                disabled={settings.axes.x.auto}
                 dp={1}
                 limit={[-10000, 10000]}
                 w="xxs"
                 onNumChanged1={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.domain = [
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.domain = [
                         v,
-                        round(displayProps.axes.xaxis.domain[1], 1),
+                        round(settings.axes.x.domain[1], 1),
                       ]
                     })
                   )
                 }}
                 onNumChanged2={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.domain = [
-                        round(draft.props.axes.xaxis.domain[0], 1),
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.domain = [
+                        round(draft.axes.x.domain[0], 1),
                         v,
                       ]
-
-                      console.log([
-                        round(draft.props.axes.xaxis.domain[0], 1),
-                        v,
-                      ])
                     })
                   )
                 }}

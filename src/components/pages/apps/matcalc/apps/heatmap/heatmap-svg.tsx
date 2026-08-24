@@ -5,7 +5,6 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
-import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { CellsSvg, DotsSvg, GridSvg } from '@/components/plot/heatmap/cell-svg'
 import {
   ColGroupsSvg,
@@ -16,6 +15,7 @@ import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
 } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -23,6 +23,7 @@ import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
+import { Axis } from '@/components/plot/axis/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { useMergeRefs } from '@/hooks/merge-refs'
@@ -283,6 +284,26 @@ export function HeatMapSvg({ ref }: IProps) {
       }
     }
 
+    const cax = new Axis()
+      .setDomain(displayOptions.range)
+      .setLength(displayOptions.colorbar.size.w)
+      .setTicks([
+        displayOptions.range[0],
+        (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
+        displayOptions.range[1],
+      ])
+      .setMinorTicks([
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+      ])
+      .setTickParams({
+        which: 'minor',
+        show: true,
+      })
+
+ 
     const svg = (
       <>
         {displayOptions.title.show && displayOptions.title.text && (
@@ -435,12 +456,11 @@ export function HeatMapSvg({ ref }: IProps) {
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('right') && (
-            <VColorBarSvg
-              domain={displayOptions.range}
+            <SvgVColorBar
+              ax={cax}
+
               cmap={COLOR_MAPS[displayOptions.cmap]!}
-              size={displayOptions.colorbar.size}
-              stroke={displayOptions.colorbar.stroke}
-              font={displayOptions.legend}
+
               pos={{
                 x:
                   margin.left +
@@ -462,12 +482,16 @@ export function HeatMapSvg({ ref }: IProps) {
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
-            <HColorBarSvg
-              domain={displayOptions.range}
+            <SvgHColorBar
+              ax={new Axis()
+                .setDomain(displayOptions.range)
+                .setLength(displayOptions.colorbar.size.w)
+                .setTickParams({
+                  which: 'minor',
+                  show: false,
+                })}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
-              size={displayOptions.colorbar.size}
-              stroke={displayOptions.colorbar.stroke}
-              font={displayOptions.legend}
+
               pos={{
                 x: margin.left,
                 y:

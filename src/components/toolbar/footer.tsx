@@ -10,7 +10,7 @@ export const TOOLBAR_FOOTER_CLS = cn(
   CENTERED_ROW_CLS,
   'px-2 h-7 text-xs text-alt-foreground overflow-hidden',
   'justify-between grid grid-cols-4 shrink-0 w-full bg-body',
-  'border-t border-transparent hover:border-border/70 trans-color'
+  'border-t border-transparent hover:border-border/50 trans-color'
 )
 
 export function Footer({ className }: IChildrenProps) {

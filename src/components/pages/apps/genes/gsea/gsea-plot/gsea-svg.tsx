@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
@@ -12,8 +12,9 @@ import type { ISVGProps } from '@/interfaces/svg-props'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { SvgText } from '@/components/plot/svg-text'
-import { IGseaGeneRankScore, IGseaPathway, useGsea } from './gsea-plot-store'
+import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
 /**
@@ -26,8 +27,9 @@ import { useGseaSettings } from './gsea-settings-store'
  */
 export function GseaSvg({ ref }: ISVGProps) {
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
-  const { rankedGenes, reports, resultsMap, datasetsForUse } = useGsea()
+  const { rankedGenes, inUseReports, resultsMap } = useGsea()
 
   // size of plot with padding
   const plotSize = [
@@ -42,11 +44,8 @@ export function GseaSvg({ ref }: ISVGProps) {
   // keep only pathways for which we have results, i.e. with
   // suitable q values. If q == 1, unlikely GSEA generated it
   // so we cannot plot it
-  const pathways = reports.filter(
-    (report) =>
-      (datasetsForUse[report.id] ?? false) &&
-      report.q < 1 &&
-      report.name in resultsMap
+  const pathways = inUseReports.filter(
+    (report) => report.q < 1 && report.name in resultsMap
   )
 
   const rows = Math.ceil(pathways.flat().length / settings.page.columns)
@@ -90,6 +89,7 @@ export function GseaSvg({ ref }: ISVGProps) {
     let xax = new Axis()
       .setDomain([0, maxRank])
       .setLength(settings.axes.x.length)
+      .setTickParams({ which: 'both', show: false })
 
     xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -108,7 +108,10 @@ export function GseaSvg({ ref }: ISVGProps) {
       Math.max(...es.map((e) => e.score)),
     ]
 
-    let yax = new YAxis().autoDomain(ylim).setLength(settings.es.axes.y.length)
+    let yax = new YAxis()
+      .autoDomain(ylim)
+      .setLength(settings.es.axes.y.length)
+      .setTickParams({ which: 'minor', show: false })
 
     const points: IPos[] = es.map((e) => ({
       x: xax.domainToRange(e.rank),
@@ -145,14 +148,9 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     const crossIndex =
       sortedRankedGenes.findLastIndex((gene) => gene.score > 0) + 1
-    //console.log('crossIndex2', crossIndex2, sortedRankedGenes[crossIndex2!])
-    // const crossIndex =
-    //   end(where(sortedRankedGenes, (gene) => gene.score > 0)) + 1
 
     //const crossingX = xax.domainToRange(crossIndex)
     const crossing = { index: crossIndex, x: xax.domainToRange(crossIndex) }
-
-    //end(where(sortedRankedGenes, (gene) => gene.score > 0)) + 1
 
     let genesSvg: ReactNode | null = null
 
@@ -186,27 +184,33 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     ploti++
 
-    let titleX = settings.plot.margin.left
+    // let titleX = settings.plot.margin.left
 
-    switch (settings.title.font.textAnchor) {
-      case 'middle':
-        titleX = settings.plot.margin.left + settings.axes.x.length / 2
-        break
-      case 'end':
-        titleX = settings.plot.margin.left + settings.axes.x.length
-        break
-      default:
-        titleX = settings.plot.margin.left
-    }
+    // switch (edbSettings.plots.axes.x.title.textAnchor) {
+    //   case 'middle':
+    //     titleX = settings.plot.margin.left + settings.axes.x.length / 2
+    //     break
+    //   case 'end':
+    //     titleX = settings.plot.margin.left + settings.axes.x.length
+    //     break
+    //   default:
+    //     titleX = settings.plot.margin.left
+    // }
+
+    const titleX = settings.plot.margin.left + settings.axes.x.length / 2
 
     return (
       <g transform={`translate(${x}, ${y})`} key={ploti} id={`plot-${ploti}`}>
-        {settings.title.show && (
+        {edbSettings.plots.axes.x.title.show && (
           <SvgText
             id={`title-${ploti}`}
-            font={settings.title}
+            font={edbSettings.plots.axes.x.title}
+            textAnchor="middle"
             x={titleX}
-            y={settings.plot.margin.top - settings.title.offset}
+            y={
+              settings.plot.margin.top -
+              edbSettings.plots.axes.x.title.offset * 0.5
+            }
           >
             {pathway.name}
           </SvgText>
@@ -290,7 +294,7 @@ function EsSvg({
   xax,
   yax,
 }: {
-  pathway: IGseaPathway
+  pathway: IGseaGeneSet
   es: IGseaGeneRankScore[]
   sortedRankedGenes: IGseaGeneRankScore[]
   maxRank: number
@@ -301,6 +305,7 @@ function EsSvg({
   yax: YAxis
 }) {
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
   const { phenotypes } = useGsea()
   const nes = settings.phenotypes.invert ? -pathway.nes : pathway.nes
 
@@ -362,30 +367,21 @@ function EsSvg({
         s={settings.es.line}
       />
 
-      {settings.axes.show && (
-        <AxisLeftSvg
-          ax={yax}
-          title="ES"
-          font={settings.axes.ticks}
-          labelFont={settings.axes.labels}
-        />
-      )}
+      {edbSettings.plots.axes.y.show && <AxisLeftSvg ax={yax} title="ES" />}
 
-      {settings.axes.show && (
+      {edbSettings.plots.axes.x.show && (
         <g transform={`translate(0, ${yax.domainToRange(0)})`}>
-          <AxisBottomSvg
-            ax={xax}
-            showTicks={settings.es.axes.x.showTicks}
-            font={settings.axes.ticks}
-            labelFont={settings.axes.labels}
-          />
+          <AxisBottomSvg ax={xax} showTicks={settings.es.axes.x.showTicks} />
         </g>
       )}
 
       <g
         transform={`translate(${settings.axes.x.length + settings.plot.gap.x / 4}, ${yax.domainToRange(0)})`}
       >
-        <SvgText dominantBaseline="central" font={settings.axes.ticks}>
+        <SvgText
+          dominantBaseline="central"
+          font={edbSettings.plots.axes.x.ticks.major.labels}
+        >
           {sortedRankedGenes.length.toLocaleString()}
         </SvgText>
       </g>
@@ -637,6 +633,7 @@ function RankingSvg({
   pos: IPos
 }) {
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const yMin = Math.min(...sortedRankedGenes.map((e) => e.score))
   const yMax = Math.max(...sortedRankedGenes.map((e) => e.score))
@@ -645,6 +642,7 @@ function RankingSvg({
     .autoDomain([yMin, yMax])
     //.setDomain([0, plot.dna.seq.length])
     .setLength(settings.ranking.axes.y.length)
+    .setTickParams({ which: 'minor', show: false })
 
   const y0 = yax.domainToRange(0)
 
@@ -684,20 +682,16 @@ function RankingSvg({
           <g
             transform={`translate(0, ${settings.ranking.axes.y.length + settings.plot.gap.y})`}
           >
-            <SvgText textAnchor="middle" font={settings.axes.ticks}>
+            <SvgText
+              textAnchor="middle"
+              font={edbSettings.plots.axes.x.ticks.major.labels}
+            >
               Zero cross at {crossing.index.toLocaleString()}
             </SvgText>
           </g>
         </g>
       )}
-      {settings.axes.show && (
-        <AxisLeftSvg
-          ax={yax}
-          title="SNR"
-          labelFont={settings.axes.labels}
-          font={settings.axes.ticks}
-        />
-      )}
+      <AxisLeftSvg ax={yax} title="SNR" />
     </g>
   )
 }

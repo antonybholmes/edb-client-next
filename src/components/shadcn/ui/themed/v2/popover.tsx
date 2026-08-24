@@ -43,15 +43,23 @@ export function PopoverTrigger({
   variant,
   w,
   className,
+  title,
+  'aria-label': ariaLabel,
   children,
   ...props
 }: ComponentProps<typeof PopoverPrimitive.Trigger> &
   VariantProps<typeof triggerVariants> & {
     showIcon?: boolean
   }) {
+  if (!ariaLabel) {
+    ariaLabel = title
+  }
+
   return (
     <PopoverPrimitive.Trigger
       className={triggerVariants({ variant, w, className })}
+      aria-label={ariaLabel}
+      title={title}
       {...props}
     >
       {children}

@@ -36,6 +36,7 @@ export function HomeToolbar() {
                   if (!success) {
                     return
                   }
+
                   loadGseaZipWithErrorHandling(files)
                 })
               },
@@ -120,6 +121,31 @@ export function HomeToolbar() {
           </ToolbarButton>
         </ToolbarCol>
       </ToolbarTabGroup>
+
+      {/* <ToolbarTabGroup title="View">
+        <ToggleGroup
+          //direction="toolbar"
+          className="overflow-hidden rounded-theme"
+          //rounded="none"
+          size="toolbar"
+          value={[settings.view.tab]}
+          onValueChange={(v) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.view.tab = v[0] as 'gsea' | 'bubble'
+              })
+            )
+          }}
+        >
+          <GroupToggle value="gsea" className="px-2">
+            GSEA
+          </GroupToggle>
+
+          <GroupToggle value="bubble" className="px-2">
+            Bubble
+          </GroupToggle>
+        </ToggleGroup>
+      </ToolbarTabGroup> */}
     </>
   )
 }

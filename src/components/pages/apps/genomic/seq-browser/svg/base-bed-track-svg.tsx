@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { type Axis } from '@/components/plot/axis'
+import { type Axis } from '@/components/plot/axis/axis'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { locStr } from '@/lib/genomic/genomic'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'

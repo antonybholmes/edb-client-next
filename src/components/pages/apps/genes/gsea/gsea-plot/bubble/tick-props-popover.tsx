@@ -1,0 +1,125 @@
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
+import { PropRow } from '@/components/dialogs/prop-row'
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { AxisType } from '@/components/plot/axis/svg-axis-props'
+import { FontPopover } from '@/components/plot/font/font-popover'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/ui/themed/v2/popover'
+import { TEXT_FONT } from '@/consts'
+import { capitalCase } from '@/lib/text/capital-case'
+import { produce } from 'immer'
+import { MoveRight, MoveUp } from 'lucide-react'
+import { useState } from 'react'
+
+export function TickPropsPopover({
+  axis,
+  which,
+}: {
+  axis: AxisType
+  which: 'major' | 'minor'
+}) {
+  const { settings, updateSettings } = useEdbSettings()
+  const [open, setOpen] = useState(false)
+
+  const title = `${capitalCase(which)} ${capitalCase(axis)}-Axis`
+
+  const icon =
+    axis === 'x' ? (
+      <MoveRight size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
+    ) : (
+      <MoveUp size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
+    )
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        className="text-foreground/70 hover:text-foreground data-pressed:text-foreground"
+        title={`${title} Tick Properties`}
+      >
+        {icon}
+      </PopoverTrigger>
+      <PopoverContent className="gap-y-1">
+        <CheckPropRow
+          title={title}
+          className="font-bold"
+          checked={settings.plots.axes[axis].ticks[which].show}
+          onCheckedChange={(v) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.plots.axes[axis].ticks[which].show = v
+              })
+            )
+          }}
+        />
+        <PropRow title="Labels">
+          <FontPopover
+            fonts={[
+              {
+                title: TEXT_FONT,
+                textProps: settings.plots.axes[axis].ticks[which].labels,
+                showRotation: true,
+                update: (f) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plots.axes[axis].ticks[which].labels =
+                        Object.assign(
+                          draft.plots.axes[axis].ticks[which].labels,
+                          f
+                        )
+                    })
+                  ),
+              },
+            ]}
+          />
+        </PropRow>
+
+        <PropRow title="Size / Offset">
+          <NumericalInput
+            title="Size"
+
+            value={settings.plots.axes[axis].ticks[which].line.size}
+
+            limit={[1, 1000]}
+            dp={0}
+            onNumChanged={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plots.axes[axis].ticks[which].line.size = v
+                })
+              )
+            }}
+          />
+
+          <NumericalInput
+            value={settings.plots.axes[axis].ticks[which].line.offset}
+            title="Offset"
+            onNumChanged={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plots.axes[axis].ticks[which].line.offset = v
+                })
+              )
+            }}
+          />
+        </PropRow>
+
+        <NumericalPropRow
+          value={settings.plots.axes[axis].ticks[which].labels.offset}
+          title="Label Offset"
+          onNumChanged={(v) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.plots.axes[axis].ticks[which].labels.offset = v
+              })
+            )
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}

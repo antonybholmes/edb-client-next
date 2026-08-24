@@ -3,8 +3,8 @@ import { useMemo, useRef, useState } from 'react'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
 
-import { Axis, YAxis } from '../../../../../plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/svg-axis'
+import { Axis, YAxis } from '../../../../../plot/axis/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axis/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import {
@@ -27,8 +27,6 @@ const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
 
 const TOOLTIP_OFFSET = 10
 
-const margin = { top: 100, right: 100, bottom: 100, left: 100 }
-
 export interface IDisplayAxis {
   name: string
   domain: ILim
@@ -36,8 +34,7 @@ export interface IDisplayAxis {
   ticks: number[]
   tickLabels: string[]
   tickSize: number
-  strokeWidth: number
-  color: string
+  stroke: IStrokeProps
 }
 
 export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
@@ -47,8 +44,7 @@ export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
   ticks: [],
   tickLabels: [],
   tickSize: 4,
-  strokeWidth: 2,
-  color: COLOR_BLACK,
+  stroke: { ...DEFAULT_STROKE_PROPS, width: 2 },
 }
 
 export interface IScatterDisplayOptions {
@@ -161,8 +157,8 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
       ticks: [],
       tickLabels: [],
       tickSize: 4,
-      strokeWidth: 1,
-      color: COLOR_BLACK,
+
+      stroke: { ...DEFAULT_STROKE_PROPS },
     },
     yaxis: {
       name: '-log10 p-value',
@@ -171,8 +167,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
       ticks: [],
       tickLabels: [],
       tickSize: 4,
-      strokeWidth: 1,
-      color: COLOR_BLACK,
+      stroke: { ...DEFAULT_STROKE_PROPS },
     },
   },
 
@@ -431,17 +426,17 @@ export function VolcanoPlotSvg({
           ax={yax}
           pos={{ x: MARGIN.left, y: MARGIN.top }}
           tickSize={displayOptions.axes.yaxis.tickSize}
-          strokeWidth={displayOptions.axes.yaxis.strokeWidth}
+          strokeWidth={displayOptions.axes.yaxis.stroke.width}
           title={y}
-          color={displayOptions.axes.yaxis.color}
+          color={displayOptions.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
           ax={xax}
           pos={{ x: MARGIN.left, y: MARGIN.top + innerHeight }}
           tickSize={displayOptions.axes.xaxis.tickSize}
-          strokeWidth={displayOptions.axes.xaxis.strokeWidth}
+          strokeWidth={displayOptions.axes.xaxis.stroke.width}
           title={x}
-          color={displayOptions.axes.xaxis.color}
+          color={displayOptions.axes.xaxis.stroke.value}
         />
       </SvgBase>
     )

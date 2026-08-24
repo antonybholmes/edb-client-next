@@ -1,4 +1,4 @@
-import type { Axis } from '@/components/plot/axis'
+import type { Axis } from '@/components/plot/axis/axis'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { useMemo } from 'react'
 import { useVariantSettings } from './variant-settings-store'
@@ -35,7 +35,7 @@ export function MotifsSvg({ xax, pos = ZERO_POS }: { xax: Axis; pos?: IPos }) {
         motifLocs.push({
           name: motif.name,
           color: motif.color,
-          locations: matches.map(m => ({
+          locations: matches.map((m) => ({
             x1: xax.domainToRange(settings.location.start + (m.index ?? 0)),
             x2: xax.domainToRange(
               settings.location.start + (m.index ?? 0) + (m[0].length ?? 0) - 1

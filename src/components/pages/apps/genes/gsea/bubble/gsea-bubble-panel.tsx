@@ -15,9 +15,8 @@ import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { PLOT_ZOOM_CHANNEL } from '../../../matcalc/apps/heatmap/heatmap-panel'
-import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
-import { GseaBubblePlotSvg } from './gsea-bubble-svg'
+import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
+import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 
 export function GseaBubblePanel() {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
@@ -27,9 +26,6 @@ export function GseaBubblePanel() {
   // if (!plot) {
   //   return null
   // }
-
-  const { plot } = useGseaBubbleContext()
-  const displayProps = plot.props
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
@@ -86,13 +82,9 @@ export function GseaBubblePanel() {
 
       <ResizableSidebar side="right">
         <ExtScrollCard className="pb-2">
-          <GseaBubblePlotSvg
-            ref={svgRef}
-            //displayProps={displayOptions}
-            x={displayProps.axes.xaxis.name}
-          />
+          <GseaBubblePlotSvg ref={svgRef} />
         </ExtScrollCard>
-        <GseaBubblePropsPanel />
+        <GseaBubbleDisplayPropsPanel />
       </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 justify-end">

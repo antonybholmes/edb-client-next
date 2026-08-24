@@ -82,7 +82,7 @@ import { usePasteText } from '@/hooks/paste-text'
 import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
 import { GseaBubblePanel } from '../genes/gsea/bubble/gsea-bubble-panel'
-import { GseaBubbleProvider } from '../genes/gsea/bubble/gsea-bubble-provider'
+import { GseaBubbleProvider } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
@@ -154,7 +154,7 @@ function plotElem(plot: HistoryPlot): ReactElement {
       )
     case 'gsea-bubble-plot':
       return (
-        <GseaBubbleProvider plot={plot}>
+        <GseaBubbleProvider plots={[plot.gseaBubble]}>
           <GseaBubblePanel />
         </GseaBubbleProvider>
       )

@@ -109,26 +109,19 @@ export function deepFreeze<T extends object>(obj: T): T {
   return Object.freeze(obj)
 }
 
-type DeepPartial<T> = {
+export type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
 }
 
-/**
- * Takes an object and a partial object and recursively overwrites
- * nested properties. This allows us to create complex defaults
- * and use partial json to update properties etc.
- *
- * @param defaults
- * @param overrides
- * @returns
- */
-export function deepMergeDefaults<T>(
+/*  
+ 
+export function deepMergeDefaults<T extends object>(
   defaults: T,
   overrides?: DeepPartial<T>
 ): T {
   if (!overrides) return defaults
 
-  const result: any = { ...defaults }
+  const result: T = { ...defaults }
 
   for (const key in overrides) {
     const override = overrides[key]
@@ -146,4 +139,17 @@ export function deepMergeDefaults<T>(
   }
 
   return result
+} */
+
+/**
+ * Returns a new object containing only the properties of the input object
+ * that are defined (not undefined).
+ *
+ * @param obj The input object.
+ * @returns A new object with only defined properties.
+ */
+export function definedProps<T>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined)
+  ) as Partial<T>
 }

@@ -3,11 +3,9 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v36`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v42`
 
 import {
-  DEFAULT_BOLD_FONT_PROPS,
-  DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_COLOR_PROPS,
   DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN,
@@ -25,20 +23,31 @@ import {
   COLOR_RED,
 } from '@/lib/color/color'
 
+interface IFilters {
+  q: {
+    on: boolean
+    value: number
+  }
+  nes: {
+    on: boolean
+    value: number
+  }
+}
+
 export interface IGseaDisplayProps {
   phenotypes: {
     invert: boolean
   }
   axes: {
-    show: boolean
-    labels: ITextProps
-    ticks: ITextProps
+    //show: boolean
+    //labels: ITextProps
+    //ticks: ITextProps
     x: {
       length: number
-      labels: {
-        rotate: boolean
-        truncate: number
-      }
+      // labels: {
+      //   rotate: boolean
+      //   truncate: number
+      // }
     }
   }
   genes: {
@@ -71,7 +80,7 @@ export interface IGseaDisplayProps {
       }
     }
   }
-  title: ITextProps & { offset: number }
+  //title: ITextProps & { offset: number }
   page: {
     scale: number
     columns: number
@@ -94,6 +103,12 @@ export interface IGseaDisplayProps {
     }
     fill: IPaintProps
   }
+  genesets: {
+    filters: IFilters
+  }
+  view: {
+    tab: 'graph' | 'bubble'
+  }
 }
 
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
@@ -105,15 +120,15 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     invert: false,
   },
 
-  title: {
-    offset: 20,
-    ...DEFAULT_BOLD_TEXT_PROPS,
-    font: {
-      ...DEFAULT_BOLD_FONT_PROPS,
+  // title: {
+  //   offset: 10,
+  //   ...DEFAULT_BOLD_TEXT_PROPS,
+  //   font: {
+  //     ...DEFAULT_BOLD_FONT_PROPS,
 
-      textAnchor: 'middle',
-    },
-  },
+  //     textAnchor: 'middle',
+  //   },
+  // },
   plot: {
     margin: { ...DEFAULT_MARGIN, bottom: 0, right: 50 },
     gap: {
@@ -122,14 +137,14 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     },
   },
   axes: {
-    show: true,
-    labels: { ...DEFAULT_BOLD_TEXT_PROPS },
-    ticks: { ...DEFAULT_TEXT_PROPS },
+    //show: true,
+    //labels: { ...DEFAULT_BOLD_TEXT_PROPS },
+    //ticks: { ...DEFAULT_TEXT_PROPS },
     x: {
-      labels: {
-        rotate: false,
-        truncate: -2,
-      },
+      // labels: {
+      //   rotate: false,
+      //   truncate: -2,
+      // },
       length: 220,
     },
   },
@@ -182,10 +197,27 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       line: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
     },
   },
+  genesets: {
+    filters: {
+      q: {
+        on: false,
+        value: 0.25,
+      },
+      nes: {
+        on: false,
+        value: 1,
+      },
+    },
+  },
+  view: {
+    tab: 'graph',
+  },
 }
 
 export interface IGseaSettingsStore extends IGseaDisplayProps {
   hasHydrated: boolean
+
+  //setFilters: (filters: Partial<IFilters>) => void
   setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
 }
@@ -195,6 +227,13 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
     (set) => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
       hasHydrated: false,
+
+      // setFilters: (filters: Partial<IFilters>) => {
+      //   set((state) => {
+      //     Object.assign(state.genesets.filters, filters)
+      //   })
+      // },
+
       setHasHydrated: (hasHydrated: boolean) => {
         set({ hasHydrated })
       },

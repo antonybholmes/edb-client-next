@@ -1,9 +1,38 @@
 # Changelog
 
-## 87.4 (Aug, 2026)
+## 87.6.0 (Aug, 2026)
 
 ### Changed
 
+- New axis UI with colorbar axis separate from x y.
+- Greater integration of axis and settings properties. Axis props now optional and only override global settings if present.
+- Added deepmerge to unify axis edb settings and settings in axis with axis obj taking priority if props are present so we can have unified axes, but optionally customize them adhoc as needed.
+- Some axes now correctly respond to tick props panel changes.
+- Axis now has proper tick params to control when shown.
+- Standardizing more axis properties.
+- Integration of centralized settings to control axis appearances.
+- Bug fixes and updates.
+
+
+## 87.6.0 (Aug, 2026)
+
+### Changed
+
+- Colorbar now uses axes to set size. Expanded about dialog.
+- Improved axis objects with minor tick support.
+- Fixed gsea store not showing filtered genesets. Added sort order to filtered list. Display props now context aware for the view.
+- Bug fixes and updates.
+- GSEA plot can now draw bubble plots.
+- GSEA bubble now supports grid layout.
+
+
+## 87.4.0 (Aug, 2026)
+
+### Changed
+
+- Started to merge bubble plot with gsea plot as can generate both from gsea output.
+- Redesigned gsea plot gene set selection ui.
+- Added pathway filter feature.
 - Added zoom callback to get rid of need for hydrated listeners.
 - Added hydration checks to stores.
 - Added hydrated effect for loading stores without sync issues.
@@ -20,7 +49,7 @@
 - GSEA bubble nes axis can now be set by user.
 
 
-## 87.2 (Aug, 2026)
+## 87.2.0 (Aug, 2026)
 
 ### Changed
 
@@ -67,7 +96,7 @@
 - Simplified data-attributes that are conditional.
 
 
-## 85.8 (Jul, 2026)
+## 85.8.0 (Jul, 2026)
 
 ### Changed
 
@@ -85,7 +114,7 @@
 - Matcalc group name edit now works correctly. Exact match is now tied to group rather than global setting.
 
 
-## 85.6 (Jul, 2026)
+## 85.6.0 (Jul, 2026)
 
 ### Added
 
@@ -106,7 +135,7 @@
 - Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb.
 
 
-## 85.4 (Jul, 2026)
+## 85.4.0 (Jul, 2026)
 
 ### Added
 
@@ -128,7 +157,7 @@
 - Bug fixes and updates.
 
 
-## 85.2 (Jul, 2026)
+## 85.2.0 (Jul, 2026)
 
 ### Added
 
@@ -190,7 +219,7 @@
 - Updated to match Astro version.
 
 
-## 32.8 (Apr, 2026)
+## 32.8.0 (Apr, 2026)
 
 ### Changed
 
@@ -198,7 +227,7 @@
 - Updating libs etc to match Astro.
 
 
-## 32.6 (Apr, 2026)
+## 32.6.0 (Apr, 2026)
 
 ### Changed
 
@@ -206,7 +235,7 @@
 - Bug fixes and updates.
 
 
-## 32.4 (Apr, 2026)
+## 32.4.0 (Apr, 2026)
 
 ### Changed
 
@@ -215,7 +244,7 @@
 - Bug fixes and updates.
 
 
-## 32.2 (Apr, 2026)
+## 32.2.0 (Apr, 2026)
 
 ### Changed
 
@@ -229,7 +258,7 @@
 - Bug fixes and updates.
 
 
-## 30.8 (Sep, 2025)
+## 30.8.0 (Sep, 2025)
 
 ### Changed
 
@@ -242,7 +271,7 @@
 - Fixed help url.
 
 
-## 30.6 (Sep, 2025)
+## 30.6.0 (Sep, 2025)
 
 ### Added
 
@@ -258,7 +287,7 @@
 - UI fixes. Allow request errors to return json messages.
 
 
-## 30.4 (Sep, 2025)
+## 30.4.0 (Sep, 2025)
 
 ### Added
 
@@ -271,7 +300,7 @@
 - UI tweaks.
 
 
-## 30.2 (Sep, 2025)
+## 30.2.0 (Sep, 2025)
 
 ### Added
 
@@ -295,7 +324,7 @@
 - UI tweaks to seqbrowser dialogs.
 
 
-## 28.8 (Sep, 2025)
+## 28.8.0 (Sep, 2025)
 
 ### Added
 
@@ -310,7 +339,7 @@
 - Fixed gene search.
 
 
-## 28.6 (Sep, 2025)
+## 28.6.0 (Sep, 2025)
 
 ### Changed
 
@@ -320,7 +349,7 @@
 - Fix UI inconsistencies when showing signin button in header.
 
 
-## 28.4 (Sep, 2025)
+## 28.4.0 (Sep, 2025)
 
 ### Added
 
@@ -333,7 +362,7 @@
 - Removal of nanostores.
 
 
-## 28.2 (Sep, 2025)
+## 28.2.0 (Sep, 2025)
 
 ### Added
 
@@ -359,7 +388,7 @@
 - Venn improvements using debounce to make user input feel faster.
 
 
-## 26.8 (Sep, 2025)
+## 26.8.0 (Sep, 2025)
 
 ### Changed
 
@@ -369,7 +398,7 @@
 - Venn UI fixes.
 
 
-## 26.6 (Sep, 2025)
+## 26.6.0 (Sep, 2025)
 
 ### Added
 
@@ -381,7 +410,7 @@
 - Added simplified SVG Venn diagram creator.
 
 
-## 26.4 (Sep, 2025)
+## 26.4.0 (Sep, 2025)
 
 ### Changed
 
@@ -390,7 +419,7 @@
 - Bug fixes and updates.
 
 
-## 26.2 (Sep, 2025)
+## 26.2.0 (Sep, 2025)
 
 ### Added
 
@@ -414,7 +443,7 @@
 - UI tweaks to switch and accordion.
 
 
-## 24.8 (Aug, 2025)
+## 24.8.0 (Aug, 2025)
 
 ### Added
 
@@ -432,7 +461,7 @@
 - Bug fixes and updates.
 
 
-## 24.7 (Aug, 2025)
+## 24.7.0 (Aug, 2025)
 
 ### Changed
 
@@ -448,7 +477,7 @@
 - Fixes to help system.
 
 
-## 24.6 (Aug, 2025)
+## 24.6.0 (Aug, 2025)
 
 ### Changed
 
@@ -463,7 +492,7 @@
 - Fixed help side menu.
 
 
-## 24.5 (Jul, 2025)
+## 24.5.0 (Jul, 2025)
 
 ### Added
 
@@ -480,7 +509,7 @@
 - Bug fixes and updates.
 
 
-## 24.4 (Jul, 2025)
+## 24.4.0 (Jul, 2025)
 
 ### Added
 
@@ -497,7 +526,7 @@
 - Bug fixes and updates.
 
 
-## 24.3 (Jul, 2025)
+## 24.3.0 (Jul, 2025)
 
 ### Added
 
@@ -514,7 +543,7 @@
 - Bug fixes and updates.
 
 
-## 24.2 (Jul, 2025)
+## 24.2.0 (Jul, 2025)
 
 ### Changed
 
@@ -530,7 +559,7 @@
 - Bug fixes and updates.
 
 
-## 24.1 (Jul, 2025)
+## 24.1.0 (Jul, 2025)
 
 ### Changed
 
@@ -565,7 +594,7 @@
 - Bug fixes and updates.
 
 
-## 23.9 (Jul, 2025)
+## 23.9.0 (Jul, 2025)
 
 ### Added
 
@@ -586,7 +615,7 @@
 - Bug fixes and updates.
 
 
-## 23.8 (Jul, 2025)
+## 23.8.0 (Jul, 2025)
 
 ### Added
 
@@ -607,7 +636,7 @@
 - Bug fixes and updates.
 
 
-## 23.7 (Jul, 2025)
+## 23.7.0 (Jul, 2025)
 
 ### Added
 
@@ -626,7 +655,7 @@
 - Change csrf token storage.
 
 
-## 23.6 (Jul, 2025)
+## 23.6.0 (Jul, 2025)
 
 ### Added
 
@@ -647,7 +676,7 @@
 - Fixed feature display in Lollipop.
 
 
-## 23.5 (Jun, 2025)
+## 23.5.0 (Jun, 2025)
 
 ### Added
 
@@ -667,7 +696,7 @@
 - Revised uniprot search.
 
 
-## 23.4 (Jun, 2025)
+## 23.4.0 (Jun, 2025)
 
 ### Added
 
@@ -683,7 +712,7 @@
 - Bug fixes and updates.
 
 
-## 23.3 (Jun, 2025)
+## 23.3.0 (Jun, 2025)
 
 ### Added
 
@@ -703,7 +732,7 @@
 - Bug fixes and updates.
 
 
-## 23.2 (Jun, 2025)
+## 23.2.0 (Jun, 2025)
 
 ### Added
 
@@ -721,7 +750,7 @@
 - Bug fixes and updates.
 
 
-## 23.1 (Jun, 2025)
+## 23.1.0 (Jun, 2025)
 
 ### Added
 
@@ -762,7 +791,7 @@
 - Bug fixes and updates.
 
 
-## 22.9 (Jun, 2025)
+## 22.9.0 (Jun, 2025)
 
 ### Added
 
@@ -783,7 +812,7 @@
 - Bug fixes and updates.
 
 
-## 22.8 (Jun, 2025)
+## 22.8.0 (Jun, 2025)
 
 ### Added
 
@@ -803,7 +832,7 @@
 - Added support for loading clusters and colors from db.
 
 
-## 22.7 (Jun, 2025)
+## 22.7.0 (Jun, 2025)
 
 ### Added
 
@@ -821,7 +850,7 @@
 - UMAP renamed to Single Cell.
 
 
-## 22.6 (Jun, 2025)
+## 22.6.0 (Jun, 2025)
 
 ### Added
 
@@ -841,7 +870,7 @@
 - Improved canvas scaling.
 
 
-## 22.5 (May, 2025)
+## 22.5.0 (May, 2025)
 
 ### Added
 
@@ -860,7 +889,7 @@
 - Dot plot properly ignores zero values when threshold filter on.
 
 
-## 22.4 (May, 2025)
+## 22.4.0 (May, 2025)
 
 ### Added
 
@@ -881,7 +910,7 @@
 - Removal of log statements.
 
 
-## 22.3 (May, 2025)
+## 22.3.0 (May, 2025)
 
 ### Added
 
@@ -904,7 +933,7 @@
 - Removed glass UI from open file.
 
 
-## 22.2 (May, 2025)
+## 22.2.0 (May, 2025)
 
 ### Added
 
@@ -916,7 +945,7 @@
 - Lots of UI tweaks to fix inconsistent labels, colors, sizes, corner roundings etc.
 
 
-## 21.6 (May, 2025)
+## 21.6.0 (May, 2025)
 
 ### Added
 
@@ -928,7 +957,7 @@
 - Multiple locations are supported in the seq browser using the Locations tab.
 
 
-## 21.3 (Mar, 2025)
+## 21.3.0 (Mar, 2025)
 
 ### Added
 
@@ -948,7 +977,7 @@
 - Revised sign in dialog.
 
 
-## 20.7 (Jan, 2025)
+## 20.7.0 (Jan, 2025)
 
 ### Added
 
@@ -961,7 +990,7 @@
 - Refreshed UI.
 
 
-## 20.4 (Dec, 2024)
+## 20.4.0 (Dec, 2024)
 
 ### Added
 
@@ -977,7 +1006,7 @@
 - Sign in now uses Auth0 workflow.
 
 
-## 19.8 (Dec, 2024)
+## 19.8.0 (Dec, 2024)
 
 ### Added
 
@@ -991,7 +1020,7 @@
 - Loading a file through drag and drop now prompts users with options for opening the file.
 
 
-## 19.6 (Dec, 2024)
+## 19.6.0 (Dec, 2024)
 
 ### Added
 

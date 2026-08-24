@@ -1,6 +1,6 @@
 import { resizeAndScaleCanvas } from '@/lib/canvas'
 
-import { Axis, YAxis } from '@/components/plot/axis'
+import { Axis, YAxis } from '@/components/plot/axis/axis'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_TRANSPARENT } from '@/lib/color/color'
 import { BWR_CMAP_V2, COLOR_MAPS } from '@/lib/color/colormap'

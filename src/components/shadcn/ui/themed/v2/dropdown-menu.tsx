@@ -337,11 +337,11 @@ export function LineSeparator({
   ref,
   className,
   ...props
-}: ComponentProps<'span'>) {
+}: ComponentProps<'hr'>) {
   return (
-    <span
+    <hr
       ref={ref}
-      className={cn('my-2 border-b h-0 border-border/50', className)}
+      className={cn('my-1 border-t border-border/50', className)}
       {...props}
     />
   )

@@ -1,3 +1,4 @@
+import { IDisplayAxis } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import {
   ColorBarPos,
   DEFAULT_COLOR_PROPS,
@@ -7,7 +8,6 @@ import {
   IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { IDim } from '@/interfaces/dim'
 import { ColorMapName } from '@/lib/color/colormap'
 import { ILim } from '@/lib/math/math'
 import { useCallback } from 'react'
@@ -15,16 +15,18 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v10`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v18`
 
-const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
+const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
+
+const PLOT_MARGIN = { top: 20, right: 10, bottom: 100, left: 400 }
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
 
 export interface IGseaBubbleSettings {
   sortBy: SortBy
   axes: {
-    x: { length: number }
+    x: IDisplayAxis & { auto: boolean }
     y: { rowHeight: number }
   }
   size: {
@@ -43,11 +45,14 @@ export interface IGseaBubbleSettings {
     cmap: ColorMapName
   }
   border: IStrokeProps
+  title: {
+    show: boolean
+  }
   padding: number
   colorbar: {
     show: boolean
+    showMinorTicks: boolean
     position: ColorBarPos
-    size: IDim
   }
   legend: {
     bubbles: {
@@ -56,14 +61,28 @@ export interface IGseaBubbleSettings {
     }
   }
   margin: IMarginProps
-  scale: number
+  plot: { margin: IMarginProps }
+  page: {
+    scale: number
+    grid: {
+      cols: number
+    }
+  }
 }
 
 const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   sortBy: 'none',
   axes: {
     x: {
+      name: 'Log2 fold change',
+
+      domain: [-2, 2],
       length: 300,
+      ticks: [],
+      tickLabels: [],
+      tickSize: 4,
+      stroke: { ...DEFAULT_STROKE_PROPS },
+      auto: true,
     },
     y: {
       rowHeight: 24,
@@ -84,13 +103,16 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     fill: { ...DEFAULT_COLOR_PROPS },
     stroke: { ...DEFAULT_STROKE_PROPS, show: false },
   },
-
+  title: {
+    show: true,
+  },
   border: { ...DEFAULT_STROKE_PROPS },
   padding: 10,
   colorbar: {
     show: true,
     position: 'right',
-    size: { w: 100, h: 14 },
+
+    showMinorTicks: true,
   },
   legend: {
     bubbles: {
@@ -99,7 +121,13 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     },
   },
   margin: { ...MARGIN },
-  scale: 1,
+  plot: { margin: { ...PLOT_MARGIN } },
+  page: {
+    scale: 1,
+    grid: {
+      cols: 3,
+    },
+  },
 }
 
 export interface IGseaBubbleSettingsStore extends IGseaBubbleSettings {

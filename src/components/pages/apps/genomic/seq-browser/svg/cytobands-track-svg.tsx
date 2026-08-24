@@ -2,7 +2,7 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { API_CYTOBANDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { Axis } from '@/components/plot/axis'
+import { Axis } from '@/components/plot/axis/axis'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IStringMap } from '@/interfaces/string-map'
 import { COLOR_BLACK } from '@/lib/color/color'
