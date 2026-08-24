@@ -7,12 +7,7 @@ export function GseaDisplayPropsPanel() {
   const { settings } = useGseaSettings()
 
   return (
-    <Tabs
-      //orientation="vertical"
-      value={settings.view.tab}
-      onValueChange={() => {}}
-      className="grow"
-    >
+    <Tabs value={settings.view.tab} onValueChange={() => {}} className="grow">
       <TabsContent value="graph">
         <GseaPlotDisplayPropsPanel />
       </TabsContent>
