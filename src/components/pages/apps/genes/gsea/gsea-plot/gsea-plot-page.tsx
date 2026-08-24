@@ -96,7 +96,6 @@ export function GseaPlotPage() {
     rankedGenes,
     filteredReports,
     geneSetsInUse,
-
     setGeneSetsInUse,
     loadGseaZipWithErrorHandling,
   } = useGsea()
@@ -141,18 +140,6 @@ export function GseaPlotPage() {
   useUpdateEffect(() => {
     setZoom(zoom)
   }, [settings.page.scale])
-
-  // useHydratedUpdateEffect(
-  //   () => {
-  //     updateSettings(
-  //       produce(settings, (draft) => {
-  //         draft.page.scale = zoom
-  //       })
-  //     )
-  //   },
-  //   [zoom],
-  //   hasHydrated
-  // )
 
   const searchIndex = useMemo(() => {
     return new Fuse(filteredReports, {

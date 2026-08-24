@@ -6,7 +6,7 @@ import { locStr } from '@/lib/genomic/genomic'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { cumsum } from '@/lib/math/cumsum'
 import { sum } from '@/lib/math/sum'
-import { formattedList, truncate } from '@/lib/text/text'
+import { textJoin, truncate } from '@/lib/text/text'
 import {
   useSeqBrowserSettings,
   type ISeqBrowserSettings,
@@ -69,7 +69,7 @@ export function BaseBedTrackSvg({
               settings.titles.position === 'right' ? 'start' : 'middle'
             }
           >
-            {truncate(formattedList(tracks.map((t) => t.track.name)), {
+            {truncate(textJoin(tracks.map((t) => t.track.name)), {
               length: Math.round(xax.length / 10),
             })}
           </text>

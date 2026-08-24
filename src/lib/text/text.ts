@@ -111,7 +111,7 @@ interface IformatListOptions {
  *
  * @returns A formatted string.
  */
-export function formattedList(
+export function textJoin(
   values: string[],
   options: IformatListOptions = {}
 ): string {
@@ -141,7 +141,7 @@ export function formattedList(
   delimiter = useSpaces ? delimiter + ' ' : delimiter
 
   if (finalDelimiter === 'and') {
-    finalDelimiter = oxfordComma ? ', and ' : ' and '
+    finalDelimiter = oxfordComma && values.length > 2 ? ', and ' : ' and '
   } else {
     finalDelimiter = useSpaces ? finalDelimiter + ' ' : finalDelimiter
   }

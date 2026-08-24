@@ -14,7 +14,7 @@ import { useGseaSettings } from './gsea-settings-store'
 
 export function GeneSetFilter() {
   const { settings, updateSettings } = useGseaSettings()
-  const { phenotypesFilter, setPhenotypesFilter } = useGsea()
+  const { phenotypes, phenotypesFilter, setPhenotypesFilter } = useGsea()
 
   const [open, setOpen] = useState(false)
 
@@ -36,19 +36,17 @@ export function GeneSetFilter() {
       >
         <h2 className="font-bold">Phenotypes</h2>
 
-        {Object.keys(phenotypesFilter)
-          .toSorted()
-          .map((p, pi) => (
-            <CheckPropRow
-              key={pi}
-              title={p}
-              checked={phenotypesFilter[p]}
-              onCheckedChange={(v) => {
-                console.log('Setting phenotype filter for', p, 'to', v)
-                setPhenotypesFilter({ ...phenotypesFilter, [p]: v })
-              }}
-            />
-          ))}
+        {phenotypes.map((p, pi) => (
+          <CheckPropRow
+            key={pi}
+            title={p}
+            checked={phenotypesFilter[p]}
+            onCheckedChange={(v) => {
+              console.log('Setting phenotype filter for', p, 'to', v)
+              setPhenotypesFilter({ ...phenotypesFilter, [p]: v })
+            }}
+          />
+        ))}
 
         <h2 className="font-bold">Statistics</h2>
 
