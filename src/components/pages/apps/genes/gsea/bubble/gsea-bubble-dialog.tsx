@@ -21,10 +21,10 @@ import {
 const MAX_COLS = 10
 
 export const SORT_BY_ITEMS = [
-  { value: 'none', label: 'None' },
+  { value: 'off', label: 'Off' },
   { value: 'nes', label: 'NES' },
-  { value: 'size', label: 'Size' },
   { value: 'pvalue', label: 'P-value' },
+  { value: 'size', label: 'Size' },
 ]
 
 function findNESCol(df: BaseDataFrame) {

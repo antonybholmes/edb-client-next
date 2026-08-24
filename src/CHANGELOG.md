@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Compact display layout for bubble.
 - New centralized registration system for svg to track owner of ref.
 - New axis UI with colorbar axis separate from x y.
 - Greater integration of axis and settings properties. Axis props now optional and only override global settings if present.

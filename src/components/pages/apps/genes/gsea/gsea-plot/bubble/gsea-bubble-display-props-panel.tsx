@@ -97,8 +97,9 @@ export function GseaBubbleDisplayPropsPanel() {
               }}
             /> */}
 
-            <PropRow title="Border">
+            <PropRow title="Layout">
               <FillButton
+                title="Border"
                 colors={[
                   {
                     color: settings.border.value,
@@ -113,25 +114,21 @@ export function GseaBubbleDisplayPropsPanel() {
                   },
                 ]}
               />
-            </PropRow>
+              <MarginPopover />
 
-            <PropRow title="Margins">
-              {/* <NumericalInput
-                value={settings.margin.left}
-
-                limit={[1, 1000]}
-                dp={0}
+              <NumericalInput
+                title="Grid Cols"
+                value={settings.page.grid.cols}
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.margin.left = v
+                      draft.page.grid.cols = v
                     })
                   )
                 }}
-              /> */}
-
-              <MarginPopover />
+              />
             </PropRow>
+
             <PropRow title="Axes">
               <AxesPropsPopover />
             </PropRow>

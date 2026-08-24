@@ -15,13 +15,13 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v22`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v24`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
 const PLOT_MARGIN = { top: 20, right: 10, bottom: 100, left: 400 }
 
-export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
+export type SortBy = 'off' | 'nes' | 'size' | 'pvalue'
 
 export type Mode = 'p' | 'nes'
 
@@ -81,7 +81,7 @@ export interface IGseaBubbleSettings {
 }
 
 const DEFAULT_SETTINGS: IGseaBubbleSettings = {
-  sortBy: 'none',
+  sortBy: 'off',
   axes: {
     x: {
       name: 'Log2 fold change',
@@ -138,7 +138,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   page: {
     scale: 1,
     grid: {
-      cols: 3,
+      cols: 2,
     },
   },
 }
