@@ -113,6 +113,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
     axes: {
       x: { ...DEFAULT_AXIS_DISPLAY_PROPS },
       y: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+      colorbar: { ...DEFAULT_AXIS_DISPLAY_PROPS },
     },
   },
 }

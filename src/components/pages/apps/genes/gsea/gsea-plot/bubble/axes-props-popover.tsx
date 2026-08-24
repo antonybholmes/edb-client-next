@@ -20,12 +20,16 @@ export function AxesPropsPopover() {
         <Move3d size={18} strokeWidth={1.5} />
       </PopoverTrigger>
 
-      <PopoverContent className="gap-y-1 w-48">
+      <PopoverContent className="gap-y-1 w-60">
         <AxisPropsPanel axis="x" />
 
         <LineSeparator />
 
         <AxisPropsPanel axis="y" />
+
+        <LineSeparator />
+
+        <AxisPropsPanel axis="colorbar" />
       </PopoverContent>
     </Popover>
   )

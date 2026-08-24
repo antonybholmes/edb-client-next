@@ -18,10 +18,8 @@ interface ISvgColorBarProps {
 
 export function SvgHColorBar({
   ax,
-
   cmap = BWR_CMAP_V2,
   steps,
-
   pos = { ...ZERO_POS },
 }: ISvgColorBarProps) {
   const { settings } = useEdbSettings()
@@ -153,7 +151,7 @@ export function SvgVColorBar({
       </g>
 
       <g transform={`translate(${settings.plots.colorbar.size.h}, 0)`}>
-        <AxisRightSvg ax={ax} />
+        <AxisRightSvg ax={ax} axis="colorbar" />
       </g>
     </g>
   )

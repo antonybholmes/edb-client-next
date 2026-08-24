@@ -66,23 +66,24 @@ export function AxisLeftSvg({
 
 export function AxisRightSvg({
   ax,
-
   title,
+  axis = 'y',
   pos = { ...ZERO_POS },
 }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  const { tickSize, tickOffset, tickLabelOffset } = getTickProps(
-    ax,
-    settings.plots.axes.y
-  )
+  const { tickProps, tickSize, tickOffset, tickLabelOffset, titleOffset } =
+    getTickProps(ax, settings.plots.axes[axis])
 
-  const titleOffset =
-    tickOffset + tickSize + tickLabelOffset + settings.plots.axes.y.title.offset
+  const titleX = tickOffset + tickSize + tickLabelOffset + titleOffset
 
   const strokeWidth = settings.plots.axes.y.line.width
 
   const _title = title ?? ax.title
+
+  if (!tickProps.show) {
+    return null
+  }
 
   return (
     <g
@@ -99,7 +100,7 @@ export function AxisRightSvg({
 
       {settings.plots.axes.y.title.show && ax && (
         <SvgText
-          transform={`translate(-${titleOffset}, ${
+          transform={`translate(-${titleX}, {
             0.5 * ax.length
           }) rotate(270)  `}
           textAnchor="middle"

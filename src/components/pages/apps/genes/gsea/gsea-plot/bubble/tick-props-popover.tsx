@@ -2,6 +2,7 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { AxisType } from '@/components/plot/axis/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
@@ -19,7 +20,7 @@ export function TickPropsPopover({
   axis,
   which,
 }: {
-  axis: 'x' | 'y'
+  axis: AxisType
   which: 'major' | 'minor'
 }) {
   const { settings, updateSettings } = useEdbSettings()
@@ -29,9 +30,9 @@ export function TickPropsPopover({
 
   const icon =
     axis === 'x' ? (
-      <MoveUp size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
-    ) : (
       <MoveRight size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
+    ) : (
+      <MoveUp size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
     )
 
   return (
@@ -45,6 +46,7 @@ export function TickPropsPopover({
       <PopoverContent className="gap-y-1">
         <CheckPropRow
           title={title}
+          className="font-bold"
           checked={settings.plots.axes[axis].ticks[which].show}
           onCheckedChange={(v) => {
             updateSettings(

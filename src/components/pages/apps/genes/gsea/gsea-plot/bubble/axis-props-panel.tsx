@@ -1,18 +1,18 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
-import { PropRow } from '@/components/dialogs/prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { AxisType } from '@/components/plot/axis/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { TEXT_SHOW } from '@/consts'
+import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { TickPropsPopover } from './tick-props-popover'
 
-export function AxisPropsPanel({ axis }: { axis: 'x' | 'y' }) {
+export function AxisPropsPanel({ axis }: { axis: AxisType }) {
   const { settings, updateSettings } = useEdbSettings()
 
   return (
     <>
       <CheckPropRow
-        title={`${axis.toUpperCase()}-Axis`}
+        title={`${capitalCase(axis)}-Axis`}
         className="font-bold"
         checked={settings.plots.axes[axis].show}
         onCheckedChange={(v) => {
@@ -22,12 +22,11 @@ export function AxisPropsPanel({ axis }: { axis: 'x' | 'y' }) {
             })
           )
         }}
-      />
-      <PropRow title="Title">
+      >
         <FontPopover
           fonts={[
             {
-              title: TEXT_SHOW,
+              title: 'Title Font',
               textProps: settings.plots.axes[axis].title,
               update: (f) =>
                 updateSettings(
@@ -41,12 +40,9 @@ export function AxisPropsPanel({ axis }: { axis: 'x' | 'y' }) {
             },
           ]}
         />
-      </PropRow>
-
-      <PropRow title="Ticks">
         <TickPropsPopover axis={axis} which="major" />
         <TickPropsPopover axis={axis} which="minor" />
-      </PropRow>
+      </CheckPropRow>
     </>
   )
 }

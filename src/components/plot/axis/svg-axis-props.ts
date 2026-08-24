@@ -6,6 +6,8 @@ import {
   ITextProps,
 } from '../svg-props'
 
+export type AxisType = 'x' | 'y' | 'colorbar'
+
 export interface IAxisLabelProps extends ITextProps {
   offset: number
 }
@@ -36,6 +38,7 @@ export interface IAxisDisplayProps {
 export interface IXYAxisDisplayProps {
   x: IAxisDisplayProps
   y: IAxisDisplayProps
+  colorbar: IAxisDisplayProps
 }
 
 export const DEFAULT_AXIS_LABEL_PROPS: IAxisLabelProps = {

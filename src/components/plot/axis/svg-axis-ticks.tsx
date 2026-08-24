@@ -19,6 +19,8 @@ export function getTickProps(ax: Axis, props: IAxisDisplayProps) {
 
   const tickLabelOffset = tickSize + tickProps.ticks.major.labels.offset
 
+  const titleOffset = tickProps.title.offset
+
   return {
     tickProps,
     minorTickProps: tickProps.ticks.minor,
@@ -29,6 +31,7 @@ export function getTickProps(ax: Axis, props: IAxisDisplayProps) {
     tickSize,
     tickOffset,
     tickLabelOffset,
+    titleOffset,
   }
 }
 

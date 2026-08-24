@@ -4,7 +4,7 @@ import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
 import { type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
 import { Switch } from '../shadcn/ui/themed/v2/switch'
-import { DialogCardInfo, DialogCardLabel } from './card/dialog-card'
+import { DialogCardInfo } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {
   title?: ReactNode
@@ -27,7 +27,7 @@ export function CheckPropRow({
   return (
     <BaseRow
       className={cn(
-        'gap-x-16 justify-between',
+        'gap-x-4 justify-between',
         info ? 'items-start pb-1' : 'items-center',
         h,
         className
@@ -46,12 +46,13 @@ export function CheckPropRow({
       </Checkbox> */}
 
       {title && (
-        <DialogCardLabel title={title}>
+        <VCenterRow className="grow">
+          <span>{title}</span>
           {info && <DialogCardInfo>{info}</DialogCardInfo>}
-        </DialogCardLabel>
+        </VCenterRow>
       )}
 
-      <VCenterRow className="gap-x-1.5 justify-end grow">
+      <VCenterRow className="gap-x-1.5 justify-end">
         {children && children}
 
         <Switch
