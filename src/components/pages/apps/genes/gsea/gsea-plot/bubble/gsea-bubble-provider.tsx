@@ -186,8 +186,6 @@ export function GseaBubbleProvider({
               )
             : getColor(nes[i]!, globalXLim, getColorMap(settings.scale.cmap))
 
-        console.log('mode', settings.scale.mode)
-
         return {
           x: score,
           y: i + 1,
