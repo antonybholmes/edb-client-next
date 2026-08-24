@@ -8,7 +8,6 @@ import {
   IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { IDim } from '@/interfaces/dim'
 import { ColorMapName } from '@/lib/color/colormap'
 import { ILim } from '@/lib/math/math'
 import { useCallback } from 'react'
@@ -54,7 +53,6 @@ export interface IGseaBubbleSettings {
     show: boolean
     showMinorTicks: boolean
     position: ColorBarPos
-    size: IDim
   }
   legend: {
     bubbles: {
@@ -113,7 +111,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   colorbar: {
     show: true,
     position: 'right',
-    size: { w: 100, h: 12 },
+
     showMinorTicks: true,
   },
   legend: {

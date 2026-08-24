@@ -27,7 +27,7 @@ export interface IBlock {
 
 export const DOT_PLOT_PERCENT_TABLE = 'Group percentages'
 
-export const DEFAULT_COLORBAR_SIZE: IDim = { w: 160, h: 12 }
+export const DEFAULT_COLORBAR_SIZE: IDim = { w: 100, h: 12 }
 
 export const LEGEND_BLOCK_SIZE: IBlock = { w: 20, h: 20 }
 

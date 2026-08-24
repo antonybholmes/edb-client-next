@@ -100,9 +100,7 @@ export function AxisRightSvg({
 
       {settings.plots.axes.y.title.show && ax && (
         <SvgText
-          transform={`translate(-${titleX}, {
-            0.5 * ax.length
-          }) rotate(270)  `}
+          transform={`translate(-${titleX}, ${0.5 * ax.length}) rotate(270)`}
           textAnchor="middle"
           font={settings.plots.axes.y.title}
         >

@@ -18,6 +18,7 @@ import { COLOR_MAPS, ColorMapName } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
 
+import { AxesPropsPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/bubble/axes-props-popover'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
@@ -45,7 +46,10 @@ export function ColormapSettingsPanel() {
         Colormap
       </AccordionTrigger>
       <AccordionContent>
-        <PropRow title="Colors">
+        <PropRow title="Axis">
+          <AxesPropsPopover axes={['colorbar']} />
+        </PropRow>
+        <PropRow title="Colormap">
           <ColorMapMenu
             align="end"
             cmap={COLOR_MAPS[displayProps.cmap]!}

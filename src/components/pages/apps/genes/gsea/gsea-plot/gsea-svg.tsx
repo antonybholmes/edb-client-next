@@ -27,6 +27,7 @@ import { useGseaSettings } from './gsea-settings-store'
  */
 export function GseaSvg({ ref }: ISVGProps) {
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const { rankedGenes, inUseReports, resultsMap } = useGsea()
 
@@ -147,14 +148,9 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     const crossIndex =
       sortedRankedGenes.findLastIndex((gene) => gene.score > 0) + 1
-    //console.log('crossIndex2', crossIndex2, sortedRankedGenes[crossIndex2!])
-    // const crossIndex =
-    //   end(where(sortedRankedGenes, (gene) => gene.score > 0)) + 1
 
     //const crossingX = xax.domainToRange(crossIndex)
     const crossing = { index: crossIndex, x: xax.domainToRange(crossIndex) }
-
-    //end(where(sortedRankedGenes, (gene) => gene.score > 0)) + 1
 
     let genesSvg: ReactNode | null = null
 
@@ -188,27 +184,33 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     ploti++
 
-    let titleX = settings.plot.margin.left
+    // let titleX = settings.plot.margin.left
 
-    switch (settings.title.font.textAnchor) {
-      case 'middle':
-        titleX = settings.plot.margin.left + settings.axes.x.length / 2
-        break
-      case 'end':
-        titleX = settings.plot.margin.left + settings.axes.x.length
-        break
-      default:
-        titleX = settings.plot.margin.left
-    }
+    // switch (edbSettings.plots.axes.x.title.textAnchor) {
+    //   case 'middle':
+    //     titleX = settings.plot.margin.left + settings.axes.x.length / 2
+    //     break
+    //   case 'end':
+    //     titleX = settings.plot.margin.left + settings.axes.x.length
+    //     break
+    //   default:
+    //     titleX = settings.plot.margin.left
+    // }
+
+    const titleX = settings.plot.margin.left + settings.axes.x.length / 2
 
     return (
       <g transform={`translate(${x}, ${y})`} key={ploti} id={`plot-${ploti}`}>
-        {settings.title.show && (
+        {edbSettings.plots.axes.x.title.show && (
           <SvgText
             id={`title-${ploti}`}
-            font={settings.title}
+            font={edbSettings.plots.axes.x.title}
+            textAnchor="middle"
             x={titleX}
-            y={settings.plot.margin.top - settings.title.offset}
+            y={
+              settings.plot.margin.top -
+              edbSettings.plots.axes.x.title.offset * 0.5
+            }
           >
             {pathway.name}
           </SvgText>

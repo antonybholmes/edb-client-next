@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
-import { TEXT_SHOW } from '@/consts'
+import { TEXT_FONT } from '@/consts'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
@@ -60,7 +60,7 @@ export function TickPropsPopover({
           <FontPopover
             fonts={[
               {
-                title: TEXT_SHOW,
+                title: TEXT_FONT,
                 textProps: settings.plots.axes[axis].ticks[which].labels,
                 showRotation: true,
                 update: (f) =>

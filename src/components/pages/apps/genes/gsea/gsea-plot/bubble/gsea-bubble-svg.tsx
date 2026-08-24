@@ -82,7 +82,7 @@ function GseaBubbleLegendSvg() {
 
   const xax = new Axis()
     .setDomain(settings.p.range)
-    .setLength(settings.colorbar.size.w)
+    .setLength(edbSettings.plots.colorbar.size.w)
     .setTicks([
       settings.p.range[0],
       settings.p.range[1] / 2,
@@ -105,7 +105,7 @@ function GseaBubbleLegendSvg() {
           <>
             <g id="p-legend">
               <SvgText
-                x={settings.colorbar.size.h / 2}
+                x={edbSettings.plots.colorbar.size.h / 2}
                 y={0}
                 textAnchor="middle"
               >
@@ -121,10 +121,10 @@ function GseaBubbleLegendSvg() {
             </g>
             <g
               id="dot-legend"
-              transform={`translate(0, ${settings.colorbar.size.w + settings.padding * 5})`}
+              transform={`translate(0, ${edbSettings.plots.colorbar.size.w + settings.padding * 5})`}
             >
               <SvgText
-                x={settings.colorbar.size.h / 2}
+                x={edbSettings.plots.colorbar.size.h / 2}
                 y={0}
                 textAnchor="middle"
               >
@@ -137,14 +137,14 @@ function GseaBubbleLegendSvg() {
                   <g key={di}>
                     <SvgCircle
                       key={di}
-                      cx={settings.colorbar.size.h / 2}
+                      cx={edbSettings.plots.colorbar.size.h / 2}
                       cy={d.y}
                       r={d.r}
                       stroke="black"
                     />
                     <SvgText
                       x={
-                        settings.colorbar.size.h / 2 +
+                        edbSettings.plots.colorbar.size.h / 2 +
                         settings.bubbles.size +
                         settings.padding
                       }
@@ -190,8 +190,6 @@ function BubblePlot({
   const { settings: edbSettings } = useEdbSettings()
 
   const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
-
-  console.log('cheese', edbSettings.plots.axes.x)
 
   // offer per plot x-axis domain
   const xax = new Axis()

@@ -21,17 +21,14 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
-import { useEdbSettings } from '@/components/edb/edb-settings'
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
-import { FontPopover } from '@/components/plot/font/font-popover'
 import { AxesPropsPopover } from './bubble/axes-props-popover'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 
 export function GseaPlotDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
-  const { settings: edbSettings, updateSettings: updateEdbSettings } =
-    useEdbSettings()
+
   const { open: openDialog } = useDialogs()
 
   return (
@@ -68,64 +65,13 @@ export function GseaPlotDisplayPropsPanel() {
         ]}
       >
         <AccordionItem value="page">
-          <AccordionTrigger
-            rightChildren={
-              <>
-                <MarginPopover />
-                <FontPopover
-                  fonts={[
-                    {
-                      title: 'Titles',
-                      textProps: settings.title,
-                      update: (f) =>
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.title.font = f.font
-                            draft.title.show = f.show
-                          })
-                        ),
-                    },
-                  ]}
-                />
-              </>
-            }
-          >
-            Page
-          </AccordionTrigger>
+          <AccordionTrigger>Page</AccordionTrigger>
           <AccordionContent>
+            <PropRow title="Margins">
+              <MarginPopover />
+            </PropRow>
             <PropRow title="Axes">
               <AxesPropsPopover />
-
-              {/* <FontPopover
-                fonts={[
-                  {
-                    title: 'Labels',
-                    textProps: edbSettings.plots.axes.x.ticks.major.labels,
-                    update: (f) =>
-                      updateEdbSettings(
-                        produce(edbSettings, (draft) => {
-                          Object.assign(
-                            draft.plots.axes.x.ticks.major.labels,
-                            f
-                          )
-                        })
-                      ),
-                  },
-                  {
-                    title: 'Ticks',
-                    textProps: edbSettings.plots.axes.x.ticks.major.labels,
-                    update: (f) =>
-                      updateEdbSettings(
-                        produce(edbSettings, (draft) => {
-                          Object.assign(
-                            draft.plots.axes.x.ticks.major.labels,
-                            f
-                          )
-                        })
-                      ),
-                  },
-                ]}
-              /> */}
             </PropRow>
             <CheckPropRow
               title="Invert Phenotypes"
@@ -144,45 +90,17 @@ export function GseaPlotDisplayPropsPanel() {
         <AccordionItem value="enrichment-plot">
           <AccordionTrigger
             rightChildren={
-              <>
-                <FontPopover
-                  fonts={[
-                    {
-                      title: 'Labels',
-                      textProps: settings.es.labels,
-                      update: (f) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.labels = f
-                          })
-                        )
-                      },
-                    },
-                    {
-                      title: 'Phenotypes',
-                      textProps: settings.es.phenotypes,
-                      update: (f) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.phenotypes = f
-                          })
-                        )
-                      },
-                    },
-                  ]}
-                />
-                <Switch
-                  title="Show"
-                  checked={settings.es.show}
-                  onCheckedChange={(state) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.es.show = state
-                      })
-                    )
-                  }}
-                />
-              </>
+              <Switch
+                title="Show"
+                checked={settings.es.show}
+                onCheckedChange={(state) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.show = state
+                    })
+                  )
+                }}
+              />
             }
           >
             Enrichment

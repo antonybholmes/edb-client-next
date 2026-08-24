@@ -6,8 +6,6 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 const SETTINGS_KEY = `${config.appId}:gsea-settings-v42`
 
 import {
-  DEFAULT_BOLD_FONT_PROPS,
-  DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_COLOR_PROPS,
   DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN,
@@ -82,7 +80,7 @@ export interface IGseaDisplayProps {
       }
     }
   }
-  title: ITextProps & { offset: number }
+  //title: ITextProps & { offset: number }
   page: {
     scale: number
     columns: number
@@ -122,15 +120,15 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     invert: false,
   },
 
-  title: {
-    offset: 10,
-    ...DEFAULT_BOLD_TEXT_PROPS,
-    font: {
-      ...DEFAULT_BOLD_FONT_PROPS,
+  // title: {
+  //   offset: 10,
+  //   ...DEFAULT_BOLD_TEXT_PROPS,
+  //   font: {
+  //     ...DEFAULT_BOLD_FONT_PROPS,
 
-      textAnchor: 'middle',
-    },
-  },
+  //     textAnchor: 'middle',
+  //   },
+  // },
   plot: {
     margin: { ...DEFAULT_MARGIN, bottom: 0, right: 50 },
     gap: {

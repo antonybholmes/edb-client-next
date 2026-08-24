@@ -58,8 +58,8 @@ export const DEFAULT_FONT_PROPS: IFontProps = {
   fontWeight: 'normal',
   fontStyle: 'normal',
   decoration: 'none',
-  textAnchor: 'start',
   fontFamily: 'Arial',
+  textAnchor: 'start',
 }
 
 export const DEFAULT_BOLD_FONT_PROPS: IFontProps = {
@@ -77,6 +77,7 @@ export interface ITextProps {
   //text: string
   font: IFontProps
   rotation?: number
+  textAnchor?: 'start' | 'middle' | 'end'
 }
 
 export const DEFAULT_TEXT_PROPS: ITextProps = {
@@ -180,7 +181,7 @@ export interface IColorBarProps {
 export const DEFAULT_COLORBAR_PROPS: IColorBarProps = {
   show: true,
   stroke: { ...DEFAULT_STROKE_PROPS },
-  size: { w: 150, h: 12 },
+  size: { w: 100, h: 12 },
   //axis: { ...DEFAULT_AXIS_DISPLAY_PROPS },
 }
 

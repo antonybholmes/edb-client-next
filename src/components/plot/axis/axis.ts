@@ -43,6 +43,7 @@ export class Axis {
   protected _userFormat: ((d: d3.NumberValue) => string) | null = null
 
   protected _numTicks: number = 5
+  protected _numMinorTicks: number = this._numTicks * MINOR_TICK_MULTIPLIER
 
   protected _params: DeepPartial<IAxisDisplayProps> = {
     //show: true,
@@ -110,6 +111,7 @@ export class Axis {
     target._title = this._title
     target._format = this._format
     target._numTicks = this._numTicks
+    target._numMinorTicks = this._numMinorTicks
     target._userFormat = this._userFormat
     target._params = structuredClone(this._params)
 
@@ -152,6 +154,19 @@ export class Axis {
   setNumTicks(numTicks: number): Axis {
     const a = this.clone()
     a._numTicks = numTicks
+    a._numMinorTicks = numTicks * MINOR_TICK_MULTIPLIER
+    a._ticks = undefined
+    a._minorTicks = undefined
+
+    console.log('bb', a)
+    return a
+  }
+
+  setNumMinorTicks(numTicks: number): Axis {
+    const a = this.clone()
+    a._numMinorTicks = numTicks
+    a._minorTicks = undefined
+    console.log('v', a)
     return a
   }
 
@@ -319,9 +334,7 @@ export class Axis {
 
   get minorTicks(): TickItem[] {
     if (!this._minorTicks) {
-      this._minorTicks = this.generateTicks(
-        this._numTicks * MINOR_TICK_MULTIPLIER
-      )
+      this._minorTicks = this.generateTicks(this._numMinorTicks)
     }
 
     return this._minorTicks

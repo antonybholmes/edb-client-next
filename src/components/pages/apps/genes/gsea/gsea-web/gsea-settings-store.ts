@@ -50,7 +50,7 @@ export interface IGseaDisplayProps {
     //line: IStrokeProps
   }
   es: {
-    labels: ITextProps
+    //labels: ITextProps
     phenotypes: ITextProps
     show: boolean
     line: IStrokeProps
@@ -141,7 +141,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       show: true,
     },
     show: true,
-    labels: { ...DEFAULT_TEXT_PROPS },
+    //labels: { ...DEFAULT_TEXT_PROPS },
     phenotypes: { ...DEFAULT_TEXT_PROPS },
   },
   genes: {

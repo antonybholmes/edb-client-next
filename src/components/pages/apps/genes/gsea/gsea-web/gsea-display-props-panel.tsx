@@ -144,51 +144,7 @@ export function GseaDisplayPropsPanel() {
         </AccordionItem>
 
         <AccordionItem value="enrichment-plot">
-          <AccordionTrigger
-            rightChildren={
-              <>
-                <FontPopover
-                  fonts={[
-                    {
-                      title: 'Labels',
-                      textProps: settings.es.labels,
-                      update: (f) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.labels = f
-                          })
-                        )
-                      },
-                    },
-                    {
-                      title: 'Phenotypes',
-                      textProps: settings.es.phenotypes,
-                      update: (f) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.phenotypes = f
-                          })
-                        )
-                      },
-                    },
-                  ]}
-                />
-                <Switch
-                  title="Show"
-                  checked={settings.es.show}
-                  onCheckedChange={(state) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.es.show = state
-                      })
-                    )
-                  }}
-                />
-              </>
-            }
-          >
-            Enrichment
-          </AccordionTrigger>
+          <AccordionTrigger>Enrichment</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Line">
               <ColorPickerButton

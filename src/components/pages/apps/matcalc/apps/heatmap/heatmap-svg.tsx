@@ -284,6 +284,26 @@ export function HeatMapSvg({ ref }: IProps) {
       }
     }
 
+    const cax = new Axis()
+      .setDomain(displayOptions.range)
+      .setLength(displayOptions.colorbar.size.w)
+      .setTicks([
+        displayOptions.range[0],
+        (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
+        displayOptions.range[1],
+      ])
+      .setMinorTicks([
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+      ])
+      .setTickParams({
+        which: 'minor',
+        show: true,
+      })
+
+ 
     const svg = (
       <>
         {displayOptions.title.show && displayOptions.title.text && (
@@ -437,10 +457,8 @@ export function HeatMapSvg({ ref }: IProps) {
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('right') && (
             <SvgVColorBar
-              ax={new Axis()
-                .setDomain(displayOptions.range)
-                .setLength(displayOptions.colorbar.size.w)}
-              // domain={displayOptions.range}
+              ax={cax}
+
               cmap={COLOR_MAPS[displayOptions.cmap]!}
 
               pos={{
@@ -467,7 +485,11 @@ export function HeatMapSvg({ ref }: IProps) {
             <SvgHColorBar
               ax={new Axis()
                 .setDomain(displayOptions.range)
-                .setLength(displayOptions.colorbar.size.w)}
+                .setLength(displayOptions.colorbar.size.w)
+                .setTickParams({
+                  which: 'minor',
+                  show: false,
+                })}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
 
               pos={{

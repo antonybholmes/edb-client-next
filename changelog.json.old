@@ -2516,6 +2516,10 @@
         {
           "msg": "Greater integration of axis and settings properties. Axis props now optional and only override global settings if present.",
           "date": "2026-08-23T23:39:58.453Z"
+        },
+        {
+          "msg": "New axis UI with colorbar axis separate from x y",
+          "date": "2026-08-24T00:08:33.800Z"
         }
       ]
     },

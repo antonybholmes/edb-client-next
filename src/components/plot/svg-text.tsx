@@ -31,7 +31,11 @@ export function SvgText({
   font = { ...DEFAULT_TEXT_PROPS },
   ...props
 }: ISvgTextProps) {
-  if (!font?.show) {
+  if (!font) {
+    return null
+  }
+
+  if (font.show !== undefined && !font.show) {
     return null
   }
 
