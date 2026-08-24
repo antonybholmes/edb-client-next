@@ -9,7 +9,7 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useVolcanoSettings } from './volcano-settings-store'
 
 import { range } from '@/lib/math/range'
@@ -26,6 +26,7 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useSVG } from '@/providers/svg-provider'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 import { useVolcanoContext } from './volcano-provider'
@@ -82,7 +83,7 @@ export function VolcanoPanel() {
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
-  const svgRef = useRef<SVGSVGElement>(null)
+  const { ref: svgRef } = useSVG()
 
   const { open: openDialog } = useDialogs()
 
@@ -148,7 +149,6 @@ export function VolcanoPanel() {
       <ResizableSidebar side="right">
         <ExtScrollCard>
           <VolcanoPlotSvg
-            ref={svgRef}
             //displayProps={displayOptions}
             x={displayProps.axes.xaxis.name}
             y={displayProps.axes.yaxis.name}

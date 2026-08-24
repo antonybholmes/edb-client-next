@@ -4,7 +4,6 @@ import { HCenterRow } from '@/components/layout/h-center-row'
 import { VCenterCol } from '@/components/layout/v-center-col'
 import { SkeletonCard } from '@/components/shadcn/ui/themed/v2/skeleton'
 import type { IPos } from '@/interfaces/pos'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { MAX_REGION_SIZE, MAX_VARIANTS, PileupPlotSvg } from './pileup-plot-svg'
 import { useVariants, type IVariant } from './variant-store'
 
@@ -38,7 +37,7 @@ export interface ITooltip {
   variant: IVariant
 }
 
-export function PileupPlotPanel({ ref }: ISVGProps) {
+export function PileupPlotPanel() {
   const { variants: results } = useVariants()
 
   //const [toolTipInfo ] = useState<ITooltip | null>(null)
@@ -76,5 +75,5 @@ export function PileupPlotPanel({ ref }: ISVGProps) {
     )
   }
 
-  return <PileupPlotSvg ref={ref} />
+  return <PileupPlotSvg />
 }

@@ -5,11 +5,7 @@ import { IGseaBubble, useGsea } from '../gsea-plot-store'
 import { GseaBubbleProvider } from './gsea-bubble-provider'
 import { GseaBubblePlotSvg } from './gsea-bubble-svg'
 
-export function GseaBubbleTabPanel({
-  svgRef,
-}: {
-  svgRef: React.RefObject<SVGSVGElement>
-}) {
+export function GseaBubbleTabPanel() {
   const { inUseReports, phenotypesFilter } = useGsea()
 
   const bubblePlots: IGseaBubble[] = useMemo(() => {
@@ -36,7 +32,7 @@ export function GseaBubbleTabPanel({
   return (
     <ExtScrollCard className="px-2 pb-2">
       <GseaBubbleProvider plots={bubblePlots}>
-        <GseaBubblePlotSvg ref={svgRef} />
+        <GseaBubblePlotSvg />
       </GseaBubbleProvider>
     </ExtScrollCard>
   )

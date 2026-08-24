@@ -37,7 +37,7 @@ export function HomeToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { settings, updateSettings } = useGseaBubbleSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { addPlots } = useHistory()
 

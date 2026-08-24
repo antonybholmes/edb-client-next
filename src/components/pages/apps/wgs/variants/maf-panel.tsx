@@ -6,7 +6,6 @@ import { VCenterCol } from '@/components/layout/v-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { SkeletonCard } from '@/components/shadcn/ui/themed/v2/skeleton'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { useDNAQuery } from '@/lib/genomic/dna'
 import { MAFPlotSVG } from './maf-plot-svg'
 import { useMAFs } from './maf-store'
@@ -37,7 +36,7 @@ function MAFSkeleton() {
   )
 }
 
-export function MAFPanel({ ref }: ISVGProps) {
+export function MAFPanel() {
   const { settings } = useVariantSettings()
   const { mafs, setSampleCount } = useMAFs()
 
@@ -60,11 +59,11 @@ export function MAFPanel({ ref }: ISVGProps) {
           dp={0}
           min={1}
           max={1000000}
-          onNumChange={v => setSampleCount(v)}
+          onNumChange={(v) => setSampleCount(v)}
         />
       </VCenterRow>
       <ExtScrollCard>
-        <MAFPlotSVG ref={ref} />
+        <MAFPlotSVG />
       </ExtScrollCard>
     </BaseCol>
   )

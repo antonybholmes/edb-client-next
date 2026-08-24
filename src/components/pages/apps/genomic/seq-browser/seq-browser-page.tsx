@@ -59,7 +59,7 @@ import {
   parseGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { LocationAutocomplete } from './location-autocomplete'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
 import { SeqBrowserPropsPanel } from './seq-browser-props-panel'
@@ -101,7 +101,7 @@ function SeqBrowserPage() {
 
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   useKeyDownListener((e) => {
     if ((e as KeyboardEvent).ctrlKey) {
@@ -403,9 +403,7 @@ function SeqBrowserPage() {
 export function SeqBrowserQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <SeqBrowserPage />
-      </SVGProvider>
+      <SeqBrowserPage />
     </CoreProviders>
   )
 }

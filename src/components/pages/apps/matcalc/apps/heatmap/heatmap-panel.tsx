@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -16,6 +16,7 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useSVG } from '@/providers/svg-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
 import { HeatMapSvg } from './heatmap-svg'
@@ -40,7 +41,7 @@ export function HeatmapPanel() {
 
   const cf = plot?.dataframes['main'] as IClusterFrame
 
-  const svgRef = useRef<SVGSVGElement>(null)
+  const { ref: svgRef } = useSVG()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
 
@@ -90,7 +91,7 @@ export function HeatmapPanel() {
     <>
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <HeatMapSvg ref={svgRef} />
+          <HeatMapSvg />
         </ExtScrollCard>
         <HeatmapPropsPanel />
       </ResizableSidebar>

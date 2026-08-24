@@ -2,21 +2,14 @@ import { Axis, YAxis } from '@/components/plot/axis/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
-import {
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_WHITE } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
+import { useSVG } from '@/providers/svg-provider'
 import { forceCollide, forceSimulation } from 'd3'
 import { gsap } from 'gsap'
 import { useLollipopSettings } from './lollipop-settings-store'
@@ -241,7 +234,7 @@ function ColGraphsSvg({
   )
 }
 
-export function LollipopSingleSvg({ ref }: ISVGProps) {
+export function LollipopSingleSvg() {
   const {
     datasets,
     datasetsForUse,
@@ -262,13 +255,12 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
   const tooltipRef = useRef<HTMLDivElement>(null)
   const [tooltipText, setTooltipText] = useState<string[]>([])
 
+  const { ref: svgRef } = useSVG()
+
   // const scaledPadding = {
   //   x: spacing.x * displayProps.scale,
   //   y: spacing.y * displayProps.scale,
   // }
-
-  const innerRef = useRef<SVGSVGElement>(null)
-  useImperativeHandle(ref, () => innerRef.current!)
 
   //const [highlightCol, setHighlightCol] = useState(NO_SELECTION)
   //const [highlightRow, setHighlightRow] = useState(-1)
@@ -565,7 +557,6 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
   const svg = (
     <>
       <SvgBase
-        ref={innerRef}
         width={width}
         height={height}
         scale={displayProps.scale}
@@ -621,7 +612,7 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
             <ColGraphsSvg
               yax={yax}
               flattenedPileups={flattenedPileups}
-              svgRef={innerRef}
+              svgRef={svgRef}
               showCounts={displayProps.variants.plot.showCounts}
               displayProps={displayProps}
               circlesRef={circlesRef}

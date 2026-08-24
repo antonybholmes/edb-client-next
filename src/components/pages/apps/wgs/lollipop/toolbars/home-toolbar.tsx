@@ -17,7 +17,7 @@ import { useOpen } from '../use-open'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { open } = useOpen()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   const {
     plotStyle,
     setPlotStyle,

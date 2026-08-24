@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -17,7 +17,7 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
-import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { useSVG } from '@/providers/svg-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { BoxPlotPropsPanel } from './box-plot-props-panel'
@@ -30,12 +30,12 @@ export const VOLCANO_Y = '-log10 p-value'
 export function BoxPlotPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
   const { updatePlot } = useHistory()
-  
+
   const { plot } = useBoxPlotContext()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 
-  const svgRef = useRef<SVGSVGElement>(null)
+  const { ref: svgRef } = useSVG()
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
@@ -100,7 +100,7 @@ export function BoxPlotPanel() {
 
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <BoxPlotSvg ref={svgRef} />
+          <BoxPlotSvg />
         </ExtScrollCard>
         <BoxPlotPropsPanel />
       </ResizableSidebar>

@@ -26,10 +26,10 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { Axis } from '@/components/plot/axis/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
-import { useMergeRefs } from '@/hooks/merge-refs'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
+import { useSVG } from '@/providers/svg-provider'
 import { createPortal } from 'react-dom'
 import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
@@ -48,7 +48,7 @@ interface IProps extends ISVGProps {
   //plotAddr: IHistItemAddr
 }
 
-export function HeatMapSvg({ ref }: IProps) {
+export function HeatMapSvg() {
   const { plot } = useHeatmapContext()
 
   const cf = plot.dataframes['main'] as IClusterFrame
@@ -68,8 +68,7 @@ export function HeatMapSvg({ ref }: IProps) {
     h: blockSize.h * displayOptions.zoom,
   }
 
-  const innerRef = useRef<SVGSVGElement>(null)
-  const setRefs = useMergeRefs(innerRef, ref)
+  const { ref } = useSVG()
 
   const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -153,11 +152,11 @@ export function HeatMapSvg({ ref }: IProps) {
         clearTimeout(timeoutRef.current)
       }
 
-      if (!innerRef.current) {
+      if (!ref.current) {
         return
       }
 
-      const screen = svgPointToScreen(innerRef.current, pos.x, pos.y)
+      const screen = svgPointToScreen(ref.current, pos.x, pos.y)
 
       if (!screen) {
         return
@@ -303,7 +302,6 @@ export function HeatMapSvg({ ref }: IProps) {
         show: true,
       })
 
- 
     const svg = (
       <>
         {displayOptions.title.show && displayOptions.title.text && (
@@ -630,7 +628,6 @@ export function HeatMapSvg({ ref }: IProps) {
   return (
     <>
       <SvgBase
-        ref={setRefs}
         scale={displayOptions.zoom}
         width={width}
         height={height}

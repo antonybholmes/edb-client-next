@@ -131,9 +131,7 @@ interface IProps extends ISVGProps {
   plotAddr: string
 }
 
-export function BoxPlotSvg({ ref }: ISVGProps) {
-  //const { plotsState } = useContext(PlotsContext)
-
+export function BoxPlotSvg() {
   const { plot, displayProps } = useBoxPlotContext()
 
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
@@ -258,7 +256,6 @@ export function BoxPlotSvg({ ref }: ISVGProps) {
 
     return (
       <SvgBase
-        ref={ref}
         scale={displayProps.page.scale}
         width={width}
         height={height}

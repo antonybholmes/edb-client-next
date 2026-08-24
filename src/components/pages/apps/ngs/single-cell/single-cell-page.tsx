@@ -66,7 +66,6 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
-import { SVGProvider } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
@@ -394,10 +393,8 @@ export function SingleCellPage() {
               <Card className="grow" variant="content">
                 <div className={PLOT_CLS}>
                   <UmapPlotSvg
-                    ref={svgRef}
                     //plot={plot}
                     displayProps={settings}
-                    className="absolute left-0 top-0"
                   />
                 </div>
               </Card>
@@ -458,9 +455,7 @@ export function SingleCellPage() {
 export function SingleCellQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <SingleCellPage />
-      </SVGProvider>
+      <SingleCellPage />
     </CoreProviders>
   )
 }

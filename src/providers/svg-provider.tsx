@@ -1,8 +1,16 @@
 import { IChildrenProps } from '@/interfaces/children-props'
-import { createContext, RefObject, useContext, useRef } from 'react'
+import {
+  createContext,
+  RefObject,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react'
 
 type ISvgRef = {
-  svgRef: RefObject<SVGSVGElement | null>
+  ref: RefObject<SVGSVGElement | null>
+  //setSVG: (svg: SVGSVGElement | null) => void
+  registerSVG: (id: string, svg: SVGSVGElement | null) => void
 }
 
 const SVGContext = createContext<ISvgRef | null>(null)
@@ -18,9 +26,28 @@ export function useSVG() {
 }
 
 export function SVGProvider({ children }: IChildrenProps) {
-  const svgRef = useRef<SVGSVGElement | null>(null)
+  const ref = useRef<SVGSVGElement | null>(null)
+  const activeId = useRef<string | null>(null)
+
+  // const setSVG = useCallback((svg: SVGSVGElement | null) => {
+  //   if (svg) {
+  //     ref.current = svg
+  //   }
+  // }, [])
+
+  const registerSVG = useCallback((id: string, svg: SVGSVGElement | null) => {
+    if (svg) {
+      activeId.current = id
+      ref.current = svg
+    } else if (activeId.current === id) {
+      activeId.current = null
+      ref.current = null
+    }
+  }, [])
 
   return (
-    <SVGContext.Provider value={{ svgRef }}>{children}</SVGContext.Provider>
+    <SVGContext.Provider value={{ ref, registerSVG }}>
+      {children}
+    </SVGContext.Provider>
   )
 }

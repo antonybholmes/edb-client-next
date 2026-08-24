@@ -3,7 +3,6 @@ import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgPath } from '@/components/plot/svg-path'
 import { SvgText } from '@/components/plot/svg-text'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { useDNAQuery } from '@/lib/genomic/dna'
 import { locStr } from '@/lib/genomic/genomic'
 import { numSort } from '@/lib/math/math'
@@ -16,7 +15,7 @@ import { useVariantSettings } from './variant-settings-store'
 
 const MARGIN = { top: 100.5, right: 100.5, bottom: 300.5, left: 100.5 }
 
-export function MAFPlotSVG({ ref }: ISVGProps) {
+export function MAFPlotSVG() {
   const { settings } = useVariantSettings()
   const { mafs: results } = useMAFs()
 
@@ -117,7 +116,6 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
 
   return (
     <SvgBase
-      ref={ref}
       width={width} //* settings.scale}
       height={height} //* settings.scale}
       scale={settings.scale}

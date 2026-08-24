@@ -2,21 +2,13 @@ import { Axis, YAxis } from '@/components/plot/axis/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
-import {
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_WHITE } from '@/lib/color/color'
 
 import { SvgCircle } from '@/components/plot/svg-circle'
@@ -24,6 +16,7 @@ import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { SVG_CRISP_EDGES } from '@/consts'
+import { useSVG } from '@/providers/svg-provider'
 import { gsap } from 'gsap'
 import { useLollipopSettings, type IAAColor } from './lollipop-settings-store'
 import { aaSum } from './lollipop-stats'
@@ -601,7 +594,7 @@ export function Tooltip({
   )
 }
 
-export function LollipopStackSvg({ ref }: ISVGProps) {
+export function LollipopStackSvg() {
   const {
     datasets,
     datasetsForUse,
@@ -610,6 +603,8 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
     aaStats,
     labels,
   } = useLollipopStore()
+
+  const { ref: svgRef } = useSVG()
 
   const { protein, displayProps, aaColor, showMaxVariantOnly } =
     useLollipopSettings()
@@ -628,9 +623,6 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
   //   x: spacing.x * displayProps.scale,
   //   y: spacing.y * displayProps.scale,
   // }
-
-  const innerRef = useRef<SVGSVGElement>(null)
-  useImperativeHandle(ref, () => innerRef.current!)
 
   //const [highlightCol, setHighlightCol] = useState(NO_SELECTION)
   //const [highlightRow, setHighlightRow] = useState(-1)
@@ -833,7 +825,6 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
   return (
     <>
       <SvgBase
-        ref={innerRef}
         width={width}
         height={height}
         scale={displayProps.scale}
@@ -891,7 +882,7 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
             <ColGraphsSvg
               yax={yax}
               flattenedPileups={flattenedPileups}
-              svgRef={innerRef}
+              svgRef={svgRef}
               blockSize={blockSize}
               displayProps={displayProps}
               tooltipRef={tooltipRef}

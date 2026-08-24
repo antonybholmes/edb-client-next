@@ -1,7 +1,6 @@
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
-import { ISVGProps } from '@/interfaces/svg-props'
 import { useMemo, useRef } from 'react'
 import { IOutputGraph, IOutputLink, IOutputNode } from './sankey-layout'
 import { useSankey } from './sankey-provider'
@@ -17,7 +16,7 @@ const NO_DRAG = Object.freeze({
   links: [],
 })
 
-export function SankeySvg({ ref }: ISVGProps) {
+export function SankeySvg() {
   const { graph, updateLinks } = useSankey()
   const { settings } = useSankeySettings()
   //const [dragging, setDragging] = useState(false)
@@ -186,15 +185,7 @@ export function SankeySvg({ ref }: ISVGProps) {
     <SvgBase
       width={w}
       height={h}
-      ref={(r) => {
-        svgRef.current = r
 
-        if (typeof ref === 'function') {
-          ref(r)
-        } else if (ref) {
-          ref.current = r
-        }
-      }}
       scale={settings.scale}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}

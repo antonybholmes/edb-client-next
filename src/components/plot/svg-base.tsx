@@ -1,4 +1,6 @@
 import type { ISVGProps } from '@/interfaces/svg-props'
+import { useSVG } from '@/providers/svg-provider'
+import { useCallback, useId } from 'react'
 
 export const ARIAL_FONT_FAMILY = 'Arial, Helvetica, sans-serif'
 
@@ -41,13 +43,24 @@ export function SvgBase({
   scale = 1,
   style,
   ...props
-}: Omit<ISVGProps, 'width' | 'height'> & {
+}: Omit<ISVGProps, 'width' | 'height' | 'ref'> & {
   width?: number
   height?: number
   scale?: number
 }) {
+  const id = useId()
+  const { registerSVG } = useSVG()
+
+  const setSVG = useCallback(
+    (svg: SVGSVGElement | null) => {
+      registerSVG(id, svg)
+    },
+    [id, registerSVG]
+  )
+
   return (
     <svg
+      ref={setSVG}
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox={`0 0 ${width} ${height}`}

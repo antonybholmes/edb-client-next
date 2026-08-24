@@ -57,12 +57,8 @@ const Y_SCALE_FACTORS: INumMap = Object.freeze({ A: 1.0, C: 1, G: 1, T: 1.0 })
 //   displayProps?: IDisplayProps
 // }
 
-export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
+export function MotifsSvg({ className }: ComponentProps<'svg'>) {
   const { searchResult, motifsInUse } = useMotifs()
-
-  // if (state.motifs.size === 0) {
-  //   return null
-  // }
 
   const { settings } = useMotifSettings()
 
@@ -268,7 +264,6 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
 
   const svg = (
     <SvgBase
-      ref={ref}
       scale={settings.scale}
       width={width}
       height={height}

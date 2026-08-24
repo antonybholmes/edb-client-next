@@ -50,7 +50,7 @@ import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
@@ -97,7 +97,7 @@ export function SankeyPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -275,9 +275,9 @@ export function SankeyPage() {
             >
               <ExtScrollCard>
                 <SankeySvg
-                  ref={svgRef}
-                  //dfs={plotFrames}
-                  //className="absolute"
+
+                //dfs={plotFrames}
+                //className="absolute"
                 />
               </ExtScrollCard>
             </ResizablePanel>
@@ -330,9 +330,7 @@ export function SankeyQueryPage() {
   return (
     <CoreProviders>
       <SankeyProvider>
-        <SVGProvider>
-          <SankeyPage />
-        </SVGProvider>
+        <SankeyPage />
       </SankeyProvider>
     </CoreProviders>
   )

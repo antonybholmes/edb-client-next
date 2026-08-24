@@ -19,7 +19,7 @@ export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { settings, updateSettings } = useGseaSettings()
   const { loadGseaZip } = useGseaWebStore()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   return (
     <>

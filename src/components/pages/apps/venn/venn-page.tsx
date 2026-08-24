@@ -63,7 +63,7 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import APP_INFO from './manifest.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
@@ -88,7 +88,7 @@ const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
 
 function VennPage() {
   const { openFiles } = useOpen()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   //const { setTabs: setViewTabs } = useTabs('venn-side-tabs')
 
@@ -578,7 +578,7 @@ function VennPage() {
                 >
                   <SvgBase
                     className="absolute"
-                    ref={svgRef}
+
                     scale={zoom}
                     width={settings.w}
                     height={settings.w}
@@ -637,9 +637,7 @@ function VennPage() {
 export function VennPageQuery() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <VennPage />
-      </SVGProvider>
+      <VennPage />
     </CoreProviders>
   )
 }

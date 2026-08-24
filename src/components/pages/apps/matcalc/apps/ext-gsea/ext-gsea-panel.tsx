@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -23,6 +23,7 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
+import { useSVG } from '@/providers/svg-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
@@ -49,11 +50,11 @@ export function ExtGseaPanel() {
 
   const { plot } = useExtGseaContext()
 
+  const { ref: svgRef } = useSVG()
+
   //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
-
-  const svgRef = useRef<SVGSVGElement>(null)
 
   const [showSave, setShowSave] = useState(false)
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
@@ -141,7 +142,7 @@ export function ExtGseaPanel() {
 
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <ExtGseaSvg ref={svgRef} />
+          <ExtGseaSvg />
         </ExtScrollCard>
         <ExtGseaPropsPanel />
       </ResizableSidebar>

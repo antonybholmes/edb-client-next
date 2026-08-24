@@ -3,7 +3,6 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import {
   Select,
   SelectContent,
@@ -19,7 +18,6 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { useMessages } from '@/providers/message-provider'
-import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import APP_INFO from '../manifest.json'
 import { PANEL_ID } from '../oncoplot-panel'
@@ -28,9 +26,8 @@ import { MULTI_MODE_MAP, MultiMode } from '../oncoplot-utils'
 import { useOpen } from '../use-open'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { open } = useOpen()
-  const { svgRef } = useSVG()
+
   const { sendMessage } = useMessages('oncoplot') //'onco')
   const { displayProps, setDisplayProps } = useOncoplotSettings()
 

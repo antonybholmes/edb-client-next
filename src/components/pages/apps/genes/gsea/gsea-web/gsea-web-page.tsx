@@ -59,7 +59,7 @@ import { PLOT_ZOOM_CHANNEL, useGsea } from './gsea-web-store'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import { IGseaGeneSet } from '../gsea-plot/gsea-plot-store'
@@ -111,7 +111,7 @@ export function GseaWebPage() {
 
   const [reportTabs, setReportTabs] = useState<string[]>([])
 
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
@@ -363,7 +363,7 @@ export function GseaWebPage() {
               }}
             >
               <ExtScrollCard className="px-2 pb-2">
-                <GseaSvg ref={svgRef} />
+                <GseaSvg />
               </ExtScrollCard>
             </FileDropZonePanel>
           ) : (
@@ -429,9 +429,7 @@ export function GseaWebPage() {
 export function GseaWebQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <GseaWebPage />
-      </SVGProvider>
+      <GseaWebPage />
     </CoreProviders>
   )
 }

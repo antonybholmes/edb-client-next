@@ -67,7 +67,7 @@ import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { ArrowUpDown } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
@@ -108,7 +108,7 @@ export function MotifsPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { svgRef } = useSVG()
+  const { ref } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -300,7 +300,7 @@ export function MotifsPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.png`)
+              downloadSvgAutoFormat(ref, `motifs.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -309,7 +309,7 @@ export function MotifsPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.svg`)
+              downloadSvgAutoFormat(ref, `motifs.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -501,11 +501,7 @@ export function MotifsPage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                <MotifsSvg
-                  ref={svgRef}
-                  //dfs={plotFrames}
-                  //className="absolute"
-                />
+                <MotifsSvg />
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
@@ -556,9 +552,7 @@ export function MotifsPage() {
 export function MotifsQueryPage() {
   return (
     <CoreProviders>
-      <SVGProvider>
-        <MotifsPage />
-      </SVGProvider>
+      <MotifsPage />
     </CoreProviders>
   )
 }

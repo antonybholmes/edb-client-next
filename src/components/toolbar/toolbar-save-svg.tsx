@@ -3,14 +3,12 @@ import { TEXT_DOWNLOAD_AS_PNG, TEXT_DOWNLOAD_AS_SVG } from '@/consts'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SaveIcon } from '@/icons/save-icon'
 import { downloadSvg, downloadSvgAsPng } from '@/lib/image-utils'
-import type { RefObject } from 'react'
+import { useSVG } from '@/providers/svg-provider'
 import { ToolbarOptionalDropdownButton } from './toolbar-optional-dropdown-button'
 
-interface IProps {
-  svgRef: RefObject<SVGElement | null>
-}
+export function ToolbarSaveSvg() {
+  const { ref: svgRef } = useSVG()
 
-export function ToolbarSaveSvg({ svgRef }: IProps) {
   return (
     <ToolbarOptionalDropdownButton
       onMainClick={() => downloadSvgAsPng(svgRef)}

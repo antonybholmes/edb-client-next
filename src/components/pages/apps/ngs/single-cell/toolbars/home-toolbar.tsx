@@ -9,7 +9,7 @@ import { useSVG } from '@/providers/svg-provider'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
-  const { svgRef } = useSVG()
+  const { ref: svgRef } = useSVG()
 
   return (
     <>
