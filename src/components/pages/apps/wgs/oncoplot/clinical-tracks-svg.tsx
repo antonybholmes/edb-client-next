@@ -1,4 +1,4 @@
-import { YAxis, type Axis } from '@/components/plot/axis/axis'
+import { YAxis, type Axis } from '@/components/plot/axes/axis'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgRect } from '@/components/plot/svg-rect'

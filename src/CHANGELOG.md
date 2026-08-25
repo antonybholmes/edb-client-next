@@ -1,5 +1,12 @@
 # Changelog
 
+## 87.8.0 (Aug, 2026)
+
+### Changed
+
+- New axis editing ui.
+
+
 ## 87.6.0 (Aug, 2026)
 
 ### Changed

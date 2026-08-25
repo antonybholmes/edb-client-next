@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { autoTickInterval, type Axis } from '@/components/plot/axis/axis'
+import { autoTickInterval, type Axis } from '@/components/plot/axes/axis'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'

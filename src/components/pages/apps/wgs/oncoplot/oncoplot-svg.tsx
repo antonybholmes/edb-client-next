@@ -1,5 +1,5 @@
-import { Axis, YAxis } from '@/components/plot/axis/axis'
-import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/axis/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 

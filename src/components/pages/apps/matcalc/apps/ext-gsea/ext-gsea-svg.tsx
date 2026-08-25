@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axis/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 import { abs } from '@/lib/math/abs'
 

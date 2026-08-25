@@ -3,8 +3,8 @@ import { useMemo, useRef, useState } from 'react'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
 
-import { Axis, YAxis } from '../../../../../plot/axis/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axis/svg-axis'
+import { Axis, YAxis } from '../../../../../plot/axes/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axes/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import {

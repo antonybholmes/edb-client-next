@@ -10,7 +10,6 @@ import { truncate, type NullStr } from '@/lib/text/text'
 
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
-import { useSortable } from '@dnd-kit/react/sortable'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { gsap } from 'gsap'
 import {
@@ -74,14 +73,6 @@ function SheetItem({
   variant,
 }: ITabSortableItemProps) {
   const ref = useRef<HTMLElement | null>(null)
-
-  const {
-    isDragging,
-    //ref,
-    //setActivatorNodeRef,
-    //transform,
-    //transition,
-  } = useSortable({ id: sheet.id, index, handle: ref })
 
   const labelRef = useRef<HTMLSpanElement>(null)
 
@@ -263,6 +254,7 @@ export function ReorderTabs({
       <Tabs
         value={sheet?.id ?? ''}
         onValueChange={(id) => {
+          //console.log('Changing to sheet with id:', id)
           goto({ file, sheet: id })
         }}
         className="overflow-hidden grow"

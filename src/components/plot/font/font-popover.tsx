@@ -4,6 +4,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { UndefStr } from '@/lib/text/text'
 import { CaseSensitive } from 'lucide-react'
@@ -34,9 +35,8 @@ export function BaseFontPopover({
         className="opacity-70 data-popup-open:opacity-100 hover:opacity-100 focus-visible:opacity-100 trans-opacity"
         title={title}
         aria-label={title}
-      >
-        {icon}
-      </PopoverTrigger>
+        render={<ToolbarIconButton>{icon}</ToolbarIconButton>}
+      ></PopoverTrigger>
 
       <PopoverContent
         //alignOffset={4}

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { Axis } from '@/components/plot/axis/axis'
+import { Axis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { TEXT_ZOOM } from '@/consts'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'

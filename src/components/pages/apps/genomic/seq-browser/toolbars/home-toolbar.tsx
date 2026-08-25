@@ -1,4 +1,3 @@
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { ArrowLeftRightIcon } from '@/components/icons/arrow-left-right-icon'
 import { ChevronRightIcon } from '@/components/icons/chevron-right-icon'
 import { DownloadIcon } from '@/components/icons/download-icon'
@@ -28,7 +27,6 @@ import {
 import { useTracks } from '../tracks-store'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { locations, setLocations } = useTracks()
   const { settings, updateSettings } = useSeqBrowserSettings()
 

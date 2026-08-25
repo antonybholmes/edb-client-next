@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
-import { AxisBottomSvg } from '../../../../../../plot/axis/svg-axis'
+import { AxisBottomSvg } from '../../../../../../plot/axes/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 
@@ -12,7 +12,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { Axis } from '@/components/plot/axis/axis'
+import { Axis } from '@/components/plot/axes/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'

@@ -20,10 +20,10 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
+import { AxesPropRow } from '../../../../../../plot/axes/axes-prop-row'
 import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
-import { AxesPropsPopover } from './axes-props-popover'
 import {
   Mode,
   MODE_ITEMS,
@@ -129,9 +129,7 @@ export function GseaBubbleDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Axes">
-              <AxesPropsPopover />
-            </PropRow>
+            <AxesPropRow />
           </AccordionContent>
         </AccordionItem>
 

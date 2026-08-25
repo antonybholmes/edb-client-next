@@ -2528,6 +2528,10 @@
         {
           "msg": "Compact display layout for bubble",
           "date": "2026-08-24T23:01:23.093Z"
+        },
+        {
+          "msg": "SVG saves now managed by centralized provider to track svg refs",
+          "date": "2026-08-25T15:21:39.703Z"
         }
       ]
     },

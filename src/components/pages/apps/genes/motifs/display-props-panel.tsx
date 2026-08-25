@@ -19,9 +19,9 @@ import { FillDropdownMenu } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { DNABase } from '@/lib/genomic/dna'
 import { produce } from 'immer'
+import { AxesPropRow } from '../../../../plot/axes/axes-prop-row'
 import { useMotifSettings } from './motifs-settings'
 
 export function DisplayPropsPanel() {
@@ -55,8 +55,9 @@ export function DisplayPropsPanel() {
       </SideBarHeader>
       <ScrollAccordion value={['plot', 'colors']}>
         <AccordionItem value="plot">
-          <AccordionTrigger
-            rightChildren={
+          <AccordionTrigger>Plot</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Title Font">
               <FontPopover
                 fonts={[
                   {
@@ -71,11 +72,9 @@ export function DisplayPropsPanel() {
                   },
                 ]}
               />
-            }
-          >
-            Plot
-          </AccordionTrigger>
-          <AccordionContent>
+            </PropRow>
+
+            <AxesPropRow axes={['x', 'y']} />
             <PropRow title="Base Width">
               <NumericalInput
                 limit={[1, 100]}
@@ -120,44 +119,6 @@ export function DisplayPropsPanel() {
                 }}
               />
             </PropRow>
-            <SwitchPropRow
-              title="Axes"
-              checked={settings.axes.show}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.show = checked
-                  })
-                )
-              }
-            >
-              <FontPopover
-                fonts={[
-                  {
-                    title: 'Axes Title',
-                    textProps: settings.axes.title,
-                    update: (font) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.axes.title = font
-                        })
-                      ),
-                  },
-
-                  {
-                    title: 'Axes Labels',
-                    textProps: settings.axes.labels,
-                    update: (font) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.axes.labels = font
-                          draft.axes.ticks.show = font.show
-                        })
-                      ),
-                  },
-                ]}
-              />
-            </SwitchPropRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="colors">

@@ -1,8 +1,8 @@
 import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
-import { Axis } from './axis/axis'
-import { AxisType } from './axis/svg-axis-props'
+import { Axis } from './axes/axis'
+import { AxisType } from './axes/svg-axis-props'
 
 export const FONT_SIZE_SMALL = 12
 export const FONT_SIZE_MEDIUM = 14

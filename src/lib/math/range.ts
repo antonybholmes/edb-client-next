@@ -1,5 +1,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
 
+import * as d3 from 'd3'
+
 export function range(start: number, stop?: number, step: number = 1) {
   if (stop === undefined) {
     stop = start
@@ -10,19 +12,21 @@ export function range(start: number, stop?: number, step: number = 1) {
     throw new Error('step cannot be 0')
   }
 
-  // we want to end on the index before the stop,
-  // e.g. stop = 5 -> [0,1,2,3,4]
+  return d3.range(start, stop, step)
 
-  const length = Math.max(Math.ceil((stop - start) / step), 0)
-  const result = new Array<number>(length)
+  // // we want to end on the index before the stop,
+  // // e.g. stop = 5 -> [0,1,2,3,4]
 
-  let value = start
-  for (let i = 0; i < length; i++) {
-    result[i] = value
-    value += step
-  }
+  // const length = Math.max(Math.ceil((stop - start) / step), 0)
+  // const result = new Array<number>(length)
 
-  return result
+  // let value = start
+  // for (let i = 0; i < length; i++) {
+  //   result[i] = value
+  //   value += step
+  // }
+
+  // return result
 }
 
 export function* rangeg(

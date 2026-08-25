@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axis/axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { SvgBase } from '@/components/plot/svg-base'

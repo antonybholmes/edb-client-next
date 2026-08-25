@@ -118,13 +118,20 @@ export function AxisBottomSvg({
 }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  const { tickSize, tickOffset } = getTickProps(ax, settings.plots.axes.x)
+  const { tickProps, tickSize, tickOffset } = getTickProps(
+    ax,
+    settings.plots.axes.x
+  )
 
   // less space required for bottom axis title since we only need
   // to account for font height and tick mark
   const titleOffset = tickOffset + tickSize + settings.plots.axes.x.title.offset
 
   const _title = title ?? ax.title
+
+  if (!tickProps.show) {
+    return null
+  }
 
   return (
     <g

@@ -1,4 +1,5 @@
 import type { ILim } from '@/lib/math/math'
+import { range } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
 import * as d3 from 'd3'
 import { type ScaleLinear } from 'd3'
@@ -7,7 +8,7 @@ import { IAxisDisplayProps, IAxisTickProps } from './svg-axis-props'
 
 export type TickLabel = string | number
 
-const MINOR_TICK_MULTIPLIER = 5
+const MINOR_TICK_DIVISIONS = 5
 
 export type TickItem = {
   v: number
@@ -43,7 +44,7 @@ export class Axis {
   protected _userFormat: ((d: d3.NumberValue) => string) | null = null
 
   protected _numTicks: number = 5
-  protected _numMinorTicks: number = this._numTicks * MINOR_TICK_MULTIPLIER
+  protected _minorTickDivisions = MINOR_TICK_DIVISIONS
 
   protected _params: DeepPartial<IAxisDisplayProps> = {
     //show: true,
@@ -111,7 +112,7 @@ export class Axis {
     target._title = this._title
     target._format = this._format
     target._numTicks = this._numTicks
-    target._numMinorTicks = this._numMinorTicks
+    target._minorTickDivisions = this._minorTickDivisions
     target._userFormat = this._userFormat
     target._params = structuredClone(this._params)
 
@@ -154,19 +155,10 @@ export class Axis {
   setNumTicks(numTicks: number): Axis {
     const a = this.clone()
     a._numTicks = numTicks
-    a._numMinorTicks = numTicks * MINOR_TICK_MULTIPLIER
     a._ticks = undefined
     a._minorTicks = undefined
 
     console.log('bb', a)
-    return a
-  }
-
-  setNumMinorTicks(numTicks: number): Axis {
-    const a = this.clone()
-    a._numMinorTicks = numTicks
-    a._minorTicks = undefined
-    console.log('v', a)
     return a
   }
 
@@ -271,6 +263,7 @@ export class Axis {
     const a = this.clone()
 
     a._ticks = a._makeTicks(ticks)
+    a._minorTicks = undefined
 
     return a
   }
@@ -284,6 +277,15 @@ export class Axis {
     // we can directly set in partial object
     // as show key will be created if it does not exist
     a._params.ticks.minor.show = a._minorTicks.length > 0
+
+    return a
+  }
+
+  setMinorTickDivisions(divisions: number): Axis {
+    const a = this.clone()
+
+    a._minorTickDivisions = divisions
+    a._minorTicks = undefined
 
     return a
   }
@@ -329,15 +331,18 @@ export class Axis {
       this._ticks = this.generateTicks(this._numTicks)
     }
 
-    return this._ticks
+    return this._ticks || []
   }
 
   get minorTicks(): TickItem[] {
     if (!this._minorTicks) {
-      this._minorTicks = this.generateTicks(this._numMinorTicks)
+      this._minorTicks = generateMinorTicks(
+        this.ticks,
+        this._minorTickDivisions
+      )
     }
 
-    return this._minorTicks
+    return this._minorTicks || []
   }
 
   /**
@@ -461,4 +466,19 @@ export function autoLim(lim: ILim, interval?: number): ILim {
     Math.floor(lim[0] / interval) * interval,
     Math.ceil(lim[1] / interval) * interval,
   ]
+}
+
+function generateMinorTicks(
+  ticks: TickItem[],
+  minorTickDivisions: number
+): TickItem[] {
+  return ticks.slice(0, -1).flatMap((tick, i) => {
+    const next = ticks[i + 1]!.v
+    const step = (next - tick.v) / (minorTickDivisions - 1)
+
+    return range(0, minorTickDivisions).map((j) => ({
+      v: tick.v + j * step,
+      label: '',
+    }))
+  })
 }

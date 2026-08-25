@@ -3,10 +3,10 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { range } from '@/lib/math/range'
 import { useEdbSettings } from '../edb/edb-settings'
-import { Axis, YAxis } from './axis/axis'
+import { Axis, YAxis } from './axes/axis'
 
-import { AxisRightSvg } from './axis/svg-axis'
-import { AxisBottomTicksSvg } from './axis/svg-axis-ticks'
+import { AxisRightSvg } from './axes/svg-axis'
+import { AxisBottomTicksSvg } from './axes/svg-axis-ticks'
 import { SvgRect } from './svg-rect'
 
 interface ISvgColorBarProps {
