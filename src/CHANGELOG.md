@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files.
 - Bug fixes and updates.
 - Improved select all ui in gsea plot.
 - New axis editing ui.

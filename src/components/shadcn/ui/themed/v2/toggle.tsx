@@ -10,7 +10,7 @@ import { type ComponentProps } from 'react'
 
 const TOGGLE_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'disabled:pointer-events-none disabled:opacity-50 trans-color overflow-hidden truncate data-pressed:font-semibold'
+  'disabled:pointer-events-none disabled:opacity-50 trans-color overflow-hidden truncate data-pressed:font-medium'
 )
 
 export const toggleVariants = cva(TOGGLE_CLS, {

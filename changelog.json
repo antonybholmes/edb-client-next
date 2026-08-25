@@ -2553,6 +2553,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-08-25T18:01:18.076Z"
+        },
+        {
+          "msg": "Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files",
+          "date": "2026-08-25T20:52:11.998Z"
         }
       ]
     },

@@ -104,11 +104,11 @@ export function HomeToolbar() {
             multiple={true}
             className="gap-x-px"
           >
-            <GroupToggle value="rows" className="w-14">
+            <GroupToggle value="rows" className="w-16">
               Rows
             </GroupToggle>
 
-            <GroupToggle value="columns" className="w-14">
+            <GroupToggle value="columns" className="w-16">
               Columns
             </GroupToggle>
           </ToggleGroup>
