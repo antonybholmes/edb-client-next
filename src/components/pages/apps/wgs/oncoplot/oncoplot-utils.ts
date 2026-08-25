@@ -1247,8 +1247,6 @@ export function memoSort(
   // for every event give it a score between 0 and 1 but less than 1
   const maxEvent = mutationsInUse.length - 1
 
-  console.log('mutationsInUse:', mutationsInUse)
-
   const eventScoreMap: Map<string, bigint> = new Map(
     [...mutationsInUse].map((event, ei) => [
       event.toLowerCase(),
@@ -1257,7 +1255,7 @@ export function memoSort(
   )
 
   const numGenes = BigInt(geneOrder.length)
-  const maxGeneIndex = BigInt(numGenes - BIG1)
+  const maxGeneIndex = numGenes - BIG1
 
   const sampleScores: { name: string; value: bigint }[][] = []
 
@@ -1349,19 +1347,12 @@ export function memoSort(
 
   let diff: bigint
 
-  for (const [si, scores] of sampleScores.entries()) {
-    if (
-      df._sampleStats[si].sample === 'TCGA-25-1630-01' ||
-      df._sampleStats[si].sample === 'TCGA-61-2109-01'
-    ) {
-      console.log('Sample scores for aha', df._sampleStats[si].sample, scores)
-    }
-  }
-
   const sampleOrder = sampleScores
     .map((scores, si) => ({ index: si, scores }))
     .sort((a, b) => {
-      // use each score in order to sort and if there is a tie, use the next score as a tiebreaker
+      // use each score in order to sort. If there is a tie, defer to
+      // the next score in order to break the tie until a
+      // descriminating score is found
       for (const [si, scoreA] of a.scores.entries()) {
         const scoreB = b.scores[si]!
 
@@ -1382,12 +1373,6 @@ export function memoSort(
   //   rowStats: newTable.geneStats,
   //   colStats: sampleOrder.map(c => newTable.sampleStats[c]),
   // }
-
-  console.log(
-    'sampleScores:',
-    sampleScores[sampleOrder[4]],
-    sampleScores[sampleOrder[21]]
-  )
 
   return { geneOrder, sampleOrder }
 
