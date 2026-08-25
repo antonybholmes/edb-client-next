@@ -32,7 +32,7 @@ export function HomeToolbar() {
   const { locations, setLocations } = useTracks()
   const { settings, updateSettings } = useSeqBrowserSettings()
 
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
 
   function setLocationZoom(scale: number) {
     setLocations(
@@ -54,10 +54,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: { svgRef, name: 'tracks' },
-            })
+            saveAs('tracks')
           }}
         >
           <DownloadIcon />

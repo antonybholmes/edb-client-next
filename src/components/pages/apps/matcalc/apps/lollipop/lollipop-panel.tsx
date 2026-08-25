@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { Card } from '@/themed/card'
@@ -15,7 +14,6 @@ import { produce } from 'immer'
 
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'
 import { LabelPropsPanel } from '../../../wgs/lollipop/label-props-panel'
 import { LollipopDisplayPropsPanel } from '../../../wgs/lollipop/lollipop-display-props-panel'
@@ -40,7 +38,7 @@ function LollipopPanel() {
 
   const { settings, updateSettings } = useMatcalcSettings()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { aaStats } = useLollipopStore()
 
@@ -48,23 +46,15 @@ function LollipopPanel() {
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
-  const { open: openDialog } = useDialogs()
-
   const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
     for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `heatmap.${messageImageFileFormat(message)}`
-          )
+          autoSave(`heatmap.${messageImageFileFormat(message)}`)
         } else {
-          openDialog({
-            type: 'save-image',
-            payload: { svgRef, name: `lollipop` },
-          })
+          saveAs('lollipop')
         }
       }
 

@@ -38,7 +38,6 @@ import {
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { produce } from 'immer'
 
 import { useLollipopSettings } from './lollipop-settings-store'
@@ -96,7 +95,7 @@ function LollipopPage() {
   //   isOpen: true,
   // }
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
   //const [foldersTab, setFoldersTab] = useState<ITab>(dataTab)
   //const [tab, setTab] = useState<ITab | undefined>(dataTab)
 
@@ -392,7 +391,7 @@ function LollipopPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'lollipop.png')
+              autoSave('lollipop.png')
             }}
           >
             <FileImageIcon stroke="" />
@@ -401,7 +400,7 @@ function LollipopPage() {
           <DropdownMenuItem
             aria-label=" TEXT_DOWNLOAD_AS_SVG"
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'lollipop.svg')
+              autoSave('lollipop.svg')
             }}
           >
             <span>TEXT_DOWNLOAD_AS_SVG</span>

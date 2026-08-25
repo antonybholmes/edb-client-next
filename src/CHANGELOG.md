@@ -4,6 +4,7 @@
 
 ### Changed
 
+- SVG saves now managed by centralized provider to track svg refs.
 - Compact display layout for bubble.
 - New centralized registration system for svg to track owner of ref.
 - New axis UI with colorbar axis separate from x y.

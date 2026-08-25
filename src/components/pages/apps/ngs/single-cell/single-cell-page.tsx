@@ -12,11 +12,9 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { produce } from 'immer'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
-
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
@@ -66,6 +64,7 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
@@ -112,15 +111,13 @@ export function SingleCellPage() {
   //const [selectedPlotTab, setSelectedPlotTab] = useState('Display')
   const [foldersIsOpen, setFoldersIsOpen] = useState(true)
 
-  const svgRef = useRef<SVGSVGElement>(null)
-
   //const [dataSetHeaders, setDataSetHeaders] = useState<any[]>([])
   //const [dataSetRows, setDataSetRows] = useState<any[]>([])
   //const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
 
   //const [scale, setScale] = useState(1)
 
-  const { settings, hasHydrated, updateSettings } = useSingleCellSettings()
+  const { settings, updateSettings } = useSingleCellSettings()
   const { setAppInfo } = useAppInfo()
 
   const { settings: edbSettings } = useEdbSettings()
@@ -133,6 +130,8 @@ export function SingleCellPage() {
   const { save } = useSave()
 
   const { addDFSize } = useFooter()
+
+  const { autoSave } = useSVG()
 
   useEffect(() => {
     addDFSize()
@@ -235,7 +234,7 @@ export function SingleCellPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.png`)
+              autoSave(`single-cell.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -244,7 +243,7 @@ export function SingleCellPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.svg`)
+              autoSave(`single-cell.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
@@ -50,9 +49,7 @@ export function ExtGseaPanel() {
 
   const { plot } = useExtGseaContext()
 
-  const { ref: svgRef } = useSVG()
-
-  //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
+  const { autoSave } = useSVG()
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
@@ -67,10 +64,7 @@ export function ExtGseaPanel() {
     for (const message of filteredMessages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `extgsea.${messageImageFileFormat(message)}`
-          )
+          autoSave(`extgsea.${messageImageFileFormat(message)}`)
         } else {
           setShowSave(true)
         }
@@ -96,7 +90,7 @@ export function ExtGseaPanel() {
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
               const d = data as { name: string }
-              downloadSvgAutoFormat(svgRef, d.name)
+              autoSave(d.name)
             }
 
             setShowSave(false)

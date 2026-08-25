@@ -7,8 +7,6 @@ import { DisplayPropsPanel } from './display-props-panel'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
-
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -43,7 +41,7 @@ interface IOncoplotPanelProps {
 export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
   const { zoom } = useZoom() //PLOT_ZOOM_CHANNEL) //Ctx()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { open: openDialog } = useDialogs()
   const { messages, removeMessage } = useMessages('oncoplot') //'onco-panel')
@@ -60,18 +58,9 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
       if (typeof message.data === 'string') {
         if (message.data.includes('save')) {
           if (message.data.includes(':')) {
-            downloadSvgAutoFormat(
-              svgRef,
-              `oncoplot.${messageImageFileFormat(message)}`
-            )
+            autoSave(`oncoplot.${messageImageFileFormat(message)}`)
           } else {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'oncoplot',
-                svgRef,
-              },
-            })
+            saveAs('oncoplot')
           }
         }
 

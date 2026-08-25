@@ -53,7 +53,9 @@ export function SvgBase({
 
   const setSVG = useCallback(
     (svg: SVGSVGElement | null) => {
-      registerSVG(id, svg)
+      if (svg) {
+        return registerSVG(id, svg)
+      }
     },
     [id, registerSVG]
   )

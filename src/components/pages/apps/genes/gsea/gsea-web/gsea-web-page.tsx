@@ -44,7 +44,6 @@ import { ExportIcon } from '@/icons/export-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { BoolSearchQuery } from '@/lib/search'
 import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
@@ -111,7 +110,7 @@ export function GseaWebPage() {
 
   const [reportTabs, setReportTabs] = useState<string[]>([])
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
@@ -201,7 +200,7 @@ export function GseaWebPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'gsea.png')
+              autoSave('gsea.png')
             }}
           >
             <FileImageIcon stroke="" />
@@ -210,7 +209,7 @@ export function GseaWebPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'gsea.svg')
+              autoSave('gsea.svg')
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

@@ -7,7 +7,6 @@ import { autoLim } from '@/components/plot/axis/axis'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useEffect } from 'react'
 import { useVolcanoSettings } from './volcano-settings-store'
@@ -83,7 +82,7 @@ export function VolcanoPanel() {
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { open: openDialog } = useDialogs()
 
@@ -93,15 +92,9 @@ export function VolcanoPanel() {
     for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `volcano.${messageImageFileFormat(message)}`
-          )
+          autoSave(`volcano.${messageImageFileFormat(message)}`)
         } else {
-          openDialog({
-            type: 'save-image',
-            payload: { svgRef, name: `volcano` },
-          })
+          saveAs('volcano')
         }
       }
 

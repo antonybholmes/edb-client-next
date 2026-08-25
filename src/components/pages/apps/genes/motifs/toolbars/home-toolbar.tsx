@@ -1,4 +1,3 @@
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import {
   GroupToggle,
@@ -18,8 +17,7 @@ export function HomeToolbar() {
   const { settings, updateSettings } = useMotifSettings()
 
   const { search, updateSearch } = useMotifs()
-  const { ref: svgRef } = useSVG()
-  const { open: openDialog } = useDialogs()
+  const { saveAs } = useSVG()
 
   return (
     <>
@@ -27,13 +25,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'motifs',
-                svgRef,
-              },
-            })
+            saveAs('motifs')
           }}
         >
           <DownloadIcon />

@@ -10,7 +10,7 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
 import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import {
@@ -45,7 +45,6 @@ import { BaseRow } from '@/layout/base-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { randId } from '@/lib/id'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { Card } from '@/themed/card'
 import { IconButton } from '@/themed/icon-button'
 import {
@@ -74,6 +73,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
+import { useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
   useFiles,
@@ -92,7 +92,7 @@ export function BioDrawPage() {
   //const searchRef = useRef<HTMLTextAreaElement>(null)
   //const [selectedTab, setSelectedTab] = useState('Plot')
 
-  const svgRef = useRef<SVGSVGElement>(null)
+  const { autoSave } = useSVG()
 
   //const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -205,7 +205,7 @@ export function BioDrawPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.png`)
+              autoSave(`motifs.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -214,7 +214,7 @@ export function BioDrawPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.svg`)
+              autoSave(`motifs.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -349,7 +349,7 @@ export function BioDrawPage() {
               name: string
             }
 
-            downloadSvgAutoFormat(svgRef, d.name as string)
+            autoSave(d.name as string)
           }
 
           setShowDialog({ ...NO_DIALOG })

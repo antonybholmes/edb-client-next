@@ -12,11 +12,11 @@
   {
     "name": "Bio Draw",
     "description": "Biological diagrams",
-    "version": "16.6.6",
+    "version": "16.6.8",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-07-08T02:28:44.138Z",
-    "hash": "425864cad2d91efc84f781f14b154cf519f258e89826dd3624bfc9c0a627d998",
-    "build": 538
+    "modified": "2026-08-25T15:21:38.852Z",
+    "hash": "a17b0d4259c86d54c244106e4d62cb8d7fa6c0fdbda00e4443f1f536062fdad2",
+    "build": 540
   },
   {
     "name": "Convert",
@@ -53,9 +53,9 @@
     "color": "#4169E1",
     "version": "1.0.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-24T23:01:21.876Z",
-    "hash": "01c75432ab0cdda544a45a33e71dc7d7632e44b5d0da4547d11d13f1da9c8c82",
-    "build": 44
+    "modified": "2026-08-25T15:21:38.852Z",
+    "hash": "f77d040ec43a28023fedb64b7083cbd99656df226c2a165408438ebede9d19ae",
+    "build": 46
   },
   {
     "name": "GSEA Plot",
@@ -63,9 +63,9 @@
     "color": "#ffb366",
     "version": "23.0.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-25T02:48:22.282Z",
-    "hash": "3ee4286b042fa9bdeec8606f137d4172a8fbcd2eaa1df0711686c1b12a3c7120",
-    "build": 864
+    "modified": "2026-08-25T15:21:38.853Z",
+    "hash": "725fe5e2615716bd638d429af5b01dee5b0e3062ef0455e4039f8adc86dd9100",
+    "build": 866
   },
   {
     "name": "GSEA Web",
@@ -73,9 +73,9 @@
     "color": "#4169E1",
     "version": "3.4.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.717Z",
-    "hash": "e8f3b5b8247deb426d446b1104ac269f7bf952d1dc6b96af08bf8224feb518ac",
-    "build": 106
+    "modified": "2026-08-25T15:21:38.854Z",
+    "hash": "c54933e1b80a5d1b941a45c827aece0a437271e410d516b32108053da07f555c",
+    "build": 108
   },
   {
     "name": "History Viewer",
@@ -111,9 +111,9 @@
     "color": "#DA70D6",
     "version": "27.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.724Z",
-    "hash": "5863d76557918f383d92a5b0726407b0371a15850d1419a3d73474acdc611ffb",
-    "build": 1100
+    "modified": "2026-08-25T15:21:38.863Z",
+    "hash": "e567d85c2f16b95dad189c9605c43a3ae18c30cf4e95ea7301a3275ebe608a28",
+    "build": 1102
   },
   {
     "name": "Matcalc",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "50.0.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-24T23:01:21.881Z",
-    "hash": "3d7addf9621d1705fd410e8bf7d8e650c77dec22a2bc2e425336c38f0dcde3ff",
-    "build": 1954
+    "modified": "2026-08-25T15:21:38.861Z",
+    "hash": "5ee537c8bd17fdae0f8684750fcaa29f6c3d88278bdc01af179b6127dd5ea1d2",
+    "build": 1956
   },
   {
     "name": "Motifs",
@@ -131,9 +131,9 @@
     "color": "#009933",
     "version": "48.4.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.718Z",
-    "hash": "c2cbbe6960215885a7380b7938dcead8fb3444dd280b6d5c0056020cd516dec4",
-    "build": 994
+    "modified": "2026-08-25T15:21:38.854Z",
+    "hash": "3387ab8441b848cb88bd04c43ecb9d934a26e790a79f7dfa25867450e0a7a8d5",
+    "build": 996
   },
   {
     "name": "Oncoplot",
@@ -141,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.0.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.724Z",
-    "hash": "3971ed2e1d9a6f3c9ff2f4dbd34a8a956d99f35178c300124ed625620b566e40",
-    "build": 1102
+    "modified": "2026-08-25T15:21:38.864Z",
+    "hash": "3633fe60d979f886044a9e301e63f41edcdcfb2401f92cf1311f07d6422abb33",
+    "build": 1104
   },
   {
     "name": "Overlap",
@@ -179,21 +179,21 @@
     "name": "Sankey",
     "description": "Create Sankey plots.",
     "color": "#ff9900",
-    "version": "1.2.2",
+    "version": "1.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.723Z",
-    "hash": "e6a7841be0a1af77d7876bba9af3bfd4a67e348f9efeb66fb559886cbaf592a6",
-    "build": 68
+    "modified": "2026-08-25T15:21:38.862Z",
+    "hash": "3f148b3b4381a53a5b59445aa6abdd2ea61af516546bb02150be825a286d3776",
+    "build": 70
   },
   {
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.4.0",
+    "version": "32.4.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T23:01:21.878Z",
-    "hash": "b57cec5c6306624c8d015a8ab08eba00f25995ad72b90e06e23188fad307f568",
-    "build": 1128
+    "modified": "2026-08-25T15:21:38.858Z",
+    "hash": "17d9408a83e2ca13f7c774e2d2f54afb5a11ff70bb2053c4cf1299053d93f968",
+    "build": 1130
   },
   {
     "name": "Single Cell",
@@ -201,9 +201,9 @@
     "color": "#9966ff",
     "version": "26.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.723Z",
-    "hash": "69a976c9f71d116d83d1766dcfe37d213e9f65925ca4912a3aaa08242f689124",
-    "build": 852
+    "modified": "2026-08-25T15:21:38.862Z",
+    "hash": "a45b9de6b66a116e0ff09988defd6b2fb98620f4c2acb13192820738e00cba7e",
+    "build": 854
   },
   {
     "name": "Table Viewer",
@@ -228,11 +228,11 @@
     "name": "Variants",
     "description": "WGS variant data explorer.",
     "color": "#FA8072",
-    "version": "26.6.8",
+    "version": "26.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.724Z",
-    "hash": "2d52e1f2c4198e08654fcbbbbdac9c149c3dc8f6aa895d984891788b3e9270d7",
-    "build": 1018
+    "modified": "2026-08-25T15:21:38.864Z",
+    "hash": "041970ff791403a2e45ccc0d139325e1a4027ed9120c65eee57f9736aa069afd",
+    "build": 1020
   },
   {
     "name": "Venn",
@@ -240,8 +240,8 @@
     "color": "#00008B",
     "version": "26.4.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-24T20:09:06.723Z",
-    "hash": "2ecb540e0303f52492d6babfb5550cc37ebb29557720eb83294c507de6aae063",
-    "build": 890
+    "modified": "2026-08-25T15:21:38.863Z",
+    "hash": "117b7ec016e1d6ec0b546f27b4535b337f05d4dc0c2f036bfc4fd074655cdce3",
+    "build": 892
   }
 ]

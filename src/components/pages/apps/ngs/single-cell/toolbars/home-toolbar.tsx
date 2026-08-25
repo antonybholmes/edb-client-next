@@ -4,12 +4,10 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { TEXT_SAVE_IMAGE } from '@/consts'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { useSVG } from '@/providers/svg-provider'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
 
   return (
     <>
@@ -17,13 +15,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'umap',
-                svgRef,
-              },
-            })
+            saveAs('umap')
           }}
         >
           <DownloadIcon />

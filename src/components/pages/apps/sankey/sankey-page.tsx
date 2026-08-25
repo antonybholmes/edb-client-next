@@ -29,7 +29,6 @@ import { ExportIcon } from '@/icons/export-icon'
 import { FileIcon } from '@/icons/file-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -97,7 +96,7 @@ export function SankeyPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -194,7 +193,7 @@ export function SankeyPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.png`)
+              autoSave(`motifs.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -203,7 +202,7 @@ export function SankeyPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.svg`)
+              autoSave(`motifs.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

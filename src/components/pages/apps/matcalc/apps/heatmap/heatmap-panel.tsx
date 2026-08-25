@@ -1,10 +1,8 @@
 import { useEffect } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import type { IClusterFrame } from '@/lib/math/hcluster'
 import {
@@ -41,29 +39,18 @@ export function HeatmapPanel() {
 
   const cf = plot?.dataframes['main'] as IClusterFrame
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
-
-  const { open: openDialog } = useDialogs()
 
   useEffect(() => {
     for (const message of messages) {
       if (typeof message.data === 'string') {
         if (message.data.includes('save')) {
           if (message.data.includes(':')) {
-            downloadSvgAutoFormat(
-              svgRef,
-              `heatmap.${messageImageFileFormat(message)}`
-            )
+            autoSave(`heatmap.${messageImageFileFormat(message)}`)
           } else {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'heatmap',
-                svgRef,
-              },
-            })
+            saveAs('heatmap')
           }
         }
       }

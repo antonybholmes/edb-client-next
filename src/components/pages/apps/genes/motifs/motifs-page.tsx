@@ -44,7 +44,6 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -108,7 +107,7 @@ export function MotifsPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { ref } = useSVG()
+  const { autoSave } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -300,7 +299,7 @@ export function MotifsPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(ref, `motifs.png`)
+              autoSave(`motifs.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -309,7 +308,7 @@ export function MotifsPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(ref, `motifs.svg`)
+              autoSave(`motifs.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

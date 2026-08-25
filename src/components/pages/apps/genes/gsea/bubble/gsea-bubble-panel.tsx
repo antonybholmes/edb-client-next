@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
@@ -9,7 +8,6 @@ import {
   useMessages,
 } from '@/providers/message-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -20,19 +18,9 @@ import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-dis
 import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 
 export function GseaBubblePanel() {
-  // const { plotsState, plotsDispatch } = useContext(PlotsContext)
-
-  // const plot = plotsState.plotMap[plotId]
-
-  // if (!plot) {
-  //   return null
-  // }
-
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
-  const { open: openDialog } = useDialogs()
-
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -40,15 +28,9 @@ export function GseaBubblePanel() {
     for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `volcano.${messageImageFileFormat(message)}`
-          )
+          autoSave(`volcano.${messageImageFileFormat(message)}`)
         } else {
-          openDialog({
-            type: 'save-image',
-            payload: { svgRef, name: `gsea-bubble` },
-          })
+          saveAs('gsea-bubble')
         }
       }
 

@@ -44,7 +44,6 @@ import { ExportIcon } from '@/icons/export-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { BoolSearchQuery } from '@/lib/search'
 import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
@@ -53,7 +52,6 @@ import { produce } from 'immer'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useSVG } from '@/providers/svg-provider'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { HCenterRow } from '@/components/layout/h-center-row'
@@ -63,6 +61,8 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { useUpdateEffect } from '@/hooks/update-effect'
+
+import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import { useGseaBubbleSettings } from './bubble/gsea-bubble-settings-store'
@@ -81,9 +81,6 @@ import { BubbleToolbar } from './toolbars/bubble'
 import { HomeToolbar } from './toolbars/home'
 
 const HELP_URL = DOCS_URL + '/apps/gsea'
-
-const LI_CLS =
-  'border border-border/25 p-4 rounded-lg bg-background shadow-xs hover:shadow-lg trans-shadow'
 
 export function GseaPlotPage() {
   const { settings: edbSettings } = useEdbSettings()
@@ -124,7 +121,7 @@ export function GseaPlotPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   useEffect(() => {
@@ -190,7 +187,7 @@ export function GseaPlotPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'gsea.png')
+              autoSave('gsea.png')
             }}
           >
             <FileImageIcon stroke="" />
@@ -199,7 +196,7 @@ export function GseaPlotPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'gsea.svg')
+              autoSave('gsea.svg')
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

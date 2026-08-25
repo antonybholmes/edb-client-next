@@ -33,7 +33,6 @@ import { ExportIcon } from '@/icons/export-icon'
 import { FileIcon } from '@/icons/file-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -104,7 +103,7 @@ export function GseaBubblePage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -206,7 +205,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `gsea-bubble.png`)
+              autoSave(`gsea-bubble.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -215,7 +214,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `gsea-bubble.svg`)
+              autoSave(`gsea-bubble.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

@@ -32,7 +32,7 @@ const SELECTION_RECT_GAP = 3
 const SELECTION_RECT_W_OFFSET = SELECTION_RECT_GAP * 2
 const MIN_ZOOM_SIZE_BP = 1000
 
-export function TracksView({ ref, className, style }: ISVGProps) {
+export function TracksView({ className, style }: ISVGProps) {
   const {
     groups,
     locations,

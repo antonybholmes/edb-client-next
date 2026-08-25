@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
@@ -35,7 +34,7 @@ export function BoxPlotPanel() {
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
@@ -50,18 +49,9 @@ export function BoxPlotPanel() {
       if (typeof message.data === 'string') {
         if (message.data.includes('save')) {
           if (message.data.includes(':')) {
-            downloadSvgAutoFormat(
-              svgRef,
-              `boxwhisker.${messageImageFileFormat(message)}`
-            )
+            autoSave(`boxwhisker.${messageImageFileFormat(message)}`)
           } else {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'boxplot',
-                svgRef,
-              },
-            })
+            saveAs('boxplot')
           }
         }
 

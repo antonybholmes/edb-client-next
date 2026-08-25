@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
@@ -10,7 +9,6 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../matcalc/data/data-panel'
 
@@ -34,12 +32,10 @@ export function SankeyPanel() {
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
   const { settings, updateSettings } = useSankeySettings()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
-
-  const { open: openDialog } = useDialogs()
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -47,15 +43,9 @@ export function SankeyPanel() {
     for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `sankey.${messageImageFileFormat(message)}`
-          )
+          autoSave(`sankey.${messageImageFileFormat(message)}`)
         } else {
-          openDialog({
-            type: 'save-image',
-            payload: { svgRef, name: `sankey` },
-          })
+          saveAs('sankey')
         }
       }
 

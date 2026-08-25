@@ -1,4 +1,3 @@
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import {
@@ -16,10 +15,9 @@ import { useGseaSettings } from '../gsea-settings-store'
 import { useGseaWebStore } from '../gsea-web-store'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { settings, updateSettings } = useGseaSettings()
   const { loadGseaZip } = useGseaWebStore()
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
 
   return (
     <>
@@ -43,13 +41,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'gsea',
-                svgRef,
-              },
-            })
+            saveAs('gsea')
           }}
         >
           <DownloadIcon />

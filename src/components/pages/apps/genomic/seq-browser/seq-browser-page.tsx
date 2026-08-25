@@ -23,7 +23,6 @@ import {
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { FileImageIcon } from '@/icons/file-image-icon'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import APP_INFO from './manifest.json'
 
 import { CompassIcon } from '@/icons/compass-icon'
@@ -101,7 +100,7 @@ function SeqBrowserPage() {
 
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
   useKeyDownListener((e) => {
     if ((e as KeyboardEvent).ctrlKey) {
@@ -237,7 +236,7 @@ function SeqBrowserPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `tracks.png`)
+              autoSave(`tracks.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -246,7 +245,7 @@ function SeqBrowserPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `tracks.svg`)
+              autoSave(`tracks.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -334,7 +333,6 @@ function SeqBrowserPage() {
             }}
           >
             <TracksView
-              ref={svgRef}
               style={{
                 pointerEvents: isCtrlPressed ? 'none' : 'auto',
               }}

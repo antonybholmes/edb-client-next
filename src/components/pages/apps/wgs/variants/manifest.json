@@ -2,9 +2,9 @@
   "name": "Variants",
   "description": "WGS variant data explorer.",
   "color": "#FA8072",
-  "version": "26.6.8",
+  "version": "26.8.0",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-08-24T20:09:06.724Z",
-  "hash": "2d52e1f2c4198e08654fcbbbbdac9c149c3dc8f6aa895d984891788b3e9270d7",
-  "build": 1018
+  "modified": "2026-08-25T15:21:38.864Z",
+  "hash": "041970ff791403a2e45ccc0d139325e1a4027ed9120c65eee57f9736aa069afd",
+  "build": 1020
 }
