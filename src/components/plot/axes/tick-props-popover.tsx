@@ -25,7 +25,7 @@ export function TickPropsPopover({
   const { settings, updateSettings } = useEdbSettings()
   const [open, setOpen] = useState(false)
 
-  const title = `${capitalCase(which)} ${capitalCase(axis)}-Axis Tick`
+  const title = `${capitalCase(which)} ${capitalCase(axis)} Ticks`
 
   const icon =
     axis === 'x' ? (
@@ -54,12 +54,11 @@ export function TickPropsPopover({
               })
             )
           }}
-        />
-        <PropRow title="Labels">
+        >
           <FontPopover
             fonts={[
               {
-                title: `${capitalCase(which)} ${capitalCase(axis)}-Axis Tick Labels`,
+                title: `${capitalCase(which)} ${capitalCase(axis)} Tick Labels`,
                 textProps: settings.plots.axes[axis].ticks[which].labels,
                 showRotation: true,
                 update: (f) =>
@@ -75,18 +74,7 @@ export function TickPropsPopover({
               },
             ]}
           />
-          <NumericalInput
-            value={settings.plots.axes[axis].ticks[which].labels.offset}
-            title="Label Offset"
-            onNumChanged={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.plots.axes[axis].ticks[which].labels.offset = v
-                })
-              )
-            }}
-          />
-        </PropRow>
+        </CheckPropRow>
 
         <PropRow title="Size / Offset">
           <NumericalInput
@@ -112,6 +100,19 @@ export function TickPropsPopover({
               updateSettings(
                 produce(settings, (draft) => {
                   draft.plots.axes[axis].ticks[which].line.offset = v
+                })
+              )
+            }}
+          />
+        </PropRow>
+        <PropRow title="Label Offset">
+          <NumericalInput
+            value={settings.plots.axes[axis].ticks[which].labels.offset}
+            title="Label Offset"
+            onNumChanged={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plots.axes[axis].ticks[which].labels.offset = v
                 })
               )
             }}

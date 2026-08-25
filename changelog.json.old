@@ -2545,6 +2545,10 @@
         {
           "msg": "New axis editing ui",
           "date": "2026-08-25T17:23:11.155Z"
+        },
+        {
+          "msg": "Improved select all ui in gsea plot",
+          "date": "2026-08-25T17:37:09.082Z"
         }
       ]
     },

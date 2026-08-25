@@ -5,8 +5,7 @@ import { range } from '@/lib/math/range'
 import { useEdbSettings } from '../edb/edb-settings'
 import { Axis, YAxis } from './axes/axis'
 
-import { AxisRightSvg } from './axes/svg-axis'
-import { AxisBottomTicksSvg } from './axes/svg-axis-ticks'
+import { AxisBottomSvg, AxisRightSvg } from './axes/svg-axis'
 import { SvgRect } from './svg-rect'
 
 interface ISvgColorBarProps {
@@ -81,7 +80,7 @@ export function SvgHColorBar({
         )}
       </g>
       <g transform={`translate(0, ${settings.plots.colorbar.size.h})`}>
-        <AxisBottomTicksSvg ax={ax} />
+        <AxisBottomSvg ax={ax} axis="colorbar" />
       </g>
     </g>
   )
@@ -104,6 +103,7 @@ export function SvgVColorBar({
   }
 
   ax = YAxis.fromAxis(ax)
+  console.log('cbar', settings.plots.axes.colorbar)
 
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps

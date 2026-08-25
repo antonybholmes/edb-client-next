@@ -9,18 +9,13 @@ import {
   AxisBottomTicksSvg,
   AxisLeftTicksSvg,
   AxisRightTicksSvg,
-  getTickProps,
+  getAxisProps,
 } from './svg-axis-ticks'
 
-export function AxisLeftSvg({
-  ax,
-
-  title,
-  pos = { ...ZERO_POS },
-}: IAxisProps) {
+export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  const { tickProps, tickSize, tickOffset, tickLabelOffset } = getTickProps(
+  const { axisProps, tickSize, tickOffset, tickLabelOffset } = getAxisProps(
     ax,
     settings.plots.axes.y
   )
@@ -32,7 +27,7 @@ export function AxisLeftSvg({
 
   const _title = title ?? ax.title
 
-  if (!tickProps.show) {
+  if (!axisProps.show) {
     return null
   }
 
@@ -72,8 +67,14 @@ export function AxisRightSvg({
 }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  const { tickProps, tickSize, tickOffset, tickLabelOffset, titleOffset } =
-    getTickProps(ax, settings.plots.axes[axis])
+  const {
+    axisProps,
+    majorTickProps,
+    tickSize,
+    tickOffset,
+    tickLabelOffset,
+    titleOffset,
+  } = getAxisProps(ax, settings.plots.axes[axis])
 
   const titleX = tickOffset + tickSize + tickLabelOffset + titleOffset
 
@@ -81,7 +82,7 @@ export function AxisRightSvg({
 
   const _title = title ?? ax.title
 
-  if (!tickProps.show) {
+  if (!axisProps.show) {
     return null
   }
 
@@ -96,13 +97,13 @@ export function AxisRightSvg({
         s={settings.plots.axes.y.line}
       />
 
-      <AxisRightTicksSvg ax={ax} />
+      <AxisRightTicksSvg ax={ax} axis={axis} />
 
       {settings.plots.axes.y.title.show && ax && (
         <SvgText
           transform={`translate(-${titleX}, ${0.5 * ax.length}) rotate(270)`}
           textAnchor="middle"
-          font={settings.plots.axes.y.title}
+          font={axisProps.title}
         >
           {_title}
         </SvgText>
@@ -114,22 +115,23 @@ export function AxisRightSvg({
 export function AxisBottomSvg({
   ax,
   pos = { ...ZERO_POS },
+  axis = 'x',
   title,
 }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  const { tickProps, tickSize, tickOffset } = getTickProps(
+  const { axisProps, tickSize, tickOffset } = getAxisProps(
     ax,
-    settings.plots.axes.x
+    settings.plots.axes[axis]
   )
 
   // less space required for bottom axis title since we only need
   // to account for font height and tick mark
-  const titleOffset = tickOffset + tickSize + settings.plots.axes.x.title.offset
+  const titleOffset = tickOffset + tickSize + axisProps.title.offset
 
   const _title = title ?? ax.title
 
-  if (!tickProps.show) {
+  if (!axisProps.show) {
     return null
   }
 
@@ -138,22 +140,22 @@ export function AxisBottomSvg({
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {settings.plots.axes.x.line.show && (
+      {axisProps.line.show && (
         <SvgLine
-          x1={-0.5 * settings.plots.axes.x.line.width}
-          x2={ax.length + 0.5 * settings.plots.axes.x.line.width}
+          x1={-0.5 * axisProps.line.width}
+          x2={ax.length + 0.5 * axisProps.line.width}
 
-          s={settings.plots.axes.x.line}
+          s={axisProps.line}
         />
       )}
 
       <AxisBottomTicksSvg ax={ax} />
 
-      {settings.plots.axes.x.title.show && _title && (
+      {axisProps.title.show && _title && (
         <SvgText
           transform={`translate(${0.5 * ax.length}, ${titleOffset})`}
           textAnchor="middle"
-          font={settings.plots.axes.x.title}
+          font={axisProps.title}
         >
           {_title}
         </SvgText>

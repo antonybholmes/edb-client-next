@@ -5,7 +5,7 @@ import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
-import { TickPropsPopover } from '../../pages/apps/genes/gsea/gsea-plot/bubble/tick-props-popover'
+import { TickPropsPopover } from './tick-props-popover'
 
 export function AxisPropsPanel({ axis }: { axis: AxisType }) {
   const { settings, updateSettings } = useEdbSettings()
