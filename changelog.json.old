@@ -2537,5 +2537,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-08-22T06:20:33.129Z"
+  },
+  {
+    "version": "87.8.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "New axis editing ui",
+          "date": "2026-08-25T17:23:11.155Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-25T17:23:11.155Z"
   }
 ]

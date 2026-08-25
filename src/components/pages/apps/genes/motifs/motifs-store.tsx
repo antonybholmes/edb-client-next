@@ -273,7 +273,8 @@ function sortResults(
     return
   }
 
-  console.log('sorting results with settings:', searchData)
+  //console.log('sorting results with settings:', searchData)
+
   switch (settings.sort.by + ',' + (settings.sort.asc ? 'asc' : 'desc')) {
     case 'motif-id,asc':
       searchData.motifs.sort((a, b) => {

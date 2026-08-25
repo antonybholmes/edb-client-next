@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Improved select all ui in gsea plot.
 - New axis editing ui.
 
 

@@ -4,9 +4,8 @@ import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { TEXT_SELECT_ALL } from '@/consts'
-import { VCenterRow } from '@/layout/v-center-row'
 
+import { SelectAll } from '@/components/select-all'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
@@ -49,30 +48,21 @@ export function GeneSetsPropsPanel() {
 
   return (
     <PropsPanel className="text-xs">
-      <VCenterRow className="gap-x-1 justify-between pl-6.5 pr-1">
-        <Checkbox
-          aria-label="Select all gene sets"
-          checked={selectAllGeneSets}
-          onCheckedChange={() => {
-            const selected = !selectAllGeneSets
-
-            setGeneSetsInUse(
-              Object.fromEntries(
-                filteredReports.map(
-                  (pathway) => [pathway.id, selected] as [string, boolean]
-                )
+      <SelectAll
+        setSelectAll={(v) => {
+          setGeneSetsInUse(
+            Object.fromEntries(
+              filteredReports.map(
+                (pathway) => [pathway.id, v] as [string, boolean]
               )
             )
+          )
 
-            setSelectAllGeneSets(selected)
-          }}
-          title={TEXT_SELECT_ALL}
-          data-visible={filteredReports.length > 0 ? 'true' : undefined}
-          className="invisible data-visible:visible"
-        />
-
-        <GeneSetFilter />
-      </VCenterRow>
+          setSelectAllGeneSets(v)
+        }}
+        rightChildren={<GeneSetFilter />}
+        className="pl-6.5"
+      />
 
       <LineSeparator />
 
