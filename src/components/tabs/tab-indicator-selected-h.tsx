@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useTabIndicators } from './tab-indicator-provider'
 
 const LINE_CLS =
-  'absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none shrink-0 rounded-full'
+  'absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none shrink-0'
 
 /**
  * A horizontal line that can be used to follow the mouse

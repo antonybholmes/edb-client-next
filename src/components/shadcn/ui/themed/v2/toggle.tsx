@@ -10,7 +10,7 @@ import { type ComponentProps } from 'react'
 
 const TOGGLE_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'disabled:pointer-events-none disabled:opacity-50 trans-color overflow-hidden truncate'
+  'disabled:pointer-events-none disabled:opacity-50 trans-color overflow-hidden truncate data-pressed:font-semibold'
 )
 
 export const toggleVariants = cva(TOGGLE_CLS, {
@@ -18,15 +18,15 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     variant: {
       default: cn(
         CENTERED_ROW_CLS,
-        'hover:bg-muted/50 data-pressed:bg-muted/50'
+        'hover:bg-muted/50 data-pressed:bg-muted/50 '
       ),
       outline:
-        'border-2 border-transparent data-pressed:font-semibold text-xs data-pressed:bg-app-theme/5 data-pressed:border-app-theme/50 hover:border-app-theme/25 rounded-theme items-center justify-center flex gap-2 aspect-square',
-      gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint data-pressed:font-semibold text-xs data-pressed:bg-faint data-pressed:border-border',
-      tab: 'overflow-hidden text-xs rounded-theme data-[state=off]:hover:bg-faint data-pressed:bg-theme/25 data-pressed:font-semibold',
+        'border-2 border-transparent text-xs data-pressed:bg-app-theme/5 data-pressed:border-app-theme/50 hover:border-app-theme/25 rounded-theme items-center justify-center flex gap-2 aspect-square',
+      gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint text-xs data-pressed:bg-faint data-pressed:border-border',
+      tab: 'overflow-hidden text-xs rounded-theme data-[state=off]:hover:bg-faint data-pressed:bg-theme/25',
       group:
-        'hover:bg-muted/50 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-pressed:font-semibold',
-      ios: 'data-pressed:font-semibold',
+        'hover:bg-muted/50 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border',
+      ios: '',
     },
     size: {
       xs: 'h-6',

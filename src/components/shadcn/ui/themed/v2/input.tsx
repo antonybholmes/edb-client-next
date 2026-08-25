@@ -43,7 +43,7 @@ export const inputVariants = cva(CONTAINER_CLS, {
       underline: 'bg-background border-b border-border hover:border-ring px-1',
     },
     h: {
-      sm: 'h-7',
+      sm: 'h-7.5',
       md: 'h-button-md',
       //dialog: 'h-9',
       lg: 'h-9',

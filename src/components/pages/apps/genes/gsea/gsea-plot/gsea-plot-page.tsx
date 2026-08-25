@@ -55,6 +55,8 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useSVG } from '@/providers/svg-provider'
 
+import { BaseCol } from '@/components/layout/base-col'
+import { HCenterRow } from '@/components/layout/h-center-row'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
   GroupToggle,
@@ -75,6 +77,7 @@ import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
 import { GseaSvg } from './gsea-svg'
 import APP_INFO from './manifest.json'
+import { BubbleToolbar } from './toolbars/bubble'
 import { HomeToolbar } from './toolbars/home'
 
 const HELP_URL = DOCS_URL + '/apps/gsea'
@@ -133,6 +136,10 @@ export function GseaPlotPage() {
       {
         id: 'Home',
         component: HomeToolbar,
+      },
+      {
+        id: 'Bubble',
+        component: BubbleToolbar,
       },
     ])
   }, [setToolbarTabs])
@@ -283,30 +290,27 @@ export function GseaPlotPage() {
             )
           })}
         </Autocomplete>
-        <>
-          <ToggleGroup
-            //direction="toolbar"
-            className="text-xs"
-            //rounded="none"
-            size="lg"
-            value={[settings.view.tab]}
-            onValueChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.view.tab = v[0] as 'graph' | 'bubble'
-                })
-              )
-            }}
-          >
-            <GroupToggle value="graph" className="px-2">
-              Graph
-            </GroupToggle>
 
-            <GroupToggle value="bubble" className="px-2">
-              Bubble
-            </GroupToggle>
-          </ToggleGroup>
-        </>
+        {/* <ToggleGroup
+          className="text-xs"
+          size="lg"
+          value={[settings.view.tab]}
+          onValueChange={(v) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.view.tab = v[0] as 'graph' | 'bubble'
+              })
+            )
+          }}
+        >
+          <GroupToggle value="graph" className="px-2">
+            Graph
+          </GroupToggle>
+
+          <GroupToggle value="bubble" className="px-2">
+            Bubble
+          </GroupToggle>
+        </ToggleGroup> */}
       </HeaderPortal>
 
       <ShortcutLayout signinRequired={false}>
@@ -341,85 +345,107 @@ export function GseaPlotPage() {
         </Toolbar>
 
         <ResizableSidebar>
-          {rankedGenes.length > 0 ? (
-            <FileDropZonePanel
-              className="grow h-full"
-              onFileDrop={(files) => {
-                if (files.length > 0) {
-                  onBinaryFileChange(files, ({ success, files }) => {
-                    if (!success) {
-                      return
-                    }
-                    loadGseaZipWithErrorHandling(files)
-                  })
-                }
-              }}
-            >
-              <Tabs
-                //orientation="vertical"
-                value={settings.view.tab}
-                onValueChange={() => {}}
-                className="grow"
-              >
-                <TabsContent value="graph">
-                  <ExtScrollCard className="px-2 pb-2">
-                    <GseaSvg />
-                  </ExtScrollCard>
-                </TabsContent>
-                <TabsContent value="bubble">
-                  <GseaBubbleTabPanel />
-                </TabsContent>
-              </Tabs>
-            </FileDropZonePanel>
-          ) : (
-            <FileDropZonePanel
-              className="grow h-full"
-              onFileDrop={(files) => {
-                if (files.length > 0) {
-                  onBinaryFileChange(files, ({ success, files }) => {
-                    if (!success) {
-                      return
-                    }
-                    loadGseaZipWithErrorHandling(files)
-                  })
-                }
-              }}
-            >
-              <div className="text-sm p-8">
-                <ol className="list-decimal ml-4 flex flex-col gap-y-4">
-                  <li className={LI_CLS}>
-                    Create a zip file of the directory containing all files from
-                    the output of the{' '}
-                    <ThemeLink
-                      href="https://www.gsea-msigdb.org/gsea/index.jsp"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Broad Institute GSEA
-                    </ThemeLink>{' '}
-                    tool. These folders are in your <strong>gsea_home</strong>{' '}
-                    folder and have names similar to{' '}
-                    <strong>dlbcl_wt_vs_missense.Gsea.1740787471679</strong>.
-                  </li>
-                  <li className={LI_CLS}>
-                    Upload the zip file to this tool using either the{' '}
-                    <strong>Open</strong> button or by dragging the zip file
-                    onto this area.
-                  </li>
-                  <li className={LI_CLS}>
-                    Select which gene sets you want to plot. Use the{' '}
-                    <strong>Display</strong> tab on the right to customize their
-                    appearance. You can configure the grid layout for multiple
-                    gene sets.
-                  </li>
-                  <li className={LI_CLS}>
-                    Download the plot as an SVG or PNG image.
-                  </li>
-                </ol>
-              </div>
-            </FileDropZonePanel>
-          )}
+          <BaseCol className="grow h-full gap-y-2">
+            <HCenterRow>
+              <ToggleGroup
+                //direction="toolbar"
+                className="text-xs gap-x-px"
+                //rounded="none"
 
+                value={[settings.view.tab]}
+                onValueChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.view.tab = v[0] as 'graph' | 'bubble'
+                    })
+                  )
+                }}
+              >
+                <GroupToggle value="graph" className="w-18">
+                  Graph
+                </GroupToggle>
+
+                <GroupToggle value="bubble" className="w-18">
+                  Bubble
+                </GroupToggle>
+              </ToggleGroup>
+            </HCenterRow>
+            {rankedGenes.length > 0 ? (
+              <FileDropZonePanel
+                className="grow h-full"
+                onFileDrop={(files) => {
+                  if (files.length > 0) {
+                    onBinaryFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
+                      loadGseaZipWithErrorHandling(files)
+                    })
+                  }
+                }}
+              >
+                <Tabs
+                  value={settings.view.tab}
+                  onValueChange={() => {}}
+                  className="grow h-full"
+                >
+                  <TabsContent value="graph">
+                    <ExtScrollCard className="px-2 pb-2">
+                      <GseaSvg />
+                    </ExtScrollCard>
+                  </TabsContent>
+                  <TabsContent value="bubble">
+                    <GseaBubbleTabPanel />
+                  </TabsContent>
+                </Tabs>
+              </FileDropZonePanel>
+            ) : (
+              <FileDropZonePanel
+                className="grow h-full"
+                onFileDrop={(files) => {
+                  if (files.length > 0) {
+                    onBinaryFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
+                      loadGseaZipWithErrorHandling(files)
+                    })
+                  }
+                }}
+              >
+                <div className="text-sm px-12 py-8 bg-background m-8 rounded-3xl border border-border/25">
+                  <ol className="list-decimal flex flex-col gap-y-4">
+                    <li>
+                      Create a zip file of the directory containing all files
+                      from the output of the{' '}
+                      <ThemeLink
+                        href="https://www.gsea-msigdb.org/gsea/index.jsp"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Broad Institute GSEA
+                      </ThemeLink>{' '}
+                      tool. These folders are in your <strong>gsea_home</strong>{' '}
+                      folder and have names similar to{' '}
+                      <strong>dlbcl_wt_vs_missense.Gsea.1740787471679</strong>.
+                    </li>
+                    <li>
+                      Upload the zip file to this tool using either the{' '}
+                      <strong>Open</strong> button or by dragging the zip file
+                      onto this area.
+                    </li>
+                    <li>
+                      Select which gene sets you want to plot. Use the{' '}
+                      <strong>Display</strong> tab on the right to customize
+                      their appearance. You can configure the grid layout for
+                      multiple gene sets.
+                    </li>
+                    <li>Download the plot as an SVG or PNG image.</li>
+                  </ol>
+                </div>
+              </FileDropZonePanel>
+            )}
+          </BaseCol>
           <GseaPropsPanel />
         </ResizableSidebar>
 

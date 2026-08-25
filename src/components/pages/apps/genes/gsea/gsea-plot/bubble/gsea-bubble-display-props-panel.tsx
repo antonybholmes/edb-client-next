@@ -15,7 +15,7 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { TEXT_SORT_BY } from '@/consts'
+import { TEXT_SORT } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
@@ -37,7 +37,7 @@ export function GseaBubbleDisplayPropsPanel() {
   return (
     <PropsPanel>
       <ScrollAccordion
-        value={['plot', 'style', 'nes', 'p-value', 'bubbles', 'size']}
+        value={['plot', 'style', 'statistics', 'bubbles', 'size']}
       >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
@@ -187,28 +187,11 @@ export function GseaBubbleDisplayPropsPanel() {
           </AccordionContent>
         </AccordionItem>
 
-        {/* <AccordionItem value="phenotypes">
-          <AccordionTrigger>Phenotypes</AccordionTrigger>
+        <AccordionItem value="statistics">
+          <AccordionTrigger>Statistics</AccordionTrigger>
           <AccordionContent>
             <CheckPropRow
-              title="Merge"
-              checked={settings.phenotypes.merge}
-              onCheckedChange={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.phenotypes.merge = v
-                  })
-                )
-              }}
-            />
-          </AccordionContent>
-        </AccordionItem> */}
-
-        <AccordionItem value="nes">
-          <AccordionTrigger>NES</AccordionTrigger>
-          <AccordionContent>
-            <CheckPropRow
-              title="Auto X-axis"
+              title="Auto NES"
               checked={settings.axes.x.auto}
               onCheckedChange={(v) => {
                 updateSettings(
@@ -218,7 +201,7 @@ export function GseaBubbleDisplayPropsPanel() {
                 )
               }}
             />
-            <PropRow title="X-axis">
+            <PropRow title="NES Limit">
               <DoubleNumericalInput
                 id="x-limit"
                 v1={settings.axes.x.domain[0]}
@@ -252,13 +235,7 @@ export function GseaBubbleDisplayPropsPanel() {
                 <span>to</span>
               </DoubleNumericalInput>
             </PropRow>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="p-value">
-          <AccordionTrigger>P-value</AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Max">
+            <PropRow title="Max P-value">
               <NumericalInput
                 id="size"
                 value={settings.scale.p.range[1]}
@@ -280,7 +257,7 @@ export function GseaBubbleDisplayPropsPanel() {
         <AccordionItem value="bubbles">
           <AccordionTrigger>Bubbles</AccordionTrigger>
           <AccordionContent>
-            <PropRow title={TEXT_SORT_BY}>
+            <PropRow title={TEXT_SORT}>
               <SelectList
                 items={SORT_BY_ITEMS}
                 onValueChange={(v) =>
