@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { FileSpreadsheet } from 'lucide-react'
 
 export function FileIcon({
-  size = 'w-5 h-5',
+  size = 18,
   stroke = 'stroke-foreground',
   fill,
   className,
@@ -25,7 +25,8 @@ export function FileIcon({
     // </svg>
 
     <FileSpreadsheet
-      className={cn(ICON_CLS, stroke, fill, size, className)}
+      className={cn(ICON_CLS, stroke, fill, className)}
+      size={size}
       stroke=""
       strokeWidth={strokeWidth}
     />

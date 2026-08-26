@@ -15,11 +15,10 @@ export const variants = cva(ICON_CLS, {
 })
 
 export function UploadIcon({
-  size = 20,
+  size = 18,
   variant,
   className,
   strokeWidth = 1.5,
-  ...props
 }: IIconProps & VariantProps<typeof variants>) {
   return (
     <MonitorUp

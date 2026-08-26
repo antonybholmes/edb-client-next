@@ -30,7 +30,7 @@ export function BoxPlotDisplayPropsPanel() {
               <DoubleNumericalInput
                 v1={displayProps.plot!.w}
                 v2={displayProps.plot!.h}
-                inputCls="w-16 rounded-theme"
+
                 dp={0}
                 limit={[0, 1000]}
                 onNumChanged1={(v) => {
@@ -47,13 +47,14 @@ export function BoxPlotDisplayPropsPanel() {
                     })
                   )
                 }}
+                w="xxs"
               />
             </PropRow>
 
             <PropRow title="X gap">
               <NumericalInput
                 value={displayProps.padding.plot}
-                className="w-16 rounded-theme"
+                w="xxs"
                 dp={0}
                 limit={[0, 1000]}
                 onNumChanged={(v) => {
@@ -68,7 +69,7 @@ export function BoxPlotDisplayPropsPanel() {
             <PropRow title="Hue gap">
               <NumericalInput
                 value={displayProps.padding.hue}
-                className="w-16 rounded-theme"
+                w="xxs"
                 dp={0}
                 limit={[0, 1000]}
                 onNumChanged={(v) => {
@@ -115,7 +116,7 @@ export function BoxPlotDisplayPropsPanel() {
               <NumericalInput
                 value={displayProps.violin.stroke.width}
                 placeholder="Stroke..."
-                className="w-14 rounded-theme"
+                w="xxs"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -148,7 +149,7 @@ export function BoxPlotDisplayPropsPanel() {
               <NumericalInput
                 value={displayProps.box.stroke.width}
                 placeholder="Stroke..."
-                className="w-14 rounded-theme"
+                w="xxs"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -162,7 +163,7 @@ export function BoxPlotDisplayPropsPanel() {
               <NumericalInput
                 value={displayProps.box.width}
                 placeholder="Width..."
-                className="w-14 rounded-theme"
+                w="xxs"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {

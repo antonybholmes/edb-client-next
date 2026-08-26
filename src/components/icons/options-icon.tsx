@@ -2,7 +2,7 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 export function OptionsIcon({
-  size = 'w-5 h-5',
+  size = 'w-4.5 h-4.5',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1,

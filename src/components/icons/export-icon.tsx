@@ -3,9 +3,8 @@ import { cn } from '@/lib/shadcn-utils'
 import { ArrowRightFromLine } from 'lucide-react'
 
 export function ExportIcon({
-  size = 'w-4.5 h-4.5',
+  size = 16,
   stroke = 'stroke-foreground',
-
   className,
   strokeWidth = 1.5,
   iconMode,
@@ -24,8 +23,9 @@ export function ExportIcon({
     // </svg>
 
     <ArrowRightFromLine
-      className={cn(stroke, size, className)}
-      stroke=""
+      className={cn(stroke, className)}
+      stroke={stroke}
+      size={size}
       strokeWidth={strokeWidth}
     />
   )

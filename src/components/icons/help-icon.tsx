@@ -1,5 +1,4 @@
 import { VECTOR_ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
-import { cn } from '@/lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { CircleHelp } from 'lucide-react'
 
@@ -16,7 +15,7 @@ export const variants = cva(VECTOR_ICON_CLS, {
 })
 
 export function HelpIcon({
-  size = 'h-5 w-5',
+  size = 18,
   variant = 'colorful',
   className,
 }: IIconProps & VariantProps<typeof variants>) {
@@ -39,8 +38,6 @@ export function HelpIcon({
     //   <circle cx="10" cy="10" r="9" className="stroke-2 fill-none" />
     // </svg>
 
-    <CircleHelp
-      className={variants({ variant, className: cn(size, className) })}
-    />
+    <CircleHelp className={variants({ variant, className })} size={size} />
   )
 }

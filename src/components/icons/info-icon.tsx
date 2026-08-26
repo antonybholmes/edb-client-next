@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { Info } from 'lucide-react'
 
 export function InfoIcon({
-  size = 'w-5 h-5',
+  size = 18,
   stroke = 'stroke-foreground',
   fill,
   className,
@@ -53,7 +53,8 @@ export function InfoIcon({
     // </svg>
 
     <Info
-      className={cn(stroke, fill, size, className)}
+      className={cn(stroke, fill, className)}
+      size={size}
       stroke=""
       strokeWidth={strokeWidth}
       {...props}

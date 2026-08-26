@@ -4,7 +4,6 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { friendlyFilename } from '@/lib/path'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
-import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 /**
  * Hook to save the current sheet as a file with a specified name and format.
@@ -12,7 +11,7 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
  */
 export function useSave() {
   const { sheets } = useCurrentSheets()
-  const { settings } = useMatcalcSettings()
+
   const { settings: edbSettings } = useEdbSettings()
 
   function save(name: string, format: string) {
@@ -32,8 +31,6 @@ export function useSave() {
       hasIndex,
       file: name,
       sep,
-      //dp: settings.view.dp,
-      //commas: settings.view.commas,
     })
   }
 

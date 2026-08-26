@@ -2573,6 +2573,10 @@
         {
           "msg": "Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.",
           "date": "2026-08-26T17:58:13.744Z"
+        },
+        {
+          "msg": "Icon refinements. Global settings dialog now simplified to directly add apps rather than flakey registration system.",
+          "date": "2026-08-26T22:08:01.643Z"
         }
       ]
     },

@@ -40,7 +40,7 @@ export const SAFARI_CLS = cn(
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'flex-row items-center px-2 h-10 data-active:bg-muted/30'
+  'flex-row items-center px-2 h-10 data-active:bg-muted/50'
 )
 
 export const PLAIN_CLS = cn(

@@ -10,7 +10,7 @@ import {
 import { OpenIcon } from '@/icons/open-icon'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import { TEXT_DOWNLOAD_AS_PNG } from '@/consts'
+import { TEXT_DOWNLOAD_AS_PNG, TEXT_OPEN_FILE } from '@/consts'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
@@ -377,7 +377,7 @@ function LollipopPage() {
         >
           <UploadIcon fill="" />
 
-          <span>Open files from this device</span>
+          <span>{TEXT_OPEN_FILE}</span>
         </DropdownMenuItem>
       ),
     },

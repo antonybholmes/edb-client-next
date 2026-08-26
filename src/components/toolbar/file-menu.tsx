@@ -201,7 +201,7 @@ export function FileMenu({
                 aria-label="Show options"
               >
                 <Globe
-                  size={20}
+                  size={18}
                   strokeWidth={1.5}
                   className="stroke-foreground fill-background"
                 />
