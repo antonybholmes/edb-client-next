@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.
 - Refined zoom controls to simplify channel system.
 - ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.
 - Added small margin defaults. Adjusted margins on GSEA plot.

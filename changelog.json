@@ -2569,6 +2569,10 @@
         {
           "msg": "Refined zoom controls to simplify channel system",
           "date": "2026-08-26T17:49:06.758Z"
+        },
+        {
+          "msg": "Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.",
+          "date": "2026-08-26T17:58:13.744Z"
         }
       ]
     },

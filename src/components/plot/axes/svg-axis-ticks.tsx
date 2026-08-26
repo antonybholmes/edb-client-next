@@ -241,9 +241,6 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
     tickLabelOffset,
   } = getAxisProps(ax, settings.plots.axes.y)
 
-  tickOffset++
-  minorTickOffset++
-
   const majorYs = ax.ticks.map((tick) => ax.domainToRange(tick.v))
   const minorYs = ax.minorTicks.map((tick) => ax.domainToRange(tick.v))
 
@@ -254,7 +251,7 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
         minorYs.map((y, ti) => {
           return (
             <g transform={`translate(${-minorTickOffset}, ${y})`} key={ti}>
-              <SvgLine x2={minorTickSize} s={minorTickProps.line} />
+              <SvgLine x1={-minorTickSize} x2={0} s={minorTickProps.line} />
             </g>
           )
         })}
