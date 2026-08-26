@@ -84,7 +84,7 @@ export function GseaBubblePage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { setZoom } = useZoom({
     onChange: ({ zoom }) => {
       updateSettings(
         produce(settings, (draft) => {
@@ -327,7 +327,7 @@ export function GseaBubblePage() {
         <FooterPortal className="justify-between">
           <></>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

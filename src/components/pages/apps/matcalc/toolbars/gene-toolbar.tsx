@@ -8,7 +8,7 @@ import { snrRankGenes } from '@/lib/gsea/gsea2'
 import { useFooter } from '@/providers/footer-provider'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
-import { useExtGseaWorker } from '../apps/ext-gsea/ext-gsea-worker'
+
 import {
   useCurrentGenesets,
   useCurrentGroups,
@@ -20,6 +20,7 @@ import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
+import { useExtGseaWorker } from '../apps/gsea/ext-gsea/ext-gsea-worker'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'

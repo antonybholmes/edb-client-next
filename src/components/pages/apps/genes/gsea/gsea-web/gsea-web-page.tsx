@@ -53,7 +53,7 @@ import { produce } from 'immer'
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
-import { PLOT_ZOOM_CHANNEL, useGsea } from './gsea-web-store'
+import { useGsea } from './gsea-web-store'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -94,7 +94,7 @@ export function GseaWebPage() {
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { zoom } = useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(
@@ -418,7 +418,7 @@ export function GseaWebPage() {
         <FooterPortal>
           <></>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

@@ -68,11 +68,7 @@ import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import { useGseaBubbleSettings } from './bubble/gsea-bubble-settings-store'
 import { GseaBubbleTabPanel } from './bubble/gsea-bubble-tab-panel'
 import { GeneSetFilter } from './gene-set-filter'
-import {
-  PLOT_ZOOM_CHANNEL,
-  useGsea,
-  type IGseaGeneSet,
-} from './gsea-plot-store'
+import { useGsea, type IGseaGeneSet } from './gsea-plot-store'
 import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
 import { GseaSvg } from './gsea-svg'
@@ -102,7 +98,7 @@ export function GseaPlotPage() {
 
   const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
 
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { zoom, setZoom } = useZoom({
     onChange: ({ zoom }) => {
       updateSettings(
         produce(settings, (draft) => {
@@ -360,7 +356,7 @@ export function GseaPlotPage() {
                   <ExtScrollCard
                     className="grow px-2 pb-2"
                     header={
-                      <HCenterRow>
+                      <HCenterRow className="pb-2">
                         <ToggleGroup
                           className="text-xs gap-x-px"
                           value={[settings.view.tab]}
@@ -453,7 +449,7 @@ export function GseaPlotPage() {
         <FooterPortal>
           <></>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

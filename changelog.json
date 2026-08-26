@@ -2565,6 +2565,10 @@
         {
           "msg": "ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.",
           "date": "2026-08-26T15:46:29.734Z"
+        },
+        {
+          "msg": "Refined zoom controls to simplify channel system",
+          "date": "2026-08-26T17:49:06.758Z"
         }
       ]
     },

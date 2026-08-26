@@ -9,7 +9,6 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
@@ -18,7 +17,6 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { BoxPlotPropsPanel } from './box-plot-props-panel'
 import { BoxPlotSvg } from './boxplot-plot-svg'
 import { useBoxPlotContext } from './boxplot-provider'
@@ -36,9 +34,15 @@ export function BoxPlotPanel() {
 
   const { autoSave, saveAs } = useSVG()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
-
-  const { open: openDialog } = useDialogs()
+  const { setZoom } = useZoom({
+    onChange: (newZoom) => {
+      updatePlot(
+        produce(plot, (draft) => {
+          draft.props.page.scale = newZoom.zoom
+        })
+      )
+    },
+  }) //Ctx()
 
   const [showSideBar, setShowSideBar] = useState(true)
 
@@ -65,12 +69,8 @@ export function BoxPlotPanel() {
   }, [messages])
 
   useUpdateEffect(() => {
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.page.scale = zoom
-      })
-    )
-  }, [zoom])
+    setZoom(plot.props.page.scale)
+  }, [plot.props.page.scale])
 
   return (
     <>
@@ -98,7 +98,7 @@ export function BoxPlotPanel() {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

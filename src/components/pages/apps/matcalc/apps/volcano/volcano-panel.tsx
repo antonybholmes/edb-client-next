@@ -19,14 +19,13 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 import { useVolcanoContext } from './volcano-provider'
 
@@ -66,16 +65,6 @@ export function makeDefaultVolcanoProps(
 }
 
 export function VolcanoPanel() {
-  // const { plotsState, plotsDispatch } = useContext(PlotsContext)
-
-  // const plot = plotsState.plotMap[plotId]
-
-  // if (!plot) {
-  //   return null
-  // }
-
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
-
   const { plot } = useVolcanoContext()
   const { settings, updateSettings } = useVolcanoSettings()
   const displayProps: IVolcanoDisplayOptions = plot.props
@@ -84,7 +73,18 @@ export function VolcanoPanel() {
 
   const { autoSave, saveAs } = useSVG()
 
-  const { open: openDialog } = useDialogs()
+  const { setZoom } = useZoom({
+    onChange: (v) =>
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = v.zoom
+        })
+      ),
+  })
+
+  useUpdateEffect(() => {
+    setZoom(settings.scale)
+  }, [settings.scale])
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -101,18 +101,6 @@ export function VolcanoPanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  useEffect(() => {
-    setZoom(zoom)
-  }, [settings.scale])
-
-  useEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
 
   return (
     <>
@@ -153,7 +141,7 @@ export function VolcanoPanel() {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

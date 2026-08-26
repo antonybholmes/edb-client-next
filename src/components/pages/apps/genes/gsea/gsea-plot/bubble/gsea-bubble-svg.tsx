@@ -17,8 +17,13 @@ import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
+import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
-import type { ITooltip } from '../../../../matcalc/apps/heatmap/heatmap-svg'
+import { useSVG } from '@/providers/svg-provider'
+import {
+  TOOLTIP_CLEAR_MS,
+  type ITooltip,
+} from '../../../../matcalc/apps/heatmap/heatmap-svg'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../gsea-plot-store'
 import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
@@ -324,8 +329,8 @@ function BubblePlot({
 
 export function GseaBubblePlotSvg() {
   const { plots, points, xlims } = useGseaBubbleContext()
-  //const { ref: svgRef } = useSVG()
-  //const containerRef = useRef<HTMLDivElement | null>(null)
+  const { ref: svgRef } = useSVG()
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const { settings } = useGseaBubbleSettings()
 
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -342,19 +347,19 @@ export function GseaBubblePlotSvg() {
         clearTimeout(timeoutRef.current)
       }
 
-      //const screenP = svgPointToScreen(svgRef.current, p)
+      const screenP = svgPointToScreen(svgRef.current, p)
 
-      //const rect = containerRef.current!.getBoundingClientRect()
+      const rect = containerRef.current!.getBoundingClientRect()
 
-      //const newP = {
-      //  x: screenP.x - rect.left,
-      //  y: screenP.y - rect.top,
-      //}
+      const newP = {
+        x: screenP.x - rect.left,
+        y: screenP.y - rect.top,
+      }
 
       setToolTipInfo({
         ...toolTipInfo,
         plot,
-        pos: p,
+        pos: newP,
         cell: { row: row, col: 0 },
       })
     },
@@ -369,7 +374,10 @@ export function GseaBubblePlotSvg() {
     // wait before removing. if we re-enter quickly, the tooltip won't flicker
     // as this timeout will be cancelled so the tooltip won't disappear
     // and will be moved to next location
-    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
+    timeoutRef.current = setTimeout(
+      () => setToolTipInfo(null),
+      TOOLTIP_CLEAR_MS
+    )
   }, [])
 
   const { svg, width, height } = useMemo(() => {
@@ -463,7 +471,7 @@ export function GseaBubblePlotSvg() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <SvgBase width={width} height={height} scale={settings.page.scale}>
         {svg}
       </SvgBase>

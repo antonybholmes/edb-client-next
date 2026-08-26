@@ -95,7 +95,7 @@ export function SingleCellPage() {
 
   //const [search, setSearch] = useState('=aicda')
 
-  useZoom(PLOT_ZOOM_CHANNEL, {
+  useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(
@@ -444,7 +444,7 @@ export function SingleCellPage() {
         <FooterPortal className="justify-between">
           <> </>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

@@ -28,12 +28,10 @@ interface IZoomSliderProps extends IDivProps {
   channel?: string
 }
 
-export function ZoomSlider({
-  channel = DEFAULT_ZOOM_CHANNEL_NAME,
-  className,
-}: IZoomSliderProps) {
-  const { index, levels, setZoom, increaseZoom, decreaseZoom } =
-    useZoom(channel)
+export function ZoomSlider({ channel, className }: IZoomSliderProps) {
+  const { index, levels, setZoom, increaseZoom, decreaseZoom } = useZoom({
+    channel,
+  })
 
   // We need to distinguish between user-initiated changes
   // to the slider and programmatic changes that occur when the zoom level
@@ -109,7 +107,7 @@ export function ZoomSelect({
 }: IZoomSliderProps) {
   const [open, setOpen] = useState(false)
 
-  const { zoom, levels, setZoom } = useZoom(channel)
+  const { zoom, levels, setZoom } = useZoom({ channel })
 
   function _setValue(value: number) {
     setZoom(value)

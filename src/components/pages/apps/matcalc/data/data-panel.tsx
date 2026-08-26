@@ -44,7 +44,7 @@ export const DEFAULT_PANEL_ID = 'Table 1'
 
 export const SHEET_PANEL_CLS = 'overflow-hidden relative' //cn(DATA_PANEL_CLS, 'px-3 pt-3')
 
-export const DATA_ZOOM_CHANNEL = 'matcalc-data'
+//export const DATA_ZOOM_CHANNEL = 'matcalc-data'
 
 export const MESSAGE_CHANNEL = 'matcalc'
 
@@ -56,7 +56,7 @@ export function DataPanel() {
   const { sheets } = useCurrentSheets()
   const { settings } = useMatcalcSettings()
 
-  const { zoom } = useZoom(DATA_ZOOM_CHANNEL)
+  const { zoom } = useZoom()
   const { open: openDialog } = useDialogs()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
@@ -194,7 +194,7 @@ export function DataPanel() {
       <FooterPortal>
         <></>
         <></>
-        <ZoomSlider channel={DATA_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

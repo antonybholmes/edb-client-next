@@ -27,7 +27,6 @@ import { useSideTabs } from '@/components/tabs/tab-provider'
 //import { getPlot } from '../../history/history-provider/history-hooks'
 import { useSVG } from '@/providers/svg-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 
@@ -44,7 +43,7 @@ function LollipopPanel() {
 
   const { displayProps, setDisplayProps } = useLollipopSettings()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom } = useZoom()
 
   const { setTabs: setSideTabs } = useSideTabs()
 
@@ -137,7 +136,7 @@ function LollipopPanel() {
         <></>
         <></>
         <>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </>
       </FooterPortal>
     </>

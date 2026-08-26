@@ -62,7 +62,6 @@ import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { CoreProviders } from '@/providers/core-providers'
-import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
@@ -74,10 +73,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../matcalc/history/history-provider/history-contexts'
+import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useSave } from '../matcalc/hooks/save'
 import APP_INFO from './manifest.json'
 
@@ -98,13 +94,10 @@ export function BioDrawPage() {
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  const { zoom } = useZoom()
 
   const { settings, updateSettings } = useMotifSettings()
 
-  const { goto } = useHistory()
-
-  const { file } = useFiles()
   const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
 
@@ -450,7 +443,7 @@ export function BioDrawPage() {
         <FooterPortal className="justify-between">
           <div>{getDataFrameInfo(df)}</div>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

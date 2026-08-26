@@ -94,7 +94,7 @@ function VennPage() {
 
   //const [selectedSideTab, setSelectedSideTab] = useState(0)
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { zoom } = useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(
@@ -626,7 +626,7 @@ function VennPage() {
         <></>
         <></>
 
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

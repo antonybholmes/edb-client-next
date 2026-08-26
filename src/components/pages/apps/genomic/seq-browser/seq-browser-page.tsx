@@ -78,7 +78,7 @@ function SeqBrowserPage() {
   const { setAppInfo } = useAppInfo()
   const { settings, updateSettings } = useSeqBrowserSettings()
 
-  useZoom(PLOT_ZOOM_CHANNEL, {
+  useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(
@@ -391,7 +391,7 @@ function SeqBrowserPage() {
             </Select>
           </VCenterRow>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

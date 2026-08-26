@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
 
-import { ExtGseaPlot } from '../../history/history-provider/history-types'
+import { ExtGseaPlot } from '../../../history/history-provider/history-types'
 import { IExtGseaDisplayOptions } from './ext-gsea-store'
 
 export interface ExtGseaPropsContextType {

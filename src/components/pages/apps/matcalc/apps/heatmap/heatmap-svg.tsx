@@ -36,6 +36,8 @@ import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
 
+export const TOOLTIP_CLEAR_MS = 300
+
 export interface ITooltip {
   pos: IPos
   cell: ICell
@@ -158,10 +160,6 @@ export function HeatMapSvg() {
 
       const screen = svgPointToScreen(ref.current, pos)
 
-      if (!screen) {
-        return
-      }
-
       setToolTipInfo({ pos: screen, cell })
     },
     [margin.left, margin.top, blockSize, displayOptions.zoom]
@@ -172,7 +170,10 @@ export function HeatMapSvg() {
       clearTimeout(timeoutRef.current)
     }
 
-    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
+    timeoutRef.current = setTimeout(
+      () => setToolTipInfo(null),
+      TOOLTIP_CLEAR_MS
+    )
   }, [])
 
   const { svg, width, height } = useMemo(() => {

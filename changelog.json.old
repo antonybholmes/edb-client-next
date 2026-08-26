@@ -2561,6 +2561,10 @@
         {
           "msg": "Added small margin defaults. Adjusted margins on GSEA plot",
           "date": "2026-08-26T14:07:55.734Z"
+        },
+        {
+          "msg": "ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.",
+          "date": "2026-08-26T15:46:29.734Z"
         }
       ]
     },

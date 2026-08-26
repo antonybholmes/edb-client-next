@@ -17,14 +17,13 @@ import {
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 
-import { MESSAGE_CHANNEL } from '../../data/data-panel'
-
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
+
+import { MESSAGE_CHANNEL } from '../../../data/data-panel'
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { ExtGseaSvg } from './ext-gsea-svg'
@@ -51,7 +50,7 @@ export function ExtGseaPanel() {
 
   const { autoSave } = useSVG()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom } = useZoom()
 
   const [showSave, setShowSave] = useState(false)
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
@@ -145,7 +144,7 @@ export function ExtGseaPanel() {
         <></>
         <></>
         <>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </>
       </FooterPortal>
     </>

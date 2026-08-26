@@ -16,7 +16,6 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { PLOT_ZOOM_CHANNEL } from '../matcalc/apps/heatmap/heatmap-panel'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'
 import { useSankeySettings } from './sankey-settings-store'
 import { SankeySvg } from './sankey-svg'
@@ -30,7 +29,7 @@ export function SankeyPanel() {
   //   return null
   // }
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom } = useZoom()
 
   const { autoSave, saveAs } = useSVG()
   const { settings, updateSettings } = useSankeySettings()
@@ -73,7 +72,7 @@ export function SankeyPanel() {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
@@ -16,9 +16,12 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 
+import { IPos } from '@/interfaces/pos'
+import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
+import { useSVG } from '@/providers/svg-provider'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
-import type { ITooltip } from '../heatmap/heatmap-svg'
+import { TOOLTIP_CLEAR_MS, type ITooltip } from '../heatmap/heatmap-svg'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings-store'
 
@@ -228,11 +231,13 @@ interface IProps {
 export function VolcanoPlotSvg({
   x,
   y,
-  size,
-  //displayOptions = { ...DEFAULT_VOLCANO_PROPS },
+
   sizeFunc = (x: number) => x,
 }: IProps) {
   const { plot, displayLabels } = useVolcanoContext()
+
+  const { ref: svgRef } = useSVG()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const { settings } = useVolcanoSettings()
 
@@ -275,6 +280,43 @@ export function VolcanoPlotSvg({
     return color
   }
 
+  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const handleVariantEnter = useCallback((row: number, p: IPos) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    const screenP = svgPointToScreen(svgRef.current, p)
+
+    const rect = containerRef.current!.getBoundingClientRect()
+
+    const newP = {
+      x: screenP.x - rect.left,
+      y: screenP.y - rect.top,
+    }
+
+    setToolTipInfo({
+      ...toolTipInfo,
+      pos: newP,
+      cell: { row: row, col: 0 },
+    })
+  }, [])
+
+  const handleVariantLeave = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    // wait before removing. if we re-enter quickly, the tooltip won't flicker
+    // as this timeout will be cancelled so the tooltip won't disappear
+    // and will be moved to next location
+    timeoutRef.current = setTimeout(
+      () => setToolTipInfo(null),
+      TOOLTIP_CLEAR_MS
+    )
+  }, [])
+
   const points = useMemo(
     () =>
       plot.volcano.log2foldChanges.map((x, i) => ({
@@ -284,7 +326,7 @@ export function VolcanoPlotSvg({
     [plot.volcano.log2foldChanges, plot.volcano.logpvalues]
   )
 
-  const svg = useMemo(() => {
+  const { svg, width, height } = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
     //const sizedata = size ? getNumCol(sheet, findCol(sheet, size)) : []
 
@@ -312,14 +354,8 @@ export function VolcanoPlotSvg({
 
     const yThreshold = yax!.domainToRange(thresholdLogP)
 
-    return (
-      <SvgBase
-        width={width}
-        height={height}
-        scale={settings.scale}
-        //shapeRendering={SVG_CRISP_EDGES}
-        className="absolute"
-      >
+    const svg = (
+      <>
         <SvgMargin margin={MARGIN}>
           {points.map((p, xi) => {
             const x1 = xax!.domainToRange(p.x)
@@ -338,17 +374,14 @@ export function VolcanoPlotSvg({
                 fill={color}
                 opacity={displayOptions.dots.opacity}
                 key={xi}
-                onMouseLeave={() => setToolTipInfo(null)}
-                onMouseEnter={() => {
-                  setToolTipInfo({
-                    ...toolTipInfo,
-                    pos: {
-                      x: x1 + MARGIN.left + TOOLTIP_OFFSET,
-                      y: y1 + MARGIN.top + TOOLTIP_OFFSET,
-                    },
-                    cell: { row: xi, col: 0 },
+
+                onMouseEnter={() =>
+                  handleVariantEnter(xi, {
+                    x: x1 + MARGIN.left + TOOLTIP_OFFSET,
+                    y: y1 + MARGIN.top + TOOLTIP_OFFSET,
                   })
-                }}
+                }
+                onMouseLeave={handleVariantLeave}
               />
             )
           })}
@@ -435,8 +468,9 @@ export function VolcanoPlotSvg({
           title={x}
           color={displayOptions.axes.xaxis.stroke.value}
         />
-      </SvgBase>
+      </>
     )
+    return { svg, width, height }
   }, [
     plot,
     y,
@@ -621,8 +655,16 @@ export function VolcanoPlotSvg({
   // }, [dataFile, search])
 
   return (
-    <>
-      {svg}
+    <div className="relative" ref={containerRef}>
+      <SvgBase
+        width={width}
+        height={height}
+        scale={settings.scale}
+        //shapeRendering={SVG_CRISP_EDGES}
+        className="absolute"
+      >
+        {svg}
+      </SvgBase>
 
       {toolTipInfo && (
         <div
@@ -639,6 +681,6 @@ export function VolcanoPlotSvg({
           )}`}</p>
         </div>
       )}
-    </>
+    </div>
   )
 }

@@ -88,7 +88,7 @@ export function MotifsPage() {
 
   const { open: openDialog } = useDialogs()
 
-  useZoom(PLOT_ZOOM_CHANNEL, {
+  useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(
@@ -541,7 +541,7 @@ export function MotifsPage() {
         <FooterPortal className="justify-between">
           <></>
           <>{searchResult.total > 0 ? `${searchResult.total} results` : null}</>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

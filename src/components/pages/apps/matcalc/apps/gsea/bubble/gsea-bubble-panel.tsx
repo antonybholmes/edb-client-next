@@ -8,19 +8,38 @@ import {
   useMessages,
 } from '@/providers/message-provider'
 
-import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
+import { MESSAGE_CHANNEL } from '../../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { PLOT_ZOOM_CHANNEL } from '../../../matcalc/apps/heatmap/heatmap-panel'
-import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
-import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
+import { useZoom } from '@/providers/zoom-provider'
+import { produce } from 'immer'
+import { GseaBubbleDisplayPropsPanel } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-display-props-panel'
+import { useGseaBubbleSettings } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-settings-store'
+import { GseaBubblePlotSvg } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-svg'
 
 export function GseaBubblePanel() {
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
+  const { settings, updateSettings } = useGseaBubbleSettings()
+
   const { autoSave, saveAs } = useSVG()
+
+  const { setZoom } = useZoom({
+    onChange: (v) => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.page.scale = v.zoom
+        })
+      )
+    },
+  })
+
+  useUpdateEffect(() => {
+    setZoom(settings.page.scale)
+  }, [settings.page.scale])
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -50,7 +69,7 @@ export function GseaBubblePanel() {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

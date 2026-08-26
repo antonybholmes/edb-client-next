@@ -158,8 +158,6 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
   const majorYs = ax.ticks.map((tick) => ax.domainToRange(tick.v))
   const minorYs = ax.minorTicks.map((tick) => ax.domainToRange(tick.v))
 
-  console.log('AxisRightTicksSvg', majorTickProps)
-
   return (
     <>
       {minorTickProps.show &&
