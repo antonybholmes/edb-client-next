@@ -353,34 +353,30 @@ export function GseaPlotPage() {
                     }
                   }}
                 >
-                  <ExtScrollCard
-                    className="grow px-2 pb-2"
-                    header={
-                      <HCenterRow className="pb-2">
-                        <ToggleGroup
-                          className="text-xs gap-x-px"
-                          value={[settings.view.tab]}
-                          onValueChange={(v) => {
-                            updateSettings(
-                              produce(settings, (draft) => {
-                                draft.view.tab = v[0] as 'graph' | 'bubble'
-                              })
-                            )
-                          }}
-                          rounded="full"
-                          variant="app-theme"
-                        >
-                          <GroupToggle value="graph" className="w-18">
-                            Graph
-                          </GroupToggle>
+                  <HCenterRow className="pb-2">
+                    <ToggleGroup
+                      className="text-xs gap-x-px"
+                      value={[settings.view.tab]}
+                      onValueChange={(v) => {
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.view.tab = v[0] as 'graph' | 'bubble'
+                          })
+                        )
+                      }}
+                      rounded="full"
+                      variant="app-theme"
+                    >
+                      <GroupToggle value="graph" className="w-18">
+                        Graph
+                      </GroupToggle>
 
-                          <GroupToggle value="bubble" className="w-18">
-                            Bubble
-                          </GroupToggle>
-                        </ToggleGroup>
-                      </HCenterRow>
-                    }
-                  >
+                      <GroupToggle value="bubble" className="w-18">
+                        Bubble
+                      </GroupToggle>
+                    </ToggleGroup>
+                  </HCenterRow>
+                  <ExtScrollCard className="grow px-2 pb-2">
                     <Tabs
                       value={settings.view.tab}
                       onValueChange={() => {}}

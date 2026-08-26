@@ -43,7 +43,15 @@ function LollipopPanel() {
 
   const { displayProps, setDisplayProps } = useLollipopSettings()
 
-  const { zoom } = useZoom()
+  useZoom({
+    onChange: (z) => {
+      setDisplayProps(
+        produce(displayProps, (draft) => {
+          draft.scale = z.zoom
+        })
+      )
+    },
+  })
 
   const { setTabs: setSideTabs } = useSideTabs()
 
@@ -60,14 +68,6 @@ function LollipopPanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  useEffect(() => {
-    setDisplayProps(
-      produce(displayProps, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
 
   // useEffect(() => {
   //   const df = plot.dataframes['main']! as BaseDataFrame

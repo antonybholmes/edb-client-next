@@ -19,7 +19,6 @@ import { produce } from 'immer'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 
 import { MESSAGE_CHANNEL } from '../../../data/data-panel'
@@ -50,7 +49,15 @@ export function ExtGseaPanel() {
 
   const { autoSave } = useSVG()
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom({
+    onChange: (z) => {
+      updatePlot(
+        produce(plot, (draft) => {
+          draft.props.page.scale = z.zoom
+        })
+      )
+    },
+  })
 
   const [showSave, setShowSave] = useState(false)
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
@@ -72,14 +79,6 @@ export function ExtGseaPanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  useUpdateEffect(() => {
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.page.scale = zoom
-      })
-    )
-  }, [zoom])
 
   return (
     <>

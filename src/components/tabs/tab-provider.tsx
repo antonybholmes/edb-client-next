@@ -109,9 +109,10 @@ export function renderTab(
       return renderTab(tab.component)
     }
 
-    if ('icon' in tab && tab.icon) {
-      return tab.icon
-    }
+    // if ('icon' in tab && tab.icon) {
+    //   console.log('ret', tab.icon, tab.name)
+    //   return tab.icon
+    // }
   }
 
   return null //tab as ReactNode
@@ -273,8 +274,8 @@ export function useTabs(id: string) {
 
 export const TOOLBAR_TABS = 'toolbar'
 
-export function useToolbarTabs(id: string = TOOLBAR_TABS) {
-  return useTabs(id)
+export function useToolbarTabs() {
+  return useTabs(TOOLBAR_TABS)
 }
 
 export const OPTS_SIDEBAR_ID = 'opts-sidebar'

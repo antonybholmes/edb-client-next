@@ -13,7 +13,6 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
@@ -43,7 +42,6 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
 
   const { autoSave, saveAs } = useSVG()
 
-  const { open: openDialog } = useDialogs()
   const { messages, removeMessage } = useMessages('oncoplot') //'onco-panel')
   const { displayProps, setDisplayProps } = useOncoplotSettings()
   const [showSideBar, setShowSideBar] = useState(true)

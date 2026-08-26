@@ -35,14 +35,14 @@ export function BoxPlotPanel() {
   const { autoSave, saveAs } = useSVG()
 
   const { setZoom } = useZoom({
-    onChange: (newZoom) => {
+    onChange: (z) => {
       updatePlot(
         produce(plot, (draft) => {
-          draft.props.page.scale = newZoom.zoom
+          draft.props.page.scale = z.zoom
         })
       )
     },
-  }) //Ctx()
+  })
 
   const [showSideBar, setShowSideBar] = useState(true)
 

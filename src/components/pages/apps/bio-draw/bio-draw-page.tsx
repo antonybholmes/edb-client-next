@@ -71,7 +71,6 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useSave } from '../matcalc/hooks/save'
@@ -94,7 +93,15 @@ export function BioDrawPage() {
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom({
+    onChange: (z) => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.zoom = z.zoom
+        })
+      )
+    },
+  })
 
   const { settings, updateSettings } = useMotifSettings()
 
@@ -123,14 +130,6 @@ export function BioDrawPage() {
       },
     ])
   }, [setSideTabs])
-
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.zoom = zoom
-      })
-    )
-  }, [zoom])
 
   // const datasetsQuery = useQuery({
   //   queryKey: ['datasets'],

@@ -216,8 +216,6 @@ export function MatcalcPage() {
   const { open, setOpen } = useSlideBar(FOLDER_ID) //) //'matcalc') //useContext(MessageContext)
 
   useEffect(() => {
-    // open a dedicated history app for this module
-
     setAppInfo(APP_INFO)
   }, [setAppInfo])
 

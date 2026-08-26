@@ -14,7 +14,6 @@ import { MESSAGE_CHANNEL } from '../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'
 import { useSankeySettings } from './sankey-settings-store'
@@ -29,7 +28,15 @@ export function SankeyPanel() {
   //   return null
   // }
 
-  const { zoom } = useZoom()
+  useZoom({
+    onChange: (z) => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = z.zoom
+        })
+      )
+    },
+  })
 
   const { autoSave, saveAs } = useSVG()
   const { settings, updateSettings } = useSankeySettings()
@@ -51,14 +58,6 @@ export function SankeyPanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
 
   return (
     <>

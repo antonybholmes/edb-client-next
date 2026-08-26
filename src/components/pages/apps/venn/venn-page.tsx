@@ -96,7 +96,6 @@ function VennPage() {
 
   const { zoom } = useZoom({
     onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
       updateSettings(
         produce(settings, (draft) => {
           draft.scale = zoom

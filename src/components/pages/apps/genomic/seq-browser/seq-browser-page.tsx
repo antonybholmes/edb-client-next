@@ -26,7 +26,6 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import APP_INFO from './manifest.json'
 
 import { CompassIcon } from '@/icons/compass-icon'
-import { CubeIcon } from '@/icons/cube-icon'
 import { LayersIcon } from '@/icons/layers-icon'
 
 import { useKeyDownListener } from '@/hooks/keydown-listener'
@@ -59,6 +58,7 @@ import {
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
 import { useSVG } from '@/providers/svg-provider'
+import { Box } from 'lucide-react'
 import { LocationAutocomplete } from './location-autocomplete'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
 import { SeqBrowserPropsPanel } from './seq-browser-props-panel'
@@ -70,8 +70,6 @@ import { TracksView } from './svg/tracks-view'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useTracks } from './tracks-store'
 
-const PLOT_ZOOM_CHANNEL = 'seq-browser-zoom'
-
 function SeqBrowserPage() {
   const { locations, binSizes, setLocations, dispatch } = useTracks()
   const { settings: edbSettings } = useEdbSettings()
@@ -80,7 +78,6 @@ function SeqBrowserPage() {
 
   useZoom({
     onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
       updateSettings(
         produce(settings, (draft) => {
           draft.scale = zoom
@@ -119,8 +116,9 @@ function SeqBrowserPage() {
   useEffect(() => {
     setSettingsTabs([
       {
-        id: APP_INFO.name,
-        icon: <CubeIcon fill="" />,
+        id: '01a03f83-1204-7632-afdf-6eb4877a5efc',
+        name: APP_INFO.name,
+        icon: <Box strokeWidth={1.5} size={18} />,
 
         children: [
           {
@@ -135,7 +133,6 @@ function SeqBrowserPage() {
           },
           {
             id: 'Cytobands',
-
             icon: <LayersIcon />,
             component: SettingsCytobandPanel,
           },

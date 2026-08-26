@@ -14,7 +14,6 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
@@ -33,7 +32,18 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 export const PLOT_ZOOM_CHANNEL = 'matcalc-plot'
 
 export function HeatmapPanel() {
-  const { zoom } = useZoom()
+  const { zoom } = useZoom({
+    onChange: (z) => {
+      if (!plot) {
+        return
+      }
+      updatePlot(
+        produce(plot, (draft) => {
+          draft.props.zoom = z.zoom
+        })
+      )
+    },
+  })
 
   const { plot } = useHeatmapContext()
   const { updatePlot } = useHistory()
@@ -59,17 +69,6 @@ export function HeatmapPanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  useUpdateEffect(() => {
-    if (!plot) {
-      return
-    }
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.zoom = zoom
-      })
-    )
-  }, [plot, zoom])
 
   if (!plot || !cf) {
     return null
