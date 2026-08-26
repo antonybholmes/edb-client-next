@@ -67,14 +67,8 @@ export function AxisRightSvg({
 }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  const {
-    axisProps,
-    majorTickProps,
-    tickSize,
-    tickOffset,
-    tickLabelOffset,
-    titleOffset,
-  } = getAxisProps(ax, settings.plots.axes[axis])
+  const { axisProps, tickSize, tickOffset, tickLabelOffset, titleOffset } =
+    getAxisProps(ax, settings.plots.axes[axis])
 
   const titleX = tickOffset + tickSize + tickLabelOffset + titleOffset
 

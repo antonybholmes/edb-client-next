@@ -23,7 +23,8 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       outline:
         'border-2 border-transparent text-xs data-pressed:bg-app-theme/5 data-pressed:border-app-theme/50 hover:border-app-theme/25 rounded-theme items-center justify-center flex gap-2 aspect-square',
       gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint text-xs data-pressed:bg-faint data-pressed:border-border',
-      tab: 'overflow-hidden text-xs rounded-theme data-[state=off]:hover:bg-faint data-pressed:bg-theme/25',
+      'app-theme':
+        'overflow-hidden text-xs aria-[pressed=false]:hover:bg-app-theme/20 data-pressed:bg-app-theme/50',
       group:
         'hover:bg-muted/50 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border',
       ios: '',

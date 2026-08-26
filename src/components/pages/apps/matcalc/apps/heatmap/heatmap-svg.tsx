@@ -156,7 +156,7 @@ export function HeatMapSvg() {
         return
       }
 
-      const screen = svgPointToScreen(ref.current, pos.x, pos.y)
+      const screen = svgPointToScreen(ref.current, pos)
 
       if (!screen) {
         return

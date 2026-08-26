@@ -1,5 +1,5 @@
 import { BaseCol } from '@/layout/base-col'
-import { Children, useCallback } from 'react'
+import { ReactNode, useCallback } from 'react'
 
 import { TEXT_DRAG_HERE } from '@/consts'
 import type { IDivProps } from '@/interfaces/div-props'
@@ -63,6 +63,7 @@ export function FileDrag() {
 export interface IFileDropProps {
   fileTypes?: Accept
   onFileDrop?: FileDrop | undefined
+  dragComp?: ReactNode | undefined
 }
 
 export interface IProps extends IDivProps, IFileDropProps {}
@@ -70,12 +71,11 @@ export interface IProps extends IDivProps, IFileDropProps {}
 export function FileDropZonePanel({
   fileTypes = {},
   onFileDrop = undefined,
+  dragComp,
   className,
   children,
 }: IProps) {
-  const c = Children.toArray(children)
-
-  const dragComp = c.length > 1 ? c[1] : <FileDrag />
+  dragComp = dragComp ?? <FileDrag />
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     onFileDrop?.(acceptedFiles)
@@ -91,7 +91,7 @@ export function FileDropZonePanel({
     <BaseCol {...getRootProps({ className: cn('relative', className) })}>
       <input {...getInputProps()} aria-label="Drop files here" />
       {isDragActive && dragComp}
-      {c[0]}
+      {children}
     </BaseCol>
   )
 }

@@ -104,7 +104,6 @@ export function GseaPlotPage() {
 
   const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL, {
     onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
       updateSettings(
         produce(settings, (draft) => {
           draft.page.scale = zoom
@@ -343,59 +342,64 @@ export function GseaPlotPage() {
 
         <ResizableSidebar>
           <BaseCol className="grow h-full gap-y-2">
-            <HCenterRow>
-              <ToggleGroup
-                //direction="toolbar"
-                className="text-xs gap-x-px"
-                //rounded="none"
-
-                value={[settings.view.tab]}
-                onValueChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.view.tab = v[0] as 'graph' | 'bubble'
-                    })
-                  )
-                }}
-              >
-                <GroupToggle value="graph" className="w-18">
-                  Graph
-                </GroupToggle>
-
-                <GroupToggle value="bubble" className="w-18">
-                  Bubble
-                </GroupToggle>
-              </ToggleGroup>
-            </HCenterRow>
             {rankedGenes.length > 0 ? (
-              <FileDropZonePanel
-                className="grow h-full"
-                onFileDrop={(files) => {
-                  if (files.length > 0) {
-                    onBinaryFileChange(files, ({ success, files }) => {
-                      if (!success) {
-                        return
-                      }
-                      loadGseaZipWithErrorHandling(files)
-                    })
-                  }
-                }}
-              >
-                <Tabs
-                  value={settings.view.tab}
-                  onValueChange={() => {}}
+              <>
+                <FileDropZonePanel
                   className="grow h-full"
+                  onFileDrop={(files) => {
+                    if (files.length > 0) {
+                      onBinaryFileChange(files, ({ success, files }) => {
+                        if (!success) {
+                          return
+                        }
+                        loadGseaZipWithErrorHandling(files)
+                      })
+                    }
+                  }}
                 >
-                  <TabsContent value="graph">
-                    <ExtScrollCard className="px-2 pb-2">
-                      <GseaSvg />
-                    </ExtScrollCard>
-                  </TabsContent>
-                  <TabsContent value="bubble">
-                    <GseaBubbleTabPanel />
-                  </TabsContent>
-                </Tabs>
-              </FileDropZonePanel>
+                  <ExtScrollCard
+                    className="grow px-2 pb-2"
+                    header={
+                      <HCenterRow>
+                        <ToggleGroup
+                          className="text-xs gap-x-px"
+                          value={[settings.view.tab]}
+                          onValueChange={(v) => {
+                            updateSettings(
+                              produce(settings, (draft) => {
+                                draft.view.tab = v[0] as 'graph' | 'bubble'
+                              })
+                            )
+                          }}
+                          rounded="full"
+                          variant="app-theme"
+                        >
+                          <GroupToggle value="graph" className="w-18">
+                            Graph
+                          </GroupToggle>
+
+                          <GroupToggle value="bubble" className="w-18">
+                            Bubble
+                          </GroupToggle>
+                        </ToggleGroup>
+                      </HCenterRow>
+                    }
+                  >
+                    <Tabs
+                      value={settings.view.tab}
+                      onValueChange={() => {}}
+                      className="grow h-full"
+                    >
+                      <TabsContent value="graph">
+                        <GseaSvg />
+                      </TabsContent>
+                      <TabsContent value="bubble">
+                        <GseaBubbleTabPanel />
+                      </TabsContent>
+                    </Tabs>
+                  </ExtScrollCard>
+                </FileDropZonePanel>
+              </>
             ) : (
               <FileDropZonePanel
                 className="grow h-full"

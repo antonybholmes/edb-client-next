@@ -4,6 +4,7 @@
 
 ### Changed
 
+- ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.
 - Added small margin defaults. Adjusted margins on GSEA plot.
 - Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files.
 - Bug fixes and updates.

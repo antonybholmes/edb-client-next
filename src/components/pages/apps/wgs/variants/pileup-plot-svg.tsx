@@ -150,11 +150,10 @@ export function PileupPlotSvg() {
         return
       }
 
-      const pos = svgPointToScreen(
-        ref.current,
-        MARGIN.left + x,
-        MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset
-      )
+      const pos = svgPointToScreen(ref.current, {
+        x: MARGIN.left + x,
+        y: MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset,
+      })
 
       if (!pos) {
         return
