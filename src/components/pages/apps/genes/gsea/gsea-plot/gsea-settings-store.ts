@@ -3,12 +3,12 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v42`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v44`
 
 import {
   DEFAULT_COLOR_PROPS,
   DEFAULT_FILL_PROPS,
-  DEFAULT_MARGIN,
+  DEFAULT_MARGIN_SMALL,
   DEFAULT_STROKE_PROPS,
   DEFAULT_TEXT_PROPS,
   type IMarginProps,
@@ -130,7 +130,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   //   },
   // },
   plot: {
-    margin: { ...DEFAULT_MARGIN, bottom: 0, right: 50 },
+    margin: { ...DEFAULT_MARGIN_SMALL, left: 80 },
     gap: {
       y: 15,
       x: 20,

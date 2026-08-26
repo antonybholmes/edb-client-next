@@ -1,8 +1,8 @@
 import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
-import { Axis } from './axis/axis'
-import { AxisType } from './axis/svg-axis-props'
+import { Axis } from './axes/axis'
+import { AxisType } from './axes/svg-axis-props'
 
 export const FONT_SIZE_SMALL = 12
 export const FONT_SIZE_MEDIUM = 14
@@ -169,6 +169,13 @@ export const DEFAULT_MARGIN: IMarginProps = {
   left: 100,
   bottom: 100,
   right: 100,
+}
+
+export const DEFAULT_MARGIN_SMALL: IMarginProps = {
+  top: 50,
+  left: 50,
+  bottom: 50,
+  right: 50,
 }
 
 export interface IColorBarProps {

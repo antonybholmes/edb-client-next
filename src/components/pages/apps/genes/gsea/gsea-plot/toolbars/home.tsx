@@ -1,4 +1,3 @@
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import {
@@ -16,14 +15,14 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
+import { AxesPropsPopover } from '../../../../../../plot/axes/axes-props-popover'
 import { useGsea } from '../gsea-plot-store'
 import { useGseaSettings } from '../gsea-settings-store'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { settings, updateSettings } = useGseaSettings()
   const { loadGseaZipWithErrorHandling } = useGsea()
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
 
   return (
     <>
@@ -47,13 +46,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'gsea',
-                svgRef,
-              },
-            })
+            saveAs('gsea')
           }}
         >
           <DownloadIcon />
@@ -62,7 +55,7 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Plot Size">
         <DoubleNumericalInput
-          h="md"
+          h="sm"
           v1={settings.axes.x.length}
           placeholder="Width"
           limit={[1, 1000]}
@@ -85,13 +78,13 @@ export function HomeToolbar() {
         />
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Options">
+      <ToolbarTabGroup title="Options" className="gap-x-1">
         <ToolbarCol className="gap-x-1">
           <ToolbarRow gap="gap-x-1">
             Columns
             <NumericalInput
               value={settings.page.columns}
-              h="md"
+              h="sm"
               placeholder="Opacity"
               limit={[1, 100]}
               step={1}
@@ -102,7 +95,7 @@ export function HomeToolbar() {
                   })
                 )
               }}
-              className="w-16 rounded-theme"
+              w="xxs"
             />
           </ToolbarRow>
 
@@ -119,6 +112,11 @@ export function HomeToolbar() {
           >
             Invert Phenotypes
           </ToolbarButton>
+        </ToolbarCol>
+        <ToolbarCol>
+          <ToolbarRow>
+            <AxesPropsPopover />
+          </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>
 

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
-import { AxisBottomSvg } from '../../../../../../plot/axis/svg-axis'
+import { AxisBottomSvg } from '../../../../../../plot/axes/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 
@@ -12,13 +12,18 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { Axis } from '@/components/plot/axis/axis'
+import { Axis } from '@/components/plot/axes/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
+import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
-import type { ITooltip } from '../../../../matcalc/apps/heatmap/heatmap-svg'
+import { useSVG } from '@/providers/svg-provider'
+import {
+  TOOLTIP_CLEAR_MS,
+  type ITooltip,
+} from '../../../../matcalc/apps/heatmap/heatmap-svg'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../gsea-plot-store'
 import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
@@ -44,6 +49,13 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
       stroke: { ...DEFAULT_STROKE_PROPS },
     },
   },
+}
+
+interface IPlotInfo {
+  plot: IGseaBubble
+  points: IBubblePoint[]
+  xlim: ILim
+  pos: IPos
 }
 
 function GseaBubbleLegendSvg() {
@@ -187,31 +199,23 @@ function GseaBubbleLegendSvg() {
 }
 
 function BubblePlot({
-  points,
-  plot,
-  xlim,
+  info,
   innerPlotWidth,
   innerPlotHeight,
   handleVariantEnter,
   handleVariantLeave,
 }: {
-  points: IBubblePoint[]
-  plot: IGseaBubble
-  xlim: ILim
+  info: IPlotInfo
+
   innerPlotWidth: number
   innerPlotHeight: number
-  handleVariantEnter: (
-    plot: IGseaBubble,
-    row: number,
-    x1: number,
-    y1: number
-  ) => void
+  handleVariantEnter: (plot: IGseaBubble, row: number, p: IPos) => void
   handleVariantLeave: () => void
 }) {
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
-  const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
+  const domain = settings.axes.x.auto ? info.xlim : settings.axes.x.domain
 
   // offer per plot x-axis domain
   const xax = new Axis()
@@ -230,7 +234,7 @@ function BubblePlot({
   return (
     <>
       <SvgMargin margin={settings.plot.margin}>
-        {points.map((point, xi) => {
+        {info.points.map((point, xi) => {
           const x1 = xax!.domainToRange(point.x)
           const y1 = point.y * settings.axes.y.rowHeight
 
@@ -245,7 +249,20 @@ function BubblePlot({
               key={xi}
               onMouseLeave={handleVariantLeave}
               onMouseEnter={() => {
-                handleVariantEnter(plot, xi, x1, y1)
+                handleVariantEnter(info.plot, xi, {
+                  x:
+                    x1 +
+                    settings.margin.left +
+                    settings.plot.margin.left +
+                    info.pos.x +
+                    TOOLTIP_OFFSET,
+                  y:
+                    y1 +
+                    settings.margin.top +
+                    settings.plot.margin.top +
+                    info.pos.y +
+                    TOOLTIP_OFFSET,
+                })
               }}
             />
           )
@@ -255,7 +272,7 @@ function BubblePlot({
       <g
         transform={`translate(${settings.plot.margin.left - settings.padding}, ${settings.plot.margin.top})`}
       >
-        {points.map((p, xi) => {
+        {info.points.map((p, xi) => {
           const y1 = p.y * settings.axes.y.rowHeight
 
           return (
@@ -284,12 +301,12 @@ function BubblePlot({
         </SvgMargin>
       )}
 
-      {settings.title.show && plot.name && (
+      {settings.title.show && info.plot.name && (
         <g
           transform={`translate(${settings.plot.margin.left + innerPlotWidth / 2}, ${settings.plot.margin.top - settings.padding * 1.5})`}
         >
           <SvgText textAnchor="middle" fontWeight="bold">
-            {plot.name}
+            {info.plot.name}
           </SvgText>
         </g>
       )}
@@ -303,7 +320,7 @@ function BubblePlot({
             y: settings.plot.margin.top + innerPlotHeight,
           }}
 
-          title={plot.nes.label}
+          title={info.plot.nes.label}
         />
       )}
     </>
@@ -312,7 +329,8 @@ function BubblePlot({
 
 export function GseaBubblePlotSvg() {
   const { plots, points, xlims } = useGseaBubbleContext()
-
+  const { ref: svgRef } = useSVG()
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const { settings } = useGseaBubbleSettings()
 
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -324,18 +342,24 @@ export function GseaBubblePlotSvg() {
   const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const handleVariantEnter = useCallback(
-    (plot: IGseaBubble, row: number, x1: number, y1: number) => {
+    (plot: IGseaBubble, row: number, p: IPos) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
+      }
+
+      const screenP = svgPointToScreen(svgRef.current, p)
+
+      const rect = containerRef.current!.getBoundingClientRect()
+
+      const newP = {
+        x: screenP.x - rect.left,
+        y: screenP.y - rect.top,
       }
 
       setToolTipInfo({
         ...toolTipInfo,
         plot,
-        pos: {
-          x: x1 + settings.plot.margin.left + TOOLTIP_OFFSET,
-          y: y1 + settings.plot.margin.top + TOOLTIP_OFFSET,
-        },
+        pos: newP,
         cell: { row: row, col: 0 },
       })
     },
@@ -350,7 +374,10 @@ export function GseaBubblePlotSvg() {
     // wait before removing. if we re-enter quickly, the tooltip won't flicker
     // as this timeout will be cancelled so the tooltip won't disappear
     // and will be moved to next location
-    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
+    timeoutRef.current = setTimeout(
+      () => setToolTipInfo(null),
+      TOOLTIP_CLEAR_MS
+    )
   }, [])
 
   const { svg, width, height } = useMemo(() => {
@@ -417,9 +444,7 @@ export function GseaBubblePlotSvg() {
             {row.map((p, ci) => (
               <g key={ci} transform={`translate(${p.pos.x}, 0)`}>
                 <BubblePlot
-                  points={p.points}
-                  plot={p.plot}
-                  xlim={p.xlim}
+                  info={p}
                   innerPlotWidth={innerPlotWidth}
                   innerPlotHeight={innerPlotHeight}
                   handleVariantEnter={handleVariantEnter}
@@ -446,7 +471,7 @@ export function GseaBubblePlotSvg() {
   }
 
   return (
-    <>
+    <div className="relative" ref={containerRef}>
       <SvgBase width={width} height={height} scale={settings.page.scale}>
         {svg}
       </SvgBase>
@@ -466,6 +491,6 @@ export function GseaBubblePlotSvg() {
           <p>{`${toolTipInfo.plot.size.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.size}`}</p>
         </div>
       )}
-    </>
+    </div>
   )
 }

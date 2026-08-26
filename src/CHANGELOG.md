@@ -1,9 +1,24 @@
 # Changelog
 
+## 87.8.0 (Aug, 2026)
+
+### Changed
+
+- Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.
+- Refined zoom controls to simplify channel system.
+- ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.
+- Added small margin defaults. Adjusted margins on GSEA plot.
+- Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files.
+- Bug fixes and updates.
+- Improved select all ui in gsea plot.
+- New axis editing ui.
+
+
 ## 87.6.0 (Aug, 2026)
 
 ### Changed
 
+- SVG saves now managed by centralized provider to track svg refs.
 - Compact display layout for bubble.
 - New centralized registration system for svg to track owner of ref.
 - New axis UI with colorbar axis separate from x y.

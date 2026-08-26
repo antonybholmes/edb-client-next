@@ -22,7 +22,6 @@ import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings-store'
 
@@ -39,8 +38,6 @@ export function VolcanoPropsPanel() {
 
   const { plot, displayLabels, setLabels } = useVolcanoContext()
   const { settings, updateSettings } = useVolcanoSettings()
-  const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
-    useMatcalcSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
 

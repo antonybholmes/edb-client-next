@@ -146,7 +146,6 @@ export function useOncoplot(): IOncoplotStore {
       }
     }
 
-    // auto make oncoplot when data or settings change
     oncoplot()
   }, [
     file,
@@ -159,7 +158,6 @@ export function useOncoplot(): IOncoplotStore {
     setMutationFrame,
     setVariantsInUse,
     setMutations,
-    //oncoQuery.data,
   ])
 
   return {
@@ -167,7 +165,6 @@ export function useOncoplot(): IOncoplotStore {
     mutationsInUse,
     genes,
     clinicalTracks,
-
     setMutationFrame,
     setVariantsInUse,
     setClinicalTracks: useOncoplotStore((state) => state.setClinicalTracks),
@@ -175,106 +172,3 @@ export function useOncoplot(): IOncoplotStore {
     setGenesFromTable: useOncoplotStore((state) => state.setGenesFromTable),
   }
 }
-
-// interface IPlotState {
-//   df: ILollipop
-// }
-
-// export type PlotAction =
-//   | {
-//       type: 'set'
-//       df: ILollipop
-//     }
-//   | {
-//       type: 'features'
-//       features: IProteinFeature[]
-//     }
-//   | {
-//       type: 'feature'
-//       feature: IProteinFeature
-//     }
-//   | {
-//       type: 'labels'
-//       labels: IProteinLabel[]
-//     }
-// | {
-//     type: 'display'
-//     displayProps: ILollipopDisplayProps
-//   }
-
-// export function makePlot(cf: ClusterFrame, type: PlotType, params:IFieldMap={}): IPlot {
-//   return {
-//     id: randId(),
-//     type,
-//     cf,
-//     params
-//   }
-// }
-
-// export function plotReducer(state: IPlotState, action: PlotAction): IPlotState {
-//   switch (action.type) {
-//     case 'set':
-//       return {
-//         df: action.df,
-//       }
-//     case 'features':
-//       return {
-//         df: {
-//           ...state.df,
-//           features: [...action.features],
-//         },
-//       }
-//     case 'feature':
-//       return {
-//         df: {
-//           ...state.df,
-//           features: state.df.features.map(f =>
-//             f.id === action.feature.id ? action.feature : f
-//           ),
-//         },
-//       }
-//     case 'labels':
-//       return {
-//         df: {
-//           ...state.df,
-//           labels: [...action.labels],
-//         },
-//       }
-//     // case 'display':
-//     //   return {
-//     //     df: {
-//     //       ...state.df,
-//     //       displayProps: { ...action.displayProps },
-//     //     },
-//     //   }
-//     default:
-//       return state
-//   }
-// }
-
-// const [DEFAULT_HISTORY, DEFAULT_HISTORY_DISPATCH] = useReducer(
-//   historyReducer,
-//   new HistoryState(0, DEFAULT_HISTORY_STEPS),
-// )
-
-// export const PlotContext = createContext<{
-//   plotState: IPlotState
-//   plotDispatch: Dispatch<PlotAction>
-// }>({
-//   plotState: {
-//     df: { ...DEFAULT_LOLLIPOP },
-//   },
-//   plotDispatch: () => {},
-// })
-
-// export function PlotProvider({ children }: IChildrenProps) {
-//   const [plotState, plotDispatch] = useReducer(plotReducer, {
-//     df: { ...DEFAULT_LOLLIPOP },
-//   })
-
-//   return (
-//     <PlotContext.Provider value={{ plotState, plotDispatch }}>
-//       {children}
-//     </PlotContext.Provider>
-//   )
-// }

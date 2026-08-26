@@ -6,7 +6,7 @@ import { Card } from '@/components/shadcn/ui/themed/card'
 import { useSizeObserver } from '@/hooks/resize-observer'
 import type { IDim } from '@/interfaces/dim'
 import { cn } from '@/lib/shadcn-utils'
-import { useRef, useState, type ComponentProps } from 'react'
+import { ReactNode, useRef, useState, type ComponentProps } from 'react'
 import {
   ExtScrollProvider,
   useExtScrollRefsContext,
@@ -17,14 +17,17 @@ import { ExtHScroll, ExtVScroll } from './ext-scrollbars'
 interface ExtScrollCardProps extends ComponentProps<typeof Card> {
   cardCls?: string | undefined
   shiftToScroll?: boolean
+  header?: ReactNode | undefined
+  padding?: string | undefined
 }
 
 function _ExtScrollCard({
   shiftToScroll = false,
-  cardCls,
-  variant = 'content',
+
+  header,
   children,
   className,
+  padding = '0.5rem',
 }: ExtScrollCardProps) {
   const { vScrollRef } = useExtScrollRefsContext()
   const { size, scrollLeft, scrollTop, setSize } = useExtScrollStateContext()
@@ -57,34 +60,51 @@ function _ExtScrollCard({
   useSizeObserver(ref, _setSize)
 
   return (
-    <BaseRow className={cn('grow h-full', className)}>
-      <BaseCol className="grow">
-        <Card
-          className={cn('grow', cardCls)}
-          variant={variant}
-          onWheel={(e) => {
-            if (vScrollRef.current && (!shiftToScroll || e.shiftKey)) {
-              vScrollRef.current.scrollTop += e.deltaY
-            }
-          }}
-        >
-          <div className="relative overflow-hidden grow" ref={containerRef}>
-            <div
-              ref={ref}
-              className="absolute left-0 top-0"
-              style={{
-                transform: `translate3d(${-scrollLeft.normalized * scrollableArea.w}px, ${-scrollTop.normalized * scrollableArea.h}px, 0)`,
-              }}
-            >
-              {children}
+    <BaseCol className={cn('grow h-full', className)}>
+      <div
+        className="bg-background rounded-t-xl border-t border-l border-r border-border/50 mr-4"
+        style={{
+          paddingTop: padding,
+          paddingLeft: padding,
+          paddingRight: padding,
+          paddingBottom: header ? padding : undefined,
+        }}
+      >
+        {header && header}
+      </div>
+      <BaseRow className="grow">
+        <BaseCol className="grow">
+          <BaseCol
+            className="grow bg-background border-l border-r border-b border-border/50 rounded-b-xl"
+            style={{
+              paddingLeft: padding,
+              paddingRight: padding,
+              paddingBottom: padding,
+            }}
+            onWheel={(e) => {
+              if (vScrollRef.current && (!shiftToScroll || e.shiftKey)) {
+                vScrollRef.current.scrollTop += e.deltaY
+              }
+            }}
+          >
+            <div className="relative overflow-hidden grow" ref={containerRef}>
+              <div
+                ref={ref}
+                className="absolute left-0 top-0"
+                style={{
+                  transform: `translate3d(${-scrollLeft.normalized * scrollableArea.w}px, ${-scrollTop.normalized * scrollableArea.h}px, 0)`,
+                }}
+              >
+                {children}
+              </div>
             </div>
-          </div>
-        </Card>
+          </BaseCol>
 
-        <ExtHScroll className="mx-2" />
-      </BaseCol>
-      <ExtVScroll className="mt-2 mb-6" />
-    </BaseRow>
+          <ExtHScroll className="mx-2" />
+        </BaseCol>
+        <ExtVScroll className="mb-6" />
+      </BaseRow>
+    </BaseCol>
   )
 }
 

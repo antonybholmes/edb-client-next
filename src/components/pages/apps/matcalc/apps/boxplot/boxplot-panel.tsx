@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
@@ -10,7 +9,6 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
@@ -19,7 +17,6 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { BoxPlotPropsPanel } from './box-plot-props-panel'
 import { BoxPlotSvg } from './boxplot-plot-svg'
 import { useBoxPlotContext } from './boxplot-provider'
@@ -35,11 +32,17 @@ export function BoxPlotPanel() {
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
-
-  const { open: openDialog } = useDialogs()
+  const { setZoom } = useZoom({
+    onChange: (z) => {
+      updatePlot(
+        produce(plot, (draft) => {
+          draft.props.page.scale = z.zoom
+        })
+      )
+    },
+  })
 
   const [showSideBar, setShowSideBar] = useState(true)
 
@@ -50,18 +53,9 @@ export function BoxPlotPanel() {
       if (typeof message.data === 'string') {
         if (message.data.includes('save')) {
           if (message.data.includes(':')) {
-            downloadSvgAutoFormat(
-              svgRef,
-              `boxwhisker.${messageImageFileFormat(message)}`
-            )
+            autoSave(`boxwhisker.${messageImageFileFormat(message)}`)
           } else {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'boxplot',
-                svgRef,
-              },
-            })
+            saveAs('boxplot')
           }
         }
 
@@ -75,12 +69,8 @@ export function BoxPlotPanel() {
   }, [messages])
 
   useUpdateEffect(() => {
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.page.scale = zoom
-      })
-    )
-  }, [zoom])
+    setZoom(plot.props.page.scale)
+  }, [plot.props.page.scale])
 
   return (
     <>
@@ -108,7 +98,7 @@ export function BoxPlotPanel() {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

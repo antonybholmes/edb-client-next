@@ -73,7 +73,7 @@ export function PropRow({
   title,
   align,
   gap,
-  contentCls = 'gap-x-1.5',
+  contentCls = 'gap-x-1',
   side = 'right',
   info,
   className,

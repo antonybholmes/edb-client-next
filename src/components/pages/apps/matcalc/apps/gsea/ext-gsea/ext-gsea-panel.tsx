@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
@@ -18,14 +17,12 @@ import {
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 
-import { MESSAGE_CHANNEL } from '../../data/data-panel'
-
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
+
+import { MESSAGE_CHANNEL } from '../../../data/data-panel'
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { ExtGseaSvg } from './ext-gsea-svg'
@@ -50,11 +47,17 @@ export function ExtGseaPanel() {
 
   const { plot } = useExtGseaContext()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
-  //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
-
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom } = useZoom({
+    onChange: (z) => {
+      updatePlot(
+        produce(plot, (draft) => {
+          draft.props.page.scale = z.zoom
+        })
+      )
+    },
+  })
 
   const [showSave, setShowSave] = useState(false)
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
@@ -67,10 +70,7 @@ export function ExtGseaPanel() {
     for (const message of filteredMessages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `extgsea.${messageImageFileFormat(message)}`
-          )
+          autoSave(`extgsea.${messageImageFileFormat(message)}`)
         } else {
           setShowSave(true)
         }
@@ -80,14 +80,6 @@ export function ExtGseaPanel() {
     }
   }, [messages])
 
-  useUpdateEffect(() => {
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.page.scale = zoom
-      })
-    )
-  }, [zoom])
-
   return (
     <>
       {showSave && (
@@ -96,7 +88,7 @@ export function ExtGseaPanel() {
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
               const d = data as { name: string }
-              downloadSvgAutoFormat(svgRef, d.name)
+              autoSave(d.name)
             }
 
             setShowSave(false)
@@ -151,7 +143,7 @@ export function ExtGseaPanel() {
         <></>
         <></>
         <>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </>
       </FooterPortal>
     </>

@@ -6,8 +6,8 @@ import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
 import { sum } from '@/lib/math/sum'
 
-import { Axis, YAxis } from '@/components/plot/axis/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
@@ -139,7 +139,8 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
               v: x - 0.5,
               label: x.toLocaleString(),
             }))
-          ),
+          )
+          .setTickParams({ which: 'minor', show: false }),
       [w, motif.weights.length, n]
     )
 
@@ -245,16 +246,16 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
           <>
             <AxisLeftSvg
               ax={yax}
-              font={settings.axes.labels}
-              labelFont={settings.axes.title}
-              showTicks={settings.axes.ticks.show}
+              //font={settings.axes.labels}
+              //labelFont={settings.axes.title}
+              //showTicks={settings.axes.ticks.show}
             />
             <AxisBottomSvg
               ax={xax}
               pos={{ x: 0, y: settings.plotHeight }}
-              font={settings.axes.labels}
-              labelFont={settings.axes.title}
-              showTicks={settings.axes.ticks.show}
+              //font={settings.axes.labels}
+              //labelFont={settings.axes.title}
+              //showTicks={settings.axes.ticks.show}
             />
           </>
         )}

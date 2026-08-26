@@ -10,7 +10,7 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
 import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import {
@@ -45,7 +45,6 @@ import { BaseRow } from '@/layout/base-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { randId } from '@/lib/id'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { Card } from '@/themed/card'
 import { IconButton } from '@/themed/icon-button'
 import {
@@ -63,7 +62,6 @@ import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { CoreProviders } from '@/providers/core-providers'
-import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
@@ -73,11 +71,8 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs } from '@/components/tabs/tab-provider'
-import { useUpdateEffect } from '@/hooks/update-effect'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../matcalc/history/history-provider/history-contexts'
+import { useSVG } from '@/providers/svg-provider'
+import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useSave } from '../matcalc/hooks/save'
 import APP_INFO from './manifest.json'
 
@@ -92,19 +87,24 @@ export function BioDrawPage() {
   //const searchRef = useRef<HTMLTextAreaElement>(null)
   //const [selectedTab, setSelectedTab] = useState('Plot')
 
-  const svgRef = useRef<SVGSVGElement>(null)
+  const { autoSave } = useSVG()
 
   //const [showFileMenu, setShowFileMenu] = useState(false)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  const { zoom } = useZoom({
+    onChange: (z) => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.zoom = z.zoom
+        })
+      )
+    },
+  })
 
   const { settings, updateSettings } = useMotifSettings()
 
-  const { goto } = useHistory()
-
-  const { file } = useFiles()
   const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
 
@@ -130,14 +130,6 @@ export function BioDrawPage() {
       },
     ])
   }, [setSideTabs])
-
-  useUpdateEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.zoom = zoom
-      })
-    )
-  }, [zoom])
 
   // const datasetsQuery = useQuery({
   //   queryKey: ['datasets'],
@@ -205,7 +197,7 @@ export function BioDrawPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.png`)
+              autoSave(`motifs.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -214,7 +206,7 @@ export function BioDrawPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.svg`)
+              autoSave(`motifs.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -349,7 +341,7 @@ export function BioDrawPage() {
               name: string
             }
 
-            downloadSvgAutoFormat(svgRef, d.name as string)
+            autoSave(d.name as string)
           }
 
           setShowDialog({ ...NO_DIALOG })
@@ -450,7 +442,7 @@ export function BioDrawPage() {
         <FooterPortal className="justify-between">
           <div>{getDataFrameInfo(df)}</div>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

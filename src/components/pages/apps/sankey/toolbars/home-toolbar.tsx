@@ -23,7 +23,7 @@ import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
 
 export function HomeToolbar() {
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
   const { open: openDialog } = useDialogs()
   const { openDataFrames } = useOpenFiles()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
@@ -52,13 +52,7 @@ export function HomeToolbar() {
             <ToolbarColSmallButton
               title="Download table to device"
               onClick={() => {
-                openDialog({
-                  type: 'save-image',
-                  payload: {
-                    name: 'sankey',
-                    svgRef,
-                  },
-                })
+                saveAs('sankey')
               }}
               icon={<DownloadImageIcon />}
             >

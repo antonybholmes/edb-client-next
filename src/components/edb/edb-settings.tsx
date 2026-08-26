@@ -10,7 +10,7 @@ import type { IAppInfo } from '../../lib/app-info'
 import {
   DEFAULT_AXIS_DISPLAY_PROPS,
   IXYAxisDisplayProps,
-} from '../plot/axis/svg-axis-props'
+} from '../plot/axes/svg-axis-props'
 import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'

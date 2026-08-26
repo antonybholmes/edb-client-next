@@ -3,11 +3,10 @@ import {
   VolcanoPlotSvg,
   type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
-import { autoLim } from '@/components/plot/axis/axis'
+import { autoLim } from '@/components/plot/axes/axis'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useEffect } from 'react'
 import { useVolcanoSettings } from './volcano-settings-store'
@@ -20,14 +19,13 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 import { useVolcanoContext } from './volcano-provider'
 
@@ -67,25 +65,26 @@ export function makeDefaultVolcanoProps(
 }
 
 export function VolcanoPanel() {
-  // const { plotsState, plotsDispatch } = useContext(PlotsContext)
-
-  // const plot = plotsState.plotMap[plotId]
-
-  // if (!plot) {
-  //   return null
-  // }
-
-  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
-
   const { plot } = useVolcanoContext()
   const { settings, updateSettings } = useVolcanoSettings()
   const displayProps: IVolcanoDisplayOptions = plot.props
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
-  const { open: openDialog } = useDialogs()
+  const { setZoom } = useZoom({
+    onChange: (v) =>
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.scale = v.zoom
+        })
+      ),
+  })
+
+  useUpdateEffect(() => {
+    setZoom(settings.scale)
+  }, [settings.scale])
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -93,33 +92,15 @@ export function VolcanoPanel() {
     for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `volcano.${messageImageFileFormat(message)}`
-          )
+          autoSave(`volcano.${messageImageFileFormat(message)}`)
         } else {
-          openDialog({
-            type: 'save-image',
-            payload: { svgRef, name: `volcano` },
-          })
+          saveAs('volcano')
         }
       }
 
       removeMessage(message.id)
     }
   }, [messages])
-
-  useEffect(() => {
-    setZoom(zoom)
-  }, [settings.scale])
-
-  useEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
 
   return (
     <>
@@ -160,7 +141,7 @@ export function VolcanoPanel() {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

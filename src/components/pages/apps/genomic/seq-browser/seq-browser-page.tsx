@@ -23,11 +23,9 @@ import {
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { FileImageIcon } from '@/icons/file-image-icon'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import APP_INFO from './manifest.json'
 
 import { CompassIcon } from '@/icons/compass-icon'
-import { CubeIcon } from '@/icons/cube-icon'
 import { LayersIcon } from '@/icons/layers-icon'
 
 import { useKeyDownListener } from '@/hooks/keydown-listener'
@@ -60,6 +58,7 @@ import {
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
 import { useSVG } from '@/providers/svg-provider'
+import { Box } from 'lucide-react'
 import { LocationAutocomplete } from './location-autocomplete'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
 import { SeqBrowserPropsPanel } from './seq-browser-props-panel'
@@ -71,17 +70,14 @@ import { TracksView } from './svg/tracks-view'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useTracks } from './tracks-store'
 
-const PLOT_ZOOM_CHANNEL = 'seq-browser-zoom'
-
 function SeqBrowserPage() {
   const { locations, binSizes, setLocations, dispatch } = useTracks()
   const { settings: edbSettings } = useEdbSettings()
   const { setAppInfo } = useAppInfo()
   const { settings, updateSettings } = useSeqBrowserSettings()
 
-  useZoom(PLOT_ZOOM_CHANNEL, {
+  useZoom({
     onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
       updateSettings(
         produce(settings, (draft) => {
           draft.scale = zoom
@@ -101,7 +97,7 @@ function SeqBrowserPage() {
 
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
   useKeyDownListener((e) => {
     if ((e as KeyboardEvent).ctrlKey) {
@@ -120,8 +116,9 @@ function SeqBrowserPage() {
   useEffect(() => {
     setSettingsTabs([
       {
-        id: APP_INFO.name,
-        icon: <CubeIcon fill="" />,
+        id: '01a03f83-1204-7632-afdf-6eb4877a5efc',
+        name: APP_INFO.name,
+        icon: <Box strokeWidth={1.5} size={18} />,
 
         children: [
           {
@@ -136,7 +133,6 @@ function SeqBrowserPage() {
           },
           {
             id: 'Cytobands',
-
             icon: <LayersIcon />,
             component: SettingsCytobandPanel,
           },
@@ -237,7 +233,7 @@ function SeqBrowserPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `tracks.png`)
+              autoSave(`tracks.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -246,7 +242,7 @@ function SeqBrowserPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `tracks.svg`)
+              autoSave(`tracks.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -334,7 +330,6 @@ function SeqBrowserPage() {
             }}
           >
             <TracksView
-              ref={svgRef}
               style={{
                 pointerEvents: isCtrlPressed ? 'none' : 'auto',
               }}
@@ -393,7 +388,7 @@ function SeqBrowserPage() {
             </Select>
           </VCenterRow>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

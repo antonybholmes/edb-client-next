@@ -1,5 +1,3 @@
-import type { RefObject } from 'react'
-
 const MIN_SIZE = 10
 
 /**
@@ -8,12 +6,10 @@ const MIN_SIZE = 10
  * @param svgRef a ref to an svg DOM element
  * @returns
  */
-export function getSvg(svgRef: RefObject<SVGElement | null>): string | null {
-  if (!svgRef.current) {
+export function getSvg(svg: SVGElement | null | undefined): string | null {
+  if (!svg) {
     return null
   }
-
-  const svg = svgRef.current
 
   //get svg source.
   let source = new XMLSerializer().serializeToString(svg)
@@ -34,15 +30,10 @@ export function getSvg(svgRef: RefObject<SVGElement | null>): string | null {
 }
 
 export function downloadSvg(
-  svgRef: RefObject<SVGElement | null>,
-
+  svg: SVGElement | null | undefined,
   name = 'chart.svg'
 ) {
-  if (!svgRef.current) {
-    return
-  }
-
-  const source = getSvg(svgRef)
+  const source = getSvg(svg)
 
   if (!source) {
     return
@@ -76,30 +67,25 @@ export function downloadSvg(
   //link.parentNode.removeChild(link)
 }
 
-export async function downloadSvgAutoFormat(
-  svgRef: RefObject<SVGElement | null>,
-
+export function downloadSvgAutoFormat(
+  svg: SVGElement | null | undefined,
   name = 'chart.png',
   scale = 2
 ) {
   if (name.endsWith('svg')) {
-    downloadSvg(svgRef, name)
+    downloadSvg(svg, name)
   } else {
-    downloadSvgAsPng(svgRef, name, scale)
+    downloadSvgAsPng(svg, name, scale)
   }
 }
 
-export async function downloadSvgAsPng(
-  svgRef: RefObject<SVGElement | null>,
+export function downloadSvgAsPng(
+  svg: SVGElement | null | undefined,
 
   name = 'chart.png',
   scale = 2
 ) {
-  if (!svgRef.current) {
-    return
-  }
-
-  const source = getSvg(svgRef)
+  const source = getSvg(svg)
 
   if (!source) {
     return
@@ -121,7 +107,7 @@ export async function downloadSvgAsPng(
 
   const ctx = canvas.getContext('2d')
 
-  const newWidth = Math.max(MIN_SIZE, svgRef.current.clientWidth * scale) //3000
+  const newWidth = Math.max(MIN_SIZE, svg.clientWidth * scale) //3000
   const img = new Image()
 
   img.onload = function () {
@@ -187,15 +173,15 @@ export async function downloadSvgAsPng(
   //link.parentNode.removeChild(link)
 }
 
-export async function downloadCanvasAsPng(
-  canvas: RefObject<HTMLCanvasElement | null>,
+export function downloadCanvasAsPng(
+  canvas: HTMLCanvasElement | null | undefined,
   name = 'chart.png'
 ) {
   //get svg element.
   //d3.select("svg") //document.getElementById("svg");
 
-  if (canvas.current) {
-    const url = canvas.current.toDataURL('image/png')
+  if (canvas) {
+    const url = canvas.toDataURL('image/png')
 
     const link = document.createElement('a')
     link.href = url

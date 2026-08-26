@@ -14,7 +14,7 @@ import { resizeAndScaleCanvas } from '@/lib/canvas'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
-import { Axis, YAxis } from '../axis/axis'
+import { Axis, YAxis } from '../axes/axis'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 100 }
 

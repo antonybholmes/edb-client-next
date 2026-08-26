@@ -56,25 +56,18 @@ import {
 
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { useBasicSaveAs } from '../../matcalc/hooks/save'
-import { useAnnotations } from './annotate-store'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 export function AnnotationPage() {
-  const { goto, openFile } = useHistory()
+  const { openFile } = useHistory()
 
-  const { file } = useFiles()
-  const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
-  const { settings } = useAnnotations()
+
   const { save } = useBasicSaveAs()
   const [showFileMenu, setShowFileMenu] = useState(false)
 

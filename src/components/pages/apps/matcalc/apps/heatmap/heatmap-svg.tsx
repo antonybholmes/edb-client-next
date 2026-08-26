@@ -23,7 +23,7 @@ import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
-import { Axis } from '@/components/plot/axis/axis'
+import { Axis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { COLOR_MAPS } from '@/lib/color/colormap'
@@ -35,6 +35,8 @@ import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
+
+export const TOOLTIP_CLEAR_MS = 300
 
 export interface ITooltip {
   pos: IPos
@@ -156,11 +158,7 @@ export function HeatMapSvg() {
         return
       }
 
-      const screen = svgPointToScreen(ref.current, pos.x, pos.y)
-
-      if (!screen) {
-        return
-      }
+      const screen = svgPointToScreen(ref.current, pos)
 
       setToolTipInfo({ pos: screen, cell })
     },
@@ -172,7 +170,10 @@ export function HeatMapSvg() {
       clearTimeout(timeoutRef.current)
     }
 
-    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
+    timeoutRef.current = setTimeout(
+      () => setToolTipInfo(null),
+      TOOLTIP_CLEAR_MS
+    )
   }, [])
 
   const { svg, width, height } = useMemo(() => {

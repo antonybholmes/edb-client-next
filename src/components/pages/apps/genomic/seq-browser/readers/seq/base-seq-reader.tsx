@@ -1,4 +1,4 @@
-import type { Axis } from '@/components/plot/axis/axis'
+import type { Axis } from '@/components/plot/axes/axis'
 
 import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'

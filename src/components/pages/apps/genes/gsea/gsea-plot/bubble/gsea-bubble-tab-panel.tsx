@@ -1,4 +1,3 @@
-import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { makeUuid } from '@/lib/id'
 import { textJoin } from '@/lib/text/text'
 import { useMemo } from 'react'
@@ -44,10 +43,8 @@ export function GseaBubbleTabPanel() {
   }, [inUseReports, inUsePhenotypes, settings.phenotypes.merge])
 
   return (
-    <ExtScrollCard className="px-2 pb-2">
-      <GseaBubbleProvider plots={bubblePlots}>
-        <GseaBubblePlotSvg />
-      </GseaBubbleProvider>
-    </ExtScrollCard>
+    <GseaBubbleProvider plots={bubblePlots}>
+      <GseaBubblePlotSvg />
+    </GseaBubbleProvider>
   )
 }

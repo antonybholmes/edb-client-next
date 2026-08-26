@@ -16,7 +16,7 @@ import { useOpen } from '../use-open'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { openFiles } = useOpen()
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
 
   return (
     <>
@@ -38,13 +38,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'venn',
-                svgRef,
-              },
-            })
+            saveAs('venn')
           }}
         >
           <DownloadIcon />

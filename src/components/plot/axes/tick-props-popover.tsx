@@ -1,8 +1,7 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
-import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { AxisType } from '@/components/plot/axis/svg-axis-props'
+import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
@@ -10,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
-import { TEXT_FONT } from '@/consts'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
@@ -26,7 +25,7 @@ export function TickPropsPopover({
   const { settings, updateSettings } = useEdbSettings()
   const [open, setOpen] = useState(false)
 
-  const title = `${capitalCase(which)} ${capitalCase(axis)}-Axis`
+  const title = `${capitalCase(which)} ${capitalCase(axis)} Ticks`
 
   const icon =
     axis === 'x' ? (
@@ -39,10 +38,10 @@ export function TickPropsPopover({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         className="text-foreground/70 hover:text-foreground data-pressed:text-foreground"
-        title={`${title} Tick Properties`}
-      >
-        {icon}
-      </PopoverTrigger>
+        title={`${title} Properties`}
+        render={<ToolbarIconButton>{icon}</ToolbarIconButton>}
+      />
+
       <PopoverContent className="gap-y-1">
         <CheckPropRow
           title={title}
@@ -55,12 +54,11 @@ export function TickPropsPopover({
               })
             )
           }}
-        />
-        <PropRow title="Labels">
+        >
           <FontPopover
             fonts={[
               {
-                title: TEXT_FONT,
+                title: `${capitalCase(which)} ${capitalCase(axis)} Tick Labels`,
                 textProps: settings.plots.axes[axis].ticks[which].labels,
                 showRotation: true,
                 update: (f) =>
@@ -76,7 +74,7 @@ export function TickPropsPopover({
               },
             ]}
           />
-        </PropRow>
+        </CheckPropRow>
 
         <PropRow title="Size / Offset">
           <NumericalInput
@@ -107,18 +105,19 @@ export function TickPropsPopover({
             }}
           />
         </PropRow>
-
-        <NumericalPropRow
-          value={settings.plots.axes[axis].ticks[which].labels.offset}
-          title="Label Offset"
-          onNumChanged={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.plots.axes[axis].ticks[which].labels.offset = v
-              })
-            )
-          }}
-        />
+        <PropRow title="Label Offset">
+          <NumericalInput
+            value={settings.plots.axes[axis].ticks[which].labels.offset}
+            title="Label Offset"
+            onNumChanged={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plots.axes[axis].ticks[which].labels.offset = v
+                })
+              )
+            }}
+          />
+        </PropRow>
       </PopoverContent>
     </Popover>
   )

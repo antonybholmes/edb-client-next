@@ -125,24 +125,6 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               <OutlineButton
                 colors={[
                   {
-                    color: displayProps.border.value,
-                    show: displayProps.border.show,
-                    onColorChange: ({ color, show }) =>
-                      setDisplayProps(
-                        produce(displayProps, (draft) => {
-                          draft.border.value = color
-                          draft.border.show = show ?? displayProps.border.show
-                        })
-                      ),
-                  },
-                ]}
-                title="Border Outline"
-              />
-            </PropRow>
-            <PropRow title="Outline">
-              <OutlineButton
-                colors={[
-                  {
                     color: displayProps.grid.value,
                     show: displayProps.grid.show,
                     onColorChange: ({ color, show }) =>
@@ -154,7 +136,23 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                       ),
                   },
                 ]}
-                title="Grid Outline"
+                title="Grid"
+              />
+              <OutlineButton
+                colors={[
+                  {
+                    color: displayProps.border.value,
+                    show: displayProps.border.show,
+                    onColorChange: ({ color, show }) =>
+                      setDisplayProps(
+                        produce(displayProps, (draft) => {
+                          draft.border.value = color
+                          draft.border.show = show ?? displayProps.border.show
+                        })
+                      ),
+                  },
+                ]}
+                title="Outline"
               />
             </PropRow>
           </AccordionContent>

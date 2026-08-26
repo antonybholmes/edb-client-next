@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axis/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 import { abs } from '@/lib/math/abs'
 
@@ -74,6 +74,7 @@ export function ExtGseaSvg() {
     let xax = new Axis()
       .setDomain([0, xmax])
       .setLength(displayProps.axes.x.length)
+      .setTickParams({ which: 'both', show: false })
 
     xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -81,6 +82,7 @@ export function ExtGseaSvg() {
       .autoDomain([-ymax, ymax])
       .setLength(displayProps.es.axes.y.length)
       .setTitle(displayProps.es.axes.y.title)
+      .setTickParams({ which: 'minor', show: false })
 
     let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank]!)
     let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank]!)
@@ -295,6 +297,7 @@ export function ExtGseaSvg() {
         //.setDomain([0, plot!.dna.seq.length])
         .setLength(displayProps.ranking.axes.y.length)
         .setTitle('SNR')
+        .setTickParams({ which: 'minor', show: false })
 
       let displayPoints = rankedGenes.genes.map((e, ei) => [
         xax.domainToRange(ei),
@@ -354,11 +357,7 @@ export function ExtGseaSvg() {
               </g>
             </g>
           )}
-          <AxisLeftSvg
-            ax={yax}
-            font={displayProps.axes.x.font}
-            labelFont={displayProps.axes.x.labels.font}
-          />
+          <AxisLeftSvg ax={yax} />
         </g>
       )
     }
@@ -405,11 +404,7 @@ export function ExtGseaSvg() {
             {leadingEdge2Svg && leadingEdge2Svg}
             {line2Svg && line2Svg}
 
-            <AxisLeftSvg
-              ax={yax}
-              font={displayProps.axes.x.font}
-              labelFont={displayProps.axes.x.labels.font}
-            />
+            <AxisLeftSvg ax={yax} />
             <g transform={`translate(0, ${yax.domainToRange(0)})`}>
               <AxisBottomSvg
                 ax={xax}

@@ -947,7 +947,7 @@ export function makeOncoPlot(
   })
 
   if (sort.sortGenes) {
-    ret = ret.setGeneOrder(geneOrder)
+    ret = ret.setGeneOrder(geneOrder.map((x) => x.index))
   }
 
   if (sort.sortSamples) {
@@ -1124,7 +1124,9 @@ export function makeLocationOncoPlot(
   if (sort) {
     const { geneOrder, sampleOrder } = memoSort(ret, mutationsInUse)
 
-    ret = ret.setGeneOrder(geneOrder).setSampleOrder(sampleOrder)
+    ret = ret
+      .setGeneOrder(geneOrder.map((x) => x.index))
+      .setSampleOrder(sampleOrder)
   }
 
   // const colorMap = Object.fromEntries(
@@ -1224,15 +1226,14 @@ export function memoSort(
   mutationsInUse: string[],
   //useEventScore: boolean = true,
   opts: { useEventScore?: boolean; clinicalTracks?: ClinicalDataTrack[] } = {}
-): { geneOrder: number[]; sampleOrder: number[] } {
+): { geneOrder: { index: number; sum: number }[]; sampleOrder: number[] } {
   const { useEventScore = true, clinicalTracks = [] } = opts
 
   // descending
   // sample with most mutations on top
   const geneOrder = df._geneStats
-    .map((stats, si) => [si, stats.sum])
-    .sort((a, b) => b[1]! - a[1]!)
-    .map((x) => x[0]!)
+    .map((stats, si) => ({ index: si, sum: stats.sum }))
+    .sort((a, b) => b.sum - a.sum)
 
   // sort rows first
   // let newTable: OncoplotDataframe = {
@@ -1253,11 +1254,16 @@ export function memoSort(
     ])
   )
 
-  const maxPower = geneOrder.length - 1
+  const numGenes = BigInt(geneOrder.length)
+  const maxGeneIndex = numGenes - BIG1
 
   const sampleScores: { name: string; value: bigint }[][] = []
 
   const samples = df._sampleStats.map((s) => s.sample)
+
+  const blockShifts: bigint[] = range(geneOrder.length).map(
+    (gi) => numGenes * (maxGeneIndex - BigInt(gi))
+  )
 
   for (let col = 0; col < df.shape[1]; ++col) {
     // find all non zero rows and use a bit flag to set whether
@@ -1270,22 +1276,24 @@ export function memoSort(
 
     let scores = [
       {
-        name: 'comb',
-        value: BigInt(0),
+        name: 'genebits',
+        value: BIG0,
       },
     ]
 
     if (useEventScore) {
-      scores.push({ name: 'block', value: BigInt(0) })
+      scores.push({ name: 'mutationbits', value: BIG0 })
     }
 
-    for (const [newIndex, originalIndex] of geneOrder.entries()) {
-      const stats = df._data[originalIndex]![col]!
+    for (const [gi, originalGene] of geneOrder.entries()) {
+      const stats = df._data[originalGene.index]![col]!
+
+      const geneShift = blockShifts[gi] ?? BIG0 // maxGeneIndex - BigInt(newIndex)
 
       if (stats.sum > 0) {
         // organize into blocks where the most mutated genes are at the left
         // of the matrix and share a pattern
-        scores[0]!.value |= BIG1 << BigInt(maxPower - newIndex)
+        scores[0]!.value |= BIG1 << geneShift
       }
 
       // scores[1].value +=
@@ -1295,13 +1303,21 @@ export function memoSort(
       // than randomly sorting them
       if (useEventScore) {
         for (const event of stats.events) {
-          scores[1]!.value |= BIG1 << (eventScoreMap.get(event.name) ?? BIG0)
+          // each block represents a gene, and within each block,
+          // mutation types within each gene block are scored
+          // this is because we need to capture all mutations for
+          // each gene so that trunc in gene 1 and trunc in gene 2
+          // are given priority over say missense in gene 1 and
+          // trunc in gene 2.
+
+          scores[1]!.value |=
+            BIG1 << (geneShift + (eventScoreMap.get(event.name) ?? BIG0))
         }
       }
     }
 
     for (const track of clinicalTracks.filter((c) => c.type === 'category')) {
-      const score = { name: track.name, value: BigInt(0) }
+      const score = { name: track.name, value: BIG0 }
 
       const maxEvent = track.getEvents(samples[col]!).maxEvent.name
 
@@ -1310,10 +1326,6 @@ export function memoSort(
       )
 
       score!.value |= BIG1 << BigInt(track.categories.length - catIndex)
-
-      //for (const cat of categories) {
-      //  scores[1]!.value |= BIG1 << (events.get(cat)  ?? BIG0)
-      //}
 
       scores.push(score)
     }
@@ -1341,7 +1353,9 @@ export function memoSort(
   const sampleOrder = sampleScores
     .map((scores, si) => ({ index: si, scores }))
     .sort((a, b) => {
-      // use each score in order to sort and if there is a tie, use the next score as a tiebreaker
+      // use each score in order to sort. If there is a tie, defer to
+      // the next score in order to break the tie until a
+      // descriminating score is found
       for (const [si, scoreA] of a.scores.entries()) {
         const scoreB = b.scores[si]!
 

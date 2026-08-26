@@ -47,63 +47,15 @@ export function ExtHScroll({ style, className }: IDivProps) {
   const { hScrollRef } = useExtScrollRefsContext()
   const { size, setScrollLeft } = useExtScrollStateContext()
 
-  // const dragStatus = useRef({
-  //   isDown: false,
-  //   startX: 0,
-  //   scrollLeft: 0,
-  // })
-
-  // useEffect(() => {
-  //   // 2. This runs ONLY during an active drag operation
-  //   function onMouseMove(e: MouseEvent) {
-  //     // Bypasses passive event warnings cleanly
-  //     e.preventDefault()
-
-  //     const x = e.pageX - hScrollRef.current!.offsetLeft
-
-  //     const walkX = (x - dragStatus.current.startX) * DRAG_MULTIPLIER //(x - dragStatus.current.startX) * 1.5
-
-  //     hScrollRef.current!.scrollLeft = walkX - dragStatus.current.scrollLeft
-  //   }
-
-  //   // 3. This tears down listeners the moment the user lets go anywhere
-  //   function onMouseUp() {
-  //     hScrollRef.current?.classList.remove('grabbing')
-
-  //     // Remove listeners from window immediately
-  //     window.removeEventListener('mousemove', onMouseMove)
-  //     window.removeEventListener('mouseup', onMouseUp)
-  //   }
-
-  //   // 1. Initial entry point attached to the container
-  //   function onMouseDown(e: MouseEvent) {
-  //     hScrollRef.current?.classList.add('grabbing')
-
-  //     dragStatus.current.startX = e.pageX - hScrollRef.current!.offsetLeft
-  //     dragStatus.current.scrollLeft = hScrollRef.current!.scrollLeft
-
-  //     // Attach temporary tracking events to global window
-  //     window.addEventListener('mousemove', onMouseMove, { passive: false })
-  //     window.addEventListener('mouseup', onMouseUp)
-  //   }
-
-  //   hScrollRef.current?.addEventListener('mousedown', onMouseDown)
-
-  //   // Initial cleanup if component unmounts mid-render loop
-  //   return () => {
-  //     hScrollRef.current?.removeEventListener('mousedown', onMouseDown)
-  //   }
-  // }, [])
-
   return (
     <div
+      ref={hScrollRef}
       id="h-scroll"
       className={cn(
         'relative overflow-x-scroll overflow-y-hidden h-4 custom-scrollbar',
         className
       )}
       style={style}
-      ref={hScrollRef}
       onScroll={(e) => {
         const { scrollLeft, scrollWidth, clientWidth } = e.currentTarget
         const maxScrollLeft = scrollWidth - clientWidth

@@ -29,7 +29,6 @@ import {
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { makeUuid } from '@/lib/id'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
 import { type ITab } from '@/components/tabs/tab-provider'
 
@@ -109,7 +108,7 @@ export function VariantsPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
   const { save } = useSave()
 
@@ -330,7 +329,7 @@ export function VariantsPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `variants.png`)
+              autoSave(`variants.png`)
             }}
           >
             <FileImageIcon fill="" />
@@ -339,7 +338,7 @@ export function VariantsPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `variants.svg`)
+              autoSave(`variants.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

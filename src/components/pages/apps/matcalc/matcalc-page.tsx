@@ -81,14 +81,15 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { usePasteText } from '@/hooks/paste-text'
 import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
-import { GseaBubblePanel } from '../genes/gsea/bubble/gsea-bubble-panel'
 import { GseaBubbleProvider } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
-import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
-import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
+
+import { GseaBubblePanel } from './apps/gsea/bubble/gsea-bubble-panel'
+import { ExtGseaPanel } from './apps/gsea/ext-gsea/ext-gsea-panel'
+import { ExtGseaProvider } from './apps/gsea/ext-gsea/ext-gsea-provider'
 import {
   useCurrentSelections,
   useCurrentSheets,
@@ -215,8 +216,6 @@ export function MatcalcPage() {
   const { open, setOpen } = useSlideBar(FOLDER_ID) //) //'matcalc') //useContext(MessageContext)
 
   useEffect(() => {
-    // open a dedicated history app for this module
-
     setAppInfo(APP_INFO)
   }, [setAppInfo])
 

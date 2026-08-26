@@ -3,7 +3,7 @@ import type { ISaveAsFileType, ISaveAsResponse } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
-import type { ComponentType, ReactNode, RefObject } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { create } from 'zustand'
 import { ColorPickerDialog } from '../plot/color-picker-dialog'
 import { IColorChangeProps } from '../plot/color-picker-popover'
@@ -30,7 +30,7 @@ type DialogTypeMap = {
   'save-image': {
     title?: string
     name: string
-    svgRef: RefObject<SVGSVGElement | null>
+    svg: SVGSVGElement | null
   }
   save: {
     title?: string
@@ -234,15 +234,15 @@ function DialogRenderer({
       )
     }
     case 'save-image': {
-      const { title, name, svgRef } = dialog.payload
+      const { title, name, svg } = dialog.payload
       return (
         <SaveImageDialog
           title={title}
           name={name}
           onResponse={(response, data) => {
-            console.log('here', svgRef.current)
-            if (response !== TEXT_CANCEL && svgRef.current) {
-              downloadSvgAutoFormat(svgRef, (data as ISaveAsResponse).name)
+            console.log('here', svg)
+            if (response !== TEXT_CANCEL && svg) {
+              downloadSvgAutoFormat(svg, (data as ISaveAsResponse).name)
             }
             close(dialog.id)
           }}

@@ -1,11 +1,11 @@
-import type { IRankedGenes } from '../../../../../../lib/gsea/geneset'
+import type { IRankedGenes } from '../../../../../../../lib/gsea/geneset'
 
 import {
   ExtGSEA,
   type IExtGseaResult,
   type IGseaResult,
-} from '../../../../../../lib/gsea/ext-gsea'
-import type { IGeneSet } from '../../../../../../lib/gsea/geneset'
+} from '../../../../../../../lib/gsea/ext-gsea'
+import type { IGeneSet } from '../../../../../../../lib/gsea/geneset'
 
 export interface IExtGseaWorkerMessage {
   rankedGenes: IRankedGenes

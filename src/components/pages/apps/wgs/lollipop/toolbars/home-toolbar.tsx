@@ -17,7 +17,7 @@ import { useOpen } from '../use-open'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { open } = useOpen()
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
   const {
     plotStyle,
     setPlotStyle,
@@ -40,13 +40,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           aria-label="Save image"
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'lollipop',
-                svgRef,
-              },
-            })
+            saveAs('lollipop')
           }}
         >
           <DownloadIcon />

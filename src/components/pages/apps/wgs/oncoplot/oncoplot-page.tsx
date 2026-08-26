@@ -195,7 +195,7 @@ function OncoplotPage() {
 
       setGenesFromTable(table)
 
-      openFile(`Variants`, { sheets: [table] })
+      openFile(`Variants`, { sheets: [table], mode: 'set' })
 
       loadClinicalTestData()
     } catch (error) {

@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { Card } from '@/themed/card'
@@ -15,7 +14,6 @@ import { produce } from 'immer'
 
 import { useZoom } from '@/providers/zoom-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'
 import { LabelPropsPanel } from '../../../wgs/lollipop/label-props-panel'
 import { LollipopDisplayPropsPanel } from '../../../wgs/lollipop/lollipop-display-props-panel'
@@ -29,7 +27,6 @@ import { useSideTabs } from '@/components/tabs/tab-provider'
 //import { getPlot } from '../../history/history-provider/history-hooks'
 import { useSVG } from '@/providers/svg-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 
@@ -40,15 +37,21 @@ function LollipopPanel() {
 
   const { settings, updateSettings } = useMatcalcSettings()
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave, saveAs } = useSVG()
 
   const { aaStats } = useLollipopStore()
 
   const { displayProps, setDisplayProps } = useLollipopSettings()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
-
-  const { open: openDialog } = useDialogs()
+  useZoom({
+    onChange: (z) => {
+      setDisplayProps(
+        produce(displayProps, (draft) => {
+          draft.scale = z.zoom
+        })
+      )
+    },
+  })
 
   const { setTabs: setSideTabs } = useSideTabs()
 
@@ -56,29 +59,15 @@ function LollipopPanel() {
     for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
-          downloadSvgAutoFormat(
-            svgRef,
-            `heatmap.${messageImageFileFormat(message)}`
-          )
+          autoSave(`heatmap.${messageImageFileFormat(message)}`)
         } else {
-          openDialog({
-            type: 'save-image',
-            payload: { svgRef, name: `lollipop` },
-          })
+          saveAs('lollipop')
         }
       }
 
       removeMessage(message.id)
     }
   }, [messages])
-
-  useEffect(() => {
-    setDisplayProps(
-      produce(displayProps, (draft) => {
-        draft.scale = zoom
-      })
-    )
-  }, [zoom])
 
   // useEffect(() => {
   //   const df = plot.dataframes['main']! as BaseDataFrame
@@ -147,7 +136,7 @@ function LollipopPanel() {
         <></>
         <></>
         <>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </>
       </FooterPortal>
     </>

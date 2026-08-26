@@ -14,7 +14,7 @@ import { useVariantSettings } from '../variant-settings-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
   const { settings, updateSettings } = useVariantSettings()
 
   return (
@@ -23,13 +23,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title="Download image to local file"
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'variants',
-                svgRef,
-              },
-            })
+            saveAs('variants')
           }}
         >
           <DownloadIcon />
@@ -49,9 +43,7 @@ export function HomeToolbar() {
             }
           }}
           size="toolbar"
-          //justify="start"
           direction="toolbar"
-          //multiple={true}
         >
           <GroupToggle value="pileup" className="w-12">
             Pileup

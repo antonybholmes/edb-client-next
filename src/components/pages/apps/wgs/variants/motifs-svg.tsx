@@ -1,4 +1,4 @@
-import type { Axis } from '@/components/plot/axis/axis'
+import type { Axis } from '@/components/plot/axes/axis'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { useMemo } from 'react'
 import { useVariantSettings } from './variant-settings-store'

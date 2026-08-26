@@ -1,4 +1,4 @@
-import { AxisType } from '@/components/plot/axis/svg-axis-props'
+import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import {
   Popover,

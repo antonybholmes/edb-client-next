@@ -136,6 +136,7 @@ export const useZoomStore = create<IZoomStore>()(
 )
 
 interface IZoomOpts {
+  channel?: string
   defaultZoom?: IZoomChannel
   onChange?: ({ zoom }: { zoom: number }) => void
 }
@@ -147,11 +148,12 @@ interface IZoomOpts {
  * @param channel The zoom channel to access.
  * @returns An object containing the current zoom value and a function to set the zoom value for the specified channel.
  */
-export function useZoom(
-  channel: string = DEFAULT_ZOOM_CHANNEL_NAME,
-  opts: IZoomOpts = {}
-): IZoomContext {
-  const { defaultZoom = DEFAULT_ZOOM_CHANNEL, onChange } = opts
+export function useZoom(opts: IZoomOpts = {}): IZoomContext {
+  const {
+    channel = DEFAULT_ZOOM_CHANNEL_NAME,
+    defaultZoom = DEFAULT_ZOOM_CHANNEL,
+    onChange,
+  } = opts
 
   const z = useZoomStore(
     useShallow(
@@ -189,16 +191,12 @@ export function useZoom(
   )
 
   useEffect(() => {
-    if (!onChange) {
-      return
-    }
-
     return useZoomStore.subscribe((state, previousState) => {
       const nextZoom = state.zooms[channel]?.zoom
       const previousZoom = previousState.zooms[channel]?.zoom
 
       if (nextZoom !== previousZoom && nextZoom !== undefined) {
-        onChange({ zoom: nextZoom })
+        onChange?.({ zoom: nextZoom })
       }
     })
   }, [channel, onChange])

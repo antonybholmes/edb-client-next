@@ -1,4 +1,4 @@
-import { Axis } from '@/components/plot/axis/axis'
+import { Axis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
@@ -150,11 +150,10 @@ export function PileupPlotSvg() {
         return
       }
 
-      const pos = svgPointToScreen(
-        ref.current,
-        MARGIN.left + x,
-        MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset
-      )
+      const pos = svgPointToScreen(ref.current, {
+        x: MARGIN.left + x,
+        y: MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset,
+      })
 
       if (!pos) {
         return

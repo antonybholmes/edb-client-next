@@ -16,11 +16,12 @@ import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
-import { SIMPLE_COLOR_EXT_CLS } from '../../../../../plot/color-picker-popover'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
-import { useHistory } from '../../history/history-provider/history-provider'
+
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-store'
 

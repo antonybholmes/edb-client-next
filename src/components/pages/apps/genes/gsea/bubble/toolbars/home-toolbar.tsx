@@ -1,4 +1,3 @@
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
@@ -33,11 +32,10 @@ import {
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { settings, updateSettings } = useGseaBubbleSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
-  const { ref: svgRef } = useSVG()
+  const { saveAs } = useSVG()
 
   const { addPlots } = useHistory()
 
@@ -62,13 +60,7 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title={TEXT_SAVE_IMAGE}
           onClick={() => {
-            openDialog({
-              type: 'save-image',
-              payload: {
-                name: 'gsea-bubble',
-                svgRef,
-              },
-            })
+            saveAs('gsea-bubble')
           }}
         >
           <DownloadIcon />

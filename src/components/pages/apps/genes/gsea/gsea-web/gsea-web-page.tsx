@@ -44,7 +44,6 @@ import { ExportIcon } from '@/icons/export-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { BoolSearchQuery } from '@/lib/search'
 import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
@@ -54,7 +53,7 @@ import { produce } from 'immer'
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
-import { PLOT_ZOOM_CHANNEL, useGsea } from './gsea-web-store'
+import { useGsea } from './gsea-web-store'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -95,7 +94,7 @@ export function GseaWebPage() {
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { zoom } = useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(
@@ -111,7 +110,7 @@ export function GseaWebPage() {
 
   const [reportTabs, setReportTabs] = useState<string[]>([])
 
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
@@ -201,7 +200,7 @@ export function GseaWebPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'gsea.png')
+              autoSave('gsea.png')
             }}
           >
             <FileImageIcon stroke="" />
@@ -210,7 +209,7 @@ export function GseaWebPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, 'gsea.svg')
+              autoSave('gsea.svg')
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -419,7 +418,7 @@ export function GseaWebPage() {
         <FooterPortal>
           <></>
           <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+          <ZoomSlider />
         </FooterPortal>
       </ShortcutLayout>
     </>

@@ -13,6 +13,7 @@ interface IProps extends IDivProps {
   multiselect?: boolean
   setMultiselect?: (v: boolean) => void
   selectedChildren?: ReactNode
+  rightChildren?: ReactNode
 }
 
 /**
@@ -26,12 +27,14 @@ interface IProps extends IDivProps {
  * @returns
  */
 export function SelectAll({
+  title = TEXT_SELECT_ALL,
   selectAll = true,
   setSelectAll,
   multiselect = false,
   setMultiselect,
   selectedChildren,
   className,
+  rightChildren,
   children,
 }: IProps) {
   const [_multiselect, _setMultiselect] = useState(false)
@@ -62,7 +65,7 @@ export function SelectAll({
           <VCenterRow className={cn('gap-x-1', className)}>
             <Checkbox
               checked={_selectAll}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 toggleSelectAll(v)
               }}
               title={TEXT_SELECT_ALL}
@@ -73,16 +76,18 @@ export function SelectAll({
           children
         )}
       </VCenterRow>
-
-      <IconButton
-        title="Select"
-        onClick={() => {
-          toggleMultiselect(!_multiselect)
-        }}
-        checked={_multiselect}
-      >
-        <MultiSelectIcon checked={_multiselect} />
-      </IconButton>
+      <VCenterRow className="gap-x-1">
+        {rightChildren}
+        <IconButton
+          title={title}
+          onClick={() => {
+            toggleMultiselect(!_multiselect)
+          }}
+          checked={_multiselect}
+        >
+          <MultiSelectIcon checked={_multiselect} />
+        </IconButton>
+      </VCenterRow>
     </VCenterRow>
   )
 }

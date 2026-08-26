@@ -72,6 +72,7 @@ export const TEXT_BACK = 'Back'
 export const TEXT_SIGN_UP = 'Sign Up'
 export const TEXT_EMAIL = 'Email'
 export const TEXT_FONT = 'Font'
+export const TEXT_SORT = 'Sort'
 
 export const TEXT_SIGN_IN = 'Sign In'
 export const TEXT_SIGNED_IN = 'Signed In'

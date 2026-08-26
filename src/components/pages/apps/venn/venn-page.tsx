@@ -11,8 +11,6 @@ import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-datafra
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
-import { downloadSvg, downloadSvgAsPng } from '@/lib/image-utils'
-
 import { FOCUS_RING_CLS } from '@/theme'
 
 import { useEffect, useState } from 'react'
@@ -88,7 +86,7 @@ const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
 
 function VennPage() {
   const { openFiles } = useOpen()
-  const { ref: svgRef } = useSVG()
+  const { autoSave } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   //const { setTabs: setViewTabs } = useTabs('venn-side-tabs')
 
@@ -96,9 +94,8 @@ function VennPage() {
 
   //const [selectedSideTab, setSelectedSideTab] = useState(0)
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL, {
+  const { zoom } = useZoom({
     onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
       updateSettings(
         produce(settings, (draft) => {
           draft.scale = zoom
@@ -499,7 +496,7 @@ function VennPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAsPng(svgRef, 'venn')
+              autoSave('venn.png')
               //                 setShowFileMenu(false)
             }}
           >
@@ -509,7 +506,7 @@ function VennPage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvg(svgRef, 'venn')
+              autoSave('venn.svg')
               //                 setShowFileMenu(false)
             }}
           >
@@ -628,7 +625,7 @@ function VennPage() {
         <></>
         <></>
 
-        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

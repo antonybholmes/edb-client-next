@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axis/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis/svg-axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'

@@ -2528,10 +2528,55 @@
         {
           "msg": "Compact display layout for bubble",
           "date": "2026-08-24T23:01:23.093Z"
+        },
+        {
+          "msg": "SVG saves now managed by centralized provider to track svg refs",
+          "date": "2026-08-25T15:21:39.703Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-08-22T06:20:33.129Z"
+  },
+  {
+    "version": "87.8.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "New axis editing ui",
+          "date": "2026-08-25T17:23:11.155Z"
+        },
+        {
+          "msg": "Improved select all ui in gsea plot",
+          "date": "2026-08-25T17:37:09.082Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-25T18:01:18.076Z"
+        },
+        {
+          "msg": "Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files",
+          "date": "2026-08-25T20:52:11.998Z"
+        },
+        {
+          "msg": "Added small margin defaults. Adjusted margins on GSEA plot",
+          "date": "2026-08-26T14:07:55.734Z"
+        },
+        {
+          "msg": "ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.",
+          "date": "2026-08-26T15:46:29.734Z"
+        },
+        {
+          "msg": "Refined zoom controls to simplify channel system",
+          "date": "2026-08-26T17:49:06.758Z"
+        },
+        {
+          "msg": "Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.",
+          "date": "2026-08-26T17:58:13.744Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-25T17:23:11.155Z"
   }
 ]

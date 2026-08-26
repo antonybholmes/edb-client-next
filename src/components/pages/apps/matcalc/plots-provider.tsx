@@ -5,7 +5,8 @@ import { createContext, type Dispatch } from 'react'
 import type { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
 import { deepFreeze } from '@/lib/utils'
 import type { IBoxPlotDisplayOptions } from './apps/boxplot/boxplot-plot-svg'
-import type { IExtGseaDisplayOptions } from './apps/ext-gsea/ext-gsea-store'
+
+import { IExtGseaDisplayOptions } from './apps/gsea/ext-gsea/ext-gsea-store'
 import type { IVolcanoDisplayOptions } from './apps/volcano/volcano-plot-svg'
 import { HistoryPlot } from './history/history-provider/history-types'
 
@@ -16,12 +17,7 @@ export type IPlotDisplayOptions =
   | IBoxPlotDisplayOptions
 
 export type PlotStyle =
-  | 'heatmap'
-  | 'dot'
-  | 'volcano'
-  | 'box'
-  | 'ext-gsea'
-  | 'lollipop'
+  'heatmap' | 'dot' | 'volcano' | 'box' | 'ext-gsea' | 'lollipop'
 
 export type PlotAction =
   | {

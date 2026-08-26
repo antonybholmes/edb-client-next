@@ -6,7 +6,8 @@ import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from '../../apps/boxplot/boxplot-plot-svg'
-import { DEFAULT_EXT_GSEA_PROPS } from '../../apps/ext-gsea/ext-gsea-store'
+
+import { DEFAULT_EXT_GSEA_PROPS } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { DEFAULT_VOLCANO_PROPS } from '../../apps/volcano/volcano-plot-svg'
 import {
   BoxPlot,
