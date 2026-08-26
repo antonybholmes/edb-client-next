@@ -1261,6 +1261,10 @@ export function memoSort(
 
   const samples = df._sampleStats.map((s) => s.sample)
 
+  const blockShifts: bigint[] = range(geneOrder.length).map(
+    (gi) => numGenes * (maxGeneIndex - BigInt(gi))
+  )
+
   for (let col = 0; col < df.shape[1]; ++col) {
     // find all non zero rows and use a bit flag to set whether
     // samples are there or not. Use bit pattern as score so that
@@ -1281,10 +1285,10 @@ export function memoSort(
       scores.push({ name: 'mutationbits', value: BIG0 })
     }
 
-    for (const [newIndex, originalGene] of geneOrder.entries()) {
+    for (const [gi, originalGene] of geneOrder.entries()) {
       const stats = df._data[originalGene.index]![col]!
 
-      const geneShift = maxGeneIndex - BigInt(newIndex)
+      const geneShift = blockShifts[gi] ?? BIG0 // maxGeneIndex - BigInt(newIndex)
 
       if (stats.sum > 0) {
         // organize into blocks where the most mutated genes are at the left
@@ -1307,8 +1311,7 @@ export function memoSort(
           // trunc in gene 2.
 
           scores[1]!.value |=
-            BIG1 <<
-            (numGenes * geneShift + (eventScoreMap.get(event.name) ?? BIG0))
+            BIG1 << (geneShift + (eventScoreMap.get(event.name) ?? BIG0))
         }
       }
     }
