@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added small margin defaults. Adjusted margins on GSEA plot.
 - Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files.
 - Bug fixes and updates.
 - Improved select all ui in gsea plot.

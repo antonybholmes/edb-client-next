@@ -120,8 +120,8 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       '@tanstack/react-query':
-        specifier: ^5.102.4
-        version: 5.102.4(react@19.2.8)
+        specifier: ^5.102.5
+        version: 5.102.5(react@19.2.8)
       '@tanstack/react-table':
         specifier: ^9.1.2
         version: 9.1.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -132,8 +132,8 @@ importers:
         specifier: ^2.0.14
         version: 2.0.14
       axios:
-        specifier: ^1.19.0
-        version: 1.19.0
+        specifier: ^1.20.0
+        version: 1.20.0
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2085,11 +2085,11 @@ packages:
   '@tanstack/query-core@5.102.2':
     resolution: {integrity: sha512-zQ5794PXBlV5Wl7N23SR1/Ss+wPE/h2Ye4XlKpm3omN8i8b/Fd4DAdqpLS2AXj5M/RMObt3k5qy3E7kzt/AvBA==}
 
-  '@tanstack/query-core@5.102.4':
-    resolution: {integrity: sha512-6eXkL+KFyVAZdpKoThCjPQQylZK8/ZOMYTJEVoPtHLkLs2PYks6vUiim9qzgvFXakSkRIAZwAZTeZLIJmpgRpQ==}
+  '@tanstack/query-core@5.102.5':
+    resolution: {integrity: sha512-RjCmHf9cPRYcH/dpO0Jagw3rxCM1bLzMKKSGzaDkQJADDKGpv5RFjN54IyHSOIPa822AUA7ASOXDjjy1jfyzIA==}
 
-  '@tanstack/react-query@5.102.4':
-    resolution: {integrity: sha512-Cn6X2eqFHjCtA/sfM/3eiT6/YmcPqo30twNHUlqkfz9LBqRzdt8GN/mFMWXn/qTacYUo3d4nycMzn3LWZmJ7MQ==}
+  '@tanstack/react-query@5.102.5':
+    resolution: {integrity: sha512-PyTmSq2nW4MnPuQ/T4hZbH2BYShpgCLSJNwCaPEEYO3RWd9yX611wOMm7etz2SZWVh4N7Azag5iZLMDqYTzfNA==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -2768,8 +2768,8 @@ packages:
     resolution: {integrity: sha512-s7iGf5GaVMxEG0ENN9x+xTr7GFZCb1ZP/1uATUpCEK2X78nDB3RwbtFCo9pGAf9ru+VwoQ464DkaLEeRM08wJA==}
     engines: {node: '>=4'}
 
-  axios@1.19.0:
-    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -6985,11 +6985,11 @@ snapshots:
 
   '@tanstack/query-core@5.102.2': {}
 
-  '@tanstack/query-core@5.102.4': {}
+  '@tanstack/query-core@5.102.5': {}
 
-  '@tanstack/react-query@5.102.4(react@19.2.8)':
+  '@tanstack/react-query@5.102.5(react@19.2.8)':
     dependencies:
-      '@tanstack/query-core': 5.102.4
+      '@tanstack/query-core': 5.102.5
       react: 19.2.8
 
   '@tanstack/react-store@0.11.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
@@ -7635,7 +7635,7 @@ snapshots:
 
   axe-core@4.12.1: {}
 
-  axios@1.19.0:
+  axios@1.20.0:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6

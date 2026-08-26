@@ -103,7 +103,6 @@ export function SvgVColorBar({
   }
 
   ax = YAxis.fromAxis(ax)
-  console.log('cbar', settings.plots.axes.colorbar)
 
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps

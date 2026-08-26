@@ -2557,6 +2557,10 @@
         {
           "msg": "Improved oncoplot sorting within groups. Changed loader to use set rather than opening lots of files",
           "date": "2026-08-25T20:52:11.998Z"
+        },
+        {
+          "msg": "Added small margin defaults. Adjusted margins on GSEA plot",
+          "date": "2026-08-26T14:07:55.734Z"
         }
       ]
     },
