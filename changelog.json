@@ -2577,6 +2577,10 @@
         {
           "msg": "Icon refinements. Global settings dialog now simplified to directly add apps rather than flakey registration system.",
           "date": "2026-08-26T22:08:01.643Z"
+        },
+        {
+          "msg": "Updated some Axis UI labels",
+          "date": "2026-08-26T22:18:04.614Z"
         }
       ]
     },

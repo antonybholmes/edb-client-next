@@ -25,7 +25,7 @@ export function TickPropsPopover({
   const { settings, updateSettings } = useEdbSettings()
   const [open, setOpen] = useState(false)
 
-  const title = `${capitalCase(which)} ${capitalCase(axis)} Ticks`
+  const title = `${capitalCase(axis)}-Axis ${capitalCase(which)} Ticks`
 
   const icon =
     axis === 'x' ? (
@@ -58,7 +58,7 @@ export function TickPropsPopover({
           <FontPopover
             fonts={[
               {
-                title: `${capitalCase(which)} ${capitalCase(axis)} Tick Labels`,
+                title: `${capitalCase(axis)}-Axis ${capitalCase(which)} Tick Labels`,
                 textProps: settings.plots.axes[axis].ticks[which].labels,
                 showRotation: true,
                 update: (f) =>
