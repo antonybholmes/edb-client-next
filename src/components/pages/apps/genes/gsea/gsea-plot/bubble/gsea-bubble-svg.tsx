@@ -483,7 +483,7 @@ export function GseaBubblePlotSvg() {
         createPortal(
           <div
             ref={tooltipRef}
-            className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
+            className="fixed z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
             style={{
               left: toolTipInfo.pos.x,
               top: toolTipInfo.pos.y,

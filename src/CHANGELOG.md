@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added tooltip context for standardizing tooltips.
 - Gsea bubble now uses portal for tooltips.
 - IAxisConfig now exists for configuring axes through props.
 - History dev panel now updates when plots are added.
