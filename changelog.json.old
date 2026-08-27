@@ -2585,6 +2585,10 @@
         {
           "msg": "Added axis provider to make sharing user defined axis properties easier",
           "date": "2026-08-26T22:44:05.325Z"
+        },
+        {
+          "msg": "Refactored history to split actions into separate files for managability",
+          "date": "2026-08-27T13:51:33.242Z"
         }
       ]
     },
