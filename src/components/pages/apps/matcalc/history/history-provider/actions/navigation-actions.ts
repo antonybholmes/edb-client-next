@@ -62,19 +62,21 @@ export function handleGoto(
     '',
     (draft) => {
       if (draft.files.some((f) => f.id === file)) {
-        draft.currentFile = draft.files.find((f) => f.id === file)!
+        draft.currentFile = draft.files.find((f) => f.id === file)!.id
       }
 
       if (plot) {
         if (draft.plots[file].some((p) => p.id === plot)) {
-          draft.currentPlot = draft.plots[file].filter((p) => p.id === plot)[0]
+          draft.currentPlot = draft.plots[file].filter(
+            (p) => p.id === plot
+          )[0].id
           draft.currentSelections = [{ type: 'plot', id: plot }]
         }
       } else {
         if (draft.sheets[file]?.some((s) => s.id === sheet)) {
           draft.currentSheet = draft.sheets[file].filter(
             (s) => s.id === sheet
-          )[0]
+          )[0].id
           draft.currentSelections = [{ type: 'sheet', id: sheet }]
         }
       }

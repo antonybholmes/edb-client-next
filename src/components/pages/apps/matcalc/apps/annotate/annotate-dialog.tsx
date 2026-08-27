@@ -77,7 +77,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
         if (error === null) {
           const df = new AnnotationDataFrame({ data: table, columns: header })
 
-          addSheets([df], { name: `Annotated` })
+          addSheets([df], { message: `Annotated` })
 
           onResponse?.(TEXT_OK, df)
         } else {

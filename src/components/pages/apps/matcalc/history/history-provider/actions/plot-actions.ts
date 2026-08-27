@@ -28,7 +28,7 @@ export function handleAddPlots(
 ): IHistoryData {
   const { plots, opts } = action
   const {
-    name = '',
+    message = '',
     mode = 'append',
     file = state.present.currentFile,
   } = opts || {}
@@ -38,7 +38,7 @@ export function handleAddPlots(
 
   return applyHistoryUpdate(
     state,
-    name ||
+    message ||
       (plots.length === 1
         ? `Add plot ${plots[0]!.name}`
         : `Add ${plots.length} plots`),

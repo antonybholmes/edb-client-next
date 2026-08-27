@@ -20,6 +20,7 @@ import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
+import { createPortal } from 'react-dom'
 import {
   TOOLTIP_CLEAR_MS,
   type ITooltip,
@@ -332,7 +333,7 @@ function BubblePlot({
 export function GseaBubblePlotSvg() {
   const { plots, points, xlims } = useGseaBubbleContext()
   const { ref: svgRef } = useSVG()
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  //const containerRef = useRef<HTMLDivElement | null>(null)
   const { settings } = useGseaBubbleSettings()
 
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -351,11 +352,11 @@ export function GseaBubblePlotSvg() {
 
       const screenP = svgPointToScreen(svgRef.current, p)
 
-      const rect = containerRef.current!.getBoundingClientRect()
+      //const rect = containerRef.current!.getBoundingClientRect()
 
       const newP = {
-        x: screenP.x - rect.left,
-        y: screenP.y - rect.top,
+        x: screenP.x,
+        y: screenP.y,
       }
 
       setToolTipInfo({
@@ -473,26 +474,28 @@ export function GseaBubblePlotSvg() {
   }
 
   return (
-    <div className="relative" ref={containerRef}>
+    <>
       <SvgBase width={width} height={height} scale={settings.page.scale}>
         {svg}
       </SvgBase>
 
-      {toolTipInfo && (
-        <div
-          ref={tooltipRef}
-          className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
-          style={{
-            left: toolTipInfo.pos.x,
-            top: toolTipInfo.pos.y,
-          }}
-        >
-          <p className="font-semibold">{`${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.name}`}</p>
-          <p>{`${toolTipInfo.plot.nes.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.nes.toFixed(2)}`}</p>
-          <p>{`-log10(${toolTipInfo.plot.log10q.label}): ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.log10q.toFixed(2)}`}</p>
-          <p>{`${toolTipInfo.plot.size.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.size}`}</p>
-        </div>
-      )}
-    </div>
+      {toolTipInfo &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
+            style={{
+              left: toolTipInfo.pos.x,
+              top: toolTipInfo.pos.y,
+            }}
+          >
+            <p className="font-semibold">{`${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.name}`}</p>
+            <p>{`${toolTipInfo.plot.nes.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.nes.toFixed(2)}`}</p>
+            <p>{`-log10(${toolTipInfo.plot.log10q.label}): ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.log10q.toFixed(2)}`}</p>
+            <p>{`${toolTipInfo.plot.size.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.size}`}</p>
+          </div>,
+          document.body
+        )}
+    </>
   )
 }

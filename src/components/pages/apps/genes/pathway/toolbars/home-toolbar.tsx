@@ -204,7 +204,7 @@ export function HomeToolbar() {
           'Pathways'
         )
 
-        addSheets([dfOut], { name: 'Pathway' })
+        addSheets([dfOut], { message: 'Pathway' })
 
         // we've finished so get rid of the animations
         removeFooter('left', iid)

@@ -2597,6 +2597,10 @@
         {
           "msg": "IAxisConfig now exists for configuring axes through props",
           "date": "2026-08-27T21:30:58.003Z"
+        },
+        {
+          "msg": "Gsea bubble now uses portal for tooltips",
+          "date": "2026-08-27T22:40:58.074Z"
         }
       ]
     },

@@ -63,7 +63,6 @@ export function historyReducer(
       return handleAddPlots(state, action)
     case 'updatePlot':
       return handleUpdatePlot(state, action)
-
     case 'updateAxes':
       return handleUpdateAxes(state, action)
     case 'addGroups':

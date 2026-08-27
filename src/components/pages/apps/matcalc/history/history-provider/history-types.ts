@@ -113,12 +113,11 @@ interface IFileSlice {
 
 export interface IPlotSlice {
   addPlots: (plot: HistoryPlot[], opts?: ISheetOpts) => void
-  //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
   updatePlot: (plot: HistoryPlot, opts?: ISheetOpts) => void
 }
 
 export interface IAxesSlice {
-  addAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
+  //addAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
   //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
   updateAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
 }
@@ -179,7 +178,6 @@ export interface ISheetSlice {
 
 export interface IFileOpts {
   mode?: AppendMode
-
   sheets?: BaseDataFrame[]
   plots?: HistoryPlot[]
   //groupsName?: string
@@ -188,14 +186,13 @@ export interface IFileOpts {
 }
 
 export interface ISheetOpts {
-  name?: string
+  message?: string
   mode?: AppendMode
   file?: string
-  //path?: string
 }
 
 export interface IAxesOpts {
-  name?: string
+  message?: string
   file?: string
   plot?: string
 }

@@ -5,9 +5,9 @@
     "color": "#FA8072",
     "version": "20.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-26T22:08:00.439Z",
-    "hash": "a3f203c1329cec370b4a8f29f3dd91f86e7bc202ba3d89d1238376a1624caf01",
-    "build": 854
+    "modified": "2026-08-27T22:40:56.970Z",
+    "hash": "942e8ebc7bc4fa14395f0e95097755d659cb55c276391decbda9cfe8c81d7be4",
+    "build": 856
   },
   {
     "name": "Bio Draw",
@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T23:03:48.301Z",
-    "hash": "9b0c8a15934c610a06cd5395667e775adc559bd774d7a74bd8c0cac20da404d4",
-    "build": 814
+    "modified": "2026-08-27T22:40:56.969Z",
+    "hash": "332b197805547dcb4d0bfe8296b8a4b9cc786185eef7a5a7921fe41ee09d2e34",
+    "build": 816
   },
   {
     "name": "DNA",
@@ -34,9 +34,9 @@
     "color": "#FF4500",
     "version": "20.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.126Z",
-    "hash": "f23f8fa86c2baf4fdcf4fbd715b5c4a312ddf3b61bbd51b79a757e8a458cbc41",
-    "build": 822
+    "modified": "2026-08-27T22:40:56.970Z",
+    "hash": "149acc8c408520e054f380f275453a849635d02e732df799446c5e903c25ca0b",
+    "build": 824
   },
   {
     "name": "Get DNA",
@@ -63,9 +63,9 @@
     "color": "#ffb366",
     "version": "23.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-27T21:30:56.895Z",
-    "hash": "849f989e8d0a8f5ac1d04641d2115bc549028e73dca76c505d7fefb9b8e0202b",
-    "build": 882
+    "modified": "2026-08-27T22:40:56.969Z",
+    "hash": "0ba1b280e0daff17be8fd13cf4087c101b38207ed2d71fdc94095b87f7a1d3dc",
+    "build": 884
   },
   {
     "name": "GSEA Web",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "50.0.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-27T21:30:56.898Z",
-    "hash": "5855f797274c6ffc8f0c54173ac38ca92d16364741aad5fcafcea591874cac66",
-    "build": 1972
+    "modified": "2026-08-27T22:40:56.973Z",
+    "hash": "d1a1731808105423317248db297cc97a9f2f6b666669b6da6c0c442d177f20f9",
+    "build": 1974
   },
   {
     "name": "Motifs",
@@ -161,9 +161,9 @@
     "color": "#6495ED",
     "version": "36.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.125Z",
-    "hash": "7e25a5ce5e090f8832363931179a88c0a9abd476c8ecd04ff69086d3e28e0ca5",
-    "build": 900
+    "modified": "2026-08-27T22:40:56.970Z",
+    "hash": "f6b212f701cbaf8cafa7b6c45300867f3a20bfefcacd256f0b5b1abc2e75115a",
+    "build": 902
   },
   {
     "name": "Rev Comp",

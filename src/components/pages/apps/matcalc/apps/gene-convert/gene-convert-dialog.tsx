@@ -156,7 +156,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       //   dfOut = new DataFrame({ data: d, columns }).setName(outName)
       // }
 
-      addSheets([dfOut], { name: outName })
+      addSheets([dfOut], { message: outName })
 
       onResponse?.(TEXT_OK, dfOut)
     } catch (error) {

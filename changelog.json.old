@@ -2593,6 +2593,10 @@
         {
           "msg": "History dev panel now updates when plots are added",
           "date": "2026-08-27T14:17:52.704Z"
+        },
+        {
+          "msg": "IAxisConfig now exists for configuring axes through props",
+          "date": "2026-08-27T21:30:58.003Z"
         }
       ]
     },

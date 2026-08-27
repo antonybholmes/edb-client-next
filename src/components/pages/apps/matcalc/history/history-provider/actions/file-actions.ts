@@ -20,10 +20,11 @@ export function removeFile(state: IHistoryState, p: PathId) {
   // select previous sheet/plot
 
   const lastFile = state.files[state.files.length - 1]!.id
-
   state.currentFile = lastFile
+
   const sheets = state.sheets[lastFile]!
   state.currentSheet = sheets[0].id
+
   state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 

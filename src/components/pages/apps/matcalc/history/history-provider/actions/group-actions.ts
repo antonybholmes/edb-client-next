@@ -25,7 +25,7 @@ export function handleAddGroups(
   action: Extract<HistoryAction, { type: 'addGroups' }>
 ): IHistoryData {
   const { groupRows, opts } = action
-  const { file = state.present.currentFile.id, mode = 'set' } = opts
+  const { file = state.present.currentFile, mode = 'set' } = opts
 
   // cannot add groups to default file and empty groups array does not require update
   if (groupRows.length === 0 || file === DEFAULT_FILE.id) {
@@ -53,7 +53,7 @@ export function handleClearGroups(
   action: Extract<HistoryAction, { type: 'clearGroups' }>
 ): IHistoryData {
   const { opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   // cannot add groups to default file and empty groups array does not require update
   if (file === DEFAULT_FILE.id) {
@@ -134,7 +134,7 @@ export function handleOpenGroupFiles(
   action: Extract<HistoryAction, { type: 'openGroupFiles' }>
 ) {
   const { files, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   const groupRows: IClusterGroupRow[] = openGroupFiles(files)
 
@@ -157,7 +157,7 @@ export function handleUpdateGroup(
   action: Extract<HistoryAction, { type: 'updateGroup' }>
 ): IHistoryData {
   const { group, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   return applyHistoryUpdate(
     state,
@@ -180,7 +180,7 @@ export function handleRemoveGroups(
   action: Extract<HistoryAction, { type: 'removeGroups' }>
 ): IHistoryData {
   const { ids, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
   // cannot remove groups from default file and empty ids array does not require update
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state

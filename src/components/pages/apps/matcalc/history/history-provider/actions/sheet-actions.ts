@@ -15,8 +15,8 @@ export function removeSheet(state: IHistoryState, p: PathId) {
   )
 
   const sheets = state.sheets[p.file]!
-  state.currentSheet = sheets[0]!
-  state.currentSelections = [{ type: 'sheet', id: state.currentSheet.id }]
+  state.currentSheet = sheets[0]!.id
+  state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 
 export function handleAddSheets(
@@ -24,7 +24,11 @@ export function handleAddSheets(
   action: Extract<HistoryAction, { type: 'addSheets' }>
 ): IHistoryData {
   const { sheets, opts } = action
-  const { name = '', mode = 'set', file = state.present.currentFile.id } = opts
+  const {
+    message: name = '',
+    mode = 'set',
+    file = state.present.currentFile,
+  } = opts
   if (sheets.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -49,7 +53,7 @@ export function handleAddSheets(
         draft.sheets[file] = sheets
       }
 
-      draft.currentSheet = sheets[0]
+      draft.currentSheet = sheets[0].id
       draft.currentSelections = [{ type: 'sheet', id: sheets[0]!.id }]
     }
   )
@@ -60,7 +64,7 @@ export function handleReorderSheets(
   action: Extract<HistoryAction, { type: 'reorderSheets' }>
 ): IHistoryData {
   const { sheets, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   // default file cannot be reordered
   if (sheets.length === 0 || file === DEFAULT_FILE.id) {

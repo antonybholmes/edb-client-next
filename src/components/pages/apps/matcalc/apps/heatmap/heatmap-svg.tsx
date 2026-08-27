@@ -585,60 +585,9 @@ export function HeatMapSvg() {
     return { svg, width, height }
   }, [cf, displayOptions, groupRows])
 
-  // function onMouseMove(e: { pageX: number; pageY: number }) {
-  //   if (!innerRef.current) {
-  //     return
-  //   }
-
-  //   const rect = innerRef.current.getBoundingClientRect()
-
-  //   let c = Math.floor(
-  //     (e.pageX -
-  //       margin.left * displayOptions.zoom -
-  //       rect.left -
-  //       window.scrollX) /
-  //       scaledBlockSize.w
-  //   )
-
-  //   if (c < 0 || c > dfMain.shape[1] - 1) {
-  //     c = -1
-  //   }
-
-  //   let r = Math.floor(
-  //     (e.pageY - margin.top * displayOptions.zoom - rect.top - window.scrollY) /
-  //       scaledBlockSize.h
-  //   )
-
-  //   if (r < 0 || r > dfMain.shape[0] - 1) {
-  //     r = -1
-  //   }
-
-  //   if (r === -1 || c === -1) {
-  //     setToolTipInfo(null)
-  //   } else {
-  //     setToolTipInfo({
-  //       ...toolTipInfo,
-  //       pos: {
-  //         x: (margin.left + c * blockSize.w) * displayOptions.zoom - 1,
-  //         y: (margin.top + r * blockSize.h) * displayOptions.zoom - 1,
-  //       },
-  //       cell: { row: r, col: c },
-  //     })
-  //   }
-  // }
-
-  //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
-
   return (
     <>
-      <SvgBase
-        scale={displayOptions.zoom}
-        width={width}
-        height={height}
-        //shapeRendering={SVG_CRISP_EDGES}
-        //onMouseMove={onMouseMove}
-        //className="absolute"
-      >
+      <SvgBase scale={displayOptions.zoom} width={width} height={height}>
         {svg}
       </SvgBase>
 

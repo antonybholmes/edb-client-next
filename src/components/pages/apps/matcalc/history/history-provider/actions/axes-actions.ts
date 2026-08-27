@@ -7,25 +7,6 @@ export function handleRemoveAxes(state: IHistoryState, plot: string) {
   delete state.axes[plot]
 }
 
-// export function handleAddAxes(
-//   state: IHistoryData,
-//   action: Extract<HistoryAction, { type: 'addAxes' }>
-// ): IHistoryData {
-//   const { axes, opts } = action
-//   const { name, plot = ID_DEFAULT } = opts
-
-//   return applyHistoryUpdate(
-//     state,
-//     name || `Add axes`,
-//     '',
-//     (draft: IHistoryState) => {
-//       draft.axes[plot] = axes
-
-//       draft.currentAxes = axes
-//     }
-//   )
-// }
-
 export function handleUpdateAxes(
   state: IHistoryData,
   action: Extract<HistoryAction, { type: 'updateAxes' }>

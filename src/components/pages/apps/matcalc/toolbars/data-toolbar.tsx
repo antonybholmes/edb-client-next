@@ -68,7 +68,7 @@ export function DataToolbar() {
               [log(sheets[0] as AnnotationDataFrame, 2, 1)],
 
               {
-                name: 'Log2(x+1)',
+                message: 'Log2(x+1)',
               }
             )
           }}
@@ -80,7 +80,7 @@ export function DataToolbar() {
                 [log(sheets[0] as AnnotationDataFrame, 2, 0)],
 
                 {
-                  name: 'Log2(x)',
+                  message: 'Log2(x)',
                 }
               )
             }
@@ -94,7 +94,7 @@ export function DataToolbar() {
                 [log(sheets[0] as AnnotationDataFrame, 2, 1)],
 
                 {
-                  name: 'Log2(x+1)',
+                  message: 'Log2(x+1)',
                 }
               )
             }
@@ -108,7 +108,7 @@ export function DataToolbar() {
                 [log(sheets[0] as AnnotationDataFrame, 10, 0)],
 
                 {
-                  name: 'Log10(x)',
+                  message: 'Log10(x)',
                 }
               )
             }
@@ -123,7 +123,7 @@ export function DataToolbar() {
                 [log(sheets[0] as AnnotationDataFrame, 10, 1)],
 
                 {
-                  name: 'Log10(x+1)',
+                  message: 'Log10(x+1)',
                 }
               )
             }
@@ -143,7 +143,7 @@ export function DataToolbar() {
                   ) as AnnotationDataFrame,
                 ],
 
-                { name: 'Z-score rows' }
+                { message: 'Z-score rows' }
               )
             }}
           >
@@ -156,7 +156,7 @@ export function DataToolbar() {
               const df = colZScore(sheets[0] as AnnotationDataFrame)
 
               addSheets([df as AnnotationDataFrame], {
-                name: 'Z-score columns',
+                message: 'Z-score columns',
               })
             }}
           >
@@ -169,7 +169,7 @@ export function DataToolbar() {
               const df = zscore(sheets[0] as AnnotationDataFrame)
 
               addSheets([df as AnnotationDataFrame], {
-                name: 'Z-score table',
+                message: 'Z-score table',
               })
             }}
           >
@@ -246,7 +246,7 @@ export function DataToolbar() {
 
             //df.setCol('Row Stdev', sd, true)
 
-            addSheets([df], { name: 'Row Standard Deviation' })
+            addSheets([df], { message: 'Row Standard Deviation' })
             //addStep(df.name, [log(sheet!, 2, 1)])
           }}
         >

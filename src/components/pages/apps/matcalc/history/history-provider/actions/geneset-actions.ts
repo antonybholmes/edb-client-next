@@ -15,7 +15,7 @@ export function handleAddGenesets(
   action: Extract<HistoryAction, { type: 'addGenesets' }>
 ): IHistoryData {
   const { genesets, opts } = action
-  const { mode = 'set', file = state.present.currentFile.id } = opts
+  const { mode = 'set', file = state.present.currentFile } = opts
 
   // cannot add genesets to default file and empty genesets array does not require update
   if (file === DEFAULT_FILE.id) {
@@ -43,7 +43,7 @@ export function handleUpdateGeneset(
   action: Extract<HistoryAction, { type: 'updateGeneset' }>
 ): IHistoryData {
   const { geneset, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   return applyHistoryUpdate(
     state,
@@ -67,7 +67,7 @@ export function handleClearGenesets(
   action: Extract<HistoryAction, { type: 'clearGenesets' }>
 ): IHistoryData {
   const { opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   // cannot add genesets to default file and empty genesets array does not require update
   if (file === DEFAULT_FILE.id) {
@@ -89,7 +89,7 @@ export function handleRemoveGenesets(
   action: Extract<HistoryAction, { type: 'removeGenesets' }>
 ): IHistoryData {
   const { ids, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
   // cannot remove genesets from default file and empty ids array does not require update
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state

@@ -104,7 +104,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
         plots,
         groupRows,
         genesets,
-        //groupsName,
+
         mode,
       })
     },
