@@ -2,9 +2,9 @@
   "name": "Matcalc",
   "description": "Tabular data analysis.",
   "color": "#40bf80",
-  "version": "50.0.6",
+  "version": "50.0.8",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-08-27T13:51:32.274Z",
-  "hash": "08f9dde9e0d13e538f38176e636c559a70ee6a7117f5e67d605d477e1ac79a10",
-  "build": 1968
+  "modified": "2026-08-27T14:17:51.644Z",
+  "hash": "0b8d4ae50383fe60056c2853a9a39f045096b56195dbd7fdf168cafff758b9c5",
+  "build": 1970
 }

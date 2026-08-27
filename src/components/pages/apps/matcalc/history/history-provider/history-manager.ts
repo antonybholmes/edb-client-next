@@ -92,6 +92,7 @@ export class HistoryManager<T extends object> {
       state.present,
       fn
     )
+
     if (patches.length === 0) {
       return state
     }
@@ -133,6 +134,7 @@ export class HistoryManager<T extends object> {
       prevState = applyPatches(state.present, entry.inversePatches)
     } else {
       let snapshotIndex = state.cursor - 1
+
       while (
         snapshotIndex >= 0 &&
         state.history[snapshotIndex]!.type !== 'snapshot'

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- History dev panel now updates when plots are added.
 - Refactored history to split actions into separate files for managability.
 - Added axis provider to make sharing user defined axis properties easier.
 - Updated some Axis UI labels.

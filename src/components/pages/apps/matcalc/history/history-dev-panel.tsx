@@ -51,16 +51,5 @@ export function HistoryDevPanel() {
         )}
       </ResizablePanel>
     </ResizablePanelGroup>
-
-    //   </ResizablePanel>
-    //   <ThinHResizeHandle />
-    //   <ResizablePanel
-    //     className="flex flex-col text-sm"
-    //     id="output"
-    //     defaultSize="60%"
-    //     minSize="0%"
-    //     collapsible={true}
-    //   ></ResizablePanel>
-    // </ResizablePanelGroup>
   )
 }

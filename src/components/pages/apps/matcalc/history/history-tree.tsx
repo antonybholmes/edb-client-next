@@ -94,7 +94,7 @@ export function HistoryTree({
     appTab.children!.push(filesTab)
 
     return appTab
-  }, [files, appInfo])
+  }, [present, files, appInfo])
 
   if (!isMounted) {
     return null
