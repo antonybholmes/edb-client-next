@@ -4,6 +4,7 @@ import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
+import { IDBEntity } from '@/interfaces/db-entity'
 import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useGseaSettings } from './gsea-settings-store'
@@ -15,10 +16,8 @@ export const MAX_NEG_LOG10_P = 50
 /**
  * Represents a gene set in the GSEA report.
  */
-export interface IGseaGeneSet {
-  id: string
+export interface IGseaGeneSet extends IDBEntity {
   phen: string
-  name: string
   size: number
   nes: number
   q: number
@@ -26,9 +25,7 @@ export interface IGseaGeneSet {
   maxRank: number
 }
 
-export interface IGseaBubble {
-  id: string
-  name: string
+export interface IGseaBubble extends IDBEntity {
   genesets: IGseaGeneSet[]
   nes: { label: string }
   size: { label: string }
@@ -63,7 +60,6 @@ export interface IGseaPlotStore {
 
   setGeneSetsInUse: (geneSetsInUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
-  //setReports: (reports: IGseaGeneSet[]) => void
   setPhenotypesFilter: (phenotypesFilter: Record<string, boolean>) => void
   setReportOrder: (reportOrder: string[]) => void
   loadGseaZip: (files: IBinaryFileOpen[]) => Promise<void>

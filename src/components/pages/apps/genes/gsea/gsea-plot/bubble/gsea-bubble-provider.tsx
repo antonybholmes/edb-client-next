@@ -6,13 +6,13 @@ import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { argsort } from '@/lib/math/argsort'
 import { ILim } from '@/lib/math/math'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
+
+import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
 import { IGseaBubble } from '../gsea-plot-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
-export interface IGseaBubblePlot extends IBasePlot {
+export interface IGseaBubblePlot extends IBasePlot, IGseaBubble {
   style: 'gsea-bubble-plot'
-  gseaBubble: IGseaBubble
-  //props: IGseaBubbleDisplayOptions
 }
 
 export interface IBubblePoint {
@@ -86,7 +86,6 @@ function getXLim(gseaBubble: IGseaBubble): ILim {
 }
 
 export function newGseaBubblePlot(
-  name: string,
   gseaBubble: IGseaBubble,
   opts: Partial<IGseaBubblePlot> = {}
 ): IGseaBubblePlot {
@@ -95,13 +94,11 @@ export function newGseaBubblePlot(
   return {
     id: makeUuid(),
     style: 'gsea-bubble-plot',
-    name,
-    gseaBubble,
     groupRows: [],
-
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),
+    ...gseaBubble,
   }
 }
 
@@ -121,9 +118,8 @@ export function GseaBubbleProvider({
   plots: IGseaBubble[]
   children: ReactNode
 }) {
-  //const [_plot, setPlot] = useState<IGseaBubblePlot | undefined>(plot)
-
   const { settings } = useGseaBubbleSettings()
+  const { updateAxes } = useHistory()
 
   const xlims = useMemo(() => plots.map((p) => getXLim(p)), [plots])
 
@@ -212,6 +208,10 @@ export function GseaBubbleProvider({
     settings.bubbles,
     settings.sortBy,
   ])
+
+  // useEffect(() => {
+  //   updateAxes({ x: createNewAxisConfig({ domain: globalXLim }) })
+  // }, [globalXLim, updateAxes])
 
   return (
     <GseaBubbleContext.Provider

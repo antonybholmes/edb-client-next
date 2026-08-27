@@ -292,12 +292,15 @@ export function HeatMapSvg() {
         (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
         displayOptions.range[1],
       ])
-      .setMinorTicks([
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-      ])
+      .setTicks(
+        [
+          displayOptions.range[0] +
+            (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+          displayOptions.range[0] +
+            (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+        ],
+        { which: 'minor' }
+      )
       .setTickParams({
         which: 'minor',
         show: true,

@@ -2589,6 +2589,10 @@
         {
           "msg": "Refactored history to split actions into separate files for managability",
           "date": "2026-08-27T13:51:33.242Z"
+        },
+        {
+          "msg": "History dev panel now updates when plots are added",
+          "date": "2026-08-27T14:17:52.704Z"
         }
       ]
     },

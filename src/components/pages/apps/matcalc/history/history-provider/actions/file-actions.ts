@@ -19,12 +19,12 @@ export function removeFile(state: IHistoryState, p: PathId) {
 
   // select previous sheet/plot
 
-  const lastFile = state.files[state.files.length - 1]!
+  const lastFile = state.files[state.files.length - 1]!.id
 
   state.currentFile = lastFile
-  const sheets = state.sheets[lastFile.id]!
-  state.currentSheet = sheets[0]
-  state.currentSelections = [{ type: 'sheet', id: state.currentSheet.id }]
+  const sheets = state.sheets[lastFile]!
+  state.currentSheet = sheets[0].id
+  state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 
 export function handleOpenFile(
@@ -42,6 +42,7 @@ export function handleOpenFile(
       } else {
         draft.sheets = {}
         draft.plots = {}
+        draft.axes = {}
         draft.groupRows = {}
         draft.genesets = {}
         draft.files = [action.file]
@@ -52,9 +53,10 @@ export function handleOpenFile(
       draft.groupRows[action.file.id] = action.groupRows
       draft.genesets[action.file.id] = action.genesets
 
-      draft.currentFile = action.file
-      draft.currentSheet = action.sheets[0]
-      draft.currentPlot = action.plots.length > 0 ? action.plots[0]! : undefined
+      draft.currentFile = action.file.id
+      draft.currentSheet = action.sheets[0].id
+      draft.currentPlot =
+        action.plots.length > 0 ? action.plots[0]!.id : undefined
       draft.currentSelections = [{ type: 'sheet', id: action.sheets[0]!.id }]
     }
   )

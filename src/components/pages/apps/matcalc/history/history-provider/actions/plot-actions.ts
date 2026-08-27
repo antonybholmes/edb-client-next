@@ -11,14 +11,14 @@ export function removePlot(state: IHistoryState, p: PathId) {
   if (state.plots[p.file]!.length > 0) {
     // if there are still plots left, select the previous one
     const plots = state.plots[p.file]!
-    state.currentPlot = plots[0]!
-    state.currentSelections = [{ type: 'plot', id: state.currentPlot.id }]
+    state.currentPlot = plots[0]!.id
+    state.currentSelections = [{ type: 'plot', id: state.currentPlot }]
   } else {
     // otherwise select the last sheet
     const sheets = state.sheets[p.file]!
     state.currentPlot = undefined
-    state.currentSheet = sheets[0]!
-    state.currentSelections = [{ type: 'sheet', id: state.currentSheet.id }]
+    state.currentSheet = sheets[0]!.id
+    state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
   }
 }
 
@@ -30,7 +30,7 @@ export function handleAddPlots(
   const {
     name = '',
     mode = 'append',
-    file = state.present.currentFile.id,
+    file = state.present.currentFile,
   } = opts || {}
   if (plots.length === 0 || file === DEFAULT_FILE.id) {
     return state
@@ -50,7 +50,7 @@ export function handleAddPlots(
         draft.plots[file] = plots
       }
 
-      draft.currentPlot = plots[0]!
+      draft.currentPlot = plots[0]!.id
       draft.currentSelections = [{ type: 'plot', id: plots[0]!.id }]
     }
   )
@@ -61,11 +61,11 @@ export function handleUpdatePlot(
   action: Extract<HistoryAction, { type: 'updatePlot' }>
 ): IHistoryData {
   const { plot, opts } = action
-  const { file = state.present.currentFile.id } = opts
+  const { file = state.present.currentFile } = opts
 
   return applyHistoryUpdate(
     state,
-    'Update group',
+    'Update plot',
     '',
     (draft: IHistoryState) => {
       const filePlots = draft.plots[file] ?? []

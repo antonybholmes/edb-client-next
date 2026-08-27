@@ -184,14 +184,14 @@ export function GseaBubbleDialog({
 
     const bubblePlot: IGseaBubble = {
       id: makeUuid(),
-      name: '',
+      name: 'GSEA Bubble Plot',
       genesets,
       nes: { label: nesCol },
       size: { label: sizeCol },
       log10q: { label: pValueCol },
     }
 
-    const plot = newGseaBubblePlot('GSEA Bubble Plot', bubblePlot)
+    const plot = newGseaBubblePlot(bubblePlot)
 
     onResponse?.(TEXT_OK, plot)
   }
@@ -207,21 +207,7 @@ export function GseaBubbleDialog({
           onResponse?.(r, undefined)
         }
       }}
-      //contentVariant="glass"
     >
-      {/* <ActionDialogRow title="Name">
-        <SelectList onValueChange={setIdCol} value={idCol} w="lg">
-          {df?.columns
-            .filter((name) => name !== '')
-            .slice(0, MAX_COLS)
-            .map((name, ni) => (
-              <SelectItem value={name} key={ni}>
-                {name}
-              </SelectItem>
-            ))}
-        </SelectList>
-      </ActionDialogRow> */}
-
       <ActionDialogRow title="NES">
         <SelectList onValueChange={setNESCol} value={nesCol} w="lg">
           {df?.columns

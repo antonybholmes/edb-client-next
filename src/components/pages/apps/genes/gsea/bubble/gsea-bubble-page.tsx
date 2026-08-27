@@ -339,9 +339,7 @@ export function GseaBubblePlotPage() {
 
   return (
     <GseaBubbleProvider
-      plots={
-        allPlots.length > 0 ? [(allPlots[0] as IGseaBubblePlot).gseaBubble] : []
-      }
+      plots={allPlots.length > 0 ? [allPlots[0] as IGseaBubblePlot] : []}
     >
       <GseaBubblePage />
     </GseaBubbleProvider>

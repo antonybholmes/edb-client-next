@@ -11,6 +11,7 @@ import { IGseaBubblePlot } from '../../../genes/gsea/gsea-plot/bubble/gsea-bubbl
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 
+import { AxisRecord } from '@/components/plot/axes/axis'
 import { IExtGseaDisplayOptions } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from './history-manager'
@@ -100,7 +101,7 @@ export type HistoryUpdateProps = (
 ) => void
 
 interface IFileSlice {
-  openFile: (name: string, opts?: IFileOps) => void
+  openFile: (name: string, opts?: IFileOpts) => void
   //updateGroupsName: (name: string, path: AppPath | string) => void
 }
 
@@ -111,9 +112,15 @@ interface IFileSlice {
 // }
 
 export interface IPlotSlice {
-  addPlots: (plot: HistoryPlot[], opts?: ISheetOps) => void
+  addPlots: (plot: HistoryPlot[], opts?: ISheetOpts) => void
   //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
-  updatePlot: (plot: HistoryPlot, opts?: ISheetOps) => void
+  updatePlot: (plot: HistoryPlot, opts?: ISheetOpts) => void
+}
+
+export interface IAxesSlice {
+  addAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
+  //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
+  updateAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
 }
 
 export type IdObj = { id: string }
@@ -162,7 +169,7 @@ export interface IGenesetSlice {
 }
 
 export interface ISheetSlice {
-  addSheets: (sheets: DataFrameType[], opts?: ISheetOps) => void
+  addSheets: (sheets: DataFrameType[], opts?: ISheetOpts) => void
   // reorderSheets: (
   //   sheets: string[],
 
@@ -170,7 +177,7 @@ export interface ISheetSlice {
   // ) => void
 }
 
-export interface IFileOps {
+export interface IFileOpts {
   mode?: AppendMode
 
   sheets?: BaseDataFrame[]
@@ -180,11 +187,17 @@ export interface IFileOps {
   genesets?: IGeneSet[]
 }
 
-export interface ISheetOps {
+export interface ISheetOpts {
   name?: string
   mode?: AppendMode
   file?: string
   //path?: string
+}
+
+export interface IAxesOpts {
+  name?: string
+  file?: string
+  plot?: string
 }
 
 /**
@@ -204,11 +217,13 @@ export interface IHistoryState extends IDBEntity {
   //groupOrder: Record<string, string[]> // fileId -> group IDs
   groupRows: Record<string, IClusterGroupRow[]>
   plots: Record<string, HistoryPlot[]>
+  axes: Record<string, AxisRecord>
   genesets: Record<string, IGeneSet[]> // fileId -> geneset IDs
 
-  currentFile: IDBEntity | undefined
-  currentSheet: DataFrameType | undefined
-  currentPlot: HistoryPlot | undefined
+  currentFile: string | undefined
+  currentSheet: string | undefined
+  currentPlot: string | undefined
+  currentAxes: string | undefined
   currentSelections: ISelectionPath[]
 }
 
@@ -230,6 +245,7 @@ export interface IHistoryStore
     IFileSlice,
     ISheetSlice,
     IPlotSlice,
+    IAxesSlice,
     IGroupSlice,
     IGenesetSlice,
     IHistoryData {

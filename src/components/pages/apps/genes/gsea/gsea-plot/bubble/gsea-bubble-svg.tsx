@@ -40,7 +40,6 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
   axes: {
     xaxis: {
       name: 'Log2 fold change',
-
       domain: [-2, 2],
       length: 300,
       ticks: [],
@@ -106,18 +105,21 @@ function GseaBubbleLegendSvg() {
             settings.scale.p.range[0] + range / 2,
             settings.scale.p.range[1],
           ])
-          .setMinorTicks([
-            settings.scale.p.range[0] + range * 0.25,
-            settings.scale.p.range[0] + range * 0.75,
-          ])
+          .setTicks(
+            [
+              settings.scale.p.range[0] + range * 0.25,
+              settings.scale.p.range[0] + range * 0.75,
+            ],
+            { which: 'minor' }
+          )
       : new Axis()
           .setDomain(globalXLim)
           .setLength(edbSettings.plots.colorbar.size.w)
           .setTicks([globalXLim[0], globalXLim[0] + range / 2, globalXLim[1]])
-          .setMinorTicks([
-            globalXLim[0] + range * 0.25,
-            globalXLim[0] + range * 0.75,
-          ])
+          .setTicks(
+            [globalXLim[0] + range * 0.25, globalXLim[0] + range * 0.75],
+            { which: 'minor' }
+          )
 
   xax = xax
     .setTickParams({

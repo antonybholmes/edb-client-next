@@ -1,4 +1,4 @@
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { Axis, ITickItem, YAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
@@ -693,7 +693,7 @@ export function LollipopStackSvg() {
 
     // make sure first tick is shown at 1
     if (ticks[0]!.v !== 1) {
-      ticks = [{ v: 1, label: '1' }].concat(ticks)
+      ticks = ([{ v: 1, label: '1' }] as ITickItem[]).concat(ticks)
     }
 
     if (displayProps.axes.x.showEndTick) {

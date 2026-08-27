@@ -15,8 +15,10 @@ import {
 enablePatches()
 
 import { ITextFileOpen } from '@/components/pages/open-files'
+import { AxisRecord } from '@/components/plot/axes/axis'
 import { historyReducer } from './history-actions'
 import {
+  AxesContext,
   FilesContext,
   GenesetsContext,
   GroupsContext,
@@ -30,10 +32,10 @@ import {
   FilePath,
   HistoryPath,
   HistoryPlot,
-  IFileOps,
+  IFileOpts,
   IGroupOps,
   IHistoryStore,
-  ISheetOps,
+  ISheetOpts,
 } from './history-types'
 
 export const HISTORY_STEP_TYPE_OPEN = 'open'
@@ -76,7 +78,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
   )
 
   const openFile = useCallback(
-    (name: string, opts: IFileOps = {}) => {
+    (name: string, opts: IFileOpts = {}) => {
       let {
         sheets = [DEFAULT_SHEET],
         plots = [],
@@ -110,15 +112,36 @@ export function HistoryProvider({ children }: IChildrenProps) {
   )
 
   const addSheets = useCallback(
-    (sheets: BaseDataFrame[], opts: ISheetOps = {}) => {
+    (sheets: BaseDataFrame[], opts: ISheetOpts = {}) => {
       dispatch({ type: 'addSheets', sheets, opts })
     },
     [dispatch]
   )
 
   const addPlots = useCallback(
-    (plots: HistoryPlot[], opts: ISheetOps = {}) => {
+    (plots: HistoryPlot[], opts: ISheetOpts = {}) => {
       dispatch({ type: 'addPlots', plots, opts })
+    },
+    [dispatch]
+  )
+
+  const updatePlot = useCallback(
+    (plot: HistoryPlot, opts: ISheetOpts = {}) => {
+      dispatch({ type: 'updatePlot', plot, opts })
+    },
+    [dispatch]
+  )
+
+  const addAxes = useCallback(
+    (axes: AxisRecord, opts: ISheetOpts = {}) => {
+      dispatch({ type: 'addAxes', axes, opts })
+    },
+    [dispatch]
+  )
+
+  const updateAxes = useCallback(
+    (axes: AxisRecord, opts: ISheetOpts = {}) => {
+      dispatch({ type: 'updateAxes', axes, opts })
     },
     [dispatch]
   )
@@ -138,22 +161,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
   )
 
   const reorderSheets = useCallback(
-    (sheets: BaseDataFrame[], opts: ISheetOps = {}) => {
+    (sheets: BaseDataFrame[], opts: ISheetOpts = {}) => {
       dispatch({ type: 'reorderSheets', sheets, opts })
-    },
-    [dispatch]
-  )
-
-  // const reorderPlots = useCallback(
-  //   (ids: string[], opts: ISheetOps = {}) => {
-  //     dispatch({ type: 'reorderPlots', ids, opts })
-  //   },
-  //   [dispatch]
-  // )
-
-  const updatePlot = useCallback(
-    (plot: HistoryPlot, opts: ISheetOps = {}) => {
-      dispatch({ type: 'updatePlot', plot, opts })
     },
     [dispatch]
   )
@@ -221,13 +230,6 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [dispatch]
   )
 
-  // const reorderGenesets = useCallback(
-  //   (ids: string[], opts: IGroupOps = {}) => {
-  //     dispatch({ type: 'reorderGenesets', ids, opts })
-  //   },
-  //   [dispatch]
-  // )
-
   const goto = useCallback(
     (path: HistoryPath) => {
       dispatch({ type: 'goto', path })
@@ -237,7 +239,10 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const filesContextValue = useMemo(
     () => ({
-      file: state.present.currentFile,
+      file:
+        state.present.files.filter(
+          (f) => f.id === state.present.currentFile
+        )[0]! || undefined,
       files: state.present.files,
     }),
     [state.present.currentFile, state.present.files]
@@ -245,8 +250,11 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const sheetsContextValue = useMemo(
     () => ({
-      sheet: state.present.currentSheet,
-      sheets: state.present.sheets[state.present.currentFile.id] || [],
+      sheet:
+        state.present.sheets[state.present.currentFile]?.filter(
+          (s) => s.id === state.present.currentSheet
+        )[0]! || undefined,
+      sheets: state.present.sheets[state.present.currentFile] || [],
     }),
     [
       state.present.currentSheet,
@@ -257,16 +265,17 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const plotsContextValue = useMemo(
     () => ({
-      plot: state.present.currentPlot,
-
-      plots: state.present.plots[state.present.currentFile.id] || [],
+      plot:
+        state.present.plots[state.present.currentFile]?.filter(
+          (p) => p.id === state.present.currentPlot
+        )[0]! || undefined,
+      plots: state.present.plots[state.present.currentFile] || [],
     }),
     [state.present.currentPlot, state.present.currentFile]
   )
 
   const groupsContextValue = useMemo(() => {
-    const groupRows =
-      state.present.groupRows[state.present.currentFile.id] || []
+    const groupRows = state.present.groupRows[state.present.currentFile] || []
 
     const groups = groupRows.map((row) => row.groups).flat()
 
@@ -278,7 +287,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const genesetsContextValue = useMemo(
     () => ({
-      genesets: state.present.genesets[state.present.currentFile.id] || [],
+      genesets: state.present.genesets[state.present.currentFile] || [],
     }),
     [state.present.currentFile, state.present.genesets]
   )
@@ -294,6 +303,17 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [state.present.currentSelections]
   )
 
+  const axesContextValue = useMemo(
+    () => ({
+      axes:
+        state.present.currentPlot &&
+        state.present.axes[state.present.currentPlot]
+          ? state.present.axes[state.present.currentPlot]
+          : {},
+    }),
+    [state.present.currentPlot, state.present.axes]
+  )
+
   const historyContextValue = useMemo(
     () => ({
       ...state,
@@ -307,8 +327,9 @@ export function HistoryProvider({ children }: IChildrenProps) {
       addSheets,
       reorderSheets,
       addPlots,
-
       updatePlot,
+      addAxes,
+      updateAxes,
       addGroups,
       clearGroups,
       openGroupFiles,
@@ -351,15 +372,17 @@ export function HistoryProvider({ children }: IChildrenProps) {
     <FilesContext.Provider value={filesContextValue}>
       <SheetsContext.Provider value={sheetsContextValue}>
         <PlotsContext.Provider value={plotsContextValue}>
-          <GroupsContext.Provider value={groupsContextValue}>
-            <GenesetsContext.Provider value={genesetsContextValue}>
-              <SelectionsContext.Provider value={selectionsContextValue}>
-                <HistoryContext.Provider value={historyContextValue}>
-                  {children}
-                </HistoryContext.Provider>
-              </SelectionsContext.Provider>
-            </GenesetsContext.Provider>
-          </GroupsContext.Provider>
+          <AxesContext.Provider value={axesContextValue}>
+            <GroupsContext.Provider value={groupsContextValue}>
+              <GenesetsContext.Provider value={genesetsContextValue}>
+                <SelectionsContext.Provider value={selectionsContextValue}>
+                  <HistoryContext.Provider value={historyContextValue}>
+                    {children}
+                  </HistoryContext.Provider>
+                </SelectionsContext.Provider>
+              </GenesetsContext.Provider>
+            </GroupsContext.Provider>
+          </AxesContext.Provider>
         </PlotsContext.Provider>
       </SheetsContext.Provider>
     </FilesContext.Provider>

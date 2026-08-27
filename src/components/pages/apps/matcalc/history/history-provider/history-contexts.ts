@@ -1,5 +1,6 @@
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 
+import { AxisRecord } from '@/components/plot/axes/axis'
 import { IGeneSet } from '@/lib/gsea/geneset'
 import { createContext, useContext } from 'react'
 import {
@@ -51,6 +52,22 @@ export function useCurrentPlots(): IPlotsContext {
   const ctx = useContext(PlotsContext)
   if (!ctx) {
     throw new Error('useCurrentPlots must be used within a HistoryProvider')
+  }
+
+  return ctx
+}
+
+export type IAxesContext = {
+  // Replace 'any' with the appropriate type for your axes
+  axes: AxisRecord // Replace 'any' with the appropriate type for your axes
+}
+
+export const AxesContext = createContext<IAxesContext | undefined>(undefined)
+
+export function useCurrentAxes(): IAxesContext {
+  const ctx = useContext(AxesContext)
+  if (!ctx) {
+    throw new Error('useCurrentAxes must be used within a HistoryProvider')
   }
 
   return ctx

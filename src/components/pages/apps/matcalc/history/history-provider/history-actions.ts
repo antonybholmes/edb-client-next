@@ -1,4 +1,5 @@
 import { HistoryAction } from './actions/action-types'
+import { handleUpdateAxes } from './actions/axes-actions'
 import { handleOpenFile, handleRemoveFiles } from './actions/file-actions'
 import {
   handleAddGenesets,
@@ -50,8 +51,6 @@ export function historyReducer(
       return handleOpenFile(state, action)
     case 'addSheets':
       return handleAddSheets(state, action)
-    case 'addPlots':
-      return handleAddPlots(state, action)
     case 'remove':
       return handleRemove(state, action)
     case 'removeFiles':
@@ -60,8 +59,13 @@ export function historyReducer(
     //  return handleReorderSheets(state, action)
     //case 'reorderPlots':
     //  return handleReorderPlots(state, action)
+    case 'addPlots':
+      return handleAddPlots(state, action)
     case 'updatePlot':
       return handleUpdatePlot(state, action)
+
+    case 'updateAxes':
+      return handleUpdateAxes(state, action)
     case 'addGroups':
       return handleAddGroups(state, action)
     case 'updateGroup':

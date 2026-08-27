@@ -1,15 +1,17 @@
 import { ITextFileOpen } from '@/components/pages/open-files'
+import { AxisRecord } from '@/components/plot/axes/axis'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import type { IGeneSet } from '@/lib/gsea/geneset'
+import type { IAxesOpts } from '../history-types'
 import {
   AppendMode,
   FilePath,
   HistoryPath,
   HistoryPlot,
   IGroupOps,
-  ISheetOps,
+  ISheetOpts,
 } from '../history-types'
 
 export type HistoryAction =
@@ -28,13 +30,15 @@ export type HistoryAction =
       //groupsName: string
       mode: AppendMode
     }
-  | { type: 'addSheets'; sheets: BaseDataFrame[]; opts: ISheetOps }
-  | { type: 'addPlots'; plots: HistoryPlot[]; opts: ISheetOps }
+  | { type: 'addSheets'; sheets: BaseDataFrame[]; opts: ISheetOpts }
+  | { type: 'addPlots'; plots: HistoryPlot[]; opts: ISheetOpts }
   | { type: 'remove'; paths: HistoryPath[] }
   | { type: 'removeFiles'; paths: FilePath[] }
-  | { type: 'reorderSheets'; sheets: BaseDataFrame[]; opts: ISheetOps }
+  | { type: 'reorderSheets'; sheets: BaseDataFrame[]; opts: ISheetOpts }
   //| { type: 'reorderPlots'; ids: string[]; opts: ISheetOps }
-  | { type: 'updatePlot'; plot: HistoryPlot; opts: ISheetOps }
+  | { type: 'updatePlot'; plot: HistoryPlot; opts: ISheetOpts }
+  | { type: 'addAxes'; axes: AxisRecord; opts: IAxesOpts }
+  | { type: 'updateAxes'; axes: AxisRecord; opts: IAxesOpts }
   | { type: 'addGroups'; groupRows: IClusterGroupRow[]; opts: IGroupOps }
   | { type: 'clearGroups'; opts: IGroupOps }
   | { type: 'updateGroup'; group: IClusterGroup; opts: IGroupOps }

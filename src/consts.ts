@@ -73,6 +73,7 @@ export const TEXT_SIGN_UP = 'Sign Up'
 export const TEXT_EMAIL = 'Email'
 export const TEXT_FONT = 'Font'
 export const TEXT_SORT = 'Sort'
+export const TEXT_DEFAULT = 'Default'
 
 export const TEXT_SIGN_IN = 'Sign In'
 export const TEXT_SIGNED_IN = 'Signed In'
@@ -98,6 +99,8 @@ export const TEXT_SAVE_TABLE = 'Save Table'
 export const TEXT_REMOVE_FROM_CART = 'Remove from Cart'
 export const TEXT_SORT_BY = 'Sort By'
 export const TEXT_PLOT = 'Plot'
+
+export const ID_DEFAULT = 'default'
 
 export const SVG_CRISP_EDGES = 'crispEdges'
 

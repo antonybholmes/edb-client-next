@@ -1,3 +1,5 @@
+import { TEXT_DEFAULT } from '@/consts'
+import { IDBEntity } from '@/interfaces/db-entity'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
@@ -10,9 +12,9 @@ export type TickLabel = string | number
 
 const MINOR_TICK_DIVISIONS = 5
 
-export type TickItem = {
+export interface ITickItem {
   v: number
-  label: string
+  label?: string | undefined
 }
 
 interface IMajorMinorTickParams {
@@ -20,31 +22,87 @@ interface IMajorMinorTickParams {
   minor: DeepPartial<IAxisTickProps>
 }
 
+export type WhichTick = 'major' | 'minor'
+
 interface ITickProps extends DeepPartial<IAxisTickProps> {
-  which: 'major' | 'minor' | 'both'
+  which: WhichTick | 'both'
+}
+
+interface ITicks {
+  major: { numTicks: number; items?: ITickItem[] }
+  minor: { divisions: number; items?: ITickItem[] }
+}
+
+export interface IAxisConfig {
+  title: string
+  clip: boolean
+  domain: ILim
+  range: ILim
+  ticks: ITicks
+}
+
+export const DEFAULT_AXIS_CONFIG: IAxisConfig = Object.freeze({
+  title: '',
+  clip: true,
+  domain: [0, 100] as ILim,
+  range: [0, 500] as ILim,
+  ticks: {
+    major: { numTicks: 5, items: undefined },
+    minor: { divisions: MINOR_TICK_DIVISIONS, items: undefined },
+  },
+})
+
+export interface IAxisCollection extends IDBEntity {
+  x?: IAxisConfig
+  y?: IAxisConfig
+  z?: IAxisConfig
+  colorbar?: IAxisConfig
+}
+
+export type AxisRecord = Record<string, IAxisConfig>
+
+export const DEFAULT_AXIS_CONFIG_COLLECTION_ID =
+  '01a044ae-c19a-75dd-a8b0-090308912c17'
+
+export const DEFAULT_AXIS_COLLECTION: IAxisCollection = Object.freeze({
+  id: DEFAULT_AXIS_CONFIG_COLLECTION_ID,
+  name: TEXT_DEFAULT,
+})
+
+export type AxesCollection = Record<string, IAxisCollection>
+
+export interface IAxesCollection extends IDBEntity {
+  axes: Record<string, IAxisCollection>
+}
+
+export const DEFAULT_AXES_COLLECTION_ID = '01a044b2-fb5b-75bd-ac38-d2291aed3ff6'
+
+export const DEFAULT_AXES_COLLECTION: IAxesCollection = Object.freeze({
+  id: DEFAULT_AXES_COLLECTION_ID,
+  name: TEXT_DEFAULT,
+  axes: {},
+})
+
+export function createNewAxisConfig(
+  axis: DeepPartial<IAxisConfig>
+): IAxisConfig {
+  return deepmerge(DEFAULT_AXIS_CONFIG, axis) as IAxisConfig
 }
 
 export class Axis {
   //protected _range: ILim = [0, 500]
 
   // clip values to be within bounds of axis
-  protected _clip: boolean = true
-  protected _title: string = ''
+  protected _clip: boolean
+  protected _title: string
 
-  protected _ticks: TickItem[] | undefined = undefined
-  protected _minorTicks: TickItem[] | undefined = undefined
+  protected _ticks: ITicks
 
   // we use d3 under the hood to do the scaling
-  protected _scale: ScaleLinear<number, number> = d3
-    .scaleLinear()
-    .domain([0, 100])
-    .range([0, 500])
+  protected _scale: ScaleLinear<number, number>
 
-  protected _format: ((d: d3.NumberValue) => string) | null = null
-  protected _userFormat: ((d: d3.NumberValue) => string) | null = null
-
-  protected _numTicks: number = 5
-  protected _minorTickDivisions = MINOR_TICK_DIVISIONS
+  protected _format: (d: d3.NumberValue) => string
+  protected _userFormat: (d: d3.NumberValue) => string
 
   protected _params: DeepPartial<IAxisDisplayProps> = {
     //show: true,
@@ -54,6 +112,14 @@ export class Axis {
       major: {},
       minor: {},
     },
+  }
+
+  constructor(axis: IAxisConfig = DEFAULT_AXIS_CONFIG) {
+    this._clip = axis.clip
+    this._title = axis.title
+    this._ticks = structuredClone(axis.ticks)
+
+    this._scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
   }
 
   private _makeFormatter(n: number): (d: d3.NumberValue) => string {
@@ -66,9 +132,9 @@ export class Axis {
   }
 
   private _makeTicks(
-    ticks: number[] | string[] | TickItem[],
+    ticks: number[] | ITickItem[],
     addLabels: boolean = true
-  ): TickItem[] {
+  ): ITickItem[] {
     if (ticks.length === 0) {
       return []
     }
@@ -76,25 +142,12 @@ export class Axis {
     if (ticks.every((item) => typeof item === 'number')) {
       const format = this._makeFormatter(ticks.length) ?? this._format
 
-      // if ticks are just numbers, convert to TickItem
       return ticks.map((v) => ({
         v,
-        label: addLabels ? format(v) : '',
+        label: addLabels ? format(v) : undefined,
       }))
-    } else if (ticks.every((item) => typeof item === 'string')) {
-      // if ticks are just strings, convert to TickItem
-      return ticks.map((v) => ({
-        v: parseFloat(v),
-        label: addLabels ? v : '',
-      }))
-    } else if (
-      ticks.every(
-        (item) => typeof item === 'object' && 'v' in item && 'label' in item
-      )
-    ) {
-      return ticks as TickItem[]
     } else {
-      return []
+      return ticks
     }
   }
 
@@ -111,18 +164,10 @@ export class Axis {
     target._clip = this._clip
     target._title = this._title
     target._format = this._format
-    target._numTicks = this._numTicks
-    target._minorTickDivisions = this._minorTickDivisions
+
     target._userFormat = this._userFormat
     target._params = structuredClone(this._params)
-
-    if (this._ticks) {
-      target._ticks = [...this._ticks]
-    }
-
-    if (this._minorTicks) {
-      target._minorTicks = [...this._minorTicks]
-    }
+    target._ticks = structuredClone(this._ticks)
 
     return target
   }
@@ -154,11 +199,12 @@ export class Axis {
 
   setNumTicks(numTicks: number): Axis {
     const a = this.clone()
-    a._numTicks = numTicks
-    a._ticks = undefined
-    a._minorTicks = undefined
 
-    console.log('bb', a)
+    a._ticks = {
+      major: { numTicks, items: undefined },
+      minor: { divisions: MINOR_TICK_DIVISIONS, items: undefined },
+    }
+
     return a
   }
 
@@ -198,8 +244,10 @@ export class Axis {
    * @private
    */
   private _invalidateCache() {
-    this._ticks = undefined
-    this._minorTicks = undefined
+    this._ticks = {
+      major: { ...this._ticks.major, items: undefined },
+      minor: { ...this._ticks.minor, items: undefined },
+    }
     this._format = undefined
   }
 
@@ -259,24 +307,57 @@ export class Axis {
     return a
   }
 
-  setTicks(ticks: number[] | string[] | TickItem[]): Axis {
+  setTicks(
+    ticks: number[] | ITickItem[],
+    opts: { which?: WhichTick } = {}
+  ): Axis {
+    const { which = 'major' } = opts
+
     const a = this.clone()
 
-    a._ticks = a._makeTicks(ticks)
-    a._minorTicks = undefined
+    if (which === 'major') {
+      a._ticks = {
+        major: { ...a._ticks.major, items: a._makeTicks(ticks, true) },
+        minor: undefined,
+      }
+    } else {
+      a._ticks.minor = { ...a._ticks.minor, items: a._makeTicks(ticks, false) }
+
+      // turn on minor ticks if they are set
+      // we can directly set in partial object
+      // as show key will be created if it does not exist
+      a._params.ticks.minor.show = a._ticks.minor.items?.length > 0
+    }
 
     return a
   }
 
-  setMinorTicks(ticks: number[] | string[] | TickItem[]): Axis {
+  setTickLabels(labels: string[], opts: { which?: WhichTick } = {}): Axis {
+    const { which = 'major' } = opts
+
     const a = this.clone()
 
-    a._minorTicks = a._makeTicks(ticks, false)
-
-    // turn on minor ticks if they are set
-    // we can directly set in partial object
-    // as show key will be created if it does not exist
-    a._params.ticks.minor.show = a._minorTicks.length > 0
+    if (which === 'major') {
+      if (labels.length === a._ticks.major?.items?.length) {
+        a._ticks.major = {
+          ...a._ticks.major,
+          items: a._ticks.major.items.map((tick, i) => ({
+            ...tick,
+            label: labels[i],
+          })),
+        }
+      }
+    } else {
+      if (labels.length === a._ticks.minor?.items?.length) {
+        a._ticks.minor = {
+          ...a._ticks.minor,
+          items: a._ticks.minor.items.map((tick, i) => ({
+            ...tick,
+            label: labels[i],
+          })),
+        }
+      }
+    }
 
     return a
   }
@@ -284,8 +365,7 @@ export class Axis {
   setMinorTickDivisions(divisions: number): Axis {
     const a = this.clone()
 
-    a._minorTickDivisions = divisions
-    a._minorTicks = undefined
+    a._ticks.minor = { divisions, items: undefined }
 
     return a
   }
@@ -314,7 +394,7 @@ export class Axis {
     return this._scale.range() as ILim
   }
 
-  private generateTicks(n: number): TickItem[] {
+  private generateTicks(n: number): ITickItem[] {
     const format = this._makeFormatter(n) ?? this._format
 
     const ticks = this._scale.ticks(n).map((v) => ({
@@ -325,24 +405,24 @@ export class Axis {
     return ticks
   }
 
-  get ticks(): TickItem[] {
-    if (!this._ticks) {
+  get ticks(): ITickItem[] {
+    if (!this._ticks.major?.items) {
       // if ticks are not set, generate them from the scale
-      this._ticks = this.generateTicks(this._numTicks)
+      this._ticks.major.items = this.generateTicks(this._ticks.major.numTicks)
     }
 
-    return this._ticks || []
+    return this._ticks.major?.items || []
   }
 
-  get minorTicks(): TickItem[] {
-    if (!this._minorTicks) {
-      this._minorTicks = generateMinorTicks(
+  get minorTicks(): ITickItem[] {
+    if (!this._ticks.minor?.items) {
+      this._ticks.minor.items = generateMinorTicks(
         this.ticks,
-        this._minorTickDivisions
+        this._ticks.minor.divisions
       )
     }
 
-    return this._minorTicks || []
+    return this._ticks.minor?.items || []
   }
 
   /**
@@ -469,9 +549,9 @@ export function autoLim(lim: ILim, interval?: number): ILim {
 }
 
 function generateMinorTicks(
-  ticks: TickItem[],
+  ticks: ITickItem[],
   minorTickDivisions: number
-): TickItem[] {
+): ITickItem[] {
   return ticks.slice(0, -1).flatMap((tick, i) => {
     const next = ticks[i + 1]!.v
     const step = (next - tick.v) / (minorTickDivisions - 1)
