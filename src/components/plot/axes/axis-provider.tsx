@@ -3,9 +3,9 @@ import { ILim } from '@/lib/math/math'
 import { createContext, useState } from 'react'
 
 export interface IAxisContext {
-  lim: ILim
-  range: ILim
-  domain: ILim
+  lim: ILim | undefined
+  range: ILim | undefined
+  domain: ILim | undefined
   setLim: (lim: ILim) => void
   setRange: (range: ILim) => void
   setDomain: (domain: ILim) => void
@@ -23,9 +23,9 @@ export const AxisContext = createContext<IAxisContext>({
 interface IProps extends IChildrenProps {}
 
 export function AxisProvider({ children }: IProps) {
-  const [lim, setLim] = useState<ILim>([0, 1])
-  const [range, setRange] = useState<ILim>([0, 100])
-  const [domain, setDomain] = useState<ILim>([0, 500])
+  const [lim, setLim] = useState<ILim | undefined>(undefined)
+  const [range, setRange] = useState<ILim | undefined>(undefined)
+  const [domain, setDomain] = useState<ILim | undefined>(undefined)
 
   return (
     <AxisContext.Provider

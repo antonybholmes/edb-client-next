@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refactored history to split actions into separate files for managability.
 - Added axis provider to make sharing user defined axis properties easier.
 - Updated some Axis UI labels.
 - Icon refinements. Global settings dialog now simplified to directly add apps rather than flakey registration system.

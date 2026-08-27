@@ -13,7 +13,7 @@ import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 
 import { IExtGseaDisplayOptions } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
-import { IUndoState } from '../history-manager'
+import { IUndoState } from './history-manager'
 import { IBasePlot } from './plot'
 
 export type NodeType = 'app' | 'branch' | 'sheet' | 'plot'

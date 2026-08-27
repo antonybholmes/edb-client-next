@@ -3,7 +3,7 @@
 import { IDBEntity } from '@/interfaces/db-entity'
 import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
-import { IHistoryEntry } from '../history-manager'
+import { IHistoryEntry } from './history-manager'
 import { IHistoryData, IHistoryState } from './history-types'
 
 // The history store is initialized with a default file and
