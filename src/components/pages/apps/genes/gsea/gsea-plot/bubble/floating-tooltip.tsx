@@ -1,5 +1,6 @@
 import {
   createContext,
+  ReactNode,
   useContext,
   useLayoutEffect,
   useMemo,
@@ -77,7 +78,7 @@ type TooltipContextValue = {
 
 const TooltipContext = createContext<TooltipContextValue | null>(null)
 
-const useTooltip = () => {
+export const useTooltip = () => {
   const context = useContext(TooltipContext)
   if (!context) {
     throw new Error('useTooltip must be used within a TooltipProvider')
@@ -85,7 +86,7 @@ const useTooltip = () => {
   return context
 }
 
-export function TooltipProvider({ children }: { children: React.ReactNode }) {
+export function TooltipProvider({ children }: { children: ReactNode }) {
   const [tooltip, setTooltip] = useState<TooltipState>(null)
 
   const value = useMemo(

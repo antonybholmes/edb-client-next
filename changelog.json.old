@@ -2601,6 +2601,10 @@
         {
           "msg": "Gsea bubble now uses portal for tooltips",
           "date": "2026-08-27T22:40:58.074Z"
+        },
+        {
+          "msg": "Added tooltip context for standardizing tooltips",
+          "date": "2026-08-27T22:46:15.890Z"
         }
       ]
     },
