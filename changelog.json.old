@@ -2613,6 +2613,10 @@
         {
           "msg": "Refined oncoplot tooltips",
           "date": "2026-08-28T16:20:46.102Z"
+        },
+        {
+          "msg": "Switch to using checkboxes for more settings to reduce clutter from switches",
+          "date": "2026-08-28T18:03:35.000Z"
         }
       ]
     },
