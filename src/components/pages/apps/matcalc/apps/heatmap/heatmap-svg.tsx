@@ -154,10 +154,11 @@ export function HeatMapSvg() {
       pos: screen,
       content: (
         <>
-          <p className="font-semibold">{`${dfMain.colName(
-            cell.col
-          )} (${cell.row + 1}, ${cell.col + 1})`}</p>
-          <p>{cellStr(dfMain.get(cell.row, cell.col))}</p>
+          <span className="font-semibold">{`${dfMain.rowName(
+            cell.row
+          )}, ${dfMain.colName(cell.col)}`}</span>
+          <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
+          <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
         </>
       ),
     })

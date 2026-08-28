@@ -1,3 +1,4 @@
+import { BaseCol } from '@/components/layout/base-col'
 import { IPos } from '@/interfaces/pos'
 import {
   createContext,
@@ -71,7 +72,7 @@ export function TooltipProvider({ children }: { children: ReactNode }) {
 
       {tooltip &&
         createPortal(
-          <div
+          <BaseCol
             className="fixed z-(--z-tooltip) rounded-theme bg-black/60 p-3 text-xs text-white"
             style={{
               left: tooltip.pos.x,
@@ -79,7 +80,7 @@ export function TooltipProvider({ children }: { children: ReactNode }) {
             }}
           >
             {tooltip.content}
-          </div>,
+          </BaseCol>,
           document.body
         )}
     </TooltipContext.Provider>
