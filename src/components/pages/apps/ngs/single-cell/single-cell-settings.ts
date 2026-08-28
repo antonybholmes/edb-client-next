@@ -1,4 +1,4 @@
-import { DEFAULT_COLORBAR_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
+import { DEFAULT_COLORBAR_SIZE } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 
 import {
   DEFAULT_COLOR_PROPS,

@@ -1,7 +1,7 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { LocationBinMap } from '@/lib/genomic/genomic'
 
-import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import {
   DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_STROKE_PROPS,

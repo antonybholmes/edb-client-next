@@ -19,7 +19,7 @@ import {
   pearsond as pearsonDist,
 } from '@/lib/math/distance'
 
-import { DEFAULT_HEATMAP_PROPS } from '@/components/plot/heatmap/heatmap-svg-props'
+import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { HelpButton } from '@/help/help-button'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'

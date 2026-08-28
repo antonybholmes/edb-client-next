@@ -6,8 +6,8 @@ import { useState } from 'react'
 
 import {
   DEFAULT_HEATMAP_PROPS,
-  type IHeatMapDisplayOptions,
-} from '@/components/plot/heatmap/heatmap-svg-props'
+  type IHeatMapSettings,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
 
@@ -38,11 +38,11 @@ export function HeatmapPropsPanel() {
 
   const cf = plot?.dataframes['main'] as IClusterFrame
 
-  const displayProps: IHeatMapDisplayOptions = plot.props
+  const displayProps: IHeatMapSettings = plot.props
   const [openTabs, setOpenTabs] = useState<string[]>(['plot'])
 
   function reset() {
-    const props: IHeatMapDisplayOptions = {
+    const props: IHeatMapSettings = {
       ...DEFAULT_HEATMAP_PROPS,
       mode: displayProps.mode,
       dot: displayProps.dot,

@@ -32,7 +32,7 @@ export function ExtGseaSvg() {
   const gseaRes1: IGseaResult = plot.gseaRes1
   const gseaRes2: IGseaResult = plot.gseaRes2
 
-  const svg = useMemo(() => {
+  const { svg, pageSize } = useMemo(() => {
     // size of plot with padding
     const plotSize: ILim = [
       displayProps.axes.x.length +
@@ -388,14 +388,8 @@ export function ExtGseaSvg() {
     //   )
     // })
 
-    return (
-      <SvgBase
-        width={pageSize[0]!}
-        height={pageSize[1]!}
-        scale={displayProps.page.scale}
-        //shapeRendering={SVG_CRISP_EDGES}
-        className="absolute"
-      >
+    const svg = (
+      <>
         <SvgMargin margin={displayProps.plot!.margin}>
           <g>
             {leadingEdge1Svg && leadingEdge1Svg}
@@ -464,49 +458,18 @@ export function ExtGseaSvg() {
 
           {rankingSvg && rankingSvg}
         </SvgMargin>
-      </SvgBase>
+      </>
     )
+    return { svg, pageSize }
   }, [displayProps])
 
   return (
-    <>
+    <SvgBase
+      width={pageSize[0]!}
+      height={pageSize[1]!}
+      scale={displayProps.page.scale}
+    >
       {svg}
-
-      {/* {toolTipInfo && (
-          <>
-            <div
-              ref={tooltipRef}
-              className="pointer-events-none absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
-              style={{
-                left: toolTipInfo.pos.x + TOOLTIP_OFFSET,
-                top: toolTipInfo.pos.y + TOOLTIP_OFFSET,
-              }}
-            >
-              <p className="font-semibold">
-                {`${sampleMap.get(toolTipInfo.mutation.sample)!.name} (${sampleMap.get(toolTipInfo.mutation.sample)!.coo}, ${sampleMap.get(toolTipInfo.mutation.sample)!.lymphgen})`}
-              </p>
-              <p>Type: {toolTipInfo.mutation.type.split(":")[1]}</p>
-              <p>
-                {`Loc: ${toolTipInfo.mutation.chr}:${toolTipInfo.mutation.start.toLocaleString()}-${toolTipInfo.mutation.end.toLocaleString()}`}
-              </p>
-              <p>
-                {`ref: ${toolTipInfo.mutation.ref}, tumor: ${toolTipInfo.mutation.tum.replace("^", "")}`}
-              </p>
-            </div>
-
-            <span
-              ref={highlightRef}
-              className="pointer-events-none absolute z-40 border-black"
-              style={{
-                top: `${toolTipInfo.pos.y - 1}px`,
-                left: `${toolTipInfo.pos.x - 1}px`,
-                width: `${BASE_W + 1}px`,
-                height: `${BASE_H + 1}px`,
-                borderWidth: `1px`,
-              }}
-            />
-          </>
-        )} */}
-    </>
+    </SvgBase>
   )
 }

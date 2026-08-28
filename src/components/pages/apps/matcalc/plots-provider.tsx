@@ -2,7 +2,7 @@ import type { IFieldMap } from '@/interfaces/field-map'
 
 import { createContext, type Dispatch } from 'react'
 
-import type { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { deepFreeze } from '@/lib/utils'
 import type { IBoxPlotDisplayOptions } from './apps/boxplot/boxplot-plot-svg'
 
@@ -11,7 +11,7 @@ import type { IVolcanoDisplayOptions } from './apps/volcano/volcano-plot-svg'
 import { HistoryPlot } from './history/history-provider/history-types'
 
 export type IPlotDisplayOptions =
-  | IHeatMapDisplayOptions
+  | IHeatMapSettings
   | IVolcanoDisplayOptions
   | IExtGseaDisplayOptions
   | IBoxPlotDisplayOptions

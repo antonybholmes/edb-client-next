@@ -1,5 +1,5 @@
+import { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { ITextFileOpen } from '@/components/pages/open-files'
-import { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
@@ -34,7 +34,7 @@ export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
 export interface HeatMapPlot extends IBasePlot {
   style: 'heatmap' | 'dot'
   dataframes: Record<string, DataFrameType>
-  props: IHeatMapDisplayOptions
+  props: IHeatMapSettings
 }
 
 export interface IVolcano {

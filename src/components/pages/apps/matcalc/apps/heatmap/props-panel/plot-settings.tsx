@@ -1,6 +1,6 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import type { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
 import {
   AccordionContent,
   AccordionItem,
@@ -19,7 +19,7 @@ import { HeatMapPlot } from '../../../history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export interface PlotSettingsPanelProps {
-  displayProps: IHeatMapDisplayOptions
+  displayProps: IHeatMapSettings
   plot: HeatMapPlot
   plotAddr: string
   updatePlot: (plot: any, options: { file: string }) => void

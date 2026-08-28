@@ -318,7 +318,7 @@ export class Axis {
     if (which === 'major') {
       a._ticks = {
         major: { ...a._ticks.major, items: a._makeTicks(ticks, true) },
-        minor: undefined,
+        minor: { ...a._ticks.minor, items: undefined },
       }
     } else {
       a._ticks.minor = { ...a._ticks.minor, items: a._makeTicks(ticks, false) }

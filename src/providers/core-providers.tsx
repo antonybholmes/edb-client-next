@@ -12,6 +12,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { QCP } from '@/qcp'
 import { FooterProvider } from './footer-provider'
 import { SVGProvider } from './svg-provider'
+import { TooltipProvider } from './tooltip-provider'
 
 //const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
@@ -42,21 +43,23 @@ export function CoreProviders({ children }: IChildrenProps) {
 
       {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
       <AppInfoProvider>
-        <HistoryProvider>
-          <TabProvider>
-            <SVGProvider>
-              <FooterProvider>
-                <ToastProvider>
-                  <StackedToasts />
-                  {children}
-                </ToastProvider>
-              </FooterProvider>
-            </SVGProvider>
-          </TabProvider>
-          {/* </ZoomProvider> */}
+        <TooltipProvider>
+          <HistoryProvider>
+            <TabProvider>
+              <SVGProvider>
+                <FooterProvider>
+                  <ToastProvider>
+                    <StackedToasts />
+                    {children}
+                  </ToastProvider>
+                </FooterProvider>
+              </SVGProvider>
+            </TabProvider>
+            {/* </ZoomProvider> */}
 
-          {/* </SelectionRangeProvider> */}
-        </HistoryProvider>
+            {/* </SelectionRangeProvider> */}
+          </HistoryProvider>
+        </TooltipProvider>
       </AppInfoProvider>
       {/* </ClerkProvider> */}
       {/* </EdbAuthProvider> */}

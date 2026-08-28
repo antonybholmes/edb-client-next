@@ -3,14 +3,15 @@ import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
-import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
 import { useSVG } from '@/providers/svg-provider'
-import { useRef, useState, type ReactElement, type ReactNode } from 'react'
+import { useTooltip } from '@/providers/tooltip-provider'
+import { useRef, type ReactElement, type ReactNode } from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
@@ -19,7 +20,6 @@ import {
   NO_ALTERATIONS_TEXT,
   NO_ALTERATION_COLOR,
   OTHER_MUTATION,
-  getEventLabel,
   mutationColorMapFromMutations,
   type IOncoplotDisplayProps,
   type OncoplotFrame,
@@ -614,18 +614,20 @@ export function OncoplotSvg() {
     }
 
     if (r === -1 || c === -1) {
-      setToolTipInfo(null)
+      hideTooltip()
     } else {
       x = (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale
       y = (top + r * (blockSize.h + spacing.y)) * displayProps.scale
-      setToolTipInfo({
-        ...toolTipInfo,
-        pos: {
-          x: x + 5,
-          y: y + 5,
-        },
-        cell: { x, y, row: r, col: c },
-      })
+
+      // <p className="font-semibold">{stats!.sample}</p>
+      //       <p>{stats!.feature}</p>
+      //       <p className="truncate">
+      //         {/* Let's show all mutations in the label */}
+      //         {getEventLabel(stats!, mutationsInUse, 'single')}
+      //       </p>
+      //       <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
+      //         toolTipInfo.cell.col + 1
+      //       }`}</p>
     }
   }
 
@@ -647,9 +649,9 @@ export function OncoplotSvg() {
     y: spacing.y * displayProps.scale,
   }
 
-  const tooltipRef = useRef<HTMLDivElement>(null)
+  const { showTooltip, hideTooltip } = useTooltip()
+
   const highlightRef = useRef<HTMLSpanElement>(null)
-  const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
   //const [highlightCol, setHighlightCol] = useState(NO_SELECTION)
   //const [highlightRow, setHighlightRow] = useState(-1)
@@ -713,7 +715,8 @@ export function OncoplotSvg() {
     .setDomain([0, maxSampleCount])
     .setLength(displayProps.samples.graphs.height)
     .setTitle(displayProps.samples.graphs.yaxis.label)
-    .setTicks([0, maxSampleCount])
+    .setTicks(range(maxSampleCount + 1))
+    .setTickParams({ which: 'minor', show: false })
 
   const maxGeneCount = Math.round(
     Math.max(...mf.geneStats.map((stats) => stats.sum))
@@ -735,7 +738,13 @@ export function OncoplotSvg() {
 
   //const legend = oncoProps.plotorder.filter(id => allEventsInUse.has(id))
 
-  const svg = (
+  //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
+
+  // const stats = toolTipInfo
+  //   ? mf?.data(toolTipInfo.cell.row, toolTipInfo.cell.col)
+  //   : null
+
+  return (
     <SvgBase
       width={width}
       height={height}
@@ -864,52 +873,5 @@ export function OncoplotSvg() {
         </g>
       )}
     </SvgBase>
-  )
-
-  //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
-
-  const stats = toolTipInfo
-    ? mf?.data(toolTipInfo.cell.row, toolTipInfo.cell.col)
-    : null
-
-  return (
-    <>
-      {svg}
-
-      {toolTipInfo && (
-        <>
-          <div
-            ref={tooltipRef}
-            className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100 w-48 pointer-events-none"
-            style={{
-              left: toolTipInfo.pos.x + scaledBlockSize.w,
-              top: toolTipInfo.pos.y + scaledBlockSize.h,
-            }}
-          >
-            <p className="font-semibold">{stats!.sample}</p>
-            <p>{stats!.feature}</p>
-            <p className="truncate">
-              {/* Let's show all mutations in the label */}
-              {getEventLabel(stats!, mutationsInUse, 'single')}
-            </p>
-            <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
-              toolTipInfo.cell.col + 1
-            }`}</p>
-          </div>
-
-          <span
-            ref={highlightRef}
-            className="absolute z-50 border-black pointer-events-none"
-            style={{
-              top: 10,
-              left: `${toolTipInfo.cell.x - 1}px`,
-              width: `${scaledBlockSize.w + 1}px`,
-              height: (gridHeight + top - 10) * displayProps.scale,
-              borderWidth: `${Math.max(1, displayProps.scale)}px`,
-            }}
-          />
-        </>
-      )}
-    </>
   )
 }

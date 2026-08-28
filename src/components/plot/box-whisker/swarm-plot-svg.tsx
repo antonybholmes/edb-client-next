@@ -119,45 +119,5 @@ export function SwarmPlotSvg({
     )
   }, [data, yax])
 
-  return (
-    <>
-      {svg}
-
-      {/* {toolTipInfo && (
-          <>
-            <div
-              ref={tooltipRef}
-              className="pointer-events-none absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
-              style={{
-                left: toolTipInfo.pos.x + TOOLTIP_OFFSET,
-                top: toolTipInfo.pos.y + TOOLTIP_OFFSET,
-              }}
-            >
-              <p className="font-semibold">
-                {`${sampleMap.get(toolTipInfo.mutation.sample)!.name} (${sampleMap.get(toolTipInfo.mutation.sample)!.coo}, ${sampleMap.get(toolTipInfo.mutation.sample)!.lymphgen})`}
-              </p>
-              <p>Type: {toolTipInfo.mutation.type.split(":")[1]}</p>
-              <p>
-                {`Loc: ${toolTipInfo.mutation.chr}:${toolTipInfo.mutation.start.toLocaleString()}-${toolTipInfo.mutation.end.toLocaleString()}`}
-              </p>
-              <p>
-                {`ref: ${toolTipInfo.mutation.ref}, tumor: ${toolTipInfo.mutation.tum.replace("^", "")}`}
-              </p>
-            </div>
-
-            <span
-              ref={highlightRef}
-              className="pointer-events-none absolute z-40 border-black"
-              style={{
-                top: `${toolTipInfo.pos.y - 1}px`,
-                left: `${toolTipInfo.pos.x - 1}px`,
-                width: `${BASE_W + 1}px`,
-                height: `${BASE_H + 1}px`,
-                borderWidth: `1px`,
-              }}
-            />
-          </>
-        )} */}
-    </>
-  )
+  return svg
 }

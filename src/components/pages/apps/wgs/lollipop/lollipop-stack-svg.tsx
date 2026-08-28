@@ -5,7 +5,7 @@ import { type IPos } from '@/interfaces/pos'
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
-import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'

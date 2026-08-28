@@ -12,8 +12,8 @@ importers:
         specifier: ^2.24.1
         version: 2.24.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@auth0/nextjs-auth0':
-        specifier: ^4.27.0
-        version: 4.27.0(next@16.3.0(@babel/core@7.29.7)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^4.28.0
+        version: 4.28.0(next@16.3.0(@babel/core@7.29.7)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@base-ui/react':
         specifier: ^1.7.0
         version: 1.7.0(@types/react@19.2.17)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -120,8 +120,8 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       '@tanstack/react-query':
-        specifier: ^5.102.7
-        version: 5.102.7(react@19.2.8)
+        specifier: ^5.102.8
+        version: 5.102.8(react@19.2.8)
       '@tanstack/react-table':
         specifier: ^9.2.3
         version: 9.2.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -201,8 +201,8 @@ importers:
         specifier: ^1.9.2
         version: 1.9.2
       lucide-react:
-        specifier: ^1.34.0
-        version: 1.34.0(react@19.2.8)
+        specifier: ^1.35.0
+        version: 1.35.0(react@19.2.8)
       nanoid:
         specifier: ^6.0.1
         version: 6.0.1
@@ -304,8 +304,8 @@ importers:
         specifier: ^10.4.1
         version: 10.4.1
       '@testing-library/react':
-        specifier: ^16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^16.3.3
+        version: 16.3.3(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -328,8 +328,8 @@ importers:
         specifier: ^1.4.6
         version: 1.4.6
       '@vitejs/plugin-react':
-        specifier: ^6.1.0
-        version: 6.1.0(vite@8.1.5(@types/node@26.1.1)(jiti@2.7.0))
+        specifier: ^6.1.1
+        version: 6.1.1(vite@8.1.5(@types/node@26.1.1)(jiti@2.7.0))
       autoprefixer:
         specifier: ^10.5.4
         version: 10.5.4(postcss@8.5.23)
@@ -390,8 +390,8 @@ packages:
   '@auth0/auth0-spa-js@2.24.1':
     resolution: {integrity: sha512-iS18fBlWWxQ/FPtWgWzYYEImsNRumJG2cZ08xV0HsEmWtTBv+54A+fnyFx9eiNBP7cLp0emwDDjgeG+hQEbVBA==}
 
-  '@auth0/nextjs-auth0@4.27.0':
-    resolution: {integrity: sha512-QS3fxhRa/dspkUMDdzuZwCdBnN2pHYoBqNlibKFwlRhyUnh2eqGtKXf01TTD38cLXTxg/Cx6+nJhjxBjiVv5Yw==}
+  '@auth0/nextjs-auth0@4.28.0':
+    resolution: {integrity: sha512-bxEdFBWYUMeJO5fkmaR3TKNpx2jWAlYeKXlrxv20GnzzQCP/DuZ2twfgDrUrzGAsOspNtUExcKtObPI67VtGVw==}
     peerDependencies:
       next: ^14.2.35 || ~15.0.7 || ~15.1.11 || ~15.2.8 || ~15.3.8 || ~15.4.10 || ~15.5.9 || ^16.0.10
       react: ^18.0.0 || ~19.0.1 ||  ~19.1.2 || ^19.2.1
@@ -2085,11 +2085,11 @@ packages:
   '@tanstack/query-core@5.102.2':
     resolution: {integrity: sha512-zQ5794PXBlV5Wl7N23SR1/Ss+wPE/h2Ye4XlKpm3omN8i8b/Fd4DAdqpLS2AXj5M/RMObt3k5qy3E7kzt/AvBA==}
 
-  '@tanstack/query-core@5.102.7':
-    resolution: {integrity: sha512-4TH8KQrCLoNs9Zvl1LW1iaZ9cZx3dGTgfZ1BnLrcRxMNnX/toe/dGbfvF/DkvbzRyfLfpMKZkembz3o0rnugtw==}
+  '@tanstack/query-core@5.102.8':
+    resolution: {integrity: sha512-ZNjkJ33CqvPNec/6lZBnHqLc3EVGPZ9ySLhYahU9TcuRFdmwXewuj0c4hwSWcGHqEUwcSrKeZ+oGcvPBqXcQcg==}
 
-  '@tanstack/react-query@5.102.7':
-    resolution: {integrity: sha512-bbd8T4jDIj9aPbNn11SsjNH8apKY4zspkrw63JRsNDXjpW5SRF7X0ipi7yrGd8DCs8QhYfhQJKqEj1YLru1DbQ==}
+  '@tanstack/react-query@5.102.8':
+    resolution: {integrity: sha512-TYBea4OuXWD7MhaSHq069TWbFe7rcwWN6kzT7JF0OKi1K6c1gTv2IzD6A6ExJsCMozdkqBWeuIUZmu4KQg0O5A==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -2125,8 +2125,8 @@ packages:
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
     engines: {node: '>=18'}
 
-  '@testing-library/react@16.3.2':
-    resolution: {integrity: sha512-XU5/SytQM+ykqMnAnvB2umaJNIOsLF3PVv//1Ew4CTcpz0/BRyy/af40qqrt7SjKpDdT1saBMc42CUok5gaw+g==}
+  '@testing-library/react@16.3.3':
+    resolution: {integrity: sha512-Uo193NgQbPMz6lrrhtRQQFcMC6Re/ELLFbbuVL30WDlZxlpZf9/lMHTAVxPRLw1q1iu9OJmR1c2BLiENRstdBg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@testing-library/dom': ^10.0.0
@@ -2612,8 +2612,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@vitejs/plugin-react@6.1.0':
-    resolution: {integrity: sha512-qd2BzUBehkov86WFhg0JkEFEYyCLG9uPCe6qWTY/kRlss9OvJrOF2UbIWT7p+8IzZHkEu0DNGHc4HSv+JdDLsw==}
+  '@vitejs/plugin-react@6.1.1':
+    resolution: {integrity: sha512-yxLaQV9gkhS8ezJqCM6+ndU7mDY6gqAg75NQ+0IjwEI8IYOmQCgkRwHKVSfWXW076DsqMo0Dk+0FK1U+M5RgFw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       '@rolldown/plugin-babel': ^0.1.7 || ^0.2.0
@@ -4102,8 +4102,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@1.34.0:
-    resolution: {integrity: sha512-vnjGJNI7Htk5+oWW8gXGuaLgwgAb0T6/iZbBrp9JCfRFwdNWZ0YTm3eyxjOLgwN6r8iyAf3UA70zNmBRBNv7yg==}
+  lucide-react@1.35.0:
+    resolution: {integrity: sha512-yXCCWxGFYT6bLIPYC4SY6fPQPRs/d797rRIue+J9XP2Td6vQvD53gaQRBCnIVT1kTQRHtAtxlfOQNWAuIF8ELg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -5418,7 +5418,7 @@ snapshots:
       dpop: 2.1.1
       es-cookie: 1.3.2
 
-  '@auth0/nextjs-auth0@4.27.0(next@16.3.0(@babel/core@7.29.7)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@auth0/nextjs-auth0@4.28.0(next@16.3.0(@babel/core@7.29.7)(@types/node@26.1.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
@@ -6985,11 +6985,11 @@ snapshots:
 
   '@tanstack/query-core@5.102.2': {}
 
-  '@tanstack/query-core@5.102.7': {}
+  '@tanstack/query-core@5.102.8': {}
 
-  '@tanstack/react-query@5.102.7(react@19.2.8)':
+  '@tanstack/react-query@5.102.8(react@19.2.8)':
     dependencies:
-      '@tanstack/query-core': 5.102.7
+      '@tanstack/query-core': 5.102.8
       react: 19.2.8
 
   '@tanstack/react-store@0.11.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
@@ -7032,7 +7032,7 @@ snapshots:
       picocolors: 1.1.1
       pretty-format: 27.5.1
 
-  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@testing-library/react@16.3.3(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@babel/runtime': 7.29.7
       '@testing-library/dom': 10.4.1
@@ -7456,7 +7456,7 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@vitejs/plugin-react@6.1.0(vite@8.1.5(@types/node@26.1.1)(jiti@2.7.0))':
+  '@vitejs/plugin-react@6.1.1(vite@8.1.5(@types/node@26.1.1)(jiti@2.7.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.1.5(@types/node@26.1.1)(jiti@2.7.0)
@@ -9148,7 +9148,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@1.34.0(react@19.2.8):
+  lucide-react@1.35.0(react@19.2.8):
     dependencies:
       react: 19.2.8
 

@@ -6,8 +6,8 @@ import { formatChr } from '@/lib/genomic/dna'
 import { locStr } from '@/lib/genomic/genomic'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
-import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useTooltip } from '@/providers/tooltip-provider'
+import { Fragment, useMemo } from 'react'
 import {
   useDatasets,
   type IVariantDataset,
@@ -43,9 +43,7 @@ export function PileupPlotSvg() {
   const { settings } = useVariantSettings()
   let { variants: results, dna } = useVariants()
 
-  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
+  const { showTooltip, hideTooltip } = useTooltip()
 
   const { ref } = useSVG()
 
@@ -140,37 +138,34 @@ export function PileupPlotSvg() {
 
   const motifOffset = settings.motifs.show ? 60 : 0
 
-  const handleVariantEnter = useCallback(
-    (v: IVariant, x: number, h: number) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
+  function handleVariantEnter(v: IVariant, x: number, h: number) {
+    const pos = svgPointToScreen(ref.current, {
+      x: MARGIN.left + x,
+      y: MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset,
+    })
 
-      if (!ref.current) {
-        return
-      }
-
-      const pos = svgPointToScreen(ref.current, {
-        x: MARGIN.left + x,
-        y: MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset,
-      })
-
-      if (!pos) {
-        return
-      }
-
-      setToolTipInfo({ pos, variant: v })
-    },
-    []
-  )
-
-  const handleVariantLeave = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+    if (!pos) {
+      return
     }
 
-    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
-  }, [])
+    showTooltip({
+      pos,
+      content: (
+        <>
+          <p className="font-semibold">
+            {`${sampleMap[v.sample]!.name} (${sampleMap[v.sample]!.coo}, ${sampleMap[v.sample]!.lymphgenClass})`}
+          </p>
+          <p>Type: {v.type}</p>
+          <p>COO: {sampleMap[v.sample]!.coo}</p>
+          <p>LymphGen: {sampleMap[v.sample]!.lymphgenClass}</p>
+          <p>
+            {`Loc: ${settings.chrPrefix.show ? formatChr(v.chr) : v.chr}:${v.start.toLocaleString()}-${v.end.toLocaleString()}`}
+          </p>
+          <p>{`ref: ${v.ref}, tumor: ${v.tum.replace('^', '')}`}</p>
+        </>
+      ),
+    })
+  }
 
   let xax = new Axis()
     .setDomain([settings.location.start, settings.location.end])
@@ -243,7 +238,7 @@ export function PileupPlotSvg() {
                         onMouseEnter={() => {
                           handleVariantEnter(v, x, h)
                         }}
-                        onMouseLeave={handleVariantLeave}
+                        onMouseLeave={hideTooltip}
                       />
                       <SvgText
                         x={v.type.includes('INS') ? HALF_BASE_W : 0}
@@ -279,68 +274,22 @@ export function PileupPlotSvg() {
     sampleMap,
     datasetMap,
     handleVariantEnter,
-    handleVariantLeave,
+    hideTooltip,
   ])
 
   // matching is case insensitive
 
   return (
-    <>
-      <SvgBase
-        width={width} //* settings.scale}
-        height={height} //* settings.scale}
-        scale={settings.scale}
-        //shapeRendering={SVG_CRISP_EDGES}
-        //className="absolute z-20"
-        onMouseLeave={() => setToolTipInfo(null)}
-      >
-        {svgContent}
-      </SvgBase>
-
-      {settings.tooltips.show &&
-        toolTipInfo &&
-        createPortal(
-          <>
-            <div
-              //ref={tooltipRef}
-              className="pointer-events-none fixed z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
-              style={{
-                left:
-                  toolTipInfo.pos.x +
-                  HALF_BASE_W * settings.scale +
-                  TOOLTIP_OFFSET,
-                top:
-                  toolTipInfo.pos.y + BASE_H * settings.scale + TOOLTIP_OFFSET,
-              }}
-            >
-              <p className="font-semibold">
-                {`${sampleMap[toolTipInfo.variant.sample]!.name} (${sampleMap[toolTipInfo.variant.sample]!.coo}, ${sampleMap[toolTipInfo.variant.sample]!.lymphgenClass})`}
-              </p>
-              <p>Type: {toolTipInfo.variant.type}</p>
-              <p>COO: {sampleMap[toolTipInfo.variant.sample]!.coo}</p>
-              <p>
-                LymphGen: {sampleMap[toolTipInfo.variant.sample]!.lymphgenClass}
-              </p>
-              <p>
-                {`Loc: ${settings.chrPrefix.show ? formatChr(toolTipInfo.variant.chr) : toolTipInfo.variant.chr}:${toolTipInfo.variant.start.toLocaleString()}-${toolTipInfo.variant.end.toLocaleString()}`}
-              </p>
-              <p>
-                {`ref: ${toolTipInfo.variant.ref}, tumor: ${toolTipInfo.variant.tum.replace('^', '')}`}
-              </p>
-            </div>
-            <span
-              className="fixed z-40 border border-black pointer-events-none"
-              style={{
-                top: toolTipInfo.pos.y - 1,
-                left: toolTipInfo.pos.x - HALF_BASE_W * settings.scale,
-                width: scaledBlockSize.w,
-                height: scaledBlockSize.h - 1,
-              }}
-            />
-          </>,
-          document.body
-        )}
-    </>
+    <SvgBase
+      width={width} //* settings.scale}
+      height={height} //* settings.scale}
+      scale={settings.scale}
+      //shapeRendering={SVG_CRISP_EDGES}
+      //className="absolute z-20"
+      onMouseLeave={hideTooltip}
+    >
+      {svgContent}
+    </SvgBase>
   )
 }
 
