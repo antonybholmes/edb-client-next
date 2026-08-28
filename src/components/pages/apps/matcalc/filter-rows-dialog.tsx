@@ -78,7 +78,7 @@ export function TopRowsPanel({
       return
     }
 
-    addSheets([df], { name: 'Top Rows' })
+    addSheets([df], { message: 'Top Rows' })
 
     onResponse?.(TEXT_OK, df)
   }
@@ -144,7 +144,7 @@ export function XInYPanel({
       return
     }
 
-    addSheets([df], { name: 'X in Y samples' })
+    addSheets([df], { message: 'X in Y samples' })
 
     onResponse?.(TEXT_OK, df)
   }

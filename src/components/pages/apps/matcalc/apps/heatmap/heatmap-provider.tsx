@@ -1,9 +1,9 @@
-import type { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { createContext, useContext, type ReactNode } from 'react'
 import { HeatMapPlot } from '../../history/history-provider/history-types'
 
 export interface HeatmapPropsContextType {
-  displayProps: IHeatMapDisplayOptions
+  displayProps: IHeatMapSettings
   plot: HeatMapPlot
 }
 

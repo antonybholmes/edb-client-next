@@ -1,5 +1,5 @@
+import { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { ITextFileOpen } from '@/components/pages/open-files'
-import { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
@@ -11,9 +11,10 @@ import { IGseaBubblePlot } from '../../../genes/gsea/gsea-plot/bubble/gsea-bubbl
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 
+import { AxisRecord } from '@/components/plot/axes/axis'
 import { IExtGseaDisplayOptions } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
-import { IUndoState } from '../history-manager'
+import { IUndoState } from './history-manager'
 import { IBasePlot } from './plot'
 
 export type NodeType = 'app' | 'branch' | 'sheet' | 'plot'
@@ -33,7 +34,7 @@ export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
 export interface HeatMapPlot extends IBasePlot {
   style: 'heatmap' | 'dot'
   dataframes: Record<string, DataFrameType>
-  props: IHeatMapDisplayOptions
+  props: IHeatMapSettings
 }
 
 export interface IVolcano {
@@ -100,7 +101,7 @@ export type HistoryUpdateProps = (
 ) => void
 
 interface IFileSlice {
-  openFile: (name: string, opts?: IFileOps) => void
+  openFile: (name: string, opts?: IFileOpts) => void
   //updateGroupsName: (name: string, path: AppPath | string) => void
 }
 
@@ -111,9 +112,14 @@ interface IFileSlice {
 // }
 
 export interface IPlotSlice {
-  addPlots: (plot: HistoryPlot[], opts?: ISheetOps) => void
+  addPlots: (plot: HistoryPlot[], opts?: ISheetOpts) => void
+  updatePlot: (plot: HistoryPlot, opts?: ISheetOpts) => void
+}
+
+export interface IAxesSlice {
+  //addAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
   //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
-  updatePlot: (plot: HistoryPlot, opts?: ISheetOps) => void
+  updateAxes: (axes: AxisRecord, opts?: ISheetOpts) => void
 }
 
 export type IdObj = { id: string }
@@ -162,7 +168,7 @@ export interface IGenesetSlice {
 }
 
 export interface ISheetSlice {
-  addSheets: (sheets: DataFrameType[], opts?: ISheetOps) => void
+  addSheets: (sheets: DataFrameType[], opts?: ISheetOpts) => void
   // reorderSheets: (
   //   sheets: string[],
 
@@ -170,9 +176,8 @@ export interface ISheetSlice {
   // ) => void
 }
 
-export interface IFileOps {
+export interface IFileOpts {
   mode?: AppendMode
-
   sheets?: BaseDataFrame[]
   plots?: HistoryPlot[]
   //groupsName?: string
@@ -180,11 +185,16 @@ export interface IFileOps {
   genesets?: IGeneSet[]
 }
 
-export interface ISheetOps {
-  name?: string
+export interface ISheetOpts {
+  message?: string
   mode?: AppendMode
   file?: string
-  //path?: string
+}
+
+export interface IAxesOpts {
+  message?: string
+  file?: string
+  plot?: string
 }
 
 /**
@@ -204,11 +214,13 @@ export interface IHistoryState extends IDBEntity {
   //groupOrder: Record<string, string[]> // fileId -> group IDs
   groupRows: Record<string, IClusterGroupRow[]>
   plots: Record<string, HistoryPlot[]>
+  axes: Record<string, AxisRecord>
   genesets: Record<string, IGeneSet[]> // fileId -> geneset IDs
 
-  currentFile: IDBEntity | undefined
-  currentSheet: DataFrameType | undefined
-  currentPlot: HistoryPlot | undefined
+  currentFile: string | undefined
+  currentSheet: string | undefined
+  currentPlot: string | undefined
+  currentAxes: string | undefined
   currentSelections: ISelectionPath[]
 }
 
@@ -230,6 +242,7 @@ export interface IHistoryStore
     IFileSlice,
     ISheetSlice,
     IPlotSlice,
+    IAxesSlice,
     IGroupSlice,
     IGenesetSlice,
     IHistoryData {

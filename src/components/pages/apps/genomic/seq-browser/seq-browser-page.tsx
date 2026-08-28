@@ -25,9 +25,6 @@ import { type ITab } from '@/components/tabs/tab-provider'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import APP_INFO from './manifest.json'
 
-import { CompassIcon } from '@/icons/compass-icon'
-import { LayersIcon } from '@/icons/layers-icon'
-
 import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { useKeyUpListener } from '@/hooks/keyup-listener'
 import { VCenterRow } from '@/layout/v-center-row'
@@ -36,7 +33,6 @@ import { useZoom } from '@/providers/zoom-provider'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 import { useSearch } from '@/hooks/search'
 import { ExportIcon } from '@/icons/export-icon'
 import { CoreProviders } from '@/providers/core-providers'
@@ -58,14 +54,10 @@ import {
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
 import { useSVG } from '@/providers/svg-provider'
-import { Box } from 'lucide-react'
 import { LocationAutocomplete } from './location-autocomplete'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
 import { SeqBrowserPropsPanel } from './seq-browser-props-panel'
 import { useSeqBrowserSettings, type BinSize } from './seq-browser-settings'
-import { SettingsCytobandPanel } from './settings/settings-cytoband-panel'
-import { SettingsPlotPanel } from './settings/settings-plot-panel'
-import { SettingsTracksPanel } from './settings/settings-tracks-panel'
 import { TracksView } from './svg/tracks-view'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useTracks } from './tracks-store'
@@ -85,9 +77,6 @@ function SeqBrowserPage() {
       )
     },
   })
-
-  const { setSettingsTabs, setDefaultTab: setDefaultSettingsTab } =
-    useSettingsTabs()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
@@ -113,33 +102,33 @@ function SeqBrowserPage() {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
 
-  useEffect(() => {
-    setSettingsTabs([
-      {
-        id: '01a03f83-1204-7632-afdf-6eb4877a5efc',
-        name: APP_INFO.name,
-        icon: <Box strokeWidth={1.5} size={18} />,
+  // useEffect(() => {
+  //   setSettingsTabs([
+  //     {
+  //       id: '01a03f83-1204-7632-afdf-6eb4877a5efc',
+  //       name: APP_INFO.name,
+  //       icon: <Box strokeWidth={1.5} size={18} />,
 
-        children: [
-          {
-            id: 'Plot',
-            icon: <CompassIcon />,
-            component: SettingsPlotPanel,
-          },
-          {
-            id: 'Tracks',
-            icon: <LayersIcon />,
-            component: SettingsTracksPanel,
-          },
-          {
-            id: 'Cytobands',
-            icon: <LayersIcon />,
-            component: SettingsCytobandPanel,
-          },
-        ],
-      },
-    ])
-  }, [setSettingsTabs, setDefaultSettingsTab])
+  //       children: [
+  //         {
+  //           id: 'Plot',
+  //           icon: <CompassIcon />,
+  //           component: SettingsPlotPanel,
+  //         },
+  //         {
+  //           id: 'Tracks',
+  //           icon: <LayersIcon />,
+  //           component: SettingsTracksPanel,
+  //         },
+  //         {
+  //           id: 'Cytobands',
+  //           icon: <LayersIcon />,
+  //           component: SettingsCytobandPanel,
+  //         },
+  //       ],
+  //     },
+  //   ])
+  // }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {
     setToolbarTabs([

@@ -2,8 +2,8 @@ import {
   DEFAULT_HEATMAP_PROPS,
   DOT_PLOT_PERCENT_TABLE,
   type DotPlotMode,
-  type IHeatMapDisplayOptions,
-} from '@/components/plot/heatmap/heatmap-svg-props'
+  type IHeatMapSettings,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
@@ -202,7 +202,7 @@ export function DotPlotDialog({
       //secondaryTables: { percent: groupPercentDf },
     }
 
-    const displayOptions: IHeatMapDisplayOptions = {
+    const displayOptions: IHeatMapSettings = {
       ...DEFAULT_HEATMAP_PROPS,
       mode: 'dot',
     }
@@ -311,7 +311,7 @@ export function DotPlotDialog({
       //secondaryTables: { percent: groupPercentDf },
     }
 
-    const displayOptions: IHeatMapDisplayOptions = {
+    const displayOptions: IHeatMapSettings = {
       ...DEFAULT_HEATMAP_PROPS,
       mode: 'dot',
       dot: {

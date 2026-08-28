@@ -6,14 +6,14 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_WHITE } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
 import { ReactElement } from 'react'
+import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgText } from '../svg-text'
-import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 export interface ITreeSvgProps {
   tree: IClusterTree
   width: number
   height: number
-  props: IHeatMapDisplayOptions
+  props: IHeatMapSettings
   pos?: IPos
 }
 

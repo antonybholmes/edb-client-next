@@ -65,6 +65,7 @@ function FontAlignToggles({
         onValueChange={(v) => onChange(v[0]!)}
         size="toolbar"
         aspect="icon"
+        className="gap-x-px"
       >
         <GroupToggle value="start" title="Align Left" aria-label="Align Left">
           <TextAlignStart size={16} strokeWidth={1.5} />
@@ -169,7 +170,7 @@ function FontStyleToggles({
   showColor?: boolean
 }) {
   return (
-    <VCenterRow>
+    <VCenterRow className="gap-x-px">
       <ToolbarIconButton
         checked={font.fontWeight === 'bold' || font.fontWeight === 700}
         title="Bold"

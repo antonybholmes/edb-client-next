@@ -16,6 +16,7 @@ import {
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
 } from '@/consts'
 
@@ -273,7 +274,7 @@ function OncoplotPage() {
         >
           <UploadIcon stroke="" />
 
-          <span>Open files from this device</span>
+          <span>{TEXT_OPEN_FILE}</span>
         </DropdownMenuItem>
       ),
     },

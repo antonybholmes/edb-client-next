@@ -56,7 +56,7 @@ export function HomeToolbar() {
         if (error === null) {
           const df = new AnnotationDataFrame({ data: table, columns: header })
 
-          addSheets([df], { name: `Annotated` })
+          addSheets([df], { message: `Annotated` })
         } else {
           openDialog({
             type: 'alert',

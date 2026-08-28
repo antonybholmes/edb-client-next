@@ -1,11 +1,11 @@
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { Axis, ITickItem, YAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
-import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
@@ -693,7 +693,7 @@ export function LollipopStackSvg() {
 
     // make sure first tick is shown at 1
     if (ticks[0]!.v !== 1) {
-      ticks = [{ v: 1, label: '1' }].concat(ticks)
+      ticks = ([{ v: 1, label: '1' }] as ITickItem[]).concat(ticks)
     }
 
     if (displayProps.axes.x.showEndTick) {

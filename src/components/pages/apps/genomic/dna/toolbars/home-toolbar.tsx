@@ -51,7 +51,7 @@ export function HomeToolbar() {
     })
 
     if (dfa) {
-      addSheets([dfa], { name: `DNA` })
+      addSheets([dfa], { message: `DNA` })
     }
   }
 

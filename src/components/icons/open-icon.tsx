@@ -1,5 +1,4 @@
 import { VECTOR_ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
-import { cn } from '@/lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { FolderOpen } from 'lucide-react'
 
@@ -7,7 +6,7 @@ export const variants = cva(VECTOR_ICON_CLS, {
   variants: {
     variant: {
       default: '',
-      colorful: ' stroke-1 stroke-red-400 fill-yellow-100',
+      colorful: 'stroke-red-400 fill-yellow-200',
     },
   },
   defaultVariants: {
@@ -22,8 +21,9 @@ export function OpenIcon({
 }: IIconProps & VariantProps<typeof variants>) {
   return (
     <FolderOpen
-      className={variants({ variant, className: cn(className) })}
+      className={variants({ variant, className })}
       size={size}
+      strokeWidth={1}
     />
   )
 }

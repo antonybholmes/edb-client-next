@@ -4,21 +4,26 @@ import { ColorMapName } from '@/lib/color/colormap'
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_BLACK } from '@/lib/color/color'
 
-import type { ILim } from '@/lib/math/math'
 import {
+  ColorBarPos,
   DEFAULT_BOLD_FONT_PROPS,
   DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
   DEFAULT_TEXT_PROPS,
-  type ColorBarPos,
-  type IFontProps,
-  type ILabelProps,
-  type IStrokeProps,
-  type ITextProps,
-  type LegendPos,
-  type TopBottomPos,
-} from '../svg-props'
+  IFontProps,
+  ILabelProps,
+  IStrokeProps,
+  ITextProps,
+  LegendPos,
+  TopBottomPos,
+} from '@/components/plot/svg-props'
+import { config } from '@/config'
+import type { ILim } from '@/lib/math/math'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
+
+const SETTINGS_KEY = `${config.appId}:heatmap-settings-v2`
 
 export interface IBlock {
   w: number
@@ -59,7 +64,7 @@ export const DEFAULT_TREE_PROPS: ITreeProps = {
 
 export type HeatmapMode = 'heatmap' | 'dot'
 
-export interface IHeatMapDisplayOptions {
+export interface IHeatMapSettings {
   title: ITextProps & { text: string; offset: number }
   cells: {
     values: {
@@ -150,7 +155,7 @@ export interface IHeatMapDisplayOptions {
   }
 }
 
-export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
+export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   //margin: { top: 20, right: 20, bottom: 20, left: 20 },
   blockSize: BLOCK_SIZE,
   grid: {
@@ -257,4 +262,60 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
   tooltip: {
     show: true,
   },
+}
+
+export interface IHeatmapSettingsStore extends IHeatMapSettings {
+  hasHydrated: boolean
+
+  //setFilters: (filters: Partial<IFilters>) => void
+  setHasHydrated: (hasHydrated: boolean) => void
+  updateSettings: (settings: Partial<IHeatMapSettings>) => void
+}
+
+export const useGseaSettingsStore = create<IHeatmapSettingsStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_HEATMAP_PROPS,
+      hasHydrated: false,
+
+      // setFilters: (filters: Partial<IFilters>) => {
+      //   set((state) => {
+      //     Object.assign(state.genesets.filters, filters)
+      //   })
+      // },
+
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
+
+      updateSettings: (settings: Partial<IHeatMapSettings>) => {
+        set(settings)
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
+    }
+  )
+)
+
+export function useHeatmapSettings(): {
+  settings: IHeatMapSettings
+  updateSettings: (settings: Partial<IHeatMapSettings>) => void
+  reset: () => void
+  hasHydrated: boolean
+} {
+  const settings = useGseaSettingsStore((state) => state)
+  const updateSettings = useGseaSettingsStore((state) => state.updateSettings)
+  const hasHydrated = useGseaSettingsStore((state) => state.hasHydrated)
+
+  function reset() {
+    console.log('resetting useGseaSettings to default')
+    updateSettings({ ...DEFAULT_HEATMAP_PROPS })
+  }
+
+  return { settings, updateSettings, reset, hasHydrated }
 }

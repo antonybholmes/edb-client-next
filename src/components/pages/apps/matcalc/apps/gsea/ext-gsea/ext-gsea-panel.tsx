@@ -5,8 +5,8 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
   DEFAULT_HEATMAP_PROPS,
-  type IHeatMapDisplayOptions,
-} from '@/components/plot/heatmap/heatmap-svg-props'
+  type IHeatMapSettings,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { TEXT_CANCEL } from '@/consts'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 
@@ -27,7 +27,7 @@ import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { ExtGseaSvg } from './ext-gsea-svg'
 
-export function makeDefaultHeatmapProps(mode: string): IHeatMapDisplayOptions {
+export function makeDefaultHeatmapProps(mode: string): IHeatMapSettings {
   return {
     ...DEFAULT_HEATMAP_PROPS,
     mode: mode.toLowerCase().includes('dot') ? 'dot' : 'heatmap',

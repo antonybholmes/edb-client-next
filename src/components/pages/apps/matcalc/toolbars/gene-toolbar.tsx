@@ -212,7 +212,21 @@ export function GeneToolbar() {
           >
             Extended GSEA
           </ToolbarButton>
-
+          <ToolbarButton
+            title="GSEA Bubble Plot"
+            onClick={() => {
+              openMatcalcDialog({
+                type: 'gsea-bubble-plot',
+                payload: {
+                  callback: (plot) => _addPlots([plot]),
+                },
+              })
+            }}
+          >
+            GSEA Bubble
+          </ToolbarButton>
+        </ToolbarCol>
+        <ToolbarCol>
           <ToolbarButton
             title="Convert Matrix to GSEA GCT Format"
             onClick={() => gct()}

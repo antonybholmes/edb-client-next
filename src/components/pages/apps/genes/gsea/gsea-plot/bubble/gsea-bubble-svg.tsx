@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 import { AxisBottomSvg } from '../../../../../../plot/axes/svg-axis'
@@ -20,10 +20,7 @@ import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
-import {
-  TOOLTIP_CLEAR_MS,
-  type ITooltip,
-} from '../../../../matcalc/apps/heatmap/heatmap-svg'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../gsea-plot-store'
 import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
@@ -40,7 +37,6 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
   axes: {
     xaxis: {
       name: 'Log2 fold change',
-
       domain: [-2, 2],
       length: 300,
       ticks: [],
@@ -62,6 +58,7 @@ function GseaBubbleLegendSvg() {
   const { plots, globalXLim } = useGseaBubbleContext()
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
+  const { showTooltip, hideTooltip } = useTooltip()
 
   const sizes = settings.legend.bubbles.sizes
 
@@ -106,18 +103,21 @@ function GseaBubbleLegendSvg() {
             settings.scale.p.range[0] + range / 2,
             settings.scale.p.range[1],
           ])
-          .setMinorTicks([
-            settings.scale.p.range[0] + range * 0.25,
-            settings.scale.p.range[0] + range * 0.75,
-          ])
+          .setTicks(
+            [
+              settings.scale.p.range[0] + range * 0.25,
+              settings.scale.p.range[0] + range * 0.75,
+            ],
+            { which: 'minor' }
+          )
       : new Axis()
           .setDomain(globalXLim)
           .setLength(edbSettings.plots.colorbar.size.w)
           .setTicks([globalXLim[0], globalXLim[0] + range / 2, globalXLim[1]])
-          .setMinorTicks([
-            globalXLim[0] + range * 0.25,
-            globalXLim[0] + range * 0.75,
-          ])
+          .setTicks(
+            [globalXLim[0] + range * 0.25, globalXLim[0] + range * 0.75],
+            { which: 'minor' }
+          )
 
   xax = xax
     .setTickParams({
@@ -330,55 +330,31 @@ function BubblePlot({
 export function GseaBubblePlotSvg() {
   const { plots, points, xlims } = useGseaBubbleContext()
   const { ref: svgRef } = useSVG()
-  const containerRef = useRef<HTMLDivElement | null>(null)
+
   const { settings } = useGseaBubbleSettings()
 
-  const tooltipRef = useRef<HTMLDivElement>(null)
+  const { showTooltip, hideTooltip } = useTooltip()
 
-  const [toolTipInfo, setToolTipInfo] = useState<
-    (ITooltip & { plot: IGseaBubble }) | null
-  >(null)
+  function handleVariantEnter(plot: IGseaBubble, row: number, p: IPos) {
+    const screenP = svgPointToScreen(svgRef.current, p)
 
-  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const handleVariantEnter = useCallback(
-    (plot: IGseaBubble, row: number, p: IPos) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-
-      const screenP = svgPointToScreen(svgRef.current, p)
-
-      const rect = containerRef.current!.getBoundingClientRect()
-
-      const newP = {
-        x: screenP.x - rect.left,
-        y: screenP.y - rect.top,
-      }
-
-      setToolTipInfo({
-        ...toolTipInfo,
-        plot,
-        pos: newP,
-        cell: { row: row, col: 0 },
-      })
-    },
-    []
-  )
-
-  const handleVariantLeave = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+    const newP = {
+      x: screenP.x,
+      y: screenP.y,
     }
 
-    // wait before removing. if we re-enter quickly, the tooltip won't flicker
-    // as this timeout will be cancelled so the tooltip won't disappear
-    // and will be moved to next location
-    timeoutRef.current = setTimeout(
-      () => setToolTipInfo(null),
-      TOOLTIP_CLEAR_MS
-    )
-  }, [])
+    showTooltip({
+      pos: newP,
+      content: (
+        <>
+          <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
+          <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
+          <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
+          <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+        </>
+      ),
+    })
+  }
 
   const { svg, width, height } = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
@@ -448,7 +424,7 @@ export function GseaBubblePlotSvg() {
                   innerPlotWidth={innerPlotWidth}
                   innerPlotHeight={innerPlotHeight}
                   handleVariantEnter={handleVariantEnter}
-                  handleVariantLeave={handleVariantLeave}
+                  handleVariantLeave={hideTooltip}
                 />
               </g>
             ))}
@@ -471,26 +447,8 @@ export function GseaBubblePlotSvg() {
   }
 
   return (
-    <div className="relative" ref={containerRef}>
-      <SvgBase width={width} height={height} scale={settings.page.scale}>
-        {svg}
-      </SvgBase>
-
-      {toolTipInfo && (
-        <div
-          ref={tooltipRef}
-          className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
-          style={{
-            left: toolTipInfo.pos.x,
-            top: toolTipInfo.pos.y,
-          }}
-        >
-          <p className="font-semibold">{`${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.name}`}</p>
-          <p>{`${toolTipInfo.plot.nes.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.nes.toFixed(2)}`}</p>
-          <p>{`-log10(${toolTipInfo.plot.log10q.label}): ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.log10q.toFixed(2)}`}</p>
-          <p>{`${toolTipInfo.plot.size.label}: ${toolTipInfo.plot.genesets[toolTipInfo.cell.row]!.size}`}</p>
-        </div>
-      )}
-    </div>
+    <SvgBase width={width} height={height} scale={settings.page.scale}>
+      {svg}
+    </SvgBase>
   )
 }

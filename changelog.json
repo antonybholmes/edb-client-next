@@ -2573,6 +2573,46 @@
         {
           "msg": "Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.",
           "date": "2026-08-26T17:58:13.744Z"
+        },
+        {
+          "msg": "Icon refinements. Global settings dialog now simplified to directly add apps rather than flakey registration system.",
+          "date": "2026-08-26T22:08:01.643Z"
+        },
+        {
+          "msg": "Updated some Axis UI labels",
+          "date": "2026-08-26T22:18:04.614Z"
+        },
+        {
+          "msg": "Added axis provider to make sharing user defined axis properties easier",
+          "date": "2026-08-26T22:44:05.325Z"
+        },
+        {
+          "msg": "Refactored history to split actions into separate files for managability",
+          "date": "2026-08-27T13:51:33.242Z"
+        },
+        {
+          "msg": "History dev panel now updates when plots are added",
+          "date": "2026-08-27T14:17:52.704Z"
+        },
+        {
+          "msg": "IAxisConfig now exists for configuring axes through props",
+          "date": "2026-08-27T21:30:58.003Z"
+        },
+        {
+          "msg": "Gsea bubble now uses portal for tooltips",
+          "date": "2026-08-27T22:40:58.074Z"
+        },
+        {
+          "msg": "Added tooltip context for standardizing tooltips",
+          "date": "2026-08-27T22:46:15.890Z"
+        },
+        {
+          "msg": "New unified tooltips. Fixed minor axis ticks not being generated when major ticks set",
+          "date": "2026-08-28T15:24:59.858Z"
+        },
+        {
+          "msg": "Refined oncoplot tooltips",
+          "date": "2026-08-28T16:20:46.102Z"
         }
       ]
     },

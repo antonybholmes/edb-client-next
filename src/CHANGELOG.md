@@ -4,6 +4,16 @@
 
 ### Changed
 
+- Refined oncoplot tooltips.
+- New unified tooltips. Fixed minor axis ticks not being generated when major ticks set.
+- Added tooltip context for standardizing tooltips.
+- Gsea bubble now uses portal for tooltips.
+- IAxisConfig now exists for configuring axes through props.
+- History dev panel now updates when plots are added.
+- Refactored history to split actions into separate files for managability.
+- Added axis provider to make sharing user defined axis properties easier.
+- Updated some Axis UI labels.
+- Icon refinements. Global settings dialog now simplified to directly add apps rather than flakey registration system.
 - Fixed left axis minor ticks not using offset. Refined ExtGSEA axes display.
 - Refined zoom controls to simplify channel system.
 - ext scroll card now allows heading elements. Refined SVG to screen coordinate mapper functions.

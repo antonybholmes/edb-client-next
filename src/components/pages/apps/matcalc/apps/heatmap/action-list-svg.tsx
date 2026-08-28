@@ -2,12 +2,12 @@ import { type IPos } from '@/interfaces/pos'
 
 import {
   LEGEND_BLOCK_SIZE,
-  type IHeatMapDisplayOptions,
-} from '@/components/plot/heatmap/heatmap-svg-props'
+  type IHeatMapSettings,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 
 export interface IProps {
   actions: string[]
-  props: IHeatMapDisplayOptions
+  props: IHeatMapSettings
   pos: IPos
 }
 
@@ -20,15 +20,13 @@ export interface IProps {
  */
 export function ActionListSvg({
   actions,
- 
+
   pos,
 }: IProps) {
   const legendBlockSize = LEGEND_BLOCK_SIZE.h * 0.75
 
   return (
-    <g
-      transform={`translate(${pos?.x}, ${pos.y})`}
-    >
+    <g transform={`translate(${pos?.x}, ${pos.y})`}>
       <text fontSize="small" fontWeight="bold" y={0}>
         Actions
       </text>

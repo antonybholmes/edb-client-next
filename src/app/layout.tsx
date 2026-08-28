@@ -3,6 +3,7 @@
 import { THEME_KEY, ThemeProvider } from '@/components/edb/theme'
 import { BaseCol } from '@/components/layout/base-col'
 //import { Auth0Provider } from '@auth0/nextjs-auth0/client'
+import { cn } from '@/lib/shadcn-utils'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
@@ -87,15 +88,20 @@ export default function Layout({
         />
       </head>
       <body
-        className={`${primaryFont.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
+        className={cn(
+          'antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal relative',
+          primaryFont.className
+        )}
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}
 
         <ThemeProvider>
           {/* <Auth0Provider> */}
+
           {/* Added for base-ui to render dialogs */}
           <BaseCol className="root isolate grow">{children}</BaseCol>
+
           {/* </Auth0Provider> */}
         </ThemeProvider>
       </body>

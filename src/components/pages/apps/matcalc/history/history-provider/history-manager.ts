@@ -30,8 +30,9 @@ export interface IUndoState<T> {
   history: IHistoryEntry<T>[]
   cursor: number
   /**
-   * The current version of the history state which is a monotonically increasing number
-   * and can be used to detect changes in the history state.
+   * The current version of the history state which is a monotonically
+   * increasing number and can be used to detect changes in the
+   * history state when other properties do not indicate change.
    */
   version: number
 }
@@ -91,6 +92,7 @@ export class HistoryManager<T extends object> {
       state.present,
       fn
     )
+
     if (patches.length === 0) {
       return state
     }
@@ -132,6 +134,7 @@ export class HistoryManager<T extends object> {
       prevState = applyPatches(state.present, entry.inversePatches)
     } else {
       let snapshotIndex = state.cursor - 1
+
       while (
         snapshotIndex >= 0 &&
         state.history[snapshotIndex]!.type !== 'snapshot'

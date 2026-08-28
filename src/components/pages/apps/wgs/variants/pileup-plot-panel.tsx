@@ -40,10 +40,6 @@ export interface ITooltip {
 export function PileupPlotPanel() {
   const { variants: results } = useVariants()
 
-  //const [toolTipInfo ] = useState<ITooltip | null>(null)
-
-  //const highlightRef = useRef<HTMLSpanElement>(null)
-
   if (!results || results.variants.length === 0) {
     return <PileupSkeleton />
   }

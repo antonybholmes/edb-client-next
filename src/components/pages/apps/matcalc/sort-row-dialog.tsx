@@ -92,7 +92,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
 
       const ret = df.iloc({ cols: idx }) as BaseDataFrame
 
-      addSheets([ret], { name: 'Sort by row (within groups)' })
+      addSheets([ret], { message: 'Sort by row (within groups)' })
 
       onResponse?.(TEXT_OK, ret)
     } else {
@@ -106,7 +106,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
       idx = argsort(mean)
       const ret = df.iloc({ cols: idx }) as BaseDataFrame
 
-      addSheets([ret], { name: 'Sort by row' })
+      addSheets([ret], { message: 'Sort by row' })
 
       onResponse?.(TEXT_OK, ret)
     }

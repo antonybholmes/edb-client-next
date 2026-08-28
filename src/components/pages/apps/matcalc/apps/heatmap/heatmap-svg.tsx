@@ -5,23 +5,23 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
+import {
+  LEGEND_BLOCK_SIZE,
+  MIN_INNER_HEIGHT,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { CellsSvg, DotsSvg, GridSvg } from '@/components/plot/heatmap/cell-svg'
 import {
   ColGroupsSvg,
   ColLabelsSvg,
   ColTreeTopSvg,
 } from '@/components/plot/heatmap/col-svg'
-import {
-  LEGEND_BLOCK_SIZE,
-  MIN_INNER_HEIGHT,
-} from '@/components/plot/heatmap/heatmap-svg-props'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 
 import { Axis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -30,7 +30,7 @@ import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
-import { createPortal } from 'react-dom'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
@@ -72,11 +72,7 @@ export function HeatMapSvg() {
 
   const { ref } = useSVG()
 
-  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const tooltipRef = useRef<HTMLDivElement>(null)
-  const highlightRef = useRef<HTMLSpanElement>(null)
-  const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
+  const { showTooltip, hideTooltip } = useTooltip()
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h //Math.min(displayOptions.blockSize.w,displayOptions.blockSize.h)
 
@@ -148,33 +144,25 @@ export function HeatMapSvg() {
     return { top, left, bottom, right }
   }, [displayOptions])
 
-  const handleVariantEnter = useCallback(
-    (pos: IPos, cell: ICell) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
+  function handleVariantEnter(pos: IPos, cell: ICell) {
+    const screen = svgPointToScreen(ref.current, pos)
 
-      if (!ref.current) {
-        return
-      }
+    screen.x += blockSize.w + 2
+    screen.y += blockSize.h + 2
 
-      const screen = svgPointToScreen(ref.current, pos)
-
-      setToolTipInfo({ pos: screen, cell })
-    },
-    [margin.left, margin.top, blockSize, displayOptions.zoom]
-  )
-
-  const handleVariantLeave = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    timeoutRef.current = setTimeout(
-      () => setToolTipInfo(null),
-      TOOLTIP_CLEAR_MS
-    )
-  }, [])
+    showTooltip({
+      pos: screen,
+      content: (
+        <>
+          <span className="font-semibold">{`${dfMain.rowName(
+            cell.row
+          )}, ${dfMain.colName(cell.col)}`}</span>
+          <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
+          <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
+        </>
+      ),
+    })
+  }
 
   const { svg, width, height } = useMemo(() => {
     if (!cf) {
@@ -292,12 +280,15 @@ export function HeatMapSvg() {
         (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
         displayOptions.range[1],
       ])
-      .setMinorTicks([
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-      ])
+      .setTicks(
+        [
+          displayOptions.range[0] +
+            (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+          displayOptions.range[0] +
+            (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+        ],
+        { which: 'minor' }
+      )
       .setTickParams({
         which: 'minor',
         show: true,
@@ -428,7 +419,7 @@ export function HeatMapSvg() {
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               handleVariantEnter={handleVariantEnter}
-              handleVariantLeave={handleVariantLeave}
+              handleVariantLeave={hideTooltip}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
             />
@@ -442,7 +433,7 @@ export function HeatMapSvg() {
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
               handleVariantEnter={handleVariantEnter}
-              handleVariantLeave={handleVariantLeave}
+              handleVariantLeave={hideTooltip}
             />
             <GridSvg
               width={innerWidth}
@@ -582,99 +573,9 @@ export function HeatMapSvg() {
     return { svg, width, height }
   }, [cf, displayOptions, groupRows])
 
-  // function onMouseMove(e: { pageX: number; pageY: number }) {
-  //   if (!innerRef.current) {
-  //     return
-  //   }
-
-  //   const rect = innerRef.current.getBoundingClientRect()
-
-  //   let c = Math.floor(
-  //     (e.pageX -
-  //       margin.left * displayOptions.zoom -
-  //       rect.left -
-  //       window.scrollX) /
-  //       scaledBlockSize.w
-  //   )
-
-  //   if (c < 0 || c > dfMain.shape[1] - 1) {
-  //     c = -1
-  //   }
-
-  //   let r = Math.floor(
-  //     (e.pageY - margin.top * displayOptions.zoom - rect.top - window.scrollY) /
-  //       scaledBlockSize.h
-  //   )
-
-  //   if (r < 0 || r > dfMain.shape[0] - 1) {
-  //     r = -1
-  //   }
-
-  //   if (r === -1 || c === -1) {
-  //     setToolTipInfo(null)
-  //   } else {
-  //     setToolTipInfo({
-  //       ...toolTipInfo,
-  //       pos: {
-  //         x: (margin.left + c * blockSize.w) * displayOptions.zoom - 1,
-  //         y: (margin.top + r * blockSize.h) * displayOptions.zoom - 1,
-  //       },
-  //       cell: { row: r, col: c },
-  //     })
-  //   }
-  // }
-
-  //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
-
   return (
-    <>
-      <SvgBase
-        scale={displayOptions.zoom}
-        width={width}
-        height={height}
-        //shapeRendering={SVG_CRISP_EDGES}
-        //onMouseMove={onMouseMove}
-        //className="absolute"
-      >
-        {svg}
-      </SvgBase>
-
-      {displayOptions.tooltip.show && toolTipInfo && (
-        <>
-          {createPortal(
-            <>
-              <div
-                ref={tooltipRef}
-                className="fixed z-50 rounded-lg bg-black/50 px-5 py-4 text-xs text-white"
-                style={{
-                  left: toolTipInfo.pos.x + scaledBlockSize.w + 2,
-                  top: toolTipInfo.pos.y + scaledBlockSize.h + 2,
-                }}
-              >
-                <p className="font-semibold">{`${dfMain.colName(
-                  toolTipInfo.cell.col
-                )} (${toolTipInfo.cell.row + 1}, ${toolTipInfo.cell.col + 1})`}</p>
-                <p>
-                  {cellStr(
-                    dfMain.get(toolTipInfo.cell.row, toolTipInfo.cell.col)
-                  )}
-                </p>
-              </div>
-              <span
-                ref={highlightRef}
-                className="fixed z-40 border border-black pointer-events-none"
-                style={{
-                  top: toolTipInfo.pos.y - 1,
-                  left: toolTipInfo.pos.x - 1,
-                  width: scaledBlockSize.w + 1,
-                  height: scaledBlockSize.h + 1,
-                }}
-              />
-            </>,
-            document.body
-          )}
-        </>
-      )}
-    </>
+    <SvgBase scale={displayOptions.zoom} width={width} height={height}>
+      {svg}
+    </SvgBase>
   )
 }

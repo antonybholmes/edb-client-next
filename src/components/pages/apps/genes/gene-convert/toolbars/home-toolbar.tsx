@@ -61,7 +61,7 @@ export function HomeToolbar() {
     })
 
     if (dfa) {
-      addSheets([dfa], { name: `Gene Conversion` })
+      addSheets([dfa], { message: `Gene Conversion` })
     }
   }
 

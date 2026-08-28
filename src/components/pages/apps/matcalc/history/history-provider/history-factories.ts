@@ -1,4 +1,4 @@
-import { DEFAULT_HEATMAP_PROPS } from '@/components/plot/heatmap/heatmap-svg-props'
+import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'

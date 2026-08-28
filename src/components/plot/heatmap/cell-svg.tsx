@@ -7,9 +7,9 @@ import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { normalize } from '@/lib/math/normalize'
 import { range } from '@/lib/math/range'
 import { formatNumber } from '@/lib/text/text'
+import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgPath } from '../svg-path'
 import { SvgRect } from '../svg-rect'
-import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 // we want circles slightly smaller than box to allow for borders
 const RADIUS_FACTOR = 1 //0.96
@@ -22,7 +22,7 @@ export interface ICellsSvgProps {
   colLeaves: number[]
   handleVariantEnter?: (pos: IPos, cell: ICell) => void
   handleVariantLeave?: () => void
-  props: IHeatMapDisplayOptions
+  props: IHeatMapSettings
   pos?: IPos
 }
 
@@ -259,7 +259,7 @@ export function DotsSvg({
 interface IGridSvgProps {
   width: number
   height: number
-  props: IHeatMapDisplayOptions
+  props: IHeatMapSettings
   pos?: IPos
 }
 

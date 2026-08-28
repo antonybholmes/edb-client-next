@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
@@ -20,14 +20,14 @@ import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
-import { TOOLTIP_CLEAR_MS, type ITooltip } from '../heatmap/heatmap-svg'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings-store'
 
 const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
 
-const TOOLTIP_OFFSET = 10
+const TOOLTIP_OFFSET = 5
 
 export interface IDisplayAxis {
   name: string
@@ -237,15 +237,12 @@ export function VolcanoPlotSvg({
   const { plot, displayLabels } = useVolcanoContext()
 
   const { ref: svgRef } = useSVG()
-  const containerRef = useRef<HTMLDivElement>(null)
 
   const { settings } = useVolcanoSettings()
 
   const displayOptions: IVolcanoDisplayOptions = (plot! as IVolcanoPlot).props
 
-  const tooltipRef = useRef<HTMLDivElement>(null)
-
-  const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
+  const { showTooltip, hideTooltip } = useTooltip()
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
     ? -Math.log10(settings.pvalue.threshold)
@@ -280,42 +277,26 @@ export function VolcanoPlotSvg({
     return color
   }
 
-  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const handleVariantEnter = useCallback((row: number, p: IPos) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
+  function handleVariantEnter(row: number, p: IPos) {
     const screenP = svgPointToScreen(svgRef.current, p)
 
-    const rect = containerRef.current!.getBoundingClientRect()
-
     const newP = {
-      x: screenP.x - rect.left,
-      y: screenP.y - rect.top,
+      x: screenP.x,
+      y: screenP.y,
     }
 
-    setToolTipInfo({
-      ...toolTipInfo,
-      pos: newP,
-      cell: { row: row, col: 0 },
+    showTooltip({
+      pos: screenP,
+      content: (
+        <>
+          <p className="font-semibold">{`${plot.volcano.ids[row]!}`}</p>
+          <p>{`x: ${cellStr(points[row]!.x)}, y: ${cellStr(
+            points[row]!.y
+          )}`}</p>
+        </>
+      ),
     })
-  }, [])
-
-  const handleVariantLeave = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    // wait before removing. if we re-enter quickly, the tooltip won't flicker
-    // as this timeout will be cancelled so the tooltip won't disappear
-    // and will be moved to next location
-    timeoutRef.current = setTimeout(
-      () => setToolTipInfo(null),
-      TOOLTIP_CLEAR_MS
-    )
-  }, [])
+  }
 
   const points = useMemo(
     () =>
@@ -381,7 +362,7 @@ export function VolcanoPlotSvg({
                     y: y1 + MARGIN.top + TOOLTIP_OFFSET,
                   })
                 }
-                onMouseLeave={handleVariantLeave}
+                onMouseLeave={hideTooltip}
               />
             )
           })}
@@ -655,32 +636,13 @@ export function VolcanoPlotSvg({
   // }, [dataFile, search])
 
   return (
-    <div className="relative" ref={containerRef}>
-      <SvgBase
-        width={width}
-        height={height}
-        scale={settings.scale}
-        //shapeRendering={SVG_CRISP_EDGES}
-        className="absolute"
-      >
-        {svg}
-      </SvgBase>
-
-      {toolTipInfo && (
-        <div
-          ref={tooltipRef}
-          className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
-          style={{
-            left: toolTipInfo.pos.x,
-            top: toolTipInfo.pos.y,
-          }}
-        >
-          <p className="font-semibold">{`${plot.volcano.ids[toolTipInfo.cell.row]!}`}</p>
-          <p>{`x: ${cellStr(points[toolTipInfo.cell.row]!.x)}, y: ${cellStr(
-            points[toolTipInfo.cell.row]!.y
-          )}`}</p>
-        </div>
-      )}
-    </div>
+    <SvgBase
+      width={width}
+      height={height}
+      scale={settings.scale}
+      //shapeRendering={SVG_CRISP_EDGES}
+    >
+      {svg}
+    </SvgBase>
   )
 }

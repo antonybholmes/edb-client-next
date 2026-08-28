@@ -27,6 +27,7 @@ import {
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
 } from '@/consts'
 import { OpenIcon } from '@/icons/open-icon'
@@ -458,7 +459,7 @@ function VennPage() {
         >
           <UploadIcon stroke="" />
 
-          <span>Open files from this device</span>
+          <span>{TEXT_OPEN_FILE}</span>
         </DropdownMenuItem>
       ),
     },
@@ -497,7 +498,6 @@ function VennPage() {
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
               autoSave('venn.png')
-              //                 setShowFileMenu(false)
             }}
           >
             <FileImageIcon fill="" />
@@ -507,7 +507,6 @@ function VennPage() {
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
               autoSave('venn.svg')
-              //                 setShowFileMenu(false)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>

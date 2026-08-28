@@ -1,9 +1,10 @@
 // The store is a datastore of files and an undo state
 
+import { ID_DEFAULT } from '@/consts'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
-import { IHistoryEntry } from '../history-manager'
+import { IHistoryEntry } from './history-manager'
 import { IHistoryData, IHistoryState } from './history-types'
 
 // The history store is initialized with a default file and
@@ -64,12 +65,14 @@ export function initState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
     files: [DEFAULT_FILE],
     sheets: { [DEFAULT_FILE.id]: [DEFAULT_SHEET] },
     plots: { [DEFAULT_FILE.id]: [] },
+    axes: { [ID_DEFAULT]: {} },
     groupRows: { [DEFAULT_FILE.id]: [] },
     genesets: { [DEFAULT_FILE.id]: [] },
 
-    currentFile: DEFAULT_FILE,
-    currentSheet: DEFAULT_SHEET,
+    currentFile: DEFAULT_FILE.id,
+    currentSheet: DEFAULT_SHEET.id,
     currentPlot: undefined,
+    currentAxes: ID_DEFAULT,
     currentSelections: [{ type: 'sheet', id: DEFAULT_SHEET.id }],
   }
 }

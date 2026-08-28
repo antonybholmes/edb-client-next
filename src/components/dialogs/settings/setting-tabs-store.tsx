@@ -1,18 +1,6 @@
-import { SettingsIcon } from '@/components/icons/settings-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { create } from 'zustand'
 import { useDialogs } from '../dialogs'
-import { SettingsGeneralPanel } from './settings-general-panel'
-
-// These tabs always appear in the UI
-const DEFAULT_TABS: readonly ITab[] = Object.freeze([
-  {
-    id: '019f0ae9-18f6-730c-b7f5-6e619b5bbe4e',
-    name: 'General',
-    icon: <SettingsIcon stroke="" size="w-4.5" strokeWidth={1.5} />,
-    component: SettingsGeneralPanel,
-  },
-])
 
 interface ISettingsTabStore {
   defaultTab: string
@@ -25,7 +13,7 @@ interface ISettingsTabStore {
 
 export const useSettingsTabsStore = create<ISettingsTabStore>((set) => ({
   defaultTab: 'General',
-  tabs: [...DEFAULT_TABS],
+  tabs: [],
   visible: false,
 
   setDefaultTab: (tab: string) =>
@@ -37,7 +25,7 @@ export const useSettingsTabsStore = create<ISettingsTabStore>((set) => ({
   setSettingsTabs: (tabs: readonly ITab[]) =>
     set((state) => ({
       ...state,
-      tabs: [...DEFAULT_TABS, ...tabs],
+      tabs: [...tabs],
     })),
   setVisible: (visible: boolean) =>
     set((state) => ({

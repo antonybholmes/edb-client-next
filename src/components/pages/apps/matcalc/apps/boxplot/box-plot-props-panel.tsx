@@ -1,9 +1,11 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
+import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
+import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { Filter, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
-import { OutlookTabs } from '../../data/outlook-tabs'
 import { BoxPlotDataPanel } from './boxplot-data-panel'
 import { BoxPlotDisplayPropsPanel } from './boxplot-display-props-panel'
 
@@ -17,20 +19,28 @@ export function BoxPlotPropsPanel() {
   useEffect(() => {
     setTabs([
       {
-        id: 'display',
-        name: 'Display',
-        icon: <SlidersHorizontal strokeWidth={2} size={18} />,
-      },
-      {
         id: 'data',
         name: 'Data',
         icon: <Filter strokeWidth={2} size={18} />,
+      },
+      {
+        id: 'display',
+        name: 'Display',
+        icon: <SlidersHorizontal strokeWidth={2} size={18} />,
       },
     ])
   }, [setTabs])
 
   return (
-    <BaseCol className="grow mb-2">
+    <BaseCol className="grow gap-y-2 mb-2">
+      <UnderlineTabs
+        groupId="matcalc-box-plot-panel"
+        tabListCls="gap-x-3"
+        className="text-xs"
+      >
+        <TabIndicatorFollowH />
+        <TabIndicatorSelectedH />
+      </UnderlineTabs>
       <Tabs
         value={selectedTab?.id ?? ''}
         orientation="vertical"
@@ -53,7 +63,7 @@ export function BoxPlotPropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <OutlookTabs id="matcalc-box-plot-panel" />
+      {/* <OutlookTabs id="matcalc-box-plot-panel" /> */}
     </BaseCol>
   )
 }

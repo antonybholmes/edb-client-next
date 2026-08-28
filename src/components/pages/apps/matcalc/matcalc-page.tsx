@@ -51,8 +51,6 @@ import { produce } from 'immer'
 
 import APP_INFO from './manifest.json'
 
-import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
-
 import { ExportIcon } from '@/icons/export-icon'
 
 import { DataPanel, MESSAGE_CHANNEL } from './data/data-panel'
@@ -80,7 +78,6 @@ import { useHistory } from './history/history-provider/history-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { usePasteText } from '@/hooks/paste-text'
 import { makeUuid } from '@/lib/id'
-import { Box } from 'lucide-react'
 import { GseaBubbleProvider } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
@@ -102,7 +99,6 @@ import { useOpenFiles } from './hooks/open'
 import { MatcalcDialogsRoot, useMatcalcDialogs } from './matcalc-dialogs'
 import { MatcalcFileTree } from './matcalc-file-tree'
 import { useMatcalcSettings } from './settings/matcalc-settings'
-import { SettingsAppsPanel } from './settings/settings-apps-panel'
 import { DataToolbar } from './toolbars/data-toolbar'
 import { GeneToolbar } from './toolbars/gene-toolbar'
 import { GenomicToolbar } from './toolbars/genomic-toolbar'
@@ -111,7 +107,6 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 interface IClusterFrameProps {
   cf: IClusterFrame | null
   type: PlotStyle
-  //params: IFieldMap
 }
 
 export const NO_CF: IClusterFrameProps = {
@@ -131,13 +126,6 @@ export const TEXT_DOT_PLOT = 'Dot Plot'
 
 const FOLDER_ID = 'matcalc-folders'
 
-// const DEFAULT_DATA_TABLE_TAB: ITab = {
-//   //id: nanoid(),
-//   id: DEFAULT_TABLE_NAME,
-//   icon: <TableIcon />,
-//   isOpen: true,
-// }
-
 function plotElem(plot: HistoryPlot): ReactElement {
   switch (plot.style) {
     case 'heatmap':
@@ -155,7 +143,7 @@ function plotElem(plot: HistoryPlot): ReactElement {
       )
     case 'gsea-bubble-plot':
       return (
-        <GseaBubbleProvider plots={[plot.gseaBubble]}>
+        <GseaBubbleProvider plots={[plot]}>
           <GseaBubblePanel />
         </GseaBubbleProvider>
       )
@@ -208,9 +196,6 @@ export function MatcalcPage() {
   // them when clicking on a plot tab
   const allPlots = useAllPlots()
 
-  const { setSettingsTabs, setDefaultTab: setDefaultSettingsTab } =
-    useSettingsTabs()
-
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
   const { open, setOpen } = useSlideBar(FOLDER_ID) //) //'matcalc') //useContext(MessageContext)
@@ -219,17 +204,17 @@ export function MatcalcPage() {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
 
-  useEffect(() => {
-    setSettingsTabs([
-      {
-        id: '019f3a36-ee0d-7ac1-ad56-e92dbec44927',
-        name: APP_INFO.name,
-        icon: <Box strokeWidth={1.5} size={18} />,
-        component: SettingsAppsPanel,
-      },
-    ])
-    //setDefaultSettingsTab(APP_INFO.name)
-  }, [setSettingsTabs, setDefaultSettingsTab])
+  // useEffect(() => {
+  //   setSettingsTabs([
+  //     {
+  //       id: '019f3a36-ee0d-7ac1-ad56-e92dbec44927',
+  //       name: APP_INFO.name,
+  //       icon: <Box strokeWidth={1.5} size={18} />,
+  //       component: SettingsAppsPanel,
+  //     },
+  //   ])
+  //   //setDefaultSettingsTab(APP_INFO.name)
+  // }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {
     setToolbarTabs([

@@ -157,7 +157,7 @@ export function KmeansDialog({
       }
     }
 
-    addSheets([df.setName('K-means')], { name: 'K-means' })
+    addSheets([df.setName('K-means')], { message: 'K-means' })
 
     onResponse?.(TEXT_OK, {
       df,

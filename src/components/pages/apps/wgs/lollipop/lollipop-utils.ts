@@ -1,7 +1,7 @@
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 
-import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { makeUuid } from '@/lib/id'
 
 import {
@@ -43,11 +43,7 @@ export const DEFAULT_MUTATION_COLOR = COLOR_WHITE
 // export const MUTATION_INFRAME_INDEL = 'Inframe indel'
 
 export type VariantClass =
-  | 'Missense'
-  | 'Frameshift'
-  | 'Nonsense'
-  | 'Splice'
-  | 'Inframe indel'
+  'Missense' | 'Frameshift' | 'Nonsense' | 'Splice' | 'Inframe indel'
 
 export const DEFAULT_FEATURE_BG_COLOR = '#c0c0c0'
 
@@ -340,7 +336,7 @@ export const DEFAULT_LOLLIPOP: ILollipop = deepFreeze({
   aaStats: [],
   domains: [],
   mutationsForUse: Object.fromEntries(
-    DEFAULT_DISPLAY_PROPS.variants.types.map(m => [m, true])
+    DEFAULT_DISPLAY_PROPS.variants.types.map((m) => [m, true])
   ),
   //displayProps: { ...DEFAULT_DISPLAY_PROPS },
   labels: [],

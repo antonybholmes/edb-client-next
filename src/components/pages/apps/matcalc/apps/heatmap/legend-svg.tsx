@@ -1,6 +1,6 @@
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
-import { LEGEND_BLOCK_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
+import { LEGEND_BLOCK_SIZE } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IClusterGroupRow } from '@/lib/cluster-group'
