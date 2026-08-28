@@ -273,11 +273,7 @@ export function SankeyPage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                <SankeySvg
-
-                //dfs={plotFrames}
-                //className="absolute"
-                />
+                <SankeySvg />
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />

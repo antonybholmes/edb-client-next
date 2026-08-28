@@ -572,13 +572,7 @@ function VennPage() {
                   onKeyDown={(e) => setKeyPressed(e.key)}
                   onKeyUp={() => setKeyPressed(null)}
                 >
-                  <SvgBase
-                    className="absolute"
-
-                    scale={zoom}
-                    width={settings.w}
-                    height={settings.w}
-                  >
+                  <SvgBase scale={zoom} width={settings.w} height={settings.w}>
                     {vennListsInUse < 2 && <SVGOneWayVenn />}
                     {vennListsInUse === 2 && <SVGTwoWayVenn />}
                     {vennListsInUse === 3 && <SVGThreeWayVenn />}

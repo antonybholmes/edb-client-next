@@ -1,3 +1,4 @@
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import {
   GroupToggle,
   ToggleGroup,
@@ -66,7 +67,7 @@ export function SettingsCytobandPanel() {
           updateSettings(newOptions)
         }}
       />
-      <SwitchPropRow
+      <CheckPropRow
         title="Reduce labels"
         info="Reduces the number of labels shown to make figures look less clustered."
 

@@ -398,10 +398,7 @@ export function BioDrawPage() {
             >
               <Card className="grow" variant="content">
                 <div className={PLOT_CLS}>
-                  <BioDrawSvg
-
-                  //className="absolute"
-                  />
+                  <BioDrawSvg />
                 </div>
               </Card>
             </ResizablePanel>

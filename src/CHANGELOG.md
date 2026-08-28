@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Switch to using checkboxes for more settings to reduce clutter from switches.
 - Refined oncoplot tooltips.
 - New unified tooltips. Fixed minor axis ticks not being generated when major ticks set.
 - Added tooltip context for standardizing tooltips.

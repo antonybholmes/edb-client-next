@@ -120,7 +120,6 @@ export function MAFPlotSVG() {
       height={height} //* settings.scale}
       scale={settings.scale}
       //shapeRendering={SVG_CRISP_EDGES}
-      //className="absolute z-20"
     >
       <g
         transform={`translate(${MARGIN.left + innerWidth * 0.5}, ${MARGIN.top * 0.5})`}

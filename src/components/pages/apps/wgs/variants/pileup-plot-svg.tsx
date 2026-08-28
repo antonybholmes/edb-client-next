@@ -285,7 +285,7 @@ export function PileupPlotSvg() {
       height={height} //* settings.scale}
       scale={settings.scale}
       //shapeRendering={SVG_CRISP_EDGES}
-      //className="absolute z-20"
+
       onMouseLeave={hideTooltip}
     >
       {svgContent}

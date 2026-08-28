@@ -1,3 +1,4 @@
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
@@ -8,7 +9,6 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { PropRow } from '@/dialogs/prop-row'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import { NumericalInput } from '@/themed/numerical-input'
 import {
@@ -33,7 +33,7 @@ export function SettingsTracksPanel() {
 
   return (
     <>
-      <SwitchPropRow
+      <CheckPropRow
         title="Global Y"
         checked={settings.tracks.seqs.globalY.on}
         onCheckedChange={(v) => {
@@ -45,7 +45,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <SwitchPropRow
+      <CheckPropRow
         title="Auto"
         checked={settings.tracks.seqs.globalY.auto}
         onCheckedChange={(v) => {
@@ -71,7 +71,7 @@ export function SettingsTracksPanel() {
             updateSettings(newOptions)
           }}
         />
-      </SwitchPropRow>
+      </CheckPropRow>
 
       <PropRow
         title="Read Scale Mode"
@@ -93,7 +93,7 @@ export function SettingsTracksPanel() {
           <SelectItem value="CPM">CPM</SelectItem>
         </SelectList>
       </PropRow>
-      <SwitchPropRow
+      <CheckPropRow
         title="Smooth lines"
         checked={settings.tracks.seqs.smoothing.on}
         onCheckedChange={(v) => {
@@ -122,7 +122,7 @@ export function SettingsTracksPanel() {
           Smooth lines to improve them visually. The smoothing factor controls
           the effect of this.
         </BasicHoverCard>
-      </SwitchPropRow>
+      </CheckPropRow>
 
       <PropRow title="Bin size">
         <Switch
@@ -209,7 +209,7 @@ export function SettingsTracksPanel() {
         />
       </PropRow>
 
-      <SwitchPropRow
+      <CheckPropRow
         title={
           <VCenterRow className="gap-x-1">
             <span>Collapse</span>
@@ -229,7 +229,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <SwitchPropRow
+      <CheckPropRow
         title="Arrows"
         checked={settings.tracks.genes.arrows.show}
         onCheckedChange={(v) => {
@@ -261,9 +261,9 @@ export function SettingsTracksPanel() {
             <SelectItem value="filled">Filled</SelectItem>
           </SelectContent>
         </Select>
-      </SwitchPropRow>
+      </CheckPropRow>
 
-      <SwitchPropRow
+      <CheckPropRow
         title="End arrows"
         checked={settings.tracks.genes.endArrows.show}
         onCheckedChange={(v) => {
@@ -305,9 +305,9 @@ export function SettingsTracksPanel() {
 
           title="End Arrow Outline"
         />
-      </SwitchPropRow>
+      </CheckPropRow>
 
-      <SwitchPropRow
+      <CheckPropRow
         title="Exons"
         checked={settings.tracks.genes.exons.show}
         onCheckedChange={(v) => {
@@ -319,7 +319,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <SwitchPropRow
+      <CheckPropRow
         title="Canonical Transcripts Only"
         info="Shows only the primary, canonical transcript to reduce space."
         checked={settings.tracks.genes.canonical.only}
@@ -332,7 +332,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <SwitchPropRow
+      <CheckPropRow
         title="Canonical Transcript Color"
         info="Canonical transcripts can be colored separately to highlight them."
         checked={settings.tracks.genes.canonical.isColored}
@@ -361,9 +361,9 @@ export function SettingsTracksPanel() {
 
           title="Canonical Fill"
         />
-      </SwitchPropRow>
+      </CheckPropRow>
 
-      <SwitchPropRow
+      <CheckPropRow
         title="Scale auto size (bp)"
         checked={settings.tracks.scale.autoSize}
         onCheckedChange={(v) => {
@@ -389,7 +389,7 @@ export function SettingsTracksPanel() {
             updateSettings(newOptions)
           }}
         />
-      </SwitchPropRow>
+      </CheckPropRow>
     </>
   )
 }

@@ -1,9 +1,7 @@
 import { cn } from '@/lib/shadcn-utils'
 import type { ReactNode } from 'react'
-import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
-import { type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
-import { Switch } from '../shadcn/ui/themed/v2/switch'
+import { Checkbox, type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
 import { DialogCardInfo } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {
@@ -25,44 +23,44 @@ export function CheckPropRow({
   children,
 }: IProps) {
   return (
-    <BaseRow
+    <VCenterRow
       className={cn(
         'gap-x-4 justify-between',
-        info ? 'items-start pb-1' : 'items-center',
+        //info ? 'items-start pb-1' : 'items-center',
         h,
         className
       )}
     >
-      {/* <Checkbox
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-        disabled={disabled}
- 
-        title={tooltip}
-      >
-        {title}
-
-        {info && <InfoHoverCard>{info}</InfoHoverCard>}
-      </Checkbox> */}
-
-      {title && (
-        <VCenterRow className="grow">
-          <span>{title}</span>
-          {info && <DialogCardInfo>{info}</DialogCardInfo>}
-        </VCenterRow>
-      )}
-
-      <VCenterRow className="gap-x-1.5 justify-end">
-        {children && children}
-
-        <Switch
+      <VCenterRow className="grow justify-between gap-x-2">
+        <Checkbox
           checked={checked}
           onCheckedChange={onCheckedChange}
           disabled={disabled}
 
           title={tooltip}
-        />
+        >
+          {title}
+        </Checkbox>{' '}
+        {info && <DialogCardInfo>{info}</DialogCardInfo>}
       </VCenterRow>
-    </BaseRow>
+      {/* {title && (
+        <VCenterRow className="grow">
+          <span>{title}</span>
+          {info && <DialogCardInfo>{info}</DialogCardInfo>}
+        </VCenterRow>
+      )} */}
+
+      {children && (
+        <VCenterRow className="gap-x-1.5 justify-end">{children}</VCenterRow>
+      )}
+
+      {/* <Switch
+          checked={checked}
+          onCheckedChange={onCheckedChange}
+          disabled={disabled}
+
+          title={tooltip}
+        />*/}
+    </VCenterRow>
   )
 }

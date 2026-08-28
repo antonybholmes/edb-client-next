@@ -353,7 +353,6 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
       width={svgContent.dim.w}
       height={svgContent.dim.h}
       scale={settings.scale}
-      className="absolute"
     >
       {svgContent.svg && svgContent.svg}
     </SvgBase>

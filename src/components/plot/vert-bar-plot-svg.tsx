@@ -347,7 +347,6 @@ export function VertBarPlotSvg({
       height={height}
       scale={_displayProps.scale}
       //shapeRendering={SVG_CRISP_EDGES}
-      className="absolute"
     >
       {svg}
     </SvgBase>

@@ -562,7 +562,6 @@ export function LollipopSingleSvg() {
         scale={displayProps.scale}
         //shapeRendering={SVG_CRISP_EDGES}
         //onMouseMove={onMouseMove}
-        //className="absolute"
       >
         {displayProps.title.text.show && (
           <g

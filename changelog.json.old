@@ -2609,6 +2609,10 @@
         {
           "msg": "New unified tooltips. Fixed minor axis ticks not being generated when major ticks set",
           "date": "2026-08-28T15:24:59.858Z"
+        },
+        {
+          "msg": "Refined oncoplot tooltips",
+          "date": "2026-08-28T16:20:46.102Z"
         }
       ]
     },

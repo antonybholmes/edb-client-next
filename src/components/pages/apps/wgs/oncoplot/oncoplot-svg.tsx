@@ -796,7 +796,6 @@ export function OncoplotSvg() {
       scale={displayProps.scale}
       //shapeRendering={SVG_CRISP_EDGES}
       onMouseMove={onMouseMove}
-      //className="absolute"
     >
       {/* clinical tracks */}
       {displayProps.clinical.show && (
