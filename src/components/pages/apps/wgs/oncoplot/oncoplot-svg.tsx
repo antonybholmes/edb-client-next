@@ -10,8 +10,14 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
-import { useRef, type ReactElement, type ReactNode } from 'react'
+import { TOOLTIP_CLEAR_MS, useTooltip } from '@/providers/tooltip-provider'
+import {
+  useCallback,
+  useRef,
+  useState,
+  type ReactElement,
+  type ReactNode,
+} from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
@@ -20,6 +26,7 @@ import {
   NO_ALTERATIONS_TEXT,
   NO_ALTERATION_COLOR,
   OTHER_MUTATION,
+  getEventLabel,
   mutationColorMapFromMutations,
   type IOncoplotDisplayProps,
   type OncoplotFrame,
@@ -589,48 +596,6 @@ function vLegendSvg(
 export function OncoplotSvg() {
   const { ref } = useSVG()
 
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!ref.current) {
-      return
-    }
-
-    const rect = ref.current.getBoundingClientRect()
-
-    let x =
-      e.pageX - marginLeft * displayProps.scale - rect.left - window.scrollX
-
-    let c = Math.floor(x / (scaledBlockSize.w + scaledPadding.x))
-
-    if (c < 0 || c > (mf?.shape[1] ?? 0) - 1) {
-      c = -1
-    }
-
-    let y = e.pageY - top * displayProps.scale - rect.top - window.scrollY
-
-    let r = Math.floor(y / (scaledBlockSize.h + scaledPadding.y))
-
-    if (r < 0 || r > (mf?.shape[0] ?? 0) - 1) {
-      r = -1
-    }
-
-    if (r === -1 || c === -1) {
-      hideTooltip()
-    } else {
-      x = (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale
-      y = (top + r * (blockSize.h + spacing.y)) * displayProps.scale
-
-      // <p className="font-semibold">{stats!.sample}</p>
-      //       <p>{stats!.feature}</p>
-      //       <p className="truncate">
-      //         {/* Let's show all mutations in the label */}
-      //         {getEventLabel(stats!, mutationsInUse, 'single')}
-      //       </p>
-      //       <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
-      //         toolTipInfo.cell.col + 1
-      //       }`}</p>
-    }
-  }
-
   const { mutations, displayProps } = useOncoplotSettings()
   const { mutationFrame: mf, mutationsInUse, clinicalTracks } = useOncoplot()
 
@@ -649,7 +614,7 @@ export function OncoplotSvg() {
     y: spacing.y * displayProps.scale,
   }
 
-  const { showTooltip, hideTooltip } = useTooltip()
+  const { showTooltip, hideTooltip: hideTooltipOrig } = useTooltip()
 
   const highlightRef = useRef<HTMLSpanElement>(null)
 
@@ -700,16 +665,12 @@ export function OncoplotSvg() {
 
   const height = gridHeight + top + bottom
 
-  if (!mf) {
-    return null
-  }
-
-  const samples: string[] = mf.sampleStats.map((stats) => stats.sample)
+  const samples: string[] = mf?.sampleStats.map((stats) => stats.sample)
 
   // keep things simple and use ints for the graph limits
-  const maxSampleCount = Math.round(
-    Math.max(...mf.sampleStats.map((stats) => stats.sum))
-  )
+  const maxSampleCount = mf
+    ? Math.round(Math.max(...mf.sampleStats.map((stats) => stats.sum)))
+    : 0
 
   const yax = new YAxis()
     .setDomain([0, maxSampleCount])
@@ -718,9 +679,9 @@ export function OncoplotSvg() {
     .setTicks(range(maxSampleCount + 1))
     .setTickParams({ which: 'minor', show: false })
 
-  const maxGeneCount = Math.round(
-    Math.max(...mf.geneStats.map((stats) => stats.sum))
-  )
+  const maxGeneCount = mf
+    ? Math.round(Math.max(...mf?.geneStats.map((stats) => stats.sum)))
+    : 0
 
   const xax = new Axis()
     .setDomain([0, maxGeneCount])
@@ -728,7 +689,7 @@ export function OncoplotSvg() {
     .setTitle('No. of samples')
     .setTicks([
       { v: 0, label: '0' },
-      { v: maxGeneCount, label: `${maxGeneCount} / ${mf.shape[1]}` },
+      { v: maxGeneCount, label: `${maxGeneCount} / ${mf?.shape[1]}` },
     ])
   //.setTickLabels([0, `${maxGeneCount} / ${mf.shape[1]}`])
 
@@ -744,7 +705,91 @@ export function OncoplotSvg() {
   //   ? mf?.data(toolTipInfo.cell.row, toolTipInfo.cell.col)
   //   : null
 
-  return (
+  const [barPos, setBarPos] = useState<IPos | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const hideTooltip = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    // wait before removing. if we re-enter quickly, the tooltip won't flicker
+    // as this timeout will be cancelled so the tooltip won't disappear
+    // and will be moved to next location
+    timeoutRef.current = setTimeout(() => setBarPos(null), TOOLTIP_CLEAR_MS)
+  }, [])
+
+  function onMouseMove(e: { pageX: number; pageY: number }) {
+    if (!ref.current) {
+      return
+    }
+
+    const rect = ref.current.getBoundingClientRect()
+
+    let x =
+      e.pageX - marginLeft * displayProps.scale - rect.left - window.scrollX
+
+    let c = Math.floor(x / (scaledBlockSize.w + scaledPadding.x))
+
+    if (c < 0 || c > (mf?.shape[1] ?? 0) - 1) {
+      c = -1
+    }
+
+    let y = e.pageY - top * displayProps.scale - rect.top - window.scrollY
+
+    let r = Math.floor(y / (scaledBlockSize.h + scaledPadding.y))
+
+    if (r < 0 || r > (mf?.shape[0] ?? 0) - 1) {
+      r = -1
+    }
+
+    if (r === -1 || c === -1) {
+      hideTooltip()
+      hideTooltipOrig()
+    } else {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      const x1 =
+        (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale
+      const y1 = (top + r * (blockSize.h + spacing.y)) * displayProps.scale
+
+      setBarPos({ x: x1, y: y1 })
+
+      const stats = mf?.data(r, c)
+
+      showTooltip({
+        pos: { x: e.pageX + 5, y: e.pageY + 5 },
+        content: (
+          <>
+            <p className="font-semibold">{stats!.sample}</p>
+            <p>{stats!.feature}</p>
+            <p className="truncate">
+              {getEventLabel(stats!, mutationsInUse, 'single')}
+            </p>
+            <p>{`row: ${r + 1}, col: ${c + 1}`}</p>
+          </>
+        ),
+      })
+
+      // <p className="font-semibold">{stats!.sample}</p>
+      //       <p>{stats!.feature}</p>
+      //       <p className="truncate">
+      //         {/* Let's show all mutations in the label */}
+      //         {getEventLabel(stats!, mutationsInUse, 'single')}
+      //       </p>
+      //       <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
+      //         toolTipInfo.cell.col + 1
+      //       }`}</p>
+    }
+  }
+
+  if (!mf) {
+    return null
+  }
+
+  const svgElem = (
     <SvgBase
       width={width}
       height={height}
@@ -873,5 +918,46 @@ export function OncoplotSvg() {
         </g>
       )}
     </SvgBase>
+  )
+
+  return (
+    <>
+      {svgElem}
+
+      {barPos && (
+        <>
+          {/* <div
+            ref={tooltipRef}
+            className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100 w-48 pointer-events-none"
+            style={{
+              left: toolTipInfo.pos.x + scaledBlockSize.w,
+              top: toolTipInfo.pos.y + scaledBlockSize.h,
+            }}
+          >
+            <p className="font-semibold">{stats!.sample}</p>
+            <p>{stats!.feature}</p>
+            <p className="truncate">
+        
+              {getEventLabel(stats!, mutationsInUse, 'single')}
+            </p>
+            <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
+              toolTipInfo.cell.col + 1
+            }`}</p>
+          </div> */}
+
+          <span
+            ref={highlightRef}
+            className="absolute z-50 border-black pointer-events-none"
+            style={{
+              top: 10,
+              left: `${barPos.x - 1}px`,
+              width: `${scaledBlockSize.w + 1}px`,
+              height: (gridHeight + top - 10) * displayProps.scale,
+              borderWidth: `${Math.max(1, displayProps.scale)}px`,
+            }}
+          />
+        </>
+      )}
+    </>
   )
 }

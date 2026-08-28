@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined oncoplot tooltips.
 - New unified tooltips. Fixed minor axis ticks not being generated when major ticks set.
 - Added tooltip context for standardizing tooltips.
 - Gsea bubble now uses portal for tooltips.

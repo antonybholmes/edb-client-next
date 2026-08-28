@@ -13,13 +13,30 @@ export function svgPointToScreen(svg: SVGSVGElement, p: IPos) {
   pt.x = p.x
   pt.y = p.y
   const ctm = svg.getScreenCTM()
+
   if (!ctm) {
-    return null
+    throw new Error('SVG has no screen CTM')
   }
 
   const screenPt = pt.matrixTransform(ctm)
 
   return { x: screenPt.x, y: screenPt.y }
+}
+
+export function svgPointToScreenRelative(svg: SVGSVGElement, p: IPos) {
+  const ctm = svg.getScreenCTM()
+  const rect = svg.getBoundingClientRect()
+
+  if (!ctm) {
+    throw new Error('SVG has no screen CTM')
+  }
+
+  const screenPoint = new DOMPoint(p.x, p.y).matrixTransform(ctm)
+
+  return {
+    x: screenPoint.x - rect.left,
+    y: screenPoint.y - rect.top,
+  }
 }
 
 /**
