@@ -38,7 +38,7 @@ export function DialogCardHeader({
   ...props
 }: Omit<IDivProps, 'title'> & { title?: ReactNode; info?: string }) {
   return (
-    <BaseCol className={cn('text-sm font-semibold', className)} {...props}>
+    <BaseCol className={cn('text-sm font-medium', className)} {...props}>
       {title && (typeof title === 'string' ? <h2>{title}</h2> : title)}
 
       {children}

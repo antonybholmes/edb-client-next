@@ -43,6 +43,7 @@ import {
 } from '@/components/dialogs/card/action-dialog-card'
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -276,7 +277,7 @@ export function HeatMapDialog({
     >
       <ActionDialogCard>
         <DialogCardHeader>
-          <Checkbox
+          <Switch
             checked={settings.heatmap.filters.rows.apply}
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
@@ -287,7 +288,7 @@ export function HeatMapDialog({
             }}
           >
             Filter
-          </Checkbox>
+          </Switch>
         </DialogCardHeader>
         <ActionDialogCardContent>
           <ActionDialogRow title="Top" justify="start">
@@ -357,7 +358,7 @@ export function HeatMapDialog({
 
       <ActionDialogCard>
         <DialogCardHeader>
-          <Checkbox
+          <Switch
             checked={settings.heatmap.transforms.apply}
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
@@ -368,7 +369,7 @@ export function HeatMapDialog({
             }}
           >
             Transform
-          </Checkbox>
+          </Switch>
         </DialogCardHeader>
 
         <ActionDialogCardContent>
@@ -424,9 +425,9 @@ export function HeatMapDialog({
 
       <ActionDialogCard>
         <DialogCardHeader>
-          <Checkbox
+          <Switch
             checked={settings.heatmap.cluster.apply}
-            disabled={!settings.heatmap.transforms.apply}
+
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
                 draft.heatmap.cluster.apply = v
@@ -436,7 +437,7 @@ export function HeatMapDialog({
             }}
           >
             Clustering
-          </Checkbox>
+          </Switch>
         </DialogCardHeader>
 
         <ActionDialogCardContent>

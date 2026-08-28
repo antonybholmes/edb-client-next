@@ -1,4 +1,4 @@
-import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
@@ -33,7 +33,7 @@ export function SettingsTracksPanel() {
 
   return (
     <>
-      <CheckPropRow
+      <SwitchPropRow
         title="Global Y"
         checked={settings.tracks.seqs.globalY.on}
         onCheckedChange={(v) => {
@@ -45,7 +45,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <CheckPropRow
+      <SwitchPropRow
         title="Auto"
         checked={settings.tracks.seqs.globalY.auto}
         onCheckedChange={(v) => {
@@ -71,7 +71,7 @@ export function SettingsTracksPanel() {
             updateSettings(newOptions)
           }}
         />
-      </CheckPropRow>
+      </SwitchPropRow>
 
       <PropRow
         title="Read Scale Mode"
@@ -93,7 +93,7 @@ export function SettingsTracksPanel() {
           <SelectItem value="CPM">CPM</SelectItem>
         </SelectList>
       </PropRow>
-      <CheckPropRow
+      <SwitchPropRow
         title="Smooth lines"
         checked={settings.tracks.seqs.smoothing.on}
         onCheckedChange={(v) => {
@@ -122,7 +122,7 @@ export function SettingsTracksPanel() {
           Smooth lines to improve them visually. The smoothing factor controls
           the effect of this.
         </BasicHoverCard>
-      </CheckPropRow>
+      </SwitchPropRow>
 
       <PropRow title="Bin size">
         <Switch
@@ -209,7 +209,7 @@ export function SettingsTracksPanel() {
         />
       </PropRow>
 
-      <CheckPropRow
+      <SwitchPropRow
         title={
           <VCenterRow className="gap-x-1">
             <span>Collapse</span>
@@ -229,7 +229,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <CheckPropRow
+      <SwitchPropRow
         title="Arrows"
         checked={settings.tracks.genes.arrows.show}
         onCheckedChange={(v) => {
@@ -261,9 +261,9 @@ export function SettingsTracksPanel() {
             <SelectItem value="filled">Filled</SelectItem>
           </SelectContent>
         </Select>
-      </CheckPropRow>
+      </SwitchPropRow>
 
-      <CheckPropRow
+      <SwitchPropRow
         title="End arrows"
         checked={settings.tracks.genes.endArrows.show}
         onCheckedChange={(v) => {
@@ -287,27 +287,27 @@ export function SettingsTracksPanel() {
         >
           First transcript only
         </Switch>
+      </SwitchPropRow>
 
-        <OutlineButton
-          colors={[
-            {
-              color: settings.tracks.genes.endArrows.stroke.value,
-              onColorChange: ({ color }) => {
-                const newOptions = produce(settings, (draft) => {
-                  draft.tracks.genes.endArrows.stroke.value = color
-                  draft.tracks.genes.endArrows.fill.value = color
-                })
+      <OutlineButton
+        colors={[
+          {
+            color: settings.tracks.genes.endArrows.stroke.value,
+            onColorChange: ({ color }) => {
+              const newOptions = produce(settings, (draft) => {
+                draft.tracks.genes.endArrows.stroke.value = color
+                draft.tracks.genes.endArrows.fill.value = color
+              })
 
-                updateSettings(newOptions)
-              },
+              updateSettings(newOptions)
             },
-          ]}
+          },
+        ]}
 
-          title="End Arrow Outline"
-        />
-      </CheckPropRow>
+        title="End Arrow Outline"
+      />
 
-      <CheckPropRow
+      <SwitchPropRow
         title="Exons"
         checked={settings.tracks.genes.exons.show}
         onCheckedChange={(v) => {
@@ -319,7 +319,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <CheckPropRow
+      <SwitchPropRow
         title="Canonical Transcripts Only"
         info="Shows only the primary, canonical transcript to reduce space."
         checked={settings.tracks.genes.canonical.only}
@@ -332,7 +332,7 @@ export function SettingsTracksPanel() {
         }}
       />
 
-      <CheckPropRow
+      <SwitchPropRow
         title="Canonical Transcript Color"
         info="Canonical transcripts can be colored separately to highlight them."
         checked={settings.tracks.genes.canonical.isColored}
@@ -361,9 +361,9 @@ export function SettingsTracksPanel() {
 
           title="Canonical Fill"
         />
-      </CheckPropRow>
+      </SwitchPropRow>
 
-      <CheckPropRow
+      <SwitchPropRow
         title="Scale auto size (bp)"
         checked={settings.tracks.scale.autoSize}
         onCheckedChange={(v) => {
@@ -389,7 +389,7 @@ export function SettingsTracksPanel() {
             updateSettings(newOptions)
           }}
         />
-      </CheckPropRow>
+      </SwitchPropRow>
     </>
   )
 }

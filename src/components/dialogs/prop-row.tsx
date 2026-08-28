@@ -4,9 +4,9 @@ import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { BaseRow } from '../layout/base-row'
+import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
-import { DialogCardInfo, DialogCardLabel } from './card/dialog-card'
+import { DialogCardInfo } from './card/dialog-card'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
@@ -80,31 +80,36 @@ export function PropRow({
   children,
 }: IProps) {
   return (
-    <BaseRow
-      className={propRowVariants({
-        align,
-        gap,
-        className: cn(
-          'min-h-6 gap-x-8',
-          info ? 'items-start pb-1' : 'items-center',
-          className
-        ),
-      })}
-    >
-      {side === 'right' && (
-        <DialogCardLabel title={title}>
-          {info && <DialogCardInfo>{info}</DialogCardInfo>}
-        </DialogCardLabel>
-      )}
+    <BaseCol className="gap-y-1">
       <VCenterRow
-        className={cn(
-          'grow shrink-0',
-          side === 'right' && 'justify-end',
-          contentCls
-        )}
+        className={propRowVariants({
+          align,
+          gap,
+          className: cn(
+            'min-h-6 gap-x-8',
+            //info ? 'items-start pb-1' : 'items-center',
+            className
+          ),
+        })}
       >
-        {children}
+        {side === 'right' && (
+          <label className={cn({ 'font-medium': info })}>{title}</label>
+        )}
+        <VCenterRow
+          className={cn(
+            'grow shrink-0',
+            side === 'right' && 'justify-end',
+            contentCls
+          )}
+        >
+          {children}
+        </VCenterRow>
+
+        {side === 'left' && (
+          <label className={cn({ 'font-medium': info })}>{title}</label>
+        )}
       </VCenterRow>
-    </BaseRow>
+      {info && <DialogCardInfo>{info}</DialogCardInfo>}
+    </BaseCol>
   )
 }

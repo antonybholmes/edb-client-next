@@ -119,11 +119,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.0.8",
+    "version": "50.2.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-28T18:03:33.911Z",
-    "hash": "615469c19a27c3f63dc1318794a44832662fabd939f95b6da7018a4f853e6191",
-    "build": 1978
+    "modified": "2026-08-28T22:43:59.188Z",
+    "hash": "8c293e1f835ae8a29f08f050cce73707e911c82a35d89fdebb255a9e92d73db8",
+    "build": 1980
   },
   {
     "name": "Motifs",
@@ -189,11 +189,11 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.4.2",
+    "version": "32.4.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-28T18:03:33.909Z",
-    "hash": "3edee4f44a3ed6f4287fde2c8410121730f2f5bddd87625ffdb5f8a43780e53b",
-    "build": 1138
+    "modified": "2026-08-28T22:43:59.186Z",
+    "hash": "c7ef38765171b782291541bc74933fa21ea5410d6e75e0f54970cf8184b11ba6",
+    "build": 1140
   },
   {
     "name": "Single Cell",

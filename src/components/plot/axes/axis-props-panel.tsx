@@ -1,5 +1,5 @@
-import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
@@ -12,7 +12,7 @@ export function AxisPropsPanel({ axis }: { axis: AxisType }) {
 
   return (
     <>
-      <CheckPropRow
+      <SwitchPropRow
         title={`${capitalCase(axis)}-Axis`} //{`${capitalCase(axis)}-Axis`}
         className="font-bold"
         checked={settings.plots.axes[axis].show}
@@ -41,7 +41,7 @@ export function AxisPropsPanel({ axis }: { axis: AxisType }) {
             },
           ]}
         />
-      </CheckPropRow>
+      </SwitchPropRow>
 
       <PropRow title="Ticks">
         <TickPropsPopover axis={axis} which="major" />
