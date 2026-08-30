@@ -64,7 +64,7 @@ export function TooltipRenderer() {
 
   return createPortal(
     <BaseCol
-      className="fixed z-(--z-tooltip) rounded-theme bg-black/60 p-3 text-xs text-white"
+      className="fixed z-(--z-tooltip) rounded-lg bg-black/50 shadow-lg px-4 py-3 text-xs text-white"
       style={{
         left: tooltip.pos.x,
         top: tooltip.pos.y,

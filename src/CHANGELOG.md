@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Tooltips refined.
 - New client layout. Tooltips now uses a store instead of being a provider.
 
 
