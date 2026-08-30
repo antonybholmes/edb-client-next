@@ -32,7 +32,7 @@ import { isSafeRelativeUrl, useEdbSession } from '@/components/edb/auth/session'
 import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
@@ -338,8 +338,8 @@ export function SignInQueryPage() {
   // }
 
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignInPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

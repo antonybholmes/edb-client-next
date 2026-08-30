@@ -53,7 +53,7 @@ import {
   useTabs,
   useToolbarTabs,
 } from '@/components/tabs/tab-provider'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
@@ -278,10 +278,10 @@ function OverlapPage() {
 
 export function OverlapQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <OverlapProvider>
         <OverlapPage />
       </OverlapProvider>
-    </CoreProviders>
+    </ClientLayout>
   )
 }

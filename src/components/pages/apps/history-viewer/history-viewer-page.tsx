@@ -1,7 +1,7 @@
 'use client'
 
 import { HeaderLayout } from '@/layouts/header-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { HistoryDevPanel } from '../matcalc/history/history-dev-panel'
 
 export function HistoryViewerPage() {
@@ -35,8 +35,8 @@ export function HistoryViewerPage() {
 
 export function HistoryViewerQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <HistoryViewerPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

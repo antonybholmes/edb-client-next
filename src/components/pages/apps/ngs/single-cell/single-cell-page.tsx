@@ -62,7 +62,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useFooter } from '@/providers/footer-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -453,8 +453,8 @@ export function SingleCellPage() {
 
 export function SingleCellQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SingleCellPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

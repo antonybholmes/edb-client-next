@@ -1,7 +1,7 @@
 import { MYACCOUNT_PATH } from '@/components/edb/edb'
 import { TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { SupabaseSignIn } from './supabase-signin'
 
 export function SignInPage({
@@ -22,8 +22,8 @@ export function SignInPage({
 
 export function SignInQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignInPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

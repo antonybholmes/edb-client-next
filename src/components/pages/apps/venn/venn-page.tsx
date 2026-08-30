@@ -56,7 +56,7 @@ import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { vfill } from '@/lib/fill'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { Card } from '@/themed/card'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
@@ -626,8 +626,8 @@ function VennPage() {
 
 export function VennPageQuery() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <VennPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

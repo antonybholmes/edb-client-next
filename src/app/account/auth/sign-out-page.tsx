@@ -19,7 +19,7 @@ import {
 import { ThemeLink } from '@/components/link/theme-link'
 import { CenterLayout } from '@/layouts/center-layout'
 import { redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useEffect, useState } from 'react'
 import { AuthModal } from './auth-modal'
 
@@ -118,8 +118,8 @@ export function SignOutQueryPage() {
   // }
 
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignOutPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

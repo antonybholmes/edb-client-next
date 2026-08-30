@@ -1,6 +1,6 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 
@@ -45,10 +45,10 @@ export function SignOutQueryPage() {
   // }
 
   return (
-    <CoreProviders>
+    <ClientLayout>
       <AuthProvider>
         <SignOutPage />
       </AuthProvider>
-    </CoreProviders>
+    </ClientLayout>
   )
 }

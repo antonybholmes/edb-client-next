@@ -20,7 +20,7 @@ import {
 } from '@/components/edb/edb'
 
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
 import { useEffect, useState } from 'react'
@@ -129,8 +129,8 @@ export function VerifyPage() {
 
 export function VerifyQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <VerifyPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

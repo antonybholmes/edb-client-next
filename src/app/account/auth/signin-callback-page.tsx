@@ -14,7 +14,7 @@ import {
 } from '@/components/edb/auth/session'
 import { config } from '@/config'
 import { CenterLayout } from '@/layouts/center-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useEffect } from 'react'
 import { AuthModal } from './auth-modal'
 
@@ -86,8 +86,8 @@ export function CallbackPage() {
 
 export function CallbackQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <CallbackPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

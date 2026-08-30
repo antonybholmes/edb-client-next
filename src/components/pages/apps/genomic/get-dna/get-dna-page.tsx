@@ -46,7 +46,7 @@ import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { dnaToJson } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { produce } from 'immer'
 import { useDNA } from './dna-store'
 import APP_INFO from './manifest.json'
@@ -272,10 +272,10 @@ export function GetDNAPage() {
 
 export function GetDNAQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       {/* <HistoryProvider app={APP_INFO.name}> */}
       <GetDNAPage />
       {/* </HistoryProvider> */}
-    </CoreProviders>
+    </ClientLayout>
   )
 }

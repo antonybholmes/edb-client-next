@@ -30,7 +30,7 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import type { ITab } from '@/components/tabs/tab-provider'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { HistoryPanel } from '../matcalc/history/history-panel'
 
 import { BaseCol } from '@/components/layout/base-col'
@@ -198,8 +198,8 @@ export function TableViewerPage() {
 
 export function TableViewerQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <TableViewerPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

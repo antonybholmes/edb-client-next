@@ -1,7 +1,7 @@
 'use client'
 
 import { HeaderLayout } from '@/layouts/header-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { MarkdownContent } from '../markdown-content'
 
 export function ChangelogPage({ contentHtml }: { contentHtml: string }) {
@@ -19,8 +19,8 @@ export function ChangelogPage({ contentHtml }: { contentHtml: string }) {
 
 export function ChangelogQueryPage({ contentHtml }: { contentHtml: string }) {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <ChangelogPage contentHtml={contentHtml} />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

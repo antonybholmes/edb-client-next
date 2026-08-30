@@ -1,5 +1,12 @@
 # Changelog
 
+## 89.0.0 (Aug, 2026)
+
+### Changed
+
+- New client layout. Tooltips now uses a store instead of being a provider.
+
+
 ## 87.8.0 (Aug, 2026)
 
 ### Changed

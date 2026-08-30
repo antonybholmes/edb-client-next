@@ -24,7 +24,7 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -348,8 +348,8 @@ export function GseaBubblePlotPage() {
 
 export function GseaBubbleQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <GseaBubblePlotPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

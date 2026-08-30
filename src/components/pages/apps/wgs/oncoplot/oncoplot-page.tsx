@@ -44,7 +44,7 @@ import { FileIcon } from '@/icons/file-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useMessages } from '@/providers/message-provider'
 import { HistoryShowButton } from '../../matcalc/history/history-layout'
 
@@ -422,8 +422,8 @@ function OncoplotPage() {
 /** client:only component */
 export function OncoplotQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <OncoplotPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

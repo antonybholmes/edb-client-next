@@ -1,4 +1,4 @@
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { APP_ACCOUNT_AUTH_SIGNED_OUT_URL } from '@/components/edb/edb'
 import { useClerk } from '@clerk/react'
@@ -24,8 +24,8 @@ export function SignOutPage() {
 
 export function SignOutQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignOutPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

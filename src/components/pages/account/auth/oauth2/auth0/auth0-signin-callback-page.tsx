@@ -4,7 +4,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
 import { useEdbSession } from '@/components/edb/auth/session'
 import { AuthProvider } from '@/providers/auth-provider'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'
@@ -106,10 +106,10 @@ export function CallbackPage() {
 
 export function SignInCallbackQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <AuthProvider>
         <CallbackPage />
       </AuthProvider>
-    </CoreProviders>
+    </ClientLayout>
   )
 }

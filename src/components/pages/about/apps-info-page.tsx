@@ -1,7 +1,7 @@
 'use client'
 
 import { BaseCol } from '@/layout/base-col'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { CenterLayout } from '@/layouts/center-layout'
 import type { IAppInfo } from '@/lib/app-info'
@@ -41,8 +41,8 @@ export function AppsInfoPage() {
 
 export function AppsInfoPageQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <AppsInfoPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

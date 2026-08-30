@@ -3,7 +3,7 @@
   "description": "Visualize and manage the history of changes made to data within the application.",
   "version": "3.8.6",
   "copyright": "(C) ${START_YEAR:2025} Antony Holmes",
-  "modified": "2026-06-29T17:30:17.992Z",
-  "hash": "19e9c128065b1f03b72f4dcf449605075737c72e13cb04016dd88d6562e223bd",
-  "build": 100
+  "modified": "2026-08-30T00:53:16.879Z",
+  "hash": "88df9347aab5aabc085bbe0b3c0583ef2b079da7752456761dd3720e145fd9a0",
+  "build": 102
 }

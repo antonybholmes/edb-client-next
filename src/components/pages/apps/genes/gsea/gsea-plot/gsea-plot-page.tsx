@@ -45,7 +45,7 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { BoolSearchQuery } from '@/lib/search'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
@@ -454,8 +454,8 @@ export function GseaPlotPage() {
 
 export function GseaPlotQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <GseaPlotPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

@@ -26,7 +26,7 @@ import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import {
   Accordion,
   AccordionContent,
@@ -272,8 +272,8 @@ export function HubsPage() {
 
 export function HubsQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <HubsPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

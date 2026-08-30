@@ -46,7 +46,7 @@ import {
   HeaderPortal,
   HeaderSlotPortal,
 } from '@/components/header/header-portal'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import {
   HistoryLayout,
   HistoryShowButton,
@@ -254,10 +254,10 @@ export function DNAPage() {
 
 export function DNAQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       {/* <HistoryProvider app={APP_INFO.name}> */}
       <DNAPage />
       {/* </HistoryProvider> */}
-    </CoreProviders>
+    </ClientLayout>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useEdbSession } from '@/components/edb/auth/session'
 import { BaseSignOutPage } from '../../sign-out-page'
@@ -17,8 +17,8 @@ export function SignOutPage() {
 
 export function SignOutQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignOutPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

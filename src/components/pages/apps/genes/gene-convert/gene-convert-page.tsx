@@ -43,7 +43,7 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import {
   HistoryLayout,
   HistoryShowButton,
@@ -250,8 +250,8 @@ export function GeneConvPage() {
 
 export function GeneConvQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <GeneConvPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

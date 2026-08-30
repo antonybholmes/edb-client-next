@@ -81,8 +81,8 @@ export function BaseSignInCallbackPage({
 
 // export function CallbackQueryPage() {
 //   return (
-//     <CoreProviders>
+//     <ClientLayout>
 //       <CallbackPage />
-//     </CoreProviders>
+//     </ClientLayout>
 //   )
 // }

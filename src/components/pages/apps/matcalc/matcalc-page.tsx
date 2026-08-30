@@ -63,7 +63,7 @@ import { HeaderButton } from '@/layouts/header-button'
 import { newGroupRow, type IClusterGroup } from '@/lib/cluster-group'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
 
@@ -620,8 +620,8 @@ export function MatcalcPage() {
 
 export function MatcalcQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <MatcalcPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

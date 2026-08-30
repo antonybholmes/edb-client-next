@@ -35,7 +35,7 @@ import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import APP_INFO from './manifest.json'
@@ -255,8 +255,8 @@ function RevCompPage() {
 
 export function RevCompQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <RevCompPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

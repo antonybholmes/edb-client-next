@@ -2626,5 +2626,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-08-25T17:23:11.155Z"
+  },
+  {
+    "version": "89.0.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "New client layout. Tooltips now uses a store instead of being a provider",
+          "date": "2026-08-30T00:53:19.167Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-30T00:53:19.167Z"
   }
 ]

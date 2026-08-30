@@ -2,9 +2,9 @@
   "name": "Sankey",
   "description": "Create Sankey plots.",
   "color": "#ff9900",
-  "version": "1.2.4",
+  "version": "1.2.6",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-08-28T18:03:33.912Z",
-  "hash": "82f23abd6dae7f8e9fa1024f8b0d7e03b3e2a7caeb4b86e9456b98ecd746ff7b",
-  "build": 78
+  "modified": "2026-08-30T00:53:16.886Z",
+  "hash": "441e7f4a5df60c4a7591ea34ea3666e30a4eaf057ffab464d2716e022c821d72",
+  "build": 80
 }

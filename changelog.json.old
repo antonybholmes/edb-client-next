@@ -2617,6 +2617,10 @@
         {
           "msg": "Switch to using checkboxes for more settings to reduce clutter from switches",
           "date": "2026-08-28T18:03:35.000Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2026-08-28T22:44:00.256Z"
         }
       ]
     },

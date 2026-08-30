@@ -48,7 +48,7 @@ import APP_INFO from './manifest.json'
 //import { toast } from '@/themed/use-toast'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -323,10 +323,10 @@ export function PathwayPage() {
 
 export function PathwayQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       {/* <HistoryProvider app={APP_INFO.name}> */}
       <PathwayPage />
       {/* </HistoryProvider> */}
-    </CoreProviders>
+    </ClientLayout>
   )
 }

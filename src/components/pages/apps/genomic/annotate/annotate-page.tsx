@@ -41,7 +41,7 @@ import { textToLines } from '@/lib/text/lines'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -239,10 +239,10 @@ export function AnnotationPage() {
 
 export function AnnotationQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       {/* <HistoryProvider app={APP_INFO.name}> */}
       <AnnotationPage />
       {/* </HistoryProvider> */}
-    </CoreProviders>
+    </ClientLayout>
   )
 }
