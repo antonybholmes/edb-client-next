@@ -55,9 +55,6 @@ export function CoreProviders({ children }: IChildrenProps) {
                 </FooterProvider>
               </SVGProvider>
             </TabProvider>
-            {/* </ZoomProvider> */}
-
-            {/* </SelectionRangeProvider> */}
           </HistoryProvider>
         </AppInfoProvider>
         {/* </ClerkProvider> */}
