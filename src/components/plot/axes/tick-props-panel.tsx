@@ -23,14 +23,14 @@ export function TickPropsPanel() {
         }}
       >
         <NumericalInput
-          value={settings.plots.axes.x.ticks.major.line.size}
+          value={settings.plots.axes.x.ticks.major.style.line.size}
 
           limit={[1, 1000]}
           dp={0}
           onNumChanged={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.plots.axes.x.ticks.major.line.size = v
+                draft.plots.axes.x.ticks.major.style.line.size = v
               })
             )
           }}
@@ -38,24 +38,24 @@ export function TickPropsPanel() {
       </CheckPropRow>
 
       <NumericalPropRow
-        value={settings.plots.axes.x.ticks.major.line.offset}
+        value={settings.plots.axes.x.ticks.major.style.line.offset}
         title="Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.x.ticks.major.line.offset = v
+              draft.plots.axes.x.ticks.major.style.line.offset = v
             })
           )
         }}
       />
 
       <NumericalPropRow
-        value={settings.plots.axes.x.ticks.major.labels.offset}
+        value={settings.plots.axes.x.ticks.major.style.labels.offset}
         title="Label Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.x.ticks.major.labels.offset = v
+              draft.plots.axes.x.ticks.major.style.labels.offset = v
             })
           )
         }}
@@ -76,14 +76,14 @@ export function TickPropsPanel() {
         }}
       >
         <NumericalInput
-          value={settings.plots.axes.x.ticks.minor.line.size}
+          value={settings.plots.axes.x.ticks.minor.style.line.size}
 
           limit={[1, 1000]}
           dp={0}
           onNumChanged={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.plots.axes.x.ticks.minor.line.size = v
+                draft.plots.axes.x.ticks.minor.style.line.size = v
               })
             )
           }}
@@ -91,24 +91,24 @@ export function TickPropsPanel() {
       </CheckPropRow>
 
       <NumericalPropRow
-        value={settings.plots.axes.x.ticks.minor.line.offset}
+        value={settings.plots.axes.x.ticks.minor.style.line.offset}
         title="Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.x.ticks.minor.line.offset = v
+              draft.plots.axes.x.ticks.minor.style.line.offset = v
             })
           )
         }}
       />
 
       <NumericalPropRow
-        value={settings.plots.axes.x.ticks.minor.labels.offset}
+        value={settings.plots.axes.x.ticks.minor.style.labels.offset}
         title="Label Offset"
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.plots.axes.x.ticks.minor.labels.offset = v
+              draft.plots.axes.x.ticks.minor.style.labels.offset = v
             })
           )
         }}

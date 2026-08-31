@@ -8,7 +8,7 @@ import { config } from '../../config'
 import type { IAppInfo } from '../../lib/app-info'
 
 import {
-  DEFAULT_AXIS_DISPLAY_PROPS,
+  DEFAULT_AXIS_CONFIG,
   IXYAxisDisplayProps,
 } from '../plot/axes/svg-axis-props'
 import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
@@ -112,9 +112,9 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
     colors: { custom: [] },
     colorbar: { ...DEFAULT_COLORBAR_PROPS },
     axes: {
-      x: { ...DEFAULT_AXIS_DISPLAY_PROPS },
-      y: { ...DEFAULT_AXIS_DISPLAY_PROPS },
-      colorbar: { ...DEFAULT_AXIS_DISPLAY_PROPS },
+      x: { ...DEFAULT_AXIS_CONFIG },
+      y: { ...DEFAULT_AXIS_CONFIG },
+      colorbar: { ...DEFAULT_AXIS_CONFIG },
     },
     zoom: 1,
   },

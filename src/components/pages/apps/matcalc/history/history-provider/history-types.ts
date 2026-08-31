@@ -11,7 +11,7 @@ import { IGseaBubblePlot } from '../../../genes/gsea/gsea-plot/bubble/gsea-bubbl
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 
-import { AxisRecord } from '@/components/plot/axes/axis'
+import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 import { IExtGseaDisplayOptions } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from './history-manager'

@@ -4,13 +4,14 @@ import { useMemo } from 'react'
 import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { Axis, YAxis, type TickLabel } from './axes/axis'
+import { Axis, YAxis } from './axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from './axes/svg-axis'
 import { SvgVColorBar } from './svg-color-bar'
 
 import { vfill } from '@/lib/fill'
 import type { ILim } from '@/lib/math/math'
 import { ones } from '@/lib/math/ones'
+import { TickLabel } from './axes/svg-axis-props'
 import { SvgBase } from './svg-base'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 200 }

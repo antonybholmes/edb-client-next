@@ -6,7 +6,7 @@ export const variants = cva(VECTOR_ICON_CLS, {
   variants: {
     variant: {
       default: '',
-      colorful: 'stroke-red-400 fill-yellow-200',
+      colorful: 'stroke-red-400/70 fill-yellow-200',
     },
   },
   defaultVariants: {

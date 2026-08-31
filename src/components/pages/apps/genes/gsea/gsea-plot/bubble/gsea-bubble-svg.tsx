@@ -88,7 +88,7 @@ function GseaBubbleLegendSvg() {
     }
   }
 
-  const range =
+  const rangeDiff =
     settings.scale.mode === 'p'
       ? settings.scale.p.range[1] - settings.scale.p.range[0]
       : globalXLim[1] - globalXLim[0]
@@ -100,22 +100,29 @@ function GseaBubbleLegendSvg() {
           .setLength(edbSettings.plots.colorbar.size.w)
           .setTicks([
             settings.scale.p.range[0],
-            settings.scale.p.range[0] + range / 2,
+            settings.scale.p.range[0] + rangeDiff / 2,
             settings.scale.p.range[1],
           ])
           .setTicks(
             [
-              settings.scale.p.range[0] + range * 0.25,
-              settings.scale.p.range[0] + range * 0.75,
+              settings.scale.p.range[0] + rangeDiff * 0.25,
+              settings.scale.p.range[0] + rangeDiff * 0.75,
             ],
             { which: 'minor' }
           )
       : new Axis()
           .setDomain(globalXLim)
           .setLength(edbSettings.plots.colorbar.size.w)
-          .setTicks([globalXLim[0], globalXLim[0] + range / 2, globalXLim[1]])
+          .setTicks([
+            globalXLim[0],
+            globalXLim[0] + rangeDiff / 2,
+            globalXLim[1],
+          ])
           .setTicks(
-            [globalXLim[0] + range * 0.25, globalXLim[0] + range * 0.75],
+            [
+              globalXLim[0] + rangeDiff * 0.25,
+              globalXLim[0] + rangeDiff * 0.75,
+            ],
             { which: 'minor' }
           )
 
@@ -280,7 +287,7 @@ function BubblePlot({
               key={xi}
               y={y1}
               textAnchor="end"
-              font={edbSettings.plots.axes.y.ticks.major.labels}
+              font={edbSettings.plots.axes.y.ticks.major.style.labels}
             >
               {p.label}
             </SvgText>

@@ -1,4 +1,4 @@
-import { Axis, ITickItem, YAxis } from '@/components/plot/axes/axis'
+import { Axis, YAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
@@ -11,6 +11,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
 import { COLOR_WHITE } from '@/lib/color/color'
 
+import { ITickItem } from '@/components/plot/axes/svg-axis-props'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'

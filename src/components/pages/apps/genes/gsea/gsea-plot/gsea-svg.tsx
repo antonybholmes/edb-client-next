@@ -200,15 +200,15 @@ export function GseaSvg() {
 
     return (
       <g transform={`translate(${x}, ${y})`} key={ploti} id={`plot-${ploti}`}>
-        {edbSettings.plots.axes.x.title.show && (
+        {edbSettings.plots.axes.x.style.title.show && (
           <SvgText
             id={`title-${ploti}`}
-            font={edbSettings.plots.axes.x.title}
+            font={edbSettings.plots.axes.x.style.title}
             textAnchor="middle"
             x={titleX}
             y={
               settings.plot.margin.top -
-              edbSettings.plots.axes.x.title.offset * 0.5
+              edbSettings.plots.axes.x.style.title.offset * 0.5
             }
           >
             {pathway.name}
@@ -336,7 +336,7 @@ function EsSvg({
       >
         <SvgText
           dominantBaseline="central"
-          font={edbSettings.plots.axes.x.ticks.major.labels}
+          font={edbSettings.plots.axes.x.ticks.major.style.labels}
         >
           {sortedRankedGenes.length.toLocaleString()}
         </SvgText>
@@ -385,7 +385,6 @@ function EsSvg({
               dominantBaseline="hanging"
               font={settings.es.phenotypes}
               textAnchor="end"
-              //fontWeight="bold"
             >
               {sortedPhenotypes[1]!}
             </SvgText>
@@ -640,7 +639,7 @@ function RankingSvg({
           >
             <SvgText
               textAnchor="middle"
-              font={edbSettings.plots.axes.x.ticks.major.labels}
+              font={edbSettings.plots.axes.x.ticks.major.style.labels}
             >
               Zero cross at {crossing.index.toLocaleString()}
             </SvgText>

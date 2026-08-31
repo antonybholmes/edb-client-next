@@ -21,9 +21,12 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
   )
 
   const titleOffset =
-    tickOffset + tickSize + tickLabelOffset + settings.plots.axes.y.title.offset
+    tickOffset +
+    tickSize +
+    tickLabelOffset +
+    settings.plots.axes.y.style.title.offset
 
-  const strokeWidth = settings.plots.axes.y.line.width
+  const strokeWidth = settings.plots.axes.y.style.line.width
 
   const _title = title ?? ax.title
 
@@ -39,18 +42,18 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
       <SvgLine
         y1={-0.5 * strokeWidth}
         y2={ax.length + 0.5 * strokeWidth}
-        s={settings.plots.axes.y.line}
+        s={settings.plots.axes.y.style.line}
       />
 
       <AxisLeftTicksSvg ax={ax} />
 
-      {settings.plots.axes.y.title.show && ax && (
+      {settings.plots.axes.y.style.title.show && ax && (
         <SvgText
           transform={`translate(-${titleOffset}, ${
             0.5 * ax.length
           }) rotate(270)  `}
           textAnchor="middle"
-          font={settings.plots.axes.y.title}
+          font={settings.plots.axes.y.style.title}
         >
           {_title}
         </SvgText>
@@ -72,7 +75,7 @@ export function AxisRightSvg({
 
   const titleX = tickOffset + tickSize + tickLabelOffset + titleOffset
 
-  const strokeWidth = settings.plots.axes.y.line.width
+  const strokeWidth = settings.plots.axes.y.style.line.width
 
   const _title = title ?? ax.title
 
@@ -88,16 +91,16 @@ export function AxisRightSvg({
       <SvgLine
         y1={-0.5 * strokeWidth}
         y2={ax.length + 0.5 * strokeWidth}
-        s={settings.plots.axes.y.line}
+        s={settings.plots.axes.y.style.line}
       />
 
       <AxisRightTicksSvg ax={ax} axis={axis} />
 
-      {settings.plots.axes.y.title.show && ax && (
+      {settings.plots.axes.y.style.title.show && ax && (
         <SvgText
           transform={`translate(-${titleX}, ${0.5 * ax.length}) rotate(270)`}
           textAnchor="middle"
-          font={axisProps.title}
+          font={axisProps.style.title}
         >
           {_title}
         </SvgText>
@@ -121,7 +124,7 @@ export function AxisBottomSvg({
 
   // less space required for bottom axis title since we only need
   // to account for font height and tick mark
-  const titleOffset = tickOffset + tickSize + axisProps.title.offset
+  const titleOffset = tickOffset + tickSize + axisProps.style.title.offset
 
   const _title = title ?? ax.title
 
@@ -134,22 +137,22 @@ export function AxisBottomSvg({
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {axisProps.line.show && (
+      {axisProps.style.line.show && (
         <SvgLine
-          x1={-0.5 * axisProps.line.width}
-          x2={ax.length + 0.5 * axisProps.line.width}
+          x1={-0.5 * axisProps.style.line.width}
+          x2={ax.length + 0.5 * axisProps.style.line.width}
 
-          s={axisProps.line}
+          s={axisProps.style.line}
         />
       )}
 
       <AxisBottomTicksSvg ax={ax} />
 
-      {axisProps.title.show && _title && (
+      {axisProps.style.title.show && _title && (
         <SvgText
           transform={`translate(${0.5 * ax.length}, ${titleOffset})`}
           textAnchor="middle"
-          font={axisProps.title}
+          font={axisProps.style.title}
         >
           {_title}
         </SvgText>

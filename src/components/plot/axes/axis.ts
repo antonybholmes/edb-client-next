@@ -1,93 +1,35 @@
-import { TEXT_DEFAULT } from '@/consts'
-import { IDBEntity } from '@/interfaces/db-entity'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
 import * as d3 from 'd3'
 import { type ScaleLinear } from 'd3'
 import { deepmerge } from 'deepmerge-ts'
-import { IAxisDisplayProps, IAxisTickProps } from './svg-axis-props'
-
-export type TickLabel = string | number
-
-const MINOR_TICK_DIVISIONS = 5
-
-export interface ITickItem {
-  v: number
-  label?: string | undefined
-}
+import {
+  DEFAULT_AXIS_CONFIG,
+  IAxisConfig,
+  IAxisTicks,
+  IMajorMinorTicks,
+  ITickItem,
+  ITickProps,
+  WhichTick,
+} from './svg-axis-props'
 
 interface IMajorMinorTickParams {
-  major: DeepPartial<IAxisTickProps>
-  minor: DeepPartial<IAxisTickProps>
+  major: DeepPartial<IAxisTicks>
+  minor: DeepPartial<IAxisTicks>
 }
 
-export type WhichTick = 'major' | 'minor'
-
-interface ITickProps extends DeepPartial<IAxisTickProps> {
-  which: WhichTick | 'both'
-}
-
-interface ITicks {
-  major: { numTicks: number; items?: ITickItem[] }
-  minor: { divisions: number; items?: ITickItem[] }
-}
-
-export interface IAxisConfig {
-  title: string
-  clip: boolean
-  domain: ILim
-  range: ILim
-  ticks: ITicks
-}
-
-export const DEFAULT_AXIS_CONFIG: IAxisConfig = Object.freeze({
-  title: '',
-  clip: true,
-  domain: [0, 100] as ILim,
-  range: [0, 500] as ILim,
-  ticks: {
-    major: { numTicks: 5, items: undefined },
-    minor: { divisions: MINOR_TICK_DIVISIONS, items: undefined },
-  },
-})
-
-export interface IAxisCollection extends IDBEntity {
-  x?: IAxisConfig
-  y?: IAxisConfig
-  z?: IAxisConfig
-  colorbar?: IAxisConfig
-}
-
-export type AxisRecord = Record<string, IAxisConfig>
-
-export const DEFAULT_AXIS_CONFIG_COLLECTION_ID =
-  '01a044ae-c19a-75dd-a8b0-090308912c17'
-
-export const DEFAULT_AXIS_COLLECTION: IAxisCollection = Object.freeze({
-  id: DEFAULT_AXIS_CONFIG_COLLECTION_ID,
-  name: TEXT_DEFAULT,
-})
-
-export type AxesCollection = Record<string, IAxisCollection>
-
-export interface IAxesCollection extends IDBEntity {
-  axes: Record<string, IAxisCollection>
-}
-
-export const DEFAULT_AXES_COLLECTION_ID = '01a044b2-fb5b-75bd-ac38-d2291aed3ff6'
-
-export const DEFAULT_AXES_COLLECTION: IAxesCollection = Object.freeze({
-  id: DEFAULT_AXES_COLLECTION_ID,
-  name: TEXT_DEFAULT,
-  axes: {},
-})
-
-export function createNewAxisConfig(
-  axis: DeepPartial<IAxisConfig>
-): IAxisConfig {
-  return deepmerge(DEFAULT_AXIS_CONFIG, axis) as IAxisConfig
-}
+// export const DEFAULT_AXIS_CONFIG: IAxisConfig = Object.freeze({
+//   id: '01a05879-1e9d-75d9-b0bb-9d2faafbdba3',
+//   name: '',
+//   clip: true,
+//   domain: [0, 100] as ILim,
+//   range: [0, 500] as ILim,
+//   ticks: {
+//     major: { show: true, numTicks: 5, items: undefined },
+//     minor: { show: true, divisions: MINOR_TICK_DIVISIONS, items: undefined },
+//   },
+// })
 
 export class Axis {
   //protected _range: ILim = [0, 500]
@@ -96,7 +38,7 @@ export class Axis {
   protected _clip: boolean
   protected _title: string
 
-  protected _ticks: ITicks
+  protected _ticks: IMajorMinorTicks
 
   // we use d3 under the hood to do the scaling
   protected _scale: ScaleLinear<number, number>
@@ -104,10 +46,12 @@ export class Axis {
   protected _format: (d: d3.NumberValue) => string
   protected _userFormat: (d: d3.NumberValue) => string
 
-  protected _params: DeepPartial<IAxisDisplayProps> = {
+  protected _params: DeepPartial<IAxisConfig> = {
     //show: true,
-    title: {},
-    line: {},
+    style: {
+      title: {},
+      line: {},
+    },
     ticks: {
       major: {},
       minor: {},
@@ -116,7 +60,7 @@ export class Axis {
 
   constructor(axis: IAxisConfig = DEFAULT_AXIS_CONFIG) {
     this._clip = axis.clip
-    this._title = axis.title
+    this._title = axis.name
     this._ticks = structuredClone(axis.ticks)
 
     this._scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
@@ -201,19 +145,19 @@ export class Axis {
     const a = this.clone()
 
     a._ticks = {
-      major: { numTicks, items: undefined },
-      minor: { divisions: MINOR_TICK_DIVISIONS, items: undefined },
+      major: { ...a._ticks.major, show: true, numTicks, items: undefined },
+      minor: { ...a._ticks.minor, items: undefined },
     }
 
     return a
   }
 
   setTickParams(ticks: Partial<ITickProps> = {}): Axis {
-    const { show, line, labels, which = 'both' } = ticks
+    const { show, style, which = 'both' } = ticks
 
     const a = this.clone()
 
-    const props = definedProps({ show, line, labels })
+    const props = definedProps({ show, style })
 
     if (which === 'major' || which === 'both') {
       a._params.ticks.major = deepmerge(a._params.ticks.major, props)
@@ -226,7 +170,7 @@ export class Axis {
     return a
   }
 
-  get params(): DeepPartial<IAxisDisplayProps> {
+  get params(): DeepPartial<IAxisConfig> {
     return this._params
   }
 
@@ -365,7 +309,12 @@ export class Axis {
   setMinorTickDivisions(divisions: number): Axis {
     const a = this.clone()
 
-    a._ticks.minor = { divisions, items: undefined }
+    a._ticks.minor = {
+      ...a._ticks.minor,
+      show: true,
+      divisions,
+      items: undefined,
+    }
 
     return a
   }
