@@ -75,7 +75,7 @@ export function GeneSetFilter() {
                 })
               )
             }}
-            w="sm"
+            w="xs"
           />
         </CheckPropRow>
         <CheckPropRow
@@ -103,7 +103,7 @@ export function GeneSetFilter() {
                 })
               )
             }}
-            w="sm"
+            w="xs"
           />
         </CheckPropRow>
       </PopoverContent>
