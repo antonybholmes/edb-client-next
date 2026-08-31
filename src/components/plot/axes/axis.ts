@@ -212,6 +212,26 @@ export class Axis {
   }
 
   /**
+   * Set the axis limit, but auto adjust to be multiples
+   * of the interval.
+   *
+   * @param lim axis domain limit
+   * @returns
+   */
+  autoDomain(lim: ILim): Axis {
+    const a = this.clone()
+
+    a._scale = d3
+      .scaleLinear()
+      .domain(lim)
+      .nice()
+      .range([0, a._scale.range()[1]!])
+    a._invalidateCache()
+
+    return a
+  }
+
+  /**
    * Set the drawing range (in pixels) where the axis will
    * be drawn, thus a data point can be scaled to where it
    * will appear in the actual svg.
@@ -230,25 +250,6 @@ export class Axis {
 
   setLength(l: number): Axis {
     return this.setRange([0, l])
-  }
-
-  /**
-   * Set the axis limit, but auto adjust to be multiples
-   * of the interval.
-   *
-   * @param lim axis domain limit
-   * @returns
-   */
-  autoDomain(lim: ILim): Axis {
-    const a = this.clone()
-
-    a._scale = d3
-      .scaleLinear()
-      .domain(lim)
-      .nice()
-      .range([0, a._scale.range()[1]!])
-
-    return a
   }
 
   setTicks(

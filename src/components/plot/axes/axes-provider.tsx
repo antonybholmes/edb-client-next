@@ -7,44 +7,56 @@ import React, {
 } from 'react'
 import { IAxisConfig } from './svg-axis-props'
 
-export type Plot = {
+export interface IAxesPlot {
   id: string
   axes: Record<string, IAxisConfig>
 }
 
-type PlotState = {
-  plots: Record<string, Plot>
+interface IAxesPlotState {
+  plots: Record<string, IAxesPlot>
 }
 
-type PlotActions = {
+interface IAxesPlotActions {
   updateAxis: (
     plotId: string,
     axisId: string,
     patch: Partial<IAxisConfig>
   ) => void
 
+  addPlots: (plots: IAxesPlot[]) => void
+
   addAxis: (plotId: string, axis: IAxisConfig) => void
 
   removeAxis: (plotId: string, axisId: string) => void
 }
 
-type PlotContextValue = {
-  state: PlotState
-  actions: PlotActions
+interface IAxesPlotContextValue {
+  state: IAxesPlotState
+  actions: IAxesPlotActions
 }
 
-const PlotContext = createContext<PlotContextValue | null>(null)
+const PlotContext = createContext<IAxesPlotContextValue | null>(null)
 
-export function PlotProvider({
-  initialPlots,
+export function AxesPlotProvider({
+  plots: initialPlots = [],
   children,
 }: {
-  initialPlots: Plot[]
+  plots?: IAxesPlot[]
   children: React.ReactNode
 }) {
-  const [plots, setPlots] = useState<Record<string, Plot>>(() =>
+  const [plots, setPlots] = useState<Record<string, IAxesPlot>>(() =>
     Object.fromEntries(initialPlots.map((plot) => [plot.id, plot]))
   )
+
+  const addPlots = useCallback((newPlots: IAxesPlot[]) => {
+    setPlots((current) => {
+      const updated = { ...current }
+      for (const plot of newPlots) {
+        updated[plot.id] = plot
+      }
+      return updated
+    })
+  }, [])
 
   const updateAxis = useCallback(
     (plotId: string, axisId: string, patch: Partial<IAxisConfig>) => {
@@ -125,16 +137,18 @@ export function PlotProvider({
     })
   }, [])
 
+  console.log(plots, 'plots')
   const value = useMemo(
     () => ({
       state: { plots },
       actions: {
         updateAxis,
+        addPlots,
         addAxis,
         removeAxis,
       },
     }),
-    [plots, updateAxis, addAxis, removeAxis]
+    [plots, updateAxis, addPlots, addAxis, removeAxis]
   )
 
   return <PlotContext.Provider value={value}>{children}</PlotContext.Provider>

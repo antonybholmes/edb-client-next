@@ -12,7 +12,9 @@ import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { usePlots } from '@/components/plot/axes/axes-provider'
 import { SvgText } from '@/components/plot/svg-text'
+import { useGseaPlot } from './gsea-plot-provider'
 import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
@@ -28,7 +30,11 @@ export function GseaSvg() {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
 
-  const { rankedGenes, inUseReports, resultsMap } = useGsea()
+  const { rankedGenes, resultsMap } = useGsea()
+  const { pathways } = useGseaPlot()
+  const { plots } = usePlots()
+
+  console.log(plots, 'plots x')
 
   // size of plot with padding
   const plotSize = [
@@ -39,13 +45,6 @@ export function GseaSvg() {
         ? settings.plot.gap.y + settings.ranking.axes.y.length
         : 0),
   ]
-
-  // keep only pathways for which we have results, i.e. with
-  // suitable q values. If q == 1, unlikely GSEA generated it
-  // so we cannot plot it
-  const pathways = inUseReports.filter(
-    (report) => report.q < 1 && report.name in resultsMap
-  )
 
   const rows = Math.ceil(pathways.flat().length / settings.page.columns)
 
@@ -58,7 +57,7 @@ export function GseaSvg() {
 
   let ploti = 0
 
-  const plots = pathways.map((pathway, pi) => {
+  const svgPlots = pathways.map((pathway, pi) => {
     const col = ploti % settings.page.columns
     const row = Math.floor(ploti / settings.page.columns)
     const x =
@@ -85,10 +84,7 @@ export function GseaSvg() {
           .sort((a, b) => a.rank - b.rank)
       : rankedGenes
 
-    let xax = new Axis()
-      .setDomain([0, maxRank])
-      .setLength(settings.axes.x.length)
-      .setTickParams({ which: 'both', show: false })
+    let xax = new Axis(plots[pi].x)
 
     xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -234,7 +230,7 @@ export function GseaSvg() {
       //shapeRendering={SVG_CRISP_EDGES}
       //className="absolute"
     >
-      {plots}
+      {svgPlots}
     </SvgBase>
   )
 }

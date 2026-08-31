@@ -29,6 +29,7 @@ import type { ITab } from '@/components/tabs/tab-provider'
 
 import { Checkbox } from '@/themed/v2/check-box'
 
+import { ClientLayout } from '@/app/client-layout'
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -45,7 +46,6 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { BoolSearchQuery } from '@/lib/search'
-import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
@@ -68,6 +68,7 @@ import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import { useGseaBubbleSettings } from './bubble/gsea-bubble-settings-store'
 import { GseaBubbleTabPanel } from './bubble/gsea-bubble-tab-panel'
 import { GeneSetFilter } from './gene-set-filter'
+import { GseaPlotProvider } from './gsea-plot-provider'
 import { useGsea, type IGseaGeneSet } from './gsea-plot-store'
 import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
@@ -383,7 +384,9 @@ export function GseaPlotPage() {
                       className="grow h-full"
                     >
                       <TabsContent value="graph">
-                        <GseaSvg />
+                        <GseaPlotProvider>
+                          <GseaSvg />
+                        </GseaPlotProvider>
                       </TabsContent>
                       <TabsContent value="bubble">
                         <GseaBubbleTabPanel />
