@@ -80,6 +80,7 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
 
     axesPlots.push({ id: pathway.id, axes: { x: xax, y: yax } })
   }
+
   return (
     <AxesPlotProvider plots={axesPlots}>
       <GseaPlotContext.Provider value={{ pathways }}>
