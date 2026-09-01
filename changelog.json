@@ -2650,6 +2650,10 @@
         {
           "msg": "Switched axis to plain object rather than class for preparation of user editing",
           "date": "2026-09-01T17:58:31.335Z"
+        },
+        {
+          "msg": "Transition to new axis system",
+          "date": "2026-09-01T20:44:49.139Z"
         }
       ]
     },

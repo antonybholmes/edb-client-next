@@ -14,7 +14,7 @@ import { resizeAndScaleCanvas } from '@/lib/canvas'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
-import { Axis, YAxis } from '../axes/axis'
+import { IAxis, axisDomainToRangeFunc, createAxis } from '../axes/axis'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 100 }
 
@@ -41,15 +41,19 @@ export function drawScatter(
 ) {
   const { hue, size = 1, palette = BWR_CMAP_V2, labels } = options
 
-  const xax = new Axis()
-    //.setDomain([Math.min(...xdata), Math.max(...xdata)])
-    .setDomain(displayProps.axes.xaxis.domain)
-    .setLength(displayProps.axes.xaxis.length)
+  const xax: IAxis = createAxis({
+    domain: displayProps.axes.xaxis.domain,
+    length: displayProps.axes.xaxis.length,
+  })
 
-  const yax = new YAxis()
-    //.setDomain([Math.min(...ydata), Math.max(...ydata)])
-    .setDomain(displayProps.axes.yaxis.domain)
-    .setLength(displayProps.axes.yaxis.length)
+  const yax: IAxis = createAxis({
+    direction: 'y',
+    domain: displayProps.axes.yaxis.domain,
+    length: displayProps.axes.yaxis.length,
+  })
+
+  const xaf = axisDomainToRangeFunc(xax)
+  const yaf = axisDomainToRangeFunc(yax)
 
   const innerWidth = xax.range[1]
   const innerHeight = yax.range[1]
@@ -82,8 +86,8 @@ export function drawScatter(
 
       for (const [xi, p] of points.entries()) {
         //const y = ydata[xi]!
-        const x1 = xax.domainToRange(p.x)
-        const y1 = yax.domainToRange(p.y)
+        const x1 = xaf(p.x)
+        const y1 = yaf(p.y)
 
         let color: string = displayProps.dots.color
 
@@ -121,8 +125,8 @@ export function drawScatter(
 
       if (labels) {
         for (const label of labels) {
-          const x1 = xax.domainToRange(label.pos[0])
-          const y1 = yax.domainToRange(label.pos[1])
+          const x1 = xaf(label.pos[0])
+          const y1 = yaf(label.pos[1])
 
           ctx.beginPath()
           // use arc for pure circles
@@ -148,8 +152,6 @@ export function drawScatter(
 }
 
 interface IProps extends ComponentProps<'canvas'>, IDrawScatterOptions {
-  //x: number[]
-  //y: number[]
   points: IPos[]
   onCanvasChange?: (canvas: HTMLCanvasElement) => void
   displayProps?: IScatterDisplayOptions

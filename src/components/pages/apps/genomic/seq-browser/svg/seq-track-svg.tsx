@@ -164,13 +164,6 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
 
   // update y positions
 
-  //)
-
-  // const coreTracks = tracks.map((t, ti) => ({
-  //   track: t,
-  //   positions: getPoints(yax, t, allTracksBinCounts[ti]!),
-  // }))
-
   // we allow some space to render titles
   return (
     <BaseSeqTrackSvg

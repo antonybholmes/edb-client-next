@@ -119,11 +119,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.2.0",
+    "version": "50.2.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-01T20:28:07.323Z",
-    "hash": "6c324454b9feb3c0fdeba2abe04be1f499aa7dece35590cb2f60f619f9cbff56",
-    "build": 1988
+    "modified": "2026-09-01T20:44:48.065Z",
+    "hash": "e6d4eac165e0cbdbd5186caf9df206b82f7038ba648f27bec39ab147b0fe63f1",
+    "build": 1990
   },
   {
     "name": "Motifs",
@@ -191,9 +191,9 @@
     "color": "#FF0000",
     "version": "32.4.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-01T20:28:07.321Z",
-    "hash": "798df322ffffc65543818c949fb138b8e16f7cb1ffa478e821b55650143b0593",
-    "build": 1144
+    "modified": "2026-09-01T20:44:48.063Z",
+    "hash": "5b985e26f32ecddef865a6ae5ee0efb22bcdea3dfcfff0a24d3be04952bbe51c",
+    "build": 1146
   },
   {
     "name": "Single Cell",

@@ -10,7 +10,7 @@ import {
   IAxisTicks,
   IMajorMinorTicks,
   ITickItem,
-  ITickProps,
+  ITickParamProps,
   WhichTick,
 } from './svg-axis-props'
 
@@ -155,7 +155,7 @@ export class Axis {
     return a
   }
 
-  setTickParams(ticks: Partial<ITickProps> = {}): Axis {
+  setTickParams(ticks: Partial<ITickParamProps> = {}): Axis {
     const { show, style, which = 'both' } = ticks
 
     const a = this.clone()
