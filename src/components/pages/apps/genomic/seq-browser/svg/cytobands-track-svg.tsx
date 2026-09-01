@@ -6,7 +6,6 @@ import {
   axisDomainToRangeFunc,
   createAxis,
   IAxis,
-  RangeToDomainFunc,
   setAxisDomain,
 } from '@/components/plot/axes/axis'
 import { SvgText } from '@/components/plot/svg-text'
@@ -279,7 +278,7 @@ function CytobandsRoundStyleTrackSvg({
           <LabelSvg
             pbands={pbands}
             qbands={qbands}
-            ax={xaf}
+            ax={cytoAx}
             settings={settings}
           />
         </g>
@@ -399,7 +398,7 @@ function CytobandsSquareStyleTrackSvg({
           <LabelSvg
             pbands={pbands}
             qbands={qbands}
-            ax={xaf}
+            ax={cytoAx}
             settings={settings}
           />
         </g>
@@ -447,17 +446,19 @@ function LabelSvg({
 }: {
   pbands: ICytoband[]
   qbands: ICytoband[]
-  ax: RangeToDomainFunc
+  ax: IAxis
   settings: ISeqBrowserSettings
 }) {
+  const xaf = axisDomainToRangeFunc(ax)
+
   const bands = [...pbands, ...qbands]
 
   const labels = range(0, bands.length).map((i) => {
     const b = bands[i]!
     const l = b.loc
 
-    const x1 = ax(l.start)
-    const x2 = ax(l.end)
+    const x1 = xaf(l.start)
+    const x2 = xaf(l.end)
     const x = (x1 + x2) / 2
 
     const name = b.name

@@ -700,6 +700,7 @@ export function OncoplotSvg() {
       { v: 0, label: '0' },
       { v: maxGeneCount, label: `${maxGeneCount} / ${mf?.shape[1]}` },
     ],
+    tickParams: { which: 'minor', show: false },
   })
   //.setTickLabels([0, `${maxGeneCount} / ${mf.shape[1]}`])
 

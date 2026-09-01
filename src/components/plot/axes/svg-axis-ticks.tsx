@@ -165,6 +165,8 @@ export function AxisTopTicksSvg({ ax }: IAxisProps) {
   const majorXs = axisDomainToRange(ax, ticks)
   const minorXs = axisDomainToRange(ax, minorTicks)
 
+  console.log('dsfsdf', tickLabelOffset)
+
   return (
     <>
       {minorTickProps.show && (
@@ -195,7 +197,7 @@ export function AxisTopTicksSvg({ ax }: IAxisProps) {
                       <SvgText
                         font={minorTickProps.style.labels}
                         textAnchor="middle"
-                        dominantBaseline="hanging"
+                        dominantBaseline="auto"
                       >
                         {tick.label}
                       </SvgText>
@@ -234,7 +236,7 @@ export function AxisTopTicksSvg({ ax }: IAxisProps) {
                       <SvgText
                         font={majorTickProps.style.labels}
                         textAnchor="middle"
-                        dominantBaseline="hanging"
+                        dominantBaseline="auto"
                       >
                         {tick.label}
                       </SvgText>

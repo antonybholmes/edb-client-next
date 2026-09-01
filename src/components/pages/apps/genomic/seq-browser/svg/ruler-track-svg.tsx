@@ -4,6 +4,7 @@ import {
   autoTickInterval,
   axisDomainToRangeFunc,
   IAxis,
+  setAxisClip,
   setAxisDomain,
 } from '@/components/plot/axes/axis'
 import { SvgLine } from '@/components/plot/svg-line'
@@ -27,10 +28,10 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
   const startPos = useRef<IPos | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [_xax, setAx] = useState(xax)
+  const [_xax, setAx] = useState(setAxisClip(xax, false))
 
   useEffect(() => {
-    setAx(xax)
+    setAx(setAxisClip(xax, false))
   }, [xax])
 
   function handleMouseDown(e: React.MouseEvent) {
@@ -88,7 +89,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
     ? autoTickInterval([location.start, location.end])
     : settings.tracks.ruler.bp
 
-  if (Math.abs(_xax.domain[1] - _xax.domain[0]) / rulerBb > 8) {
+  if (Math.abs(_xax.domain[1] - _xax.domain[0]) / rulerBb > 4) {
     rulerBb *= 2
   }
 
@@ -162,7 +163,6 @@ export function RulerTrackSvg({ track, xax }: IProps) {
                         y1={majorH2 - track.displayOptions.minorTicks.height}
                         y2={majorH2}
                         s={track.displayOptions.stroke}
-                        //strokeOpacity={0.5}
                       />
                     )
                   })}
@@ -192,10 +192,10 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
         <g id="major-tick-labels">
           {ticks
-            .map((tick) => [tick, xaf(tick)] as [number, number])
-            .filter((t) => t[1]! >= dx1 && t[1]! <= dx2)
+            .map((tick) => ({ domain: tick, range: xaf(tick) }))
+            .filter((t, ti) => t.range >= dx1 && t.range <= dx2)
             .map((t, pi) => {
-              const [tick, px1] = t
+              const { domain: tick, range: px1 } = t
               return (
                 <SvgText
                   id={`major-tick-${pi}`}

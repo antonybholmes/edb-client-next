@@ -331,6 +331,7 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
                     ax={createAxis({
                       domain: range,
                       length: settings.legend.colorbar.size.w,
+                      tickParams: { which: 'minor', show: false },
                     })}
 
                     cmap={COLOR_MAPS[settings.cmap]!}

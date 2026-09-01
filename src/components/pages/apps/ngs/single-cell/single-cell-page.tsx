@@ -32,7 +32,6 @@ import {
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { makeUuid } from '@/lib/id'
 import { useZoom } from '@/providers/zoom-provider'
-import { Card } from '@/themed/card'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
@@ -48,7 +47,6 @@ import {
 
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { ShowSideButton } from '../../../show-side-button'
-import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { ClusterPropsPanel } from './cluster-props-panel'
@@ -58,11 +56,12 @@ import { PlotsPropsPanel } from './plots-props-panel'
 import { ExportIcon } from '@/components/icons/export-icon'
 import { FileIcon } from '@/components/icons/file-icon'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { ClientLayout } from '@/app/client-layout'
 import { useFooter } from '@/providers/footer-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -389,14 +388,12 @@ export function SingleCellPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <Card className="grow" variant="content">
-                <div className={PLOT_CLS}>
-                  <UmapPlotSvg
-                    //plot={plot}
-                    displayProps={settings}
-                  />
-                </div>
-              </Card>
+              <ExtScrollCard>
+                <UmapPlotSvg
+                  //plot={plot}
+                  displayProps={settings}
+                />
+              </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel

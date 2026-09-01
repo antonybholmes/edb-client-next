@@ -89,6 +89,7 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
   ])
 
   const yax: IAxis = createAxis({
+    direction: 'y',
     domain: [0, ymax],
     length: tracks[0]!.displayOptions.height,
     ticks: [0, ymax],
