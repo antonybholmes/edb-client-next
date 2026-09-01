@@ -5,34 +5,23 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { IAxisConfig } from './svg-axis-props'
+import { IAxis } from './axis'
 
 export interface IAxesPlot {
   id: string
-  axes: Record<string, IAxisConfig>
-}
-
-interface IAxesPlotState {
-  plots: Record<string, IAxesPlot>
-}
-
-interface IAxesPlotActions {
-  updateAxis: (
-    plotId: string,
-    axisId: string,
-    patch: Partial<IAxisConfig>
-  ) => void
-
-  addPlots: (plots: IAxesPlot[]) => void
-
-  addAxis: (plotId: string, axis: IAxisConfig) => void
-
-  removeAxis: (plotId: string, axisId: string) => void
+  axes: Record<string, IAxis>
 }
 
 interface IAxesPlotContextValue {
-  state: IAxesPlotState
-  actions: IAxesPlotActions
+  plots: Record<string, IAxesPlot>
+
+  updateAxis: (plotId: string, axisId: string, patch: Partial<IAxis>) => void
+
+  addPlots: (plots: IAxesPlot[]) => void
+
+  addAxis: (plotId: string, axis: IAxis) => void
+
+  removeAxis: (plotId: string, axisId: string) => void
 }
 
 const PlotContext = createContext<IAxesPlotContextValue | null>(null)
@@ -59,7 +48,7 @@ export function AxesPlotProvider({
   }, [])
 
   const updateAxis = useCallback(
-    (plotId: string, axisId: string, patch: Partial<IAxisConfig>) => {
+    (plotId: string, axisId: string, patch: Partial<IAxis>) => {
       setPlots((current) => {
         const plot = current[plotId]
 
@@ -94,7 +83,7 @@ export function AxesPlotProvider({
     []
   )
 
-  const addAxis = useCallback((plotId: string, axis: IAxisConfig) => {
+  const addAxis = useCallback((plotId: string, axis: IAxis) => {
     setPlots((current) => {
       const plot = current[plotId]
 
@@ -137,16 +126,13 @@ export function AxesPlotProvider({
     })
   }, [])
 
-  console.log(plots, 'plots')
   const value = useMemo(
     () => ({
-      state: { plots },
-      actions: {
-        updateAxis,
-        addPlots,
-        addAxis,
-        removeAxis,
-      },
+      plots,
+      updateAxis,
+      addPlots,
+      addAxis,
+      removeAxis,
     }),
     [plots, updateAxis, addPlots, addAxis, removeAxis]
   )
@@ -161,15 +147,5 @@ export function usePlots() {
     throw new Error('usePlots must be used inside a PlotProvider')
   }
 
-  return context.state.plots
-}
-
-export function usePlotActions() {
-  const context = useContext(PlotContext)
-
-  if (!context) {
-    throw new Error('usePlotActions must be used inside a PlotProvider')
-  }
-
-  return context.actions
+  return context
 }

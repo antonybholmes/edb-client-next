@@ -4,8 +4,7 @@ import {
   AxesPlotProvider,
   IAxesPlot,
 } from '@/components/plot/axes/axes-provider'
-import { newAxisConfig } from '@/components/plot/axes/svg-axis-props'
-import { produce } from 'immer'
+import { createAxis } from '@/components/plot/axes/axis'
 import { IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
@@ -49,11 +48,10 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
     // ranks are 0-based in the results files
     const maxRank = rankedGenes.length - 1
 
-    let xax = produce(newAxisConfig(), (draft) => {
-      draft.domain = [0, maxRank]
-      draft.range = [0, settings.axes.x.length]
-      draft.ticks.major.show = false
-      draft.ticks.minor.show = false
+    let xax = createAxis({
+      domain: [0, maxRank],
+      length: settings.axes.x.length,
+      tickParams: { which: 'both', show: false },
     })
 
     const es = settings.phenotypes.invert
@@ -71,12 +69,14 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
       Math.max(...es.map((e) => e.score)),
     ]
 
-    let yax = produce(newAxisConfig(), (draft) => {
-      draft.domain = ylim
-      draft.range = [0, settings.es.axes.y.length]
-
-      draft.ticks.minor.show = false
+    let yax = createAxis({
+      direction: 'y',
+      domain: ylim,
+      length: settings.es.axes.y.length,
+      tickParams: { which: 'both', show: false },
     })
+
+    console.log('x', xax)
 
     axesPlots.push({ id: pathway.id, axes: { x: xax, y: yax } })
   }

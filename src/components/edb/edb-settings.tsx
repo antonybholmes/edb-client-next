@@ -15,7 +15,7 @@ import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v48`
+const SETTINGS_KEY = `${config.appId}:settings:v50`
 
 export type ToolbarStyle = 'classic' | 'single'
 

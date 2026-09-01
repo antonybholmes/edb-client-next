@@ -24,10 +24,6 @@ export interface ITickItem {
 
 export type WhichTick = 'major' | 'minor'
 
-export interface ITickProps extends DeepPartial<IAxisTicks> {
-  which: WhichTick | 'both'
-}
-
 export type AxisType = 'x' | 'y' | 'z' | 'colorbar'
 
 export interface IAxisLabelProps extends ITextProps {
@@ -39,12 +35,20 @@ export interface IAxisLineProps extends IStrokeProps {
   offset: number
 }
 
+export interface IAxisTickStyle {
+  line: IAxisLineProps
+  labels: IAxisLabelProps
+}
+
+export interface ITickParamProps {
+  show: boolean
+  style: IAxisTickStyle
+  which: WhichTick | 'both'
+}
+
 export interface IAxisTicks extends IDBEntity {
   show: boolean
-  style: {
-    labels: IAxisLabelProps
-    line: IAxisLineProps
-  }
+  style: IAxisTickStyle
   items?: ITickItem[]
 }
 
@@ -71,7 +75,7 @@ export interface IAxisConfig extends IDBEntity {
     line: IStrokeProps
   }
   ticks: IMajorMinorTicks
-
+  direction: 'x' | 'y'
   scale?: 'linear' | 'log'
 }
 
@@ -94,7 +98,7 @@ export const DEFAULT_AXIS_LINE_PROPS: IAxisLineProps = {
 
 export const DEFAULT_AXIS_TICK_PROPS: IMajorAxisTicks = {
   id: '01a0588c-3169-752f-a52b-3f356b24f0df',
-  name: 'Major Axis Tick',
+  name: 'Major Axis Ticks',
   show: true,
   style: {
     labels: { ...DEFAULT_AXIS_LABEL_PROPS },
@@ -106,7 +110,7 @@ export const DEFAULT_AXIS_TICK_PROPS: IMajorAxisTicks = {
 export const DEFAULT_MINOR_AXIS_TICK_PROPS: IMinorAxisTicks = {
   ...DEFAULT_AXIS_TICK_PROPS,
   id: '01a0588c-675d-704f-a91f-2f596b6cb4d4',
-  name: 'Minor Axis Tick',
+  name: 'Minor Axis Ticks',
   divisions: 5,
   style: {
     labels: { ...DEFAULT_AXIS_LABEL_PROPS, show: false },
@@ -129,12 +133,13 @@ export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
     major: { ...DEFAULT_AXIS_TICK_PROPS },
     minor: { ...DEFAULT_MINOR_AXIS_TICK_PROPS },
   },
+  direction: 'x',
 }
 
 export function newAxisConfig(
   config: DeepPartial<IAxisConfig> = {}
 ): IAxisConfig {
-  return deepmerge({ ...DEFAULT_AXIS_CONFIG }, config, { id: makeUuid() })
+  return deepmerge({ ...DEFAULT_AXIS_CONFIG, id: makeUuid() }, config)
 }
 
 export interface IAxisCollection extends IDBEntity {

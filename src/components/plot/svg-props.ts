@@ -1,7 +1,8 @@
 import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
-import { Axis } from './axes/axis'
+
+import { IAxis } from './axes/axis'
 import { AxisType } from './axes/svg-axis-props'
 
 export const FONT_SIZE_SMALL = 12
@@ -193,7 +194,7 @@ export const DEFAULT_COLORBAR_PROPS: IColorBarProps = {
 }
 
 export interface IAxisProps {
-  ax: Axis
+  ax: IAxis
   pos?: IPos
   font?: ITextProps
   labelFont?: ITextProps

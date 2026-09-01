@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
 import {
   DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
@@ -12,6 +11,7 @@ import {
 import { KDE } from '@/lib/math/kde'
 import { linspace } from '@/lib/math/linspace'
 import { zip } from '@/lib/utils'
+import { axisDomainToRange, createAxis, IAxis } from '../axes/axis'
 import { SvgPolygon } from '../svg-polygon'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
@@ -20,7 +20,7 @@ interface IProps extends IDivProps {
   xsmooth?: number[]
   ysmooth?: number[]
   globalXMax?: number
-  yax?: Axis
+  yax?: IAxis
   width?: number
   height?: number
   r?: number
@@ -46,10 +46,11 @@ export function ViolinPlotSvg({
     // duplicate to mirror violin
 
     if (!yax) {
-      yax = new YAxis()
-        .autoDomain([0, Math.max(...data)])
-        //.setDomain([0, plot.dna.seq.length])
-        .setLength(height)
+      yax = createAxis({
+        direction: 'y',
+        length: height,
+        autoDomain: [0, Math.max(...data)],
+      })
     }
 
     if (!ysmooth) {
@@ -103,7 +104,9 @@ export function ViolinPlotSvg({
     // }
 
     const points: string = zip(xsmooth, ysmooth)
-      .map((p) => `${0.5 * p[0]! * width},${yax!.domainToRange(p[1]!)}`)
+      .map(
+        (p) => `${0.5 * p[0]! * width},${axisDomainToRange(yax, [p[1]!])[0]!}`
+      )
       .join(' ')
 
     // matching is case insensitive

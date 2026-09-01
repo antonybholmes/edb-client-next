@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
 import {
   DEFAULT_STROKE_PROPS,
   NO_FILL_PROPS,
@@ -11,6 +10,7 @@ import {
 } from '@/components/plot/svg-props'
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_RED } from '@/lib/color/color'
+import { axisDomainToRange, createAxis, IAxis } from '../axes/axis'
 
 export type IBoxWhiskerMode = LeftRightPos | 'full'
 
@@ -19,7 +19,7 @@ interface IProps extends IDivProps {
   q1: number
   median: number
   q3: number
-  yax?: Axis
+  yax?: IAxis
   width?: number
   height?: number
   stroke?: IStrokeProps
@@ -52,22 +52,25 @@ export function BoxWhiskerPlotSvg({
     const w2 = data.toReversed().filter((x) => x <= q4)
 
     if (!yax) {
-      yax = new YAxis()
-        .autoDomain([0, Math.max(...data)])
-        //.setDomain([0, plot.dna.seq.length])
-        .setLength(height)
+      yax = createAxis({
+        direction: 'y',
+        length: height,
+        autoDomain: [0, Math.max(...data)],
+      })
     }
 
     const x1 = mode === 'right' ? 0 : -0.5 * width
 
     const x2 = mode === 'left' ? 0 : width / 2
 
-    const y1 = yax.domainToRange(w1[0]!)
-    const y2 = yax.domainToRange(w2[0]!)
+    const [y1, y2, yq1, yq3, ymed] = axisDomainToRange(yax, [
+      w1[0]!,
+      w2[0]!,
+      q1,
+      q3,
+      median,
+    ])
 
-    const yq1 = yax.domainToRange(q1)
-    const yq3 = yax.domainToRange(q3)
-    const ymed = yax.domainToRange(median)
     // matching is case insensitive
 
     return (

@@ -23,7 +23,7 @@ import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 import { useMemo } from 'react'
 
-import { Axis } from '@/components/plot/axes/axis'
+import { createAxis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { COLOR_MAPS } from '@/lib/color/colormap'
@@ -272,27 +272,22 @@ export function HeatMapSvg() {
       }
     }
 
-    const cax = new Axis()
-      .setDomain(displayOptions.range)
-      .setLength(displayOptions.colorbar.size.w)
-      .setTicks([
+    const cax = createAxis({
+      domain: displayOptions.range,
+      length: displayOptions.colorbar.size.w,
+      ticks: [
         displayOptions.range[0],
         (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
         displayOptions.range[1],
-      ])
-      .setTicks(
-        [
-          displayOptions.range[0] +
-            (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-          displayOptions.range[0] +
-            (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-        ],
-        { which: 'minor' }
-      )
-      .setTickParams({
-        which: 'minor',
-        show: true,
-      })
+      ],
+      minorTicks: [
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+      ],
+      tickParams: { which: 'minor', show: true },
+    })
 
     const svg = (
       <>
@@ -473,13 +468,7 @@ export function HeatMapSvg() {
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
             <SvgHColorBar
-              ax={new Axis()
-                .setDomain(displayOptions.range)
-                .setLength(displayOptions.colorbar.size.w)
-                .setTickParams({
-                  which: 'minor',
-                  show: false,
-                })}
+              ax={cax}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
 
               pos={{

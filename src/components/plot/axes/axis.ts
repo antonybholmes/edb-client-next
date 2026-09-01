@@ -1,514 +1,363 @@
 import type { ILim } from '@/lib/math/math'
-import { range } from '@/lib/math/range'
-import { DeepPartial, definedProps } from '@/lib/utils'
+import { range as numRange } from '@/lib/math/range'
+import { definedProps } from '@/lib/utils'
 import * as d3 from 'd3'
-import { type ScaleLinear } from 'd3'
 import { deepmerge } from 'deepmerge-ts'
 import {
   DEFAULT_AXIS_CONFIG,
-  IAxisConfig,
-  IAxisTicks,
-  IMajorMinorTicks,
-  ITickItem,
-  ITickProps,
-  WhichTick,
+  ITickParamProps,
+  type IAxisConfig,
+  type ITickItem,
+  type WhichTick,
 } from './svg-axis-props'
 
-interface IMajorMinorTickParams {
-  major: DeepPartial<IAxisTicks>
-  minor: DeepPartial<IAxisTicks>
+export interface IAxis extends IAxisConfig {
+  length: number
+  format?: (value: d3.NumberValue) => string
+  userFormat?: (value: d3.NumberValue) => string
 }
 
-// export const DEFAULT_AXIS_CONFIG: IAxisConfig = Object.freeze({
-//   id: '01a05879-1e9d-75d9-b0bb-9d2faafbdba3',
-//   name: '',
-//   clip: true,
-//   domain: [0, 100] as ILim,
-//   range: [0, 500] as ILim,
-//   ticks: {
-//     major: { show: true, numTicks: 5, items: undefined },
-//     minor: { show: true, divisions: MINOR_TICK_DIVISIONS, items: undefined },
-//   },
-// })
+export function copyAxis(axis: IAxis, patch: Partial<IAxis> = {}): IAxis {
+  return {
+    ...axis,
+    ...patch,
+    ticks: structuredClone(patch.ticks ?? axis.ticks),
+  }
+}
 
-export class Axis {
-  //protected _range: ILim = [0, 500]
-
-  // clip values to be within bounds of axis
-  protected _clip: boolean
-  protected _title: string
-
-  protected _ticks: IMajorMinorTicks
-
-  // we use d3 under the hood to do the scaling
-  protected _scale: ScaleLinear<number, number>
-
-  protected _format: (d: d3.NumberValue) => string
-  protected _userFormat: (d: d3.NumberValue) => string
-
-  protected _params: DeepPartial<IAxisConfig> = {
-    //show: true,
-    style: {
-      title: {},
-      line: {},
-    },
+function invalidateCache(axis: IAxis): IAxis {
+  return copyAxis(axis, {
     ticks: {
-      major: {},
-      minor: {},
+      major: { ...axis.ticks.major, items: undefined },
+      minor: { ...axis.ticks.minor, items: undefined },
     },
-  }
-
-  constructor(axis: IAxisConfig = DEFAULT_AXIS_CONFIG) {
-    this._clip = axis.clip
-    this._title = axis.name
-    this._ticks = structuredClone(axis.ticks)
-
-    this._scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
-  }
-
-  private _makeFormatter(n: number): (d: d3.NumberValue) => string {
-    if (!this._format) {
-      // auto format the ticks if not set
-      this._format = this._scale.tickFormat(n, 'f') //  d3.format('.2f')
-    }
-
-    return this._format
-  }
-
-  private _makeTicks(
-    ticks: number[] | ITickItem[],
-    addLabels: boolean = true
-  ): ITickItem[] {
-    if (ticks.length === 0) {
-      return []
-    }
-
-    if (ticks.every((item) => typeof item === 'number')) {
-      const format = this._makeFormatter(ticks.length) ?? this._format
-
-      return ticks.map((v) => ({
-        v,
-        label: addLabels ? format(v) : undefined,
-      }))
-    } else {
-      return ticks
-    }
-  }
-
-  /**
-   * Clones the properties of an axis onto this axis
-   * for the purposes of copying. This method is not
-   * designed for external calling.
-   *
-   * @param target an axis object to add cloned properties to
-   * @returns the axis object.
-   */
-  _copy<T extends Axis>(target: T): T {
-    target._scale = this._scale.copy()
-    target._clip = this._clip
-    target._title = this._title
-    target._format = this._format
-
-    target._userFormat = this._userFormat
-    target._params = structuredClone(this._params)
-    target._ticks = structuredClone(this._ticks)
-
-    return target
-  }
-
-  clone(): Axis {
-    const a = new Axis()
-    return this._copy(a)
-  }
-
-  setTitle(title: string): Axis {
-    const a = this.clone()
-    a._title = title
-    return a
-  }
-
-  setClip(clip: boolean): Axis {
-    const a = this.clone()
-    a._clip = clip
-    return a
-  }
-
-  setDP(dp: number): Axis {
-    const a = this.clone()
-
-    a._userFormat = dp >= 0 ? d3.format(`.${dp}f`) : undefined
-
-    return a
-  }
-
-  setNumTicks(numTicks: number): Axis {
-    const a = this.clone()
-
-    a._ticks = {
-      major: { ...a._ticks.major, show: true, numTicks, items: undefined },
-      minor: { ...a._ticks.minor, items: undefined },
-    }
-
-    return a
-  }
-
-  setTickParams(ticks: Partial<ITickProps> = {}): Axis {
-    const { show, style, which = 'both' } = ticks
-
-    const a = this.clone()
-
-    const props = definedProps({ show, style })
-
-    if (which === 'major' || which === 'both') {
-      a._params.ticks.major = deepmerge(a._params.ticks.major, props)
-    }
-
-    if (which === 'minor' || which === 'both') {
-      a._params.ticks.minor = deepmerge(a._params.ticks.minor, props)
-    }
-
-    return a
-  }
-
-  get params(): DeepPartial<IAxisConfig> {
-    return this._params
-  }
-
-  get tickParams(): DeepPartial<IMajorMinorTickParams> {
-    return this._params.ticks
-  }
-
-  /**
-   * Invalidate the cached ticks and formatters. This is called
-   * when the domain or range changes, so that the ticks can be
-   * recalculated. This is an internal method and should not be
-   * called directly. It is called automatically when the
-   * domain or range changes.
-   *
-   * @private
-   */
-  private _invalidateCache() {
-    this._ticks = {
-      major: { ...this._ticks.major, items: undefined },
-      minor: { ...this._ticks.minor, items: undefined },
-    }
-    this._format = undefined
-  }
-
-  /**
-   * The domain is the range of the real data.
-   *
-   * @param lim
-   * @param opts
-   * @returns
-   */
-  setDomain(lim: ILim): Axis {
-    const a = this.clone()
-
-    a._scale = d3.scaleLinear().domain(lim).range([0, a._scale.range()[1]!])
-    a._invalidateCache()
-
-    return a
-  }
-
-  /**
-   * Set the axis limit, but auto adjust to be multiples
-   * of the interval.
-   *
-   * @param lim axis domain limit
-   * @returns
-   */
-  autoDomain(lim: ILim): Axis {
-    const a = this.clone()
-
-    a._scale = d3
-      .scaleLinear()
-      .domain(lim)
-      .nice()
-      .range([0, a._scale.range()[1]!])
-    a._invalidateCache()
-
-    return a
-  }
-
-  /**
-   * Set the drawing range (in pixels) where the axis will
-   * be drawn, thus a data point can be scaled to where it
-   * will appear in the actual svg.
-   *
-   * @param range
-   * @returns
-   */
-  setRange(lim: ILim): Axis {
-    const a = this.clone()
-
-    a._scale = d3.scaleLinear().domain(a._scale.domain()).range(lim)
-    a._invalidateCache()
-
-    return a
-  }
-
-  setLength(l: number): Axis {
-    return this.setRange([0, l])
-  }
-
-  setTicks(
-    ticks: number[] | ITickItem[],
-    opts: { which?: WhichTick } = {}
-  ): Axis {
-    const { which = 'major' } = opts
-
-    const a = this.clone()
-
-    if (which === 'major') {
-      a._ticks = {
-        major: { ...a._ticks.major, items: a._makeTicks(ticks, true) },
-        minor: { ...a._ticks.minor, items: undefined },
-      }
-    } else {
-      a._ticks.minor = { ...a._ticks.minor, items: a._makeTicks(ticks, false) }
-
-      // turn on minor ticks if they are set
-      // we can directly set in partial object
-      // as show key will be created if it does not exist
-      a._params.ticks.minor.show = a._ticks.minor.items?.length > 0
-    }
-
-    return a
-  }
-
-  setTickLabels(labels: string[], opts: { which?: WhichTick } = {}): Axis {
-    const { which = 'major' } = opts
-
-    const a = this.clone()
-
-    if (which === 'major') {
-      if (labels.length === a._ticks.major?.items?.length) {
-        a._ticks.major = {
-          ...a._ticks.major,
-          items: a._ticks.major.items.map((tick, i) => ({
-            ...tick,
-            label: labels[i],
-          })),
-        }
-      }
-    } else {
-      if (labels.length === a._ticks.minor?.items?.length) {
-        a._ticks.minor = {
-          ...a._ticks.minor,
-          items: a._ticks.minor.items.map((tick, i) => ({
-            ...tick,
-            label: labels[i],
-          })),
-        }
-      }
-    }
-
-    return a
-  }
-
-  setMinorTickDivisions(divisions: number): Axis {
-    const a = this.clone()
-
-    a._ticks.minor = {
-      ...a._ticks.minor,
-      show: true,
-      divisions,
-      items: undefined,
-    }
-
-    return a
-  }
-
-  get title(): string {
-    return this._title
-  }
-
-  /**
-   * The limits of the axis in the domain space, i.e.
-   * your input data in metres, seconds etc.
-   */
-  get domain(): ILim {
-    return this._scale.domain() as ILim
-  }
-
-  /**
-   * The length of the axis in pixels.
-   * This is the difference between the two range limits.
-   */
-  get length(): number {
-    return this._scale.range()[1]!
-  }
-
-  get range(): ILim {
-    return this._scale.range() as ILim
-  }
-
-  private generateTicks(n: number): ITickItem[] {
-    const format = this._makeFormatter(n) ?? this._format
-
-    const ticks = this._scale.ticks(n).map((v) => ({
-      v,
-      label: format?.(v) ?? v.toString(),
-    }))
-
-    return ticks
-  }
-
-  get ticks(): ITickItem[] {
-    if (!this._ticks.major?.items) {
-      // if ticks are not set, generate them from the scale
-      this._ticks.major.items = this.generateTicks(this._ticks.major.numTicks)
-    }
-
-    return this._ticks.major?.items || []
-  }
-
-  get minorTicks(): ITickItem[] {
-    if (!this._ticks.minor?.items) {
-      this._ticks.minor.items = generateMinorTicks(
-        this.ticks,
-        this._ticks.minor.divisions
-      )
-    }
-
-    return this._ticks.minor?.items || []
-  }
-
-  /**
-   * Converts a number in domain space to range space.
-   *
-   * @param x a value in domain space
-   * @returns the value in range space (i.e. the pixel coordinate)
-   */
-  protected _domainToRange(x: number): number {
-    let n = this._scale(x)
-
-    if (this._clip) {
-      if (n < this.range[0]) {
-        n = this.range[0]
-      }
-
-      if (n > this.range[1]) {
-        n = this.range[1]
-      }
-    }
-
-    return n
-  }
-
-  /**
-   * Converts a number in domain space to range space, i.e. real to pixel coordinates.
-   *
-   * @param x a value in domain space
-   * @returns the value in range space (i.e. the pixel coordinate)
-   */
-  domainToRange(x: number): number {
-    return this._domainToRange(x)
-  }
-
-  /**
-   * Convert from range (i.e. pixel) space to domain space.
-   * This is the inverse of domainToRange.
-   *
-   * @param x a value in range space (i.e. pixel coordinate)
-   * @param clip if true, clip the value to the domain limits
-   * @returns
-   */
-  rangeToDomain(x: number): number {
-    let n = this._scale.invert(x)
-
-    if (this._clip) {
-      if (n < this.domain[0]) {
-        n = this.domain[0]
-      }
-
-      if (n > this.domain[1]) {
-        n = this.domain[1]
-      }
-    }
-
-    return n
-  }
+    format: undefined,
+  })
 }
 
-export class YAxis extends Axis {
-  override clone(): Axis {
-    return this._copy(new YAxis())
+export function createAxis(
+  opts: {
+    config?: IAxisConfig
+    direction?: IAxis['direction']
+    name?: string
+    length?: number
+    domain?: ILim
+    range?: ILim
+    autoDomain?: boolean | ILim
+    ticks?: number[] | ITickItem[]
+    minorTicks?: number[] | ITickItem[]
+    tickParams?: Partial<ITickParamProps>
+  } = {}
+): IAxis {
+  const {
+    config = DEFAULT_AXIS_CONFIG,
+    direction = 'x',
+    name,
+    length,
+    domain,
+    range,
+    autoDomain,
+    ticks,
+    minorTicks,
+    tickParams,
+  } = opts
+  let ret = {
+    ...structuredClone(config),
+    length: 1,
+    ...definedProps({ direction, name, domain, range }),
   }
 
-  override domainToRange(x: number): number {
-    // invert the y-axis, so that higher values are at the top since SVG y=0 is at the top
-    // but on a graph, y=0 is at the bottom so we need to flip the y-axis for display
-    return this._scale.range()[1]! - this._domainToRange(x)
+  if (length !== undefined) {
+    ret.range = [0, length]
   }
 
-  static fromAxis(axis: Axis): YAxis {
-    return axis._copy(new YAxis())
-  }
-}
+  ret.length = Math.abs(ret.range[1] - ret.range[0])
 
-/**
- * Calculates a reasonable tick interval for a data axis.
- *
- * https://stackoverflow.com/questions/237220/tickmark-algorithm-for-a-graph-axis
- *
- * @param lim
- * @returns
- */
-export function autoTickInterval(lim: ILim): number {
-  const range = Math.abs(lim[1] - lim[0])
-
-  const x = Math.pow(10, Math.floor(Math.log10(range)))
-
-  let ret = 0
-
-  if (range / x >= 5) {
-    ret = x
-  } else if (range / (0.5 * x) >= 5) {
-    ret = 0.5 * x
-  } else {
-    ret = x * 0.2
+  if (autoDomain !== undefined && autoDomain) {
+    ret = autoAxisDomain(
+      ret,
+      typeof autoDomain === 'boolean' ? ret.domain : autoDomain
+    )
   }
 
-  if (lim[0] > lim[1]) {
-    ret = -ret
+  if (ticks !== undefined) {
+    ret = setAxisTicks(ret, ticks)
+  }
+
+  if (minorTicks !== undefined) {
+    ret = setAxisTicks(ret, minorTicks, { which: 'minor' })
+  }
+
+  if (tickParams !== undefined) {
+    ret = setAxisTickParams(ret, tickParams)
   }
 
   return ret
 }
 
-/**
- * Calculates a standardized data range over a given limit.
- * This is to make a graph more visually appealing. For example
- * instead of [.23, 4.1] convert to [0, 5]
- *
- * @param lim
- * @param interval
- * @returns
- */
-export function autoLim(lim: ILim, interval?: number): ILim {
-  if (!interval) {
-    interval = autoTickInterval(lim)
-  }
-
-  return [
-    Math.floor(lim[0] / interval) * interval,
-    Math.ceil(lim[1] / interval) * interval,
-  ]
+export function setAxisDirection(
+  axis: IAxis,
+  direction: IAxis['direction']
+): IAxis {
+  return copyAxis(axis, { direction })
 }
 
-function generateMinorTicks(
-  ticks: ITickItem[],
-  minorTickDivisions: number
+export function setAxisTitle(axis: IAxis, title: string): IAxis {
+  return copyAxis(axis, { name: title })
+}
+
+export function setAxisClip(axis: IAxis, clip: boolean): IAxis {
+  return copyAxis(axis, { clip })
+}
+
+export function setAxisDP(axis: IAxis, decimalPlaces: number): IAxis {
+  return copyAxis(axis, {
+    userFormat:
+      decimalPlaces >= 0 ? d3.format(`.${decimalPlaces}f`) : undefined,
+  })
+}
+
+export function setAxisNumTicks(axis: IAxis, numTicks: number): IAxis {
+  return copyAxis(axis, {
+    ticks: {
+      major: { ...axis.ticks.major, show: true, numTicks, items: undefined },
+      minor: { ...axis.ticks.minor, items: undefined },
+    },
+  })
+}
+
+export function setAxisTickParams(
+  axis: IAxis,
+  params: Partial<ITickParamProps> = {}
+): IAxis {
+  const { show, style, which = 'both' } = params
+
+  const ticksCopy = structuredClone(axis.ticks)
+
+  if (which === 'major' || which === 'both') {
+    ticksCopy!.major.show = show ?? ticksCopy!.major.show
+    ticksCopy!.major.style = deepmerge(ticksCopy!.major.style, style)
+  }
+
+  if (which === 'minor' || which === 'both') {
+    ticksCopy!.minor.show = show ?? ticksCopy!.minor.show
+    ticksCopy!.minor.style = deepmerge(ticksCopy!.minor.style, style)
+  }
+
+  return copyAxis(axis, { ticks: ticksCopy })
+}
+
+export function setAxisDomain(axis: IAxis, domain: ILim): IAxis {
+  return invalidateCache(
+    copyAxis(axis, {
+      domain: [...domain] as ILim,
+      length: domain[1] - domain[0],
+    })
+  )
+}
+
+export function autoAxisDomain(axis: IAxis, domain: ILim): IAxis {
+  const niceDomain = d3.scaleLinear().domain(domain).nice().domain() as ILim
+  return invalidateCache(
+    copyAxis(axis, {
+      domain: niceDomain,
+      length: niceDomain[1] - niceDomain[0],
+    })
+  )
+}
+
+export function setAxisRange(axis: IAxis, range: ILim): IAxis {
+  return invalidateCache(copyAxis(axis, { range: [...range] as ILim }))
+}
+
+export function setAxisLength(axis: IAxis, length: number): IAxis {
+  return setAxisRange(axis, [0, length])
+}
+
+export function getAxisLength(axis: IAxis): number {
+  return axis.range[1] - axis.range[0]
+}
+
+function makeFormatter(axis: IAxis, count: number): IAxis {
+  if (axis.format) {
+    return axis
+  }
+
+  const format = d3
+    .scaleLinear()
+    .domain(axis.domain)
+    .range(axis.range)
+    .tickFormat(count, 'f')
+  return copyAxis(axis, { format })
+}
+
+function makeTicks(
+  axis: IAxis,
+  ticks: number[] | ITickItem[],
+  addLabels = true
 ): ITickItem[] {
-  return ticks.slice(0, -1).flatMap((tick, i) => {
-    const next = ticks[i + 1]!.v
+  if (ticks.length === 0) {
+    return []
+  }
+
+  if (ticks.every((tick) => typeof tick === 'number')) {
+    const format = makeFormatter(axis, ticks.length).format!
+    return ticks.map((value) => ({
+      v: value,
+      label: addLabels ? format(value) : undefined,
+    }))
+  }
+
+  return ticks
+}
+
+export function setAxisTicks(
+  axis: IAxis,
+  ticks: number[] | ITickItem[],
+  opts: { which?: WhichTick } = {}
+): IAxis {
+  const { which = 'major' } = opts
+  const items = makeTicks(axis, ticks, which === 'major')
+
+  if (which === 'major') {
+    return copyAxis(axis, {
+      ticks: {
+        major: { ...axis.ticks.major, items },
+        minor: { ...axis.ticks.minor, items: undefined },
+      },
+    })
+  }
+
+  return copyAxis(axis, {
+    ticks: {
+      major: axis.ticks.major,
+      minor: { ...axis.ticks.minor, items },
+    },
+  })
+}
+
+export function setAxisTickLabels(
+  axis: IAxis,
+  labels: string[],
+  opts: { which?: WhichTick } = {}
+): IAxis {
+  const { which = 'major' } = opts
+  const tickSet = which === 'major' ? axis.ticks.major : axis.ticks.minor
+
+  if (labels.length !== tickSet.items?.length) {
+    return axis
+  }
+
+  const items = tickSet.items.map((tick, index) => ({
+    ...tick,
+    label: labels[index],
+  }))
+
+  return copyAxis(axis, {
+    ticks:
+      which === 'major'
+        ? { ...axis.ticks, major: { ...axis.ticks.major, items } }
+        : { ...axis.ticks, minor: { ...axis.ticks.minor, items } },
+  })
+}
+
+export function setAxisMinorTickDivisions(
+  axis: IAxis,
+  divisions: number
+): IAxis {
+  return copyAxis(axis, {
+    ticks: {
+      major: axis.ticks.major,
+      minor: { ...axis.ticks.minor, show: true, divisions, items: undefined },
+    },
+  })
+}
+
+export function getAxisTicks(axis: IAxis): ITickItem[] {
+  if (axis.ticks.major.items) {
+    return axis.ticks.major.items
+  }
+
+  const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
+  const format = axis.format ?? scale.tickFormat(axis.ticks.major.numTicks, 'f')
+  return scale.ticks(axis.ticks.major.numTicks).map((value) => ({
+    v: value,
+    label: format(value),
+  }))
+}
+
+export function getAxisMinorTicks(axis: IAxis): ITickItem[] {
+  if (axis.ticks.minor.items) {
+    return axis.ticks.minor.items
+  }
+
+  const ticks = getAxisTicks(axis)
+  const minorTickDivisions = axis.ticks.minor.divisions
+
+  return ticks.slice(0, -1).flatMap((tick, index) => {
+    const next = ticks[index + 1]!.v
     const step = (next - tick.v) / (minorTickDivisions - 1)
 
-    return range(0, minorTickDivisions).map((j) => ({
-      v: tick.v + j * step,
+    return numRange(0, minorTickDivisions).map((position) => ({
+      v: tick.v + position * step,
       label: '',
     }))
+  })
+}
+
+export function axisDomainToRangeFunc(
+  axis: IAxis
+): (v: number | ITickItem) => number {
+  const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
+
+  return (v: number | ITickItem) => {
+    let mapped = scale(typeof v !== 'number' ? v.v : v)
+
+    if (axis.clip) {
+      mapped = Math.min(axis.range[1], Math.max(axis.range[0], mapped))
+    }
+
+    return axis.direction === 'y' ? axis.range[1] - mapped : mapped
+  }
+}
+
+export function axisDomainToRange(
+  axis: IAxis,
+  values: readonly (ITickItem | number)[]
+): number[]
+export function axisDomainToRange(axis: IAxis, values: number): number
+export function axisDomainToRange(axis: IAxis, values: ITickItem): number
+export function axisDomainToRange(
+  axis: IAxis,
+  values: readonly (ITickItem | number)[] | number | ITickItem
+): number[] | number {
+  const f = axisDomainToRangeFunc(axis)
+
+  if (Array.isArray(values)) {
+    return values.map((value) => f(value))
+  } else {
+    return f(values as number | ITickItem)
+  }
+}
+
+export function axisRangeToDomain(
+  axis: IAxis,
+  values: (ITickItem | number)[]
+): number[] {
+  const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
+
+  return values.map((value) => {
+    if (typeof value !== 'number') {
+      value = value.v
+    }
+
+    const rangeValue = axis.direction === 'y' ? axis.range[1] - value : value
+    let mapped = scale.invert(rangeValue)
+
+    if (axis.clip) {
+      mapped = Math.min(axis.domain[1], Math.max(axis.domain[0], mapped))
+    }
+
+    return mapped
   })
 }

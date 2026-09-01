@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
 import {
   DEFAULT_COLOR_PROPS,
   NO_STROKE_PROPS,
@@ -11,12 +10,13 @@ import {
 } from '@/components/plot/svg-props'
 import { histogram } from '@/lib/math/histogram'
 import { range } from '@/lib/math/range'
+import { axisDomainToRange, createAxis, IAxis } from '../axes/axis'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
 interface IProps extends IDivProps {
   data: number[]
 
-  yax?: Axis
+  yax?: IAxis
   width?: number
   height?: number
   r?: number
@@ -41,10 +41,11 @@ export function SwarmPlotSvg({
     const d = r * 2
 
     if (!yax) {
-      yax = new YAxis()
-        .autoDomain([0, Math.max(...data)])
-        //.setDomain([0, plot.dna.seq.length])
-        .setLength(height)
+      yax = createAxis({
+        direction: 'y',
+        length: height,
+        autoDomain: [0, Math.max(...data)],
+      })
     }
 
     if (mode !== 'full') {
@@ -96,6 +97,8 @@ export function SwarmPlotSvg({
                 .toReversed(),
             ]
 
+            const cys = axisDomainToRange(yax, values)
+
             return (
               <g key={bi}>
                 {values.map((v, vi) => {
@@ -103,7 +106,7 @@ export function SwarmPlotSvg({
                     <circle
                       key={`${bi}:${vi}`}
                       cx={x1 + vi * dx}
-                      cy={yax?.domainToRange(v)}
+                      cy={cys[vi]}
                       r={r}
                       fill={fill?.value ?? 'none'}
                       stroke={stroke?.value ?? 'none'}
