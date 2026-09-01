@@ -1,4 +1,4 @@
-import { Axis } from '@/components/plot/axes/axis'
+import { createAxis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
@@ -167,11 +167,10 @@ export function PileupPlotSvg() {
     })
   }
 
-  let xax = new Axis()
-    .setDomain([settings.location.start, settings.location.end])
-    //.setTicks([settings.location.start, settings.location.end])
-    //.setDomain([0, plot.dna.seq.length])
-    .setLength(innerWidth)
+  let xax = createAxis({
+    domain: [settings.location.start, settings.location.end],
+    length: innerWidth,
+  })
 
   const svgContent = useMemo(() => {
     return (

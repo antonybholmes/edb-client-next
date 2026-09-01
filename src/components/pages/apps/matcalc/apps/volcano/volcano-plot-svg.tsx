@@ -15,7 +15,7 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 
-import { axisDomainToRange, createAxis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
@@ -313,14 +313,16 @@ export function VolcanoPlotSvg({
 
     const xax = createAxis({
       length: displayOptions.axes.xaxis.length,
-      autoDomain: true,
+      autoDomain: displayOptions.axes.xaxis.domain,
     })
 
     const yax = createAxis({
       direction: 'y',
       length: displayOptions.axes.yaxis.length,
-      autoDomain: true,
+      autoDomain: displayOptions.axes.yaxis.domain,
     })
+
+    console.log(xax, yax, displayOptions.axes.yaxis.length)
 
     const innerWidth = xax.length
     const innerHeight = yax.length
@@ -334,14 +336,17 @@ export function VolcanoPlotSvg({
       .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
       .map((v) => v[1])
 
-    const yThreshold = axisDomainToRange(yax!, [thresholdLogP])[0]
+    const xaf = axisDomainToRangeFunc(xax!)
+    const yaf = axisDomainToRangeFunc(yax!)
+
+    const yThreshold = yaf(thresholdLogP)
 
     const svg = (
       <>
         <SvgMargin margin={MARGIN}>
           {points.map((p, xi) => {
-            const x1 = axisDomainToRange(xax!, [p.x])[0]
-            const y1 = axisDomainToRange(yax!, [p.y])[0]
+            const x1 = xaf(p.x)
+            const y1 = yaf(p.y)
             const r = plot.volcano.sizes
               ? sizeFunc(plot.volcano.sizes[xi]!)
               : displayOptions.dots.size
@@ -372,8 +377,8 @@ export function VolcanoPlotSvg({
         <SvgMargin margin={MARGIN}>
           {labelIdx.map((i) => {
             const p = points[i]!
-            const x1 = axisDomainToRange(xax!, [p.x])[0]
-            const y1 = axisDomainToRange(yax!, [p.y])[0]
+            const x1 = xaf(p.x)
+            const y1 = yaf(p.y)
             const r = plot.volcano.sizes
               ? sizeFunc(plot.volcano.sizes[i]!)
               : displayOptions.dots.size
@@ -413,9 +418,9 @@ export function VolcanoPlotSvg({
         {settings.pvalue.line.show && (
           <SvgMargin margin={MARGIN}>
             <SvgLine
-              x1={axisDomainToRange(xax!, [xax!.domain[0]])[0]}
+              x1={xaf(xax!.domain[0])}
               y1={yThreshold}
-              x2={axisDomainToRange(xax!, [xax!.domain[1]])[0]}
+              x2={xaf(xax!.domain[1])}
               y2={yThreshold}
               s={settings.pvalue.line}
             />

@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { type Axis } from '@/components/plot/axes/axis'
+import { axisDomainToRange, IAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
@@ -27,8 +27,8 @@ interface IProps extends IDivProps {
   }[]
 
   //locTrackBins: ILocTrackBins | null
-  xax: Axis
-  yax: Axis
+  xax: IAxis
+  yax: IAxis
 
   titleHeight: number
 }
@@ -214,7 +214,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
           let area = d3
             .area<IPos>()
             .x((d: IPos) => d.x)
-            .y0(yax.domainToRange(0))
+            .y0(axisDomainToRange(yax, 0))
             .y1((d: IPos) => d.y)
 
           if (settings.tracks.seqs.smoothing.on) {

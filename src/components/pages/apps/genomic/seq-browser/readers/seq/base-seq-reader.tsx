@@ -1,4 +1,4 @@
-import type { Axis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, type IAxis } from '@/components/plot/axes/axis'
 
 import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'
@@ -29,8 +29,8 @@ export abstract class BaseSeqReader {
 
   async getPoints(
     location: IGenomicLocation,
-    xax: Axis,
-    yax: Axis,
+    xax: IAxis,
+    yax: IAxis,
     binSize: number,
     options: IGetPointOptions = {}
   ): Promise<ISeqPos[]> {
@@ -86,11 +86,14 @@ export function makeBins(
 
 export function makePoints(
   location: IGenomicLocation,
-  xax: Axis,
+  xax: IAxis,
   binSize: number
 ): ISeqPos[] {
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
+
+  const xaf = axisDomainToRangeFunc(xax)
+  //const yaf = axisDomainToRangeFunc(yax)
 
   return range(start, end, binSize).map((b) => {
     const s = b + 1
@@ -98,8 +101,8 @@ export function makePoints(
     return {
       start: s,
       end: e,
-      x: xax.domainToRange(s),
-      x2: xax.domainToRange(e),
+      x: xaf(s),
+      x2: xaf(e),
       y: 0,
       realY: 0,
       // how many points are in the is window
@@ -110,13 +113,16 @@ export function makePoints(
 
 export function collapsePoints(
   points: ISeqPos[],
-  xax: Axis,
-  yax: Axis
+  xax: IAxis,
+  yax: IAxis
 ): ISeqPos[] {
   // no data, so no point attempting to collapse them
   if (points.length === 0) {
     return []
   }
+
+  const xaf = axisDomainToRangeFunc(xax)
+  const yaf = axisDomainToRangeFunc(yax)
 
   // fill the gaps
 
@@ -183,12 +189,12 @@ export function collapsePoints(
   // }
 
   for (const b of pointsWithoutGaps) {
-    b.x = xax.domainToRange(b.start)
-    b.y = yax.domainToRange(b.realY)
+    b.x = xaf(b.start)
+    b.y = yaf(b.realY)
   }
 
   // zero the ends
-  const y0 = yax.domainToRange(0)
+  const y0 = yaf(0)
 
   if (pointsWithoutGaps[0]!.y - y0 <= Number.EPSILON) {
     // zero the first point if it is close enough to zero to avoid rendering artefacts

@@ -1,4 +1,10 @@
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  createAxis,
+  getAxisTicks,
+  IAxis,
+  setAxisTicks,
+} from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
@@ -48,7 +54,7 @@ function ColGraphsSvg({
   tooltipRef,
   setTooltipText,
 }: {
-  yax: YAxis
+  yax: IAxis
   flattenedPileups: {
     id: string
     p: number
@@ -149,8 +155,9 @@ function ColGraphsSvg({
     }
   }, [flattenedPileups, svgRef, tooltipRef, setTooltipText])
 
-  const y0 = yax.domainToRange(0) // 0.5 * blockSize.h
-  const y1 = yax.domainToRange(1)
+  const yaf = axisDomainToRangeFunc(yax)
+  const y0 = yaf(0) // 0.5 * blockSize.h
+  const y1 = yaf(1)
 
   return (
     <>
@@ -300,34 +307,37 @@ export function LollipopSingleSvg() {
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
 
-  const yax = useMemo(() => {
-    let yax = new YAxis()
-      .setDomain([0, maxSampleCount])
-      .setLength(graphHeight)
-      .setTitle('Mutation count')
+  const { ax: yax, af: yaf } = useMemo(() => {
+    let yax = createAxis({
+      direction: 'y',
+      domain: [0, maxSampleCount],
+      length: graphHeight,
+      name: 'Mutation count',
+    })
 
     // small plots look better with fewer ticks
     if (maxSampleCount < 10) {
       if (maxSampleCount % 2 === 0) {
-        yax = yax.setTicks([0, maxSampleCount / 2, maxSampleCount])
+        yax = setAxisTicks(yax, [0, maxSampleCount / 2, maxSampleCount])
       } else {
-        yax = yax.setTicks([0, maxSampleCount])
+        yax = setAxisTicks(yax, [0, maxSampleCount])
       }
 
-      yax = yax.setTicks([0, maxSampleCount])
+      yax = setAxisTicks(yax, [0, maxSampleCount])
     }
 
-    return yax
+    return { ax: yax, af: axisDomainToRangeFunc(yax) }
   }, [blockSize.w, aaStats])
 
-  const xax = useMemo(() => {
-    let xax = new Axis()
-      .setDomain([1, n])
-      .setLength(gridWidth) //(n - 1) * blockSize.w)
-      .setTitle('Positions')
+  const { ax: xax, af: xaf } = useMemo(() => {
+    let xax = createAxis({
+      domain: [1, n],
+      length: gridWidth,
+      name: 'Positions',
+    })
     //.setTicks(ticks)
 
-    let ticks = xax.ticks
+    let ticks = getAxisTicks(xax)
 
     const dx = ticks[ticks.length - 1]!.v - ticks[ticks.length - 2]!.v
 
@@ -340,10 +350,10 @@ export function LollipopSingleSvg() {
     ) {
       ticks = ticks.concat({ v: n, label: xax.domain[1]!.toString() })
 
-      xax = xax.setTicks(ticks)
+      xax = setAxisTicks(xax, ticks)
     }
 
-    return xax
+    return { ax: xax, af: axisDomainToRangeFunc(xax) }
   }, [n, gridWidth, displayProps.axes.x.showEndTick])
 
   const flattenedPileups = useMemo(() => {
@@ -415,11 +425,11 @@ export function LollipopSingleSvg() {
         continue
       }
 
-      const x1 = xax.domainToRange(i) // i * blockSize.w
+      const x1 = xaf(i) // i * blockSize.w
 
       let pileupEntries = [...Object.entries(pileups[i]!)]
         .map(([variantType, aaData]) => {
-          const y2 = yax.domainToRange(aaData.length) // 0.5 * blockSize.h
+          const y2 = yaf(aaData.length) // 0.5 * blockSize.h
 
           // count protein changes
           const changes = [...new Set(aaData.map((aa) => aa.aa))]

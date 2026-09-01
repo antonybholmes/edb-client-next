@@ -455,56 +455,6 @@ export class YAxis extends Axis {
   }
 }
 
-/**
- * Calculates a reasonable tick interval for a data axis.
- *
- * https://stackoverflow.com/questions/237220/tickmark-algorithm-for-a-graph-axis
- *
- * @param lim
- * @returns
- */
-export function autoTickInterval(lim: ILim): number {
-  const range = Math.abs(lim[1] - lim[0])
-
-  const x = Math.pow(10, Math.floor(Math.log10(range)))
-
-  let ret = 0
-
-  if (range / x >= 5) {
-    ret = x
-  } else if (range / (0.5 * x) >= 5) {
-    ret = 0.5 * x
-  } else {
-    ret = x * 0.2
-  }
-
-  if (lim[0] > lim[1]) {
-    ret = -ret
-  }
-
-  return ret
-}
-
-/**
- * Calculates a standardized data range over a given limit.
- * This is to make a graph more visually appealing. For example
- * instead of [.23, 4.1] convert to [0, 5]
- *
- * @param lim
- * @param interval
- * @returns
- */
-export function autoLim(lim: ILim, interval?: number): ILim {
-  if (!interval) {
-    interval = autoTickInterval(lim)
-  }
-
-  return [
-    Math.floor(lim[0] / interval) * interval,
-    Math.ceil(lim[1] / interval) * interval,
-  ]
-}
-
 function generateMinorTicks(
   ticks: ITickItem[],
   minorTickDivisions: number

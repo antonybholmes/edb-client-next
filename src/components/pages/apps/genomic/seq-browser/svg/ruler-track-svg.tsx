@@ -1,6 +1,11 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { autoTickInterval, type Axis } from '@/components/plot/axes/axis'
+import {
+  autoTickInterval,
+  axisDomainToRangeFunc,
+  IAxis,
+  setAxisDomain,
+} from '@/components/plot/axes/axis'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
@@ -13,7 +18,7 @@ import { LocationContext, type IRulerTrack } from '../tracks-provider'
 
 interface IProps extends IDivProps {
   track: IRulerTrack
-  xax: Axis
+  xax: IAxis
 }
 
 export function RulerTrackSvg({ track, xax }: IProps) {
@@ -22,11 +27,10 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
   const startPos = useRef<IPos | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [_xax, setAx] = useState(xax.setClip(false))
+  const [_xax, setAx] = useState(xax)
 
   useEffect(() => {
-    // here we don't want to clip coordinates
-    setAx(xax.setClip(false))
+    setAx(xax)
   }, [xax])
 
   function handleMouseDown(e: React.MouseEvent) {
@@ -74,7 +78,9 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       // we use the current axes used in the ui to internally set an
       // axes object to track the mouse movements. Once the mouse is
       // released, the real ax is synced with the internal one.
-      setAx(_xax.setDomain([xax.domain[0] + domainX, xax.domain[1] + domainX]))
+      setAx(
+        setAxisDomain(_xax, [xax.domain[0] + domainX, xax.domain[1] + domainX])
+      )
     }
   }
 
@@ -91,8 +97,10 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
   const ticks = range(Math.min(x1, x2), Math.max(x1, x2) + rulerBb, rulerBb)
 
-  const dx1 = _xax.domainToRange(_xax.domain[0] - rulerBb / 4)
-  const dx2 = _xax.domainToRange(_xax.domain[1] + rulerBb / 4)
+  const xaf = axisDomainToRangeFunc(_xax)
+
+  const dx1 = xaf(_xax.domain[0] - rulerBb / 4)
+  const dx2 = xaf(_xax.domain[1] + rulerBb / 4)
 
   //let labelTicks = ticks.slice()
 
@@ -105,8 +113,8 @@ export function RulerTrackSvg({ track, xax }: IProps) {
   const h = track.displayOptions.height / 2
   const majorH2 = track.displayOptions.majorTicks.height / 2
 
-  const minX = _xax.domainToRange(_xax.domain[0])
-  const maxX = _xax.domainToRange(_xax.domain[1])
+  const minX = xaf(_xax.domain[0])
+  const maxX = xaf(_xax.domain[1])
 
   return (
     <>
@@ -143,7 +151,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
             return (
               <g id="minor-tick" key={ti}>
                 {range(1, 8)
-                  .map((tti) => _xax.domainToRange(previousTick + tti * d))
+                  .map((tti) => xaf(previousTick + tti * d))
                   .filter((px2) => px2 >= minX && px2 <= maxX)
                   .map((px2, tti) => {
                     return (
@@ -165,7 +173,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
         <g id="major-ticks">
           {ticks
-            .map((tick) => _xax.domainToRange(tick))
+            .map((tick) => xaf(tick))
             .filter((px1) => px1 >= minX && px1 <= maxX)
             .map((px1, pi) => {
               return (
@@ -184,7 +192,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
         <g id="major-tick-labels">
           {ticks
-            .map((tick) => [tick, _xax.domainToRange(tick)] as [number, number])
+            .map((tick) => [tick, xaf(tick)] as [number, number])
             .filter((t) => t[1]! >= dx1 && t[1]! <= dx2)
             .map((t, pi) => {
               const [tick, px1] = t

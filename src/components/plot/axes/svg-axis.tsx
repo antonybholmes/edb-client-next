@@ -4,7 +4,7 @@ import { useEdbSettings } from '../../edb/edb-settings'
 import { SvgLine } from '../svg-line'
 import { IAxisProps } from '../svg-props'
 import { SvgText } from '../svg-text'
-import { getAxisLength } from './axis'
+
 import {
   AxisBottomTicksSvg,
   AxisLeftTicksSvg,
@@ -35,8 +35,6 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
     return null
   }
 
-  const l = getAxisLength(ax)
-
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
@@ -44,7 +42,7 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
     >
       <SvgLine
         y1={-0.5 * strokeWidth}
-        y2={l + 0.5 * strokeWidth}
+        y2={ax.length + 0.5 * strokeWidth}
         s={settings.plots.axes.y.style.line}
       />
 
@@ -52,7 +50,7 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
 
       {settings.plots.axes.y.style.title.show && ax && (
         <SvgText
-          transform={`translate(-${titleOffset}, ${0.5 * l}) rotate(270)  `}
+          transform={`translate(-${titleOffset}, ${0.5 * ax.length}) rotate(270)  `}
           textAnchor="middle"
           font={settings.plots.axes.y.style.title}
         >
@@ -84,8 +82,6 @@ export function AxisRightSvg({
     return null
   }
 
-  const l = getAxisLength(ax)
-
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
@@ -93,7 +89,7 @@ export function AxisRightSvg({
     >
       <SvgLine
         y1={-0.5 * strokeWidth}
-        y2={l + 0.5 * strokeWidth}
+        y2={ax.length + 0.5 * strokeWidth}
         s={settings.plots.axes.y.style.line}
       />
 
@@ -101,7 +97,7 @@ export function AxisRightSvg({
 
       {settings.plots.axes.y.style.title.show && ax && (
         <SvgText
-          transform={`translate(-${titleX}, ${0.5 * l}) rotate(270)`}
+          transform={`translate(-${titleX}, ${0.5 * ax.length}) rotate(270)`}
           textAnchor="middle"
           font={axisProps.style.title}
         >
@@ -135,8 +131,6 @@ export function AxisBottomSvg({
     return null
   }
 
-  const l = getAxisLength(ax)
-
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
@@ -145,7 +139,7 @@ export function AxisBottomSvg({
       {axisProps.style.line.show && (
         <SvgLine
           x1={-0.5 * axisProps.style.line.width}
-          x2={l + 0.5 * axisProps.style.line.width}
+          x2={ax.length + 0.5 * axisProps.style.line.width}
 
           s={axisProps.style.line}
         />
@@ -155,7 +149,7 @@ export function AxisBottomSvg({
 
       {axisProps.style.title.show && _title && (
         <SvgText
-          transform={`translate(${0.5 * l}, ${titleOffset})`}
+          transform={`translate(${0.5 * ax.length}, ${titleOffset})`}
           textAnchor="middle"
           font={axisProps.style.title}
         >
@@ -187,8 +181,6 @@ export function AxisTopSvg({
     return null
   }
 
-  const l = getAxisLength(ax)
-
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
@@ -196,7 +188,7 @@ export function AxisTopSvg({
     >
       {axisProps.style.line.show && (
         <SvgLine
-          x2={l - 0.5 * axisProps.style.line.width}
+          x2={ax.length - 0.5 * axisProps.style.line.width}
           s={axisProps.style.line}
         />
       )}
@@ -205,7 +197,7 @@ export function AxisTopSvg({
 
       {_title && (
         <SvgText
-          transform={`translate(${0.5 * l}, ${-titleOffset})`}
+          transform={`translate(${0.5 * ax.length}, ${-titleOffset})`}
           textAnchor="middle"
           font={axisProps.style.title}
         >

@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { YAxis } from '@/components/plot/axes/axis'
+import { createAxis, IAxis } from '@/components/plot/axes/axis'
 import { locStr } from '@/lib/genomic/genomic'
 
 import { useEffect, useState } from 'react'
@@ -88,13 +88,12 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
     tracks,
   ])
 
-  const yax = new YAxis()
-    .setDomain([0, ymax])
-    .setLength(tracks[0]!.displayOptions.height)
-    .setTicks([0, ymax])
-    .setTitle(
-      tracks[0]!.type === 'Seq' ? settings.tracks.seqs.scale.mode : scale
-    )
+  const yax: IAxis = createAxis({
+    domain: [0, ymax],
+    length: tracks[0]!.displayOptions.height,
+    ticks: [0, ymax],
+    name: tracks[0]!.type === 'Seq' ? settings.tracks.seqs.scale.mode : scale,
+  })
 
   //const refPoints: ISeqPos[] = getPoints(yax, tracks[0]!, allBinCounts[0]!)
 

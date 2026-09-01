@@ -1,4 +1,4 @@
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgPath } from '@/components/plot/svg-path'
@@ -38,25 +38,28 @@ export function MAFPlotSVG() {
 
   // whether to show things like AID motifs or not
 
-  let xax = new Axis()
-    .setDomain([settings.location.start, settings.location.end])
-    //.setTicks([settings.location.start, settings.location.end])
-    //.setDomain([0, plot.dna.seq.length])
-    .setLength(innerWidth)
+  let xax = createAxis({
+    domain: [settings.location.start, settings.location.end],
+    length: innerWidth,
+  })
 
-  let yax = new YAxis()
-    .autoDomain([0, maxY])
-    .setLength(plotHeight)
-    .setTitle('MAF')
+  let yax = createAxis({
+    autoDomain: [0, maxY],
+    length: plotHeight,
+    name: 'MAF',
+  })
 
-  const y0 = yax.domainToRange(0)
+  const xaf = axisDomainToRangeFunc(xax)
+  const yaf = axisDomainToRangeFunc(yax)
+
+  const y0 = yaf(0)
 
   const points = useMemo(() => {
     const yMap = new Map<number, number>()
 
     for (const m of results?.mafs ?? []) {
-      const x = xax.domainToRange(m.start)
-      const y = yax.domainToRange(m.count / (results?.alleles ?? 1))
+      const x = xaf(m.start)
+      const y = yaf(m.count / (results?.alleles ?? 1))
 
       if (!yMap.has(x)) {
         yMap.set(x, 0)
@@ -69,7 +72,7 @@ export function MAFPlotSVG() {
     const xs = numSort([
       ...new Set(
         range(settings.location.start, settings.location.end + 1).map((pos) =>
-          xax.domainToRange(pos)
+          xaf(pos)
         )
       ),
     ])

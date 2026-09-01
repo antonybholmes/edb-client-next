@@ -1,4 +1,11 @@
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRange,
+  axisDomainToRangeFunc,
+  createAxis,
+  getAxisTicks,
+  IAxis,
+  setAxisTicks,
+} from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
@@ -40,16 +47,18 @@ export interface ITooltip {
 }
 
 export function yTickLinesSvg(
-  yax: YAxis,
+  yax: IAxis,
   width: number,
   displayProps: ILollipopDisplayProps
 ) {
+  const yaf = axisDomainToRangeFunc(yax)
+  const ticks = getAxisTicks(yax)
   return (
     <g>
-      {yax.ticks
+      {ticks
         .slice(displayProps.axes.y.ticks.lines.showZeroLine ? 0 : 1)
         .map((tick, ti) => {
-          const y = yax.domainToRange(tick.v)
+          const y = yaf(tick.v)
 
           return (
             <line
@@ -83,7 +92,7 @@ function ColGraphsSvg({
   tooltipRef,
   setTooltipText,
 }: {
-  yax: YAxis
+  yax: IAxis
   flattenedPileups: {
     id: string
     pos: IPos
@@ -92,7 +101,7 @@ function ColGraphsSvg({
   blockSize: IBlock
   displayProps: ILollipopDisplayProps
   svgRef: RefObject<SVGSVGElement | null>
-  //circlesRef: RefObject<(SVGGElement | null)[]>
+
   tooltipRef: RefObject<HTMLDivElement | null>
   setTooltipText: (text: string[]) => void
 }) {
@@ -197,7 +206,7 @@ function ColGraphsSvg({
   }, [flattenedPileups, circlesRef])
 
   // default them all to 1
-  const dy = yax.domainToRange(1) // - yax.domainToRange(0) // 0.5 * blockSize.h
+  const dy = axisDomainToRange(yax, 1) // - yax.domainToRange(0) // 0.5 * blockSize.h
 
   return (
     <>
@@ -233,12 +242,13 @@ function ColGraphsSvg({
 }
 
 export function seqSvg(
-  xax: Axis,
+  xax: IAxis,
   protein: IProtein,
   aaColor: IAAColor,
   blockSize: IBlock
 ) {
   const { displayProps } = useLollipopSettings()
+  const xaf = axisDomainToRangeFunc(xax)
   return (
     <g id="aa-sequence">
       {protein.sequence.split('').map((aa, aai) => {
@@ -250,7 +260,7 @@ export function seqSvg(
         const textColor = aaColor.invert ? COLOR_WHITE : color
         const blockColor = aaColor.invert ? color : COLOR_WHITE
 
-        const x = xax.domainToRange(aai + 1) //   aai * blockSize.w
+        const x = xaf(aai + 1) //   aai * blockSize.w
 
         return (
           <g id={`aa-${aai}`} key={aai} transform={`translate(${x}, 0)`}>
@@ -287,17 +297,19 @@ export function seqSvg(
 }
 
 export function labelsSvg(
-  xax: Axis,
+  xax: IAxis,
   labels: IProteinLabel[],
 
   displayProps: ILollipopDisplayProps
 ) {
+  const xaf = axisDomainToRangeFunc(xax)
+
   return (
     <g>
       {labels
         .filter((label) => label.show)
         .map((label, li) => {
-          const x = xax.domainToRange(label.start) // (label.start - 1) * blockSize.w
+          const x = xaf(label.start) // (label.start - 1) * blockSize.w
           return (
             <g key={li} transform={`translate(${x}, 0)`}>
               <line
@@ -331,12 +343,13 @@ export function labelsSvg(
 }
 
 export function featuresSvg(
-  xax: Axis,
+  xax: IAxis,
   features: IDomain[],
-
   blockSize: IBlock,
   displayProps: ILollipopDisplayProps
 ) {
+  const xaf = axisDomainToRangeFunc(xax)
+
   const filteredFeatures = features.filter((f) => f.show).toReversed() // [...df.features].sort((a, b) => a.z - b.z)
 
   return (
@@ -360,8 +373,8 @@ export function featuresSvg(
       )}
       {filteredFeatures.map((feature, fi) => {
         //const width = Math.abs(feature.end - feature.start + 1) * blockSize.w
-        const x = xax.domainToRange(feature.start) // (feature.start - 1) * blockSize.w
-        const x2 = xax.domainToRange(feature.end) // (feature.end - 1) * blockSize.w
+        const x = xaf(feature.start) // (feature.start - 1) * blockSize.w
+        const x2 = xaf(feature.end) // (feature.end - 1) * blockSize.w
         const width = Math.max(0, x2 - x)
 
         return (
@@ -663,48 +676,52 @@ export function LollipopStackSvg() {
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
 
-  const yax = useMemo(() => {
-    let yax = new YAxis()
-      .autoDomain([0, maxSampleCount])
-      .setLength(graphHeight)
-      .setTitle('Mutation count')
+  const { ax: yax, axisDomainToRangeFunc: yaxDomainToRangeFunc } =
+    useMemo(() => {
+      let yax = createAxis({
+        direction: 'y',
+        autoDomain: [0, maxSampleCount],
+        length: graphHeight,
+        name: 'Mutation count',
+      })
 
-    // small plots look better with fewer ticks
-    if (maxSampleCount < 10) {
-      if (maxSampleCount % 2 === 0) {
-        yax = yax.setTicks([0, maxSampleCount / 2, maxSampleCount])
-      } else {
-        yax = yax.setTicks([0, maxSampleCount])
+      // small plots look better with fewer ticks
+      if (maxSampleCount < 10) {
+        if (maxSampleCount % 2 === 0) {
+          yax = setAxisTicks(yax, [0, maxSampleCount / 2, maxSampleCount])
+        } else {
+          yax = setAxisTicks(yax, [0, maxSampleCount])
+        }
+
+        yax = setAxisTicks(yax, [0, maxSampleCount])
       }
 
-      yax = yax.setTicks([0, maxSampleCount])
-    }
+      return { ax: yax, axisDomainToRangeFunc: axisDomainToRangeFunc(yax) }
+    }, [blockSize.w, aaStats])
 
-    return yax
-  }, [blockSize.w, aaStats])
+  const { ax: xax, axisDomainToRangeFunc: xaxDomainToRangeFunc } =
+    useMemo(() => {
+      let xax = createAxis({
+        autoDomain: [1, n],
+        length: gridWidth,
+        name: 'Positions',
+      })
 
-  const xax = useMemo(() => {
-    let xax = new Axis()
-      .setDomain([1, n])
-      .setLength(gridWidth) //(n - 1) * blockSize.w)
-      .setTitle('Positions')
-    //.setTicks(ticks)
+      let ticks = getAxisTicks(xax)
 
-    let ticks = xax.ticks
+      // make sure first tick is shown at 1
+      if (ticks[0]!.v !== 1) {
+        ticks = ([{ v: 1, label: '1' }] as ITickItem[]).concat(ticks)
+      }
 
-    // make sure first tick is shown at 1
-    if (ticks[0]!.v !== 1) {
-      ticks = ([{ v: 1, label: '1' }] as ITickItem[]).concat(ticks)
-    }
+      if (displayProps.axes.x.showEndTick) {
+        ticks = ticks.concat({ v: n, label: xax.domain[1]!.toString() })
+      }
 
-    if (displayProps.axes.x.showEndTick) {
-      ticks = ticks.concat({ v: n, label: xax.domain[1]!.toString() })
-    }
+      xax = setAxisTicks(xax, ticks)
 
-    xax = xax.setTicks(ticks)
-
-    return xax
-  }, [n, gridWidth, displayProps.axes.x.showEndTick])
+      return { ax: xax, axisDomainToRangeFunc: axisDomainToRangeFunc(xax) }
+    }, [n, gridWidth, displayProps.axes.x.showEndTick])
 
   const flattenedPileups = useMemo(() => {
     const pileups: { variantType: VariantClass; mutations: string[] }[][] = []
@@ -769,11 +786,11 @@ export function LollipopStackSvg() {
 
     for (const [pi, pileup] of pileups.entries()) {
       let ei = 1
-      const x = xax.domainToRange(pi + 1)
+      const x = xaxDomainToRangeFunc(pi + 1)
 
       for (const variantBlock of pileup) {
         for (const mutation of variantBlock.mutations) {
-          const y2 = yax.domainToRange(ei)
+          const y2 = yaxDomainToRangeFunc(ei)
 
           const rect = {
             x,

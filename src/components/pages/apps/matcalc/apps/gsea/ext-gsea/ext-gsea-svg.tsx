@@ -1,6 +1,10 @@
 import { useMemo, type ReactNode } from 'react'
 
-import { axisDomainToRange, createAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRange,
+  axisDomainToRangeFunc,
+  createAxis,
+} from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 import { abs } from '@/lib/math/abs'
@@ -308,22 +312,18 @@ export function ExtGseaSvg() {
         tickParams: { which: 'minor', show: false },
       })
 
+      const xaf = axisDomainToRangeFunc(xax)
+      const yaf = axisDomainToRangeFunc(yax)
       let displayPoints = rankedGenes.genes.map((e, ei) => [
-        axisDomainToRange(xax, [ei])[0],
-        axisDomainToRange(yax, [e.score])[0],
+        xaf(ei),
+        yaf(e.score),
       ])
 
-      displayPoints = [
-        [axisDomainToRange(xax, [0])[0], axisDomainToRange(yax, [0])[0]],
-        ...displayPoints,
-      ]
+      displayPoints = [[xaf(0), yaf(0)], ...displayPoints]
 
       displayPoints = [
         ...displayPoints,
-        [
-          axisDomainToRange(xax, [rankedGenes.genes.length - 1])[0],
-          axisDomainToRange(yax, [0])[0],
-        ],
+        [xaf(rankedGenes.genes.length - 1), yaf(0)],
       ]
 
       // crossing point
@@ -331,7 +331,7 @@ export function ExtGseaSvg() {
       const crossIndex =
         end(where(rankedGenes.genes, (gene) => gene.score > 0)) + 1
 
-      const crossingX = axisDomainToRange(xax, [crossIndex])[0]
+      const crossingX = xaf(crossIndex)
 
       const y =
         displayProps.es.axes.y.length +

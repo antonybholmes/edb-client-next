@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { SvgBase } from '@/components/plot/svg-base'
@@ -72,23 +72,23 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
 
       const plots: IUmapPlot[] = gridMode ? allPlots : [allPlots[0]!]
 
-      const xax = new Axis()
-        //.setDomain([Math.min(...xdata), Math.max(...xdata)])
-        .setDomain(settings.axes.xaxis.domain)
-        .setLength(
-          gridMode
-            ? settings.grid.axes.xaxis.length
-            : settings.axes.xaxis.length
-        )
+      const xax = createAxis({
+        domain: settings.axes.xaxis.domain,
+        length: gridMode
+          ? settings.grid.axes.xaxis.length
+          : settings.axes.xaxis.length,
+      })
 
-      const yax = new YAxis()
-        //.setDomain([Math.min(...ydata), Math.max(...ydata)])
-        .setDomain(settings.axes.yaxis.domain)
-        .setLength(
-          gridMode
-            ? settings.grid.axes.yaxis.length
-            : settings.axes.yaxis.length
-        )
+      const yax = createAxis({
+        direction: 'y',
+        domain: settings.axes.yaxis.domain,
+        length: gridMode
+          ? settings.grid.axes.yaxis.length
+          : settings.axes.yaxis.length,
+      })
+
+      const xaf = axisDomainToRangeFunc(xax)
+      const yaf = axisDomainToRangeFunc(yax)
 
       const umapPlotSize: IDim = {
         w: gridMode ? settings.grid.axes.xaxis.length : xax.length!,
@@ -268,8 +268,8 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
                       .filter((c) => c.show && c.display.label.show)
                       .map((cluster) => {
                         //cluster.pos will be the centroid of the cluster points
-                        const x1 = xax.domainToRange(cluster.pos[0])
-                        const y1 = yax.domainToRange(cluster.pos[1])
+                        const x1 = xaf(cluster.pos[0])
+                        const y1 = yaf(cluster.pos[1])
 
                         return (
                           <g key={cluster.label}>
@@ -328,9 +328,10 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
                   transform={`translate(-${settings.legend.colorbar.size.h / 2}, ${legendHeight + 4 * settings.legend.gap})`}
                 >
                   <SvgVColorBar
-                    ax={new Axis()
-                      .setDomain(range)
-                      .setLength(settings.legend.colorbar.size.w)}
+                    ax={createAxis({
+                      domain: range,
+                      length: settings.legend.colorbar.size.w,
+                    })}
 
                     cmap={COLOR_MAPS[settings.cmap]!}
                     //size={displayOptions.colorbar.size}

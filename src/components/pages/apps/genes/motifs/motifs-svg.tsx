@@ -6,7 +6,7 @@ import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
 import { sum } from '@/lib/math/sum'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { createAxis, IAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
@@ -92,20 +92,22 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
   const x_scale_factor = settings.letterWidth / LW
   const y_scale_factor = settings.plotHeight / H
 
-  let yax: YAxis
+  let yax: IAxis
 
   if (settings.mode === 'bits') {
-    yax = new YAxis()
-      .setDomain([0, 2])
-      .setLength(settings.plotHeight)
-      .setTicks([0, 1, 2])
-      .setTitle('Bits')
+    yax = createAxis({
+      domain: [0, 2],
+      length: settings.plotHeight,
+      ticks: [0, 1, 2],
+      name: 'Bits',
+    })
   } else {
-    yax = new YAxis()
-      .setDomain([0, 1])
-      .setLength(settings.plotHeight)
-      .setTicks([0, 0.5, 1])
-      .setTitle('Prob')
+    yax = createAxis({
+      domain: [0, 1],
+      length: settings.plotHeight,
+      ticks: [0, 0.5, 1],
+      name: 'Prob',
+    })
   }
 
   const MotifPlot = memo(function MotifPlot({
@@ -131,16 +133,15 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
 
     const xax = useMemo(
       () =>
-        new Axis()
-          .setDomain([0, motif.weights.length])
-          .setLength(w)
-          .setTicks(
-            range(1, n + 1).map((x) => ({
-              v: x - 0.5,
-              label: x.toLocaleString(),
-            }))
-          )
-          .setTickParams({ which: 'minor', show: false }),
+        createAxis({
+          domain: [0, motif.weights.length],
+          length: w,
+          ticks: range(1, n + 1).map((x) => ({
+            v: x - 0.5,
+            label: x.toLocaleString(),
+          })),
+          tickParams: { which: 'minor', show: false },
+        }),
       [w, motif.weights.length, n]
     )
 

@@ -20,7 +20,7 @@ import {
 import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 
-import { Axis } from '@/components/plot/axes/axis'
+import { createAxis, IAxis } from '@/components/plot/axes/axis'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
@@ -822,7 +822,7 @@ export async function getYMax(
 }
 
 interface ILocationContextProps {
-  xax: Axis
+  xax: IAxis
   seqSearchResult: ISeqSearchResultMap | undefined
 
   binSize: number
@@ -836,7 +836,7 @@ interface ILocationContextProps {
 }
 
 export const LocationContext = createContext<ILocationContextProps>({
-  xax: new Axis(),
+  xax: createAxis(),
   seqSearchResult: {
     location: NO_LOCATION,
     samples: {},

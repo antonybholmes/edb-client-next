@@ -12,9 +12,13 @@ import {
 } from './svg-axis-props'
 
 export interface IAxis extends IAxisConfig {
+  /**
+   * The length of the axis in pixels derived from the range.
+   */
   length: number
-  format?: (value: d3.NumberValue) => string
-  userFormat?: (value: d3.NumberValue) => string
+  //domainToRange?: d3.ScaleLinear<number, number>
+  format?: (value: number) => string
+  //userFormat?: (value: number) => string
 }
 
 export function copyAxis(axis: IAxis, patch: Partial<IAxis> = {}): IAxis {
@@ -61,9 +65,10 @@ export function createAxis(
     minorTicks,
     tickParams,
   } = opts
-  let ret = {
+  let ret: IAxis = {
     ...structuredClone(config),
     length: 1,
+
     ...definedProps({ direction, name, domain, range }),
   }
 
@@ -112,8 +117,7 @@ export function setAxisClip(axis: IAxis, clip: boolean): IAxis {
 
 export function setAxisDP(axis: IAxis, decimalPlaces: number): IAxis {
   return copyAxis(axis, {
-    userFormat:
-      decimalPlaces >= 0 ? d3.format(`.${decimalPlaces}f`) : undefined,
+    format: decimalPlaces >= 0 ? d3.format(`.${decimalPlaces}f`) : undefined,
   })
 }
 
@@ -150,8 +154,7 @@ export function setAxisTickParams(
 export function setAxisDomain(axis: IAxis, domain: ILim): IAxis {
   return invalidateCache(
     copyAxis(axis, {
-      domain: [...domain] as ILim,
-      length: domain[1] - domain[0],
+      domain,
     })
   )
 }
@@ -161,54 +164,31 @@ export function autoAxisDomain(axis: IAxis, domain: ILim): IAxis {
   return invalidateCache(
     copyAxis(axis, {
       domain: niceDomain,
-      length: niceDomain[1] - niceDomain[0],
     })
   )
 }
 
 export function setAxisRange(axis: IAxis, range: ILim): IAxis {
-  return invalidateCache(copyAxis(axis, { range: [...range] as ILim }))
+  return invalidateCache(
+    copyAxis(axis, {
+      range,
+      length: Math.abs(range[1] - range[0]),
+    })
+  )
 }
 
 export function setAxisLength(axis: IAxis, length: number): IAxis {
   return setAxisRange(axis, [0, length])
 }
 
-export function getAxisLength(axis: IAxis): number {
-  return axis.range[1] - axis.range[0]
-}
-
-function makeFormatter(axis: IAxis, count: number): IAxis {
-  if (axis.format) {
-    return axis
-  }
-
+function setAxisFormat(axis: IAxis, count: number): (v: number) => string {
   const format = d3
     .scaleLinear()
     .domain(axis.domain)
     .range(axis.range)
     .tickFormat(count, 'f')
-  return copyAxis(axis, { format })
-}
 
-function makeTicks(
-  axis: IAxis,
-  ticks: number[] | ITickItem[],
-  addLabels = true
-): ITickItem[] {
-  if (ticks.length === 0) {
-    return []
-  }
-
-  if (ticks.every((tick) => typeof tick === 'number')) {
-    const format = makeFormatter(axis, ticks.length).format!
-    return ticks.map((value) => ({
-      v: value,
-      label: addLabels ? format(value) : undefined,
-    }))
-  }
-
-  return ticks
+  return format
 }
 
 export function setAxisTicks(
@@ -280,6 +260,7 @@ export function getAxisTicks(axis: IAxis): ITickItem[] {
 
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
   const format = axis.format ?? scale.tickFormat(axis.ticks.major.numTicks, 'f')
+
   return scale.ticks(axis.ticks.major.numTicks).map((value) => ({
     v: value,
     label: format(value),
@@ -305,9 +286,15 @@ export function getAxisMinorTicks(axis: IAxis): ITickItem[] {
   })
 }
 
-export function axisDomainToRangeFunc(
-  axis: IAxis
-): (v: number | ITickItem) => number {
+export type RangeToDomainFunc = (v: number | ITickItem) => number
+
+/**
+ * Convert from axis domain to pixel range.
+ *
+ * @param axis
+ * @returns
+ */
+export function axisDomainToRangeFunc(axis: IAxis): RangeToDomainFunc {
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
 
   return (v: number | ITickItem) => {
@@ -340,24 +327,124 @@ export function axisDomainToRange(
   }
 }
 
-export function axisRangeToDomain(
-  axis: IAxis,
-  values: (ITickItem | number)[]
-): number[] {
+/**
+ * Convert from pixel range to axis domain.
+ *
+ * @param axis
+ * @returns
+ */
+export function axisRangeToDomainFunc(
+  axis: IAxis
+): (item: number | ITickItem) => number {
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
 
-  return values.map((value) => {
-    if (typeof value !== 'number') {
-      value = value.v
+  return (item: number | ITickItem) => {
+    let v = typeof item !== 'number' ? item.v : item
+
+    if (axis.direction === 'y') {
+      v = axis.domain[1] - v
     }
 
-    const rangeValue = axis.direction === 'y' ? axis.range[1] - value : value
-    let mapped = scale.invert(rangeValue)
+    let mapped = scale.invert(v)
 
     if (axis.clip) {
       mapped = Math.min(axis.domain[1], Math.max(axis.domain[0], mapped))
     }
 
     return mapped
+  }
+}
+
+export function axisRangeToDomain(
+  axis: IAxis,
+  values: readonly (ITickItem | number)[]
+): number[]
+export function axisRangeToDomain(axis: IAxis, values: number): number
+export function axisRangeToDomain(axis: IAxis, values: ITickItem): number
+export function axisRangeToDomain(
+  axis: IAxis,
+  values: readonly (ITickItem | number)[] | number | ITickItem
+): number[] | number {
+  const f = axisRangeToDomainFunc(axis)
+
+  if (Array.isArray(values)) {
+    return values.map((value) => f(value))
+  } else {
+    return f(values as number | ITickItem)
+  }
+}
+
+function makeTicks(
+  axis: IAxis,
+  ticks: (ITickItem | number)[],
+  addLabels = true
+): ITickItem[] {
+  if (ticks.length === 0) {
+    return []
+  }
+
+  const format = setAxisFormat(axis, ticks.length)
+
+  return ticks.map((value) => {
+    if (typeof value !== 'number') {
+      return value
+    }
+
+    return {
+      v: value,
+      label: addLabels ? format(value) : undefined,
+    }
   })
+}
+
+// ---- Miscellaneous utility functions for axis ticks and ranges ---
+
+/**
+ * Calculates a reasonable tick interval for a data axis.
+ *
+ * https://stackoverflow.com/questions/237220/tickmark-algorithm-for-a-graph-axis
+ *
+ * @param lim
+ * @returns
+ */
+export function autoTickInterval(lim: ILim): number {
+  const range = Math.abs(lim[1] - lim[0])
+
+  const x = Math.pow(10, Math.floor(Math.log10(range)))
+
+  let ret = 0
+
+  if (range / x >= 5) {
+    ret = x
+  } else if (range / (0.5 * x) >= 5) {
+    ret = 0.5 * x
+  } else {
+    ret = x * 0.2
+  }
+
+  if (lim[0] > lim[1]) {
+    ret = -ret
+  }
+
+  return ret
+}
+
+/**
+ * Calculates a standardized data range over a given limit.
+ * This is to make a graph more visually appealing. For example
+ * instead of [.23, 4.1] convert to [0, 5]
+ *
+ * @param lim
+ * @param interval
+ * @returns
+ */
+export function autoLim(lim: ILim, interval?: number): ILim {
+  if (!interval) {
+    interval = autoTickInterval(lim)
+  }
+
+  return [
+    Math.floor(lim[0] / interval) * interval,
+    Math.ceil(lim[1] / interval) * interval,
+  ]
 }

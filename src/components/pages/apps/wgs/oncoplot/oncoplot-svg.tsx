@@ -1,4 +1,8 @@
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import {
+  IAxis,
+  axisDomainToRangeFunc,
+  createAxis,
+} from '@/components/plot/axes/axis'
 import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
@@ -94,9 +98,11 @@ function makeMatrix(
 
               const dist = stats.normCountDist(lcMutationsInUse)
 
-              const yax: Axis = new YAxis()
-                .setDomain([0, 1])
-                .setLength(blockSize.h)
+              const yax: IAxis = createAxis({
+                direction: 'y',
+                domain: [0, 1],
+                length: blockSize.h,
+              })
 
               const coords = [0]
 
@@ -104,10 +110,10 @@ function makeMatrix(
                 coords.push(coords[coords.length - 1]! + dist[di]!.value)
               })
 
+              const yaf = axisDomainToRangeFunc(yax)
+
               return dist.map((d, di) => {
-                const h =
-                  yax.domainToRange(coords[di]!) -
-                  yax.domainToRange(coords[di + 1]!)
+                const h = yaf(coords[di]!) - yaf(coords[di + 1]!)
 
                 // only render if there was a count associated with the event
                 if (h > 0) {
@@ -117,7 +123,7 @@ function makeMatrix(
                     <rect
                       key={`${ri}:${ci}:${di}`}
                       x={x}
-                      y={y + yax.domainToRange(coords[di + 1]!)}
+                      y={y + yaf(coords[di + 1]!)}
                       width={blockSize.w}
                       height={h}
                       //stroke={color}
@@ -286,12 +292,15 @@ function colGraphs(
   df: OncoplotFrame,
   mutationsInUse: string[],
   colorMap: Record<string, string>,
-  yax: YAxis,
+  yax: IAxis,
   blockSize: IBlock,
   spacing: IPos,
   displayProps: IOncoplotDisplayProps
 ) {
   const lcMutationsInUse = mutationsInUse.map((m) => m.toLowerCase())
+
+  const yaf = axisDomainToRangeFunc(yax)
+
   return (
     <>
       <g transform={`translate(${-5}, 0)`}>
@@ -315,15 +324,13 @@ function colGraphs(
           })
 
           return names.map((name, mi) => {
-            const h =
-              yax.domainToRange(coords[mi]!) -
-              yax.domainToRange(coords[mi + 1]!)
+            const h = yaf(coords[mi]!) - yaf(coords[mi + 1]!)
 
             return (
               <rect
                 key={mi}
                 x={ci * (blockSize.w + spacing.x)}
-                y={yax.domainToRange(coords[mi + 1]!)}
+                y={yaf(coords[mi + 1]!)}
                 width={blockSize.w}
                 height={h}
                 fill={colorMap[name] ?? NO_ALTERATION_COLOR}
@@ -349,12 +356,14 @@ function rowGraphs(
   df: OncoplotFrame,
   mutationsInUse: string[],
   colorMap: Record<string, string>,
-  xax: Axis,
+  xax: IAxis,
   blockSize: IBlock,
   spacing: IPos,
   displayProps: IOncoplotDisplayProps
 ) {
   const lcMutationsInUse = mutationsInUse.map((m) => m.toLowerCase())
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   return (
     <>
@@ -412,15 +421,13 @@ function rowGraphs(
           })
 
           return counts.map((count, li) => {
-            const w =
-              xax.domainToRange(coords[li + 1]!) -
-              xax.domainToRange(coords[li]!)
+            const w = xaf(coords[li + 1]!) - xaf(coords[li]!)
 
             return (
               <rect
                 key={li}
                 y={ri * (blockSize.h + spacing.y)}
-                x={xax.domainToRange(coords[li]!)}
+                x={xaf(coords[li]!)}
                 width={w}
                 height={blockSize.h}
                 fill={colorMap[count.name] ?? NO_ALTERATION_COLOR}
@@ -672,25 +679,28 @@ export function OncoplotSvg() {
     ? Math.round(Math.max(...mf.sampleStats.map((stats) => stats.sum)))
     : 0
 
-  const yax = new YAxis()
-    .setDomain([0, maxSampleCount])
-    .setLength(displayProps.samples.graphs.height)
-    .setTitle(displayProps.samples.graphs.yaxis.label)
-    .setTicks(range(maxSampleCount + 1))
-    .setTickParams({ which: 'minor', show: false })
+  const yax = createAxis({
+    direction: 'y',
+    domain: [0, maxSampleCount],
+    length: displayProps.samples.graphs.height,
+    name: displayProps.samples.graphs.yaxis.label,
+    ticks: range(maxSampleCount + 1),
+    tickParams: { which: 'minor', show: false },
+  })
 
   const maxGeneCount = mf
     ? Math.round(Math.max(...mf?.geneStats.map((stats) => stats.sum)))
     : 0
 
-  const xax = new Axis()
-    .setDomain([0, maxGeneCount])
-    .setLength(displayProps.features.graphs.height)
-    .setTitle('No. of samples')
-    .setTicks([
+  const xax = createAxis({
+    domain: [0, maxGeneCount],
+    length: displayProps.features.graphs.height,
+    name: 'No. of samples',
+    ticks: [
       { v: 0, label: '0' },
       { v: maxGeneCount, label: `${maxGeneCount} / ${mf?.shape[1]}` },
-    ])
+    ],
+  })
   //.setTickLabels([0, `${maxGeneCount} / ${mf.shape[1]}`])
 
   // get list of all events in use

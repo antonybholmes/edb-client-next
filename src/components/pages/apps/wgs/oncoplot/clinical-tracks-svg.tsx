@@ -1,5 +1,9 @@
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
-import { YAxis, type Axis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  createAxis,
+  IAxis,
+} from '@/components/plot/axes/axis'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
@@ -21,9 +25,13 @@ function numberTrackSvg(
   spacing: IPos,
   displayProps: IOncoplotDisplayProps
 ): ReactNode {
-  const yax: Axis = new YAxis()
-    .setDomain([0, track.maxEvent.value])
-    .setLength(displayProps.clinical.height)
+  const yax: IAxis = createAxis({
+    direction: 'y',
+    domain: [0, track.maxEvent.value],
+    length: displayProps.clinical.height,
+  })
+
+  const yaf = axisDomainToRangeFunc(yax)
 
   const color = trackProps.color ?? NO_ALTERATION_COLOR //displayProps.legend.mutations.noAlterationColor
 
@@ -44,9 +52,7 @@ function numberTrackSvg(
       </g>
       <g id="sample">
         {samples.map((sample, si) => {
-          const height = yax.domainToRange(
-            track.getEvents(sample).maxEvent.value
-          )!
+          const height = yaf(track.getEvents(sample).maxEvent.value)!
           const y = displayProps.clinical.height - height
           const x = si * (blockSize.w + spacing.x)
 
@@ -166,9 +172,11 @@ function distTrackSvg(
         {samples.map((sample, si) => {
           const dist = track.getEvents(sample).normCountDist(categories)
 
-          const yax: Axis = new YAxis()
-            .setDomain([0, 1])
-            .setLength(displayProps.clinical.height)
+          const yax: IAxis = createAxis({
+            direction: 'y',
+            domain: [0, 1],
+            length: displayProps.clinical.height,
+          })
 
           const coords = [0]
 
@@ -178,10 +186,10 @@ function distTrackSvg(
 
           const x = si * (blockSize.w + spacing.x)
 
+          const yaf = axisDomainToRangeFunc(yax)
+
           return categories.map((c, ci) => {
-            const h =
-              yax.domainToRange(coords[ci]!) -
-              yax.domainToRange(coords[ci + 1]!)
+            const h = yaf(coords[ci]!) - yaf(coords[ci + 1]!)
 
             // only render if there was a count associated with the event
             if (h > 0) {
@@ -193,7 +201,7 @@ function distTrackSvg(
                 <SvgRect
                   key={ci}
                   x={x}
-                  y={yax.domainToRange(coords[ci + 1]!)}
+                  y={yaf(coords[ci + 1]!)}
                   width={blockSize.w}
                   height={h}
                   //stroke={color}
