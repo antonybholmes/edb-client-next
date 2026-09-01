@@ -1,6 +1,6 @@
 import type { ILim } from '@/lib/math/math'
 import { range as numRange } from '@/lib/math/range'
-import { definedProps } from '@/lib/utils'
+import { DeepPartial, definedProps } from '@/lib/utils'
 import * as d3 from 'd3'
 import { deepmerge } from 'deepmerge-ts'
 import {
@@ -16,6 +16,7 @@ export interface IAxis extends IAxisConfig {
    * The length of the axis in pixels derived from the range.
    */
   length: number
+
   //domainToRange?: d3.ScaleLinear<number, number>
   format?: (value: number) => string
   //userFormat?: (value: number) => string
@@ -44,12 +45,14 @@ export function createAxis(
     config?: IAxisConfig
     direction?: IAxis['direction']
     name?: string
+
     length?: number
     domain?: ILim
     range?: ILim
     autoDomain?: boolean | ILim
     ticks?: number[] | ITickItem[]
     minorTicks?: number[] | ITickItem[]
+    style?: DeepPartial<IAxisConfig['style']>
     tickParams?: Partial<ITickParamProps>
   } = {}
 ): IAxis {
@@ -58,6 +61,7 @@ export function createAxis(
     direction = 'x',
     name,
     length,
+    style,
     domain,
     range,
     autoDomain,
@@ -97,6 +101,10 @@ export function createAxis(
     ret = setAxisTickParams(ret, tickParams)
   }
 
+  if (style !== undefined) {
+    ret.style = deepmerge(ret.style, style)
+  }
+
   return ret
 }
 
@@ -104,6 +112,11 @@ export function setAxisDirection(
   axis: IAxis,
   direction: IAxis['direction']
 ): IAxis {
+  // save copy operation if nothing changes
+  if (axis.direction === direction) {
+    return axis
+  }
+
   return copyAxis(axis, { direction })
 }
 

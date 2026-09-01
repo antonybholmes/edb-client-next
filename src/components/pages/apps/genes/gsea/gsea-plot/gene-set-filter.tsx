@@ -51,6 +51,7 @@ export function GeneSetFilter() {
         <h2 className="font-bold">Statistics</h2>
 
         <CheckPropRow
+          gap="gap-x-8"
           title={<span>NES &ge;</span>}
           checked={settings.genesets.filters.nes.on}
           onCheckedChange={(v) => {
@@ -79,6 +80,7 @@ export function GeneSetFilter() {
           />
         </CheckPropRow>
         <CheckPropRow
+          gap="gap-x-8"
           title={<span>FDR q-value &le;</span>}
           checked={settings.genesets.filters.q.on}
           onCheckedChange={(v) => {

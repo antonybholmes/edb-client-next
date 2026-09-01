@@ -84,6 +84,7 @@ export function ExtGseaSvg() {
     //xax = xax.setTicks(xax.ticks.slice(1))
 
     const yax = createAxis({
+      direction: 'y',
       domain: [-ymax, ymax],
       length: displayProps.es.axes.y.length,
       tickParams: { which: 'minor', show: false },

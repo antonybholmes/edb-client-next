@@ -62,6 +62,7 @@ import {
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { useUpdateEffect } from '@/hooks/update-effect'
 
+import { AxesPlotProvider } from '@/components/plot/axes/axes-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -253,7 +254,7 @@ export function GseaPlotPage() {
               <Fragment key={p}>
                 <li
                   key={p}
-                  className="px-4 py-2 text-xxs text-theme/70 font-bold"
+                  className="px-4 py-2 text-xs text-app-theme/70 font-bold"
                 >
                   {p}
                 </li>
@@ -458,7 +459,9 @@ export function GseaPlotPage() {
 export function GseaPlotQueryPage() {
   return (
     <ClientLayout>
-      <GseaPlotPage />
+      <AxesPlotProvider>
+        <GseaPlotPage />
+      </AxesPlotProvider>
     </ClientLayout>
   )
 }

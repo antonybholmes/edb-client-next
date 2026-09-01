@@ -43,7 +43,11 @@ export function GseaSvg() {
   const { pathways } = useGseaPlot()
   const { plots } = usePlots()
 
-  console.log(plots, 'plots x')
+  if (!plots || Object.keys(plots).length === 0) {
+    return null
+  }
+
+  console.log('plots', plots)
 
   // size of plot with padding
   const plotSize = [
@@ -93,7 +97,7 @@ export function GseaSvg() {
           .sort((a, b) => a.rank - b.rank)
       : rankedGenes
 
-    let xax = plots[pathway.id].axes.x
+    let xax = plots[pathway.id].axes.esx
 
     //xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -107,18 +111,20 @@ export function GseaSvg() {
           .sort((a, b) => a.rank - b.rank)
       : results.es
 
-    const ylim: [number, number] = [
-      Math.min(...es.map((e) => e.score)),
-      Math.max(...es.map((e) => e.score)),
-    ]
+    // const ylim: [number, number] = [
+    //   Math.min(...es.map((e) => e.score)),
+    //   Math.max(...es.map((e) => e.score)),
+    // ]
 
-    let yax = setAxisTickParams(
-      setAxisLength(
-        autoAxisDomain(setAxisDirection(createAxis(), 'y'), ylim),
-        settings.es.axes.y.length
-      ),
-      { which: 'minor', show: false }
-    )
+    // let yax = setAxisTickParams(
+    //   setAxisLength(
+    //     autoAxisDomain(setAxisDirection(createAxis(), 'y'), ylim),
+    //     settings.es.axes.y.length
+    //   ),
+    //   { which: 'minor', show: false }
+    // )
+
+    let yax = plots[pathway.id].axes.esy
 
     const xaf = axisDomainToRangeFunc(xax)
     const yaf = axisDomainToRangeFunc(yax)

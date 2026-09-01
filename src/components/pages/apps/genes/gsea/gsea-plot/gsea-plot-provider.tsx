@@ -1,9 +1,6 @@
-import { createContext, ReactNode, useContext, useMemo } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 
-import {
-  AxesPlotProvider,
-  IAxesPlot,
-} from '@/components/plot/axes/axes-provider'
+import { IAxesPlot, usePlots } from '@/components/plot/axes/axes-provider'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
@@ -26,7 +23,7 @@ export function useGseaPlot() {
 
 export function GseaPlotProvider({ children }: { children: ReactNode }) {
   const { settings } = useGseaSettings()
-
+  const { addPlots } = usePlots()
   const { rankedGenes, inUseReports, resultsMap } = useGsea()
 
   // keep only pathways for which we have results, i.e. with
@@ -40,52 +37,56 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
     [inUseReports, resultsMap]
   )
 
-  const axesPlots: IAxesPlot[] = []
+  useEffect(() => {
+    const axesPlots: IAxesPlot[] = []
 
-  for (const pathway of pathways) {
-    const results = resultsMap[pathway.name]!
+    for (const pathway of pathways) {
+      const results = resultsMap[pathway.name]!
 
-    // ranks are 0-based in the results files
-    const maxRank = rankedGenes.length - 1
+      // ranks are 0-based in the results files
+      const maxRank = rankedGenes.length - 1
 
-    let xax = createAxis({
-      domain: [0, maxRank],
-      length: settings.axes.x.length,
-      tickParams: { which: 'both', show: false },
-    })
+      let xax = createAxis({
+        name: 'ES X-axis',
 
-    const es = settings.phenotypes.invert
-      ? results.es
-          .map((e) => ({
-            ...e,
-            rank: maxRank - e.rank,
-            score: -e.score,
-          }))
-          .sort((a, b) => a.rank - b.rank)
-      : results.es
+        domain: [0, maxRank],
+        length: settings.axes.x.length,
+        style: { title: { show: false } },
+        tickParams: { which: 'both', show: false },
+      })
 
-    const ylim: [number, number] = [
-      Math.min(...es.map((e) => e.score)),
-      Math.max(...es.map((e) => e.score)),
-    ]
+      const es = settings.phenotypes.invert
+        ? results.es
+            .map((e) => ({
+              ...e,
+              rank: maxRank - e.rank,
+              score: -e.score,
+            }))
+            .sort((a, b) => a.rank - b.rank)
+        : results.es
 
-    let yax = createAxis({
-      direction: 'y',
-      domain: ylim,
-      length: settings.es.axes.y.length,
-      tickParams: { which: 'both', show: false },
-    })
+      const ylim: [number, number] = [
+        Math.min(...es.map((e) => e.score)),
+        Math.max(...es.map((e) => e.score)),
+      ]
 
-    console.log('x', xax)
+      let yax = createAxis({
+        direction: 'y',
+        name: 'ES Y-axis',
+        style: { title: { show: false } },
+        domain: ylim,
+        length: settings.es.axes.y.length,
+        tickParams: { which: 'minor', show: false },
+      })
 
-    axesPlots.push({ id: pathway.id, axes: { x: xax, y: yax } })
-  }
+      axesPlots.push({ id: pathway.id, axes: { esx: xax, esy: yax } })
+    }
+    addPlots(axesPlots)
+  }, [pathways, resultsMap, rankedGenes, settings, addPlots])
 
   return (
-    <AxesPlotProvider plots={axesPlots}>
-      <GseaPlotContext.Provider value={{ pathways }}>
-        {children}
-      </GseaPlotContext.Provider>
-    </AxesPlotProvider>
+    <GseaPlotContext.Provider value={{ pathways }}>
+      {children}
+    </GseaPlotContext.Provider>
   )
 }

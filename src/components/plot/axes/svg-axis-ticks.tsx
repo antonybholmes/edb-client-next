@@ -165,8 +165,6 @@ export function AxisTopTicksSvg({ ax }: IAxisProps) {
   const majorXs = axisDomainToRange(ax, ticks)
   const minorXs = axisDomainToRange(ax, minorTicks)
 
-  console.log('dsfsdf', tickLabelOffset)
-
   return (
     <>
       {minorTickProps.show && (

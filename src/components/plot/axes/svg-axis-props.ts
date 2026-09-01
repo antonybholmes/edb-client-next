@@ -67,6 +67,7 @@ export interface IMajorMinorTicks {
 
 export interface IAxisConfig extends IDBEntity {
   show: boolean
+
   clip?: boolean
   domain: ILim
   range: ILim
@@ -122,6 +123,7 @@ export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
   id: '01a058c3-e469-728e-9836-193a7704c8b8',
   name: '',
   show: true,
+
   clip: true,
   domain: [0, 1],
   range: [0, 1],

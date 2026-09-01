@@ -96,6 +96,7 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
 
   if (settings.mode === 'bits') {
     yax = createAxis({
+      direction: 'y',
       domain: [0, 2],
       length: settings.plotHeight,
       ticks: [0, 1, 2],
@@ -103,6 +104,7 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
     })
   } else {
     yax = createAxis({
+      direction: 'y',
       domain: [0, 1],
       length: settings.plotHeight,
       ticks: [0, 0.5, 1],

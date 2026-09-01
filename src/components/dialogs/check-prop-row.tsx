@@ -9,6 +9,7 @@ interface IProps extends Omit<ICheckboxProps, 'title'> {
   title?: ReactNode
   labelClassName?: string
   h?: string
+  gap?: string
   info?: string
 }
 
@@ -19,6 +20,7 @@ export function CheckPropRow({
   onCheckedChange = () => {},
   disabled = false,
   info,
+  gap = 'gap-x-2',
   h = 'min-h-6',
   className = '',
   children,
@@ -32,7 +34,7 @@ export function CheckPropRow({
         className
       )}
     >
-      <VCenterRow className={cn('grow justify-between gap-x-2', h)}>
+      <VCenterRow className={cn('grow justify-between', gap, h)}>
         <Checkbox
           checked={checked}
           onCheckedChange={onCheckedChange}
