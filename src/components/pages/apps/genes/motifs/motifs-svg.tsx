@@ -100,7 +100,7 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
       domain: [0, 2],
       length: settings.plotHeight,
       ticks: [0, 1, 2],
-      name: 'Bits',
+      title: 'Bits',
     })
   } else {
     yax = createAxis({
@@ -108,7 +108,7 @@ export function MotifsSvg({ className }: ComponentProps<'svg'>) {
       domain: [0, 1],
       length: settings.plotHeight,
       ticks: [0, 0.5, 1],
-      name: 'Prob',
+      title: 'Prob',
     })
   }
 

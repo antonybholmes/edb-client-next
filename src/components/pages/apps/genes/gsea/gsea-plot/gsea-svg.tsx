@@ -11,7 +11,7 @@ import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { usePlots } from '@/components/plot/axes/axes-provider'
+import { useAxes } from '@/components/plot/axes/axes-provider'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
@@ -37,7 +37,7 @@ export function GseaSvg() {
 
   const { rankedGenes, resultsMap } = useGsea()
   const { pathways } = useGseaPlot()
-  const { plots } = usePlots()
+  const { plots } = useAxes()
 
   if (!plots || Object.keys(plots).length === 0) {
     return null
@@ -93,7 +93,7 @@ export function GseaSvg() {
           .sort((a, b) => a.rank - b.rank)
       : rankedGenes
 
-    let xax = plots[pathway.id].axes.esx
+    let xax = plots[pathway.id].axes['es-x']
 
     //xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -120,7 +120,7 @@ export function GseaSvg() {
     //   { which: 'minor', show: false }
     // )
 
-    let yax = plots[pathway.id].axes.esy
+    let yax = plots[pathway.id].axes['es-y']
 
     const xaf = axisDomainToRangeFunc(xax)
     const yaf = axisDomainToRangeFunc(yax)
@@ -338,9 +338,11 @@ function EsSvg({
         s={settings.es.line}
       />
 
-      {edbSettings.plots.axes.y.show && <AxisLeftSvg ax={yax} title="ES" />}
+      {edbSettings.plots.axes.y.style.show && (
+        <AxisLeftSvg ax={yax} title="ES" />
+      )}
 
-      {edbSettings.plots.axes.x.show && (
+      {edbSettings.plots.axes.x.style.show && (
         <g transform={`translate(0, ${y0})`}>
           <AxisBottomSvg ax={xax} showTicks={settings.es.axes.x.showTicks} />
         </g>

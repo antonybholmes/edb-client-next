@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Ability to edit individual axes.
 - Fixing UI issues with axes.
 - Transition to new axis system.
 - Switched axis to plain object rather than class for preparation of user editing.

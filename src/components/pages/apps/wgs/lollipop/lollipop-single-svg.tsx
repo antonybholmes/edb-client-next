@@ -312,7 +312,7 @@ export function LollipopSingleSvg() {
       direction: 'y',
       domain: [0, maxSampleCount],
       length: graphHeight,
-      name: 'Mutation count',
+      title: 'Mutation count',
     })
 
     // small plots look better with fewer ticks
@@ -333,7 +333,7 @@ export function LollipopSingleSvg() {
     let xax = createAxis({
       domain: [1, n],
       length: gridWidth,
-      name: 'Positions',
+      title: 'Positions',
     })
     //.setTicks(ticks)
 

@@ -319,7 +319,7 @@ function BubblePlot({
         </g>
       )}
 
-      {edbSettings.plots.axes.x.show && (
+      {edbSettings.plots.axes.x.style.show && (
         <AxisBottomSvg
           ax={xax}
 

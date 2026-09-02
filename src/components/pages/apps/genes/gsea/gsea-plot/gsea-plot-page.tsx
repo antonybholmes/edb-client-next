@@ -385,9 +385,7 @@ export function GseaPlotPage() {
                       className="grow h-full"
                     >
                       <TabsContent value="graph">
-                        <GseaPlotProvider>
-                          <GseaSvg />
-                        </GseaPlotProvider>
+                        <GseaSvg />
                       </TabsContent>
                       <TabsContent value="bubble">
                         <GseaBubbleTabPanel />
@@ -460,7 +458,10 @@ export function GseaPlotQueryPage() {
   return (
     <ClientLayout>
       <AxesPlotProvider>
-        <GseaPlotPage />
+        <GseaPlotProvider>
+          {' '}
+          <GseaPlotPage />
+        </GseaPlotProvider>
       </AxesPlotProvider>
     </ClientLayout>
   )

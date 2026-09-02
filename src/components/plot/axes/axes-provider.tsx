@@ -24,7 +24,7 @@ interface IAxesPlotContextValue {
   removeAxis: (plotId: string, axisId: string) => void
 }
 
-const PlotContext = createContext<IAxesPlotContextValue | null>(null)
+const AxesPlotContext = createContext<IAxesPlotContextValue | null>(null)
 
 export function AxesPlotProvider({
   plots: initialPlots = [],
@@ -137,14 +137,18 @@ export function AxesPlotProvider({
     [plots, updateAxis, addPlots, addAxis, removeAxis]
   )
 
-  return <PlotContext.Provider value={value}>{children}</PlotContext.Provider>
+  return (
+    <AxesPlotContext.Provider value={value}>
+      {children}
+    </AxesPlotContext.Provider>
+  )
 }
 
-export function usePlots() {
-  const context = useContext(PlotContext)
+export function useAxes() {
+  const context = useContext(AxesPlotContext)
 
   if (!context) {
-    throw new Error('usePlots must be used inside a PlotProvider')
+    throw new Error('useAxes must be used inside a AxesPlotProvider')
   }
 
   return context

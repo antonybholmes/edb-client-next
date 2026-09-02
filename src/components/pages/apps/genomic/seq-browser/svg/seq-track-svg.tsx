@@ -93,7 +93,7 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
     domain: [0, ymax],
     length: tracks[0]!.displayOptions.height,
     ticks: [0, ymax],
-    name: tracks[0]!.type === 'Seq' ? settings.tracks.seqs.scale.mode : scale,
+    title: tracks[0]!.type === 'Seq' ? settings.tracks.seqs.scale.mode : scale,
   })
 
   //const refPoints: ISeqPos[] = getPoints(yax, tracks[0]!, allBinCounts[0]!)

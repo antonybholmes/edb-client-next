@@ -682,7 +682,7 @@ export function LollipopStackSvg() {
         direction: 'y',
         autoDomain: [0, maxSampleCount],
         length: graphHeight,
-        name: 'Mutation count',
+        title: 'Mutation count',
       })
 
       // small plots look better with fewer ticks
@@ -704,7 +704,7 @@ export function LollipopStackSvg() {
       let xax = createAxis({
         autoDomain: [1, n],
         length: gridWidth,
-        name: 'Positions',
+        title: 'Positions',
       })
 
       let ticks = getAxisTicks(xax)

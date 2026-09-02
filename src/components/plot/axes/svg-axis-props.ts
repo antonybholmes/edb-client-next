@@ -67,14 +67,11 @@ export interface IMajorMinorTicks {
 
 export interface IAxisConfig {
   title: string
-  show: boolean
+
   clip?: boolean
   domain: ILim
   range: ILim
-  style: {
-    title: IAxisLabelProps
-    line: IStrokeProps
-  }
+  style: { show: boolean; title: IAxisLabelProps; line: IStrokeProps }
   ticks: IMajorMinorTicks
   direction: 'x' | 'y'
   scale?: 'linear' | 'log'
@@ -117,12 +114,12 @@ export const DEFAULT_MINOR_AXIS_TICK_PROPS: IMinorAxisTicks = {
 
 export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
   title: '',
-  show: true,
 
   clip: true,
   domain: [0, 1],
   range: [0, 1],
   style: {
+    show: true,
     title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 30 },
     line: { ...DEFAULT_STROKE_PROPS },
   },

@@ -15,7 +15,7 @@ import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
 import { useState } from 'react'
 
-export function TickPropsPopover({
+export function TickSettingsPropsPopover({
   axis,
   which,
 }: {

@@ -683,7 +683,7 @@ export function OncoplotSvg() {
     direction: 'y',
     domain: [0, maxSampleCount],
     length: displayProps.samples.graphs.height,
-    name: displayProps.samples.graphs.yaxis.label,
+    title: displayProps.samples.graphs.yaxis.label,
     ticks: range(maxSampleCount + 1),
     tickParams: { which: 'minor', show: false },
   })
@@ -695,7 +695,7 @@ export function OncoplotSvg() {
   const xax = createAxis({
     domain: [0, maxGeneCount],
     length: displayProps.features.graphs.height,
-    name: 'No. of samples',
+    title: 'No. of samples',
     ticks: [
       { v: 0, label: '0' },
       { v: maxGeneCount, label: `${maxGeneCount} / ${mf?.shape[1]}` },

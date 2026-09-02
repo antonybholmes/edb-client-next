@@ -15,7 +15,7 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import { AxesPropsPopover } from '../../../../../../plot/axes/axes-props-popover'
+import { AxesSettingsPropsPopover } from '../../../../../../plot/axes/settings/axes-settings-props-popover'
 import { useGsea } from '../gsea-plot-store'
 import { useGseaSettings } from '../gsea-settings-store'
 
@@ -115,7 +115,7 @@ export function HomeToolbar() {
         </ToolbarCol>
         <ToolbarCol>
           <ToolbarRow>
-            <AxesPropsPopover />
+            <AxesSettingsPropsPopover />
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>

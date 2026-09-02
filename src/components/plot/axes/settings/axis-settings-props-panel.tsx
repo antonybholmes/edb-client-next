@@ -5,9 +5,9 @@ import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
-import { TickPropsPopover } from './tick-props-popover'
+import { TickSettingsPropsPopover } from './tick-settings-props-popover'
 
-export function AxisPropsPanel({ axis }: { axis: AxisType }) {
+export function AxisSettingsPropsPanel({ axis }: { axis: AxisType }) {
   const { settings, updateSettings } = useEdbSettings()
 
   return (
@@ -44,8 +44,8 @@ export function AxisPropsPanel({ axis }: { axis: AxisType }) {
       </SwitchPropRow>
 
       <PropRow title="Ticks">
-        <TickPropsPopover axis={axis} which="major" />
-        <TickPropsPopover axis={axis} which="minor" />
+        <TickSettingsPropsPopover axis={axis} which="major" />
+        <TickSettingsPropsPopover axis={axis} which="minor" />
       </PropRow>
     </>
   )

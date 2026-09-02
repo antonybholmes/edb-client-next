@@ -31,7 +31,7 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 
@@ -78,7 +78,7 @@ export function AxisRightSvg({
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 
@@ -123,11 +123,16 @@ export function AxisBottomSvg({
 
   // less space required for bottom axis title since we only need
   // to account for font height and tick mark
-  const titleOffset = tickOffset + tickSize + axisProps.style.title.offset
+  const titleOffset =
+    tickOffset +
+    tickSize +
+    (axisProps.ticks.major.show || axisProps.ticks.minor.show
+      ? tickOffset + tickSize + axisProps.style.title.offset
+      : 0)
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 
@@ -151,6 +156,7 @@ export function AxisBottomSvg({
         <SvgText
           transform={`translate(${0.5 * ax.length}, ${titleOffset})`}
           textAnchor="middle"
+          dominantBaseline="hanging"
           font={axisProps.style.title}
         >
           {_title}
@@ -173,11 +179,14 @@ export function AxisTopSvg({
     settings.plots.axes[axis]
   )
 
-  const titleOffset = tickOffset + tickSize + axisProps.style.title.offset
+  const titleOffset =
+    (axisProps.ticks.major.show || axisProps.ticks.minor.show
+      ? tickOffset + tickSize
+      : 0) + axisProps.style.title.offset
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 

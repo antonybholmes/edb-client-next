@@ -12,14 +12,21 @@ import {
   type WhichTick,
 } from './svg-axis-props'
 
+type IAxisFormat =
+  | { type: 'auto' }
+  | { type: 'd3'; specifier: string }
+  | { type: 'fixed'; decimalPlaces: number }
+
 export interface IAxis extends IAxisConfig {
+  id: string
+
   /**
    * The length of the axis in pixels derived from the range.
    */
   length: number
 
   //domainToRange?: d3.ScaleLinear<number, number>
-  format?: (value: number) => string
+  format?: IAxisFormat
   //userFormat?: (value: number) => string
 }
 
@@ -55,6 +62,7 @@ export function createAxis(
     minorTicks?: number[] | ITickItem[]
     style?: DeepPartial<IAxisConfig['style']>
     tickParams?: Partial<ITickParamProps>
+    format?: IAxisFormat
   } = {}
 ): IAxis {
   const {
@@ -70,13 +78,14 @@ export function createAxis(
     ticks,
     minorTicks,
     tickParams,
+    format,
   } = opts
   let ret: IAxis = {
     ...structuredClone(config),
     id: makeUuid(),
     length: 1,
 
-    ...definedProps({ id, title, direction, domain, range }),
+    ...definedProps({ id, title, direction, domain, range, format }),
   }
 
   if (length !== undefined) {
@@ -132,8 +141,12 @@ export function setAxisClip(axis: IAxis, clip: boolean): IAxis {
 }
 
 export function setAxisDP(axis: IAxis, decimalPlaces: number): IAxis {
+  if (decimalPlaces < 0) {
+    return axis
+  }
+
   return copyAxis(axis, {
-    format: decimalPlaces >= 0 ? d3.format(`.${decimalPlaces}f`) : undefined,
+    format: { type: 'd3', specifier: `.${decimalPlaces}f` },
   })
 }
 
@@ -197,23 +210,28 @@ export function setAxisLength(axis: IAxis, length: number): IAxis {
   return setAxisRange(axis, [0, length])
 }
 
-function setAxisFormat(axis: IAxis, count: number): (v: number) => string {
-  const format = d3
-    .scaleLinear()
-    .domain(axis.domain)
-    .range(axis.range)
-    .tickFormat(count, 'f')
-
-  return format
+export function getAxisFormatter(axis: IAxis, tickCount: number) {
+  switch (axis.format?.type) {
+    case 'd3':
+      return d3.format(axis.format.specifier)
+    case 'fixed':
+      return d3.format(`.${axis.format.decimalPlaces}f`)
+    default:
+      return d3
+        .scaleLinear()
+        .domain(axis.domain)
+        .range(axis.range)
+        .tickFormat(tickCount, 'f')
+  }
 }
 
 export function setAxisTicks(
   axis: IAxis,
-  ticks: number[] | ITickItem[],
+  ticks: (number | ITickItem)[] | undefined,
   opts: { which?: WhichTick } = {}
 ): IAxis {
   const { which = 'major' } = opts
-  const items = makeTicks(axis, ticks, which === 'major')
+  const items = ticks ? makeTicks(axis, ticks, which === 'major') : undefined
 
   if (which === 'major') {
     return copyAxis(axis, {
@@ -275,7 +293,7 @@ export function getAxisTicks(axis: IAxis): ITickItem[] {
   }
 
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
-  const format = axis.format ?? scale.tickFormat(axis.ticks.major.numTicks, 'f')
+  const format = getAxisFormatter(axis, axis.ticks.major.numTicks)
 
   return scale.ticks(axis.ticks.major.numTicks).map((value) => ({
     v: value,
@@ -399,7 +417,7 @@ function makeTicks(
     return []
   }
 
-  const format = setAxisFormat(axis, ticks.length)
+  const format = getAxisFormatter(axis, ticks.length)
 
   return ticks.map((value) => {
     if (typeof value !== 'number') {

@@ -1,0 +1,63 @@
+import { BaseCol } from '@/components/layout/base-col'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { useAxes } from '@/components/plot/axes/axes-provider'
+import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
+import { PropsPanel } from '@/components/props-panel'
+import { SortableItem } from '@/components/sortable-item'
+import { VScrollPanel } from '@/components/v-scroll-panel'
+import { DragDropProvider } from '@dnd-kit/react'
+
+export function AxesDisplayPropsPanel({
+  plotIds,
+  axesGroups,
+}: {
+  plotIds: { id: string; title: string }[]
+  axesGroups: {
+    id: string
+    title: string
+    axesIds: { id: string; axis: 'x' | 'y'; title: string }[]
+  }[]
+}) {
+  const { plots } = useAxes()
+
+  return (
+    <PropsPanel>
+      <VScrollPanel className="mb-2">
+        <DragDropProvider>
+          <ul className="flex flex-col">
+            {plotIds.map(({ id: plotId, title }, pi) => {
+              const plot = plots[plotId]
+
+              return (
+                <SortableItem key={plotId} index={pi} id={plotId}>
+                  <BaseCol className="grow">
+                    <span>{title}</span>
+
+                    {axesGroups.map(
+                      ({ id: groupId, title: groupTitle, axesIds }) => (
+                        <VCenterRow key={groupId} className="justify-between">
+                          <strong>{groupTitle}</strong>
+                          <VCenterRow>
+                            {axesIds.map(({ id: axisId, axis, title }) => (
+                              <AxisPlotPropsPopover
+                                key={axisId}
+                                axis={axis}
+                                title={title}
+                                plotId={plotId}
+                                axesId={axisId}
+                              />
+                            ))}
+                          </VCenterRow>
+                        </VCenterRow>
+                      )
+                    )}
+                  </BaseCol>
+                </SortableItem>
+              )
+            })}
+          </ul>
+        </DragDropProvider>
+      </VScrollPanel>
+    </PropsPanel>
+  )
+}

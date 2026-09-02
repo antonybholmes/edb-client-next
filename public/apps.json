@@ -63,9 +63,9 @@
     "color": "#ffb366",
     "version": "23.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-02T02:31:27.338Z",
-    "hash": "30f43d48281fa98802200dbc717e54930b79894e4ed72ddc645f30257d616b92",
-    "build": 906
+    "modified": "2026-09-02T15:22:13.197Z",
+    "hash": "32f05995ef03d21676ea92fe320a97ede3b5dc96f488086c90c108e157f860e0",
+    "build": 908
   },
   {
     "name": "GSEA Web",
@@ -109,11 +109,11 @@
     "name": "Lollipop",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
-    "version": "27.8.2",
+    "version": "27.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-01T20:28:07.324Z",
-    "hash": "0427d65dc0e545b5fd1b3d20bc940762267180eabc8d59cae1a56ec5b8097fe5",
-    "build": 1118
+    "modified": "2026-09-02T15:22:13.203Z",
+    "hash": "270411885f3b922a984d51c8d7fa8fe448357b29bcde03de10d3e4f1767069a5",
+    "build": 1120
   },
   {
     "name": "Matcalc",
@@ -129,11 +129,11 @@
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "48.4.6",
+    "version": "48.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-01T22:37:14.920Z",
-    "hash": "4ca32506dc9febb4202a44846bc404e09a306c6cbac2b795f4285d58a116e5f4",
-    "build": 1008
+    "modified": "2026-09-02T15:22:13.198Z",
+    "hash": "fc79745a1a2cf71c2a1decd1fcefaa49b4c0c6725ef369ab94e689007b256a70",
+    "build": 1010
   },
   {
     "name": "Oncoplot",
@@ -141,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.0.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-01T21:47:33.121Z",
-    "hash": "8794cf64250f0429d9824bdd318df7ffdb478b0f73b63c7e1e8e1ec353d890c1",
-    "build": 1126
+    "modified": "2026-09-02T15:22:13.203Z",
+    "hash": "69ac6c339db8d18d50b9030d219df78111363dc9c6f3317a7a11181b930980d1",
+    "build": 1128
   },
   {
     "name": "Overlap",
@@ -189,11 +189,11 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.4.4",
+    "version": "32.4.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-01T21:47:33.117Z",
-    "hash": "2c55517ea890809f8db7b71941f58f3186d9586bc481a2ded419128a112e0714",
-    "build": 1148
+    "modified": "2026-09-02T15:22:13.199Z",
+    "hash": "f01cfda99b3204198386903df4a399799882c7011e78d73b4406c313d2e57ed2",
+    "build": 1150
   },
   {
     "name": "Single Cell",
@@ -230,9 +230,9 @@
     "color": "#FA8072",
     "version": "26.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-01T22:37:14.926Z",
-    "hash": "6c6fcb3126a2ecc97b62daa9dd0ba0e00af8828d0fa47cc171669dcd361b397b",
-    "build": 1034
+    "modified": "2026-09-02T15:22:13.204Z",
+    "hash": "8a91d69f711205e98c1460beda62d1ad72fceddd9797827429cf9e56c5d23f93",
+    "build": 1036
   },
   {
     "name": "Venn",

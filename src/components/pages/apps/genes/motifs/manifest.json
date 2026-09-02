@@ -2,9 +2,9 @@
   "name": "Motifs",
   "description": "View motif logo plots.",
   "color": "#009933",
-  "version": "48.4.6",
+  "version": "48.4.8",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-09-01T22:37:14.920Z",
-  "hash": "4ca32506dc9febb4202a44846bc404e09a306c6cbac2b795f4285d58a116e5f4",
-  "build": 1008
+  "modified": "2026-09-02T15:22:13.198Z",
+  "hash": "fc79745a1a2cf71c2a1decd1fcefaa49b4c0c6725ef369ab94e689007b256a70",
+  "build": 1010
 }

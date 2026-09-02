@@ -47,7 +47,7 @@ export function MAFPlotSVG() {
     direction: 'y',
     autoDomain: [0, maxY],
     length: plotHeight,
-    name: 'MAF',
+    title: 'MAF',
   })
 
   const xaf = axisDomainToRangeFunc(xax)
