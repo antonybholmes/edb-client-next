@@ -52,7 +52,7 @@ export function Ellipse({
 }
 
 export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
-  const { setSelectedItems } = useVenn()
+  const { vennListsInUse, setSelectedItems } = useVenn()
   const { settings, circles } = useVennSettings()
 
   const circle1Ref = useRef<SVGEllipseElement | null>(null)
@@ -98,7 +98,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Circle A */}
       <Ellipse
         ref={circle1Ref}
-        circle={circles[1]!}
+        circle={circles['1']!}
         loc={center}
         radius={radius2}
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
@@ -106,7 +106,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <TitleText
-        id={'1'}
+        vennList={vennListsInUse[0]}
         center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
         textAnchor="end"
       />
@@ -114,7 +114,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Circle B */}
       <Ellipse
         ref={circle2Ref}
-        circle={circles[2]!}
+        circle={circles['2']!}
         loc={center}
         radius={radius2}
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
@@ -122,14 +122,14 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <TitleText
-        id={'2'}
+        vennList={vennListsInUse[1]}
         center={[center[0] - radius2 / 2, center[1] - radius2]}
       />
 
       {/* Circle C */}
       <Ellipse
         ref={circle3Ref}
-        circle={circles[3]!}
+        circle={circles['3']!}
         loc={center}
         radius={radius2}
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
@@ -137,7 +137,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <TitleText
-        id={'3'}
+        vennList={vennListsInUse[2]}
         center={[center[0] + radius2 / 2, center[1] - radius2]}
       />
 
@@ -145,7 +145,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Ellipse
         ref={circle4Ref}
-        circle={circles[4]!}
+        circle={circles['4']}
         loc={center}
         radius={radius2}
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
@@ -153,7 +153,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <TitleText
-        id="4"
+        vennList={vennListsInUse[3]}
         center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
         textAnchor="start"
       />
@@ -182,7 +182,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <CountText
-        id={'4'}
+        id="4"
         center={[center[0] + radius2 * 0.96, center[1] - radius2 * 0.06]}
         overlapLabels={overlapLabels}
         setItems={_setItems}

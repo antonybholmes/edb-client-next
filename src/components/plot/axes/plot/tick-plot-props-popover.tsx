@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
+import { vfill } from '@/lib/fill'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
@@ -35,7 +36,7 @@ export function TickPlotPropsPopover({
   const axis = plot.axes[axesId]
   const ticks = axis.ticks[which]
 
-  const items = getAxisTicks(axis)
+  const items = getAxisTicks(axis, { which })
   const format = getAxisFormatter(axis, axis.ticks.major.numTicks)
 
   const icon = title.toLowerCase().includes('x') ? (
@@ -86,10 +87,30 @@ export function TickPlotPropsPopover({
           />
         </SwitchPropRow>
 
-        <PropRow title="Ticks">
+        <SwitchPropRow
+          title="Ticks"
+          tooltip="Specify the tick values using semicolons (e.g., 1; 2; 3) or use 'auto' for automatic ticks."
+          checked={axis.ticks[which].style.line.show}
+          onCheckedChange={(v) => {
+            updateAxis(plotId, axesId, {
+              ticks: produce(axis.ticks, (draft) => {
+                draft[which].style.line.show = v
+              }),
+            })
+          }}
+        >
           <Input
             value={items.map((v) => format(v.v)).join('; ')}
             onTextChanged={(v) => {
+              if (v === 'auto') {
+                updateAxis(plotId, axesId, {
+                  ticks: produce(axis.ticks, (draft) => {
+                    draft[which].items = undefined
+                  }),
+                })
+                return
+              }
+
               const values = v
                 .split(';')
                 .map((s) => parseFloat(s.trim().replace(/,/g, '')))
@@ -105,7 +126,55 @@ export function TickPlotPropsPopover({
             }}
             w="lg"
           />
-        </PropRow>
+        </SwitchPropRow>
+
+        <SwitchPropRow
+          title="Labels"
+          tooltip="Specify the tick labels using semicolons (e.g., 1; 2; 3)"
+          checked={axis.ticks[which].style.labels.show}
+          onCheckedChange={(v) => {
+            updateAxis(plotId, axesId, {
+              ticks: produce(axis.ticks, (draft) => {
+                draft[which].style.labels.show = v
+              }),
+            })
+          }}
+        >
+          <Input
+            value={items
+              .map((v) => v.label)
+              .map((s) => s.trim())
+              .filter((s) => s.length > 0)
+              .join('; ')}
+            onTextChanged={(v) => {
+              const values: string[] = []
+
+              switch (v) {
+                case 'auto':
+                  values.push(...items.map((v) => format(v.v)))
+                  break
+                case 'clear':
+                  values.push(...vfill('', items.length))
+                  break
+                default:
+                  values.push(...v.split(';').map((s) => s.trim()))
+                  break
+              }
+
+              const newItems = items.map((item, i) => ({
+                v: item.v,
+                label: i < values.length ? values[i] : '',
+              }))
+
+              updateAxis(plotId, axesId, {
+                ticks: produce(axis.ticks, (draft) => {
+                  draft[which].items = newItems
+                }),
+              })
+            }}
+            w="lg"
+          />
+        </SwitchPropRow>
 
         <PropRow title="Size / Offset">
           <NumericalInput

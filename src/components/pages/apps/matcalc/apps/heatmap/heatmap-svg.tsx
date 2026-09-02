@@ -1,7 +1,7 @@
 import { cellStr } from '@/lib/dataframe/cell'
 
 import { type ICell } from '@/interfaces/cell'
-import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import { type IPos } from '@/interfaces/pos'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
@@ -53,6 +53,18 @@ interface IProps extends ISVGProps {
 export function HeatMapSvg() {
   const { plot } = useHeatmapContext()
 
+  if (!plot) {
+    return null
+  }
+
+  return <HeatMapSvgContent plot={plot} />
+}
+
+interface IHeatMapSvgContentProps {
+  plot: any
+}
+
+function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
   const cf = plot.dataframes['main'] as IClusterFrame
 
   const groupRows = plot.groupRows || []
@@ -65,10 +77,10 @@ export function HeatMapSvg() {
 
   const blockSize = displayOptions.blockSize
 
-  const scaledBlockSize = {
-    w: blockSize.w * displayOptions.zoom,
-    h: blockSize.h * displayOptions.zoom,
-  }
+  // const scaledBlockSize = {
+  //   w: blockSize.w * displayOptions.zoom,
+  //   h: blockSize.h * displayOptions.zoom,
+  // }
 
   const { ref } = useSVG()
 
@@ -102,7 +114,7 @@ export function HeatMapSvg() {
         : 0) +
       (displayOptions.colorbar.show &&
       displayOptions.colorbar.position.includes('right')
-        ? displayOptions.colorbar.width + displayOptions.padding
+        ? displayOptions.colorbar.size.w + displayOptions.padding
         : 0) +
       (cf.rowTree &&
       displayOptions.rowTree.show &&
@@ -138,7 +150,7 @@ export function HeatMapSvg() {
         : 0) +
       (displayOptions.colorbar.show &&
       displayOptions.colorbar.position === 'bottom'
-        ? displayOptions.colorbar.width + displayOptions.padding
+        ? displayOptions.colorbar.size.w + displayOptions.padding
         : 0)
 
     return { top, left, bottom, right }
@@ -174,6 +186,12 @@ export function HeatMapSvg() {
     }
 
     const dfSize = plot?.dataframes['size'] as BaseDataFrame
+
+    //unadjusted values which can be used to set the cell value
+    // for display rather than the transformed data. useful if
+    // you want to display non-logged values in a logged matrix
+    // where the logged data is used to control heatmap colors etc
+    // but user wants to see the original values
     const dfRaw = plot?.dataframes['raw'] as BaseDataFrame
 
     // const colorMap = d3
@@ -235,42 +253,39 @@ export function HeatMapSvg() {
       ? 30
       : margin.top
 
-    let legendPos: IPos = { ...ZERO_POS }
-
-    if (displayOptions.legend.position.includes('right')) {
-      legendPos = {
-        x:
-          margin.left +
-          innerWidth +
-          displayOptions.padding +
-          (displayOptions.rowLabels.show &&
-          displayOptions.rowLabels.position === 'right'
-            ? rowLabelsMetaW
-            : 0) +
-          (cf.rowTree &&
-          displayOptions.rowTree.show &&
-          displayOptions.rowTree.position === 'right'
-            ? displayOptions.rowTree.width + displayOptions.padding
-            : 0) +
-          (displayOptions.colorbar.show &&
-          displayOptions.colorbar.position.includes('right')
-            ? displayOptions.colorbar.width
-            : 0),
-        y: legendTop,
-      }
+    const legendPos = {
+      x:
+        margin.left +
+        innerWidth +
+        displayOptions.padding +
+        (displayOptions.rowLabels.show &&
+        displayOptions.rowLabels.position === 'right'
+          ? rowLabelsMetaW
+          : 0) +
+        (cf.rowTree &&
+        displayOptions.rowTree.show &&
+        displayOptions.rowTree.position === 'right'
+          ? displayOptions.rowTree.width + displayOptions.padding
+          : 0),
+      y: legendTop,
     }
 
-    let dotLegendPos: IPos = { ...ZERO_POS }
-    if (displayOptions.legend.position.includes('right')) {
-      dotLegendPos = {
-        x: legendPos.x!,
-        y:
-          legendTop +
-          (displayOptions.legend.show && displayOptions.groups.show
-            ? (legendBlockSize + displayOptions.padding) * (groups0.length + 1)
-            : 0),
-      }
-    }
+    const showLegendGroupRight =
+      displayOptions.groups.show &&
+      groupRows.length > 0 &&
+      displayOptions.legend.show &&
+      displayOptions.legend.position.includes('right')
+
+    const legendGroupRightY =
+      displayOptions.colorbar.show &&
+      displayOptions.colorbar.position.includes('right')
+        ? displayOptions.colorbar.size.w + 40
+        : 0
+
+    const dotLegendRightY =
+      displayOptions.legend.show && displayOptions.groups.show
+        ? (legendBlockSize + displayOptions.padding) * groups0.length + 10
+        : 0
 
     const cax = createAxis({
       domain: displayOptions.range,
@@ -288,6 +303,20 @@ export function HeatMapSvg() {
       ],
       tickParams: { which: 'minor', show: true },
     })
+
+    const legendRightX =
+      margin.left +
+      innerWidth +
+      displayOptions.padding +
+      (displayOptions.rowLabels.show &&
+      displayOptions.rowLabels.position === 'right'
+        ? rowLabelsMetaW
+        : 0) +
+      (cf.rowTree &&
+      displayOptions.rowTree.show &&
+      displayOptions.rowTree.position === 'right'
+        ? displayOptions.rowTree.width + displayOptions.padding
+        : 0)
 
     const svg = (
       <>
@@ -439,31 +468,7 @@ export function HeatMapSvg() {
           </>
         )}
 
-        {displayOptions.colorbar.show &&
-          displayOptions.colorbar.position.includes('right') && (
-            <SvgVColorBar
-              ax={cax}
-
-              cmap={COLOR_MAPS[displayOptions.cmap]!}
-
-              pos={{
-                x:
-                  margin.left +
-                  innerWidth +
-                  displayOptions.padding +
-                  (displayOptions.rowLabels.show &&
-                  displayOptions.rowLabels.position === 'right'
-                    ? rowLabelsMetaW
-                    : 0) +
-                  (cf.rowTree &&
-                  displayOptions.rowTree.show &&
-                  displayOptions.rowTree.position === 'right'
-                    ? displayOptions.rowTree.width + displayOptions.padding
-                    : 0),
-                y: legendTop,
-              }}
-            />
-          )}
+        {/* Plot the legend */}
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
@@ -489,17 +494,6 @@ export function HeatMapSvg() {
             />
           )}
 
-        {/* Plot the legend */}
-
-        {displayOptions.groups.show &&
-          groupRows.length > 0 &&
-          displayOptions.legend.show &&
-          displayOptions.legend.position.includes('right') && (
-            <LegendRightSvg pos={legendPos} groupRows={groupRows} />
-          )}
-
-        {/* Legend on bottom */}
-
         {displayOptions.groups.show &&
           groupRows.length > 0 &&
           displayOptions.legend.show &&
@@ -520,13 +514,32 @@ export function HeatMapSvg() {
             />
           )}
 
-        {/* Plot the dot legend */}
+        <g
+          id="legend-right"
+          transform={`translate(${legendPos.x}, ${legendPos.y})`}
+        >
+          {displayOptions.colorbar.show &&
+            displayOptions.colorbar.position.includes('right') && (
+              <SvgVColorBar
+                ax={cax}
 
-        {displayOptions.mode === 'dot' &&
-          displayOptions.legend.position.includes('right') &&
-          displayOptions.dot.legend.show && (
-            <DotLegend pos={dotLegendPos} groupRows={groupRows} />
-          )}
+                cmap={COLOR_MAPS[displayOptions.cmap]!}
+              />
+            )}
+          <g transform={`translate(0, ${legendGroupRightY})`}>
+            {showLegendGroupRight && <LegendRightSvg groupRows={groupRows} />}
+
+            {/* Plot the dot legend */}
+
+            {displayOptions.mode === 'dot' &&
+              displayOptions.legend.position.includes('right') &&
+              displayOptions.dot.legend.show && (
+                <g transform={`translate(0, ${dotLegendRightY})`}>
+                  <DotLegend groupRows={groupRows} />
+                </g>
+              )}
+          </g>
+        </g>
 
         {/* Show a list of transforms to create heatmap */}
         {displayOptions.actions.show &&

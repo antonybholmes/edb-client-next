@@ -6,7 +6,6 @@ import { SvgText } from '../svg-text'
 
 import {
   axisDomainToRange,
-  getAxisMinorTicks,
   getAxisTicks,
   IAxis,
   setAxisDirection,
@@ -64,7 +63,7 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
   } = getAxisProps(ax, settings.plots.axes.x)
 
   const ticks = getAxisTicks(ax)
-  const minorTicks = getAxisMinorTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
 
   const majorXs = axisDomainToRange(ax, ticks)
   const minorXs = axisDomainToRange(ax, minorTicks)
@@ -160,7 +159,7 @@ export function AxisTopTicksSvg({ ax }: IAxisProps) {
   } = getAxisProps(ax, settings.plots.axes.x)
 
   const ticks = getAxisTicks(ax)
-  const minorTicks = getAxisMinorTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
 
   const majorXs = axisDomainToRange(ax, ticks)
   const minorXs = axisDomainToRange(ax, minorTicks)
@@ -271,7 +270,7 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
   } = getAxisProps(ax, settings.plots.axes[axis])
 
   const ticks = getAxisTicks(ax)
-  const minorTicks = getAxisMinorTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
 
   const majorYs = axisDomainToRange(ax, ticks)
   const minorYs = axisDomainToRange(ax, minorTicks)
@@ -360,7 +359,7 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
   } = getAxisProps(ax, settings.plots.axes.y)
 
   const ticks = getAxisTicks(ax)
-  const minorTicks = getAxisMinorTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
 
   const majorYs = axisDomainToRange(ax, ticks)
   const minorYs = axisDomainToRange(ax, minorTicks)

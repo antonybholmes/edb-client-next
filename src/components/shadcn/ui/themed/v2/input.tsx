@@ -57,7 +57,7 @@ export const inputVariants = cva(CONTAINER_CLS, {
       xs: 'w-14',
       sm: 'w-20',
       md: 'w-32',
-      lg: 'w-42',
+      lg: 'w-40',
       xl: 'w-64',
       grow: 'grow',
       full: 'w-full',

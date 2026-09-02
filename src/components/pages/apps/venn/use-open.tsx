@@ -22,20 +22,11 @@ export function useOpen() {
       .read(lines).t
 
     setVennLists(
-      Object.fromEntries(
-        rangeMap((ci) => {
-          const id = (ci + 1).toString()
+      rangeMap((ci) => {
+        const id = (ci + 1).toString()
 
-          return [
-            id,
-            makeVennList(
-              (ci + 1).toString(),
-              table.index.str(ci),
-              table.row(ci).strs
-            ),
-          ]
-        }, table.shape[0])
-      )
+        return makeVennList(id, table.index.str(ci), table.row(ci).strs)
+      }, table.shape[0])
     )
 
     // setListTextMap(

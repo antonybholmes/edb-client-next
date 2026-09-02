@@ -11,7 +11,10 @@ import { Input } from '@/themed/v2/input'
 
 import { TEXT_CLEAR } from '@/consts'
 
-import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
+import {
+  DEFAULT_VENN_CIRCLE_PROPS,
+  useVennSettings,
+} from '@/components/pages/apps/venn/venn-settings-store'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
@@ -36,7 +39,8 @@ export function VennList({ vennList }: IProps) {
   })
 
   useEffect(() => {
-    updateVennListFromText(vennList.id, debouncedText)
+    console.log('debouncedText:', debouncedText)
+    updateVennListFromText(vennList.listId, debouncedText)
   }, [debouncedText])
 
   useEffect(() => {
@@ -70,37 +74,39 @@ export function VennList({ vennList }: IProps) {
   // we split these later to get the actual items
   //const [listTextMap, setListTextMap] = useState<Map<number, string>>(new Map())
 
+  const circle = circles[vennList.listId] ?? DEFAULT_VENN_CIRCLE_PROPS
+
   return (
     <BaseCol className="gap-y-1">
       <VCenterRow className="gap-x-2">
         <Input
-          id={`label${vennList.id}`}
+          id={`label${vennList.listId}`}
           value={vennList.name ?? ''}
           onChange={(e) => {
             setVennLists(
               produce(vennLists, (draft) => {
-                draft[vennList.id]!.name = e.target.value
+                draft[vennList.listId]!.name = e.target.value
               })
             )
           }}
           className="w-0 grow rounded-theme"
-          placeholder={`List ${vennList.id} name...`}
+          placeholder={`List ${vennList.listId} name...`}
         />
         <VCenterRow className="shrink-0">
           <FillButton
             colors={[
               {
-                color: circles[vennList.id]!.fill.value,
-                opacity: circles[vennList.id]!.fill.opacity,
-                show: circles[vennList.id]!.fill.show,
+                color: circle.fill.value,
+                opacity: circle.fill.opacity,
+                show: circle.fill.show,
                 onColorChange: ({ color, opacity, show }) =>
                   updateCircles(
                     produce(circles, (draft) => {
-                      draft[vennList.id]!.fill.value = color
-                      draft[vennList.id]!.fill.opacity =
-                        opacity ?? draft[vennList.id]!.fill.opacity
-                      draft[vennList.id]!.fill.show =
-                        show ?? draft[vennList.id]!.fill.show
+                      draft[vennList.listId]!.fill.value = color
+                      draft[vennList.listId]!.fill.opacity =
+                        opacity ?? draft[vennList.listId]!.fill.opacity
+                      draft[vennList.listId]!.fill.show =
+                        show ?? draft[vennList.listId]!.fill.show
                     })
                   ),
               },
@@ -110,17 +116,17 @@ export function VennList({ vennList }: IProps) {
           <OutlineButton
             colors={[
               {
-                color: circles[vennList.id]!.stroke.value,
-                opacity: circles[vennList.id]!.stroke.opacity,
-                show: circles[vennList.id]!.stroke.show,
+                color: circle.stroke.value,
+                opacity: circle.stroke.opacity,
+                show: circle.stroke.show,
                 onColorChange: ({ color, opacity, show }) =>
                   updateCircles(
                     produce(circles, (draft) => {
-                      draft[vennList.id]!.stroke.value = color
-                      draft[vennList.id]!.stroke.opacity =
-                        opacity ?? draft[vennList.id]!.stroke.opacity
-                      draft[vennList.id]!.stroke.show =
-                        show ?? draft[vennList.id]!.stroke.show
+                      draft[vennList.listId]!.stroke.value = color
+                      draft[vennList.listId]!.stroke.opacity =
+                        opacity ?? draft[vennList.listId]!.stroke.opacity
+                      draft[vennList.listId]!.stroke.show =
+                        show ?? draft[vennList.listId]!.stroke.show
                     })
                   ),
               },
@@ -145,11 +151,12 @@ export function VennList({ vennList }: IProps) {
       </VCenterRow>
 
       <Textarea
-        id={`set${vennList.id}`}
-        aria-label={`Set ${vennList.id}`}
+        id={`set${vennList.listId}`}
+        aria-label={`Set ${vennList.listId}`}
         //placeholder={listLabelMap[index] ?? ''}
         value={text}
         onTextChange={(v) => {
+          console.log('text changed:', v)
           setText(v)
           // setVennLists(
           //   produce(vennLists, (draft) => {
@@ -161,12 +168,14 @@ export function VennList({ vennList }: IProps) {
           //   })
           // )
         }}
-        className="h-28"
+        // onTextChanged={(v) => {
+        //   updateVennListFromText(vennList.setId, v)
+        // }}
+        className="h-24"
       />
       <VCenterRow className="justify-between pr-1">
         <span title="Total items / Unique items">
-          {vennList.items.length || 0} / {vennList.uniqueItems.length || 0}{' '}
-          unique
+          {vennList.items.length || 0} / {vennList.uniqueItems.size || 0} unique
         </span>
 
         <Button
@@ -175,7 +184,7 @@ export function VennList({ vennList }: IProps) {
 
           onClick={() => {
             setText('')
-            updateVennListFromText(vennList.id, '')
+            updateVennListFromText(vennList.listId, '')
           }}
         >
           {TEXT_CLEAR}

@@ -6,6 +6,7 @@ import { H2_CLS } from '@/theme'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 import type { ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
+import { InfoHoverCard } from '../shadcn/ui/themed/v2/hover-card'
 import { Switch } from '../shadcn/ui/themed/v2/switch'
 import { DialogCardInfo } from './card/dialog-card'
 import { H_CLS } from './prop-row'
@@ -30,8 +31,9 @@ export function SwitchPropRow({
   disabled = false,
   side = 'right',
   h = H_CLS,
+  tooltip,
   className,
-  leftChildren,
+
   children,
 }: IProps) {
   const id = useId()
@@ -63,7 +65,7 @@ export function SwitchPropRow({
 
         <VCenterRow className="gap-x-1.5 justify-end grow overflow-hidden">
           {children && children}
-
+          {tooltip && <InfoHoverCard>{tooltip}</InfoHoverCard>}
           {side == 'right' && (
             <Switch
               id={id}

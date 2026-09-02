@@ -8,7 +8,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v60`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v62`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -16,10 +16,12 @@ export interface IVennCircleProps extends IDBEntity {
   text: IPaintProps
 }
 
-export const DEFAULT_VENN_CIRCLE_PROPS = {
-  fill: '#cccccc',
-  stroke: COLOR_BLACK,
-  color: COLOR_WHITE,
+export const DEFAULT_VENN_CIRCLE_PROPS: IVennCircleProps = {
+  id: '0',
+  name: 'Default',
+  fill: { value: '#cccccc', opacity: 0.4, show: true },
+  stroke: { value: COLOR_BLACK, opacity: 1, show: true },
+  text: { value: COLOR_WHITE, opacity: 1, show: true },
 }
 
 export type VennCirclesMap = Record<string, IVennCircleProps>
@@ -103,6 +105,9 @@ export interface IVennSettings {
     counts: IFontProps
     percentages: IFontProps
   }
+  view: {
+    tab: 'venn' | 'dot'
+  }
 }
 
 const DEFAULT_SETTINGS: IVennSettings = {
@@ -121,6 +126,9 @@ const DEFAULT_SETTINGS: IVennSettings = {
     title: { ...BOLD_FONT, colored: true },
     counts: DEFAULT_FONT,
     percentages: { ...DEFAULT_FONT, size: 12 },
+  },
+  view: {
+    tab: 'venn',
   },
 }
 

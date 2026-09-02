@@ -1,10 +1,9 @@
-import type { IDBEntity } from '@/interfaces/db-entity'
+import { makeUuid } from '@/lib/id'
 import { makeCombinations } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import type { UndefStr } from '@/lib/text/text'
-import { deepFreeze } from '@/lib/utils'
-import { produce } from 'immer'
+import { useMemo } from 'react'
 import { create } from 'zustand'
 
 export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
@@ -54,41 +53,48 @@ export function getItems(text: UndefStr): string[] {
 //   )
 // }
 
-export interface IVennList extends IDBEntity {
+export interface IVennList {
+  id: string
+  listId: string
+  name: string
   //text: string
   items: string[]
-  uniqueItems: string[]
+  uniqueItems: Map<string, string>
 }
 
 export function makeVennList(
   id: string,
   name: string,
-  text: string | string[]
+  items: string | string[] = []
 ): IVennList {
-  let items: string[] = []
+  let _items: string[] = []
 
-  if (Array.isArray(text)) {
-    items = text
+  if (Array.isArray(items)) {
+    _items = items
   } else {
-    items = getItems(text)
+    _items = getItems(items)
   }
 
   return {
-    id,
-    name: name || `List ${id}`,
-
-    items,
-    uniqueItems: [...new Set(items.map(item => item.toLowerCase()))].sort(),
+    id: makeUuid(),
+    listId: id,
+    name: name,
+    items: _items,
+    uniqueItems: new Map(_items.map((item) => [item.toLowerCase(), item])),
   }
 }
 
 export interface IVennOptions {
   selectedItems: { name: string; items: string[] }
-  vennLists: Record<string, IVennList>
-  vennListsInUse: number
+  vennLists: IVennList[]
+  //vennListsInUse: IVennList[]
   originalNames: Record<string, string>
 
   combinationNames: Record<string, string>
+  /**
+   * For each combination stores the item ids in it.
+   * e.g. "1:2:3" -> ["itemA", "itemB"] means items A and B are in the combination of lists 1, 2, and 3
+   */
   vennElemMap: Record<string, string[]>
   /**
    * Incremented every time a list is changed for determining if the
@@ -97,154 +103,198 @@ export interface IVennOptions {
   updateCounter: number
 }
 
-export const COMBINATIONS: readonly number[][] = deepFreeze(
-  makeCombinations(range(1, 5))
-)
+// export const COMBINATIONS: readonly number[][] = deepFreeze(
+//   makeCombinations(range(1, 5))
+// )
 
 const DEFAULT_SETTINGS: IVennOptions = {
   selectedItems: { name: '', items: [] },
-  vennLists: Object.fromEntries(
-    VENN_LIST_IDS.map(id => [
-      id,
-      {
-        id,
-        name: `List ${id}`,
-        text: '',
-        items: [],
-        uniqueItems: [],
-      },
-    ])
-  ),
+  vennLists: VENN_LIST_IDS.map((id) => ({
+    id: makeUuid(),
+    listId: id,
+    name: `List ${id}`,
+
+    items: [],
+    uniqueItems: new Map(),
+  })),
   originalNames: {},
   combinationNames: {},
   vennElemMap: {},
-  vennListsInUse: 0,
+  //vennListsInUse: [],
   updateCounter: 0,
 }
 
 export interface IVennStore extends IVennOptions {
+  addGroup: () => void
   setSelectedItems: (name: string, items: string[]) => void
-  setVennLists: (vennLists: Record<string, IVennList>) => void
+  setVennLists: (vennLists: IVennList[]) => void
   updateVennListFromText: (id: string, text: string) => void
-  setVennElemMap: (vennElemMap: Record<string, string[]>) => void
-  setVennListsInUse: (n: number) => void
+  //updateVennElemMap: () => void
+  //setVennListsInUse: (ids: Set<string>) => void
 }
 
-export const useVennStore = create<IVennStore>(set => ({
+function makeVennElemMap(vennLists: IVennList[]): Record<string, string[]> {
+  const combs = new Map<string, Set<string>>()
+
+  for (const vl of vennLists) {
+    for (const item of vl.uniqueItems.keys()) {
+      if (!combs.has(item)) {
+        combs.set(item, new Set())
+      }
+
+      // tag each item with the lists it belongs to
+      combs.get(item)!.add(vl.listId)
+    }
+  }
+
+  const vennElemMap: Record<string, string[]> = {}
+
+  for (const [item, listIds] of combs.entries()) {
+    // make an id from all the lists this item belongs to, e.g 1:2:3
+    const id = [...listIds].sort().join(':')
+
+    if (!(id in vennElemMap)) {
+      vennElemMap[id] = []
+    }
+
+    // now we have each set combination and the items in it
+    // e.g. 1:2:3 -> [itemA, itemB, itemC] so if three
+    // way, these are items shared by all 3 lists,
+    // if 1:2, these are items shared by list 1 and 2 but not 3,
+    // if 1, these are items unique to list 1 etc.
+    vennElemMap[id]!.push(item)
+  }
+
+  return vennElemMap
+}
+
+export const useVennStore = create<IVennStore>((set, get) => ({
   ...DEFAULT_SETTINGS,
   setSelectedItems: (name: string, items: string[]) => {
     set({ selectedItems: { name, items } })
   },
-  setVennLists: (vennLists: Record<string, IVennList>) => {
-    set(
-      produce((state: IVennStore) => {
-        vennLists = Object.fromEntries(
-          Object.entries(vennLists)
-            .sort((a, b) => a[0].localeCompare(b[0]))
-            .slice(0, 4)
-            .map(([_, vl], i) => {
-              const id = (i + 1).toString()
-              return [id, { ...vl, id }]
-            })
-        )
+  // updateVennElemMap: () => {
+  //   set((state) => ({
+  //     vennElemMap: makeVennElemMap(state.vennLists),
+  //   }))
+  // },
+  addGroup: () => {
+    set((state) => {
+      const id = (state.vennLists.length + 1).toString()
+      const list = makeVennList(id, `List ${id}`)
+      const vennLists = [...state.vennLists, list]
 
-        // add at most first 4 items and also fix the ids
-        state.vennLists = { ...state.vennLists, ...vennLists }
-
-        state.originalNames = Object.fromEntries(
-          [
-            ...new Set(
-              Object.values(vennLists)
-                .map(v => v.items)
-                .flat()
-            ),
-          ].map(v => [v.toLowerCase(), v])
-        )
-        state.combinationNames = Object.fromEntries(
-          COMBINATIONS.map(comb => [
-            comb.join(':'),
-            comb.map(i => vennLists[i]?.name || `List ${i}`).join(' AND '),
-          ])
-        )
-
-        state.updateCounter = 0
-      })
-    )
-  },
-  updateVennListFromText: (id: string, text: string) => {
-    set(
-      produce((state: IVennStore) => {
-        //state.vennLists[id].text = text
-        state.vennLists[id]!.items = getItems(text)
-        state.vennLists[id]!.uniqueItems = [
-          ...new Set(state.vennLists[id]!.items),
-        ].sort()
-
-        state.originalNames = {
-          ...Object.fromEntries(
-            [
-              ...new Set(
-                Object.entries(state.vennLists)
-                  .filter(([k]) => k !== id)
-                  .map(([, v]) => v.items)
-                  .flat()
-              ),
-            ].map(v => [v.toLowerCase(), v])
-          ),
-          ...Object.fromEntries(
-            state.vennLists[id]!.items.map(v => [v.toLowerCase(), v])
-          ),
-        }
-
-        state.updateCounter++
-      })
-    )
-  },
-  setVennElemMap: (vennElemMap: Record<string, string[]>) => {
-    // ensure unique and sorted items in each set
-    set({
-      vennElemMap: Object.fromEntries(
-        Object.entries(vennElemMap).map(([k, v]) => [k, [...new Set(v)].sort()])
-      ),
+      console.log('Adding new group:', vennLists)
+      return {
+        vennLists,
+        vennElemMap: makeVennElemMap(vennLists),
+        updateCounter: state.updateCounter + 1,
+      }
     })
   },
-  setVennListsInUse: (n: number) => {
-    set({ vennListsInUse: n })
+  setVennLists: (vennLists: IVennList[]) => {
+    const originalNames = Object.fromEntries(
+      vennLists
+        .flatMap((vennList) => vennList.uniqueItems.entries())
+        .map(([key, value]) => [key, value])
+    )
+    const listIdxCombinations = makeCombinations(range(vennLists.length))
+    const combinationNames = Object.fromEntries(
+      listIdxCombinations.map((combination) => [
+        combination.map((index) => (index + 1).toString()).join(':'),
+        combination.map((index) => vennLists[index]!.name).join(' AND '),
+      ])
+    )
+
+    set({
+      vennLists,
+      originalNames,
+      combinationNames,
+      vennElemMap: makeVennElemMap(vennLists),
+      updateCounter: 0,
+    })
   },
+  updateVennListFromText: (id: string, text: string) => {
+    set((state) => {
+      const items = getItems(text)
+
+      console.log('id', id, 'text', text)
+
+      const vennLists = state.vennLists.map((vennList) =>
+        vennList.listId === id
+          ? {
+              ...vennList,
+              items,
+              uniqueItems: new Map(
+                items.map((item) => [item.toLowerCase(), item])
+              ),
+            }
+          : vennList
+      )
+      const originalNames = Object.fromEntries(
+        vennLists
+          .flatMap((vennList) => vennList.uniqueItems.entries())
+          .map(([key, value]) => [key, value])
+      )
+
+      return {
+        vennLists,
+        originalNames,
+        vennElemMap: makeVennElemMap(vennLists),
+        updateCounter: state.updateCounter + 1,
+      }
+    })
+  },
+  // setVennListsInUse: (ids: Set<string>) => {
+  //   set({ vennListsInUse: ids })
+  // },
 }))
 
-export function useVenn(): IVennStore {
-  const selectedItems = useVennStore(state => state.selectedItems)
-  const setSelectedItems = useVennStore(state => state.setSelectedItems)
-  const originalNames = useVennStore(state => state.originalNames)
+export function useVenn(): IVennStore & {
+  vennListsInUse: IVennList[]
+} {
+  const addGroup = useVennStore((state) => state.addGroup)
+  const selectedItems = useVennStore((state) => state.selectedItems)
+  const setSelectedItems = useVennStore((state) => state.setSelectedItems)
+  const originalNames = useVennStore((state) => state.originalNames)
 
-  const vennLists = useVennStore(state => state.vennLists)
+  const vennLists = useVennStore((state) => state.vennLists)
 
-  const setVennLists = useVennStore(state => state.setVennLists)
+  const setVennLists = useVennStore((state) => state.setVennLists)
 
-  const updateCounter = useVennStore(state => state.updateCounter)
+  const updateCounter = useVennStore((state) => state.updateCounter)
 
   const updateVennListFromText = useVennStore(
-    state => state.updateVennListFromText
+    (state) => state.updateVennListFromText
   )
 
-  const combinationNames = useVennStore(state => state.combinationNames)
+  const combinationNames = useVennStore((state) => state.combinationNames)
 
-  const vennElemMap = useVennStore(state => state.vennElemMap)
-  const setVennElemMap = useVennStore(state => state.setVennElemMap)
+  const vennElemMap = useVennStore((state) => state.vennElemMap)
+  //const updateVennElemMap = useVennStore((state) => state.updateVennElemMap)
+
+  const vennListsInUse = useMemo(
+    () => vennLists.filter((vl) => vl.items.length > 0),
+    [vennLists]
+  )
+
+  console.log('Venn Lists In Use:', vennLists)
 
   return {
     selectedItems,
-    setSelectedItems,
+
     vennLists,
-    setVennLists,
-    updateVennListFromText,
+
     originalNames,
     combinationNames,
     vennElemMap,
-    setVennElemMap,
-    vennListsInUse: useVennStore(state => state.vennListsInUse),
-    setVennListsInUse: useVennStore(state => state.setVennListsInUse),
+    //updateVennElemMap,
+    vennListsInUse,
+    //setVennListsInUse: useVennStore((state) => state.setVennListsInUse),
     updateCounter,
+    addGroup,
+    setSelectedItems,
+    setVennLists,
+    updateVennListFromText,
   }
 }

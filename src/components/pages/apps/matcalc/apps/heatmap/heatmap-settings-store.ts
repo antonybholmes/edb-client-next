@@ -102,7 +102,7 @@ export interface IHeatMapSettings {
   colorbar: {
     show: boolean
     size: IDim
-    width: number
+    //width: number
     position: ColorBarPos
     stroke: IStrokeProps
   }
@@ -182,7 +182,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   colorbar: {
     position: 'right',
     size: { ...DEFAULT_COLORBAR_SIZE },
-    width: 100,
+    //width: 100,
     show: true,
     stroke: { ...DEFAULT_STROKE_PROPS },
   },

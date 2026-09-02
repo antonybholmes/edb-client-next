@@ -1,10 +1,11 @@
 import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext, useState, type ReactNode } from 'react'
 import { HeatMapPlot } from '../../history/history-provider/history-types'
 
 export interface HeatmapPropsContextType {
-  displayProps: IHeatMapSettings
-  plot: HeatMapPlot
+  displayProps?: IHeatMapSettings | undefined
+  plot?: HeatMapPlot | undefined
+  setPlot: (plot: HeatMapPlot) => void
 }
 
 export const HeatmapContext = createContext<
@@ -27,11 +28,15 @@ export function HeatmapProvider({
   plot,
   children,
 }: {
-  plot: HeatMapPlot
+  plot?: HeatMapPlot | undefined
   children: ReactNode
 }) {
+  const [_plot, setPlot] = useState<HeatMapPlot | undefined>(plot)
+
   return (
-    <HeatmapContext.Provider value={{ displayProps: plot.props, plot }}>
+    <HeatmapContext.Provider
+      value={{ displayProps: _plot?.props, plot: _plot, setPlot }}
+    >
       {children}
     </HeatmapContext.Provider>
   )

@@ -43,8 +43,6 @@ export function GseaSvg() {
     return null
   }
 
-  console.log('plots', plots)
-
   // size of plot with padding
   const plotSize = [
     settings.axes.x.length,

@@ -65,13 +65,16 @@ export function SVGOneWayVenn({ overlapLabels = {} }: IVennProps) {
     <>
       {/* Circle A */}
 
-      <Circle ref={circle1Ref} loc={cA} circle={circles[1]!} />
+      <Circle ref={circle1Ref} loc={cA} circle={circles['1']!} />
 
-      <TitleText id="1" center={[cA[0], cA[1] - labelRadius]} />
+      <TitleText
+        vennList={vennListsInUse[0]}
+        center={[cA[0], cA[1] - labelRadius]}
+      />
 
       <CountText
         id="1"
-        center={[vennListsInUse > 1 ? lA[0] : cA[0], cA[1]]}
+        center={[vennListsInUse.length > 1 ? lA[0] : cA[0], cA[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />

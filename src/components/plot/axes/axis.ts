@@ -287,26 +287,28 @@ export function setAxisMinorTickDivisions(
   })
 }
 
-export function getAxisTicks(axis: IAxis): ITickItem[] {
-  if (axis.ticks.major.items) {
-    return axis.ticks.major.items
+export function getAxisTicks(
+  axis: IAxis,
+  opts: { which?: WhichTick } = {}
+): ITickItem[] {
+  const { which = 'major' } = opts
+
+  if (axis.ticks[which].items) {
+    return axis.ticks[which].items
   }
 
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
   const format = getAxisFormatter(axis, axis.ticks.major.numTicks)
 
-  return scale.ticks(axis.ticks.major.numTicks).map((value) => ({
+  const ticks = scale.ticks(axis.ticks.major.numTicks).map((value) => ({
     v: value,
     label: format(value),
   }))
-}
 
-export function getAxisMinorTicks(axis: IAxis): ITickItem[] {
-  if (axis.ticks.minor.items) {
-    return axis.ticks.minor.items
+  if (which === 'major') {
+    return ticks
   }
 
-  const ticks = getAxisTicks(axis)
   const minorTickDivisions = axis.ticks.minor.divisions
 
   return ticks.slice(0, -1).flatMap((tick, index) => {
@@ -319,6 +321,25 @@ export function getAxisMinorTicks(axis: IAxis): ITickItem[] {
     }))
   })
 }
+
+// export function getAxisMinorTicks(axis: IAxis): ITickItem[] {
+//   if (axis.ticks.minor.items) {
+//     return axis.ticks.minor.items
+//   }
+
+//   const ticks = getAxisTicks(axis)
+//   const minorTickDivisions = axis.ticks.minor.divisions
+
+//   return ticks.slice(0, -1).flatMap((tick, index) => {
+//     const next = ticks[index + 1]!.v
+//     const step = (next - tick.v) / (minorTickDivisions - 1)
+
+//     return numRange(0, minorTickDivisions).map((position) => ({
+//       v: tick.v + position * step,
+//       label: '',
+//     }))
+//   })
+// }
 
 export type RangeToDomainFunc = (v: number | ITickItem) => number
 

@@ -29,6 +29,8 @@ export function PlotSettingsPanel() {
   const { displayProps, plot } = useHeatmapContext()
   const { updatePlot } = useHistory()
 
+  console.log(displayProps, plot)
+
   return (
     <AccordionItem value="plot">
       <AccordionTrigger>Plot</AccordionTrigger>

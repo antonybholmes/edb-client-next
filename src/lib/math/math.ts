@@ -17,6 +17,10 @@ export function numSort(a: number[]) {
   return a.sort((a, b) => a - b)
 }
 
+export function numericalSort(l: string[]) {
+  return l.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+}
+
 export function makeCombinations<T>(items: T[]): T[][] {
   const result: T[][] = [[]]
 
@@ -47,4 +51,20 @@ export function end<T>(data: T[]): T {
 
 export function minMax(x: number, min: number, max: number) {
   return Math.max(min, Math.min(max, x))
+}
+
+export function transpose<T>(matrix: T[][]): T[][] {
+  if (matrix.length === 0) return []
+
+  const rows = matrix.length
+  const cols = matrix[0]!.length
+  const result: T[][] = Array.from({ length: cols }, () => Array(rows))
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      result[j]![i] = matrix[i]![j]
+    }
+  }
+
+  return result
 }
