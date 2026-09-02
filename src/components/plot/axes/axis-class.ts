@@ -1,3 +1,4 @@
+import { makeUuid } from '@/lib/id'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
@@ -59,9 +60,9 @@ export class Axis {
   }
 
   constructor(axis: IAxisConfig = DEFAULT_AXIS_CONFIG) {
-    this._id = axis.id
+    this._id = makeUuid()
     this._clip = axis.clip
-    this._title = axis.name
+    this._title = axis.title
     this._ticks = structuredClone(axis.ticks)
 
     console.log(axis, 'axis')

@@ -46,7 +46,7 @@ export interface ITickParamProps {
   which: WhichTick | 'both'
 }
 
-export interface IAxisTicks extends IDBEntity {
+export interface IAxisTicks {
   show: boolean
   style: IAxisTickStyle
   items?: ITickItem[]
@@ -65,9 +65,9 @@ export interface IMajorMinorTicks {
   minor: IMinorAxisTicks
 }
 
-export interface IAxisConfig extends IDBEntity {
+export interface IAxisConfig {
+  title: string
   show: boolean
-
   clip?: boolean
   domain: ILim
   range: ILim
@@ -98,8 +98,6 @@ export const DEFAULT_AXIS_LINE_PROPS: IAxisLineProps = {
 }
 
 export const DEFAULT_AXIS_TICK_PROPS: IMajorAxisTicks = {
-  id: '01a0588c-3169-752f-a52b-3f356b24f0df',
-  name: 'Major Axis Ticks',
   show: true,
   style: {
     labels: { ...DEFAULT_AXIS_LABEL_PROPS },
@@ -110,8 +108,6 @@ export const DEFAULT_AXIS_TICK_PROPS: IMajorAxisTicks = {
 
 export const DEFAULT_MINOR_AXIS_TICK_PROPS: IMinorAxisTicks = {
   ...DEFAULT_AXIS_TICK_PROPS,
-  id: '01a0588c-675d-704f-a91f-2f596b6cb4d4',
-  name: 'Minor Axis Ticks',
   divisions: 5,
   style: {
     labels: { ...DEFAULT_AXIS_LABEL_PROPS, show: false },
@@ -120,8 +116,7 @@ export const DEFAULT_MINOR_AXIS_TICK_PROPS: IMinorAxisTicks = {
 }
 
 export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
-  id: '01a058c3-e469-728e-9836-193a7704c8b8',
-  name: '',
+  title: '',
   show: true,
 
   clip: true,

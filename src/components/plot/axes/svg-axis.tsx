@@ -29,7 +29,7 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
 
   const strokeWidth = settings.plots.axes.y.style.line.width
 
-  const _title = title ?? ax.name
+  const _title = title ?? ax.title
 
   if (!axisProps.show) {
     return null
@@ -76,7 +76,7 @@ export function AxisRightSvg({
 
   const strokeWidth = axisProps.style.line.width
 
-  const _title = title ?? ax.name
+  const _title = title ?? ax.title
 
   if (!axisProps.show) {
     return null
@@ -125,7 +125,7 @@ export function AxisBottomSvg({
   // to account for font height and tick mark
   const titleOffset = tickOffset + tickSize + axisProps.style.title.offset
 
-  const _title = title ?? ax.name
+  const _title = title ?? ax.title
 
   if (!axisProps.show) {
     return null
@@ -175,7 +175,7 @@ export function AxisTopSvg({
 
   const titleOffset = tickOffset + tickSize + axisProps.style.title.offset
 
-  const _title = title ?? ax.name
+  const _title = title ?? ax.title
 
   if (!axisProps.show) {
     return null

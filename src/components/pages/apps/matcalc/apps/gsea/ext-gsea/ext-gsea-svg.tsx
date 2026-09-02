@@ -307,7 +307,7 @@ export function ExtGseaSvg() {
 
       const yax = createAxis({
         direction: 'y',
-        name: 'SNR',
+        title: 'SNR',
         autoDomain: [-yMax, yMax],
         length: displayProps.ranking.axes.y.length,
         tickParams: { which: 'minor', show: false },

@@ -13,14 +13,10 @@ import { ColorMap } from '@/lib/color/colormap'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { usePlots } from '@/components/plot/axes/axes-provider'
 import {
-  autoAxisDomain,
   axisDomainToRange,
   axisDomainToRangeFunc,
   createAxis,
   IAxis,
-  setAxisDirection,
-  setAxisLength,
-  setAxisTickParams,
 } from '@/components/plot/axes/axis'
 import { SvgText } from '@/components/plot/svg-text'
 import { useGseaPlot } from './gsea-plot-provider'
@@ -618,13 +614,13 @@ function RankingSvg({
   //   .setLength(settings.ranking.axes.y.length)
   //   .setTickParams({ which: 'minor', show: false })
 
-  let yax = setAxisTickParams(
-    setAxisLength(
-      autoAxisDomain(setAxisDirection(createAxis(), 'y'), [yMin, yMax]),
-      settings.ranking.axes.y.length
-    ),
-    { which: 'minor', show: false }
-  )
+  let yax = createAxis({
+    direction: 'y',
+    title: 'SNR',
+    autoDomain: [yMin, yMax],
+    length: settings.ranking.axes.y.length,
+    tickParams: { which: 'minor', show: false },
+  })
 
   const y0 = axisDomainToRange(yax, [0])[0]
   const xaf = axisDomainToRangeFunc(xax)
@@ -674,7 +670,7 @@ function RankingSvg({
           </g>
         </g>
       )}
-      <AxisLeftSvg ax={yax} title="SNR" />
+      <AxisLeftSvg ax={yax} />
     </g>
   )
 }

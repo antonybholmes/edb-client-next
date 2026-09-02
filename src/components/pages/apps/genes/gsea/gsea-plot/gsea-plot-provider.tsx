@@ -47,8 +47,7 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
       const maxRank = rankedGenes.length - 1
 
       let xax = createAxis({
-        name: 'ES X-axis',
-
+        title: 'ES X-axis',
         domain: [0, maxRank],
         length: settings.axes.x.length,
         style: { title: { show: false } },
@@ -72,8 +71,8 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
 
       let yax = createAxis({
         direction: 'y',
-        name: 'ES Y-axis',
-        style: { title: { show: false } },
+        title: 'ES',
+        //style: { title: { show: false } },
         domain: ylim,
         length: settings.es.axes.y.length,
         tickParams: { which: 'minor', show: false },

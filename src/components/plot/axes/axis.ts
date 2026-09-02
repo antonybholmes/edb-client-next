@@ -1,3 +1,4 @@
+import { makeUuid } from '@/lib/id'
 import type { ILim } from '@/lib/math/math'
 import { range as numRange } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
@@ -43,9 +44,9 @@ function invalidateCache(axis: IAxis): IAxis {
 export function createAxis(
   opts: {
     config?: IAxisConfig
+    id?: string
+    title?: string
     direction?: IAxis['direction']
-    name?: string
-
     length?: number
     domain?: ILim
     range?: ILim
@@ -58,8 +59,9 @@ export function createAxis(
 ): IAxis {
   const {
     config = DEFAULT_AXIS_CONFIG,
+    id,
+    title,
     direction = 'x',
-    name,
     length,
     style,
     domain,
@@ -71,9 +73,10 @@ export function createAxis(
   } = opts
   let ret: IAxis = {
     ...structuredClone(config),
+    id: makeUuid(),
     length: 1,
 
-    ...definedProps({ direction, name, domain, range }),
+    ...definedProps({ id, title, direction, domain, range }),
   }
 
   if (length !== undefined) {
@@ -121,7 +124,7 @@ export function setAxisDirection(
 }
 
 export function setAxisTitle(axis: IAxis, title: string): IAxis {
-  return copyAxis(axis, { name: title })
+  return copyAxis(axis, { title })
 }
 
 export function setAxisClip(axis: IAxis, clip: boolean): IAxis {
