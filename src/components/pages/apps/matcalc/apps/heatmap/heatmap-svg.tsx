@@ -157,6 +157,7 @@ function HeatMapSvgContent() {
   }, [displayOptions])
 
   function handleVariantEnter(pos: IPos, cell: ICell) {
+    //console.log('handleVariantEnter', pos, cell)
     const screen = svgPointToScreen(ref.current, pos)
 
     screen.x += blockSize.w + 2
@@ -424,6 +425,7 @@ function HeatMapSvgContent() {
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}
+              margin={margin}
               xgaps={xgaps}
               ygaps={ygaps}
               rowLeaves={rowLeaves}
@@ -438,6 +440,7 @@ function HeatMapSvgContent() {
           <>
             <CellsSvg
               df={dfMain}
+              margin={margin}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               props={displayOptions}

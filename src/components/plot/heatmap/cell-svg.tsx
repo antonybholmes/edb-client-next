@@ -10,6 +10,7 @@ import { formatNumber } from '@/lib/text/text'
 import { ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgPath } from '../svg-path'
+import { IMarginProps } from '../svg-props'
 import { SvgRect } from '../svg-rect'
 import { CellGaps } from './cell-gaps'
 
@@ -17,9 +18,10 @@ import { CellGaps } from './cell-gaps'
 const RADIUS_FACTOR = 1 //0.96
 
 export interface ICellsSvgProps {
+  df: BaseDataFrame
+  margin: IMarginProps
   xgaps: CellGaps
   ygaps: CellGaps
-  df: BaseDataFrame
   dfRaw?: BaseDataFrame | undefined
   dfSize?: BaseDataFrame | undefined
   rowLeaves: number[]
@@ -35,9 +37,11 @@ function getUseRectId(color: string): string {
 }
 
 export function CellsSvg({
+  df,
+  margin,
   xgaps,
   ygaps,
-  df,
+
   rowLeaves,
   colLeaves,
   props,
@@ -100,8 +104,8 @@ export function CellsSvg({
                 onMouseEnter={() => {
                   handleVariantEnter?.(
                     {
-                      x,
-                      y,
+                      x: x + margin.left,
+                      y: y + margin.top,
                     },
                     { row: ri, col: ci }
                   )
@@ -122,6 +126,7 @@ export function DotsSvg({
   df,
   dfRaw,
   dfSize,
+  margin,
   xgaps,
   ygaps,
   rowLeaves,
@@ -205,8 +210,8 @@ export function DotsSvg({
                 onMouseEnter={() => {
                   handleVariantEnter?.(
                     {
-                      x,
-                      y,
+                      x: x + margin.left,
+                      y: y + margin.top,
                     },
                     { row: ri, col: ci }
                   )

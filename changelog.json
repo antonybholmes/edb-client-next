@@ -2671,6 +2671,12 @@
           "msg": "Venn lists can be removed",
           "date": "2026-09-03T20:45:26.010Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "Heatmap tooltips now in correct position",
+          "date": "2026-09-03T20:53:40.158Z"
+        }
       ]
     },
     "author": "Antony Holmes",

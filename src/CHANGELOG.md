@@ -15,6 +15,10 @@
 - Tooltips refined.
 - New client layout. Tooltips now uses a store instead of being a provider.
 
+### Fixed
+
+- Heatmap tooltips now in correct position.
+
 
 ## 87.8.0 (Aug, 2026)
 
