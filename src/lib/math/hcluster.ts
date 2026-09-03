@@ -18,7 +18,11 @@ export interface ICluster {
 
 // to make the square u shape to join nodes requires 4 coordinates
 // bottom left, top left, top right, bottom right
-export type IBranchCoords = [IPos, IPos, IPos, IPos]
+export type IBranchCoords = {
+  c1: number
+  c2: number
+  coords: [IPos, IPos, IPos, IPos]
+}
 
 export interface IClusterTree {
   cluster: ICluster
@@ -397,12 +401,16 @@ export function clusterToCoords(
       const x2 = _getNodeX(c.children[1]!, leafXMap, xCacheMap) / maxX
       const y = c.height / maxH
 
-      coords.push([
-        { x: x1, y: c.children[0]!.height / maxH },
-        { x: x1, y },
-        { x: x2, y },
-        { x: x2, y: c.children[1]!.height / maxH },
-      ])
+      coords.push({
+        c1: c.children[0]!.id,
+        c2: c.children[1]!.id,
+        coords: [
+          { x: x1, y: c.children[0]!.height / maxH },
+          { x: x1, y },
+          { x: x2, y },
+          { x: x2, y: c.children[1]!.height / maxH },
+        ],
+      })
 
       // depth first left tree first
       stack.push(...c.children.toReversed())

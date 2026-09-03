@@ -32,6 +32,7 @@ import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { SvgTitle } from '../../../../../plot/svg-title'
+import { HeatMapPlot } from '../../history/history-provider/history-types'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
@@ -61,7 +62,7 @@ export function HeatMapSvg() {
 }
 
 interface IHeatMapSvgContentProps {
-  plot: any
+  plot: HeatMapPlot
 }
 
 function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
@@ -98,9 +99,9 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
     const left =
       displayOptions.padding +
       (cf.rowTree &&
-      displayOptions.rowTree.show &&
-      displayOptions.rowTree.position === 'left'
-        ? displayOptions.rowTree.width + displayOptions.padding
+      displayOptions.tree.row.show &&
+      displayOptions.tree.row.position === 'left'
+        ? displayOptions.tree.row.width + displayOptions.padding
         : 0) +
       (displayOptions.rowLabels.show &&
       displayOptions.rowLabels.position === 'left'
@@ -117,9 +118,9 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
         ? displayOptions.colorbar.size.w + displayOptions.padding
         : 0) +
       (cf.rowTree &&
-      displayOptions.rowTree.show &&
-      displayOptions.rowTree.position === 'right'
-        ? displayOptions.rowTree.width + displayOptions.padding
+      displayOptions.tree.row.show &&
+      displayOptions.tree.row.position === 'right'
+        ? displayOptions.tree.row.width + displayOptions.padding
         : 0) +
       ((displayOptions.legend.show || displayOptions.dot.legend.show) &&
       displayOptions.legend.position.includes('right')
@@ -129,9 +130,9 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
     const top =
       displayOptions.padding +
       (cf.colTree &&
-      displayOptions.colTree.show &&
-      displayOptions.colTree.position === 'top'
-        ? displayOptions.colTree.width + displayOptions.padding
+      displayOptions.tree.col.show &&
+      displayOptions.tree.col.position === 'top'
+        ? displayOptions.tree.col.width + displayOptions.padding
         : 0) +
       (displayOptions.colLabels.show &&
       displayOptions.colLabels.position === 'top'
@@ -243,8 +244,14 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
       ])
     )
 
-    const innerWidth = colLeaves.length * blockSize.w
-    const innerHeight = dfMain.shape[0] * blockSize.h
+    const innerWidth =
+      colLeaves.length * blockSize.w +
+      displayOptions.gaps.cols.size * displayOptions.gaps.cols.indexes.length
+
+    const innerHeight =
+      dfMain.shape[0] * blockSize.h +
+      displayOptions.gaps.rows.size * displayOptions.gaps.rows.indexes.length
+
     const width = innerWidth + margin.left + margin.right
     const height =
       Math.max(MIN_INNER_HEIGHT, innerHeight) + margin.top + margin.bottom
@@ -263,9 +270,9 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
           ? rowLabelsMetaW
           : 0) +
         (cf.rowTree &&
-        displayOptions.rowTree.show &&
-        displayOptions.rowTree.position === 'right'
-          ? displayOptions.rowTree.width + displayOptions.padding
+        displayOptions.tree.row.show &&
+        displayOptions.tree.row.position === 'right'
+          ? displayOptions.tree.row.width + displayOptions.padding
           : 0),
       y: legendTop,
     }
@@ -304,20 +311,6 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
       tickParams: { which: 'minor', show: true },
     })
 
-    const legendRightX =
-      margin.left +
-      innerWidth +
-      displayOptions.padding +
-      (displayOptions.rowLabels.show &&
-      displayOptions.rowLabels.position === 'right'
-        ? rowLabelsMetaW
-        : 0) +
-      (cf.rowTree &&
-      displayOptions.rowTree.show &&
-      displayOptions.rowTree.position === 'right'
-        ? displayOptions.rowTree.width + displayOptions.padding
-        : 0)
-
     const svg = (
       <>
         {displayOptions.title.show && displayOptions.title.text && (
@@ -331,12 +324,12 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
         )}
 
         {cf.colTree &&
-          displayOptions.colTree.show &&
-          displayOptions.colTree.position === 'top' && (
+          displayOptions.tree.col.show &&
+          displayOptions.tree.col.position === 'top' && (
             <ColTreeTopSvg
               tree={cf.colTree}
               width={innerWidth}
-              height={displayOptions.colTree.width}
+              height={displayOptions.tree.col.width}
               props={displayOptions}
               pos={{ x: margin.left, y: displayOptions.padding }}
             />
@@ -378,12 +371,12 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
 
         {/* Show tree on left of heat map */}
         {cf.rowTree &&
-          displayOptions.rowTree.show &&
-          displayOptions.rowTree.position === 'left' && (
+          displayOptions.tree.row.show &&
+          displayOptions.tree.row.position === 'left' && (
             <RowTreeSvg
               tree={cf.rowTree}
               width={innerHeight}
-              height={displayOptions.rowTree.width}
+              height={displayOptions.tree.row.width}
               mode="left"
               props={displayOptions}
               pos={{ x: displayOptions.padding, y: margin.top }}
@@ -391,12 +384,12 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
           )}
 
         {cf.rowTree &&
-          displayOptions.rowTree.show &&
-          displayOptions.rowTree.position === 'right' && (
+          displayOptions.tree.row.show &&
+          displayOptions.tree.row.position === 'right' && (
             <RowTreeSvg
               tree={cf.rowTree}
               width={innerHeight}
-              height={displayOptions.rowTree.width}
+              height={displayOptions.tree.row.width}
               mode="right"
               props={displayOptions}
               pos={{
@@ -430,6 +423,7 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
         {displayOptions.mode === 'dot' ? (
           <>
             <GridSvg
+              df={dfMain}
               width={innerWidth}
               height={innerHeight}
               props={displayOptions}
@@ -460,6 +454,7 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
               handleVariantLeave={hideTooltip}
             />
             <GridSvg
+              df={dfMain}
               width={innerWidth}
               height={innerHeight}
               props={displayOptions}

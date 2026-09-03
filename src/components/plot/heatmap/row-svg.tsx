@@ -20,13 +20,13 @@ export function RowTreeSvg({
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {tree.coords.map((coords, ri) => {
+      {tree.coords.map((branch, ri) => {
         const p = range(4).map((i) => ({
-          y: coords[i]!.x * width,
+          y: branch.coords[i]!.x * width,
           x:
             mode === 'left'
-              ? height - coords[i]!.y * height
-              : coords[i]!.y * height,
+              ? height - branch.coords[i]!.y * height
+              : branch.coords[i]!.y * height,
         }))
 
         return (
@@ -36,8 +36,8 @@ export function RowTreeSvg({
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
-            stroke={props.rowTree.stroke.value}
-            strokeWidth={props.rowTree.stroke.width}
+            stroke={props.tree.row.stroke.value}
+            strokeWidth={props.tree.row.stroke.width}
           />
         )
       })}

@@ -4,9 +4,10 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { ILim, numSort } from '@/lib/math/math'
 import { normalize } from '@/lib/math/normalize'
-import { range } from '@/lib/math/range'
 import { formatNumber } from '@/lib/text/text'
+import { ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgPath } from '../svg-path'
 import { SvgRect } from '../svg-rect'
@@ -69,6 +70,8 @@ export function CellsSvg({
     )
   })
 
+  const { xs, ys } = xys({ props, shape: df.shape })
+
   return (
     <>
       <defs>{uniqueColorRects}</defs>
@@ -77,28 +80,20 @@ export function CellsSvg({
         shapeRendering={SVG_CRISP_EDGES}
       >
         {rowLeaves.map((row, ri) => {
-          const y = pos.y + row * blockSize.h
+          const y = ys[ri]
+
           return colLeaves.map((col, ci) => {
-            const x = pos.x + col * blockSize.w
+            const x = xs[ci]
+
             const fill = colors[ri]![ci]!
 
             const id = getUseRectId(fill)
 
             return (
-              // <rect
-              //   id={`${ri}:${ci}`}
-              //   key={`${ri}:${ci}`}
-              //   x={ci * blockSize.w}
-              //   y={ri * blockSize.h}
-              //   width={blockSize.w}
-              //   height={blockSize.h}
-              //   fill={fill}
-              //   //shapeRendering={SVG_CRISP_EDGES}
-              // />
               <use
                 key={`${ri}:${ci}`}
                 xlinkHref={`#${id}`}
-                transform={`translate(${ci * blockSize.w},${ri * blockSize.h})`}
+                transform={`translate(${x},${y})`}
                 onMouseEnter={() => {
                   handleVariantEnter?.(
                     {
@@ -257,6 +252,7 @@ export function DotsSvg({
 }
 
 interface IGridSvgProps {
+  df: BaseDataFrame
   width: number
   height: number
   props: IHeatMapSettings
@@ -264,33 +260,116 @@ interface IGridSvgProps {
 }
 
 export function GridSvg({
-  width,
-  height,
+  df,
+
   props,
   pos = { ...ZERO_POS },
 }: IGridSvgProps) {
   const blockSize = props.blockSize
 
-  const hlines = range(blockSize.h, height, blockSize.h)
-    .map((y) => `M 0,${y} L ${width},${y}`)
-    .join(' ')
+  const xbreaks = [
+    0,
+    ...numSort([...new Set(props.gaps.cols.indexes)]),
+    df.shape[1],
+  ]
 
-  const vlines = range(blockSize.w, width, blockSize.w)
-    .map((x) => `M ${x},0 L ${x},${height}`)
-    .join(' ')
+  const ybreaks = [
+    0,
+    ...numSort([...new Set(props.gaps.rows.indexes)]),
+    df.shape[0],
+  ]
+
+  const { xs, ys } = xys({ props, shape: df.shape })
+
+  const hlines = []
+  let x1 = 0
+  let x2 = 0
+  let w = 0
+  for (let b = 0; b < xbreaks.length - 1; b++) {
+    w = (xbreaks[b + 1] - xbreaks[b]) * blockSize.w
+
+    x2 = x1 + w
+
+    for (let row = 0; row < df.shape[0]; row++) {
+      hlines.push(`M ${x1},${ys[row]} L ${x2},${ys[row]}`)
+    }
+
+    x1 = x2 + props.gaps.cols.size
+  }
+
+  const vlines = []
+  let y1 = 0
+  let y2 = 0
+  let h = 0
+
+  for (let b = 0; b < ybreaks.length - 1; b++) {
+    h = (ybreaks[b + 1] - ybreaks[b]) * blockSize.h
+
+    y2 = y1 + h
+
+    for (let col = 0; col < df.shape[1]; col++) {
+      vlines.push(`M ${xs[col]},${y1} L ${xs[col]},${y2}`)
+    }
+
+    y1 = y2 + props.gaps.rows.size
+  }
+
+  x1 = 0
+  x2 = 0
+  y1 = 0
+  y2 = 0
+  w = 0
+  h = 0
+
+  const rects: ReactNode[] = []
+
+  for (let yi = 0; yi < ybreaks.length - 1; yi++) {
+    x1 = 0
+    x2 = 0
+
+    h = (ybreaks[yi + 1] - ybreaks[yi]) * blockSize.h
+    y2 = y1 + h
+
+    for (let xi = 0; xi < xbreaks.length - 1; xi++) {
+      w = (xbreaks[xi + 1] - xbreaks[xi]) * blockSize.w
+      x2 = x1 + w
+
+      rects.push(
+        <SvgRect
+          key={`grid:${yi}:${xi}`}
+          x={x1}
+          y={y1}
+          width={w}
+          height={h}
+          sp={props.border}
+          shapeRendering={SVG_CRISP_EDGES}
+        />
+      )
+
+      x1 = x2 + props.gaps.cols.size
+    }
+
+    y1 = y2 + props.gaps.rows.size
+  }
+
+  // const vlines = xs
+  //   .slice(1, -1)
+  //   .map((x) => `M ${x},0 L ${x},${height}`)
+  //   .join(' ')
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.grid.show && (
         <>
           <SvgPath
-            d={hlines}
+            d={hlines.join(' ')}
             sp={props.grid}
+            //stroke="black"
             shapeRendering={SVG_CRISP_EDGES}
           />
 
           <SvgPath
-            d={vlines}
+            d={vlines.join(' ')}
             sp={props.grid}
 
             shapeRendering={SVG_CRISP_EDGES}
@@ -298,17 +377,36 @@ export function GridSvg({
         </>
       )}
 
-      {props.border.show && (
-        <SvgRect
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          sp={props.border}
-
-          shapeRendering={SVG_CRISP_EDGES}
-        />
-      )}
+      {props.border.show && <>{rects}</>}
     </g>
   )
+}
+
+function xys({ props, shape }: { props: IHeatMapSettings; shape: ILim }): {
+  xs: number[]
+  ys: number[]
+} {
+  const blockSize = props.blockSize
+  const rowGaps = new Set(props.gaps.rows.indexes)
+  const colGaps = new Set(props.gaps.cols.indexes)
+
+  const xs: number[] = []
+  const ys: number[] = []
+  let x = 0
+  let y = 0
+
+  console.log(rowGaps, colGaps)
+
+  for (let i = 0; i < shape[1]; i++) {
+    x += colGaps.has(i) ? props.gaps.cols.size : 0
+    xs.push(x)
+    x += blockSize.w
+  }
+
+  for (let i = 0; i < shape[0]; i++) {
+    y += rowGaps.has(i) ? props.gaps.rows.size : 0
+    ys.push(y)
+    y += blockSize.h
+  }
+  return { xs, ys }
 }

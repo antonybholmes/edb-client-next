@@ -425,7 +425,7 @@ export function HeatMapDialog({
 
       <ActionDialogCard>
         <DialogCardHeader>
-          <Switch
+          {/* <Switch
             checked={settings.heatmap.cluster.apply}
 
             onCheckedChange={(v) => {
@@ -437,13 +437,14 @@ export function HeatMapDialog({
             }}
           >
             Clustering
-          </Switch>
+          </Switch> */}
+          Clustering
         </DialogCardHeader>
 
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               checked={settings.heatmap.cluster.rows}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
@@ -458,7 +459,7 @@ export function HeatMapDialog({
           </ActionDialogRow>
           <ActionDialogRow>
             <Checkbox
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               checked={settings.heatmap.cluster.cols}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
@@ -474,7 +475,7 @@ export function HeatMapDialog({
 
           <ActionDialogRow title="Linkage">
             <SelectList
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               value={settings.heatmap.cluster.linkage}
               onValueChange={(v) => {
                 if (v) {
@@ -495,7 +496,7 @@ export function HeatMapDialog({
 
           <ActionDialogRow title="Distance">
             <SelectList
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               value={settings.heatmap.cluster.distance}
               onValueChange={(v) => {
                 if (v) {

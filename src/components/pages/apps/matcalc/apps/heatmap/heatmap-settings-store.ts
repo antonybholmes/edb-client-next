@@ -106,11 +106,13 @@ export interface IHeatMapSettings {
     position: ColorBarPos
     stroke: IStrokeProps
   }
-  rowTree: ITreeProps & {
-    position: LeftRightPos
-  }
-  colTree: ITreeProps & {
-    position: TopBottomPos
+  tree: {
+    row: ITreeProps & {
+      position: LeftRightPos
+    }
+    col: ITreeProps & {
+      position: TopBottomPos
+    }
   }
   legend: {
     show: boolean
@@ -146,6 +148,10 @@ export interface IHeatMapSettings {
     grid: IStrokeProps
     border: IStrokeProps
     labels: ITextProps
+  }
+  gaps: {
+    rows: { size: number; indexes: number[] }
+    cols: { size: number; indexes: number[] }
   }
   padding: number
   zoom: number
@@ -231,10 +237,16 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
     },
     useOriginalValuesForSizes: true,
   },
-  rowTree: { ...DEFAULT_TREE_PROPS, position: 'left' },
-  colTree: {
-    ...DEFAULT_TREE_PROPS,
-    position: 'top',
+  tree: {
+    row: { ...DEFAULT_TREE_PROPS, position: 'left' },
+    col: {
+      ...DEFAULT_TREE_PROPS,
+      position: 'top',
+    },
+  },
+  gaps: {
+    rows: { size: 10, indexes: [] },
+    cols: { size: 10, indexes: [3, 7] },
   },
   padding: 10,
   zoom: 1,

@@ -25,11 +25,11 @@ export function ColTreeSettingsPanel() {
       <AccordionContent>
         <SwitchPropRow
           title="Show tree"
-          checked={displayProps.colTree.show}
+          checked={displayProps.tree.col.show}
           onCheckedChange={(v) => {
             updatePlot(
               produce(plot, (draft) => {
-                draft.props.colTree.show = v
+                draft.props.tree.col.show = v
               })
             )
           }}
@@ -38,22 +38,22 @@ export function ColTreeSettingsPanel() {
             align="end"
             colors={[
               {
-                color: displayProps.colTree.stroke.value,
-                width: displayProps.colTree.stroke.width,
-                opacity: displayProps.colTree.stroke.opacity,
+                color: displayProps.tree.col.stroke.value,
+                width: displayProps.tree.col.stroke.width,
+                opacity: displayProps.tree.col.stroke.opacity,
                 onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
-                      draft.props.colTree.stroke.value = color
-                      draft.props.colTree.stroke.opacity =
-                        opacity ?? draft.props.colTree.stroke.opacity
-                      draft.props.colTree.stroke.width =
-                        width ?? displayProps.colTree.stroke.width
+                      draft.props.tree.col.stroke.value = color
+                      draft.props.tree.col.stroke.opacity =
+                        opacity ?? draft.props.tree.col.stroke.opacity
+                      draft.props.tree.col.stroke.width =
+                        width ?? displayProps.tree.col.stroke.width
                     })
                   ),
               },
             ]}
-            disabled={!displayProps.colTree.show}
+            disabled={!displayProps.tree.col.show}
             className={SIMPLE_COLOR_EXT_CLS}
             title="Change tree color"
           />
@@ -62,14 +62,14 @@ export function ColTreeSettingsPanel() {
         <PropRow title="Stroke" className="ml-3">
           <NumericalInput
             id="col-tree-stroke-width"
-            value={displayProps.colTree.stroke.width}
-            disabled={!displayProps.colTree.show}
+            value={displayProps.tree.col.stroke.width}
+            disabled={!displayProps.tree.col.show}
             placeholder="Stroke..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.colTree.stroke.width = v
+                  draft.props.tree.col.stroke.width = v
                 })
               )
             }}
@@ -79,15 +79,15 @@ export function ColTreeSettingsPanel() {
         <PropRow title="Height" className="ml-3">
           <NumericalInput
             id="col-tree-size"
-            value={displayProps.colTree.width}
-            disabled={!displayProps.colTree.show}
+            value={displayProps.tree.col.width}
+            disabled={!displayProps.tree.col.show}
             limit={[1, 200]}
             placeholder="Tree size..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.colTree.width = v
+                  draft.props.tree.col.width = v
                 })
               )
             }}
