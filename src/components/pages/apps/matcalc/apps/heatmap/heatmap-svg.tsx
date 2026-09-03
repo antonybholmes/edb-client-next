@@ -73,8 +73,6 @@ function HeatMapSvgContent() {
 
   const displayOptions = plot.props
 
-  console.log('dnsndfm,sndfmnsdf', displayOptions.mode)
-
   const blockSize = displayOptions.blockSize
 
   // const scaledBlockSize = {

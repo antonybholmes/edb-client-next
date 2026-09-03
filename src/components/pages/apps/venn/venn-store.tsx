@@ -366,7 +366,7 @@ export function useVenn(): IVennStore & {
       }
     }
 
-    console.log(overlapData)
+    //console.log(overlapData)
 
     const dfOverlap = new AnnotationDataFrame({
       name: 'Venn Overlap',
@@ -407,8 +407,6 @@ export function useVenn(): IVennStore & {
 
       colLabels: { ...DEFAULT_HEATMAP_PROPS.colLabels, width: 50 },
     }
-
-    console.log('whhha', displayOptions)
 
     const plot: HistoryPlot = newHeatMapPlot(
       'Dot Plot',
