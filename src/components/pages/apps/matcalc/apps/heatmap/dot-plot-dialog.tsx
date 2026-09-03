@@ -211,7 +211,6 @@ export function DotPlotDialog({
       'Dot Plot',
       { main: cf, size: groupPercentDf },
       {
-        style: 'dot',
         props: displayOptions,
       }
     )
@@ -331,7 +330,6 @@ export function DotPlotDialog({
       'Dot Plot',
       { main: cf, raw: df, size: sizeDf },
       {
-        style: 'dot',
         groupRows,
         props: displayOptions,
       }

@@ -24,6 +24,7 @@ import { ColLabelsSettingsPanel } from './col-labels-settings'
 import { ColTreeSettingsPanel } from './col-tree-settings'
 import { ColormapSettingsPanel } from './colormap-settings'
 import { DotLegendSettingsPanel } from './dot-legend-settings'
+import { GapSettingsPanel } from './gap-settings'
 import { LegendSettingsPanel } from './legend-settings'
 import { PlotSettingsPanel } from './plot-settings'
 import { RowLabelsSettingsPanel } from './row-labels-settings'
@@ -57,7 +58,7 @@ export function HeatmapPropsPanel() {
 
   return (
     <PropsPanel className="pr-1 gap-y-2 text-xs">
-      <SideBarHeader className="justify-end">
+      <SideBarHeader>
         <LinkButton
           onClick={() => {
             openDialog({
@@ -85,8 +86,9 @@ export function HeatmapPropsPanel() {
       >
         <PlotSettingsPanel />
         <CellSettingsPanel />
+        <GapSettingsPanel />
         <LegendSettingsPanel />
-        {plot.style === 'dot' && <DotLegendSettingsPanel />}
+        {plot.props.mode === 'dot' && <DotLegendSettingsPanel />}
         <ColormapSettingsPanel />
         <RowLabelsSettingsPanel />
         {cf?.rowTree && <RowTreeSettingsPanel />}

@@ -1,10 +1,22 @@
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { zscore } from '@/lib/dataframe/dataframe-utils'
+import { vfill, vfill2d } from '@/lib/fill'
 import { makeUuid } from '@/lib/id'
-import { makeCombinations } from '@/lib/math/math'
+import { HCluster, IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
+import { makeCombinations, transpose } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import type { UndefStr } from '@/lib/text/text'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { create } from 'zustand'
+import {
+  DEFAULT_HEATMAP_PROPS,
+  IHeatMapSettings,
+} from '../matcalc/apps/heatmap/heatmap-settings-store'
+import { newHeatMapPlot } from '../matcalc/history/history-provider/history-factories'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
+import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
+import { useVennSettings } from './venn-settings-store'
 
 export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
 
@@ -184,7 +196,6 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       const list = makeVennList(id, `List ${id}`)
       const vennLists = [...state.vennLists, list]
 
-      console.log('Adding new group:', vennLists)
       return {
         vennLists,
         vennElemMap: makeVennElemMap(vennLists),
@@ -218,10 +229,8 @@ export const useVennStore = create<IVennStore>((set, get) => ({
     set((state) => {
       const items = getItems(text)
 
-      console.log('id', id, 'text', text)
-
       const vennLists = state.vennLists.map((vennList) =>
-        vennList.listId === id
+        vennList.id === id || vennList.listId === id
           ? {
               ...vennList,
               items,
@@ -253,6 +262,8 @@ export const useVennStore = create<IVennStore>((set, get) => ({
 export function useVenn(): IVennStore & {
   vennListsInUse: IVennList[]
 } {
+  const { settings } = useVennSettings()
+  const { openFile } = useHistory()
   const addGroup = useVennStore((state) => state.addGroup)
   const selectedItems = useVennStore((state) => state.selectedItems)
   const setSelectedItems = useVennStore((state) => state.setSelectedItems)
@@ -278,7 +289,127 @@ export function useVenn(): IVennStore & {
     [vennLists]
   )
 
-  console.log('Venn Lists In Use:', vennLists)
+  useEffect(() => {
+    // make a dataframe
+
+    if (vennListsInUse.length === 0 || Object.keys(vennElemMap).length === 0) {
+      return
+    }
+
+    const sortedElementNames = [...Object.keys(vennElemMap)].sort((a, b) =>
+      a.length !== b.length ? a.length - b.length : a.localeCompare(b)
+    )
+
+    const maxRows = sortedElementNames
+      .map((n) => vennElemMap[n]!.length)
+      .reduce((a, b) => Math.max(a, b), 0)
+
+    let d = sortedElementNames.map((n) =>
+      [...vennElemMap[n]!]
+        .sort()
+        .concat(vfill('', maxRows - vennElemMap[n]!.length))
+    )
+
+    d = transpose(d)
+
+    const df = new AnnotationDataFrame({
+      name: 'Venn Sets',
+      data: d,
+      columns: sortedElementNames.map((n) =>
+        n
+          .split(':')
+          .map((s) => vennListsInUse.find((vl) => vl.listId === s)?.name ?? s)
+          .join(' AND ')
+      ),
+    })
+
+    // lets make an overlap matrix for the Venn sets
+
+    const overlapData = vfill2d(0, {
+      rows: vennListsInUse.length,
+      cols: vennListsInUse.length,
+    })
+
+    const sizeData = vfill2d(0, {
+      rows: vennListsInUse.length,
+      cols: vennListsInUse.length,
+    })
+
+    for (const [i, vlA] of vennListsInUse.entries()) {
+      for (const [j, vlB] of vennListsInUse.entries()) {
+        if (i === j) {
+          continue
+        }
+        const s1 = new Set(vlA.uniqueItems.keys())
+        const s2 = new Set(vlB.uniqueItems.keys())
+        const overlap = [...s1].filter((item) => s2.has(item)).length
+
+        const jaccard = overlap / (s1.size + s2.size - overlap)
+
+        overlapData[i]![j] = overlap
+        sizeData[i]![j] = jaccard
+      }
+    }
+
+    console.log(overlapData)
+
+    const dfOverlap = new AnnotationDataFrame({
+      name: 'Venn Overlap',
+      data: overlapData,
+      index: vennListsInUse.map((vl) => vl.name),
+      columns: vennListsInUse.map((vl) => vl.name),
+    })
+
+    const dfSize = new AnnotationDataFrame({
+      name: 'Venn Size',
+      data: sizeData,
+      index: vennListsInUse.map((vl) => vl.name),
+      columns: vennListsInUse.map((vl) => vl.name),
+    })
+
+    const dfZ = zscore(dfOverlap)
+
+    const hc = new HCluster()
+
+    const rowC: IClusterTree | undefined = settings.cluster.rows.on
+      ? hc.run(dfZ)
+      : undefined
+    const colC: IClusterTree | undefined = settings.cluster.cols.on
+      ? hc.run(dfZ.t)
+      : undefined
+
+    const cf: IClusterFrame = {
+      id: makeUuid(),
+      name: 'Dot Plot Cluster Frame',
+      rowTree: rowC,
+      colTree: colC,
+      df: dfZ as AnnotationDataFrame,
+      //secondaryTables: { percent: groupPercentDf },
+    }
+
+    let displayOptions: IHeatMapSettings = {
+      ...DEFAULT_HEATMAP_PROPS,
+
+      colLabels: { ...DEFAULT_HEATMAP_PROPS.colLabels, width: 50 },
+    }
+
+    console.log('whhha', displayOptions)
+
+    const plot: HistoryPlot = newHeatMapPlot(
+      'Dot Plot',
+      { main: cf, size: dfSize, raw: dfOverlap },
+      {
+        mode: 'dot',
+        props: displayOptions,
+      }
+    )
+
+    openFile(`Venn Sets`, {
+      sheets: [df, dfOverlap],
+      plots: [plot],
+      mode: 'set',
+    })
+  }, [vennElemMap, settings])
 
   return {
     selectedItems,

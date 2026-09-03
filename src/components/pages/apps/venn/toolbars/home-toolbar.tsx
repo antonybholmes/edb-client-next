@@ -9,14 +9,18 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { useSVG } from '@/providers/svg-provider'
+import { produce } from 'immer'
 import { useOpen } from '../use-open'
+import { useVennSettings } from '../venn-settings-store'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { openFiles } = useOpen()
   const { saveAs } = useSVG()
+  const { settings, updateSettings } = useVennSettings()
 
   return (
     <>
@@ -43,6 +47,39 @@ export function HomeToolbar() {
         >
           <DownloadIcon />
         </ToolbarIconButton>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Heatmap">
+        <ToolbarCol>
+          <ToolbarRow>
+            <Checkbox
+              checked={settings.cluster.rows.on}
+              onCheckedChange={(checked) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.cluster.rows.on = checked as boolean
+                  })
+                )
+              }}
+            >
+              Cluster rows
+            </Checkbox>
+          </ToolbarRow>
+          <ToolbarRow>
+            <Checkbox
+              checked={settings.cluster.cols.on}
+              onCheckedChange={(checked) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.cluster.cols.on = checked as boolean
+                  })
+                )
+              }}
+            >
+              Cluster columns
+            </Checkbox>
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

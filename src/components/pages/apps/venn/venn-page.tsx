@@ -52,8 +52,7 @@ import { useToolbarTabs, type ITab } from '@/components/tabs/tab-provider'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { downloadDataFrame, zscore } from '@/lib/dataframe/dataframe-utils'
-import { vfill, vfill2d } from '@/lib/fill'
+import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
@@ -69,6 +68,7 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
@@ -76,22 +76,12 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { makeUuid } from '@/lib/id'
-import { HCluster, IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
-import { transpose } from '@/lib/math/math'
 import { produce } from 'immer'
-import {
-  HeatmapProvider,
-  useHeatmapContext,
-} from '../matcalc/apps/heatmap/heatmap-provider'
-import {
-  DEFAULT_HEATMAP_PROPS,
-  IHeatMapSettings,
-} from '../matcalc/apps/heatmap/heatmap-settings-store'
+import { HeatmapProvider } from '../matcalc/apps/heatmap/heatmap-provider'
 import { HeatMapSvg } from '../matcalc/apps/heatmap/heatmap-svg'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
-import { newHeatMapPlot } from '../matcalc/history/history-provider/history-factories'
-import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
+import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
+import { IHeatMapPlot } from '../matcalc/history/history-provider/history-types'
 import { VennPropsPanel } from './venn-props-panel'
 import { makeVennList, useVenn } from './venn-store'
 
@@ -100,7 +90,7 @@ function VennPage() {
   const { autoSave } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { setPlot } = useHeatmapContext()
+  //const { setPlot } = useHeatmapContext()
   //const { setTabs: setViewTabs } = useTabs('venn-side-tabs')
 
   //const [scale, setScale] = useState(1)
@@ -309,124 +299,6 @@ function VennPage() {
 
   // }, [])
 
-  useEffect(() => {
-    // make a dataframe
-
-    if (vennListsInUse.length === 0 || Object.keys(vennElemMap).length === 0) {
-      return
-    }
-
-    const sortedElementNames = [...Object.keys(vennElemMap)].sort((a, b) =>
-      a.length !== b.length ? a.length - b.length : a.localeCompare(b)
-    )
-
-    const maxRows = sortedElementNames
-      .map((n) => vennElemMap[n]!.length)
-      .reduce((a, b) => Math.max(a, b), 0)
-
-    let d = sortedElementNames.map((n) =>
-      [...vennElemMap[n]!]
-        .sort()
-        .concat(vfill('', maxRows - vennElemMap[n]!.length))
-    )
-
-    d = transpose(d)
-
-    const df = new AnnotationDataFrame({
-      name: 'Venn Sets',
-      data: d,
-      columns: sortedElementNames.map((n) =>
-        n
-          .split(':')
-          .map((s) => vennListsInUse.find((vl) => vl.listId === s)?.name ?? s)
-          .join(' AND ')
-      ),
-    })
-
-    // lets make an overlap matrix for the Venn sets
-
-    const overlapData = vfill2d(0, {
-      rows: vennListsInUse.length,
-      cols: vennListsInUse.length,
-    })
-
-    const sizeData = vfill2d(0, {
-      rows: vennListsInUse.length,
-      cols: vennListsInUse.length,
-    })
-
-    console.log(vennElemMap)
-
-    for (const [i, vlA] of vennListsInUse.entries()) {
-      for (const [j, vlB] of vennListsInUse.entries()) {
-        const s1 = new Set(vlA.uniqueItems.keys())
-        const s2 = new Set(vlB.uniqueItems.keys())
-        const overlap = [...s1].filter((item) => s2.has(item)).length
-
-        const jaccard = overlap / (s1.size + s2.size - overlap)
-
-        overlapData[i]![j] = overlap
-        sizeData[i]![j] = jaccard
-      }
-    }
-
-    console.log(overlapData)
-
-    const dfOverlap = new AnnotationDataFrame({
-      name: 'Venn Overlap',
-      data: overlapData,
-      index: vennListsInUse.map((vl) => vl.name),
-      columns: vennListsInUse.map((vl) => vl.name),
-    })
-
-    const dfSize = new AnnotationDataFrame({
-      name: 'Venn Size',
-      data: sizeData,
-      index: vennListsInUse.map((vl) => vl.name),
-      columns: vennListsInUse.map((vl) => vl.name),
-    })
-
-    console.log('overlap', dfOverlap)
-
-    const dfZ = zscore(dfOverlap)
-
-    const hc = new HCluster()
-
-    let rowC: IClusterTree | undefined = undefined
-    let colC: IClusterTree | undefined = undefined
-
-    rowC = hc.run(dfZ)
-
-    colC = hc.run(dfZ.t)
-
-    const cf: IClusterFrame = {
-      id: makeUuid(),
-      name: 'Dot Plot Cluster Frame',
-      rowTree: rowC,
-      colTree: colC,
-      df: dfZ as AnnotationDataFrame,
-      //secondaryTables: { percent: groupPercentDf },
-    }
-
-    const displayOptions: IHeatMapSettings = {
-      ...DEFAULT_HEATMAP_PROPS,
-      mode: 'dot',
-    }
-
-    const plot: HistoryPlot = newHeatMapPlot(
-      'Dot Plot',
-      { main: cf, size: dfSize, raw: dfOverlap },
-      {
-        style: 'dot',
-        props: displayOptions,
-      }
-    )
-
-    setPlot(plot)
-
-    openFile(`Venn Sets`, { sheets: [df, dfOverlap] })
-  }, [vennElemMap])
-
   // useHydratedUpdateEffect(
   //   () => {
   //     updateSettings(
@@ -584,95 +456,110 @@ function VennPage() {
           //onOpenChange={setShowSideBar}
           //className="mx-2"
         >
-          <ResizablePanelGroup orientation="vertical" className="h-full">
-            <ResizablePanel
-              defaultSize="60%"
-              minSize="0%"
-              className="flex flex-col overflow-hidden px-2"
-              id="venn"
-            >
-              <HCenterRow className="pb-2">
-                <ToggleGroup
-                  className="text-xs gap-x-px"
-                  value={[settings.view.tab]}
-                  onValueChange={(v) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.view.tab = v[0] as 'venn' | 'dot'
-                      })
-                    )
-                  }}
-                  rounded="full"
-                  variant="app-theme"
-                >
-                  <GroupToggle value="venn" className="w-18">
-                    Venn
-                  </GroupToggle>
+          <FileDropZonePanel
+            onFileDrop={(files) => {
+              if (files.length > 0) {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
 
-                  <GroupToggle value="dot" className="w-18">
-                    Dot
-                  </GroupToggle>
-                </ToggleGroup>
-              </HCenterRow>
-
-              <ExtScrollCard
-                tabIndex={0}
-                onKeyDown={(e) => setKeyPressed(e.key)}
-                onKeyUp={() => setKeyPressed(null)}
+                  openFiles(files)
+                })
+              }
+            }}
+            className="grow h-full"
+          >
+            <ResizablePanelGroup orientation="vertical" className="h-full">
+              <ResizablePanel
+                defaultSize="60%"
+                minSize="0%"
+                className="flex flex-col overflow-hidden px-2"
+                id="venn"
               >
-                <Tabs
-                  value={settings.view.tab}
-                  onValueChange={() => {}}
-                  className="grow h-full"
-                >
-                  <TabsContent value="venn">
-                    <SvgBase
-                      scale={zoom}
-                      width={settings.w}
-                      height={settings.w}
-                    >
-                      {vennListsInUse.length < 2 && <SVGOneWayVenn />}
-                      {vennListsInUse.length === 2 && <SVGTwoWayVenn />}
-                      {vennListsInUse.length === 3 && <SVGThreeWayVenn />}
-                      {vennListsInUse.length > 3 && <SVGFourWayVenn />}
-                    </SvgBase>
-                  </TabsContent>
-                  <TabsContent value="dot">
-                    {/* <HeatmapPanel /> */}
-                    <HeatMapSvg />
-                  </TabsContent>
-                </Tabs>
-              </ExtScrollCard>
-            </ResizablePanel>
-            <ThinVResizeHandle />
-            <ResizablePanel
-              id="list"
-              defaultSize="40%"
-              minSize="0%"
-              collapsible={true}
-              className="grow flex flex-col text-xs pl-2"
-            >
-              <BaseRow className="grow mt-2 gap-x-1">
-                <BaseCol className="text-xs">
-                  <ToolbarIconButton
-                    title="Download pathway table"
-                    onClick={() => save('txt')}
+                <HCenterRow className="pb-2">
+                  <ToggleGroup
+                    className="text-xs gap-x-px"
+                    value={[settings.view.tab]}
+                    onValueChange={(v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.view.tab = v[0] as 'venn' | 'heatmap'
+                        })
+                      )
+                    }}
+                    rounded="full"
+                    variant="app-theme"
                   >
-                    <MonitorDown size={20} strokeWidth={1.5} />
-                  </ToolbarIconButton>
-                </BaseCol>
+                    <GroupToggle value="venn" className="w-18">
+                      Venn
+                    </GroupToggle>
 
-                <TabbedDataFrames
-                  key="tabbed-data-frames"
-                  //selectedSheet={sheet?.id ?? ''}
-                  //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
-                  // onTabChange={(selectedTab) => {
-                  //   goto({ file, sheet: selectedTab.tab })
-                  // }}
-                />
-              </BaseRow>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+                    <GroupToggle value="heatmap" className="w-18">
+                      Heatmap
+                    </GroupToggle>
+                  </ToggleGroup>
+                </HCenterRow>
+
+                <ExtScrollCard
+                  tabIndex={0}
+                  onKeyDown={(e) => setKeyPressed(e.key)}
+                  onKeyUp={() => setKeyPressed(null)}
+                >
+                  <Tabs
+                    value={settings.view.tab}
+                    onValueChange={() => {}}
+                    className="grow h-full"
+                  >
+                    <TabsContent value="venn">
+                      <SvgBase
+                        scale={zoom}
+                        width={settings.w}
+                        height={settings.w}
+                      >
+                        {vennListsInUse.length < 2 && <SVGOneWayVenn />}
+                        {vennListsInUse.length === 2 && <SVGTwoWayVenn />}
+                        {vennListsInUse.length === 3 && <SVGThreeWayVenn />}
+                        {vennListsInUse.length > 3 && <SVGFourWayVenn />}
+                      </SvgBase>
+                    </TabsContent>
+                    <TabsContent value="heatmap">
+                      {/* <HeatmapPanel /> */}
+                      <HeatMapSvg />
+                    </TabsContent>
+                  </Tabs>
+                </ExtScrollCard>
+              </ResizablePanel>
+              <ThinVResizeHandle />
+              <ResizablePanel
+                id="list"
+                defaultSize="40%"
+                minSize="0%"
+                collapsible={true}
+                className="grow flex flex-col text-xs pl-2"
+              >
+                <BaseRow className="grow mt-2 gap-x-1">
+                  <BaseCol className="text-xs">
+                    <ToolbarIconButton
+                      title="Download pathway table"
+                      onClick={() => save('txt')}
+                    >
+                      <MonitorDown size={20} strokeWidth={1.5} />
+                    </ToolbarIconButton>
+                  </BaseCol>
+
+                  <TabbedDataFrames
+                    key="tabbed-data-frames"
+                    //selectedSheet={sheet?.id ?? ''}
+                    //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
+                    // onTabChange={(selectedTab) => {
+                    //   goto({ file, sheet: selectedTab.tab })
+                    // }}
+                  />
+                </BaseRow>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </FileDropZonePanel>
           <VennPropsPanel />
         </ResizableSidebar>
       </ShortcutLayout>
@@ -687,12 +574,20 @@ function VennPage() {
   )
 }
 
+export function VennPlotPage() {
+  const allPlots = useAllPlots()
+
+  return (
+    <HeatmapProvider plot={allPlots[0] as IHeatMapPlot}>
+      <VennPage />
+    </HeatmapProvider>
+  )
+}
+
 export function VennPageQuery() {
   return (
     <ClientLayout>
-      <HeatmapProvider>
-        <VennPage />
-      </HeatmapProvider>
+      <VennPlotPage />
     </ClientLayout>
   )
 }

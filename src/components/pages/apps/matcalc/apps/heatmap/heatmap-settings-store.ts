@@ -4,6 +4,7 @@ import { ColorMapName } from '@/lib/color/colormap'
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_BLACK } from '@/lib/color/color'
 
+import { ICellGaps } from '@/components/plot/heatmap/cell-gaps'
 import {
   ColorBarPos,
   DEFAULT_BOLD_FONT_PROPS,
@@ -150,8 +151,8 @@ export interface IHeatMapSettings {
     labels: ITextProps
   }
   gaps: {
-    rows: { size: number; indexes: number[] }
-    cols: { size: number; indexes: number[] }
+    rows: ICellGaps
+    cols: ICellGaps
   }
   padding: number
   zoom: number
@@ -245,8 +246,8 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
     },
   },
   gaps: {
-    rows: { size: 10, indexes: [] },
-    cols: { size: 10, indexes: [3, 7] },
+    rows: { size: 5, indexes: [] },
+    cols: { size: 5, indexes: [] },
   },
   padding: 10,
   zoom: 1,

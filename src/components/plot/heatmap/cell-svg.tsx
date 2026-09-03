@@ -4,18 +4,21 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { ILim, numSort } from '@/lib/math/math'
+import { ILim } from '@/lib/math/math'
 import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
 import { ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgPath } from '../svg-path'
 import { SvgRect } from '../svg-rect'
+import { CellGaps } from './cell-gaps'
 
 // we want circles slightly smaller than box to allow for borders
 const RADIUS_FACTOR = 1 //0.96
 
 export interface ICellsSvgProps {
+  xgaps: CellGaps
+  ygaps: CellGaps
   df: BaseDataFrame
   dfRaw?: BaseDataFrame | undefined
   dfSize?: BaseDataFrame | undefined
@@ -32,6 +35,8 @@ function getUseRectId(color: string): string {
 }
 
 export function CellsSvg({
+  xgaps,
+  ygaps,
   df,
   rowLeaves,
   colLeaves,
@@ -70,8 +75,6 @@ export function CellsSvg({
     )
   })
 
-  const { xs, ys } = xys({ props, shape: df.shape })
-
   return (
     <>
       <defs>{uniqueColorRects}</defs>
@@ -80,10 +83,10 @@ export function CellsSvg({
         shapeRendering={SVG_CRISP_EDGES}
       >
         {rowLeaves.map((row, ri) => {
-          const y = ys[ri]
+          const y = ygaps.position(ri)
 
           return colLeaves.map((col, ci) => {
-            const x = xs[ci]
+            const x = xgaps.position(ci)
 
             const fill = colors[ri]![ci]!
 
@@ -119,6 +122,8 @@ export function DotsSvg({
   df,
   dfRaw,
   dfSize,
+  xgaps,
+  ygaps,
   rowLeaves,
   colLeaves,
   handleVariantEnter,
@@ -145,9 +150,9 @@ export function DotsSvg({
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {rowLeaves.map((row, ri) => {
-        const y = pos.y + row * blockSize.h
+        const y = ygaps.position(ri)
         return colLeaves.map((col, ci) => {
-          const x = pos.x + col * blockSize.w
+          const x = xgaps.position(ci)
           const v = df.get(row, col) as number
 
           const radius =
@@ -190,10 +195,7 @@ export function DotsSvg({
               : props.cells.values.color
 
           return (
-            <g
-              key={`${ri}:${ci}`}
-              transform={`translate(${ci * blockSize.w},${ri * blockSize.h})`}
-            >
+            <g key={`${ri}:${ci}`} transform={`translate(${x},${y})`}>
               {/* Handle mouse events on transparent rect on top of circles to avoid 
               issues with small circles not triggering mouse events */}
               <rect
@@ -252,110 +254,65 @@ export function DotsSvg({
 }
 
 interface IGridSvgProps {
-  df: BaseDataFrame
   width: number
   height: number
   props: IHeatMapSettings
   pos?: IPos
+  xgaps: CellGaps
+  ygaps: CellGaps
 }
 
 export function GridSvg({
-  df,
-
   props,
+  xgaps,
+  ygaps,
   pos = { ...ZERO_POS },
 }: IGridSvgProps) {
   const blockSize = props.blockSize
 
-  const xbreaks = [
-    0,
-    ...numSort([...new Set(props.gaps.cols.indexes)]),
-    df.shape[1],
-  ]
-
-  const ybreaks = [
-    0,
-    ...numSort([...new Set(props.gaps.rows.indexes)]),
-    df.shape[0],
-  ]
-
-  const { xs, ys } = xys({ props, shape: df.shape })
-
   const hlines = []
-  let x1 = 0
-  let x2 = 0
-  let w = 0
-  for (let b = 0; b < xbreaks.length - 1; b++) {
-    w = (xbreaks[b + 1] - xbreaks[b]) * blockSize.w
 
-    x2 = x1 + w
-
-    for (let row = 0; row < df.shape[0]; row++) {
-      hlines.push(`M ${x1},${ys[row]} L ${x2},${ys[row]}`)
+  for (const xspan of xgaps.spans) {
+    for (const yspan of ygaps.spans) {
+      let y = yspan.p1
+      for (let row = 0; row < yspan.size; row++) {
+        hlines.push(`M ${xspan.p1},${y} L ${xspan.p2},${y}`)
+        y += blockSize.h
+      }
     }
-
-    x1 = x2 + props.gaps.cols.size
   }
 
   const vlines = []
-  let y1 = 0
-  let y2 = 0
-  let h = 0
 
-  for (let b = 0; b < ybreaks.length - 1; b++) {
-    h = (ybreaks[b + 1] - ybreaks[b]) * blockSize.h
-
-    y2 = y1 + h
-
-    for (let col = 0; col < df.shape[1]; col++) {
-      vlines.push(`M ${xs[col]},${y1} L ${xs[col]},${y2}`)
+  for (const yspan of ygaps.spans) {
+    for (const xspan of xgaps.spans) {
+      let x = xspan.p1
+      for (let col = 0; col < xspan.size; col++) {
+        vlines.push(`M ${x},${yspan.p1} L ${x},${yspan.p2}`)
+        x += blockSize.w
+      }
     }
-
-    y1 = y2 + props.gaps.rows.size
   }
-
-  x1 = 0
-  x2 = 0
-  y1 = 0
-  y2 = 0
-  w = 0
-  h = 0
 
   const rects: ReactNode[] = []
 
-  for (let yi = 0; yi < ybreaks.length - 1; yi++) {
-    x1 = 0
-    x2 = 0
-
-    h = (ybreaks[yi + 1] - ybreaks[yi]) * blockSize.h
-    y2 = y1 + h
-
-    for (let xi = 0; xi < xbreaks.length - 1; xi++) {
-      w = (xbreaks[xi + 1] - xbreaks[xi]) * blockSize.w
-      x2 = x1 + w
-
-      rects.push(
-        <SvgRect
-          key={`grid:${yi}:${xi}`}
-          x={x1}
-          y={y1}
-          width={w}
-          height={h}
-          sp={props.border}
-          shapeRendering={SVG_CRISP_EDGES}
-        />
-      )
-
-      x1 = x2 + props.gaps.cols.size
+  if (props.border.show) {
+    for (const [yi, yspan] of ygaps.spans.entries()) {
+      for (const [xi, xspan] of xgaps.spans.entries()) {
+        rects.push(
+          <SvgRect
+            key={`grid:${yi}:${xi}`}
+            x={xspan.p1}
+            y={yspan.p1}
+            width={xspan.w}
+            height={yspan.w}
+            sp={props.border}
+            shapeRendering={SVG_CRISP_EDGES}
+          />
+        )
+      }
     }
-
-    y1 = y2 + props.gaps.rows.size
   }
-
-  // const vlines = xs
-  //   .slice(1, -1)
-  //   .map((x) => `M ${x},0 L ${x},${height}`)
-  //   .join(' ')
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>

@@ -20,10 +20,10 @@ import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
-import { range } from '@/lib/math/range'
 import { useMemo } from 'react'
 
 import { createAxis } from '@/components/plot/axes/axis'
+import { CellGaps } from '@/components/plot/heatmap/cell-gaps'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { COLOR_MAPS } from '@/lib/color/colormap'
@@ -32,7 +32,6 @@ import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { SvgTitle } from '../../../../../plot/svg-title'
-import { HeatMapPlot } from '../../history/history-provider/history-types'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
@@ -58,14 +57,12 @@ export function HeatMapSvg() {
     return null
   }
 
-  return <HeatMapSvgContent plot={plot} />
+  return <HeatMapSvgContent />
 }
 
-interface IHeatMapSvgContentProps {
-  plot: HeatMapPlot
-}
+function HeatMapSvgContent() {
+  const { plot, rowLeaves, colLeaves } = useHeatmapContext()
 
-function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
   const cf = plot.dataframes['main'] as IClusterFrame
 
   const groupRows = plot.groupRows || []
@@ -75,6 +72,8 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
   //const groups = groups.filter(g => g.show|| settings.groups.filter.mode === 'keep')
 
   const displayOptions = plot.props
+
+  console.log('dnsndfm,sndfmnsdf', displayOptions.mode)
 
   const blockSize = displayOptions.blockSize
 
@@ -201,34 +200,6 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
     //
     //   .range(["blue", "white", "red"])
 
-    const s = dfMain.shape
-
-    const rowLeaves = cf.rowTree ? cf.rowTree.leaves : range(s[0])
-    let colLeaves: number[] = []
-
-    if (cf.colTree) {
-      colLeaves = cf.colTree.leaves
-    } else if (groups0.length > 0) {
-      // if we are not clustering columns, but have groups,
-      // order by groups
-
-      colLeaves = groups0
-        .map((group) => getColIdxFromGroup(dfMain, group))
-        .flat()
-
-      const used = new Set<number>(colLeaves)
-
-      // add unused indices in the order encountered at the end of the list
-      // so we don't lose any data but move the unclassified to the end
-      if (displayOptions.groups.keepUnused) {
-        colLeaves = [...colLeaves, ...range(s[1]).filter((i) => !used.has(i))]
-      }
-    } else {
-      // no clustering or groups, just show in original order
-
-      colLeaves = range(s[1])
-    }
-
     const colColorMap = new Map<string, Map<number, string>>(
       groupRows.map((gr) => [
         gr.id,
@@ -244,12 +215,27 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
       ])
     )
 
+    const xgaps = new CellGaps(
+      displayOptions.gaps.cols,
+      blockSize.w,
+      dfMain.shape[1]
+    )
+    const ygaps = new CellGaps(
+      displayOptions.gaps.rows,
+      blockSize.h,
+      dfMain.shape[0]
+    )
+
+    const unadjustedInnerWidth = colLeaves.length * blockSize.w
+
     const innerWidth =
-      colLeaves.length * blockSize.w +
+      unadjustedInnerWidth +
       displayOptions.gaps.cols.size * displayOptions.gaps.cols.indexes.length
 
+    const unadjustedInnerHeight = rowLeaves.length * blockSize.h
+
     const innerHeight =
-      dfMain.shape[0] * blockSize.h +
+      unadjustedInnerHeight +
       displayOptions.gaps.rows.size * displayOptions.gaps.rows.indexes.length
 
     const width = innerWidth + margin.left + margin.right
@@ -328,7 +314,8 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
           displayOptions.tree.col.position === 'top' && (
             <ColTreeTopSvg
               tree={cf.colTree}
-              width={innerWidth}
+              width={unadjustedInnerWidth}
+              gaps={xgaps}
               height={displayOptions.tree.col.width}
               props={displayOptions}
               pos={{ x: margin.left, y: displayOptions.padding }}
@@ -375,7 +362,8 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
           displayOptions.tree.row.position === 'left' && (
             <RowTreeSvg
               tree={cf.rowTree}
-              width={innerHeight}
+              gaps={ygaps}
+              width={unadjustedInnerHeight}
               height={displayOptions.tree.row.width}
               mode="left"
               props={displayOptions}
@@ -388,7 +376,8 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
           displayOptions.tree.row.position === 'right' && (
             <RowTreeSvg
               tree={cf.rowTree}
-              width={innerHeight}
+              gaps={ygaps}
+              width={unadjustedInnerHeight}
               height={displayOptions.tree.row.width}
               mode="right"
               props={displayOptions}
@@ -423,10 +412,11 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
         {displayOptions.mode === 'dot' ? (
           <>
             <GridSvg
-              df={dfMain}
               width={innerWidth}
               height={innerHeight}
               props={displayOptions}
+              xgaps={xgaps}
+              ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
             />
             {/* Draw cells after grid so the are not obscured */}
@@ -434,6 +424,8 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}
+              xgaps={xgaps}
+              ygaps={ygaps}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               handleVariantEnter={handleVariantEnter}
@@ -449,15 +441,18 @@ function HeatMapSvgContent({ plot }: IHeatMapSvgContentProps) {
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               props={displayOptions}
+              xgaps={xgaps}
+              ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
               handleVariantEnter={handleVariantEnter}
               handleVariantLeave={hideTooltip}
             />
             <GridSvg
-              df={dfMain}
               width={innerWidth}
               height={innerHeight}
               props={displayOptions}
+              xgaps={xgaps}
+              ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
             />
           </>

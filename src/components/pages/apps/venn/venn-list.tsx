@@ -39,7 +39,6 @@ export function VennList({ vennList }: IProps) {
   })
 
   useEffect(() => {
-    console.log('debouncedText:', debouncedText)
     updateVennListFromText(vennList.listId, debouncedText)
   }, [debouncedText])
 

@@ -31,8 +31,8 @@ export interface ISelectionPath {
 
 export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
 
-export interface HeatMapPlot extends IBasePlot {
-  style: 'heatmap' | 'dot'
+export interface IHeatMapPlot extends IBasePlot {
+  style: 'heatmap'
   dataframes: Record<string, DataFrameType>
   props: IHeatMapSettings
 }
@@ -79,7 +79,7 @@ export interface ExtGseaPlot extends IBasePlot {
 }
 
 export type HistoryPlot =
-  | HeatMapPlot
+  | IHeatMapPlot
   | IVolcanoPlot
   | IGseaBubblePlot
   | ExtGseaPlot

@@ -364,7 +364,7 @@ export function getLeaves(cluster: ICluster): number[] {
   return ret
 }
 
-export function clusterToCoords(
+function clusterToCoords(
   df: BaseDataFrame,
   cluster: ICluster,
   leafXMap: Map<number, number>,

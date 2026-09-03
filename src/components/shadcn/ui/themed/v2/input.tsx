@@ -157,7 +157,9 @@ export function Input({
   const [focus, setFocus] = useState(false)
 
   useEffect(() => {
-    setValue(value ?? '')
+    if (value !== _value) {
+      setValue(value ?? '')
+    }
   }, [value])
 
   return (

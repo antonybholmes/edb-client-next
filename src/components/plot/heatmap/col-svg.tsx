@@ -9,11 +9,13 @@ import { range } from '@/lib/math/range'
 import { ReactElement } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgText } from '../svg-text'
+import { CellGaps } from './cell-gaps'
 
 export interface ITreeSvgProps {
   tree: IClusterTree
   width: number
   height: number
+  gaps: CellGaps
   props: IHeatMapSettings
   pos?: IPos
 }
@@ -22,30 +24,23 @@ export function ColTreeTopSvg({
   tree,
   width,
   height,
+  gaps,
   props,
   pos = { ...ZERO_POS },
 }: ITreeSvgProps) {
-  const xbreaks = [
-    0,
-    ...numSort([...new Set(props.gaps.cols.indexes)]),
-    tree.leaves.length,
-  ]
-
   const gElems: ReactElement[] = []
-
-  let x1 = xbreaks[0] * width
-  let x2 = 0
-  let w = 0
 
   const points = range(4)
 
   for (let [ri, branch] of tree.coords.entries()) {
-    x1 += props.gaps.cols.indexes.includes(ri) ? props.gaps.cols.size : 0
+    const p = points.map((i) => {
+      const x = branch.coords[i]!.x * width
 
-    const p = points.map((i) => ({
-      x: branch.coords[i]!.x * width,
-      y: height - branch.coords[i]!.y * height,
-    }))
+      return {
+        x: x + gaps.offset(x),
+        y: height - branch.coords[i]!.y * height,
+      }
+    })
 
     gElems.push(
       <path
@@ -58,8 +53,6 @@ export function ColTreeTopSvg({
         strokeWidth={props.tree.col.stroke.width}
       />
     )
-
-    x2 = x1 + w
   }
 
   return (

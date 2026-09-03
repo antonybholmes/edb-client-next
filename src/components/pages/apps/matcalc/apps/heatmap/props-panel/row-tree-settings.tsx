@@ -31,37 +31,37 @@ export function RowTreeSettingsPanel() {
       <AccordionContent>
         <CheckPropRow
           title={TEXT_SHOW}
-          checked={displayProps.rowTree.show}
+          checked={displayProps.tree.row.show}
           onCheckedChange={(v) => {
             updatePlot(
               produce(plot, (draft) => {
-                draft.props.rowTree.show = v
+                draft.props.tree.row.show = v
               })
             )
           }}
         >
           <RadioGroup
-            value={displayProps.rowTree.position}
-            disabled={!displayProps.rowTree.show}
+            value={displayProps.tree.row.position}
+            disabled={!displayProps.tree.row.show}
             onValueChange={(v) =>
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.rowTree.position = v as LeftRightPos
+                  draft.props.tree.row.position = v as LeftRightPos
                 })
               )
             }
             className="flex flex-row justify-start gap-x-1"
           >
             <SideRadioGroupItem
-              disabled={!displayProps.rowTree.show}
+              disabled={!displayProps.tree.row.show}
               value="Left"
-              currentValue={displayProps.rowTree.position}
+              currentValue={displayProps.tree.row.position}
               className="w-5.5"
             />
             <SideRadioGroupItem
-              disabled={!displayProps.rowTree.show}
+              disabled={!displayProps.tree.row.show}
               value="Right"
-              currentValue={displayProps.rowTree.position}
+              currentValue={displayProps.tree.row.position}
               className="w-5.5"
             />
           </RadioGroup>
@@ -70,11 +70,11 @@ export function RowTreeSettingsPanel() {
             align="end"
             colors={[
               {
-                color: displayProps.rowTree.stroke.value,
+                color: displayProps.tree.row.stroke.value,
                 onColorChange: ({ color }) =>
                   updatePlot(
                     produce(plot, (draft) => {
-                      draft.props.rowTree.stroke.value = color
+                      draft.props.tree.row.stroke.value = color
                     })
                   ),
               },
@@ -87,14 +87,14 @@ export function RowTreeSettingsPanel() {
         <PropRow title="Stroke">
           <NumericalInput
             id="row-tree-stroke-width"
-            value={displayProps.rowTree.stroke.width}
-            disabled={!displayProps.rowTree.show}
+            value={displayProps.tree.row.stroke.width}
+            disabled={!displayProps.tree.row.show}
             placeholder="Stroke..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.rowTree.stroke.width = v
+                  draft.props.tree.row.stroke.width = v
                 })
               )
             }}
@@ -104,15 +104,15 @@ export function RowTreeSettingsPanel() {
         <PropRow title="Width">
           <NumericalInput
             id="row-tree-size"
-            value={displayProps.rowTree.width}
-            disabled={!displayProps.rowTree.show}
+            value={displayProps.tree.row.width}
+            disabled={!displayProps.tree.row.show}
             limit={[1, 200]}
             placeholder="Tree size..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.rowTree.width = v
+                  draft.props.tree.row.width = v
                 })
               )
             }}

@@ -3,10 +3,9 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { type ReactNode } from 'react'
 import { ToolbarIconButton } from '../../../toolbar/toolbar-icon-button'
 
-import { type IFileDropProps } from '@/components/file-drop-panel'
 import { IClassProps } from '@/interfaces/class-props'
 import { Select as SelectPrimitive } from '@base-ui/react/select'
-import { FileDropZonePanel } from '../../../file-dropzone-panel'
+import { FileDropZonePanel, IFileDropProps } from '../../../file-dropzone-panel'
 import { HamburgerIcon } from '../../../icons/hamburger-icon'
 import { IconButton } from '../../../shadcn/ui/themed/icon-button'
 import {

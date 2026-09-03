@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Venn now supports heatmaps. Rendering moved into hook rather than page. Support for gaps in heatmaps.
 - Ability to edit individual axes.
 - Fixing UI issues with axes.
 - Transition to new axis system.

@@ -303,7 +303,7 @@ export function HeatMapDialog({
 
                 updateSettings(newSettings)
               }}
-              disabled={!settings.heatmap.filters.rows.apply}
+              //disabled={!settings.heatmap.filters.rows.apply}
               w="xs"
             />
             <span className="shrink-0">rows using</span>
@@ -376,10 +376,13 @@ export function HeatMapDialog({
           <ActionDialogRow>
             <Checkbox
               checked={settings.heatmap.transforms.log2}
-              disabled={!settings.heatmap.transforms.apply}
+              //disabled={!settings.heatmap.transforms.apply}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.transforms.log2 = v
+                  if (v) {
+                    draft.heatmap.transforms.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -395,6 +398,9 @@ export function HeatMapDialog({
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.transforms.rowZscore = v
+                  if (v) {
+                    draft.heatmap.transforms.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -410,6 +416,9 @@ export function HeatMapDialog({
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.transforms.transpose = v
+                  if (v) {
+                    draft.heatmap.transforms.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -425,7 +434,7 @@ export function HeatMapDialog({
 
       <ActionDialogCard>
         <DialogCardHeader>
-          {/* <Switch
+          <Switch
             checked={settings.heatmap.cluster.apply}
 
             onCheckedChange={(v) => {
@@ -437,8 +446,7 @@ export function HeatMapDialog({
             }}
           >
             Clustering
-          </Switch> */}
-          Clustering
+          </Switch>
         </DialogCardHeader>
 
         <ActionDialogCardContent>
@@ -449,6 +457,9 @@ export function HeatMapDialog({
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.cluster.rows = v
+                  if (v) {
+                    draft.heatmap.cluster.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -464,6 +475,9 @@ export function HeatMapDialog({
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.cluster.cols = v
+                  if (v) {
+                    draft.heatmap.cluster.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)

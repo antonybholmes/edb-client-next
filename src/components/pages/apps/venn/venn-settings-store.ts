@@ -106,7 +106,15 @@ export interface IVennSettings {
     percentages: IFontProps
   }
   view: {
-    tab: 'venn' | 'dot'
+    tab: 'venn' | 'heatmap'
+  }
+  cluster: {
+    rows: {
+      on: boolean
+    }
+    cols: {
+      on: boolean
+    }
   }
 }
 
@@ -129,6 +137,14 @@ const DEFAULT_SETTINGS: IVennSettings = {
   },
   view: {
     tab: 'venn',
+  },
+  cluster: {
+    rows: {
+      on: true,
+    },
+    cols: {
+      on: true,
+    },
   },
 }
 
