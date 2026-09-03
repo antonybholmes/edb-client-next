@@ -2662,6 +2662,10 @@
         {
           "msg": "Ability to edit individual axes",
           "date": "2026-09-02T15:22:14.251Z"
+        },
+        {
+          "msg": "Venn now supports heatmaps. Rendering moved into hook rather than page. Support for gaps in heatmaps",
+          "date": "2026-09-03T20:37:32.818Z"
         }
       ]
     },

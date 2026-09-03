@@ -319,7 +319,7 @@ function VennPage() {
     downloadDataFrame(df, {
       hasHeader: true,
       hasIndex: false,
-      file: `table.${format}`,
+      file: `venn.${format}`,
       sep,
     })
 

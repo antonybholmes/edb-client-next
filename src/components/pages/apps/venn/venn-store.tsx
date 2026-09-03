@@ -137,7 +137,8 @@ const DEFAULT_SETTINGS: IVennOptions = {
 }
 
 export interface IVennStore extends IVennOptions {
-  addGroup: () => void
+  addList: () => void
+  removeList: (id: string) => void
   setSelectedItems: (name: string, items: string[]) => void
   setVennLists: (vennLists: IVennList[]) => void
   updateVennListFromText: (id: string, text: string) => void
@@ -190,11 +191,24 @@ export const useVennStore = create<IVennStore>((set, get) => ({
   //     vennElemMap: makeVennElemMap(state.vennLists),
   //   }))
   // },
-  addGroup: () => {
+  addList: () => {
     set((state) => {
       const id = (state.vennLists.length + 1).toString()
       const list = makeVennList(id, `List ${id}`)
       const vennLists = [...state.vennLists, list]
+
+      return {
+        vennLists,
+        vennElemMap: makeVennElemMap(vennLists),
+        updateCounter: state.updateCounter + 1,
+      }
+    })
+  },
+  removeList: (id: string) => {
+    set((state) => {
+      const vennLists = state.vennLists.filter(
+        (vennList) => vennList.id !== id && vennList.listId !== id
+      )
 
       return {
         vennLists,
@@ -264,7 +278,8 @@ export function useVenn(): IVennStore & {
 } {
   const { settings } = useVennSettings()
   const { openFile } = useHistory()
-  const addGroup = useVennStore((state) => state.addGroup)
+  const addList = useVennStore((state) => state.addList)
+  const removeList = useVennStore((state) => state.removeList)
   const selectedItems = useVennStore((state) => state.selectedItems)
   const setSelectedItems = useVennStore((state) => state.setSelectedItems)
   const originalNames = useVennStore((state) => state.originalNames)
@@ -423,7 +438,8 @@ export function useVenn(): IVennStore & {
     vennListsInUse,
     //setVennListsInUse: useVennStore((state) => state.setVennListsInUse),
     updateCounter,
-    addGroup,
+    addList,
+    removeList,
     setSelectedItems,
     setVennLists,
     updateVennListFromText,

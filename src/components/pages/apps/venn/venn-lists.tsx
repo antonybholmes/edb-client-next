@@ -10,11 +10,16 @@ import {
   AccordionTrigger,
   ScrollAccordion,
 } from '@/components/shadcn/ui/themed/v2/accordion'
+
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { TrashIcon } from '@/components/icons/trash-icon'
+import { TEXT_OK } from '@/consts'
 import { VennList } from './venn-list'
 import { useVenn } from './venn-store'
 
 export function VennLists() {
-  const { vennLists, addGroup } = useVenn()
+  const { vennLists, addList: addGroup, removeList } = useVenn()
+  const { open: openDialog } = useDialogs()
   return (
     <PropsPanel>
       <VCenterRow className="border-b border-border/50 mb-2 pb-1">
@@ -34,7 +39,29 @@ export function VennLists() {
               value={`List ${vennList.name}`}
               key={vennList.listId}
             >
-              <AccordionTrigger>{vennList.name}</AccordionTrigger>
+              <AccordionTrigger
+                rightChildren={
+                  <button
+                    onClick={() => {
+                      openDialog({
+                        type: 'warning',
+                        payload: {
+                          content: `Are you sure you want to remove '${vennList.name}'?`,
+                          callback: (response) => {
+                            if (response === TEXT_OK) {
+                              removeList(vennList.id)
+                            }
+                          },
+                        },
+                      })
+                    }}
+                  >
+                    <TrashIcon />
+                  </button>
+                }
+              >
+                {vennList.name}
+              </AccordionTrigger>
               <AccordionContent>
                 <VennList vennList={vennList} />
               </AccordionContent>

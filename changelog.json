@@ -2666,6 +2666,10 @@
         {
           "msg": "Venn now supports heatmaps. Rendering moved into hook rather than page. Support for gaps in heatmaps",
           "date": "2026-09-03T20:37:32.818Z"
+        },
+        {
+          "msg": "Venn lists can be removed",
+          "date": "2026-09-03T20:45:26.010Z"
         }
       ]
     },
