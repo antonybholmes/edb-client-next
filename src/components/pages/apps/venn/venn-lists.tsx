@@ -42,6 +42,7 @@ export function VennLists() {
               <AccordionTrigger
                 rightChildren={
                   <button
+                    className="hover:text-red-500 trans-color"
                     onClick={() => {
                       openDialog({
                         type: 'warning',
