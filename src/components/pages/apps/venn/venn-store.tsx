@@ -1,3 +1,4 @@
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { colZScore, rowZScore, zscore } from '@/lib/dataframe/dataframe-utils'
@@ -280,6 +281,7 @@ export function useVenn(): IVennStore & {
   vennListsInUse: IVennList[]
 } {
   const { settings } = useVennSettings()
+  const { settings: edbSettings } = useEdbSettings()
   const { openFile } = useHistory()
   const addList = useVennStore((state) => state.addList)
   const removeList = useVennStore((state) => state.removeList)
@@ -413,7 +415,7 @@ export function useVenn(): IVennStore & {
 
     let dfZ: BaseDataFrame
 
-    switch (settings.cluster.zscore) {
+    switch (settings.heatmap.cluster.zscore) {
       case 'row':
         dfZ = rowZScore(dfZData)
         break
@@ -434,11 +436,11 @@ export function useVenn(): IVennStore & {
 
     const hc = new HCluster()
 
-    const rowC: IClusterTree | undefined = settings.cluster.rows.on
+    const rowC: IClusterTree | undefined = settings.heatmap.cluster.rows.on
       ? hc.run(dfDist)
       : undefined
 
-    const colC: IClusterTree | undefined = settings.cluster.cols.on
+    const colC: IClusterTree | undefined = settings.heatmap.cluster.cols.on
       ? hc.run(dfDist.t)
       : undefined
 
@@ -478,7 +480,15 @@ export function useVenn(): IVennStore & {
           show: false,
         },
       },
-      cmap: settings.cluster.cmap,
+      cmap: edbSettings.plots.cmap,
+      dot: {
+        ...DEFAULT_HEATMAP_PROPS.dot,
+        sizes: settings.heatmap.dot.sizes.map((x) => ({
+          size: x / 100,
+          value: `${x}%`,
+        })),
+        scale: settings.heatmap.dot.scale,
+      },
     }
 
     const plot: HistoryPlot = newHeatMapPlot(
@@ -495,7 +505,7 @@ export function useVenn(): IVennStore & {
       plots: [plot],
       mode: 'set',
     })
-  }, [vennElemMap, settings])
+  }, [vennElemMap, settings, edbSettings])
 
   return {
     selectedItems,

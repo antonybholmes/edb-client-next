@@ -51,11 +51,14 @@ export function ColormapSettingsPanel() {
         <PropRow title="Colormap">
           <ColorMapMenu
             align="end"
-            cmap={COLOR_MAPS[displayProps.cmap]!}
-            onChange={(cmap) =>
+            cmap={COLOR_MAPS[displayProps.cmap.name]}
+            reversed={displayProps.cmap.reversed}
+
+            onChange={(cmap, reversed) =>
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.cmap = cmap.id as ColorMapName
+                  draft.props.cmap.name = cmap.id as ColorMapName
+                  draft.props.cmap.reversed = reversed
                 })
               )
             }

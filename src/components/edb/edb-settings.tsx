@@ -7,6 +7,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
 import type { IAppInfo } from '../../lib/app-info'
 
+import { ICMAP } from '@/lib/color/colormap'
 import {
   DEFAULT_AXIS_CONFIG,
   IXYAxisDisplayProps,
@@ -15,7 +16,7 @@ import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v50`
+const SETTINGS_KEY = `${config.appId}:settings:v52`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -60,6 +61,7 @@ export interface IEdbSettings {
     colors: {
       custom: { id: string; color: string; opacity: number }[]
     }
+    cmap: ICMAP
     colorbar: IColorBarProps
     axes: IXYAxisDisplayProps
     zoom: number
@@ -110,6 +112,10 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   },
   plots: {
     colors: { custom: [] },
+    cmap: {
+      name: 'bwr-v2',
+      reversed: false,
+    },
     colorbar: { ...DEFAULT_COLORBAR_PROPS },
     axes: {
       x: { ...DEFAULT_AXIS_CONFIG },

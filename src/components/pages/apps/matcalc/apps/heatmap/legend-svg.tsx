@@ -200,7 +200,7 @@ export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
       <g>
         {props.dot.sizes.map((ds, dsi) => {
           const y = (legendBlockSize + props.padding * 0.5) * dsi
-          const r = halfW * ds.size // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
+          const r = halfW * ds.size * props.dot.scale // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
 
           return (
             <g key={`dot:${dsi}`} transform={`translate(0, ${y})`}>

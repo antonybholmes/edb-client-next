@@ -1,5 +1,4 @@
 import type { IDim } from '@/interfaces/dim'
-import { ColorMapName } from '@/lib/color/colormap'
 
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -20,6 +19,7 @@ import {
   TopBottomPos,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
+import { ICMAP } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -64,6 +64,11 @@ export const DEFAULT_TREE_PROPS: ITreeProps = {
 }
 
 export type HeatmapMode = 'heatmap' | 'dot'
+
+export interface IDot {
+  size: number
+  value: number | string
+}
 
 export interface IHeatMapSettings {
   title: ITextProps & { text: string; offset: number }
@@ -132,8 +137,8 @@ export interface IHeatMapSettings {
     }
   }
   dot: {
-    sizes: { size: number; value: number | string }[]
-    lim: ILim
+    sizes: IDot[]
+    scale: number
     mode: DotPlotMode
     useOriginalValuesForSizes: boolean
     legend: {
@@ -158,7 +163,7 @@ export interface IHeatMapSettings {
   }
   padding: number
   //zoom: number
-  cmap: ColorMapName
+  cmap: ICMAP
   tooltip: {
     show: boolean
   }
@@ -231,7 +236,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
       { size: 0.75, value: '75%' },
       { size: 1, value: '100%' },
     ],
-    lim: [0, 100],
+    scale: 1,
     mode: 'groups',
     legend: {
       show: true,
@@ -255,7 +260,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   },
   padding: 10,
   //zoom: 1,
-  cmap: 'bwr-v2',
+  cmap: { name: 'bwr-v2', reversed: false },
   cells: {
     values: {
       show: false,
