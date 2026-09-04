@@ -6,14 +6,13 @@ import {
 import { config } from '@/config'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
-import { ColorMapName } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v68`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v70`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -113,15 +112,21 @@ export interface IVennSettings {
   view: {
     tab: 'venn' | 'heatmap'
   }
-  cluster: {
-    rows: {
-      on: boolean
+  heatmap: {
+    cluster: {
+      rows: {
+        on: boolean
+      }
+      cols: {
+        on: boolean
+      }
+      zscore: 'row' | 'col' | 'all' | 'none'
+      //cmap: ColorMapName
     }
-    cols: {
-      on: boolean
+    dot: {
+      sizes: number[]
+      scale: number
     }
-    zscore: 'row' | 'col' | 'all' | 'none'
-    cmap: ColorMapName
   }
   page: {
     margin: IMarginProps
@@ -148,16 +153,23 @@ const DEFAULT_SETTINGS: IVennSettings = {
   view: {
     tab: 'venn',
   },
-  cluster: {
-    rows: {
-      on: true,
+  heatmap: {
+    cluster: {
+      rows: {
+        on: true,
+      },
+      cols: {
+        on: true,
+      },
+      zscore: 'row',
+      //cmap: 'bwr-v2',
     },
-    cols: {
-      on: true,
+    dot: {
+      sizes: [25, 50, 75, 100],
+      scale: 1,
     },
-    zscore: 'row',
-    cmap: 'bwr-v2',
   },
+
   page: {
     margin: { ...DEFAULT_MARGIN, top: 25, bottom: 25 },
   },

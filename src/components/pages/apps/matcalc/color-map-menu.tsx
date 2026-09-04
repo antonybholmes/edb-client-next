@@ -9,6 +9,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  MenuSeparator,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 
@@ -40,10 +41,12 @@ export function ColorMapMenuIcon({ cmap }: { cmap: ColorMap }) {
 
 export function ColorMapMenuContent({
   cmap,
+  reversed = false,
   onChange,
 }: {
   cmap: ColorMap
-  onChange?: (cmap: ColorMap) => void
+  reversed?: boolean
+  onChange?: (cmap: ColorMap, reversed: boolean) => void
 }) {
   return (
     <DropdownMenuContent>
@@ -80,7 +83,7 @@ export function ColorMapMenuContent({
                 <DropdownMenuCheckboxItem
                   key={cm.id}
                   onClick={() => {
-                    onChange(cm)
+                    onChange(cm, reversed)
                   }}
                   checked={cm.id === cmap.id}
                 >
@@ -98,15 +101,15 @@ export function ColorMapMenuContent({
           </DropdownMenuPortal>
         </DropdownMenuSub>
       ))}
-      {/* <MenuSeparator />
+      <MenuSeparator />
       <DropdownMenuCheckboxItem
         onClick={() => {
-          onChange(BWR_CMAP_V2)
+          onChange(cmap, !reversed)
         }}
-        checked={cmap.id === BWR_CMAP_V2.id}
+        checked={reversed}
       >
         Reverse
-      </DropdownMenuCheckboxItem> */}
+      </DropdownMenuCheckboxItem>
     </DropdownMenuContent>
   )
 }
@@ -114,18 +117,20 @@ export function ColorMapMenuContent({
 interface IProps {
   cmap: ColorMap
   align?: 'start' | 'end'
-  onChange?: (cmap: ColorMap) => void
+  reversed?: boolean
+
+  onChange?: (cmap: ColorMap, reversed: boolean) => void
 }
 
 export function ColorMapMenu({
   cmap = BWR_CMAP_V2,
-  align = 'start',
+  reversed = false,
   onChange,
 }: IProps) {
   const [open, setOpen] = useState(false)
 
-  function _onChange(cmap: ColorMap) {
-    onChange?.(cmap)
+  function _onChange(cmap: ColorMap, reversed: boolean) {
+    onChange?.(cmap, reversed)
   }
 
   return (
@@ -180,7 +185,11 @@ export function ColorMapMenu({
           </ToolbarIconButton>
         }
       />
-      <ColorMapMenuContent cmap={cmap} onChange={_onChange} />
+      <ColorMapMenuContent
+        cmap={cmap}
+        reversed={reversed}
+        onChange={_onChange}
+      />
     </DropdownMenu>
   )
 }
@@ -188,13 +197,14 @@ export function ColorMapMenu({
 export function ColorMapToolbarMenu({
   cmap = BWR_CMAP_V2,
   align = 'start',
+  reversed = false,
   onChange,
 }: IProps) {
   const [open, setOpen] = useState(false)
 
-  function _onChange(cmap: ColorMap) {
+  function _onChange(cmap: ColorMap, reversed: boolean) {
     //setOpen(false)
-    onChange?.(cmap)
+    onChange?.(cmap, reversed)
   }
 
   return (
@@ -209,7 +219,11 @@ export function ColorMapToolbarMenu({
         }
       />
 
-      <ColorMapMenuContent cmap={cmap} onChange={_onChange} />
+      <ColorMapMenuContent
+        cmap={cmap}
+        reversed={reversed}
+        onChange={_onChange}
+      />
     </DropdownMenu>
   )
 }

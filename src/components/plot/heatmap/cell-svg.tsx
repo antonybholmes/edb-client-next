@@ -2,9 +2,8 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import type { ICell } from '@/interfaces/cell'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
-import { COLOR_MAPS } from '@/lib/color/colormap'
+import { getColorMapFromICMAP } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { ILim } from '@/lib/math/math'
 import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
 import { ReactNode } from 'react'
@@ -18,7 +17,7 @@ import { SvgText } from '../svg-text'
 import { CellGaps } from './cell-gaps'
 
 // we want circles slightly smaller than box to allow for borders
-const RADIUS_FACTOR = 1 //0.96
+//const RADIUS_FACTOR = 1 //0.96
 
 export interface ICellsSvgProps {
   df: BaseDataFrame
@@ -54,7 +53,7 @@ export function CellsSvg({
 }: ICellsSvgProps) {
   const blockSize = props.blockSize
 
-  const cmap = COLOR_MAPS[props.cmap]!
+  const cmap = getColorMapFromICMAP(props.cmap)
 
   const colors = rowLeaves.map((row) => {
     return colLeaves.map((col) => {
@@ -150,7 +149,9 @@ export function DotsSvg({
     )
   }
 
-  const cmap = COLOR_MAPS[props.cmap]!
+  const cmap = getColorMapFromICMAP(props.cmap)
+
+  const w = Math.min(blockSize.w, blockSize.h)
 
   return (
     <g
@@ -191,8 +192,9 @@ export function DotsSvg({
 
           const cx = 0.5 * blockSize.w
           const cy = 0.5 * blockSize.h
-          const r =
-            0.5 * Math.min(blockSize.w, blockSize.h) * radius * RADIUS_FACTOR
+          const r = 0.5 * w * radius * props.dot.scale
+
+          console.log(r, radius, props.dot.scale)
 
           const textColor =
             props.cells.values.autoColor.on && radius > 0.4
@@ -341,33 +343,4 @@ export function GridSvg({
       {props.border.show && <>{rects}</>}
     </g>
   )
-}
-
-function xys({ props, shape }: { props: IHeatMapSettings; shape: ILim }): {
-  xs: number[]
-  ys: number[]
-} {
-  const blockSize = props.blockSize
-  const rowGaps = new Set(props.gaps.rows.indexes)
-  const colGaps = new Set(props.gaps.cols.indexes)
-
-  const xs: number[] = []
-  const ys: number[] = []
-  let x = 0
-  let y = 0
-
-  console.log(rowGaps, colGaps)
-
-  for (let i = 0; i < shape[1]; i++) {
-    x += colGaps.has(i) ? props.gaps.cols.size : 0
-    xs.push(x)
-    x += blockSize.w
-  }
-
-  for (let i = 0; i < shape[0]; i++) {
-    y += rowGaps.has(i) ? props.gaps.rows.size : 0
-    ys.push(y)
-    y += blockSize.h
-  }
-  return { xs, ys }
 }

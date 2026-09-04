@@ -322,7 +322,7 @@ export function DotPlotDialog({
           value: formatNumber(s, { dp: DEFAULT_HEATMAP_PROPS.cells.values.dp }),
         })),
         //sizes: sizes.map(s => ({ size: s, value: s })),
-        lim: [min, max],
+        //lim: [min, max],
       },
     }
 

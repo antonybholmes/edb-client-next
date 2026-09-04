@@ -726,3 +726,13 @@ export type ColorMapName =
 export function getColorMap(name: string): ColorMap {
   return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
 }
+
+export interface ICMAP {
+  name: ColorMapName
+  reversed: boolean
+}
+
+export function getColorMapFromICMAP(icmap: ICMAP): ColorMap {
+  const cmap = COLOR_MAPS[icmap.name]!
+  return icmap.reversed ? cmap.reverse() : cmap
+}

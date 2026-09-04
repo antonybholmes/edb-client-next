@@ -24,7 +24,7 @@ export function CellSettingsPanel() {
       <AccordionTrigger>Cells</AccordionTrigger>
       <AccordionContent>
         <CheckPropRow
-          title="Values"
+          title="Show values"
           checked={displayProps.cells.values.show}
           onCheckedChange={(v) => {
             updatePlot(
@@ -51,6 +51,39 @@ export function CellSettingsPanel() {
           />
           <span>dp</span>
         </CheckPropRow>
+
+        <CheckPropRow
+          title="Only Values &ge;"
+          checked={displayProps.cells.values.filter.on}
+          disabled={!displayProps.cells.values.show}
+          onCheckedChange={(v) => {
+            updatePlot(
+              produce(plot, (draft) => {
+                draft.props.cells.values.filter.on = v
+              })
+            )
+          }}
+        >
+          <NumericalInput
+            id="cell-filter"
+            value={displayProps.cells.values.filter.value}
+            limit={[0, 10000]}
+            disabled={
+              !displayProps.cells.values.show ||
+              !displayProps.cells.values.filter.on
+            }
+            placeholder="Filter"
+            className="rounded-theme"
+            onNumChanged={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.cells.values.filter.value = v
+                })
+              )
+            }}
+          />
+        </CheckPropRow>
+
         <PropRow title={<ExtTitle title="Color"></ExtTitle>}>
           <FillButton
             disabled={!displayProps.cells.values.show}
@@ -91,38 +124,6 @@ export function CellSettingsPanel() {
             color is blue. Adjust between 0-255 to find a suitable threshold for
             your data.
           </InfoHoverCard>
-        </CheckPropRow>
-
-        <CheckPropRow
-          title="Only Values &ge;"
-          checked={displayProps.cells.values.filter.on}
-          disabled={!displayProps.cells.values.show}
-          onCheckedChange={(v) => {
-            updatePlot(
-              produce(plot, (draft) => {
-                draft.props.cells.values.filter.on = v
-              })
-            )
-          }}
-        >
-          <NumericalInput
-            id="cell-filter"
-            value={displayProps.cells.values.filter.value}
-            limit={[0, 10000]}
-            disabled={
-              !displayProps.cells.values.show ||
-              !displayProps.cells.values.filter.on
-            }
-            placeholder="Filter"
-            className="rounded-theme"
-            onNumChanged={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.cells.values.filter.value = v
-                })
-              )
-            }}
-          />
         </CheckPropRow>
 
         <PropRow title="Border">

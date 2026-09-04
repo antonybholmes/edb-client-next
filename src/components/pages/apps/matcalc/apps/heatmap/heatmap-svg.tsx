@@ -26,7 +26,7 @@ import { createAxis } from '@/components/plot/axes/axis'
 import { CellGaps } from '@/components/plot/heatmap/cell-gaps'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
-import { COLOR_MAPS } from '@/lib/color/colormap'
+import { getColorMapFromICMAP } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
@@ -293,6 +293,8 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
       tickParams: { which: 'minor', show: true },
     })
 
+    const cmap = getColorMapFromICMAP(displayOptions.cmap)
+
     const svg = (
       <>
         {displayOptions.title.show && displayOptions.title.text && (
@@ -464,7 +466,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.colorbar.position === 'bottom' && (
             <SvgHColorBar
               ax={cax}
-              cmap={COLOR_MAPS[displayOptions.cmap]!}
+              cmap={cmap}
 
               pos={{
                 x: margin.left,
@@ -513,7 +515,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               <SvgVColorBar
                 ax={cax}
 
-                cmap={COLOR_MAPS[displayOptions.cmap]!}
+                cmap={cmap}
               />
             )}
           <g transform={`translate(0, ${legendGroupRightY})`}>
