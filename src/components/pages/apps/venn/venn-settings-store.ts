@@ -1,14 +1,19 @@
-import type { IPaintProps } from '@/components/plot/svg-props'
+import {
+  DEFAULT_MARGIN,
+  IMarginProps,
+  type IPaintProps,
+} from '@/components/plot/svg-props'
 import { config } from '@/config'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { ColorMapName } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v64`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v68`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -116,6 +121,10 @@ export interface IVennSettings {
       on: boolean
     }
     zscore: 'row' | 'col' | 'all' | 'none'
+    cmap: ColorMapName
+  }
+  page: {
+    margin: IMarginProps
   }
 }
 
@@ -147,6 +156,10 @@ const DEFAULT_SETTINGS: IVennSettings = {
       on: true,
     },
     zscore: 'row',
+    cmap: 'bwr-v2',
+  },
+  page: {
+    margin: { ...DEFAULT_MARGIN, top: 25, bottom: 25 },
   },
 }
 

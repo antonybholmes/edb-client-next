@@ -14,8 +14,10 @@ import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { useOpen } from '../use-open'
 import { useVennSettings } from '../venn-settings-store'
 
@@ -83,32 +85,49 @@ export function HomeToolbar() {
           </ToolbarRow>
         </ToolbarCol>
         <ToolbarSeparator />
-        <ToolbarRow>
-          Z-score
-          <SelectList
-            variant="toolbar"
-            w="sm"
-            value={settings.cluster.zscore}
-            items={[
-              { value: 'row', label: 'Row' },
-              { value: 'col', label: 'Column' },
-              { value: 'all', label: 'All' },
-              { value: 'none', label: 'None' },
-            ]}
-            onValueChange={(value) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.cluster.zscore = value as 'row' | 'col' | 'all' | 'none'
-                })
-              )
-            }}
-          >
-            <SelectItem value="row">Row</SelectItem>
-            <SelectItem value="col">Column</SelectItem>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="none">None</SelectItem>
-          </SelectList>
-        </ToolbarRow>
+        <ToolbarCol>
+          <ToolbarRow>
+            Z-score
+            <SelectList
+              variant="toolbar"
+              w="sm"
+              value={settings.cluster.zscore}
+              items={[
+                { value: 'row', label: 'Row' },
+                { value: 'col', label: 'Column' },
+                { value: 'all', label: 'All' },
+                { value: 'none', label: 'None' },
+              ]}
+              onValueChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.cluster.zscore = value as
+                      'row' | 'col' | 'all' | 'none'
+                  })
+                )
+              }}
+            >
+              <SelectItem value="row">Row</SelectItem>
+              <SelectItem value="col">Column</SelectItem>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="none">None</SelectItem>
+            </SelectList>
+          </ToolbarRow>
+          <ToolbarRow>
+            <ColorMapMenu
+              align="end"
+              cmap={getColorMap(settings.cluster.cmap)}
+              onChange={(cmap) => {
+                // store the cmap the user likes
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.cluster.cmap = cmap.id as ColorMapName
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

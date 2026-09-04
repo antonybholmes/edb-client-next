@@ -33,7 +33,6 @@ import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
-import { SvgBase } from '@/components/plot/svg-base'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -60,10 +59,6 @@ import { MonitorDown } from 'lucide-react'
 import { useSVG } from '@/providers/svg-provider'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import APP_INFO from './manifest.json'
-import { SVGFourWayVenn } from './svg-four-way-venn'
-import { SVGOneWayVenn } from './svg-one-way-venn'
-import { SVGThreeWayVenn } from './svg-three-way-venn'
-import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
@@ -83,6 +78,7 @@ import { HeatMapSvg } from '../matcalc/apps/heatmap/heatmap-svg'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
 import { IHeatMapPlot } from '../matcalc/history/history-provider/history-types'
+import { SvgVenn } from './svg/svg-venn'
 import { VennPropsPanel } from './venn-props-panel'
 import { makeVennList, useVenn } from './venn-store'
 
@@ -518,16 +514,7 @@ function VennPage() {
                     className="grow h-full"
                   >
                     <TabsContent value="venn">
-                      <SvgBase
-                        scale={zoom}
-                        width={settings.w}
-                        height={settings.w}
-                      >
-                        {vennListsInUse.length < 2 && <SVGOneWayVenn />}
-                        {vennListsInUse.length === 2 && <SVGTwoWayVenn />}
-                        {vennListsInUse.length === 3 && <SVGThreeWayVenn />}
-                        {vennListsInUse.length > 3 && <SVGFourWayVenn />}
-                      </SvgBase>
+                      <SvgVenn scale={zoom} />
                     </TabsContent>
                     <TabsContent value="heatmap">
                       {/* <HeatmapPanel /> */}
