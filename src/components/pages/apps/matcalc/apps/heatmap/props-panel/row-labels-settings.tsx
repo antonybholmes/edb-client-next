@@ -58,12 +58,12 @@ export function RowLabelsSettingsPanel() {
               fonts={[
                 {
                   title: 'Font',
-                  textProps: displayProps.rowLabels,
+                  textProps: displayProps.labels.row,
                   update: (f) => {
                     updatePlot(
                       produce(plot, (draft) => {
-                        draft.props.rowLabels.font = f.font
-                        draft.props.rowLabels.show = f.show
+                        draft.props.labels.row.font = f.font
+                        draft.props.labels.row.show = f.show
                       })
                     )
                   },
@@ -78,11 +78,11 @@ export function RowLabelsSettingsPanel() {
       <AccordionContent>
         <CheckPropRow
           title="Metadata"
-          checked={displayProps.rowLabels.showMetadata}
+          checked={displayProps.labels.row.showMetadata}
           onCheckedChange={(v) => {
             updatePlot(
               produce(plot, (draft) => {
-                draft.props.rowLabels.showMetadata = v
+                draft.props.labels.row.showMetadata = v
               })
             )
           }}
@@ -90,12 +90,12 @@ export function RowLabelsSettingsPanel() {
 
         <PropRow title="Position">
           <RadioGroup
-            value={displayProps.rowLabels.position}
-            disabled={!displayProps.rowLabels.show}
+            value={displayProps.labels.row.position}
+            disabled={!displayProps.labels.row.show}
             onValueChange={(v) =>
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.rowLabels.position = v as LeftRightPos
+                  draft.props.labels.row.position = v as LeftRightPos
                 })
               )
             }
@@ -107,15 +107,15 @@ export function RowLabelsSettingsPanel() {
                       className="w-5"
                     /> */}
             <SideRadioGroupItem
-              disabled={!displayProps.rowLabels.show}
+              disabled={!displayProps.labels.row.show}
               value="Left"
-              currentValue={displayProps.rowLabels.position}
+              currentValue={displayProps.labels.row.position}
               className="w-5.5"
             />
             <SideRadioGroupItem
-              disabled={!displayProps.rowLabels.show}
+              disabled={!displayProps.labels.row.show}
               value="Right"
-              currentValue={displayProps.rowLabels.position}
+              currentValue={displayProps.labels.row.position}
               className="w-5.5"
             />
           </RadioGroup>
@@ -124,15 +124,15 @@ export function RowLabelsSettingsPanel() {
         <PropRow title="Width">
           <NumericalInput
             id="row-label-size"
-            value={displayProps.rowLabels.width}
-            disabled={!displayProps.rowLabels.show}
+            value={displayProps.labels.row.width}
+            disabled={!displayProps.labels.row.show}
             limit={[1, 200]}
             placeholder="Row label size..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.rowLabels.width = v
+                  draft.props.labels.row.width = v
                 })
               )
             }}

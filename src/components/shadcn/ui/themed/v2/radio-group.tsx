@@ -1,4 +1,5 @@
 import { cn } from '@/lib/shadcn-utils'
+import { capitalCase } from '@/lib/text/capital-case'
 import { CENTERED_ROW_CLS, FOCUS_RING_CLS } from '@/theme'
 import { Field } from '@base-ui/react/field'
 import { Radio as RadioPrimitive } from '@base-ui/react/radio'
@@ -28,10 +29,21 @@ export function RadioGroupItem({
   ref,
   className = '',
   children,
+  title,
+  'aria-label': ariaLabel,
   ...props
 }: ComponentProps<typeof Radio>) {
+  if (!ariaLabel) {
+    ariaLabel = title ?? String(props.value)
+  }
+
   let ret: ReactNode = (
-    <Radio className={RADIO_BUTTON_CLS} {...props}>
+    <Radio
+      className={RADIO_BUTTON_CLS}
+      aria-label={ariaLabel}
+      title={title}
+      {...props}
+    >
       <RadioPrimitive.Indicator className="aspect-square h-1.5 w-1.5 rounded-full bg-white" />
     </Radio>
   )
@@ -89,6 +101,8 @@ export function SideRadioGroupItem({
   disabled = false,
   ...props
 }: SideRadioGroupItemProps) {
+  const tooltip = capitalCase(String(value))
+
   return (
     <Radio
       ref={ref}
@@ -102,8 +116,8 @@ export function SideRadioGroupItem({
         BORDER_MAP[(String(value) ?? 'off') as Sides],
         className
       )}
-      //aria-label={title ?? value}
-      // title={title ?? value}
+
+      title={tooltip}
     >
       {/* <span
         data-state={value === currentValue ? 'checked' : 'unchecked'}
@@ -121,7 +135,7 @@ export function SideRadioGroupItem({
             'data-[state=unchecked]:group-hover:bg-foreground/50',
             [String(value).includes('upper'), 'bottom-1/2', 'bottom-0.5']
           )}
-        />
+        ></span>
       )}
     </Radio>
   )

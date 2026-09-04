@@ -1,5 +1,12 @@
 # Changelog
 
+## 89.2.0 (Sep, 2026)
+
+### Changed
+
+- Revised venn clustering. Cluster props to make plot look better.
+
+
 ## 89.0.0 (Aug, 2026)
 
 ### Changed

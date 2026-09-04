@@ -20,6 +20,8 @@ import { useVennSettings } from './venn-settings-store'
 
 export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
 
+const MIN_RADIUS = 0.2
+
 export function getItems(text: UndefStr): string[] {
   if (!text) {
     return []
@@ -345,16 +347,23 @@ export function useVenn(): IVennStore & {
       cols: vennListsInUse.length,
     })
 
+    const distData = vfill2d(0, {
+      rows: vennListsInUse.length,
+      cols: vennListsInUse.length,
+    })
+
     const sizeData = vfill2d(0, {
+      rows: vennListsInUse.length,
+      cols: vennListsInUse.length,
+    })
+
+    const zData = vfill2d(0, {
       rows: vennListsInUse.length,
       cols: vennListsInUse.length,
     })
 
     for (const [i, vlA] of vennListsInUse.entries()) {
       for (const [j, vlB] of vennListsInUse.entries()) {
-        if (i === j) {
-          continue
-        }
         const s1 = new Set(vlA.uniqueItems.keys())
         const s2 = new Set(vlB.uniqueItems.keys())
         const overlap = [...s1].filter((item) => s2.has(item)).length
@@ -362,7 +371,12 @@ export function useVenn(): IVennStore & {
         const jaccard = overlap / (s1.size + s2.size - overlap)
 
         overlapData[i]![j] = overlap
-        sizeData[i]![j] = jaccard
+        distData[i]![j] = 1 - jaccard
+
+        if (i !== j) {
+          zData[i]![j] = jaccard
+          sizeData[i]![j] = Math.max(MIN_RADIUS, jaccard)
+        }
       }
     }
 
@@ -375,6 +389,13 @@ export function useVenn(): IVennStore & {
       columns: vennListsInUse.map((vl) => vl.name),
     })
 
+    const dfDist = new AnnotationDataFrame({
+      name: 'Venn Dist',
+      data: distData,
+      index: vennListsInUse.map((vl) => vl.name),
+      columns: vennListsInUse.map((vl) => vl.name),
+    })
+
     const dfSize = new AnnotationDataFrame({
       name: 'Venn Size',
       data: sizeData,
@@ -382,15 +403,25 @@ export function useVenn(): IVennStore & {
       columns: vennListsInUse.map((vl) => vl.name),
     })
 
-    const dfZ = zscore(dfOverlap)
+    const dfZData = new AnnotationDataFrame({
+      name: 'Venn Z',
+      data: zData,
+      index: vennListsInUse.map((vl) => vl.name),
+      columns: vennListsInUse.map((vl) => vl.name),
+    })
+
+    //const dfDist = dfJaccard.apply((v) => 1 - (v as number))
+
+    const dfZ = zscore(dfZData)
 
     const hc = new HCluster()
 
     const rowC: IClusterTree | undefined = settings.cluster.rows.on
-      ? hc.run(dfZ)
+      ? hc.run(dfDist)
       : undefined
+
     const colC: IClusterTree | undefined = settings.cluster.cols.on
-      ? hc.run(dfZ.t)
+      ? hc.run(dfDist.t)
       : undefined
 
     const cf: IClusterFrame = {
@@ -402,10 +433,33 @@ export function useVenn(): IVennStore & {
       //secondaryTables: { percent: groupPercentDf },
     }
 
+    const maxRowNameSize = Math.max(
+      ...dfOverlap.rowNames.map((name) => name.length)
+    )
+
+    const labelWidth = maxRowNameSize * 8
+
     let displayOptions: IHeatMapSettings = {
       ...DEFAULT_HEATMAP_PROPS,
-
-      colLabels: { ...DEFAULT_HEATMAP_PROPS.colLabels, width: 50 },
+      labels: {
+        ...DEFAULT_HEATMAP_PROPS.labels,
+        col: {
+          ...DEFAULT_HEATMAP_PROPS.labels.col,
+          width: labelWidth,
+          position: 'bottom',
+        },
+        row: {
+          ...DEFAULT_HEATMAP_PROPS.labels.row,
+          width: labelWidth,
+        },
+      },
+      tree: {
+        ...DEFAULT_HEATMAP_PROPS.tree,
+        row: {
+          ...DEFAULT_HEATMAP_PROPS.tree.row,
+          show: false,
+        },
+      },
     }
 
     const plot: HistoryPlot = newHeatMapPlot(
