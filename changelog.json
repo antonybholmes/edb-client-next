@@ -2693,6 +2693,10 @@
         {
           "msg": "Revised venn clustering. Cluster props to make plot look better",
           "date": "2026-09-04T17:17:10.940Z"
+        },
+        {
+          "msg": "Heatmap can now be scaled through ui rather than with a setting",
+          "date": "2026-09-04T17:40:38.330Z"
         }
       ]
     },

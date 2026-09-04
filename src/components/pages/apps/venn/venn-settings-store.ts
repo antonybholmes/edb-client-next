@@ -8,7 +8,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v62`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v64`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -115,6 +115,7 @@ export interface IVennSettings {
     cols: {
       on: boolean
     }
+    zscore: 'row' | 'col' | 'all' | 'none'
   }
 }
 
@@ -145,6 +146,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
     cols: {
       on: true,
     },
+    zscore: 'row',
   },
 }
 

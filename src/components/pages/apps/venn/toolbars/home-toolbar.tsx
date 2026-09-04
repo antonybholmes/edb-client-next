@@ -10,8 +10,10 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { useOpen } from '../use-open'
@@ -49,7 +51,7 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Heatmap">
+      <ToolbarTabGroup title="Heatmap" className="gap-x-2">
         <ToolbarCol gap="gap-x-2">
           <ToolbarRow>
             <Checkbox
@@ -80,6 +82,33 @@ export function HomeToolbar() {
             </Checkbox>
           </ToolbarRow>
         </ToolbarCol>
+        <ToolbarSeparator />
+        <ToolbarRow>
+          Z-score
+          <SelectList
+            variant="toolbar"
+            w="sm"
+            value={settings.cluster.zscore}
+            items={[
+              { value: 'row', label: 'Row' },
+              { value: 'col', label: 'Column' },
+              { value: 'all', label: 'All' },
+              { value: 'none', label: 'None' },
+            ]}
+            onValueChange={(value) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.cluster.zscore = value as 'row' | 'col' | 'all' | 'none'
+                })
+              )
+            }}
+          >
+            <SelectItem value="row">Row</SelectItem>
+            <SelectItem value="col">Column</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="none">None</SelectItem>
+          </SelectList>
+        </ToolbarRow>
       </ToolbarTabGroup>
     </>
   )

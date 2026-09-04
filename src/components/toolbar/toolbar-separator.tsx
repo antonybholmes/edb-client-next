@@ -2,6 +2,6 @@
 
 export function ToolbarSeparator() {
   return (
-    <span className="border-r border-border/75 w-0 mx-1 my-1 min-h-6 shrink-0" />
+    <span className="border-r border-border/75 w-0 mx-1 my-1 min-h-6 group-data-[ribbon=classic]:min-h-14 shrink-0" />
   )
 }

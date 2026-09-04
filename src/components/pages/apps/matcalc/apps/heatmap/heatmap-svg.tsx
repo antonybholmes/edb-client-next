@@ -44,23 +44,20 @@ export interface ITooltip {
 }
 
 interface IProps extends ISVGProps {
-  //cf: IClusterFrame
-  maxRows?: number
-  maxCols?: number
-  //plotAddr: IHistItemAddr
+  scale?: number
 }
 
-export function HeatMapSvg() {
+export function HeatMapSvg({ scale = 1 }: IProps) {
   const { plot } = useHeatmapContext()
 
   if (!plot) {
     return null
   }
 
-  return <HeatMapSvgContent />
+  return <HeatMapSvgContent scale={scale} />
 }
 
-function HeatMapSvgContent() {
+function HeatMapSvgContent({ scale = 1 }: IProps) {
   const { plot, rowLeaves, colLeaves } = useHeatmapContext()
 
   const cf = plot.dataframes['main'] as IClusterFrame
@@ -567,7 +564,7 @@ function HeatMapSvgContent() {
   }, [cf, displayOptions, groupRows])
 
   return (
-    <SvgBase scale={displayOptions.zoom} width={width} height={height}>
+    <SvgBase scale={scale} width={width} height={height}>
       {svg}
     </SvgBase>
   )

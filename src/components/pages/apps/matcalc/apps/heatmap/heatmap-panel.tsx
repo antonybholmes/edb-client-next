@@ -29,10 +29,8 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 //   }
 // }
 
-export const PLOT_ZOOM_CHANNEL = 'matcalc-plot'
-
 export function HeatmapPanel() {
-  useZoom({
+  const { zoom } = useZoom({
     onChange: (z) => {
       if (!plot) {
         return
@@ -78,7 +76,7 @@ export function HeatmapPanel() {
     <>
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <HeatMapSvg />
+          <HeatMapSvg scale={zoom} />
         </ExtScrollCard>
         <HeatmapPropsPanel />
       </ResizableSidebar>
