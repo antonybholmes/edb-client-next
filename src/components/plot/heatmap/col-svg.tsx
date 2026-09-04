@@ -91,7 +91,7 @@ export function ColLabelsSvg({
   const offset = blockSize.w / 2
 
   for (const [ci, col] of leaves.entries()) {
-    const x = gaps.position(col) + offset
+    const x = gaps.position(ci) + offset
     gElems.push(
       <SvgText
         key={ci}

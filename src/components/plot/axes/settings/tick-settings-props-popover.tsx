@@ -34,6 +34,8 @@ export function TickSettingsPropsPopover({
       <MoveUp size={which === 'major' ? 18 : 14} strokeWidth={1.5} />
     )
 
+  console.log(settings.plots, axis, which)
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
@@ -80,26 +82,26 @@ export function TickSettingsPropsPopover({
           <NumericalInput
             title="Size"
 
-            value={settings.plots.axes[axis].ticks[which].line.size}
+            value={settings.plots.axes[axis].ticks[which].style.line.size}
 
             limit={[1, 1000]}
             dp={0}
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.plots.axes[axis].ticks[which].line.size = v
+                  draft.plots.axes[axis].ticks[which].style.line.size = v
                 })
               )
             }}
           />
 
           <NumericalInput
-            value={settings.plots.axes[axis].ticks[which].line.offset}
+            value={settings.plots.axes[axis].ticks[which].style.line.offset}
             title="Offset"
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.plots.axes[axis].ticks[which].line.offset = v
+                  draft.plots.axes[axis].ticks[which].style.line.offset = v
                 })
               )
             }}
@@ -107,12 +109,12 @@ export function TickSettingsPropsPopover({
         </PropRow>
         <PropRow title="Label Offset">
           <NumericalInput
-            value={settings.plots.axes[axis].ticks[which].labels.offset}
+            value={settings.plots.axes[axis].ticks[which].style.labels.offset}
             title="Label Offset"
             onNumChanged={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.plots.axes[axis].ticks[which].labels.offset = v
+                  draft.plots.axes[axis].ticks[which].style.labels.offset = v
                 })
               )
             }}

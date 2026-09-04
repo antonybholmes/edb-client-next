@@ -77,7 +77,7 @@ export function RowLabelsSvg({
   const gElems: ReactElement[] = []
 
   for (const [ri, row] of leaves.entries()) {
-    const y = gaps.position(row) + offset
+    const y = gaps.position(ri) + offset
     gElems.push(
       <SvgText
         key={ri}
