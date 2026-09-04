@@ -6,8 +6,8 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
 import {
   onTextFileChange,
-  onTextFilePaste,
   openFilesDialog,
+  pasteTextAsFiles,
 } from '@/components/pages/open-files'
 import {
   DropdownMenu,
@@ -385,7 +385,7 @@ export function MatcalcPage() {
   usePasteText((text) => {
     console.log('Pasted text:', text)
 
-    onTextFilePaste(text, ({ success, files }) => {
+    pasteTextAsFiles(text, ({ success, files }) => {
       if (!success) {
         return
       }

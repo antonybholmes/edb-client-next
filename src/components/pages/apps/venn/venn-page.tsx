@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react'
 import {
   onTextFileChange,
   openFilesDialog,
+  pasteTextAsFiles,
 } from '@/components/pages/open-files'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
@@ -55,7 +56,6 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
-import { useHistory } from '../matcalc/history/history-provider/history-provider'
 
 import { useSVG } from '@/providers/svg-provider'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
@@ -76,6 +76,7 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { usePasteText } from '@/hooks/paste-text'
 import { produce } from 'immer'
 import { HeatmapProvider } from '../matcalc/apps/heatmap/heatmap-provider'
 import { HeatMapSvg } from '../matcalc/apps/heatmap/heatmap-svg'
@@ -113,12 +114,9 @@ function VennPage() {
   const { setAppInfo } = useAppInfo()
 
   const {
-    //vennLists,
     setVennLists,
 
-    vennElemMap,
     vennListsInUse,
-    //setvennLists,
   } = useVenn()
 
   //const [listIds] = useState<number[]>(range(4))
@@ -160,8 +158,6 @@ function VennPage() {
   // const { setTabs: setSideTabs } = useSideTabs()
 
   const { settings: edbSettings } = useEdbSettings()
-
-  const { openFile } = useHistory()
 
   const { sheets } = useCurrentSheets()
 
@@ -230,6 +226,16 @@ function VennPage() {
       },
     ])
   }, [setToolbarTabs])
+
+  usePasteText((text) => {
+    pasteTextAsFiles(text, ({ success, files }) => {
+      if (!success) {
+        return
+      }
+
+      openFiles(files)
+    })
+  })
 
   // useEffect(() => {
   //   setSideTabs([

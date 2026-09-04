@@ -59,7 +59,7 @@ export interface ITreeProps {
 
 export const DEFAULT_TREE_PROPS: ITreeProps = {
   show: true,
-  width: 100,
+  width: 75,
   stroke: { ...DEFAULT_STROKE_PROPS },
 }
 
@@ -183,7 +183,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   colLabels: {
     ...DEFAULT_TEXT_PROPS,
     position: 'top',
-    width: 150,
+    width: 100,
     isColored: true,
   },
   colorbar: {
