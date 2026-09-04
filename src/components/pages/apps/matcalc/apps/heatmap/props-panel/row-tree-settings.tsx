@@ -54,13 +54,13 @@ export function RowTreeSettingsPanel() {
           >
             <SideRadioGroupItem
               disabled={!displayProps.tree.row.show}
-              value="Left"
+              value="left"
               currentValue={displayProps.tree.row.position}
               className="w-5.5"
             />
             <SideRadioGroupItem
               disabled={!displayProps.tree.row.show}
-              value="Right"
+              value="right"
               currentValue={displayProps.tree.row.position}
               className="w-5.5"
             />

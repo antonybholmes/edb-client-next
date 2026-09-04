@@ -531,7 +531,7 @@ function VennPage() {
                     </TabsContent>
                     <TabsContent value="heatmap">
                       {/* <HeatmapPanel /> */}
-                      <HeatMapSvg />
+                      <HeatMapSvg scale={zoom} />
                     </TabsContent>
                   </Tabs>
                 </ExtScrollCard>

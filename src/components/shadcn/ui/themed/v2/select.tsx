@@ -38,8 +38,8 @@ export const triggerVariants = cva(
           'data-[popup-open]:border-app-theme/50 placeholder:text-foreground/50 rounded-theme min-h-8'
         ),
         toolbar: cn(
-          'h-toolbar-button rounded-theme border border-transparent focus:border-app-theme/50 pl-2 pr-1',
-          'hover:border-border/60 data-[popup-open]:border-border/60 aria-[expanded=true]:border-border/60'
+          'h-toolbar-button rounded-theme border border-border/50 focus:border-app-theme/50 pl-2 pr-1',
+          'hover:border-border data-[popup-open]:border-app-theme/50 aria-[expanded=true]:border-app-theme/50'
         ),
         button: cn(BASE_FLAT_BUTTON_CLS, 'h-button rounded-theme'),
 

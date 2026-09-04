@@ -10,12 +10,10 @@ import {
   useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSVG } from '@/providers/svg-provider'
-import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
 import { HeatMapSvg } from './heatmap-svg'
 import { HeatmapPropsPanel } from './props-panel/heatmap-props-panel'
@@ -29,24 +27,10 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 //   }
 // }
 
-export const PLOT_ZOOM_CHANNEL = 'matcalc-plot'
-
 export function HeatmapPanel() {
-  useZoom({
-    onChange: (z) => {
-      if (!plot) {
-        return
-      }
-      updatePlot(
-        produce(plot, (draft) => {
-          draft.props.zoom = z.zoom
-        })
-      )
-    },
-  })
+  const { zoom } = useZoom()
 
   const { plot } = useHeatmapContext()
-  const { updatePlot } = useHistory()
 
   const cf = plot?.dataframes['main'] as IClusterFrame
 
@@ -78,7 +62,7 @@ export function HeatmapPanel() {
     <>
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <HeatMapSvg />
+          <HeatMapSvg scale={zoom} />
         </ExtScrollCard>
         <HeatmapPropsPanel />
       </ResizableSidebar>

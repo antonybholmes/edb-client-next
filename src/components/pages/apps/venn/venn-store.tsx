@@ -1,5 +1,6 @@
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { zscore } from '@/lib/dataframe/dataframe-utils'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { colZScore, rowZScore, zscore } from '@/lib/dataframe/dataframe-utils'
 import { vfill, vfill2d } from '@/lib/fill'
 import { makeUuid } from '@/lib/id'
 import { HCluster, IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
@@ -410,9 +411,26 @@ export function useVenn(): IVennStore & {
       columns: vennListsInUse.map((vl) => vl.name),
     })
 
+    let dfZ: BaseDataFrame
+
+    switch (settings.cluster.zscore) {
+      case 'row':
+        dfZ = rowZScore(dfZData)
+        break
+      case 'col':
+        dfZ = colZScore(dfZData)
+        break
+      case 'all':
+        dfZ = zscore(dfZData)
+        break
+      default:
+        dfZ = dfZData
+        break
+    }
+
     //const dfDist = dfJaccard.apply((v) => 1 - (v as number))
 
-    const dfZ = zscore(dfZData)
+    //const dfZ = zscore(dfZData)
 
     const hc = new HCluster()
 

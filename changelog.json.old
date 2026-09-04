@@ -2685,5 +2685,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-08-30T00:53:19.167Z"
+  },
+  {
+    "version": "89.2.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Revised venn clustering. Cluster props to make plot look better",
+          "date": "2026-09-04T17:17:10.940Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-04T17:17:10.940Z"
   }
 ]

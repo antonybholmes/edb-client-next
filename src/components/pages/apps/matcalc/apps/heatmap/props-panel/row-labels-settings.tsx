@@ -108,13 +108,13 @@ export function RowLabelsSettingsPanel() {
                     /> */}
             <SideRadioGroupItem
               disabled={!displayProps.labels.row.show}
-              value="Left"
+              value="left"
               currentValue={displayProps.labels.row.position}
               className="w-5.5"
             />
             <SideRadioGroupItem
               disabled={!displayProps.labels.row.show}
-              value="Right"
+              value="right"
               currentValue={displayProps.labels.row.position}
               className="w-5.5"
             />
