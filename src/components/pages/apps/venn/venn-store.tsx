@@ -478,6 +478,7 @@ export function useVenn(): IVennStore & {
           show: false,
         },
       },
+      cmap: settings.cluster.cmap,
     }
 
     const plot: HistoryPlot = newHeatMapPlot(

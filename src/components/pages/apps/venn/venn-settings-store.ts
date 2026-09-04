@@ -6,6 +6,7 @@ import {
 import { config } from '@/config'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { ColorMapName } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -120,6 +121,7 @@ export interface IVennSettings {
       on: boolean
     }
     zscore: 'row' | 'col' | 'all' | 'none'
+    cmap: ColorMapName
   }
   page: {
     margin: IMarginProps
@@ -154,6 +156,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
       on: true,
     },
     zscore: 'row',
+    cmap: 'bwr-v2',
   },
   page: {
     margin: { ...DEFAULT_MARGIN, top: 25, bottom: 25 },

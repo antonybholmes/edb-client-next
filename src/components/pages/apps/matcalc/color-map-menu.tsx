@@ -163,14 +163,14 @@ export function ColorMapMenu({
 
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
-        title="Change colormap"
+        title="Colormap"
         onClick={() => setOpen(true)}
         render={
           <ToolbarIconButton>
             <ColorMapMenuIcon cmap={cmap} />
           </ToolbarIconButton>
         }
-      ></DropdownMenuTrigger>
+      />
       <ColorMapMenuContent cmap={cmap} onChange={_onChange} />
     </DropdownMenu>
   )
@@ -191,7 +191,7 @@ export function ColorMapToolbarMenu({
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
-        title="Change colormap"
+        title="Colormap"
         onClick={() => setOpen(true)}
         render={
           <ToolbarIconButton>
