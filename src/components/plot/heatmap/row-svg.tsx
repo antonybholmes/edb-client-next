@@ -5,6 +5,7 @@ import { ZERO_POS } from '@/interfaces/pos'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { range } from 'd3'
 import { ReactElement } from 'react'
+import { SvgG } from '../svg-g'
 import { SvgText } from '../svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
@@ -48,18 +49,16 @@ export function RowTreeSvg({
   }
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
-      shapeRendering={SVG_CRISP_EDGES}
-    >
+    <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES}>
       {gElems}
-    </g>
+    </SvgG>
   )
 }
 
 export function RowLabelsSvg({
   leaves,
-
+  gaps,
+  colorMap,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
   const { plot } = useHeatmapContext()
@@ -68,30 +67,33 @@ export function RowLabelsSvg({
   const df = (plot.dataframes['main'] as IClusterFrame).df
 
   const blockSize = props.blockSize
-  const halfH = blockSize.h / 2
+  const offset = blockSize.h / 2
   const rowMetaN = range(
     0,
     props.labels.row.showMetadata ? df.rowObs.shape[1] : 1
   )
   const isLeft = props.labels.row.position === 'left'
 
-  return (
-    <g transform={`translate(${pos.x}, ${pos.y})`}>
-      {leaves.map((row, ri) => {
-        return (
-          <SvgText
-            key={row}
-            id={`row-label-${row}`}
-            x={0}
-            y={ri * blockSize.h + halfH}
-            font={props.labels.row}
-            dominantBaseline="central"
-            textAnchor={isLeft ? 'end' : 'start'}
-          >
-            {rowMetaN.map((rmi) => df.rowObs.str(row, rmi)).join(', ')}
-          </SvgText>
-        )
-      })}
-    </g>
-  )
+  const gElems: ReactElement[] = []
+
+  for (const [ri, row] of leaves.entries()) {
+    const y = gaps.position(row) + offset
+    gElems.push(
+      <SvgText
+        key={ri}
+        id={`row-label-${ri}`}
+        x={0}
+        y={y}
+        font={props.labels.row}
+        dominantBaseline="central"
+        textAnchor={isLeft ? 'end' : 'start'}
+      >
+        {rowMetaN.map((rmi) => df.rowObs.str(row, rmi)).join(', ')}
+      </SvgText>
+    )
+
+    // x += blockSize.w
+  }
+
+  return <SvgG pos={pos}>{gElems}</SvgG>
 }

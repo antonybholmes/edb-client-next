@@ -9,9 +9,12 @@ import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
 import { ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { SvgCircle } from '../svg-circle'
+import { SvgG } from '../svg-g'
 import { SvgPath } from '../svg-path'
 import { IMarginProps } from '../svg-props'
 import { SvgRect } from '../svg-rect'
+import { SvgText } from '../svg-text'
 import { CellGaps } from './cell-gaps'
 
 // we want circles slightly smaller than box to allow for borders
@@ -200,7 +203,7 @@ export function DotsSvg({
               : props.cells.values.color
 
           return (
-            <g key={`${ri}:${ci}`} transform={`translate(${x},${y})`}>
+            <SvgG key={`${ri}:${ci}`} pos={{ x: x, y: y }}>
               {/* Handle mouse events on transparent rect on top of circles to avoid 
               issues with small circles not triggering mouse events */}
               <rect
@@ -220,24 +223,20 @@ export function DotsSvg({
                   handleVariantLeave?.()
                 }}
               />
-              <circle
+              <SvgCircle
                 id={`${ri}:${ci}`}
                 key={`${ri}:${ci}`}
                 cx={cx}
                 cy={cy}
                 r={r}
                 fill={fill}
-                stroke={
-                  props.cells.border.show ? props.cells.border.value : 'none'
-                }
-                strokeWidth={
-                  props.cells.border.show ? props.cells.border.width : 0
-                }
+                sp={props.cells.border}
+
                 pointerEvents="none"
               />
 
               {!Number.isNaN(cellValue) && (
-                <text
+                <SvgText
                   x={cx}
                   y={cy}
                   fill={textColor}
@@ -248,9 +247,9 @@ export function DotsSvg({
                   //fontWeight={track.displayOptions.font.weight}
                 >
                   {formatNumber(cellValue, { dp: props.cells.values.dp })}
-                </text>
+                </SvgText>
               )}
-            </g>
+            </SvgG>
           )
         })
       })}

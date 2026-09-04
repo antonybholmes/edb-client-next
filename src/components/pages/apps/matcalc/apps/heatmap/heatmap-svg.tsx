@@ -320,6 +320,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
         {displayOptions.groups.show && groupRows.length > 0 && (
           <ColGroupsSvg
+            gaps={xgaps}
             colorMap={colColorMap}
             pos={{
               x: margin.left,
@@ -334,6 +335,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
         {displayOptions.labels.col.show && (
           <ColLabelsSvg
+            gaps={xgaps}
             leaves={colLeaves}
 
             colorMap={colColorMap}
@@ -394,7 +396,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
         {displayOptions.labels.row.show && (
           <RowLabelsSvg
             leaves={rowLeaves}
-
+            gaps={ygaps}
             pos={{
               x:
                 displayOptions.labels.row.position === 'left'

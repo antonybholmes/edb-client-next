@@ -133,6 +133,13 @@ export class CellGaps {
     return 0
   }
 
+  /**
+   * Returns the adjusted position of the cell
+   * at the given index, accounting for gaps.
+   *
+   * @param index
+   * @returns
+   */
   position(index: number): number {
     return this._positions[index]
   }
