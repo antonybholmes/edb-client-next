@@ -157,7 +157,7 @@ export interface IHeatMapSettings {
     cols: ICellGaps
   }
   padding: number
-  zoom: number
+  //zoom: number
   cmap: ColorMapName
   tooltip: {
     show: boolean
@@ -254,7 +254,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
     cols: { size: 5, indexes: [] },
   },
   padding: 10,
-  zoom: 1,
+  //zoom: 1,
   cmap: 'bwr-v2',
   cells: {
     values: {
