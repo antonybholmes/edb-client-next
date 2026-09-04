@@ -9,6 +9,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  MenuSeparator,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 
@@ -98,6 +99,15 @@ export function ColorMapMenuContent({
           </DropdownMenuPortal>
         </DropdownMenuSub>
       ))}
+      <MenuSeparator />
+      <DropdownMenuCheckboxItem
+        onClick={() => {
+          onChange(BWR_CMAP_V2)
+        }}
+        checked={cmap.id === BWR_CMAP_V2.id}
+      >
+        Reverse
+      </DropdownMenuCheckboxItem>
     </DropdownMenuContent>
   )
 }

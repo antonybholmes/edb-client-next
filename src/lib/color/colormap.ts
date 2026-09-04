@@ -114,6 +114,11 @@ export class ColorMap {
     return ret
   }
 
+  reverse(): ColorMap {
+    const reversedColors = [...this._cmap].reverse()
+    return new ColorMap(this._id, this._name + ' (Reversed)', reversedColors)
+  }
+
   /**
    * Returns the color stripped of the alpha channel.
    *
@@ -542,6 +547,78 @@ export const GREENS_CMAP: ColorMap = new ColorMap('greens', 'Greens', [
   '#00441b',
 ])
 
+export const YELLOWS_CMAP: ColorMap = new ColorMap('yellows', 'Yellows', [
+  '#FFFFE5',
+  '#FFFFD9',
+  '#FFFED0',
+  '#FFFDC6',
+  '#FFFDBD',
+  '#FFFDB3',
+  '#FFFCAA',
+  '#FFFBA0',
+  '#FFF997',
+  '#FFF78D',
+  '#FFF584',
+  '#FFF37A',
+  '#FFF171',
+  '#FEEF67',
+  '#FEED5E',
+  '#FEEB54',
+  '#FEE94B',
+  '#FEE741',
+  '#FEE538',
+  '#FEE32E',
+  '#FEE125',
+  '#FEDF1B',
+  '#FDDD12',
+  '#FCDB08',
+  '#FBD900',
+  '#FAD200',
+  '#F9CA00',
+  '#F8C300',
+  '#F7BB00',
+  '#F6B400',
+  '#F5AC00',
+])
+
+export const YELLOW_ORANGE_RED_CMAP: ColorMap = new ColorMap(
+  'yellow-orange-red',
+  'YlOrRd',
+  [
+    '#FFFFE5',
+    '#FFF7BC',
+    '#FFEFAD',
+    '#FEE9A0',
+    '#FEE395',
+    '#FEDC8A',
+    '#FED680',
+    '#FDCF75',
+    '#FDC96A',
+    '#FEC261',
+    '#FEBB57',
+    '#FEB34D',
+    '#FEAC43',
+    '#FEA539',
+    '#FE9E2F',
+    '#FD9627',
+    '#FC8E20',
+    '#FB8619',
+    '#FA7E12',
+    '#F9760B',
+    '#F46D05',
+    '#ED6403',
+    '#E65B02',
+    '#DF5202',
+    '#D84902',
+    '#D04002',
+    '#C83802',
+    '#C02F02',
+    '#B72702',
+    '#A91E01',
+    '#800026',
+  ]
+)
+
 //createColorMap({
 //  cmap: [
 //    { index: 0, rgba: [255, 255, 255, 1] },
@@ -602,6 +679,8 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
   [BLUES_CMAP.id]: BLUES_CMAP,
   [REDS_CMAP.id]: REDS_CMAP,
   [GREENS_CMAP.id]: GREENS_CMAP,
+  [YELLOWS_CMAP.id]: YELLOWS_CMAP,
+  [YELLOW_ORANGE_RED_CMAP.id]: YELLOW_ORANGE_RED_CMAP,
   //Tab10: TAB10_CMAP,
   //Tableu20: TABLEAU_20_CMAP,
   //Bright20: BRIGHT_20_CMAP,
@@ -613,15 +692,17 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
 
 export const COLOR_MAP_MENU = [
   {
+    label: 'Primary',
+    cmaps: [REDS_CMAP, BLUES_CMAP, GREENS_CMAP, YELLOWS_CMAP],
+  },
+  {
     label: 'Sequential',
     cmaps: [
       VIRIDIS_CMAP,
       PLASMA_CMAP,
       INFERNO_CMAP,
       MAGMA_CMAP,
-      REDS_CMAP,
-      BLUES_CMAP,
-      GREENS_CMAP,
+      YELLOW_ORANGE_RED_CMAP,
     ],
   },
   { label: 'Diverging', cmaps: [BWR_CMAP, BWR_CMAP_V2, GRAY_RED_CMAP] },
@@ -636,6 +717,7 @@ export type ColorMapName =
   | 'blues'
   | 'reds'
   | 'greens'
+  | 'yellows'
   | 'gray-red'
   | 'inferno'
   | 'plasma'

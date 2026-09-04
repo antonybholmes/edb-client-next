@@ -21,14 +21,13 @@ import { useHeatmapContext } from '../heatmap-provider'
 import { CellSettingsPanel } from './cell-settings'
 import { ColGroupsSettingsPanel } from './col-group-settings'
 import { ColLabelsSettingsPanel } from './col-labels-settings'
-import { ColTreeSettingsPanel } from './col-tree-settings'
 import { ColormapSettingsPanel } from './colormap-settings'
 import { DotLegendSettingsPanel } from './dot-legend-settings'
 import { GapSettingsPanel } from './gap-settings'
 import { LegendSettingsPanel } from './legend-settings'
 import { PlotSettingsPanel } from './plot-settings'
 import { RowLabelsSettingsPanel } from './row-labels-settings'
-import { RowTreeSettingsPanel } from './row-tree-settings'
+import { TreeSettingsPanel } from './tree-settings'
 
 export function HeatmapPropsPanel() {
   const { updatePlot } = useHistory()
@@ -90,11 +89,12 @@ export function HeatmapPropsPanel() {
         <LegendSettingsPanel />
         {plot.props.mode === 'dot' && <DotLegendSettingsPanel />}
         <ColormapSettingsPanel />
+        {(cf?.rowTree || cf?.colTree) && <TreeSettingsPanel />}
         <RowLabelsSettingsPanel />
-        {cf?.rowTree && <RowTreeSettingsPanel />}
+
         <ColLabelsSettingsPanel />
         <ColGroupsSettingsPanel />
-        {cf?.colTree && <ColTreeSettingsPanel />}
+        {/* {cf?.colTree && <ColTreeSettingsPanel />} */}
       </ScrollAccordion>
     </PropsPanel>
   )
