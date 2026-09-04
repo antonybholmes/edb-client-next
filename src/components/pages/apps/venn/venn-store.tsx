@@ -20,7 +20,7 @@ import { useVennSettings } from './venn-settings-store'
 
 export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
 
-const MIN_RADIUS = 0.2
+const MIN_RADIUS = 0.1
 
 export function getItems(text: UndefStr): string[] {
   if (!text) {
