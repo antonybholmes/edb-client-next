@@ -92,13 +92,15 @@ export interface IHeatMapSettings {
   border: IStrokeProps
   mode: HeatmapMode
   range: ILim
-  rowLabels: ILabelProps & {
-    position: LeftRightPos
-    showMetadata: boolean
-  }
-  colLabels: ILabelProps & {
-    position: TopBottomPos
-    isColored: boolean
+  labels: {
+    row: ILabelProps & {
+      position: LeftRightPos
+      showMetadata: boolean
+    }
+    col: ILabelProps & {
+      position: TopBottomPos
+      isColored: boolean
+    }
   }
   colorbar: {
     show: boolean
@@ -174,17 +176,19 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   mode: 'heatmap',
   title: { ...DEFAULT_BOLD_TEXT_PROPS, text: '', offset: 20 },
   actions: { show: true },
-  rowLabels: {
-    ...DEFAULT_TEXT_PROPS,
-    position: 'right',
-    width: 120,
-    showMetadata: true,
-  },
-  colLabels: {
-    ...DEFAULT_TEXT_PROPS,
-    position: 'top',
-    width: 100,
-    isColored: true,
+  labels: {
+    row: {
+      ...DEFAULT_TEXT_PROPS,
+      position: 'right',
+      width: 120,
+      showMetadata: true,
+    },
+    col: {
+      ...DEFAULT_TEXT_PROPS,
+      position: 'top',
+      width: 100,
+      isColored: true,
+    },
   },
   colorbar: {
     position: 'right',

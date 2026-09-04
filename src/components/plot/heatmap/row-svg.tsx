@@ -71,9 +71,9 @@ export function RowLabelsSvg({
   const halfH = blockSize.h / 2
   const rowMetaN = range(
     0,
-    props.rowLabels.showMetadata ? df.rowObs.shape[1] : 1
+    props.labels.row.showMetadata ? df.rowObs.shape[1] : 1
   )
-  const isLeft = props.rowLabels.position === 'left'
+  const isLeft = props.labels.row.position === 'left'
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
@@ -84,7 +84,7 @@ export function RowLabelsSvg({
             id={`row-label-${row}`}
             x={0}
             y={ri * blockSize.h + halfH}
-            font={props.rowLabels}
+            font={props.labels.row}
             dominantBaseline="central"
             textAnchor={isLeft ? 'end' : 'start'}
           >

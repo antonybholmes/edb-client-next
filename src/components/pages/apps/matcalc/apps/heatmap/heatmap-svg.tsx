@@ -89,8 +89,8 @@ function HeatMapSvgContent() {
   const dfMain = cf.df
 
   const rowLabelsMetaW =
-    displayOptions.rowLabels.width *
-    (displayOptions.rowLabels.showMetadata ? dfMain.rowObs.shape[1] : 1)
+    displayOptions.labels.row.width *
+    (displayOptions.labels.row.showMetadata ? dfMain.rowObs.shape[1] : 1)
 
   const margin: IMarginProps = useMemo(() => {
     const left =
@@ -100,14 +100,14 @@ function HeatMapSvgContent() {
       displayOptions.tree.row.position === 'left'
         ? displayOptions.tree.row.width + displayOptions.padding
         : 0) +
-      (displayOptions.rowLabels.show &&
-      displayOptions.rowLabels.position === 'left'
+      (displayOptions.labels.row.show &&
+      displayOptions.labels.row.position === 'left'
         ? rowLabelsMetaW + displayOptions.padding
         : 0)
 
     const right =
-      (displayOptions.rowLabels.show &&
-      displayOptions.rowLabels.position === 'right'
+      (displayOptions.labels.row.show &&
+      displayOptions.labels.row.position === 'right'
         ? rowLabelsMetaW + displayOptions.padding
         : 0) +
       (displayOptions.colorbar.show &&
@@ -131,9 +131,9 @@ function HeatMapSvgContent() {
       displayOptions.tree.col.position === 'top'
         ? displayOptions.tree.col.width + displayOptions.padding
         : 0) +
-      (displayOptions.colLabels.show &&
-      displayOptions.colLabels.position === 'top'
-        ? displayOptions.colLabels.width + displayOptions.padding
+      (displayOptions.labels.col.show &&
+      displayOptions.labels.col.position === 'top'
+        ? displayOptions.labels.col.width + displayOptions.padding
         : 0) +
       (displayOptions.groups.show && groupRows.length > 0
         ? groupRows.length *
@@ -142,7 +142,7 @@ function HeatMapSvgContent() {
 
     const bottom =
       displayOptions.padding +
-      displayOptions.colLabels.width +
+      displayOptions.labels.col.width +
       (displayOptions.legend.show && displayOptions.legend.position === 'bottom'
         ? 2 * legendBlockSize + displayOptions.padding
         : 0) +
@@ -250,8 +250,8 @@ function HeatMapSvgContent() {
         margin.left +
         innerWidth +
         displayOptions.padding +
-        (displayOptions.rowLabels.show &&
-        displayOptions.rowLabels.position === 'right'
+        (displayOptions.labels.row.show &&
+        displayOptions.labels.row.position === 'right'
           ? rowLabelsMetaW
           : 0) +
         (cf.rowTree &&
@@ -335,7 +335,7 @@ function HeatMapSvgContent() {
           />
         )}
 
-        {displayOptions.colLabels.show && (
+        {displayOptions.labels.col.show && (
           <ColLabelsSvg
             leaves={colLeaves}
 
@@ -343,7 +343,7 @@ function HeatMapSvgContent() {
             pos={{
               x: margin.left,
               y:
-                displayOptions.colLabels.position === 'top'
+                displayOptions.labels.col.position === 'top'
                   ? margin.top -
                     displayOptions.padding -
                     (displayOptions.groups.show && groupRows.length > 0
@@ -385,8 +385,8 @@ function HeatMapSvgContent() {
                   margin.left +
                   innerWidth +
                   displayOptions.padding +
-                  (displayOptions.rowLabels.show &&
-                  displayOptions.rowLabels.position === 'right'
+                  (displayOptions.labels.row.show &&
+                  displayOptions.labels.row.position === 'right'
                     ? rowLabelsMetaW + displayOptions.padding
                     : 0),
                 y: margin.top,
@@ -394,13 +394,13 @@ function HeatMapSvgContent() {
             />
           )}
 
-        {displayOptions.rowLabels.show && (
+        {displayOptions.labels.row.show && (
           <RowLabelsSvg
             leaves={rowLeaves}
 
             pos={{
               x:
-                displayOptions.rowLabels.position === 'left'
+                displayOptions.labels.row.position === 'left'
                   ? margin.left - displayOptions.padding
                   : margin.left + innerWidth + displayOptions.padding,
               y: margin.top,
@@ -473,9 +473,9 @@ function HeatMapSvgContent() {
                   margin.top +
                   innerHeight +
                   displayOptions.padding +
-                  (displayOptions.colLabels.show &&
-                  displayOptions.colLabels.position === 'bottom'
-                    ? displayOptions.colLabels.width + displayOptions.padding
+                  (displayOptions.labels.col.show &&
+                  displayOptions.labels.col.position === 'bottom'
+                    ? displayOptions.labels.col.width + displayOptions.padding
                     : 0) +
                   (displayOptions.legend.show &&
                   displayOptions.legend.position === 'bottom'
@@ -496,9 +496,9 @@ function HeatMapSvgContent() {
                   margin.top +
                   innerHeight +
                   displayOptions.padding +
-                  (displayOptions.colLabels.show &&
-                  displayOptions.colLabels.position === 'bottom'
-                    ? displayOptions.colLabels.width + displayOptions.padding
+                  (displayOptions.labels.col.show &&
+                  displayOptions.labels.col.position === 'bottom'
+                    ? displayOptions.labels.col.width + displayOptions.padding
                     : 0),
               }}
               groupRows={groupRows}
@@ -545,9 +545,9 @@ function HeatMapSvgContent() {
                   margin.top +
                   innerHeight +
                   3 * displayOptions.padding +
-                  (displayOptions.colLabels.show &&
-                  displayOptions.colLabels.position === 'bottom'
-                    ? displayOptions.colLabels.width + displayOptions.padding
+                  (displayOptions.labels.col.show &&
+                  displayOptions.labels.col.position === 'bottom'
+                    ? displayOptions.labels.col.width + displayOptions.padding
                     : 0) +
                   (displayOptions.legend.show &&
                   displayOptions.legend.position === 'bottom'

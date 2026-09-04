@@ -87,13 +87,6 @@ export function ColLabelsSvg({
   const id = groupRows[0]?.id
 
   const blockSize = props.blockSize
-  const halfW = blockSize.w / 2
-
-  const xbreaks = [
-    0,
-    ...numSort([...new Set(props.gaps.cols.indexes)]),
-    leaves.length,
-  ]
 
   const gElems: ReactElement[] = []
 
@@ -107,13 +100,13 @@ export function ColLabelsSvg({
         key={ci}
         transform={`translate(${x}, 0) rotate(270)`}
         fill={
-          props.colLabels.isColored
-            ? (colorMap?.get(id)?.get(col) ?? props.colLabels.font.fill.value)
+          props.labels.col.isColored
+            ? (colorMap?.get(id)?.get(col) ?? props.labels.col.font.fill.value)
             : undefined
         }
         dominantBaseline="central"
-        textAnchor={props.colLabels.position === 'top' ? 'start' : 'end'}
-        font={props.colLabels}
+        textAnchor={props.labels.col.position === 'top' ? 'start' : 'end'}
+        font={props.labels.col}
       >
         {df.colName(col)}
       </SvgText>

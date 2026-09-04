@@ -57,12 +57,12 @@ export function ColLabelsSettingsPanel() {
               fonts={[
                 {
                   title: 'Font',
-                  textProps: displayProps.colLabels,
+                  textProps: displayProps.labels.col,
                   update: (f) => {
                     updatePlot(
                       produce(plot, (draft) => {
-                        draft.props.colLabels.font = f.font
-                        draft.props.colLabels.show = f.show
+                        draft.props.labels.col.font = f.font
+                        draft.props.labels.col.show = f.show
                       })
                     )
                   },
@@ -77,32 +77,27 @@ export function ColLabelsSettingsPanel() {
       <AccordionContent>
         <PropRow title="Position">
           <RadioGroup
-            value={displayProps.colLabels.position}
-            disabled={!displayProps.colLabels.show}
+            value={displayProps.labels.col.position}
+            disabled={!displayProps.labels.col.show}
             onValueChange={(v) =>
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.colLabels.position = v as TopBottomPos
+                  draft.props.labels.col.position = v as TopBottomPos
                 })
               )
             }
             className="flex flex-row justify-start gap-x-1"
           >
-            {/* <SideRadioGroupItem
-                      value="Off"
-                      currentValue={displayProps.colLabels.position}
-                      className="w-5"
-                    /> */}
             <SideRadioGroupItem
-              disabled={!displayProps.colLabels.show}
-              value="Top"
-              currentValue={displayProps.colLabels.position}
+              disabled={!displayProps.labels.col.show}
+              value="top"
+              currentValue={displayProps.labels.col.position}
               className="w-5.5"
             />
             <SideRadioGroupItem
-              disabled={!displayProps.colLabels.show}
-              value="Bottom"
-              currentValue={displayProps.colLabels.position}
+              disabled={!displayProps.labels.col.show}
+              value="bottom"
+              currentValue={displayProps.labels.col.position}
               className="w-5.5"
             />
           </RadioGroup>
@@ -111,15 +106,15 @@ export function ColLabelsSettingsPanel() {
         <PropRow title="Width">
           <NumericalInput
             id="col-label-size"
-            value={displayProps.colLabels.width}
-            disabled={!displayProps.colLabels.show}
+            value={displayProps.labels.col.width}
+            disabled={!displayProps.labels.col.show}
             limit={[1, 200]}
             placeholder="Column label size..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.colLabels.width = v
+                  draft.props.labels.col.width = v
                 })
               )
             }}
@@ -128,12 +123,12 @@ export function ColLabelsSettingsPanel() {
 
         <CheckPropRow
           title="Color By Group"
-          disabled={!displayProps.colLabels.show}
-          checked={displayProps.colLabels.isColored}
+          disabled={!displayProps.labels.col.show}
+          checked={displayProps.labels.col.isColored}
           onCheckedChange={(v) =>
             updatePlot(
               produce(plot, (draft) => {
-                draft.props.colLabels.isColored = v
+                draft.props.labels.col.isColored = v
               })
             )
           }

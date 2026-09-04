@@ -180,6 +180,11 @@ export abstract class BaseDataFrame {
    */
   abstract map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][]
 
+  /**
+   *  Apply a function to all data values in the matrix and return a new dataframe.
+   * @param f
+   * @returns
+   */
   apply(
     f: (v: SeriesData, row: number, col: number) => SeriesData
   ): BaseDataFrame {
