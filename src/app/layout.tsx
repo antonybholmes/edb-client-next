@@ -1,11 +1,11 @@
 //import { Geist, Geist_Mono } from "next/font/google";
 
-import { THEME_KEY, ThemeProvider } from '@/components/edb/theme'
-import { BaseCol } from '@/components/layout/base-col'
+import { THEME_KEY } from '@/components/edb/theme'
 //import { Auth0Provider } from '@auth0/nextjs-auth0/client'
 import { cn } from '@/lib/shadcn-utils'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
+import { ClientLayout } from './client-layout'
 import './globals.css'
 
 const primaryFont = Geist({
@@ -96,14 +96,7 @@ export default function Layout({
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}
 
-        <ThemeProvider>
-          {/* <Auth0Provider> */}
-
-          {/* Added for base-ui to render dialogs */}
-          <BaseCol className="root isolate grow">{children}</BaseCol>
-
-          {/* </Auth0Provider> */}
-        </ThemeProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   )

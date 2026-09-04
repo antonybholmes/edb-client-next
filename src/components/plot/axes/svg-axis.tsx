@@ -1,14 +1,15 @@
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
-import { COLOR_BLACK } from '@/lib/color/color'
 import { useEdbSettings } from '../../edb/edb-settings'
 import { SvgLine } from '../svg-line'
 import { IAxisProps } from '../svg-props'
 import { SvgText } from '../svg-text'
+
 import {
   AxisBottomTicksSvg,
   AxisLeftTicksSvg,
   AxisRightTicksSvg,
+  AxisTopTicksSvg,
   getAxisProps,
 } from './svg-axis-ticks'
 
@@ -21,13 +22,16 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
   )
 
   const titleOffset =
-    tickOffset + tickSize + tickLabelOffset + settings.plots.axes.y.title.offset
+    tickOffset +
+    tickSize +
+    tickLabelOffset +
+    settings.plots.axes.y.style.title.offset
 
-  const strokeWidth = settings.plots.axes.y.line.width
+  const strokeWidth = settings.plots.axes.y.style.line.width
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 
@@ -39,18 +43,16 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
       <SvgLine
         y1={-0.5 * strokeWidth}
         y2={ax.length + 0.5 * strokeWidth}
-        s={settings.plots.axes.y.line}
+        s={settings.plots.axes.y.style.line}
       />
 
       <AxisLeftTicksSvg ax={ax} />
 
-      {settings.plots.axes.y.title.show && ax && (
+      {axisProps.style.title.show && _title && (
         <SvgText
-          transform={`translate(-${titleOffset}, ${
-            0.5 * ax.length
-          }) rotate(270)  `}
+          transform={`translate(-${titleOffset}, ${0.5 * ax.length}) rotate(270)  `}
           textAnchor="middle"
-          font={settings.plots.axes.y.title}
+          font={axisProps.style.title}
         >
           {_title}
         </SvgText>
@@ -72,11 +74,11 @@ export function AxisRightSvg({
 
   const titleX = tickOffset + tickSize + tickLabelOffset + titleOffset
 
-  const strokeWidth = settings.plots.axes.y.line.width
+  const strokeWidth = axisProps.style.line.width
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 
@@ -88,16 +90,16 @@ export function AxisRightSvg({
       <SvgLine
         y1={-0.5 * strokeWidth}
         y2={ax.length + 0.5 * strokeWidth}
-        s={settings.plots.axes.y.line}
+        s={axisProps.style.line}
       />
 
       <AxisRightTicksSvg ax={ax} axis={axis} />
 
-      {settings.plots.axes.y.title.show && ax && (
+      {axisProps.style.title.show && ax && (
         <SvgText
           transform={`translate(-${titleX}, ${0.5 * ax.length}) rotate(270)`}
           textAnchor="middle"
-          font={axisProps.title}
+          font={axisProps.style.title}
         >
           {_title}
         </SvgText>
@@ -121,11 +123,16 @@ export function AxisBottomSvg({
 
   // less space required for bottom axis title since we only need
   // to account for font height and tick mark
-  const titleOffset = tickOffset + tickSize + axisProps.title.offset
+  const titleOffset =
+    tickOffset +
+    tickSize +
+    (axisProps.ticks.major.show || axisProps.ticks.minor.show
+      ? tickOffset + tickSize + axisProps.style.title.offset
+      : 0)
 
   const _title = title ?? ax.title
 
-  if (!axisProps.show) {
+  if (!axisProps.style.show) {
     return null
   }
 
@@ -134,22 +141,23 @@ export function AxisBottomSvg({
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {axisProps.line.show && (
+      {axisProps.style.line.show && (
         <SvgLine
-          x1={-0.5 * axisProps.line.width}
-          x2={ax.length + 0.5 * axisProps.line.width}
+          x1={-0.5 * axisProps.style.line.width}
+          x2={ax.length + 0.5 * axisProps.style.line.width}
 
-          s={axisProps.line}
+          s={axisProps.style.line}
         />
       )}
 
       <AxisBottomTicksSvg ax={ax} />
 
-      {axisProps.title.show && _title && (
+      {axisProps.style.title.show && _title && (
         <SvgText
           transform={`translate(${0.5 * ax.length}, ${titleOffset})`}
           textAnchor="middle"
-          font={axisProps.title}
+          dominantBaseline="hanging"
+          font={axisProps.style.title}
         >
           {_title}
         </SvgText>
@@ -160,67 +168,51 @@ export function AxisBottomSvg({
 
 export function AxisTopSvg({
   ax,
-  tickSize = 5,
-  strokeWidth = 2,
-  color = COLOR_BLACK,
   pos = { ...ZERO_POS },
+  axis = 'x',
   title,
-  titleOffset,
-  font,
-  labelFont: titleFont,
 }: IAxisProps) {
+  const { settings } = useEdbSettings()
+
+  const { axisProps, tickSize, tickOffset } = getAxisProps(
+    ax,
+    settings.plots.axes[axis]
+  )
+
+  const titleOffset =
+    (axisProps.ticks.major.show || axisProps.ticks.minor.show
+      ? tickOffset + tickSize
+      : 0) + axisProps.style.title.offset
+
   const _title = title ?? ax.title
-  const _titleOffset = titleOffset ?? tickSize * 8
+
+  if (!axisProps.style.show) {
+    return null
+  }
 
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      <SvgLine
-        x2={ax.length - 0.5 * strokeWidth}
-        stroke={color}
-        strokeWidth={strokeWidth}
-      />
+      {axisProps.style.line.show && (
+        <SvgLine
+          x2={ax.length - 0.5 * axisProps.style.line.width}
+          s={axisProps.style.line}
+        />
+      )}
 
-      {_title && (
+      <AxisTopTicksSvg ax={ax} />
+
+      {axisProps.style.title.show && _title && (
         <SvgText
-          transform={`translate(${0.5 * ax.length}, ${-_titleOffset})`}
+          transform={`translate(${0.5 * ax.length}, ${-titleOffset})`}
           textAnchor="middle"
-          font={titleFont}
+          font={axisProps.style.title}
         >
           {_title}
         </SvgText>
       )}
-
-      <g>
-        {ax.ticks.map((tick, ticki) => {
-          return (
-            <SvgLine
-              y1={-tickSize}
-              y2={0.5 * strokeWidth}
-              stroke={color}
-              transform={`translate(${ax.domainToRange(tick.v)}, 0)`}
-              key={ticki}
-              strokeWidth={strokeWidth}
-            />
-          )
-        })}
-      </g>
-
-      <g transform={`translate(0, -${tickSize * 4})`}>
-        {ax.ticks.map((tick, ticki) => (
-          <SvgText
-            key={ticki}
-            x={ax.domainToRange(tick.v)}
-            dominantBaseline="hanging"
-            textAnchor="middle"
-            font={font}
-          >
-            {tick.label}
-          </SvgText>
-        ))}
-      </g>
     </g>
   )
 }

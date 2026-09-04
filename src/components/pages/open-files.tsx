@@ -306,7 +306,7 @@ export async function onTextFileChange(
  * @param result
  * @returns
  */
-export async function onTextFilePaste(
+export async function pasteTextAsFiles(
   text: string,
   result: (res: TextFileResult) => void
 ) {

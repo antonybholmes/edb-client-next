@@ -11,7 +11,7 @@ import { SignIn } from '@/components/pages/account/auth/passwordless/signin'
 import { CenterLayout } from '@/layouts/center-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
@@ -74,8 +74,8 @@ export function SignInPage() {
 
 export function SignInQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignInPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

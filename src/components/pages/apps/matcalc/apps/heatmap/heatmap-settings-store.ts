@@ -4,6 +4,7 @@ import { ColorMapName } from '@/lib/color/colormap'
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_BLACK } from '@/lib/color/color'
 
+import { ICellGaps } from '@/components/plot/heatmap/cell-gaps'
 import {
   ColorBarPos,
   DEFAULT_BOLD_FONT_PROPS,
@@ -58,7 +59,7 @@ export interface ITreeProps {
 
 export const DEFAULT_TREE_PROPS: ITreeProps = {
   show: true,
-  width: 100,
+  width: 75,
   stroke: { ...DEFAULT_STROKE_PROPS },
 }
 
@@ -102,15 +103,17 @@ export interface IHeatMapSettings {
   colorbar: {
     show: boolean
     size: IDim
-    width: number
+    //width: number
     position: ColorBarPos
     stroke: IStrokeProps
   }
-  rowTree: ITreeProps & {
-    position: LeftRightPos
-  }
-  colTree: ITreeProps & {
-    position: TopBottomPos
+  tree: {
+    row: ITreeProps & {
+      position: LeftRightPos
+    }
+    col: ITreeProps & {
+      position: TopBottomPos
+    }
   }
   legend: {
     show: boolean
@@ -147,6 +150,10 @@ export interface IHeatMapSettings {
     border: IStrokeProps
     labels: ITextProps
   }
+  gaps: {
+    rows: ICellGaps
+    cols: ICellGaps
+  }
   padding: number
   zoom: number
   cmap: ColorMapName
@@ -176,13 +183,13 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   colLabels: {
     ...DEFAULT_TEXT_PROPS,
     position: 'top',
-    width: 150,
+    width: 100,
     isColored: true,
   },
   colorbar: {
     position: 'right',
     size: { ...DEFAULT_COLORBAR_SIZE },
-    width: 100,
+    //width: 100,
     show: true,
     stroke: { ...DEFAULT_STROKE_PROPS },
   },
@@ -231,10 +238,16 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
     },
     useOriginalValuesForSizes: true,
   },
-  rowTree: { ...DEFAULT_TREE_PROPS, position: 'left' },
-  colTree: {
-    ...DEFAULT_TREE_PROPS,
-    position: 'top',
+  tree: {
+    row: { ...DEFAULT_TREE_PROPS, position: 'left' },
+    col: {
+      ...DEFAULT_TREE_PROPS,
+      position: 'top',
+    },
+  },
+  gaps: {
+    rows: { size: 5, indexes: [] },
+    cols: { size: 5, indexes: [] },
   },
   padding: 10,
   zoom: 1,

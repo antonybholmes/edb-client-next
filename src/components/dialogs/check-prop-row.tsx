@@ -1,15 +1,15 @@
 import { cn } from '@/lib/shadcn-utils'
 import type { ReactNode } from 'react'
-import { BaseRow } from '../layout/base-row'
+import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
-import { type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
-import { Switch } from '../shadcn/ui/themed/v2/switch'
+import { Checkbox, type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
 import { DialogCardInfo } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {
   title?: ReactNode
   labelClassName?: string
   h?: string
+  gap?: string
   info?: string
 }
 
@@ -20,49 +20,52 @@ export function CheckPropRow({
   onCheckedChange = () => {},
   disabled = false,
   info,
+  gap = 'gap-x-2',
   h = 'min-h-6',
   className = '',
   children,
 }: IProps) {
   return (
-    <BaseRow
+    <BaseCol
       className={cn(
-        'gap-x-4 justify-between',
-        info ? 'items-start pb-1' : 'items-center',
-        h,
+        'gap-x-4 gap-y-1 justify-between',
+        //info ? 'items-start pb-1' : 'items-center',
+
         className
       )}
     >
-      {/* <Checkbox
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-        disabled={disabled}
- 
-        title={tooltip}
-      >
-        {title}
+      <VCenterRow className={cn('grow justify-between', gap, h)}>
+        <Checkbox
+          checked={checked}
+          onCheckedChange={onCheckedChange}
+          disabled={disabled}
+          title={tooltip}
+          className={cn({ 'font-medium': info })}
+        >
+          {title}
+        </Checkbox>
 
-        {info && <InfoHoverCard>{info}</InfoHoverCard>}
-      </Checkbox> */}
-
-      {title && (
+        {/* {title && (
         <VCenterRow className="grow">
           <span>{title}</span>
           {info && <DialogCardInfo>{info}</DialogCardInfo>}
         </VCenterRow>
-      )}
+      )} */}
 
-      <VCenterRow className="gap-x-1.5 justify-end">
-        {children && children}
+        {children && (
+          <VCenterRow className="gap-x-1.5 justify-end">{children}</VCenterRow>
+        )}
+      </VCenterRow>
 
-        <Switch
+      {info && <DialogCardInfo>{info}</DialogCardInfo>}
+
+      {/* <Switch
           checked={checked}
           onCheckedChange={onCheckedChange}
           disabled={disabled}
 
           title={tooltip}
-        />
-      </VCenterRow>
-    </BaseRow>
+        />*/}
+    </BaseCol>
   )
 }

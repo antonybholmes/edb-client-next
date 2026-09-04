@@ -119,7 +119,7 @@ export function Autocomplete({
         data-open={_isOpen ? true : undefined}
         //data-focus={focus}
         className={`absolute  
-          rounded-theme border border-border/50 data-open:shadow-lg bg-background
+          rounded-lg border border-border/50 data-open:shadow-lg bg-background
           w-full min-h-9 data-open:pt-11 data-open:pb-3 
           z-10 data-open:z-30 top-0 
           overflow-hidden`}

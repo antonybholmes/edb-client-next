@@ -41,7 +41,7 @@ import { ReloadIcon } from '@/icons/reload-icon'
 import { Textarea } from '@/themed/textarea'
 
 import { textJoin } from '@/lib/text/text'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
@@ -586,8 +586,8 @@ export function MyAccountPage() {
 
 export function MyAccountQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <MyAccountPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

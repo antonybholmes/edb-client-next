@@ -1,5 +1,5 @@
-import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
@@ -15,7 +15,7 @@ import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
 import { useState } from 'react'
 
-export function TickPropsPopover({
+export function TickSettingsPropsPopover({
   axis,
   which,
 }: {
@@ -43,7 +43,7 @@ export function TickPropsPopover({
       />
 
       <PopoverContent className="gap-y-1">
-        <CheckPropRow
+        <SwitchPropRow
           title={title}
           className="font-bold"
           checked={settings.plots.axes[axis].ticks[which].show}
@@ -74,7 +74,7 @@ export function TickPropsPopover({
               },
             ]}
           />
-        </CheckPropRow>
+        </SwitchPropRow>
 
         <PropRow title="Size / Offset">
           <NumericalInput

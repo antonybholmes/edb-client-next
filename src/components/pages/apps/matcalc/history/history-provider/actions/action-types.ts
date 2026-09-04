@@ -1,5 +1,6 @@
 import { ITextFileOpen } from '@/components/pages/open-files'
-import { AxisRecord } from '@/components/plot/axes/axis'
+
+import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'

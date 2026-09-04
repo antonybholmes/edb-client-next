@@ -1,5 +1,8 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import type {
+  HeatmapMode,
+  IHeatMapSettings,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import {
   AccordionContent,
@@ -14,13 +17,18 @@ import { produce } from 'immer'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { Circle, Square } from 'lucide-react'
 import { useHistory } from '../../../history/history-provider/history-provider'
-import { HeatMapPlot } from '../../../history/history-provider/history-types'
+import { IHeatMapPlot } from '../../../history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export interface PlotSettingsPanelProps {
   displayProps: IHeatMapSettings
-  plot: HeatMapPlot
+  plot: IHeatMapPlot
   plotAddr: string
   updatePlot: (plot: any, options: { file: string }) => void
 }
@@ -28,6 +36,8 @@ export interface PlotSettingsPanelProps {
 export function PlotSettingsPanel() {
   const { displayProps, plot } = useHeatmapContext()
   const { updatePlot } = useHistory()
+
+  console.log(displayProps, plot)
 
   return (
     <AccordionItem value="plot">
@@ -168,6 +178,29 @@ export function PlotSettingsPanel() {
               title="Border Outline"
             />
           </VCenterRow>
+        </PropRow>
+
+        <PropRow title="Style">
+          <ToggleGroup
+            value={[displayProps.mode]}
+            onValueChange={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.mode = v[0] as HeatmapMode
+                })
+              )
+            }}
+            className="gap-x-0.5"
+            variant="outline"
+            pad="none"
+          >
+            <GroupToggle value="heatmap" title="Heatmap">
+              <Square size={16} />
+            </GroupToggle>
+            <GroupToggle value="dot" title="Dot">
+              <Circle size={16} />
+            </GroupToggle>
+          </ToggleGroup>
         </PropRow>
 
         <CheckPropRow

@@ -6,7 +6,6 @@ import { type IVolcanoDisplayOptions } from '@/components/pages/apps/matcalc/app
 import { PropsPanel } from '@/components/props-panel'
 import { TEXT_CLEAR } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { textToLines } from '@/lib/text/lines'
 import { NumericalInput } from '@/themed/numerical-input'
 import {
@@ -17,6 +16,7 @@ import {
 } from '@/themed/v2/accordion'
 import { Button } from '@/themed/v2/button'
 
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
@@ -168,7 +168,7 @@ export function VolcanoPropsPanel() {
               />
             </PropRow>
 
-            <SwitchPropRow
+            <CheckPropRow
               title="Border"
               checked={displayProps.border.show}
               onCheckedChange={(v) => {
@@ -192,14 +192,14 @@ export function VolcanoPropsPanel() {
                   },
                 ]}
               />
-            </SwitchPropRow>
+            </CheckPropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="fold-change">
           <AccordionTrigger>Fold change</AccordionTrigger>
           <AccordionContent>
-            <SwitchPropRow
+            <CheckPropRow
               title="Filter"
               checked={settings.logFc.show}
               onCheckedChange={(v) => {
@@ -224,7 +224,7 @@ export function VolcanoPropsPanel() {
                   )
                 }}
               />
-            </SwitchPropRow>
+            </CheckPropRow>
 
             <PropRow title="Highlight">
               <FillButton
@@ -265,7 +265,7 @@ export function VolcanoPropsPanel() {
         <AccordionItem value="p-value">
           <AccordionTrigger>P-value</AccordionTrigger>
           <AccordionContent>
-            <SwitchPropRow
+            <CheckPropRow
               title="Threshold"
               checked={settings.pvalue.show}
               onCheckedChange={(v) => {
@@ -306,9 +306,9 @@ export function VolcanoPropsPanel() {
               >
                 <SelectItem value={5}>5%</SelectItem>
               </SelectList> */}
-            </SwitchPropRow>
+            </CheckPropRow>
 
-            <SwitchPropRow
+            <CheckPropRow
               title="Line"
               checked={settings.pvalue.line.show}
               onCheckedChange={(v) => {
@@ -326,7 +326,7 @@ export function VolcanoPropsPanel() {
           <AccordionTrigger>Labels</AccordionTrigger>
           <AccordionContent>
             <BaseCol className="gap-y-1">
-              <SwitchPropRow
+              <CheckPropRow
                 title="Auto label"
                 checked={settings.labels.auto}
                 onCheckedChange={(v) => {

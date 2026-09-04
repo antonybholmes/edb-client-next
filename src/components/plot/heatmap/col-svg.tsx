@@ -4,15 +4,18 @@ import type { IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
 import { useHeatmapContext } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-provider'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_WHITE } from '@/lib/color/color'
+import { numSort } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { ReactElement } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgText } from '../svg-text'
+import { CellGaps } from './cell-gaps'
 
 export interface ITreeSvgProps {
   tree: IClusterTree
   width: number
   height: number
+  gaps: CellGaps
   props: IHeatMapSettings
   pos?: IPos
 }
@@ -21,32 +24,43 @@ export function ColTreeTopSvg({
   tree,
   width,
   height,
+  gaps,
   props,
   pos = { ...ZERO_POS },
 }: ITreeSvgProps) {
+  const gElems: ReactElement[] = []
+
+  const points = range(4)
+
+  for (let [ri, branch] of tree.coords.entries()) {
+    const p = points.map((i) => {
+      const x = branch.coords[i]!.x * width
+
+      return {
+        x: x + gaps.offset(x),
+        y: height - branch.coords[i]!.y * height,
+      }
+    })
+
+    gElems.push(
+      <path
+        key={ri}
+        d={`M ${p[0]!.x},${p[0]!.y} L ${p[1]!.x},${p[1]!.y} L ${p[2]!.x},${p[2]!.y} L ${p[3]!.x},${p[3]!.y}`}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        stroke={props.tree.col.stroke.value}
+        strokeWidth={props.tree.col.stroke.width}
+      />
+    )
+  }
+
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {tree.coords.map((coords, ri) => {
-        const p = range(4).map((i) => ({
-          x: coords[i]!.x * width,
-          y: height - coords[i]!.y * height,
-        }))
-
-        return (
-          <path
-            key={ri}
-            d={`M ${p[0]!.x},${p[0]!.y} L ${p[1]!.x},${p[1]!.y} L ${p[2]!.x},${p[2]!.y} L ${p[3]!.x},${p[3]!.y}`}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            stroke={props.colTree.stroke.value}
-            strokeWidth={props.colTree.stroke.width}
-          />
-        )
-      })}
+      {gElems}
     </g>
   )
 }
@@ -75,30 +89,40 @@ export function ColLabelsSvg({
   const blockSize = props.blockSize
   const halfW = blockSize.w / 2
 
-  return (
-    <g transform={`translate(${pos.x}, ${pos.y})`}>
-      {leaves.map((col, ci) => {
-        const x = ci * blockSize.w + halfW
-        return (
-          <SvgText
-            key={ci}
-            transform={`translate(${x}, 0) rotate(270)`}
-            fill={
-              props.colLabels.isColored
-                ? (colorMap?.get(id)?.get(col) ??
-                  props.colLabels.font.fill.value)
-                : undefined
-            }
-            dominantBaseline="central"
-            textAnchor={props.colLabels.position === 'top' ? 'start' : 'end'}
-            font={props.colLabels}
-          >
-            {df.colName(col)}
-          </SvgText>
-        )
-      })}
-    </g>
-  )
+  const xbreaks = [
+    0,
+    ...numSort([...new Set(props.gaps.cols.indexes)]),
+    leaves.length,
+  ]
+
+  const gElems: ReactElement[] = []
+
+  let x = blockSize.w / 2
+
+  for (const [ci, col] of leaves.entries()) {
+    x += props.gaps.cols.indexes.includes(ci) ? props.gaps.cols.size : 0
+
+    gElems.push(
+      <SvgText
+        key={ci}
+        transform={`translate(${x}, 0) rotate(270)`}
+        fill={
+          props.colLabels.isColored
+            ? (colorMap?.get(id)?.get(col) ?? props.colLabels.font.fill.value)
+            : undefined
+        }
+        dominantBaseline="central"
+        textAnchor={props.colLabels.position === 'top' ? 'start' : 'end'}
+        font={props.colLabels}
+      >
+        {df.colName(col)}
+      </SvgText>
+    )
+
+    x += blockSize.w
+  }
+
+  return <g transform={`translate(${pos.x}, ${pos.y})`}>{gElems}</g>
 }
 
 export function ColGroupsSvg({
@@ -115,6 +139,12 @@ export function ColGroupsSvg({
 
   const blockSize = props.blockSize
 
+  const xbreaks = [
+    0,
+    ...numSort([...new Set(props.gaps.cols.indexes)]),
+    leaves.length,
+  ]
+
   const elems: ReactElement[] = []
   let y = 0
 
@@ -125,6 +155,8 @@ export function ColGroupsSvg({
 
     for (const [ci, col] of leaves.entries()) {
       const fill: string = colorMap?.get(gr.id)?.get(col) ?? COLOR_WHITE
+
+      x += props.gaps.cols.indexes.includes(ci) ? props.gaps.cols.size : 0
 
       gElems.push(
         <rect
@@ -145,26 +177,42 @@ export function ColGroupsSvg({
     }
 
     if (props.groups.border.show) {
-      gElems.push(
-        <rect
-          key={`group-border:${gri}`}
-          x={0}
-          y={0}
-          width={leaves.length * blockSize.w}
-          height={props.groups.height}
-          fill="none"
-          stroke={props.groups.border.value}
-          strokeWidth={props.groups.border.width}
-          shapeRendering={SVG_CRISP_EDGES}
-        />
-      )
+      let x1 = xbreaks[0] * blockSize.w
+      let x2 = 0
+      let w = 0
+
+      for (let b = 0; b < xbreaks.length - 1; b++) {
+        w = (xbreaks[b + 1] - xbreaks[b]) * blockSize.w
+
+        x2 = x1 + w
+
+        gElems.push(
+          <rect
+            key={`group-border:${gri}:${b}`}
+            x={x1}
+            y={0}
+            width={w}
+            height={props.groups.height}
+            fill="none"
+            stroke={props.groups.border.value}
+            strokeWidth={props.groups.border.width}
+            shapeRendering={SVG_CRISP_EDGES}
+          />
+        )
+
+        x1 = x2 + props.gaps.cols.size
+      }
     }
 
     if (props.groups.labels.show) {
       gElems.push(
         <SvgText
           key={`group-row-name:${gri}`}
-          x={leaves.length * blockSize.w + props.padding}
+          x={
+            leaves.length * blockSize.w +
+            props.gaps.cols.indexes.length * props.gaps.cols.size +
+            props.padding
+          }
           y={props.groups.height / 2}
           font={props.groups.labels}
         >

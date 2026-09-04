@@ -3,7 +3,7 @@
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
 import { useEdbSession } from '@/components/edb/auth/session'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useAuth } from '@clerk/react'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'
@@ -53,8 +53,8 @@ export function SignInCallbackPage() {
 
 export function SignInCallbackQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignInCallbackPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

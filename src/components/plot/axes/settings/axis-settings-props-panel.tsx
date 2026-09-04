@@ -1,18 +1,18 @@
-import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
-import { TickPropsPopover } from './tick-props-popover'
+import { TickSettingsPropsPopover } from './tick-settings-props-popover'
 
-export function AxisPropsPanel({ axis }: { axis: AxisType }) {
+export function AxisSettingsPropsPanel({ axis }: { axis: AxisType }) {
   const { settings, updateSettings } = useEdbSettings()
 
   return (
     <>
-      <CheckPropRow
+      <SwitchPropRow
         title={`${capitalCase(axis)}-Axis`} //{`${capitalCase(axis)}-Axis`}
         className="font-bold"
         checked={settings.plots.axes[axis].show}
@@ -41,11 +41,11 @@ export function AxisPropsPanel({ axis }: { axis: AxisType }) {
             },
           ]}
         />
-      </CheckPropRow>
+      </SwitchPropRow>
 
       <PropRow title="Ticks">
-        <TickPropsPopover axis={axis} which="major" />
-        <TickPropsPopover axis={axis} which="minor" />
+        <TickSettingsPropsPopover axis={axis} which="major" />
+        <TickSettingsPropsPopover axis={axis} which="minor" />
       </PropRow>
     </>
   )

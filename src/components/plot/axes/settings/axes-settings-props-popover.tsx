@@ -8,9 +8,9 @@ import {
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Move3d } from 'lucide-react'
 import { Fragment, useState } from 'react'
-import { AxisPropsPanel } from './axis-props-panel'
+import { AxisSettingsPropsPanel } from './axis-settings-props-panel'
 
-export function AxesPropsPopover({
+export function AxesSettingsPropsPopover({
   axes = ['x', 'y', 'colorbar'],
 }: {
   axes?: AxisType[]
@@ -27,12 +27,12 @@ export function AxesPropsPopover({
             <Move3d size={18} strokeWidth={1.5} />
           </ToolbarIconButton>
         }
-      ></PopoverTrigger>
+      />
 
       <PopoverContent className="gap-y-1 w-60">
         {axes.map((axis, index) => (
           <Fragment key={axis}>
-            <AxisPropsPanel axis={axis} />
+            <AxisSettingsPropsPanel axis={axis} />
             {index < axes.length - 1 && <LineSeparator />}
           </Fragment>
         ))}

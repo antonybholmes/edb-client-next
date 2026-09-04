@@ -4,7 +4,7 @@ import type { TextAnchor } from '@/types/types'
 import { gsap } from 'gsap'
 import { useEffect, useRef, useState } from 'react'
 import { type IVennCircleProps, useVennSettings } from './venn-settings-store'
-import { useVenn } from './venn-store'
+import { IVennList, useVenn } from './venn-store'
 
 interface ICountTextProps {
   id: string
@@ -148,19 +148,22 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
 }
 
 interface ITitleTextProps {
-  id: string
+  vennList: IVennList
   textAnchor?: TextAnchor
   center: ILim
 }
 
 export function TitleText({
-  id,
+  vennList,
   center,
   textAnchor = 'middle',
 }: ITitleTextProps) {
-  const { vennLists } = useVenn()
   const { settings, circles } = useVennSettings()
-  const vennList = vennLists[id]
+
+  if (!vennList) {
+    return null
+  }
+
   return (
     <text
       x={center[0]!}
@@ -170,18 +173,18 @@ export function TitleText({
       fontFamily={settings.fonts.title.family}
       fill={
         settings.fonts.title.colored
-          ? circles[id]?.fill.value
+          ? circles[vennList.listId]?.fill.value
           : settings.fonts.title.color
       }
       //fillOpacity={settings.fonts.title.colored ? circles[id]?.fill.opacity : 1}
       textAnchor={textAnchor}
       dominantBaseline="middle"
     >
-      {vennList?.name || `List ${id}`}
+      {vennList?.name || `List ${vennList.listId}`}
 
       {settings.fonts.counts.show && (
         <tspan>
-          {` (${(vennList?.uniqueItems.length || 0).toLocaleString()})`}
+          {` (${(vennList?.uniqueItems.size || 0).toLocaleString()})`}
         </tspan>
       )}
     </text>
@@ -224,7 +227,7 @@ export interface IVennProps {
 }
 
 export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
-  const { setSelectedItems } = useVenn()
+  const { vennListsInUse, setSelectedItems } = useVenn()
   const { settings, circles } = useVennSettings()
 
   const center = [settings.w * 0.5, settings.w * 0.5]
@@ -287,7 +290,7 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
 
       {settings.fonts.title.show && (
         <TitleText
-          id="1"
+          vennList={vennListsInUse[0]}
           center={[cA[0]! - labelRadius * 0.1, cA[1]! - labelRadius]}
         />
       )}
@@ -305,7 +308,7 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
 
       {settings.fonts.title.show && (
         <TitleText
-          id="2"
+          vennList={vennListsInUse[1]}
           center={[cB[0]! + labelRadius * 0.1, cB[1]! - labelRadius]}
         />
       )}
@@ -322,7 +325,10 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
       <Circle circle={circles['3']!} ref={circle3Ref} loc={cC} />
 
       {settings.fonts.title.show && (
-        <TitleText id="3" center={[cC[0]!, cC[1]! + labelRadius]} />
+        <TitleText
+          vennList={vennListsInUse[2]}
+          center={[cC[0]!, cC[1]! + labelRadius]}
+        />
       )}
 
       <CountText

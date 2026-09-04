@@ -6,8 +6,8 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
 import {
   onTextFileChange,
-  onTextFilePaste,
   openFilesDialog,
+  pasteTextAsFiles,
 } from '@/components/pages/open-files'
 import {
   DropdownMenu,
@@ -55,6 +55,7 @@ import { ExportIcon } from '@/icons/export-icon'
 
 import { DataPanel, MESSAGE_CHANNEL } from './data/data-panel'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
@@ -63,7 +64,6 @@ import { HeaderButton } from '@/layouts/header-button'
 import { newGroupRow, type IClusterGroup } from '@/lib/cluster-group'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
 
@@ -129,7 +129,6 @@ const FOLDER_ID = 'matcalc-folders'
 function plotElem(plot: HistoryPlot): ReactElement {
   switch (plot.style) {
     case 'heatmap':
-    case 'dot':
       return (
         <HeatmapProvider plot={plot}>
           <HeatmapPanel />
@@ -386,7 +385,7 @@ export function MatcalcPage() {
   usePasteText((text) => {
     console.log('Pasted text:', text)
 
-    onTextFilePaste(text, ({ success, files }) => {
+    pasteTextAsFiles(text, ({ success, files }) => {
       if (!success) {
         return
       }
@@ -620,8 +619,8 @@ export function MatcalcPage() {
 
 export function MatcalcQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <MatcalcPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

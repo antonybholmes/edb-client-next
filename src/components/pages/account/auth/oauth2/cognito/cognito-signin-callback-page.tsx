@@ -1,6 +1,6 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { useEffect, useState } from 'react'
@@ -52,8 +52,8 @@ export function SignInCallbackPage() {
 
 export function SignInCallbackQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignInCallbackPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

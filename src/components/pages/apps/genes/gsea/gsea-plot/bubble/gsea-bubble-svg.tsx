@@ -12,7 +12,11 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { Axis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRange,
+  createAxis,
+  setAxisTickParams,
+} from '@/components/plot/axes/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
@@ -88,46 +92,45 @@ function GseaBubbleLegendSvg() {
     }
   }
 
-  const range =
+  const rangeDiff =
     settings.scale.mode === 'p'
       ? settings.scale.p.range[1] - settings.scale.p.range[0]
       : globalXLim[1] - globalXLim[0]
 
   let xax =
     settings.scale.mode === 'p'
-      ? new Axis()
-          .setDomain(settings.scale.p.range)
-          .setLength(edbSettings.plots.colorbar.size.w)
-          .setTicks([
+      ? createAxis({
+          domain: settings.scale.p.range,
+          length: edbSettings.plots.colorbar.size.w,
+          ticks: [
             settings.scale.p.range[0],
-            settings.scale.p.range[0] + range / 2,
+            settings.scale.p.range[0] + rangeDiff / 2,
             settings.scale.p.range[1],
-          ])
-          .setTicks(
-            [
-              settings.scale.p.range[0] + range * 0.25,
-              settings.scale.p.range[0] + range * 0.75,
-            ],
-            { which: 'minor' }
-          )
-      : new Axis()
-          .setDomain(globalXLim)
-          .setLength(edbSettings.plots.colorbar.size.w)
-          .setTicks([globalXLim[0], globalXLim[0] + range / 2, globalXLim[1]])
-          .setTicks(
-            [globalXLim[0] + range * 0.25, globalXLim[0] + range * 0.75],
-            { which: 'minor' }
-          )
+          ],
+          minorTicks: [
+            settings.scale.p.range[0] + rangeDiff * 0.25,
+            settings.scale.p.range[0] + rangeDiff * 0.75,
+          ],
+        })
+      : createAxis({
+          domain: globalXLim,
+          length: edbSettings.plots.colorbar.size.w,
+          ticks: [globalXLim[0], globalXLim[0] + rangeDiff / 2, globalXLim[1]],
+          minorTicks: [
+            globalXLim[0] + rangeDiff * 0.25,
+            globalXLim[0] + rangeDiff * 0.75,
+          ],
+        })
 
-  xax = xax
-    .setTickParams({
-      which: 'major',
-      show: edbSettings.plots.axes.x.ticks.major.show,
-    })
-    .setTickParams({
-      which: 'minor',
-      show: edbSettings.plots.axes.x.ticks.minor.show,
-    })
+  xax = setAxisTickParams(xax, {
+    which: 'major',
+    show: edbSettings.plots.axes.x.ticks.major.show,
+  })
+
+  xax = setAxisTickParams(xax, {
+    which: 'minor',
+    show: edbSettings.plots.axes.x.ticks.minor.show,
+  })
 
   const label =
     settings.scale.mode === 'p' ? `-log10(${plot.log10q.label})` : 'NES'
@@ -218,24 +221,29 @@ function BubblePlot({
   const domain = settings.axes.x.auto ? info.xlim : settings.axes.x.domain
 
   // offer per plot x-axis domain
-  const xax = new Axis()
-    //.autoDomain(domain)
-    .setDomain(domain)
-    .setLength(settings.axes.x.length)
-    .setTickParams({
-      which: 'major',
-      show: edbSettings.plots.axes.x.ticks.major.show,
-    })
-    .setTickParams({
-      which: 'minor',
-      show: edbSettings.plots.axes.x.ticks.minor.show,
-    })
+  let xax = createAxis({
+    autoDomain: domain,
+    length: settings.axes.x.length,
+  })
+  xax = setAxisTickParams(xax, {
+    which: 'major',
+    show: edbSettings.plots.axes.x.ticks.major.show,
+  })
+  xax = setAxisTickParams(xax, {
+    which: 'minor',
+    show: edbSettings.plots.axes.x.ticks.minor.show,
+  })
+
+  const xvs = axisDomainToRange(
+    xax,
+    info.points.map((p) => p.x)
+  )
 
   return (
     <>
       <SvgMargin margin={settings.plot.margin}>
         {info.points.map((point, xi) => {
-          const x1 = xax!.domainToRange(point.x)
+          const x1 = xvs[xi]
           const y1 = point.y * settings.axes.y.rowHeight
 
           return (
@@ -280,7 +288,7 @@ function BubblePlot({
               key={xi}
               y={y1}
               textAnchor="end"
-              font={edbSettings.plots.axes.y.ticks.major.labels}
+              font={edbSettings.plots.axes.y.ticks.major.style.labels}
             >
               {p.label}
             </SvgText>
@@ -311,7 +319,7 @@ function BubblePlot({
         </g>
       )}
 
-      {edbSettings.plots.axes.x.show && (
+      {edbSettings.plots.axes.x.style.show && (
         <AxisBottomSvg
           ax={xax}
 

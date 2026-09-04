@@ -43,6 +43,7 @@ import {
 } from '@/components/dialogs/card/action-dialog-card'
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -276,7 +277,7 @@ export function HeatMapDialog({
     >
       <ActionDialogCard>
         <DialogCardHeader>
-          <Checkbox
+          <Switch
             checked={settings.heatmap.filters.rows.apply}
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
@@ -287,7 +288,7 @@ export function HeatMapDialog({
             }}
           >
             Filter
-          </Checkbox>
+          </Switch>
         </DialogCardHeader>
         <ActionDialogCardContent>
           <ActionDialogRow title="Top" justify="start">
@@ -302,7 +303,7 @@ export function HeatMapDialog({
 
                 updateSettings(newSettings)
               }}
-              disabled={!settings.heatmap.filters.rows.apply}
+              //disabled={!settings.heatmap.filters.rows.apply}
               w="xs"
             />
             <span className="shrink-0">rows using</span>
@@ -357,7 +358,7 @@ export function HeatMapDialog({
 
       <ActionDialogCard>
         <DialogCardHeader>
-          <Checkbox
+          <Switch
             checked={settings.heatmap.transforms.apply}
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
@@ -368,17 +369,20 @@ export function HeatMapDialog({
             }}
           >
             Transform
-          </Checkbox>
+          </Switch>
         </DialogCardHeader>
 
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
               checked={settings.heatmap.transforms.log2}
-              disabled={!settings.heatmap.transforms.apply}
+              //disabled={!settings.heatmap.transforms.apply}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.transforms.log2 = v
+                  if (v) {
+                    draft.heatmap.transforms.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -394,6 +398,9 @@ export function HeatMapDialog({
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.transforms.rowZscore = v
+                  if (v) {
+                    draft.heatmap.transforms.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -409,6 +416,9 @@ export function HeatMapDialog({
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.transforms.transpose = v
+                  if (v) {
+                    draft.heatmap.transforms.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -424,9 +434,9 @@ export function HeatMapDialog({
 
       <ActionDialogCard>
         <DialogCardHeader>
-          <Checkbox
+          <Switch
             checked={settings.heatmap.cluster.apply}
-            disabled={!settings.heatmap.transforms.apply}
+
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
                 draft.heatmap.cluster.apply = v
@@ -436,17 +446,20 @@ export function HeatMapDialog({
             }}
           >
             Clustering
-          </Checkbox>
+          </Switch>
         </DialogCardHeader>
 
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               checked={settings.heatmap.cluster.rows}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.cluster.rows = v
+                  if (v) {
+                    draft.heatmap.cluster.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -457,11 +470,14 @@ export function HeatMapDialog({
           </ActionDialogRow>
           <ActionDialogRow>
             <Checkbox
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               checked={settings.heatmap.cluster.cols}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
                   draft.heatmap.cluster.cols = v
+                  if (v) {
+                    draft.heatmap.cluster.apply = true
+                  }
                 })
 
                 updateSettings(newSettings)
@@ -473,7 +489,7 @@ export function HeatMapDialog({
 
           <ActionDialogRow title="Linkage">
             <SelectList
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               value={settings.heatmap.cluster.linkage}
               onValueChange={(v) => {
                 if (v) {
@@ -494,7 +510,7 @@ export function HeatMapDialog({
 
           <ActionDialogRow title="Distance">
             <SelectList
-              disabled={!settings.heatmap.cluster.apply}
+              //disabled={!settings.heatmap.cluster.apply}
               value={settings.heatmap.cluster.distance}
               onValueChange={(v) => {
                 if (v) {

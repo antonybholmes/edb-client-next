@@ -1,4 +1,5 @@
-import type { Axis } from '@/components/plot/axes/axis'
+import type { IAxis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { useMemo } from 'react'
 import { useVariantSettings } from './variant-settings-store'
@@ -9,7 +10,7 @@ export const HALF_BASE_W = 0.5 * BASE_W
 export const BASE_H = 20
 export const HALF_BASE_H = 0.5 * BASE_H
 
-export function MotifsSvg({ xax, pos = ZERO_POS }: { xax: Axis; pos?: IPos }) {
+export function MotifsSvg({ xax, pos = ZERO_POS }: { xax: IAxis; pos?: IPos }) {
   const { settings } = useVariantSettings()
   let { dna } = useVariants()
 
@@ -24,6 +25,8 @@ export function MotifsSvg({ xax, pos = ZERO_POS }: { xax: Axis; pos?: IPos }) {
       locations: { x1: number; x2: number }[]
     }[] = []
 
+    const xaf = axisDomainToRangeFunc(xax)
+
     for (const motif of settings.motifs.patterns) {
       if (motif.show) {
         const matches = [
@@ -36,8 +39,8 @@ export function MotifsSvg({ xax, pos = ZERO_POS }: { xax: Axis; pos?: IPos }) {
           name: motif.name,
           color: motif.color,
           locations: matches.map((m) => ({
-            x1: xax.domainToRange(settings.location.start + (m.index ?? 0)),
-            x2: xax.domainToRange(
+            x1: xaf(settings.location.start + (m.index ?? 0)),
+            x2: xaf(
               settings.location.start + (m.index ?? 0) + (m[0].length ?? 0) - 1
             ),
           })),

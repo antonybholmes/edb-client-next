@@ -1,9 +1,32 @@
 # Changelog
 
+## 89.0.0 (Aug, 2026)
+
+### Changed
+
+- Added paste support to venn. Adjust size default size of trees.
+- Venn lists can be removed.
+- Venn now supports heatmaps. Rendering moved into hook rather than page. Support for gaps in heatmaps.
+- Ability to edit individual axes.
+- Fixing UI issues with axes.
+- Transition to new axis system.
+- Switched axis to plain object rather than class for preparation of user editing.
+- New axes provider for allowing axes to be updated.
+- Bug fixes and updates.
+- Tooltips refined.
+- New client layout. Tooltips now uses a store instead of being a provider.
+
+### Fixed
+
+- Heatmap tooltips now in correct position.
+
+
 ## 87.8.0 (Aug, 2026)
 
 ### Changed
 
+- UI fixes.
+- Switch to using checkboxes for more settings to reduce clutter from switches.
 - Refined oncoplot tooltips.
 - New unified tooltips. Fixed minor axis ticks not being generated when major ticks set.
 - Added tooltip context for standardizing tooltips.

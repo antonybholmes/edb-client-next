@@ -14,7 +14,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { VCenterRow } from '@/layout/v-center-row'
 import { SignInLayout } from '@/layouts/signin-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
@@ -180,8 +180,8 @@ export function InfoPage({ children }: IChildrenProps) {
 
 export function InfoQueryPage({ children }: IChildrenProps) {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <InfoPage>{children}</InfoPage>
-    </CoreProviders>
+    </ClientLayout>
   )
 }

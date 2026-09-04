@@ -4,13 +4,14 @@ import { useMemo } from 'react'
 import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { Axis, YAxis, type TickLabel } from './axes/axis'
+import { axisDomainToRangeFunc, createAxis, IAxis } from './axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from './axes/svg-axis'
 import { SvgVColorBar } from './svg-color-bar'
 
 import { vfill } from '@/lib/fill'
 import type { ILim } from '@/lib/math/math'
 import { ones } from '@/lib/math/ones'
+import { TickLabel } from './axes/svg-axis-props'
 import { SvgBase } from './svg-base'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 200 }
@@ -91,20 +92,25 @@ export function VertBarPlotSvg({
     x = 'Data' //df.getColName(0)
   }
 
-  const yax = new YAxis()
-    .setDomain([0, ydata.length])
-    .setDomain(_displayProps.ydomain!)
-    .setLength(_displayProps.ylen!)
-    .setTicks(ydata.map((x, xi) => ({ v: xi + 0.5, label: x })))
+  const yax: IAxis = createAxis({
+    direction: 'y',
+    domain: [0, ydata.length],
+    range: _displayProps.ydomain!,
+    length: _displayProps.ylen!,
+    ticks: ydata.map((x, xi) => ({ v: xi + 0.5, label: x })),
+  })
 
   //.setTitle(y)
 
   // min and max must be different
-  const xax = new Axis()
-    .setDomain([Math.min(...xdata), Math.max(...xdata)])
-    .setDomain(_displayProps.xdomain!)
-    .setLength(_displayProps.xlen!)
-  //.setTitle(x)
+  const xax: IAxis = createAxis({
+    domain: [Math.min(...xdata), Math.max(...xdata)],
+    range: _displayProps.xdomain!,
+    length: _displayProps.xlen!,
+  })
+
+  const xaf = axisDomainToRangeFunc(xax)
+  const yaf = axisDomainToRangeFunc(yax)
 
   const innerWidth = xax.length
   const innerHeight = yax.length
@@ -140,8 +146,8 @@ export function VertBarPlotSvg({
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {ydata.map((_, yi) => {
-            const y1 = yax.domainToRange(yi + 0.5)
-            const x1 = xax.domainToRange(xdata[yi]!)
+            const x1 = xaf(xdata[yi]!)
+            const y1 = yaf(yi + 0.5)
 
             const color = huedata[yi]
             return (
@@ -162,7 +168,7 @@ export function VertBarPlotSvg({
             margin.left + innerWidth + _displayProps.padding
           }, ${margin.top})`}
         >
-          {SvgVColorBar({ ax: new Axis().setDomain([0, 10]), cmap })}
+          {SvgVColorBar({ ax: createAxis({ domain: [0, 10] }), cmap })}
         </g>
       </>
     )
@@ -347,7 +353,6 @@ export function VertBarPlotSvg({
       height={height}
       scale={_displayProps.scale}
       //shapeRendering={SVG_CRISP_EDGES}
-      className="absolute"
     >
       {svg}
     </SvgBase>

@@ -1,6 +1,10 @@
 import { useMemo, type ReactNode } from 'react'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRange,
+  axisDomainToRangeFunc,
+  createAxis,
+} from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 import { abs } from '@/lib/math/abs'
@@ -71,18 +75,20 @@ export function ExtGseaSvg() {
     const ymax = Math.max(...abs([...y, ...gseaRes2.esAll]))
     //ymax = round((ymax * 10) / 10, 1)
 
-    let xax = new Axis()
-      .setDomain([0, xmax])
-      .setLength(displayProps.axes.x.length)
-      .setTickParams({ which: 'both', show: false })
+    let xax = createAxis({
+      domain: [0, xmax],
+      length: displayProps.axes.x.length,
+      tickParams: { which: 'both', show: false },
+    })
 
-    xax = xax.setTicks(xax.ticks.slice(1))
+    //xax = xax.setTicks(xax.ticks.slice(1))
 
-    const yax = new YAxis()
-      .autoDomain([-ymax, ymax])
-      .setLength(displayProps.es.axes.y.length)
-      .setTitle(displayProps.es.axes.y.title)
-      .setTickParams({ which: 'minor', show: false })
+    const yax = createAxis({
+      direction: 'y',
+      domain: [-ymax, ymax],
+      length: displayProps.es.axes.y.length,
+      tickParams: { which: 'minor', show: false },
+    })
 
     let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank]!)
     let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank]!)
@@ -98,10 +104,11 @@ export function ExtGseaSvg() {
     let leadingEdge1Svg: ReactNode | undefined = undefined
 
     if (displayProps.es.gs1.leadingEdge.fill.show) {
-      const points = zip(xlead, ylead)
-        .map(
-          ([px, py]) => `${xax.domainToRange(px!)},${yax.domainToRange(py!)}`
-        )
+      const xs = axisDomainToRange(xax, xlead)
+      const ys = axisDomainToRange(yax, ylead)
+
+      const points = zip(xs, ys)
+        .map(([px, py]) => `${px},${py}`)
         .join(', ')
 
       leadingEdge1Svg = (
@@ -117,10 +124,11 @@ export function ExtGseaSvg() {
     let line1Svg: ReactNode | undefined = undefined
 
     if (displayProps.es.gs1.line.show) {
-      const points = zip(x1, y1)
-        .map(
-          ([px, py]) => `${xax.domainToRange(px!)},${yax.domainToRange(py!)}`
-        )
+      const xs = axisDomainToRange(xax, x1)
+      const ys = axisDomainToRange(yax, y1)
+
+      const points = zip(xs, ys)
+        .map(([px, py]) => `${px},${py}`)
         .join(', ')
 
       line1Svg = (
@@ -158,10 +166,11 @@ export function ExtGseaSvg() {
     let leadingEdge2Svg: ReactNode | undefined = undefined
 
     if (displayProps.es.gs2.leadingEdge.fill.show) {
-      const points = zip(xlead, ylead)
-        .map(
-          ([px, py]) => `${xax.domainToRange(px!)},${yax.domainToRange(py!)}`
-        )
+      const xs = axisDomainToRange(xax, xlead)
+      const ys = axisDomainToRange(yax, ylead)
+
+      const points = zip(xs, ys)
+        .map(([px, py]) => `${px},${py}`)
         .join(', ')
 
       leadingEdge2Svg = (
@@ -177,10 +186,11 @@ export function ExtGseaSvg() {
     let line2Svg: ReactNode | undefined = undefined
 
     if (displayProps.es.gs2.line.show) {
-      const points = zip(x1, y1)
-        .map(
-          ([px, py]) => `${xax.domainToRange(px!)},${yax.domainToRange(py!)}`
-        )
+      const xs = axisDomainToRange(xax, x1)
+      const ys = axisDomainToRange(yax, y1)
+
+      const points = zip(xs, ys)
+        .map(([px, py]) => `${px},${py}`)
         .join(', ')
 
       line2Svg = (
@@ -197,11 +207,13 @@ export function ExtGseaSvg() {
     if (displayProps.genes.line.show) {
       let points = where(gseaRes1.hits, (x) => x > 0)
 
+      let xs = axisDomainToRange(xax, points)
+
       const gengseaRes1Svg = (
         <g>
           <g>
             {points.map((p, pointi) => {
-              const x = xax.domainToRange(p)
+              const x = xs[pointi]
 
               return (
                 <SvgLine
@@ -235,6 +247,7 @@ export function ExtGseaSvg() {
       )
 
       points = where(gseaRes2.hits, (x) => x > 0)
+      xs = axisDomainToRange(xax, points)
 
       const gengseaRes2Svg = (
         <g
@@ -242,7 +255,7 @@ export function ExtGseaSvg() {
         >
           <g>
             {points.map((p, pointi) => {
-              const x = xax.domainToRange(p)
+              const x = xs[pointi]
 
               return (
                 <SvgLine
@@ -292,26 +305,26 @@ export function ExtGseaSvg() {
       //const yMin = Math.min(...rankedGenes.map(e => e.score))
       const yMax = Math.max(...abs(rankedGenes.genes.map((e) => e.score)))
 
-      const yax = new YAxis()
-        .autoDomain([-yMax, yMax])
-        //.setDomain([0, plot!.dna.seq.length])
-        .setLength(displayProps.ranking.axes.y.length)
-        .setTitle('SNR')
-        .setTickParams({ which: 'minor', show: false })
+      const yax = createAxis({
+        direction: 'y',
+        title: 'SNR',
+        autoDomain: [-yMax, yMax],
+        length: displayProps.ranking.axes.y.length,
+        tickParams: { which: 'minor', show: false },
+      })
 
+      const xaf = axisDomainToRangeFunc(xax)
+      const yaf = axisDomainToRangeFunc(yax)
       let displayPoints = rankedGenes.genes.map((e, ei) => [
-        xax.domainToRange(ei),
-        yax.domainToRange(e.score),
+        xaf(ei),
+        yaf(e.score),
       ])
 
-      displayPoints = [
-        [xax.domainToRange(0), yax.domainToRange(0)],
-        ...displayPoints,
-      ]
+      displayPoints = [[xaf(0), yaf(0)], ...displayPoints]
 
       displayPoints = [
         ...displayPoints,
-        [xax.domainToRange(rankedGenes.genes.length - 1), yax.domainToRange(0)],
+        [xaf(rankedGenes.genes.length - 1), yaf(0)],
       ]
 
       // crossing point
@@ -319,7 +332,7 @@ export function ExtGseaSvg() {
       const crossIndex =
         end(where(rankedGenes.genes, (gene) => gene.score > 0)) + 1
 
-      const crossingX = xax.domainToRange(crossIndex)
+      const crossingX = xaf(crossIndex)
 
       const y =
         displayProps.es.axes.y.length +
@@ -399,7 +412,7 @@ export function ExtGseaSvg() {
             {line2Svg && line2Svg}
 
             <AxisLeftSvg ax={yax} />
-            <g transform={`translate(0, ${yax.domainToRange(0)})`}>
+            <g transform={`translate(0, ${axisDomainToRange(yax, [0])[0]})`}>
               <AxisBottomSvg
                 ax={xax}
                 showTicks={displayProps.es.axes.x.showTicks}

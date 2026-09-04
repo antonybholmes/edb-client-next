@@ -1,6 +1,6 @@
 import {} from '@/components/edb/auth/edb-signin'
 import { useEdbSession } from '@/components/edb/auth/session'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { BaseSignOutPage } from '../sign-out-page'
 
 export function SignOutCallbackPage() {
@@ -30,8 +30,8 @@ export function SignOutCallbackPage() {
 
 export function SignOutCallbackQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignOutCallbackPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

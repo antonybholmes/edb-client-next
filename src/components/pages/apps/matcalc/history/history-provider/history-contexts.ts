@@ -1,6 +1,6 @@
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 
-import { AxisRecord } from '@/components/plot/axes/axis'
+import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 import { IGeneSet } from '@/lib/gsea/geneset'
 import { createContext, useContext } from 'react'
 import {

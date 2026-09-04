@@ -2,9 +2,9 @@
   "name": "Lollipop",
   "description": "Create lollipop plots.",
   "color": "#DA70D6",
-  "version": "27.8.2",
+  "version": "27.8.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-08-28T15:24:58.880Z",
-  "hash": "1cad8827ec160a5994d5a1b48bf51ace76f1b772746b891e15979949d04b22e4",
-  "build": 1110
+  "modified": "2026-09-02T15:22:13.203Z",
+  "hash": "270411885f3b922a984d51c8d7fa8fe448357b29bcde03de10d3e4f1767069a5",
+  "build": 1120
 }

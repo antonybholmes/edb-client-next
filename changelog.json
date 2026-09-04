@@ -2613,10 +2613,77 @@
         {
           "msg": "Refined oncoplot tooltips",
           "date": "2026-08-28T16:20:46.102Z"
+        },
+        {
+          "msg": "Switch to using checkboxes for more settings to reduce clutter from switches",
+          "date": "2026-08-28T18:03:35.000Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2026-08-28T22:44:00.256Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-08-25T17:23:11.155Z"
+  },
+  {
+    "version": "89.0.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "New client layout. Tooltips now uses a store instead of being a provider",
+          "date": "2026-08-30T00:53:19.167Z"
+        },
+        {
+          "msg": "Tooltips refined",
+          "date": "2026-08-30T05:27:08.067Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-30T05:54:19.680Z"
+        },
+        {
+          "msg": "New axes provider for allowing axes to be updated",
+          "date": "2026-08-31T17:22:14.733Z"
+        },
+        {
+          "msg": "Switched axis to plain object rather than class for preparation of user editing",
+          "date": "2026-09-01T17:58:31.335Z"
+        },
+        {
+          "msg": "Transition to new axis system",
+          "date": "2026-09-01T20:44:49.139Z"
+        },
+        {
+          "msg": "Fixing UI issues with axes",
+          "date": "2026-09-01T21:47:34.051Z"
+        },
+        {
+          "msg": "Ability to edit individual axes",
+          "date": "2026-09-02T15:22:14.251Z"
+        },
+        {
+          "msg": "Venn now supports heatmaps. Rendering moved into hook rather than page. Support for gaps in heatmaps",
+          "date": "2026-09-03T20:37:32.818Z"
+        },
+        {
+          "msg": "Venn lists can be removed",
+          "date": "2026-09-03T20:45:26.010Z"
+        },
+        {
+          "msg": "Added paste support to venn. Adjust size default size of trees",
+          "date": "2026-09-04T02:08:19.817Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Heatmap tooltips now in correct position",
+          "date": "2026-09-03T20:53:40.158Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-30T00:53:19.167Z"
   }
 ]

@@ -8,9 +8,9 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { capitalCase } from '@/lib/text/capital-case'
 import { Move3d } from 'lucide-react'
 import { useState } from 'react'
-import { AxisPropsPanel } from './axis-props-panel'
+import { AxisSettingsPropsPanel } from './axis-settings-props-panel'
 
-export function AxisPropsPopover({ axis }: { axis: AxisType }) {
+export function AxisSettingsPropsPopover({ axis }: { axis: AxisType }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -33,7 +33,7 @@ export function AxisPropsPopover({ axis }: { axis: AxisType }) {
       />
 
       <PopoverContent className="gap-y-1 w-60">
-        <AxisPropsPanel axis={axis} />
+        <AxisSettingsPropsPanel axis={axis} />
       </PopoverContent>
     </Popover>
   )

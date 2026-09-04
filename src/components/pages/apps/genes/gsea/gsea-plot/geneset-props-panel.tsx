@@ -5,6 +5,8 @@ import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { SelectAll } from '@/components/select-all'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { move } from '@dnd-kit/helpers'
@@ -36,7 +38,23 @@ function GseaReportItem({
         }}
       />
 
-      <TruncateSpan className="h-8 grow">{report.name}</TruncateSpan>
+      <TruncateSpan className="h-6 grow">{report.name}</TruncateSpan>
+
+      <VCenterRow>
+        <AxesDisplayPropsPopover
+          plotIds={[{ id: report.id, title: report.name }]}
+          axesGroups={[
+            {
+              id: 'es',
+              title: 'ES',
+              axesIds: [
+                { id: 'es-x', axis: 'x', title: 'ES X' },
+                { id: 'es-y', axis: 'y', title: 'ES Y' },
+              ],
+            },
+          ]}
+        />
+      </VCenterRow>
     </SortableItem>
   )
 }

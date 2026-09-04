@@ -23,7 +23,7 @@ import {
   TEXT_SAVE_TABLE,
   TEXT_SORT_BY,
 } from '@/consts'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 
 import {
@@ -550,8 +550,8 @@ export function MotifsPage() {
 
 export function MotifsQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <MotifsPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

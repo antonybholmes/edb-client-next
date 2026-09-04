@@ -1,5 +1,6 @@
 [
-  ["CPN1", "BTRC", "KCNIP2", "ARMH3"],
-  ["CPN1", "HPS6", "NFKB2", "DUSP5"],
-  ["CPN1", "DUSP5", "PRDX3", "BAG3"]
+  { "name": "List 1", "items": ["CPN1", "BTRC", "KCNIP2", "ARMH3"] },
+  { "name": "List 2", "items": ["CPN1", "HPS6", "NFKB2", "DUSP5"] },
+  { "name": "List 3", "items": ["CPN1", "DUSP5", "PRDX3", "BAG3"] },
+  { "name": "List 4", "items": [] }
 ]

@@ -36,7 +36,7 @@ import {
   TEXT_EMAIL_ERROR,
 } from '@/layouts/signin-layout'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'
@@ -192,8 +192,8 @@ export function UpdateEmailPage() {
 
 export function UpdateEmailQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <UpdateEmailPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

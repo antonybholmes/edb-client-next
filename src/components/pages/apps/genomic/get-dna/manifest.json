@@ -3,7 +3,7 @@
   "description": "Get DNA for genomic locations.",
   "version": "19.0.8",
   "copyright": "(C) ${START_YEAR:2022} Antony Holmes",
-  "modified": "2026-08-10T17:36:24.126Z",
-  "hash": "e07945cbe6beb4aa73e5a4cfb3fcb3de591e8278a20f999b28430ca92eac6113",
-  "build": 700
+  "modified": "2026-08-30T00:53:16.874Z",
+  "hash": "0558fe804e5009bd35c39026f1b2c36e947d18219be6bcb7d06dfb40dbf8faf2",
+  "build": 702
 }

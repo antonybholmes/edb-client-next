@@ -4,6 +4,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { range } from 'd3'
+import { ReactElement } from 'react'
 import { SvgText } from '../svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
@@ -11,36 +12,47 @@ export function RowTreeSvg({
   tree,
   width,
   height,
+  gaps,
   mode,
   props,
   pos = { ...ZERO_POS },
 }: ITreeSvgProps & { mode: LeftRightPos }) {
+  const gElems: ReactElement[] = []
+
+  const points = range(4)
+
+  for (let [ri, branch] of tree.coords.entries()) {
+    const p = points.map((i) => {
+      const y = branch.coords[i]!.x * width
+
+      return {
+        y: y + gaps.offset(y),
+        x:
+          mode === 'left'
+            ? height - branch.coords[i]!.y * height
+            : branch.coords[i]!.y * height,
+      }
+    })
+
+    gElems.push(
+      <path
+        key={ri}
+        d={`M ${p[0]!.x},${p[0]!.y} L ${p[1]!.x},${p[1]!.y} L ${p[2]!.x},${p[2]!.y} L ${p[3]!.x},${p[3]!.y}`}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        stroke={props.tree.row.stroke.value}
+        strokeWidth={props.tree.row.stroke.width}
+      />
+    )
+  }
+
   return (
     <g
       transform={`translate(${pos.x}, ${pos.y})`}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      {tree.coords.map((coords, ri) => {
-        const p = range(4).map((i) => ({
-          y: coords[i]!.x * width,
-          x:
-            mode === 'left'
-              ? height - coords[i]!.y * height
-              : coords[i]!.y * height,
-        }))
-
-        return (
-          <path
-            key={ri}
-            d={`M ${p[0]!.x},${p[0]!.y} L ${p[1]!.x},${p[1]!.y} L ${p[2]!.x},${p[2]!.y} L ${p[3]!.x},${p[3]!.y}`}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            stroke={props.rowTree.stroke.value}
-            strokeWidth={props.rowTree.stroke.width}
-          />
-        )
-      })}
+      {gElems}
     </g>
   )
 }

@@ -20,6 +20,8 @@ import { produce } from 'immer'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { AxesPropRow } from '@/components/plot/axes/axes-prop-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
@@ -88,6 +90,8 @@ export function ExtGseaPropsPanel() {
                 }}
               />
             </PropRow>
+
+            <AxesPropRow axes={['x', 'y']} />
           </AccordionContent>
         </AccordionItem>
 
@@ -141,7 +145,7 @@ export function ExtGseaPropsPanel() {
               />
             </SwitchPropRow>
 
-            <SwitchPropRow
+            <CheckPropRow
               title="Leading edge"
               checked={displayOptions.es.gs1.leadingEdge.fill.show}
               onCheckedChange={(v) =>
@@ -172,7 +176,7 @@ export function ExtGseaPropsPanel() {
                   )
                 }}
               />
-            </SwitchPropRow>
+            </CheckPropRow>
           </AccordionContent>
         </AccordionItem>
 
@@ -318,7 +322,7 @@ export function ExtGseaPropsPanel() {
               /> */}
             </PropRow>
 
-            <SwitchPropRow
+            <CheckPropRow
               className="ml-2"
               title="Zero crossing"
               checked={displayOptions.ranking.zeroCross.show}

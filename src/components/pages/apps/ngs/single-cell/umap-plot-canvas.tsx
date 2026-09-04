@@ -1,6 +1,6 @@
 import { resizeAndScaleCanvas } from '@/lib/canvas'
 
-import { Axis, YAxis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_TRANSPARENT } from '@/lib/color/color'
 import { BWR_CMAP_V2, COLOR_MAPS } from '@/lib/color/colormap'
@@ -22,15 +22,19 @@ export function drawUmap(
 ) {
   const cmap = COLOR_MAPS[displayProps.cmap] ?? BWR_CMAP_V2
 
-  const xax = new Axis()
-    //.setDomain([Math.min(...xdata), Math.max(...xdata)])
-    .setDomain(displayProps.axes.xaxis.domain)
-    .setLength(displayProps.axes.xaxis.length)
+  const xax = createAxis({
+    domain: displayProps.axes.xaxis.domain,
+    length: displayProps.axes.xaxis.length,
+  })
 
-  const yax = new YAxis()
-    //.setDomain([Math.min(...ydata), Math.max(...ydata)])
-    .setDomain(displayProps.axes.yaxis.domain)
-    .setLength(displayProps.axes.yaxis.length)
+  const yax = createAxis({
+    direction: 'y',
+    domain: displayProps.axes.yaxis.domain,
+    length: displayProps.axes.yaxis.length,
+  })
+
+  const xaf = axisDomainToRangeFunc(xax)
+  const yaf = axisDomainToRangeFunc(yax)
 
   const innerWidth = xax.length
   const innerHeight = yax.length
@@ -71,8 +75,8 @@ export function drawUmap(
 
       for (const [xi, p] of points.entries()) {
         //const y = ydata[xi]!
-        const x1 = xax.domainToRange(p.x)
-        const y1 = yax.domainToRange(p.y)
+        const x1 = xaf(p.x)
+        const y1 = yaf(p.y)
 
         let color: string = displayProps.dots.color
 

@@ -2,7 +2,12 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { API_CYTOBANDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { Axis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  createAxis,
+  IAxis,
+  setAxisDomain,
+} from '@/components/plot/axes/axis'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IStringMap } from '@/interfaces/string-map'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -97,13 +102,15 @@ function CytobandsRoundStyleTrackSvg({
   const l1 = cytobands[0]!.loc
   const l2 = cytobands[cytobands.length - 1]!.loc
 
-  let cytoAx = new Axis().setLength(xax.length)
+  let cytoAx: IAxis = createAxis({ length: xax.length })
 
   if (settings.reverse) {
-    cytoAx = cytoAx.setDomain([l2.end, l1.start])
+    cytoAx = setAxisDomain(cytoAx, [l2.end, l1.start])
   } else {
-    cytoAx = cytoAx.setDomain([l1.start, l2.end])
+    cytoAx = setAxisDomain(cytoAx, [l1.start, l2.end])
   }
+
+  const xaf = axisDomainToRangeFunc(cytoAx)
 
   const pcenters = cytobands
     .filter((c) => c.name.startsWith('p') && c.giemsaStain === 'acen')
@@ -114,27 +121,19 @@ function CytobandsRoundStyleTrackSvg({
     .map((c) => c.loc)
 
   const pcenterxs =
-    pcenters.length > 0
-      ? cytoAx.domainToRange(Math.min(...pcenters.map((l) => l.start)))
-      : 0
+    pcenters.length > 0 ? xaf(Math.min(...pcenters.map((l) => l.start))) : 0
 
   const pcenterxe =
-    pcenters.length > 0
-      ? cytoAx.domainToRange(Math.max(...pcenters.map((l) => l.end)))
-      : 0
+    pcenters.length > 0 ? xaf(Math.max(...pcenters.map((l) => l.end))) : 0
 
   const qcenterxs =
-    qcenters.length > 0
-      ? cytoAx.domainToRange(Math.min(...qcenters.map((l) => l.start)))
-      : 0
+    qcenters.length > 0 ? xaf(Math.min(...qcenters.map((l) => l.start))) : 0
 
   const qcentersxe =
-    qcenters.length > 0
-      ? cytoAx.domainToRange(Math.max(...qcenters.map((l) => l.end)))
-      : 0
+    qcenters.length > 0 ? xaf(Math.max(...qcenters.map((l) => l.end))) : 0
 
-  const pw = Math.max(1, Math.abs(pcenterxe - cytoAx.domainToRange(l1.start)))
-  const qw = Math.max(1, Math.abs(cytoAx.domainToRange(l2.end) - qcenterxs))
+  const pw = Math.max(1, Math.abs(pcenterxe - xaf(l1.start)))
+  const qw = Math.max(1, Math.abs(xaf(l2.end) - qcenterxs))
 
   const pbands = cytobands.filter(
     (c) => c.name.startsWith('p') && c.giemsaStain !== 'acen'
@@ -146,8 +145,8 @@ function CytobandsRoundStyleTrackSvg({
 
   const h = settings.tracks.cytobands.band.height
 
-  const locx1 = cytoAx.domainToRange(location.start)
-  const locx2 = cytoAx.domainToRange(location.end)
+  const locx1 = xaf(location.start)
+  const locx2 = xaf(location.end)
   const locw = Math.max(1, locx2 - locx1)
 
   return (
@@ -155,7 +154,7 @@ function CytobandsRoundStyleTrackSvg({
       <defs>
         <clipPath id="p-arm">
           <rect
-            x={cytoAx.domainToRange(l1.start) - (settings.reverse ? pw : 0)}
+            x={xaf(l1.start) - (settings.reverse ? pw : 0)}
             width={pw}
             height={h}
             rx={h / 2}
@@ -178,8 +177,8 @@ function CytobandsRoundStyleTrackSvg({
         <g id="p-bands" clipPath="url(#p-arm)">
           {pbands.map((b, bi) => {
             const l = b.loc
-            const x1 = cytoAx.domainToRange(l.start)
-            const x2 = cytoAx.domainToRange(l.end)
+            const x1 = xaf(l.start)
+            const x2 = xaf(l.end)
             const w = Math.abs(x2 - x1)
 
             return (
@@ -211,7 +210,7 @@ function CytobandsRoundStyleTrackSvg({
         </g>
 
         <rect
-          x={cytoAx.domainToRange(l1.start) - (settings.reverse ? pw : 0)}
+          x={xaf(l1.start) - (settings.reverse ? pw : 0)}
           width={pw}
           height={h}
           stroke={track.displayOptions.stroke.value}
@@ -228,8 +227,8 @@ function CytobandsRoundStyleTrackSvg({
         <g id="q-bands" clipPath="url(#q-arm)">
           {qbands.map((b, bi) => {
             const l = b.loc
-            const x1 = cytoAx.domainToRange(l.start)
-            const x2 = cytoAx.domainToRange(l.end)
+            const x1 = xaf(l.start)
+            const x2 = xaf(l.end)
             const w = Math.abs(x2 - x1)
 
             return (
@@ -310,22 +309,22 @@ function CytobandsSquareStyleTrackSvg({
   const l1 = cytobands[0]!.loc
   const l2 = cytobands[cytobands.length - 1]!.loc
 
-  let cytoAx = new Axis().setLength(xax.length)
+  let cytoAx = createAxis({ length: xax.length })
 
   if (settings.reverse) {
-    cytoAx = cytoAx.setDomain([l2.end, l1.start])
+    cytoAx = setAxisDomain(cytoAx, [l2.end, l1.start])
   } else {
-    cytoAx = cytoAx.setDomain([l1.start, l2.end])
+    cytoAx = setAxisDomain(cytoAx, [l1.start, l2.end])
   }
+
+  const xaf = axisDomainToRangeFunc(cytoAx)
 
   const centers = cytobands
     .filter((c) => c.giemsaStain === 'acen')
     .map((c) => c.loc)
 
-  const centerx1 = cytoAx.domainToRange(
-    Math.min(...centers.map((l) => l.start))
-  )
-  const centerx2 = cytoAx.domainToRange(Math.max(...centers.map((l) => l.end)))
+  const centerx1 = xaf(Math.min(...centers.map((l) => l.start)))
+  const centerx2 = xaf(Math.max(...centers.map((l) => l.end)))
 
   const pbands = cytobands.filter(
     (c) => c.name.startsWith('p') && c.giemsaStain !== 'acen'
@@ -337,8 +336,8 @@ function CytobandsSquareStyleTrackSvg({
 
   const h = settings.tracks.cytobands.band.height
 
-  const locx1 = cytoAx.domainToRange(location.start)
-  const locx2 = cytoAx.domainToRange(location.end)
+  const locx1 = xaf(location.start)
+  const locx2 = xaf(location.end)
   const locw = Math.max(1, locx2 - locx1)
 
   return (
@@ -349,8 +348,8 @@ function CytobandsSquareStyleTrackSvg({
       >
         {pbands.map((b, bi) => {
           const l = b.loc
-          const x1 = cytoAx.domainToRange(l.start)
-          const x2 = cytoAx.domainToRange(l.end)
+          const x1 = xaf(l.start)
+          const x2 = xaf(l.end)
           const w = Math.abs(x2 - x1)
 
           return (
@@ -373,8 +372,8 @@ function CytobandsSquareStyleTrackSvg({
       >
         {qbands.map((b, bi) => {
           const l = b.loc
-          const x1 = cytoAx.domainToRange(l.start)
-          const x2 = cytoAx.domainToRange(l.end)
+          const x1 = xaf(l.start)
+          const x2 = xaf(l.end)
           const w = Math.abs(x2 - x1)
 
           return (
@@ -447,17 +446,19 @@ function LabelSvg({
 }: {
   pbands: ICytoband[]
   qbands: ICytoband[]
-  ax: Axis
+  ax: IAxis
   settings: ISeqBrowserSettings
 }) {
+  const xaf = axisDomainToRangeFunc(ax)
+
   const bands = [...pbands, ...qbands]
 
   const labels = range(0, bands.length).map((i) => {
     const b = bands[i]!
     const l = b.loc
 
-    const x1 = ax.domainToRange(l.start)
-    const x2 = ax.domainToRange(l.end)
+    const x1 = xaf(l.start)
+    const x2 = xaf(l.end)
     const x = (x1 + x2) / 2
 
     const name = b.name

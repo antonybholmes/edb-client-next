@@ -5,8 +5,8 @@ import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-
 import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { useEffect } from 'react'
+import { SettingsPropsPanel } from './settings-props-panel'
 import { VennLists } from './venn-lists'
-import { VennSettingsPropsPanel } from './venn-settings-props-panel'
 
 const ID = 'venn-props-panel'
 
@@ -43,7 +43,7 @@ export function VennPropsPanel() {
           <VennLists />
         </TabsContent>
         <TabsContent value="settings">
-          <VennSettingsPropsPanel />
+          <SettingsPropsPanel />
         </TabsContent>
         {/* <TabsList className="py-1">
         <TabsTrigger value="genesets" className="grow" variant="sidebar">

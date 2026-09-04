@@ -3,7 +3,7 @@ import {
   VolcanoPlotSvg,
   type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
-import { autoLim } from '@/components/plot/axes/axis'
+
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
@@ -25,6 +25,7 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
+import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 import { useVolcanoContext } from './volcano-provider'
@@ -41,8 +42,8 @@ export function makeDefaultVolcanoProps(
 
   const ydata = y ? getNumCol(df, findCol(df, y)) : range(df.shape[0])
 
-  const xlim = autoLim([Math.min(...xdata), Math.max(...xdata)])
-  const ylim = autoLim([Math.min(...ydata), Math.max(...ydata)])
+  const xlim: ILim = [Math.min(...xdata), Math.max(...xdata)]
+  const ylim: ILim = [Math.min(...ydata), Math.max(...ydata)]
 
   let props: IVolcanoDisplayOptions = { ...DEFAULT_VOLCANO_PROPS }
 

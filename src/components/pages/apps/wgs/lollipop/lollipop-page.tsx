@@ -44,7 +44,7 @@ import { useLollipopSettings } from './lollipop-settings-store'
 
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo } from '@/components/edb/edb-settings'
@@ -509,8 +509,8 @@ function LollipopPage() {
 
 export function LollipopQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <LollipopPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

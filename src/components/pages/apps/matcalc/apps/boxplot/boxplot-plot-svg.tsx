@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { YAxis } from '@/components/plot/axes/axis'
 import { AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IPos } from '@/interfaces/pos'
 import { linspace } from '@/lib/math/linspace'
@@ -30,6 +29,7 @@ import {
   type LegendPos,
 } from '../../../../../plot/svg-props'
 
+import { createAxis } from '@/components/plot/axes/axis'
 import { useBoxPlotContext } from './boxplot-provider'
 
 /**
@@ -205,9 +205,11 @@ export function BoxPlotSvg() {
       )
       .flat()
 
-    const globalYAxis = new YAxis()
-      .autoDomain([Math.min(...values), Math.max(...values)])
-      .setLength(displayProps.plot!.h)
+    const globalYAxis = createAxis({
+      direction: 'y',
+      length: displayProps.plot!.h,
+      autoDomain: [Math.min(...values), Math.max(...values)],
+    })
 
     //
     // how big is the canvas

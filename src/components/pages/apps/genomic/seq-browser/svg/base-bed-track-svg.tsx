@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { type Axis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, type IAxis } from '@/components/plot/axes/axis'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { locStr } from '@/lib/genomic/genomic'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'
@@ -34,7 +34,7 @@ interface IProps extends IDivProps {
     positions: IGenomicLocation[]
   }[]
   //allFeatures: IGenomicLocation[][]
-  xax: Axis
+  xax: IAxis
   titleHeight: number
 }
 
@@ -51,6 +51,8 @@ export function BaseBedTrackSvg({
   )
 
   const trackYs = cumsum([0, ...trackHeights])
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   return (
     <g transform={`translate(0, ${titleHeight})`}>
@@ -91,8 +93,8 @@ export function BaseBedTrackSvg({
             >
               {features.map((f, bi) => {
                 const l = f
-                const x1 = xax.domainToRange(l.start)
-                const x2 = xax.domainToRange(l.end)
+                const x1 = xaf(l.start)
+                const x2 = xaf(l.end)
                 const w = Math.abs(x2 - x1)
 
                 return (

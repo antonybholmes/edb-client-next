@@ -7,7 +7,7 @@ import { CenterLayout } from '@/layouts/center-layout'
 import { addAlphaToHex } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import { HEADER_LINKS, type IAppHeaderLink } from '@/menus'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { FOCUS_RING_CLS } from '@/theme'
 import { LayoutGrid, LayoutList } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -223,8 +223,8 @@ export function AppsPage({ title = 'Index' }: { title?: string }) {
 
 export function AppsQueryPage({ title = 'Index' }: { title?: string }) {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <AppsPage title={title} />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

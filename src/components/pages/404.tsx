@@ -1,7 +1,7 @@
 'use client'
 
 import { CenterLayout } from '@/layouts/center-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import { DinoIcon } from '../icons/dino-icon'
@@ -126,8 +126,8 @@ export function Error404Page() {
 
 export function Error404QueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <Error404Page />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

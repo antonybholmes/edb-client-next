@@ -1,3 +1,4 @@
+import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
@@ -8,7 +9,6 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { PropRow } from '@/dialogs/prop-row'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import { NumericalInput } from '@/themed/numerical-input'
 import {
@@ -287,25 +287,25 @@ export function SettingsTracksPanel() {
         >
           First transcript only
         </Switch>
-
-        <OutlineButton
-          colors={[
-            {
-              color: settings.tracks.genes.endArrows.stroke.value,
-              onColorChange: ({ color }) => {
-                const newOptions = produce(settings, (draft) => {
-                  draft.tracks.genes.endArrows.stroke.value = color
-                  draft.tracks.genes.endArrows.fill.value = color
-                })
-
-                updateSettings(newOptions)
-              },
-            },
-          ]}
-
-          title="End Arrow Outline"
-        />
       </SwitchPropRow>
+
+      <OutlineButton
+        colors={[
+          {
+            color: settings.tracks.genes.endArrows.stroke.value,
+            onColorChange: ({ color }) => {
+              const newOptions = produce(settings, (draft) => {
+                draft.tracks.genes.endArrows.stroke.value = color
+                draft.tracks.genes.endArrows.fill.value = color
+              })
+
+              updateSettings(newOptions)
+            },
+          },
+        ]}
+
+        title="End Arrow Outline"
+      />
 
       <SwitchPropRow
         title="Exons"

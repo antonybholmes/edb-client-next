@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 import { useEdbSession } from '@/components/edb/auth/session'
 import { redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { BaseSignOutPage } from '../../sign-out-page'
 
 export function SignOutPage() {
@@ -37,8 +37,8 @@ export function SignOutPage() {
 
 export function SignOutQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignOutPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

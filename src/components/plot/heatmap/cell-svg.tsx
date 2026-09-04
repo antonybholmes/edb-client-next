@@ -4,18 +4,24 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { ILim } from '@/lib/math/math'
 import { normalize } from '@/lib/math/normalize'
-import { range } from '@/lib/math/range'
 import { formatNumber } from '@/lib/text/text'
+import { ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgPath } from '../svg-path'
+import { IMarginProps } from '../svg-props'
 import { SvgRect } from '../svg-rect'
+import { CellGaps } from './cell-gaps'
 
 // we want circles slightly smaller than box to allow for borders
 const RADIUS_FACTOR = 1 //0.96
 
 export interface ICellsSvgProps {
   df: BaseDataFrame
+  margin: IMarginProps
+  xgaps: CellGaps
+  ygaps: CellGaps
   dfRaw?: BaseDataFrame | undefined
   dfSize?: BaseDataFrame | undefined
   rowLeaves: number[]
@@ -32,6 +38,10 @@ function getUseRectId(color: string): string {
 
 export function CellsSvg({
   df,
+  margin,
+  xgaps,
+  ygaps,
+
   rowLeaves,
   colLeaves,
   props,
@@ -77,33 +87,25 @@ export function CellsSvg({
         shapeRendering={SVG_CRISP_EDGES}
       >
         {rowLeaves.map((row, ri) => {
-          const y = pos.y + row * blockSize.h
+          const y = ygaps.position(ri)
+
           return colLeaves.map((col, ci) => {
-            const x = pos.x + col * blockSize.w
+            const x = xgaps.position(ci)
+
             const fill = colors[ri]![ci]!
 
             const id = getUseRectId(fill)
 
             return (
-              // <rect
-              //   id={`${ri}:${ci}`}
-              //   key={`${ri}:${ci}`}
-              //   x={ci * blockSize.w}
-              //   y={ri * blockSize.h}
-              //   width={blockSize.w}
-              //   height={blockSize.h}
-              //   fill={fill}
-              //   //shapeRendering={SVG_CRISP_EDGES}
-              // />
               <use
                 key={`${ri}:${ci}`}
                 xlinkHref={`#${id}`}
-                transform={`translate(${ci * blockSize.w},${ri * blockSize.h})`}
+                transform={`translate(${x},${y})`}
                 onMouseEnter={() => {
                   handleVariantEnter?.(
                     {
-                      x,
-                      y,
+                      x: x + margin.left,
+                      y: y + margin.top,
                     },
                     { row: ri, col: ci }
                   )
@@ -124,6 +126,9 @@ export function DotsSvg({
   df,
   dfRaw,
   dfSize,
+  margin,
+  xgaps,
+  ygaps,
   rowLeaves,
   colLeaves,
   handleVariantEnter,
@@ -150,9 +155,9 @@ export function DotsSvg({
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {rowLeaves.map((row, ri) => {
-        const y = pos.y + row * blockSize.h
+        const y = ygaps.position(ri)
         return colLeaves.map((col, ci) => {
-          const x = pos.x + col * blockSize.w
+          const x = xgaps.position(ci)
           const v = df.get(row, col) as number
 
           const radius =
@@ -195,10 +200,7 @@ export function DotsSvg({
               : props.cells.values.color
 
           return (
-            <g
-              key={`${ri}:${ci}`}
-              transform={`translate(${ci * blockSize.w},${ri * blockSize.h})`}
-            >
+            <g key={`${ri}:${ci}`} transform={`translate(${x},${y})`}>
               {/* Handle mouse events on transparent rect on top of circles to avoid 
               issues with small circles not triggering mouse events */}
               <rect
@@ -208,8 +210,8 @@ export function DotsSvg({
                 onMouseEnter={() => {
                   handleVariantEnter?.(
                     {
-                      x,
-                      y,
+                      x: x + margin.left,
+                      y: y + margin.top,
                     },
                     { row: ri, col: ci }
                   )
@@ -261,36 +263,75 @@ interface IGridSvgProps {
   height: number
   props: IHeatMapSettings
   pos?: IPos
+  xgaps: CellGaps
+  ygaps: CellGaps
 }
 
 export function GridSvg({
-  width,
-  height,
   props,
+  xgaps,
+  ygaps,
   pos = { ...ZERO_POS },
 }: IGridSvgProps) {
   const blockSize = props.blockSize
 
-  const hlines = range(blockSize.h, height, blockSize.h)
-    .map((y) => `M 0,${y} L ${width},${y}`)
-    .join(' ')
+  const hlines = []
 
-  const vlines = range(blockSize.w, width, blockSize.w)
-    .map((x) => `M ${x},0 L ${x},${height}`)
-    .join(' ')
+  for (const xspan of xgaps.spans) {
+    for (const yspan of ygaps.spans) {
+      let y = yspan.p1
+      for (let row = 0; row < yspan.size; row++) {
+        hlines.push(`M ${xspan.p1},${y} L ${xspan.p2},${y}`)
+        y += blockSize.h
+      }
+    }
+  }
+
+  const vlines = []
+
+  for (const yspan of ygaps.spans) {
+    for (const xspan of xgaps.spans) {
+      let x = xspan.p1
+      for (let col = 0; col < xspan.size; col++) {
+        vlines.push(`M ${x},${yspan.p1} L ${x},${yspan.p2}`)
+        x += blockSize.w
+      }
+    }
+  }
+
+  const rects: ReactNode[] = []
+
+  if (props.border.show) {
+    for (const [yi, yspan] of ygaps.spans.entries()) {
+      for (const [xi, xspan] of xgaps.spans.entries()) {
+        rects.push(
+          <SvgRect
+            key={`grid:${yi}:${xi}`}
+            x={xspan.p1}
+            y={yspan.p1}
+            width={xspan.w}
+            height={yspan.w}
+            sp={props.border}
+            shapeRendering={SVG_CRISP_EDGES}
+          />
+        )
+      }
+    }
+  }
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.grid.show && (
         <>
           <SvgPath
-            d={hlines}
+            d={hlines.join(' ')}
             sp={props.grid}
+            //stroke="black"
             shapeRendering={SVG_CRISP_EDGES}
           />
 
           <SvgPath
-            d={vlines}
+            d={vlines.join(' ')}
             sp={props.grid}
 
             shapeRendering={SVG_CRISP_EDGES}
@@ -298,17 +339,36 @@ export function GridSvg({
         </>
       )}
 
-      {props.border.show && (
-        <SvgRect
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          sp={props.border}
-
-          shapeRendering={SVG_CRISP_EDGES}
-        />
-      )}
+      {props.border.show && <>{rects}</>}
     </g>
   )
+}
+
+function xys({ props, shape }: { props: IHeatMapSettings; shape: ILim }): {
+  xs: number[]
+  ys: number[]
+} {
+  const blockSize = props.blockSize
+  const rowGaps = new Set(props.gaps.rows.indexes)
+  const colGaps = new Set(props.gaps.cols.indexes)
+
+  const xs: number[] = []
+  const ys: number[] = []
+  let x = 0
+  let y = 0
+
+  console.log(rowGaps, colGaps)
+
+  for (let i = 0; i < shape[1]; i++) {
+    x += colGaps.has(i) ? props.gaps.cols.size : 0
+    xs.push(x)
+    x += blockSize.w
+  }
+
+  for (let i = 0; i < shape[0]; i++) {
+    y += rowGaps.has(i) ? props.gaps.rows.size : 0
+    ys.push(y)
+    y += blockSize.h
+  }
+  return { xs, ys }
 }

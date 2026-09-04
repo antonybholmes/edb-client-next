@@ -28,7 +28,7 @@ export function getFileId(
   opts: { file?: OptStrOrIdObj } = {}
 ): string {
   const { file } = opts
-  return (typeof file === 'string' ? file : file?.id) || present.currentFile.id
+  return (typeof file === 'string' ? file : file?.id) || present.currentFile
 }
 
 export function getSheets(

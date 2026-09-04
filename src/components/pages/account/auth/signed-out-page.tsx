@@ -4,7 +4,7 @@ import { useEdbSession } from '@/components/edb/auth/session'
 import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import { config } from '@/config'
 import { CenterLayout } from '@/layouts/center-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { AuthModal } from './auth-modal'
 
 function SignedOutPage() {
@@ -34,8 +34,8 @@ function SignedOutPage() {
 
 export function SignedOutQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignedOutPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

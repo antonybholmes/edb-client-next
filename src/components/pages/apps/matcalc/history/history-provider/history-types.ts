@@ -11,7 +11,7 @@ import { IGseaBubblePlot } from '../../../genes/gsea/gsea-plot/bubble/gsea-bubbl
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 
-import { AxisRecord } from '@/components/plot/axes/axis'
+import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 import { IExtGseaDisplayOptions } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from './history-manager'
@@ -31,8 +31,8 @@ export interface ISelectionPath {
 
 export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
 
-export interface HeatMapPlot extends IBasePlot {
-  style: 'heatmap' | 'dot'
+export interface IHeatMapPlot extends IBasePlot {
+  style: 'heatmap'
   dataframes: Record<string, DataFrameType>
   props: IHeatMapSettings
 }
@@ -79,7 +79,7 @@ export interface ExtGseaPlot extends IBasePlot {
 }
 
 export type HistoryPlot =
-  | HeatMapPlot
+  | IHeatMapPlot
   | IVolcanoPlot
   | IGseaBubblePlot
   | ExtGseaPlot

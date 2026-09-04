@@ -124,7 +124,7 @@ export function Switch({
         data-enabled={!disabled}
         data-checked={checked}
         style={{ height: 16, width: 20 }}
-      ></span>
+      />
     </SwitchPrimitives.Root>
   )
 

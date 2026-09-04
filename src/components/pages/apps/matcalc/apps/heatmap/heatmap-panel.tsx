@@ -32,7 +32,7 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 export const PLOT_ZOOM_CHANNEL = 'matcalc-plot'
 
 export function HeatmapPanel() {
-  const { zoom } = useZoom({
+  useZoom({
     onChange: (z) => {
       if (!plot) {
         return

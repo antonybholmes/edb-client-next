@@ -35,7 +35,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSearch } from '@/hooks/search'
 import { ExportIcon } from '@/icons/export-icon'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { produce } from 'immer'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
@@ -386,8 +386,8 @@ function SeqBrowserPage() {
 
 export function SeqBrowserQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SeqBrowserPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

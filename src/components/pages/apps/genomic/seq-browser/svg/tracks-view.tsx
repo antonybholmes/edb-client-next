@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { Axis } from '@/components/plot/axes/axis'
+import {
+  axisRangeToDomain,
+  createAxis,
+  setAxisDomain,
+  setAxisTicks,
+} from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { TEXT_ZOOM } from '@/consts'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
@@ -66,16 +71,18 @@ export function TracksView({ className, style }: ISVGProps) {
 
   const axes = useMemo(() => {
     return locations.map((location) => {
-      let xax = new Axis().setLength(settings.plot.width)
+      let xax = createAxis({ length: settings.plot.width })
 
       if (settings.reverse) {
-        xax = xax
-          .setDomain([location.end, location.start])
-          .setTicks([location.end, location.start])
+        xax = setAxisTicks(setAxisDomain(xax, [location.end, location.start]), [
+          location.end,
+          location.start,
+        ])
       } else {
-        xax = xax
-          .setDomain([location.start, location.end])
-          .setTicks([location.start, location.end])
+        xax = setAxisTicks(setAxisDomain(xax, [location.start, location.end]), [
+          location.start,
+          location.end,
+        ])
       }
 
       return xax
@@ -235,10 +242,12 @@ export function TracksView({ className, style }: ISVGProps) {
 
   const handleDrag = () => {
     if (dragPositionRef.current && dragStartPositionRef.current) {
-      const rangeX1 = axes[column.current.col]!.rangeToDomain(
+      const rangeX1 = axisRangeToDomain(
+        axes[column.current.col]!,
         dragStartPositionRef.current.x
       )
-      const rangeX2 = axes[column.current.col]!.rangeToDomain(
+      const rangeX2 = axisRangeToDomain(
+        axes[column.current.col]!,
         dragPositionRef.current.x
       )
 

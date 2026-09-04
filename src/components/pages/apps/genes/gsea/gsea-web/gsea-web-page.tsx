@@ -45,7 +45,6 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { BoolSearchQuery } from '@/lib/search'
-import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
@@ -55,6 +54,7 @@ import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
 import { useGsea } from './gsea-web-store'
 
+import { ClientLayout } from '@/app/client-layout'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
@@ -427,8 +427,8 @@ export function GseaWebPage() {
 
 export function GseaWebQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <GseaWebPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

@@ -9,7 +9,7 @@ import {
   type LocType,
 } from './base-dataframe'
 
-import { fill2d, vfill } from '../fill'
+import { vfill, vfill2d } from '../fill'
 import { getExcelColName } from './cell'
 import { ColFrame } from './col-frame'
 import { type IDataFrameOptions } from './dataframe'
@@ -378,7 +378,7 @@ export const DATAFRAME_1x1 = create1x1Df()
 export function createEmptyFrame(rows: number, cols: number) {
   return new AnnotationDataFrame({
     name: DEFAULT_SHEET_NAME,
-    data: fill2d('', rows, cols),
+    data: vfill2d('', { rows, cols }),
   })
 }
 

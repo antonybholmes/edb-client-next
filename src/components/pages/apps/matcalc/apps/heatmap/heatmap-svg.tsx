@@ -1,7 +1,7 @@
 import { cellStr } from '@/lib/dataframe/cell'
 
 import { type ICell } from '@/interfaces/cell'
-import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import { type IPos } from '@/interfaces/pos'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
@@ -20,10 +20,10 @@ import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
-import { range } from '@/lib/math/range'
 import { useMemo } from 'react'
 
-import { Axis } from '@/components/plot/axes/axis'
+import { createAxis } from '@/components/plot/axes/axis'
+import { CellGaps } from '@/components/plot/heatmap/cell-gaps'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { COLOR_MAPS } from '@/lib/color/colormap'
@@ -53,6 +53,16 @@ interface IProps extends ISVGProps {
 export function HeatMapSvg() {
   const { plot } = useHeatmapContext()
 
+  if (!plot) {
+    return null
+  }
+
+  return <HeatMapSvgContent />
+}
+
+function HeatMapSvgContent() {
+  const { plot, rowLeaves, colLeaves } = useHeatmapContext()
+
   const cf = plot.dataframes['main'] as IClusterFrame
 
   const groupRows = plot.groupRows || []
@@ -65,10 +75,10 @@ export function HeatMapSvg() {
 
   const blockSize = displayOptions.blockSize
 
-  const scaledBlockSize = {
-    w: blockSize.w * displayOptions.zoom,
-    h: blockSize.h * displayOptions.zoom,
-  }
+  // const scaledBlockSize = {
+  //   w: blockSize.w * displayOptions.zoom,
+  //   h: blockSize.h * displayOptions.zoom,
+  // }
 
   const { ref } = useSVG()
 
@@ -86,9 +96,9 @@ export function HeatMapSvg() {
     const left =
       displayOptions.padding +
       (cf.rowTree &&
-      displayOptions.rowTree.show &&
-      displayOptions.rowTree.position === 'left'
-        ? displayOptions.rowTree.width + displayOptions.padding
+      displayOptions.tree.row.show &&
+      displayOptions.tree.row.position === 'left'
+        ? displayOptions.tree.row.width + displayOptions.padding
         : 0) +
       (displayOptions.rowLabels.show &&
       displayOptions.rowLabels.position === 'left'
@@ -102,12 +112,12 @@ export function HeatMapSvg() {
         : 0) +
       (displayOptions.colorbar.show &&
       displayOptions.colorbar.position.includes('right')
-        ? displayOptions.colorbar.width + displayOptions.padding
+        ? displayOptions.colorbar.size.w + displayOptions.padding
         : 0) +
       (cf.rowTree &&
-      displayOptions.rowTree.show &&
-      displayOptions.rowTree.position === 'right'
-        ? displayOptions.rowTree.width + displayOptions.padding
+      displayOptions.tree.row.show &&
+      displayOptions.tree.row.position === 'right'
+        ? displayOptions.tree.row.width + displayOptions.padding
         : 0) +
       ((displayOptions.legend.show || displayOptions.dot.legend.show) &&
       displayOptions.legend.position.includes('right')
@@ -117,9 +127,9 @@ export function HeatMapSvg() {
     const top =
       displayOptions.padding +
       (cf.colTree &&
-      displayOptions.colTree.show &&
-      displayOptions.colTree.position === 'top'
-        ? displayOptions.colTree.width + displayOptions.padding
+      displayOptions.tree.col.show &&
+      displayOptions.tree.col.position === 'top'
+        ? displayOptions.tree.col.width + displayOptions.padding
         : 0) +
       (displayOptions.colLabels.show &&
       displayOptions.colLabels.position === 'top'
@@ -138,13 +148,14 @@ export function HeatMapSvg() {
         : 0) +
       (displayOptions.colorbar.show &&
       displayOptions.colorbar.position === 'bottom'
-        ? displayOptions.colorbar.width + displayOptions.padding
+        ? displayOptions.colorbar.size.w + displayOptions.padding
         : 0)
 
     return { top, left, bottom, right }
   }, [displayOptions])
 
   function handleVariantEnter(pos: IPos, cell: ICell) {
+    //console.log('handleVariantEnter', pos, cell)
     const screen = svgPointToScreen(ref.current, pos)
 
     screen.x += blockSize.w + 2
@@ -174,6 +185,12 @@ export function HeatMapSvg() {
     }
 
     const dfSize = plot?.dataframes['size'] as BaseDataFrame
+
+    //unadjusted values which can be used to set the cell value
+    // for display rather than the transformed data. useful if
+    // you want to display non-logged values in a logged matrix
+    // where the logged data is used to control heatmap colors etc
+    // but user wants to see the original values
     const dfRaw = plot?.dataframes['raw'] as BaseDataFrame
 
     // const colorMap = d3
@@ -181,34 +198,6 @@ export function HeatMapSvg() {
     //   .domain([displayOptions.range[0], 0, displayOptions.range[1]])
     //
     //   .range(["blue", "white", "red"])
-
-    const s = dfMain.shape
-
-    const rowLeaves = cf.rowTree ? cf.rowTree.leaves : range(s[0])
-    let colLeaves: number[] = []
-
-    if (cf.colTree) {
-      colLeaves = cf.colTree.leaves
-    } else if (groups0.length > 0) {
-      // if we are not clustering columns, but have groups,
-      // order by groups
-
-      colLeaves = groups0
-        .map((group) => getColIdxFromGroup(dfMain, group))
-        .flat()
-
-      const used = new Set<number>(colLeaves)
-
-      // add unused indices in the order encountered at the end of the list
-      // so we don't lose any data but move the unclassified to the end
-      if (displayOptions.groups.keepUnused) {
-        colLeaves = [...colLeaves, ...range(s[1]).filter((i) => !used.has(i))]
-      }
-    } else {
-      // no clustering or groups, just show in original order
-
-      colLeaves = range(s[1])
-    }
 
     const colColorMap = new Map<string, Map<number, string>>(
       groupRows.map((gr) => [
@@ -225,8 +214,29 @@ export function HeatMapSvg() {
       ])
     )
 
-    const innerWidth = colLeaves.length * blockSize.w
-    const innerHeight = dfMain.shape[0] * blockSize.h
+    const xgaps = new CellGaps(
+      displayOptions.gaps.cols,
+      blockSize.w,
+      dfMain.shape[1]
+    )
+    const ygaps = new CellGaps(
+      displayOptions.gaps.rows,
+      blockSize.h,
+      dfMain.shape[0]
+    )
+
+    const unadjustedInnerWidth = colLeaves.length * blockSize.w
+
+    const innerWidth =
+      unadjustedInnerWidth +
+      displayOptions.gaps.cols.size * displayOptions.gaps.cols.indexes.length
+
+    const unadjustedInnerHeight = rowLeaves.length * blockSize.h
+
+    const innerHeight =
+      unadjustedInnerHeight +
+      displayOptions.gaps.rows.size * displayOptions.gaps.rows.indexes.length
+
     const width = innerWidth + margin.left + margin.right
     const height =
       Math.max(MIN_INNER_HEIGHT, innerHeight) + margin.top + margin.bottom
@@ -235,64 +245,56 @@ export function HeatMapSvg() {
       ? 30
       : margin.top
 
-    let legendPos: IPos = { ...ZERO_POS }
-
-    if (displayOptions.legend.position.includes('right')) {
-      legendPos = {
-        x:
-          margin.left +
-          innerWidth +
-          displayOptions.padding +
-          (displayOptions.rowLabels.show &&
-          displayOptions.rowLabels.position === 'right'
-            ? rowLabelsMetaW
-            : 0) +
-          (cf.rowTree &&
-          displayOptions.rowTree.show &&
-          displayOptions.rowTree.position === 'right'
-            ? displayOptions.rowTree.width + displayOptions.padding
-            : 0) +
-          (displayOptions.colorbar.show &&
-          displayOptions.colorbar.position.includes('right')
-            ? displayOptions.colorbar.width
-            : 0),
-        y: legendTop,
-      }
+    const legendPos = {
+      x:
+        margin.left +
+        innerWidth +
+        displayOptions.padding +
+        (displayOptions.rowLabels.show &&
+        displayOptions.rowLabels.position === 'right'
+          ? rowLabelsMetaW
+          : 0) +
+        (cf.rowTree &&
+        displayOptions.tree.row.show &&
+        displayOptions.tree.row.position === 'right'
+          ? displayOptions.tree.row.width + displayOptions.padding
+          : 0),
+      y: legendTop,
     }
 
-    let dotLegendPos: IPos = { ...ZERO_POS }
-    if (displayOptions.legend.position.includes('right')) {
-      dotLegendPos = {
-        x: legendPos.x!,
-        y:
-          legendTop +
-          (displayOptions.legend.show && displayOptions.groups.show
-            ? (legendBlockSize + displayOptions.padding) * (groups0.length + 1)
-            : 0),
-      }
-    }
+    const showLegendGroupRight =
+      displayOptions.groups.show &&
+      groupRows.length > 0 &&
+      displayOptions.legend.show &&
+      displayOptions.legend.position.includes('right')
 
-    const cax = new Axis()
-      .setDomain(displayOptions.range)
-      .setLength(displayOptions.colorbar.size.w)
-      .setTicks([
+    const legendGroupRightY =
+      displayOptions.colorbar.show &&
+      displayOptions.colorbar.position.includes('right')
+        ? displayOptions.colorbar.size.w + 40
+        : 0
+
+    const dotLegendRightY =
+      displayOptions.legend.show && displayOptions.groups.show
+        ? (legendBlockSize + displayOptions.padding) * groups0.length + 10
+        : 0
+
+    const cax = createAxis({
+      domain: displayOptions.range,
+      length: displayOptions.colorbar.size.w,
+      ticks: [
         displayOptions.range[0],
         (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
         displayOptions.range[1],
-      ])
-      .setTicks(
-        [
-          displayOptions.range[0] +
-            (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-          displayOptions.range[0] +
-            (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-        ],
-        { which: 'minor' }
-      )
-      .setTickParams({
-        which: 'minor',
-        show: true,
-      })
+      ],
+      minorTicks: [
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+      ],
+      tickParams: { which: 'minor', show: true },
+    })
 
     const svg = (
       <>
@@ -307,12 +309,13 @@ export function HeatMapSvg() {
         )}
 
         {cf.colTree &&
-          displayOptions.colTree.show &&
-          displayOptions.colTree.position === 'top' && (
+          displayOptions.tree.col.show &&
+          displayOptions.tree.col.position === 'top' && (
             <ColTreeTopSvg
               tree={cf.colTree}
-              width={innerWidth}
-              height={displayOptions.colTree.width}
+              width={unadjustedInnerWidth}
+              gaps={xgaps}
+              height={displayOptions.tree.col.width}
               props={displayOptions}
               pos={{ x: margin.left, y: displayOptions.padding }}
             />
@@ -354,12 +357,13 @@ export function HeatMapSvg() {
 
         {/* Show tree on left of heat map */}
         {cf.rowTree &&
-          displayOptions.rowTree.show &&
-          displayOptions.rowTree.position === 'left' && (
+          displayOptions.tree.row.show &&
+          displayOptions.tree.row.position === 'left' && (
             <RowTreeSvg
               tree={cf.rowTree}
-              width={innerHeight}
-              height={displayOptions.rowTree.width}
+              gaps={ygaps}
+              width={unadjustedInnerHeight}
+              height={displayOptions.tree.row.width}
               mode="left"
               props={displayOptions}
               pos={{ x: displayOptions.padding, y: margin.top }}
@@ -367,12 +371,13 @@ export function HeatMapSvg() {
           )}
 
         {cf.rowTree &&
-          displayOptions.rowTree.show &&
-          displayOptions.rowTree.position === 'right' && (
+          displayOptions.tree.row.show &&
+          displayOptions.tree.row.position === 'right' && (
             <RowTreeSvg
               tree={cf.rowTree}
-              width={innerHeight}
-              height={displayOptions.rowTree.width}
+              gaps={ygaps}
+              width={unadjustedInnerHeight}
+              height={displayOptions.tree.row.width}
               mode="right"
               props={displayOptions}
               pos={{
@@ -409,6 +414,8 @@ export function HeatMapSvg() {
               width={innerWidth}
               height={innerHeight}
               props={displayOptions}
+              xgaps={xgaps}
+              ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
             />
             {/* Draw cells after grid so the are not obscured */}
@@ -416,6 +423,9 @@ export function HeatMapSvg() {
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}
+              margin={margin}
+              xgaps={xgaps}
+              ygaps={ygaps}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               handleVariantEnter={handleVariantEnter}
@@ -428,9 +438,12 @@ export function HeatMapSvg() {
           <>
             <CellsSvg
               df={dfMain}
+              margin={margin}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               props={displayOptions}
+              xgaps={xgaps}
+              ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
               handleVariantEnter={handleVariantEnter}
               handleVariantLeave={hideTooltip}
@@ -439,47 +452,19 @@ export function HeatMapSvg() {
               width={innerWidth}
               height={innerHeight}
               props={displayOptions}
+              xgaps={xgaps}
+              ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
             />
           </>
         )}
 
-        {displayOptions.colorbar.show &&
-          displayOptions.colorbar.position.includes('right') && (
-            <SvgVColorBar
-              ax={cax}
-
-              cmap={COLOR_MAPS[displayOptions.cmap]!}
-
-              pos={{
-                x:
-                  margin.left +
-                  innerWidth +
-                  displayOptions.padding +
-                  (displayOptions.rowLabels.show &&
-                  displayOptions.rowLabels.position === 'right'
-                    ? rowLabelsMetaW
-                    : 0) +
-                  (cf.rowTree &&
-                  displayOptions.rowTree.show &&
-                  displayOptions.rowTree.position === 'right'
-                    ? displayOptions.rowTree.width + displayOptions.padding
-                    : 0),
-                y: legendTop,
-              }}
-            />
-          )}
+        {/* Plot the legend */}
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position === 'bottom' && (
             <SvgHColorBar
-              ax={new Axis()
-                .setDomain(displayOptions.range)
-                .setLength(displayOptions.colorbar.size.w)
-                .setTickParams({
-                  which: 'minor',
-                  show: false,
-                })}
+              ax={cax}
               cmap={COLOR_MAPS[displayOptions.cmap]!}
 
               pos={{
@@ -499,17 +484,6 @@ export function HeatMapSvg() {
               }}
             />
           )}
-
-        {/* Plot the legend */}
-
-        {displayOptions.groups.show &&
-          groupRows.length > 0 &&
-          displayOptions.legend.show &&
-          displayOptions.legend.position.includes('right') && (
-            <LegendRightSvg pos={legendPos} groupRows={groupRows} />
-          )}
-
-        {/* Legend on bottom */}
 
         {displayOptions.groups.show &&
           groupRows.length > 0 &&
@@ -531,13 +505,32 @@ export function HeatMapSvg() {
             />
           )}
 
-        {/* Plot the dot legend */}
+        <g
+          id="legend-right"
+          transform={`translate(${legendPos.x}, ${legendPos.y})`}
+        >
+          {displayOptions.colorbar.show &&
+            displayOptions.colorbar.position.includes('right') && (
+              <SvgVColorBar
+                ax={cax}
 
-        {displayOptions.mode === 'dot' &&
-          displayOptions.legend.position.includes('right') &&
-          displayOptions.dot.legend.show && (
-            <DotLegend pos={dotLegendPos} groupRows={groupRows} />
-          )}
+                cmap={COLOR_MAPS[displayOptions.cmap]!}
+              />
+            )}
+          <g transform={`translate(0, ${legendGroupRightY})`}>
+            {showLegendGroupRight && <LegendRightSvg groupRows={groupRows} />}
+
+            {/* Plot the dot legend */}
+
+            {displayOptions.mode === 'dot' &&
+              displayOptions.legend.position.includes('right') &&
+              displayOptions.dot.legend.show && (
+                <g transform={`translate(0, ${dotLegendRightY})`}>
+                  <DotLegend groupRows={groupRows} />
+                </g>
+              )}
+          </g>
+        </g>
 
         {/* Show a list of transforms to create heatmap */}
         {displayOptions.actions.show &&

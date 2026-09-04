@@ -3,13 +3,18 @@ import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { range } from '@/lib/math/range'
 import { useEdbSettings } from '../edb/edb-settings'
-import { Axis, YAxis } from './axes/axis'
+import {
+  axisDomainToRange,
+  axisDomainToRangeFunc,
+  IAxis,
+  setAxisDirection,
+} from './axes/axis'
 
 import { AxisBottomSvg, AxisRightSvg } from './axes/svg-axis'
 import { SvgRect } from './svg-rect'
 
 interface ISvgColorBarProps {
-  ax: Axis
+  ax: IAxis
   cmap?: ColorMap
   steps?: number
   pos?: IPos
@@ -42,9 +47,10 @@ export function SvgHColorBar({
 
   let colorStart = -colorStep
 
-  let x2 = ax.domainToRange(ax.domain[0])
-  const xinc = ax.domainToRange(ax.domain[0] + inc) - x2
-  const xinc2 = ax.domainToRange(ax.domain[0] + inc2) - x2
+  const af = axisDomainToRangeFunc(ax)
+  let x2 = af(ax.domain[0])
+  const xinc = af(ax.domain[0] + inc) - x2
+  const xinc2 = af(ax.domain[0] + inc2) - x2
 
   x2 -= xinc
 
@@ -102,7 +108,7 @@ export function SvgVColorBar({
     steps = 15
   }
 
-  ax = YAxis.fromAxis(ax)
+  ax = setAxisDirection(ax, 'y')
 
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps
@@ -110,9 +116,9 @@ export function SvgVColorBar({
 
   let colorStart = -colorStep
 
-  let y2 = ax.domainToRange(ax.domain[0])
-  const yinc = y2 - ax.domainToRange(ax.domain[0] + inc)
-  const yinc2 = y2 - ax.domainToRange(ax.domain[0] + inc2)
+  let y2 = axisDomainToRange(ax, [ax.domain[0]])[0]
+  const yinc = y2 - axisDomainToRange(ax, [ax.domain[0] + inc])[0]
+  const yinc2 = y2 - axisDomainToRange(ax, [ax.domain[0] + inc2])[0]
 
   y2 -= yinc
 

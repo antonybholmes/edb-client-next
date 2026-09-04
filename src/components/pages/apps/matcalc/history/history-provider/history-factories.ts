@@ -13,7 +13,7 @@ import {
   BoxPlot,
   DataFrameType,
   ExtGseaPlot,
-  HeatMapPlot,
+  IHeatMapPlot,
   IHistoryApp,
   IVolcano,
   IVolcanoPlot,
@@ -22,10 +22,10 @@ import {
 export function newHeatMapPlot(
   name: string,
   dataframes: Record<string, DataFrameType> = {},
-  opts: Partial<HeatMapPlot> = {}
-): HeatMapPlot {
+  opts: Partial<IHeatMapPlot> & { mode?: 'heatmap' | 'dot' } = {}
+): IHeatMapPlot {
   const {
-    style = 'heatmap',
+    mode = 'heatmap',
     props = { ...DEFAULT_HEATMAP_PROPS },
     actions = [],
     groupRows: groups = [],
@@ -33,11 +33,11 @@ export function newHeatMapPlot(
 
   return {
     id: makeUuid(),
-    style,
+    style: 'heatmap',
     name,
     dataframes,
     groupRows: groups,
-    props,
+    props: { ...props, mode },
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),

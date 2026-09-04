@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import type { Axis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 
 import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'
@@ -36,9 +36,11 @@ const CHAR_W = 8
 export function getGeneTrackHeight(
   genes: IGenomicFeature[],
   settings: ISeqBrowserSettings,
-  xax: Axis
+  xax: IAxis
 ): Map<string, number> {
   const geneYMap: Map<string, number> = new Map()
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   if (settings.tracks.genes.display === 'dense') {
     for (const [gi, gene] of genes.entries()) {
@@ -69,15 +71,11 @@ export function getGeneTrackHeight(
 
         // add an allowance for the label width
         if (settings.reverse) {
-          x1 = Math.floor(xax.domainToRange(t.loc.end))
-          x2 =
-            Math.floor(xax.domainToRange(t.loc.start)) +
-            (t.symbol?.length ?? 0) * CHAR_W
+          x1 = Math.floor(xaf(t.loc.end))
+          x2 = Math.floor(xaf(t.loc.start)) + (t.symbol?.length ?? 0) * CHAR_W
         } else {
-          x1 =
-            Math.floor(xax.domainToRange(t.loc.start)) -
-            (t.symbol?.length ?? 0) * CHAR_W
-          x2 = Math.floor(xax.domainToRange(t.loc.end))
+          x1 = Math.floor(xaf(t.loc.start)) - (t.symbol?.length ?? 0) * CHAR_W
+          x2 = Math.floor(xaf(t.loc.end))
         }
 
         x1 = Math.max(0, x1)
@@ -237,6 +235,8 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
 
   // const geneY = cumsum([0, ...geneHeights])
 
+  const xaf = axisDomainToRangeFunc(xax)
+
   const sgn = sign(!settings.reverse)
 
   const arrowHy = track.displayOptions.arrows.y
@@ -280,8 +280,8 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                 ?.filter((f) => f.type === 'transcript')
                 .map((transcript, ti) => {
                   const transLoc = transcript.loc
-                  x1 = xax.domainToRange(transLoc.start)
-                  x2 = xax.domainToRange(transLoc.end)
+                  x1 = xaf(transLoc.start)
+                  x2 = xaf(transLoc.end)
 
                   const arrowStart =
                     Math.round(
@@ -394,6 +394,8 @@ export function GenesStructureTrackSvg({
 }: IProps) {
   const { xax, genes } = useContext(LocationContext)
   const { settings } = useSeqBrowserSettings()
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   // const genesQuery = useQuery({
   //   queryKey: ['db'],
@@ -532,8 +534,8 @@ export function GenesStructureTrackSvg({
                 )
                 .map((transcript, ti) => {
                   const transLoc = transcript.loc
-                  x1 = xax.domainToRange(transLoc.start)
-                  x2 = xax.domainToRange(transLoc.end)
+                  x1 = xaf(transLoc.start)
+                  x2 = xaf(transLoc.end)
 
                   const exonCount =
                     transcript.children?.filter((f) => f.type === 'exon')
@@ -703,13 +705,17 @@ function ExonsSvg({
   isCanonical,
 }: {
   transcript: IGenomicFeature
-  xax: Axis
+  xax: IAxis
   exonCount: number
   isCanonical: boolean
 }) {
   const { settings } = useSeqBrowserSettings()
 
-  if (!settings.tracks.genes.exons.show) return null
+  if (!settings.tracks.genes.exons.show) {
+    return null
+  }
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   return (
     <g
@@ -720,8 +726,8 @@ function ExonsSvg({
         ?.filter((f) => f.type === 'exon')
         .map((exon, ei) => {
           const exonLoc = exon.loc
-          const x1 = xax.domainToRange(exonLoc.start)
-          const x2 = xax.domainToRange(exonLoc.end)
+          const x1 = xaf(exonLoc.start)
+          const x2 = xaf(exonLoc.end)
           const w = Math.abs(x2 - x1)
           return (
             <rect
@@ -754,13 +760,17 @@ function CDSSvg({
   isCanonical,
 }: {
   transcript: IGenomicFeature
-  xax: Axis
+  xax: IAxis
   exonCount: number
   isCanonical: boolean
 }) {
   const { settings } = useSeqBrowserSettings()
 
-  if (!settings.tracks.genes.cds.show) return null
+  if (!settings.tracks.genes.cds.show) {
+    return null
+  }
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   return (
     <g
@@ -771,8 +781,8 @@ function CDSSvg({
         ?.filter((f) => f.type === 'cds')
         .map((cds, ei) => {
           const cdsLoc = cds.loc
-          const x1 = xax.domainToRange(cdsLoc.start)
-          const x2 = xax.domainToRange(cdsLoc.end)
+          const x1 = xaf(cdsLoc.start)
+          const x2 = xaf(cdsLoc.end)
           const w = Math.abs(x2 - x1)
           return (
             <rect
@@ -805,13 +815,17 @@ function UTRSvg({
   isCanonical,
 }: {
   transcript: IGenomicFeature
-  xax: Axis
+  xax: IAxis
   exonCount: number
   isCanonical: boolean
 }) {
   const { settings } = useSeqBrowserSettings()
 
-  if (!settings.tracks.genes.utrs.show) return null
+  if (!settings.tracks.genes.utrs.show) {
+    return null
+  }
+
+  const xaf = axisDomainToRangeFunc(xax)
 
   return (
     <g
@@ -822,8 +836,8 @@ function UTRSvg({
         ?.filter((f) => f.type === 'utr')
         .map((utr, ei) => {
           const utrLoc = utr.loc
-          const x1 = xax.domainToRange(utrLoc.start)
-          const x2 = xax.domainToRange(utrLoc.end)
+          const x1 = xaf(utrLoc.start)
+          const x2 = xaf(utrLoc.end)
           const w = Math.abs(x2 - x1)
           return (
             <rect

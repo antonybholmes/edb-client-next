@@ -20,7 +20,7 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -273,11 +273,7 @@ export function SankeyPage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                <SankeySvg
-
-                //dfs={plotFrames}
-                //className="absolute"
-                />
+                <SankeySvg />
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
@@ -327,10 +323,10 @@ export function SankeyPage() {
 
 export function SankeyQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SankeyProvider>
         <SankeyPage />
       </SankeyProvider>
-    </CoreProviders>
+    </ClientLayout>
   )
 }

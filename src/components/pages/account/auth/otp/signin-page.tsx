@@ -29,7 +29,7 @@ import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
 import { makeUuid } from '@/lib/id'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -326,8 +326,8 @@ export function SignInQueryPage() {
   // }
 
   return (
-    <CoreProviders>
+    <ClientLayout>
       <SignInPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

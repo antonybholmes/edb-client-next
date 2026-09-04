@@ -2,7 +2,7 @@
 
 import { BaseCol } from '@/layout/base-col'
 import { ContentDiv } from '@/layout/content-div'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { HeaderLayout } from '@/layouts/header-layout'
 
@@ -57,8 +57,8 @@ export function PrivacyPage() {
 
 export function PrivacyQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <PrivacyPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

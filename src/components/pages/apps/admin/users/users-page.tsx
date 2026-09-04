@@ -48,7 +48,7 @@ import { AdminLayout } from '@/layouts/admin-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 
@@ -576,8 +576,8 @@ export function AdminUsersPage() {
 
 export function AdminUsersQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <AdminUsersPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

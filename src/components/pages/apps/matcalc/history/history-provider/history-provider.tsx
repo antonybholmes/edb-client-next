@@ -15,7 +15,8 @@ import {
 enablePatches()
 
 import { ITextFileOpen } from '@/components/pages/open-files'
-import { AxisRecord } from '@/components/plot/axes/axis'
+
+import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 import { historyReducer } from './history-actions'
 import {
   AxesContext,

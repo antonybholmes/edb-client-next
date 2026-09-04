@@ -1261,9 +1261,14 @@ export function memoSort(
 
   const samples = df._sampleStats.map((s) => s.sample)
 
-  const blockShifts: bigint[] = range(geneOrder.length).map(
-    (gi) => numGenes * (maxGeneIndex - BigInt(gi))
-  )
+  const geneShifts: bigint[] = []
+  const blockShifts: bigint[] = []
+
+  for (let gi = 0; gi < geneOrder.length; ++gi) {
+    const geneShift = maxGeneIndex - BigInt(gi)
+    geneShifts.push(geneShift)
+    blockShifts.push(numGenes * geneShift)
+  }
 
   for (let col = 0; col < df.shape[1]; ++col) {
     // find all non zero rows and use a bit flag to set whether
@@ -1288,16 +1293,21 @@ export function memoSort(
     for (const [gi, originalGene] of geneOrder.entries()) {
       const stats = df._data[originalGene.index]![col]!
 
-      const geneShift = blockShifts[gi] ?? BIG0 // maxGeneIndex - BigInt(newIndex)
+      // only shift if this sample has mutations in this gene.
+      // This is because we want to push samples with mutations in the same genes
+      // together so that they are visually grouped together. If we don't do this,
+      // then samples with no mutations will be pushed to the left
+      // and will not be grouped with other samples that have mutations in the
+      // same genes.
 
       if (stats.sum > 0) {
-        // organize into blocks where the most mutated genes are at the left
-        // of the matrix and share a pattern
-        scores[0]!.value |= BIG1 << geneShift
-      }
+        // the first gene in the order is shifted the most to the left and so forth.
 
-      // scores[1].value +=
-      //   stats.sum > 0 ? Math.pow(2, Math.max(0, MAX_MEMO_POWER - newIndex)) : 0
+        // organize into blocks where the most mutated genes are at the left
+        // of the matrix and share a pattern this will be bit
+        // representation of the number of genes that have mutations in this sample
+        scores[0]!.value |= BIG1 << geneShifts[gi]
+      }
 
       // sort within blocks using event scores to group events rather
       // than randomly sorting them
@@ -1311,7 +1321,7 @@ export function memoSort(
           // trunc in gene 2.
 
           scores[1]!.value |=
-            BIG1 << (geneShift + (eventScoreMap.get(event.name) ?? BIG0))
+            BIG1 << (blockShifts[gi] + (eventScoreMap.get(event.name) ?? BIG0))
         }
       }
     }

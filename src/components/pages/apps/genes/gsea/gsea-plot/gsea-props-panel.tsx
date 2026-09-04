@@ -7,6 +7,7 @@ import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { List, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
+import { GseaAxesPropsPanel } from './gsea-axes-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 
 const ID = 'gsea-plot-props-panel'
@@ -25,6 +26,10 @@ export function GseaPropsPanel() {
         id: 'display',
         name: 'Display',
         icon: <SlidersHorizontal strokeWidth={2} size={18} />,
+      },
+      {
+        id: 'axes',
+        name: 'Axes',
       },
     ])
   }, [setTabs])
@@ -47,6 +52,9 @@ export function GseaPropsPanel() {
         </TabsContent>
         <TabsContent value="display">
           <GseaDisplayPropsPanel />
+        </TabsContent>
+        <TabsContent value="axes">
+          <GseaAxesPropsPanel />
         </TabsContent>
         {/* <TabsList className="py-1">
         <TabsTrigger value="genesets" className="grow" variant="sidebar">

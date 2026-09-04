@@ -11,13 +11,12 @@ import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-datafra
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
-import { FOCUS_RING_CLS } from '@/theme'
-
 import { useEffect, useState } from 'react'
 
 import {
   onTextFileChange,
   openFilesDialog,
+  pasteTextAsFiles,
 } from '@/components/pages/open-files'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
@@ -32,7 +31,6 @@ import {
 } from '@/consts'
 import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { cn } from '@/lib/shadcn-utils'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -46,6 +44,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
@@ -55,12 +54,8 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
-import { vfill } from '@/lib/fill'
-import { CoreProviders } from '@/providers/core-providers'
-import { Card } from '@/themed/card'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
-import { useHistory } from '../matcalc/history/history-provider/history-provider'
 
 import { useSVG } from '@/providers/svg-provider'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
@@ -72,23 +67,31 @@ import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
-import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { produce } from 'immer'
-import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
-import { VennPropsPanel } from './venn-props-panel'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { HCenterRow } from '@/components/layout/h-center-row'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
-  makeVennList,
-  useVenn,
-  VENN_LIST_IDS,
-  type IVennList,
-} from './venn-store'
-
-const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { usePasteText } from '@/hooks/paste-text'
+import { produce } from 'immer'
+import { HeatmapProvider } from '../matcalc/apps/heatmap/heatmap-provider'
+import { HeatMapSvg } from '../matcalc/apps/heatmap/heatmap-svg'
+import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
+import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
+import { IHeatMapPlot } from '../matcalc/history/history-provider/history-types'
+import { VennPropsPanel } from './venn-props-panel'
+import { makeVennList, useVenn } from './venn-store'
 
 function VennPage() {
   const { openFiles } = useOpen()
   const { autoSave } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
+
+  //const { setPlot } = useHeatmapContext()
   //const { setTabs: setViewTabs } = useTabs('venn-side-tabs')
 
   //const [scale, setScale] = useState(1)
@@ -111,13 +114,9 @@ function VennPage() {
   const { setAppInfo } = useAppInfo()
 
   const {
-    vennLists,
     setVennLists,
 
-    vennElemMap,
-    setVennElemMap,
     vennListsInUse,
-    setVennListsInUse,
   } = useVenn()
 
   //const [listIds] = useState<number[]>(range(4))
@@ -159,8 +158,6 @@ function VennPage() {
   // const { setTabs: setSideTabs } = useSideTabs()
 
   const { settings: edbSettings } = useEdbSettings()
-
-  const { openFile } = useHistory()
 
   const { sheets } = useCurrentSheets()
 
@@ -206,17 +203,13 @@ function VennPage() {
   // }
 
   async function loadTestData() {
-    const res = await httpFetch.getJson<string[][]>('/data/test/venn.json')
+    const res = await httpFetch.getJson<{ name: string; items: string[] }[]>(
+      '/data/test/venn.json'
+    )
 
     setVennLists(
-      Object.fromEntries(
-        res.map((items: string[], ci: number) => {
-          const id = (ci + 1).toString()
-          return [
-            id,
-            makeVennList((ci + 1).toString(), `List ${ci + 1}`, items),
-          ]
-        })
+      res.map(({ items }, ci) =>
+        makeVennList((ci + 1).toString(), `List ${ci + 1}`, items)
       )
     )
   }
@@ -233,6 +226,16 @@ function VennPage() {
       },
     ])
   }, [setToolbarTabs])
+
+  usePasteText((text) => {
+    pasteTextAsFiles(text, ({ success, files }) => {
+      if (!success) {
+        return
+      }
+
+      openFiles(files)
+    })
+  })
 
   // useEffect(() => {
   //   setSideTabs([
@@ -302,101 +305,6 @@ function VennPage() {
 
   // }, [])
 
-  useEffect(() => {
-    const vennSetList: IVennList[] = []
-    let inUse: number = 0
-
-    for (const [i, id] of VENN_LIST_IDS.entries()) {
-      const vl = vennLists[id]!
-
-      if (vl.uniqueItems.length > 0) {
-        vennSetList.push(vl)
-        inUse = Math.max(inUse, i)
-
-        // for (const item of vl.uniqueItems) {
-        //   originalNameMap.set(item.toLowerCase(), item)
-        // }
-      }
-    }
-
-    // we need to know which items are in which combination so
-    // create a map of item to the lists it is found in for example
-    // itemA -> [1, 2]
-    const combs = new Map<string, Set<string>>()
-
-    for (const vl of vennSetList) {
-      for (const item of vl.uniqueItems) {
-        if (!combs.has(item)) {
-          combs.set(item, new Set())
-        }
-
-        combs.get(item)!.add(vl.id)
-      }
-    }
-
-    //
-    // counts for venn
-    //
-
-    const vennMap: Record<string, string[]> = {}
-
-    for (const [item, listIds] of combs.entries()) {
-      // make an id from all the lists this item belongs to, e.g 1:2:3
-      const id = [...listIds].sort().join(':')
-
-      if (!(id in vennMap)) {
-        vennMap[id] = []
-      }
-
-      // now we have each set combination and the items in it
-      // e.g. 1:2:3 -> [itemA, itemB, itemC] so if three
-      // way, these are items shared by all 3 lists,
-      // if 1:2, these are items shared by list 1 and 2 but not 3,
-      // if 1, these are items unique to list 1 etc.
-      vennMap[id]!.push(item)
-    }
-
-    setVennElemMap(vennMap)
-
-    setVennListsInUse(inUse + 1)
-  }, [vennLists, settings])
-
-  useEffect(() => {
-    // make a dataframe
-
-    if (vennListsInUse === 0 || Object.keys(vennElemMap).length === 0) {
-      return
-    }
-
-    const index = [...Object.keys(vennElemMap)].sort((a, b) =>
-      a.length !== b.length ? a.length - b.length : a.localeCompare(b)
-    )
-
-    const maxRows = index
-      .map((n) => vennElemMap[n]!.length)
-      .reduce((a, b) => Math.max(a, b), 0)
-
-    const d = index.map((n) =>
-      [...vennElemMap[n]!]
-        .sort()
-        .concat(vfill('', maxRows - vennElemMap[n]!.length))
-    )
-
-    const df = new AnnotationDataFrame({
-      name: 'Venn Sets',
-      data: d,
-      index: index.map((n) =>
-        n
-          .split(':')
-          .map((s) => Number(s))
-          .map((s) => vennLists[s]?.name ?? s)
-          .join(' AND ')
-      ),
-    }).t
-
-    openFile(`Venn Sets`, { sheets: [df] })
-  }, [vennElemMap])
-
   // useHydratedUpdateEffect(
   //   () => {
   //     updateSettings(
@@ -417,7 +325,7 @@ function VennPage() {
     downloadDataFrame(df, {
       hasHeader: true,
       hasIndex: false,
-      file: `table.${format}`,
+      file: `venn.${format}`,
       sep,
     })
 
@@ -554,68 +462,110 @@ function VennPage() {
           //onOpenChange={setShowSideBar}
           //className="mx-2"
         >
-          <ResizablePanelGroup orientation="vertical" className="h-full">
-            <ResizablePanel
-              defaultSize="60%"
-              minSize="0%"
-              className="flex flex-col overflow-hidden px-2"
-              id="venn"
-            >
-              <Card className="grow" variant="content">
-                <div
-                  className={cn(
-                    FOCUS_RING_CLS,
-                    'custom-scrollbar relative grow overflow-scroll rounded-theme bg-background'
-                  )}
-                  id="venn"
+          <FileDropZonePanel
+            onFileDrop={(files) => {
+              if (files.length > 0) {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+
+                  openFiles(files)
+                })
+              }
+            }}
+            className="grow h-full"
+          >
+            <ResizablePanelGroup orientation="vertical" className="h-full">
+              <ResizablePanel
+                defaultSize="60%"
+                minSize="0%"
+                className="flex flex-col overflow-hidden px-2"
+                id="venn"
+              >
+                <HCenterRow className="pb-2">
+                  <ToggleGroup
+                    className="text-xs gap-x-px"
+                    value={[settings.view.tab]}
+                    onValueChange={(v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.view.tab = v[0] as 'venn' | 'heatmap'
+                        })
+                      )
+                    }}
+                    rounded="full"
+                    variant="app-theme"
+                  >
+                    <GroupToggle value="venn" className="w-18">
+                      Venn
+                    </GroupToggle>
+
+                    <GroupToggle value="heatmap" className="w-18">
+                      Heatmap
+                    </GroupToggle>
+                  </ToggleGroup>
+                </HCenterRow>
+
+                <ExtScrollCard
                   tabIndex={0}
                   onKeyDown={(e) => setKeyPressed(e.key)}
                   onKeyUp={() => setKeyPressed(null)}
                 >
-                  <SvgBase
-                    className="absolute"
-
-                    scale={zoom}
-                    width={settings.w}
-                    height={settings.w}
+                  <Tabs
+                    value={settings.view.tab}
+                    onValueChange={() => {}}
+                    className="grow h-full"
                   >
-                    {vennListsInUse < 2 && <SVGOneWayVenn />}
-                    {vennListsInUse === 2 && <SVGTwoWayVenn />}
-                    {vennListsInUse === 3 && <SVGThreeWayVenn />}
-                    {vennListsInUse > 3 && <SVGFourWayVenn />}
-                  </SvgBase>
-                </div>
-              </Card>
-            </ResizablePanel>
-            <ThinVResizeHandle />
-            <ResizablePanel
-              id="list"
-              defaultSize="40%"
-              minSize="0%"
-              collapsible={true}
-              className="grow flex flex-col text-xs pl-2"
-            >
-              <BaseRow className="grow mt-2 gap-x-1">
-                <BaseCol className="text-xs">
-                  <ToolbarIconButton
-                    title="Download pathway table"
-                    onClick={() => save('txt')}
-                  >
-                    <MonitorDown size={20} strokeWidth={1.5} />
-                  </ToolbarIconButton>
-                </BaseCol>
+                    <TabsContent value="venn">
+                      <SvgBase
+                        scale={zoom}
+                        width={settings.w}
+                        height={settings.w}
+                      >
+                        {vennListsInUse.length < 2 && <SVGOneWayVenn />}
+                        {vennListsInUse.length === 2 && <SVGTwoWayVenn />}
+                        {vennListsInUse.length === 3 && <SVGThreeWayVenn />}
+                        {vennListsInUse.length > 3 && <SVGFourWayVenn />}
+                      </SvgBase>
+                    </TabsContent>
+                    <TabsContent value="heatmap">
+                      {/* <HeatmapPanel /> */}
+                      <HeatMapSvg />
+                    </TabsContent>
+                  </Tabs>
+                </ExtScrollCard>
+              </ResizablePanel>
+              <ThinVResizeHandle />
+              <ResizablePanel
+                id="list"
+                defaultSize="40%"
+                minSize="0%"
+                collapsible={true}
+                className="grow flex flex-col text-xs pl-2"
+              >
+                <BaseRow className="grow mt-2 gap-x-1">
+                  <BaseCol className="text-xs">
+                    <ToolbarIconButton
+                      title="Download pathway table"
+                      onClick={() => save('txt')}
+                    >
+                      <MonitorDown size={20} strokeWidth={1.5} />
+                    </ToolbarIconButton>
+                  </BaseCol>
 
-                <TabbedDataFrames
-                  key="tabbed-data-frames"
-                  //selectedSheet={sheet?.id ?? ''}
-                  //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
-                  // onTabChange={(selectedTab) => {
-                  //   goto({ file, sheet: selectedTab.tab })
-                  // }}
-                />
-              </BaseRow>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+                  <TabbedDataFrames
+                    key="tabbed-data-frames"
+                    //selectedSheet={sheet?.id ?? ''}
+                    //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
+                    // onTabChange={(selectedTab) => {
+                    //   goto({ file, sheet: selectedTab.tab })
+                    // }}
+                  />
+                </BaseRow>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </FileDropZonePanel>
           <VennPropsPanel />
         </ResizableSidebar>
       </ShortcutLayout>
@@ -630,10 +580,20 @@ function VennPage() {
   )
 }
 
+export function VennPlotPage() {
+  const allPlots = useAllPlots()
+
+  return (
+    <HeatmapProvider plot={allPlots[0] as IHeatMapPlot}>
+      <VennPage />
+    </HeatmapProvider>
+  )
+}
+
 export function VennPageQuery() {
   return (
-    <CoreProviders>
-      <VennPage />
-    </CoreProviders>
+    <ClientLayout>
+      <VennPlotPage />
+    </ClientLayout>
   )
 }

@@ -40,7 +40,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { CoreProviders } from '@/providers/core-providers'
+import { ClientLayout } from '@/app/client-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AssemblySelect } from '@/components/edb/assembly-select'
@@ -484,8 +484,8 @@ export function VariantsPage() {
 
 export function VariantsQueryPage() {
   return (
-    <CoreProviders>
+    <ClientLayout>
       <VariantsPage />
-    </CoreProviders>
+    </ClientLayout>
   )
 }

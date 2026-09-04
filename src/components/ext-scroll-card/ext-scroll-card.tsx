@@ -23,11 +23,12 @@ interface ExtScrollCardProps extends ComponentProps<typeof Card> {
 
 function _ExtScrollCard({
   shiftToScroll = false,
-
   header,
   children,
   className,
   padding = '0.5rem',
+  cardCls,
+  ...props
 }: ExtScrollCardProps) {
   const { vScrollRef } = useExtScrollRefsContext()
   const { size, scrollLeft, scrollTop, setSize } = useExtScrollStateContext()
@@ -86,6 +87,7 @@ function _ExtScrollCard({
                 vScrollRef.current.scrollTop += e.deltaY
               }
             }}
+            {...props}
           >
             <div className="relative overflow-hidden grow" ref={containerRef}>
               <div

@@ -57,7 +57,7 @@ export const inputVariants = cva(CONTAINER_CLS, {
       xs: 'w-14',
       sm: 'w-20',
       md: 'w-32',
-      lg: 'w-48',
+      lg: 'w-40',
       xl: 'w-64',
       grow: 'grow',
       full: 'w-full',
@@ -157,7 +157,9 @@ export function Input({
   const [focus, setFocus] = useState(false)
 
   useEffect(() => {
-    setValue(value ?? '')
+    if (value !== _value) {
+      setValue(value ?? '')
+    }
   }, [value])
 
   return (

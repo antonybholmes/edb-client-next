@@ -3,23 +3,30 @@ import { useEdbSettings } from '../../edb/edb-settings'
 import { SvgLine } from '../svg-line'
 import type { IAxisProps } from '../svg-props'
 import { SvgText } from '../svg-text'
-import { Axis, YAxis } from './axis'
-import { IAxisDisplayProps } from './svg-axis-props'
 
-export function getAxisProps(ax: Axis, props: IAxisDisplayProps) {
-  const axisProps = deepmerge(props, ax.params)
+import {
+  axisDomainToRange,
+  getAxisTicks,
+  IAxis,
+  setAxisDirection,
+} from './axis'
+import { IAxisConfig } from './svg-axis-props'
 
-  const minorTickSize = axisProps.ticks.minor.line.size
-  const minorTickOffset = axisProps.ticks.minor.line.offset
+export function getAxisProps(ax: IAxis, props: IAxisConfig) {
+  const axisProps = deepmerge(props, ax)
 
-  const minorLabelOffset = minorTickSize + axisProps.ticks.minor.labels.offset
+  const minorTickSize = axisProps.ticks.minor.style.line.size
+  const minorTickOffset = axisProps.ticks.minor.style.line.offset
 
-  const tickSize = axisProps.ticks.major.line.size
-  const tickOffset = axisProps.ticks.major.line.offset
+  const minorLabelOffset =
+    minorTickSize + axisProps.ticks.minor.style.labels.offset
 
-  const tickLabelOffset = tickSize + axisProps.ticks.major.labels.offset
+  const tickSize = axisProps.ticks.major.style.line.size
+  const tickOffset = axisProps.ticks.major.style.line.offset
 
-  const titleOffset = axisProps.title.offset
+  const tickLabelOffset = tickSize + axisProps.ticks.major.style.labels.offset
+
+  const titleOffset = axisProps.style.title.offset
 
   return {
     axisProps,
@@ -55,26 +62,29 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
     tickLabelOffset,
   } = getAxisProps(ax, settings.plots.axes.x)
 
-  const majorXs = ax.ticks.map((tick) => ax.domainToRange(tick.v))
-  const minorXs = ax.minorTicks.map((tick) => ax.domainToRange(tick.v))
+  const ticks = getAxisTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
+
+  const majorXs = axisDomainToRange(ax, ticks)
+  const minorXs = axisDomainToRange(ax, minorTicks)
 
   return (
     <>
       {minorTickProps.show && (
         <g>
           {minorTickProps.show &&
-            minorTickProps.line.show &&
+            minorTickProps.style.line.show &&
             minorXs.map((x, ti) => {
               return (
                 <g transform={`translate(${x}, ${minorTickOffset})`} key={ti}>
-                  <SvgLine y2={minorTickSize} s={minorTickProps.line} />
+                  <SvgLine y2={minorTickSize} s={minorTickProps.style.line} />
                 </g>
               )
             })}
 
           {minorTickProps.show &&
-            minorTickProps.labels.show &&
-            ax.minorTicks.map((tick, ti) => {
+            minorTickProps.style.labels.show &&
+            minorTicks.map((tick, ti) => {
               const x = minorXs[ti]
 
               return (
@@ -82,7 +92,7 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
                   {tick.label && (
                     <g transform={`translate(0, ${minorLabelOffset})`}>
                       <SvgText
-                        font={minorTickProps.labels}
+                        font={minorTickProps.style.labels}
                         textAnchor="middle"
                         dominantBaseline="hanging"
                       >
@@ -98,18 +108,18 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
 
       {majorTickProps.show && majorTickProps.show && (
         <g>
-          {majorTickProps.line.show &&
+          {majorTickProps.style.line.show &&
             majorXs.map((x, ti) => {
               return (
                 <g transform={`translate(${x}, ${tickOffset})`} key={ti}>
-                  <SvgLine y2={tickSize} s={majorTickProps.line} />
+                  <SvgLine y2={tickSize} s={majorTickProps.style.line} />
                 </g>
               )
             })}
 
           {majorTickProps.show &&
-            majorTickProps.labels.show &&
-            ax.ticks.map((tick, ti) => {
+            majorTickProps.style.labels.show &&
+            ticks.map((tick, ti) => {
               const x = majorXs[ti]
 
               return (
@@ -117,9 +127,113 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
                   {tick.label && (
                     <g transform={`translate(0, ${tickLabelOffset})`}>
                       <SvgText
-                        font={majorTickProps.labels}
+                        font={majorTickProps.style.labels}
                         textAnchor="middle"
                         dominantBaseline="hanging"
+                      >
+                        {tick.label}
+                      </SvgText>
+                    </g>
+                  )}
+                </g>
+              )
+            })}
+        </g>
+      )}
+    </>
+  )
+}
+
+export function AxisTopTicksSvg({ ax }: IAxisProps) {
+  const { settings } = useEdbSettings()
+
+  const {
+    minorTickProps,
+    majorTickProps,
+    minorTickSize,
+    minorTickOffset,
+    minorLabelOffset,
+    tickSize,
+    tickOffset,
+    tickLabelOffset,
+  } = getAxisProps(ax, settings.plots.axes.x)
+
+  const ticks = getAxisTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
+
+  const majorXs = axisDomainToRange(ax, ticks)
+  const minorXs = axisDomainToRange(ax, minorTicks)
+
+  return (
+    <>
+      {minorTickProps.show && (
+        <g>
+          {minorTickProps.show &&
+            minorTickProps.style.line.show &&
+            minorXs.map((x, ti) => {
+              return (
+                <g transform={`translate(${x}, ${-minorTickOffset})`} key={ti}>
+                  <SvgLine
+                    y1={-minorTickSize}
+                    y2={0}
+                    s={minorTickProps.style.line}
+                  />
+                </g>
+              )
+            })}
+
+          {minorTickProps.show &&
+            minorTickProps.style.labels.show &&
+            minorTicks.map((tick, ti) => {
+              const x = minorXs[ti]
+
+              return (
+                <g transform={`translate(${x}, ${-minorTickOffset})`} key={ti}>
+                  {tick.label && (
+                    <g transform={`translate(0, ${-minorLabelOffset})`}>
+                      <SvgText
+                        font={minorTickProps.style.labels}
+                        textAnchor="middle"
+                        dominantBaseline="auto"
+                      >
+                        {tick.label}
+                      </SvgText>
+                    </g>
+                  )}
+                </g>
+              )
+            })}
+        </g>
+      )}
+
+      {majorTickProps.show && majorTickProps.show && (
+        <g>
+          {majorTickProps.style.line.show &&
+            majorXs.map((x, ti) => {
+              return (
+                <g transform={`translate(${x}, ${-tickOffset})`} key={ti}>
+                  <SvgLine
+                    y1={-tickSize}
+                    y2={0}
+                    s={majorTickProps.style.line}
+                  />
+                </g>
+              )
+            })}
+
+          {majorTickProps.show &&
+            majorTickProps.style.labels.show &&
+            ticks.map((tick, ti) => {
+              const x = majorXs[ti]
+
+              return (
+                <g transform={`translate(${x}, ${-tickOffset})`} key={ti}>
+                  {tick.label && (
+                    <g transform={`translate(0, ${-tickLabelOffset})`}>
+                      <SvgText
+                        font={majorTickProps.style.labels}
+                        textAnchor="middle"
+                        dominantBaseline="auto"
                       >
                         {tick.label}
                       </SvgText>
@@ -142,7 +256,7 @@ export function AxisBottomTicksSvg({ ax }: IAxisProps) {
 export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  ax = YAxis.fromAxis(ax)
+  ax = setAxisDirection(ax, 'y')
 
   const {
     minorTickProps,
@@ -155,24 +269,27 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
     tickLabelOffset,
   } = getAxisProps(ax, settings.plots.axes[axis])
 
-  const majorYs = ax.ticks.map((tick) => ax.domainToRange(tick.v))
-  const minorYs = ax.minorTicks.map((tick) => ax.domainToRange(tick.v))
+  const ticks = getAxisTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
+
+  const majorYs = axisDomainToRange(ax, ticks)
+  const minorYs = axisDomainToRange(ax, minorTicks)
 
   return (
     <>
       {minorTickProps.show &&
-        minorTickProps.line.show &&
+        minorTickProps.style.line.show &&
         minorYs.map((y, ti) => {
           return (
             <g transform={`translate(${minorTickOffset}, ${y})`} key={ti}>
-              <SvgLine x2={minorTickSize} s={minorTickProps.line} />
+              <SvgLine x2={minorTickSize} s={minorTickProps.style.line} />
             </g>
           )
         })}
 
       {minorTickProps.show &&
-        minorTickProps.labels.show &&
-        ax.minorTicks.map((tick, ti) => {
+        minorTickProps.style.labels.show &&
+        minorTicks.map((tick, ti) => {
           const y = minorYs[ti]
 
           return (
@@ -180,7 +297,7 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
               {tick.label && (
                 <g transform={`translate(${minorLabelOffset}, 0)`}>
                   <SvgText
-                    font={minorTickProps.labels}
+                    font={minorTickProps.style.labels}
                     dominantBaseline="central"
                   >
                     {tick.label}
@@ -192,18 +309,18 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
         })}
 
       {majorTickProps.show &&
-        majorTickProps.line.show &&
+        majorTickProps.style.line.show &&
         majorYs.map((y, ti) => {
           return (
             <g transform={`translate(${tickOffset}, ${y})`} key={ti}>
-              <SvgLine x2={tickSize} s={majorTickProps.line} />
+              <SvgLine x2={tickSize} s={majorTickProps.style.line} />
             </g>
           )
         })}
 
       {majorTickProps.show &&
-        majorTickProps.labels.show &&
-        ax.ticks.map((tick, ti) => {
+        majorTickProps.style.labels.show &&
+        ticks.map((tick, ti) => {
           const y = majorYs[ti]
 
           return (
@@ -211,7 +328,7 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
               {tick.label && (
                 <g transform={`translate(${tickLabelOffset}, 0)`}>
                   <SvgText
-                    font={majorTickProps.labels}
+                    font={majorTickProps.style.labels}
                     dominantBaseline="central"
                   >
                     {tick.label}
@@ -228,7 +345,7 @@ export function AxisRightTicksSvg({ ax, axis = 'y' }: IAxisProps) {
 export function AxisLeftTicksSvg({ ax }: IAxisProps) {
   const { settings } = useEdbSettings()
 
-  ax = YAxis.fromAxis(ax)
+  ax = setAxisDirection(ax, 'y')
 
   let {
     minorTickProps,
@@ -241,24 +358,30 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
     tickLabelOffset,
   } = getAxisProps(ax, settings.plots.axes.y)
 
-  const majorYs = ax.ticks.map((tick) => ax.domainToRange(tick.v))
-  const minorYs = ax.minorTicks.map((tick) => ax.domainToRange(tick.v))
+  const ticks = getAxisTicks(ax)
+  const minorTicks = getAxisTicks(ax, { which: 'minor' })
 
+  const majorYs = axisDomainToRange(ax, ticks)
+  const minorYs = axisDomainToRange(ax, minorTicks)
   return (
     <>
       {minorTickProps.show &&
-        minorTickProps.line.show &&
+        minorTickProps.style.line.show &&
         minorYs.map((y, ti) => {
           return (
             <g transform={`translate(${-minorTickOffset}, ${y})`} key={ti}>
-              <SvgLine x1={-minorTickSize} x2={0} s={minorTickProps.line} />
+              <SvgLine
+                x1={-minorTickSize}
+                x2={0}
+                s={minorTickProps.style.line}
+              />
             </g>
           )
         })}
 
       {minorTickProps.show &&
-        minorTickProps.labels.show &&
-        ax.minorTicks.map((tick, ti) => {
+        minorTickProps.style.labels.show &&
+        minorTicks.map((tick, ti) => {
           const y = minorYs[ti]
 
           return (
@@ -266,7 +389,7 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
               {tick.label && (
                 <g transform={`translate(${minorLabelOffset}, 0)`}>
                   <SvgText
-                    font={minorTickProps.labels}
+                    font={minorTickProps.style.labels}
                     dominantBaseline="central"
                     textAnchor="end"
                   >
@@ -279,18 +402,18 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
         })}
 
       {majorTickProps.show &&
-        majorTickProps.line.show &&
+        majorTickProps.style.line.show &&
         majorYs.map((y, ti) => {
           return (
             <g transform={`translate(${-tickOffset}, ${y})`} key={ti}>
-              <SvgLine x1={-tickSize} x2={0} s={majorTickProps.line} />
+              <SvgLine x1={-tickSize} x2={0} s={majorTickProps.style.line} />
             </g>
           )
         })}
 
       {majorTickProps.show &&
-        majorTickProps.labels.show &&
-        ax.ticks.map((tick, ti) => {
+        majorTickProps.style.labels.show &&
+        ticks.map((tick, ti) => {
           const y = majorYs[ti]
 
           return (
@@ -298,7 +421,7 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
               {tick.label && (
                 <g transform={`translate(${-tickLabelOffset}, 0)`}>
                   <SvgText
-                    font={majorTickProps.labels}
+                    font={majorTickProps.style.labels}
                     dominantBaseline="central"
                     textAnchor="end"
                   >

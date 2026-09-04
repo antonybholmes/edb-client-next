@@ -63,16 +63,20 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
 
   const lA: ILim = [center[0]! - offset3[0]!, center[1]! - offset3[1]!]
   const lB: ILim = [center[0]! + offset3[0]!, center[1]! - offset3[1]!]
+
   return (
     <>
       {/* Circle A */}
       <Circle ref={circle1Ref} loc={cA} circle={circles['1']!} />
 
-      <TitleText id="1" center={[cA[0]!, cA[1]! - labelRadius]} />
+      <TitleText
+        vennList={vennListsInUse[0]}
+        center={[cA[0]!, cA[1]! - labelRadius]}
+      />
 
       <CountText
         id="1"
-        center={[vennListsInUse > 1 ? lA[0]! : cA[0]!, cA[1]!]}
+        center={[vennListsInUse.length > 1 ? lA[0]! : cA[0]!, cA[1]!]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -81,7 +85,10 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Circle ref={circle2Ref} loc={cB} circle={circles['2']!} />
 
-      <TitleText id="2" center={[cB[0]!, cB[1]! - labelRadius]} />
+      <TitleText
+        vennList={vennListsInUse[1]}
+        center={[cB[0]!, cB[1]! - labelRadius]}
+      />
 
       <CountText
         id="2"
