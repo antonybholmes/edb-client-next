@@ -50,7 +50,7 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Heatmap">
-        <ToolbarCol gap="gap-y-2">
+        <ToolbarCol gap="gap-x-2">
           <ToolbarRow>
             <Checkbox
               checked={settings.cluster.rows.on}

@@ -23,8 +23,6 @@ export function GapSettingsPanel() {
   const colNames = colLeaves.map((leaf) => df.columns[leaf].toLowerCase())
   const rowNames = rowLeaves.map((leaf) => df.rowNames[leaf].toLowerCase())
 
-  console.log('col', colNames)
-
   return (
     <AccordionItem value="gap">
       <AccordionTrigger>Gaps</AccordionTrigger>
@@ -96,7 +94,7 @@ export function GapSettingsPanel() {
 }
 
 function findIndices(v: string, colNames: string[]): number[] {
-  const values = v.split(';').map((v) => v.trim().toLowerCase())
+  const values = v.split(/[; \|]+/).map((v) => v.trim().toLowerCase())
 
   const numIndexes = values.map((s) => parseInt(s, 10)).filter((n) => !isNaN(n))
 
