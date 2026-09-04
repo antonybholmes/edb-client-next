@@ -9,17 +9,17 @@ import { TickPlotPropsPopover } from './tick-plot-props-popover'
 
 export function AxisPlotPropsPanel({
   plotId,
-  axesId,
+  axisId,
   title,
 }: {
   plotId: string
-  axesId: string
+  axisId: string
   title: string
 }) {
   const { plots, updateAxis } = useAxes()
 
   const plot = plots[plotId]
-  const axis = plot.axes[axesId]
+  const axis = plot.axes[axisId]
 
   return (
     <>
@@ -28,7 +28,7 @@ export function AxisPlotPropsPanel({
         className="font-bold"
         checked={axis.style.show}
         onCheckedChange={(v) => {
-          updateAxis(plotId, axesId, { style: { ...axis.style, show: v } })
+          updateAxis(plotId, axisId, { style: { ...axis.style, show: v } })
         }}
       />
 
@@ -36,7 +36,7 @@ export function AxisPlotPropsPanel({
         title="Title"
         checked={axis.style.title.show}
         onCheckedChange={(v) => {
-          updateAxis(plotId, axesId, {
+          updateAxis(plotId, axisId, {
             style: produce(axis.style, (draft) => {
               draft.title.show = v
             }),
@@ -47,7 +47,7 @@ export function AxisPlotPropsPanel({
           title="Title"
           value={axis.title}
           onTextChanged={(v) => {
-            updateAxis(plotId, axesId, {
+            updateAxis(plotId, axisId, {
               title: v,
             })
           }}
@@ -61,7 +61,7 @@ export function AxisPlotPropsPanel({
               textProps: axis.style.title,
               showEnabled: false,
               update: (f) =>
-                updateAxis(plotId, axesId, {
+                updateAxis(plotId, axisId, {
                   style: {
                     ...axis.style,
                     title: Object.assign({}, axis.style.title, f),
@@ -79,12 +79,12 @@ export function AxisPlotPropsPanel({
           limit={[-Infinity, Infinity]}
           dp={2}
           onNumChanged1={(v) => {
-            updateAxis(plotId, axesId, {
+            updateAxis(plotId, axisId, {
               domain: [v, axis.domain[1]],
             })
           }}
           onNumChanged2={(v) => {
-            updateAxis(plotId, axesId, {
+            updateAxis(plotId, axisId, {
               domain: [axis.domain[0], v],
             })
           }}
@@ -97,13 +97,13 @@ export function AxisPlotPropsPanel({
         <TickPlotPropsPopover
           title={`Major ${title} Ticks`}
           plotId={plotId}
-          axesId={axesId}
+          axisId={axisId}
           which="major"
         />
         <TickPlotPropsPopover
           title={`Minor ${title} Ticks`}
           plotId={plotId}
-          axesId={axesId}
+          axisId={axisId}
           which="minor"
         />
       </PropRow>

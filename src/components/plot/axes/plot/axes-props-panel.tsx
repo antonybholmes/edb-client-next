@@ -1,6 +1,5 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { useAxes } from '@/components/plot/axes/axes-provider'
 import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { SortableItem } from '@/components/sortable-item'
@@ -18,16 +17,12 @@ export function AxesDisplayPropsPanel({
     axesIds: { id: string; axis: 'x' | 'y'; title: string }[]
   }[]
 }) {
-  const { plots } = useAxes()
-
   return (
     <PropsPanel>
       <VScrollPanel className="mb-2">
         <DragDropProvider>
           <ul className="flex flex-col">
             {plotIds.map(({ id: plotId, title }, pi) => {
-              const plot = plots[plotId]
-
               return (
                 <SortableItem key={plotId} index={pi} id={plotId}>
                   <BaseCol className="grow">
@@ -44,7 +39,7 @@ export function AxesDisplayPropsPanel({
                                 axis={axis}
                                 title={title}
                                 plotId={plotId}
-                                axesId={axisId}
+                                axisId={axisId}
                               />
                             ))}
                           </VCenterRow>

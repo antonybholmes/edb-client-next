@@ -12,12 +12,12 @@ export function AxisPlotPropsPopover({
   title,
   axis,
   plotId,
-  axesId,
+  axisId,
 }: {
   title: string
   axis: 'x' | 'y'
   plotId: string
-  axesId: string
+  axisId: string
 }) {
   const [open, setOpen] = useState(false)
 
@@ -41,7 +41,7 @@ export function AxisPlotPropsPopover({
       />
 
       <PopoverContent className="gap-y-1 w-60">
-        <AxisPlotPropsPanel title={title} plotId={plotId} axesId={axesId} />
+        <AxisPlotPropsPanel title={title} plotId={plotId} axisId={axisId} />
       </PopoverContent>
     </Popover>
   )

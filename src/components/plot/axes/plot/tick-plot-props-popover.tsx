@@ -20,12 +20,12 @@ import { getAxisFormatter, getAxisTicks } from '../axis'
 export function TickPlotPropsPopover({
   title,
   plotId,
-  axesId,
+  axisId,
   which,
 }: {
   title: string
   plotId: string
-  axesId: string
+  axisId: string
   which: 'major' | 'minor'
 }) {
   const [open, setOpen] = useState(false)
@@ -33,7 +33,7 @@ export function TickPlotPropsPopover({
   const { plots, updateAxis } = useAxes()
 
   const plot = plots[plotId]
-  const axis = plot.axes[axesId]
+  const axis = plot.axes[axisId]
   const ticks = axis.ticks[which]
 
   const items = getAxisTicks(axis, { which })
@@ -59,7 +59,7 @@ export function TickPlotPropsPopover({
           className="font-bold"
           checked={ticks.show}
           onCheckedChange={(v) => {
-            updateAxis(plotId, axesId, {
+            updateAxis(plotId, axisId, {
               ticks: produce(axis.ticks, (draft) => {
                 draft[which].show = v
               }),
@@ -73,7 +73,7 @@ export function TickPlotPropsPopover({
                 textProps: ticks.style.labels,
                 showRotation: true,
                 update: (f) =>
-                  updateAxis(plotId, axesId, {
+                  updateAxis(plotId, axisId, {
                     ticks: produce(axis.ticks, (draft) => {
                       draft[which].style.labels = Object.assign(
                         {},
@@ -92,7 +92,7 @@ export function TickPlotPropsPopover({
           tooltip="Specify the tick values using semicolons (e.g., 1; 2; 3) or use 'auto' for automatic ticks."
           checked={axis.ticks[which].style.line.show}
           onCheckedChange={(v) => {
-            updateAxis(plotId, axesId, {
+            updateAxis(plotId, axisId, {
               ticks: produce(axis.ticks, (draft) => {
                 draft[which].style.line.show = v
               }),
@@ -103,7 +103,7 @@ export function TickPlotPropsPopover({
             value={items.map((v) => format(v.v)).join('; ')}
             onTextChanged={(v) => {
               if (v === 'auto') {
-                updateAxis(plotId, axesId, {
+                updateAxis(plotId, axisId, {
                   ticks: produce(axis.ticks, (draft) => {
                     draft[which].items = undefined
                   }),
@@ -115,7 +115,7 @@ export function TickPlotPropsPopover({
                 .split(';')
                 .map((s) => parseFloat(s.trim().replace(/,/g, '')))
                 .filter(Number.isFinite)
-              updateAxis(plotId, axesId, {
+              updateAxis(plotId, axisId, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].items = values.map((v) => ({
                     v,
@@ -133,7 +133,7 @@ export function TickPlotPropsPopover({
           tooltip="Specify the tick labels using semicolons (e.g., 1; 2; 3)"
           checked={axis.ticks[which].style.labels.show}
           onCheckedChange={(v) => {
-            updateAxis(plotId, axesId, {
+            updateAxis(plotId, axisId, {
               ticks: produce(axis.ticks, (draft) => {
                 draft[which].style.labels.show = v
               }),
@@ -166,7 +166,7 @@ export function TickPlotPropsPopover({
                 label: i < values.length ? values[i] : '',
               }))
 
-              updateAxis(plotId, axesId, {
+              updateAxis(plotId, axisId, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].items = newItems
                 }),
@@ -185,7 +185,7 @@ export function TickPlotPropsPopover({
             limit={[1, 1000]}
             dp={0}
             onNumChanged={(v) => {
-              updateAxis(plotId, axesId, {
+              updateAxis(plotId, axisId, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].style.line.size = v
                 }),
@@ -197,7 +197,7 @@ export function TickPlotPropsPopover({
             value={ticks.style.line.offset}
             title="Offset"
             onNumChanged={(v) => {
-              updateAxis(plotId, axesId, {
+              updateAxis(plotId, axisId, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].style.line.offset = v
                 }),
@@ -210,7 +210,7 @@ export function TickPlotPropsPopover({
             value={ticks.style.labels.offset}
             title="Label Offset"
             onNumChanged={(v) => {
-              updateAxis(plotId, axesId, {
+              updateAxis(plotId, axisId, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].style.labels.offset = v
                 }),

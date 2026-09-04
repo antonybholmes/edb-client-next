@@ -1,4 +1,4 @@
-import { AxesDisplayPropsPanel } from './axes-props-panel'
+import { AxesDisplayPropsPanel } from '../../../../../plot/axes/plot/axes-props-panel'
 import { useGseaPlot } from './gsea-plot-provider'
 
 export function GseaGraphAxesPropsPanel() {
