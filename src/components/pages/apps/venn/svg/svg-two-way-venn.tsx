@@ -1,6 +1,8 @@
 import { DEG_TO_RAD, type ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
+import { useVennSettings } from '../venn-settings-store'
+import { useVenn } from '../venn-store'
 import {
   Circle,
   CountText,
@@ -8,8 +10,6 @@ import {
   makeTitle,
   TitleText,
 } from './svg-three-way-venn'
-import { useVennSettings } from './venn-settings-store'
-import { useVenn } from './venn-store'
 
 export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
   const { setSelectedItems, vennListsInUse } = useVenn()

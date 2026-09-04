@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "50.2.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-04T17:40:37.281Z",
-    "hash": "401d1919ce4241470c4a5b22da73228d68ee6f6223189510877d97d007a861a7",
-    "build": 2010
+    "modified": "2026-09-04T17:54:21.199Z",
+    "hash": "19974ee6feb45ae45d47f634c36f40e925679fd70d3ab699a2a961cbd0a6cb70",
+    "build": 2012
   },
   {
     "name": "Motifs",
@@ -238,10 +238,10 @@
     "name": "Venn",
     "description": "Make Venn diagrams.",
     "color": "#00008B",
-    "version": "26.4.8",
+    "version": "26.6.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-04T17:40:37.282Z",
-    "hash": "2f4ac22018191c1589807e573e68679916b121ca0d793f297e1e24cdfdc73f05",
-    "build": 918
+    "modified": "2026-09-04T17:54:21.200Z",
+    "hash": "345d05b8864445d9c6d218f54422c7b4b79bc601a40b426af1be440701c6d80c",
+    "build": 920
   }
 ]

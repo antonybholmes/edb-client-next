@@ -3,8 +3,8 @@ import { DEG_TO_RAD, type ILim } from '@/lib/math/math'
 import type { TextAnchor } from '@/types/types'
 import { gsap } from 'gsap'
 import { useEffect, useRef, useState } from 'react'
-import { type IVennCircleProps, useVennSettings } from './venn-settings-store'
-import { IVennList, useVenn } from './venn-store'
+import { type IVennCircleProps, useVennSettings } from '../venn-settings-store'
+import { IVennList, useVenn } from '../venn-store'
 
 interface ICountTextProps {
   id: string

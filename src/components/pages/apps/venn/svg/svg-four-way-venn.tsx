@@ -1,14 +1,14 @@
 import type { ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
+import { type IVennCircleProps, useVennSettings } from '../venn-settings-store'
+import { useVenn } from '../venn-store'
 import {
   CountText,
   type IVennProps,
   makeTitle,
   TitleText,
 } from './svg-three-way-venn'
-import { type IVennCircleProps, useVennSettings } from './venn-settings-store'
-import { useVenn } from './venn-store'
 
 interface IEllipseProps {
   circle: IVennCircleProps
