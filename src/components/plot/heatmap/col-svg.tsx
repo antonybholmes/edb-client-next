@@ -4,10 +4,10 @@ import type { IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
 import { useHeatmapContext } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-provider'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_WHITE } from '@/lib/color/color'
-import { numSort } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { ReactElement } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { SvgG } from '../svg-g'
 import { SvgText } from '../svg-text'
 import { CellGaps } from './cell-gaps'
 
@@ -56,17 +56,15 @@ export function ColTreeTopSvg({
   }
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
-      shapeRendering={SVG_CRISP_EDGES}
-    >
+    <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES}>
       {gElems}
-    </g>
+    </SvgG>
   )
 }
 
 export interface IColLabelsSvgProps {
   leaves: number[]
+  gaps: CellGaps
 
   colorMap?: Map<string, Map<number, string>>
   pos?: IPos
@@ -74,7 +72,7 @@ export interface IColLabelsSvgProps {
 
 export function ColLabelsSvg({
   leaves,
-
+  gaps,
   colorMap,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
@@ -90,11 +88,10 @@ export function ColLabelsSvg({
 
   const gElems: ReactElement[] = []
 
-  let x = blockSize.w / 2
+  const offset = blockSize.w / 2
 
   for (const [ci, col] of leaves.entries()) {
-    x += props.gaps.cols.indexes.includes(ci) ? props.gaps.cols.size : 0
-
+    const x = gaps.position(col) + offset
     gElems.push(
       <SvgText
         key={ci}
@@ -112,15 +109,15 @@ export function ColLabelsSvg({
       </SvgText>
     )
 
-    x += blockSize.w
+    // x += blockSize.w
   }
 
-  return <g transform={`translate(${pos.x}, ${pos.y})`}>{gElems}</g>
+  return <SvgG pos={pos}>{gElems}</SvgG>
 }
 
 export function ColGroupsSvg({
   leaves,
-
+  gaps,
   colorMap,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
@@ -131,12 +128,6 @@ export function ColGroupsSvg({
   const groupRows = plot.groupRows || []
 
   const blockSize = props.blockSize
-
-  const xbreaks = [
-    0,
-    ...numSort([...new Set(props.gaps.cols.indexes)]),
-    leaves.length,
-  ]
 
   const elems: ReactElement[] = []
   let y = 0
@@ -149,7 +140,7 @@ export function ColGroupsSvg({
     for (const [ci, col] of leaves.entries()) {
       const fill: string = colorMap?.get(gr.id)?.get(col) ?? COLOR_WHITE
 
-      x += props.gaps.cols.indexes.includes(ci) ? props.gaps.cols.size : 0
+      const x = gaps.position(col)
 
       gElems.push(
         <rect
@@ -165,26 +156,16 @@ export function ColGroupsSvg({
           shapeRendering={SVG_CRISP_EDGES}
         />
       )
-
-      x += blockSize.w
     }
 
     if (props.groups.border.show) {
-      let x1 = xbreaks[0] * blockSize.w
-      let x2 = 0
-      let w = 0
-
-      for (let b = 0; b < xbreaks.length - 1; b++) {
-        w = (xbreaks[b + 1] - xbreaks[b]) * blockSize.w
-
-        x2 = x1 + w
-
+      for (const [spanIndex, span] of gaps.spans.entries()) {
         gElems.push(
           <rect
-            key={`group-border:${gri}:${b}`}
-            x={x1}
+            key={`group-border:${gri}:${spanIndex}`}
+            x={span.p1}
             y={0}
-            width={w}
+            width={span.w}
             height={props.groups.height}
             fill="none"
             stroke={props.groups.border.value}
@@ -192,8 +173,6 @@ export function ColGroupsSvg({
             shapeRendering={SVG_CRISP_EDGES}
           />
         )
-
-        x1 = x2 + props.gaps.cols.size
       }
     }
 
@@ -215,9 +194,9 @@ export function ColGroupsSvg({
     }
 
     const grElem = (
-      <g key={`group-row:${gri}`} transform={`translate(0, ${y})`}>
+      <SvgG key={`group-row:${gri}`} pos={{ x: 0, y: y }}>
         {gElems}
-      </g>
+      </SvgG>
     )
 
     elems.push(grElem)
@@ -225,5 +204,5 @@ export function ColGroupsSvg({
     y += props.groups.height + props.padding
   }
 
-  return <g transform={`translate(${pos.x}, ${pos.y})`}>{elems}</g>
+  return <SvgG pos={pos}>{elems}</SvgG>
 }

@@ -125,17 +125,7 @@ export function CellSettingsPanel() {
           />
         </CheckPropRow>
 
-        <CheckPropRow
-          title="Border"
-          checked={displayProps.cells.border.show}
-          onCheckedChange={(v) => {
-            updatePlot(
-              produce(plot, (draft) => {
-                draft.props.cells.border.show = v
-              })
-            )
-          }}
-        >
+        <PropRow title="Border">
           <OutlineButton
             align="end"
             colors={[
@@ -143,7 +133,8 @@ export function CellSettingsPanel() {
                 color: displayProps.cells.border.value,
                 width: displayProps.cells.border.width,
                 opacity: displayProps.cells.border.opacity,
-                onColorChange: ({ color, opacity, width }) =>
+                show: displayProps.cells.border.show,
+                onColorChange: ({ color, opacity, width, show }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.cells.border.value = color
@@ -151,6 +142,8 @@ export function CellSettingsPanel() {
                         opacity ?? draft.props.cells.border.opacity
                       draft.props.cells.border.width =
                         width ?? displayProps.cells.border.width
+                      draft.props.cells.border.show =
+                        show ?? displayProps.cells.border.show
                     })
                   ),
               },
@@ -172,7 +165,7 @@ export function CellSettingsPanel() {
                         )
                       }}
                     /> */}
-        </CheckPropRow>
+        </PropRow>
 
         <CheckPropRow
           title="Tooltips"
