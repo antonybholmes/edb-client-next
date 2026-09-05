@@ -38,8 +38,7 @@ export function AxesDisplayPropsPanel({
                                 key={axisId}
                                 axis={axis}
                                 title={title}
-                                plotId={plotId}
-                                axisId={axisId}
+                                plotAddress={{ plotId, groupId, axisId }}
                               />
                             ))}
                           </VCenterRow>

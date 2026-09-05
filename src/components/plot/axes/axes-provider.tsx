@@ -1,140 +1,178 @@
+import { produce } from 'immer'
 import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 import { IAxis } from './axis'
 
-export interface IAxesPlot {
-  id: string
+export interface IAxesPlots {
+  plotIds: string[]
+  plots: Record<string, IPlotAxesGroups>
+}
+
+export interface IPlotAxesGroups {
+  plotId: string
+  groupIds: string[]
+  groups: Record<string, IPlotAxes>
+}
+
+export interface IPlotAxes {
+  plotId: string
+  groupId: string
+  axisIds: string[]
   axes: Record<string, IAxis>
 }
 
-interface IAxesPlotContextValue {
-  plots: Record<string, IAxesPlot>
-
-  updateAxis: (plotId: string, axisId: string, patch: Partial<IAxis>) => void
-
-  addPlots: (plots: IAxesPlot[]) => void
-
-  addAxis: (plotId: string, axis: IAxis) => void
-
-  removeAxis: (plotId: string, axisId: string) => void
+export interface IPlotAddress {
+  plotId: string
+  groupId: string
+  axisId: string
 }
 
-const AxesPlotContext = createContext<IAxesPlotContextValue | null>(null)
+interface IPlotAxesContextValue extends IAxesPlots {
+  updateAxis: (address: IPlotAddress, patch: Partial<IAxis>) => void
+
+  addAxesPlots: (plots: IPlotAxes[]) => void
+
+  addAxis: (plotId: string, groupId: string, axis: IAxis) => void
+
+  removeAxis: (plotId: string, groupId: string, axisId: string) => void
+}
+
+const AxesPlotContext = createContext<IPlotAxesContextValue | null>(null)
+
+const DEFAULT_AXES_PLOTS: IAxesPlots = {
+  plotIds: [],
+  plots: {},
+}
 
 export function AxesPlotProvider({
   plots: initialPlots = [],
   children,
 }: {
-  plots?: IAxesPlot[]
+  plots?: IPlotAxes[]
   children: React.ReactNode
 }) {
-  const [plots, setPlots] = useState<Record<string, IAxesPlot>>(() =>
-    Object.fromEntries(initialPlots.map((plot) => [plot.id, plot]))
-  )
+  const [plots, setPlots] = useState<IAxesPlots>({
+    ...DEFAULT_AXES_PLOTS,
+  })
 
-  const addPlots = useCallback((newPlots: IAxesPlot[]) => {
+  useEffect(() => {
+    if (initialPlots && initialPlots.length > 0) {
+      const updated = updatePlots(initialPlots, plots)
+
+      console.log(initialPlots)
+
+      setPlots(updated)
+    }
+  }, [initialPlots])
+
+  const addAxesPlots = useCallback((newPlots: IPlotAxes[]) => {
     setPlots((current) => {
-      const updated = { ...current }
-      for (const plot of newPlots) {
-        updated[plot.id] = plot
-      }
-      return updated
+      return updatePlots(newPlots, current)
     })
   }, [])
 
   const updateAxis = useCallback(
-    (plotId: string, axisId: string, patch: Partial<IAxis>) => {
+    (address: IPlotAddress, patch: Partial<IAxis>) => {
       setPlots((current) => {
-        const plot = current[plotId]
+        const { plotId, groupId, axisId } = address
+
+        const plot = current.plots[plotId]
 
         if (!plot) {
           throw new Error(`Unknown plot: ${plotId}`)
         }
 
-        const axis = plot.axes[axisId]
+        const groups = plot.groups[groupId]
+
+        if (!groups) {
+          throw new Error(`Unknown group: ${groupId} in plot: ${plotId}`)
+        }
+
+        const axis = groups.axes[axisId]
 
         if (!axis) {
           throw new Error(`Unknown axis "${axisId}" in plot "${plotId}"`)
         }
 
-        return {
-          ...current,
-
-          [plotId]: {
-            ...plot,
-
-            axes: {
-              ...plot.axes,
-
-              [axisId]: {
-                ...axis,
-                ...patch,
-              },
-            },
-          },
-        }
+        return produce(current, (draft) => {
+          draft.plots[plotId].groups[groupId].axes[axisId] = {
+            ...draft.plots[plotId].groups[groupId].axes[axisId],
+            ...patch,
+          }
+        })
       })
     },
     []
   )
 
-  const addAxis = useCallback((plotId: string, axis: IAxis) => {
-    setPlots((current) => {
-      const plot = current[plotId]
+  const addAxis = useCallback(
+    (plotId: string, groupId: string, axis: IAxis) => {
+      setPlots((current) => {
+        const plot = current.plots[plotId]
 
-      if (!plot) {
-        throw new Error(`Unknown plot: ${plotId}`)
-      }
+        if (!plot) {
+          throw new Error(`Unknown plot: ${plotId}`)
+        }
 
-      return {
-        ...current,
+        const groups = plot.groups[groupId]
 
-        [plotId]: {
-          ...plot,
-          axes: {
-            ...plot.axes,
-            [axis.id]: axis,
-          },
-        },
-      }
-    })
-  }, [])
+        if (!groups) {
+          throw new Error(`Unknown group: ${groupId} in plot: ${plotId}`)
+        }
 
-  const removeAxis = useCallback((plotId: string, axisId: string) => {
-    setPlots((current) => {
-      const plot = current[plotId]
+        return produce(current, (draft) => {
+          draft.plots[plotId].groups[groupId].axes[axis.id] = axis
+        })
+      })
+    },
+    []
+  )
 
-      if (!plot) {
-        throw new Error(`Unknown plot: ${plotId}`)
-      }
+  const removeAxis = useCallback(
+    (plotId: string, groupId: string, axisId: string) => {
+      setPlots((current) => {
+        const plot = current.plots[plotId]
 
-      const { [axisId]: _, ...axes } = plot.axes
+        if (!plot) {
+          throw new Error(`Unknown plot: ${plotId}`)
+        }
 
-      return {
-        ...current,
+        const groups = plot.groups[groupId]
 
-        [plotId]: {
-          ...plot,
-          axes,
-        },
-      }
-    })
-  }, [])
+        if (!groups) {
+          throw new Error(`Unknown group: ${groupId} in plot: ${plotId}`)
+        }
+
+        const axis = groups.axes[axisId]
+
+        if (!axis) {
+          throw new Error(`Unknown axis "${axisId}" in plot "${plotId}"`)
+        }
+
+        return produce(current, (draft) => {
+          delete draft.plots[plotId].groups[groupId].axes[axisId]
+        })
+      })
+    },
+    []
+  )
 
   const value = useMemo(
     () => ({
-      plots,
+      plotIds: plots.plotIds,
+      plots: plots.plots,
       updateAxis,
-      addPlots,
+      addAxesPlots,
       addAxis,
       removeAxis,
     }),
-    [plots, updateAxis, addPlots, addAxis, removeAxis]
+    [plots, updateAxis, addAxesPlots, addAxis, removeAxis]
   )
 
   return (
@@ -152,4 +190,50 @@ export function useAxes() {
   }
 
   return context
+}
+
+function updatePlots(newPlots: IPlotAxes[], plots: IAxesPlots) {
+  const updated = { ...plots }
+
+  for (const plot of newPlots) {
+    if (!updated.plots[plot.plotId]) {
+      updated.plots[plot.plotId] = {
+        plotId: plot.plotId,
+        groupIds: [],
+        groups: {},
+      }
+    }
+
+    if (!updated.plots[plot.plotId].groups[plot.groupId]) {
+      updated.plots[plot.plotId].groups[plot.groupId] = {
+        plotId: plot.plotId,
+        groupId: plot.groupId,
+        axisIds: [],
+        axes: {},
+      }
+    }
+
+    if (!updated.plotIds.includes(plot.plotId)) {
+      updated.plotIds.push(plot.plotId)
+    }
+
+    if (!updated.plots[plot.plotId].groupIds.includes(plot.groupId)) {
+      updated.plots[plot.plotId].groupIds.push(plot.groupId)
+    }
+
+    for (const axisId of plot.axisIds) {
+      if (
+        !updated.plots[plot.plotId].groups[plot.groupId].axisIds.includes(
+          axisId
+        )
+      ) {
+        updated.plots[plot.plotId].groups[plot.groupId].axisIds.push(axisId)
+      }
+
+      updated.plots[plot.plotId].groups[plot.groupId].axes[axisId] =
+        plot.axes[axisId]
+    }
+  }
+
+  return updated
 }

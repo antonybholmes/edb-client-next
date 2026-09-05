@@ -459,7 +459,6 @@ export function GseaPlotQueryPage() {
     <ClientLayout>
       <AxesPlotProvider>
         <GseaPlotProvider>
-          {' '}
           <GseaPlotPage />
         </GseaPlotProvider>
       </AxesPlotProvider>

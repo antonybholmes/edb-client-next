@@ -91,7 +91,7 @@ export function GseaSvg() {
           .sort((a, b) => a.rank - b.rank)
       : rankedGenes
 
-    let xax = plots[pathway.id].axes['es-x']
+    let xax = plots[pathway.id].groups['es'].axes['es-x']
 
     //xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -118,7 +118,7 @@ export function GseaSvg() {
     //   { which: 'minor', show: false }
     // )
 
-    let yax = plots[pathway.id].axes['es-y']
+    let yax = plots[pathway.id].groups['es'].axes['es-y']
 
     const xaf = axisDomainToRangeFunc(xax)
     const yaf = axisDomainToRangeFunc(yax)

@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 
-import { IAxesPlot, useAxes } from '@/components/plot/axes/axes-provider'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-provider'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
@@ -23,7 +23,7 @@ export function useGseaPlot() {
 
 export function GseaPlotProvider({ children }: { children: ReactNode }) {
   const { settings } = useGseaSettings()
-  const { addPlots } = useAxes()
+  const { addAxesPlots } = useAxes()
   const { rankedGenes, inUseReports, resultsMap } = useGsea()
 
   // keep only pathways for which we have results, i.e. with
@@ -38,7 +38,7 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
   )
 
   useEffect(() => {
-    const axesPlots: IAxesPlot[] = []
+    const axesPlots: IPlotAxes[] = []
 
     for (const pathway of pathways) {
       const results = resultsMap[pathway.name]!
@@ -78,10 +78,15 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
         tickParams: { which: 'minor', show: false },
       })
 
-      axesPlots.push({ id: pathway.id, axes: { 'es-x': xax, 'es-y': yax } })
+      axesPlots.push({
+        plotId: pathway.id,
+        groupId: 'es',
+        axisIds: ['es-x', 'es-y'],
+        axes: { 'es-x': xax, 'es-y': yax },
+      })
     }
-    addPlots(axesPlots)
-  }, [pathways, resultsMap, rankedGenes, settings, addPlots])
+    addAxesPlots(axesPlots)
+  }, [pathways, resultsMap, rankedGenes, settings, addAxesPlots])
 
   return (
     <GseaPlotContext.Provider value={{ pathways }}>

@@ -55,8 +55,7 @@ export function AxesDisplayPropsPopover({
                               key={axisId}
                               axis={axis}
                               title={title}
-                              plotId={plotId}
-                              axisId={axisId}
+                              plotAddress={{ plotId, groupId, axisId }}
                             />
                           ))}
                         </VCenterRow>

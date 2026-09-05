@@ -4,22 +4,23 @@ import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { produce } from 'immer'
-import { useAxes } from '../axes-provider'
+import { IPlotAddress, useAxes } from '../axes-provider'
 import { TickPlotPropsPopover } from './tick-plot-props-popover'
 
 export function AxisPlotPropsPanel({
-  plotId,
-  axisId,
+  plotAddress,
   title,
 }: {
-  plotId: string
-  axisId: string
+  plotAddress: IPlotAddress
   title: string
 }) {
   const { plots, updateAxis } = useAxes()
 
+  const { plotId, groupId, axisId } = plotAddress
+
   const plot = plots[plotId]
-  const axis = plot.axes[axisId]
+  const group = plot.groups[groupId]
+  const axis = group.axes[axisId]
 
   return (
     <>
@@ -28,7 +29,10 @@ export function AxisPlotPropsPanel({
         className="font-bold"
         checked={axis.style.show}
         onCheckedChange={(v) => {
-          updateAxis(plotId, axisId, { style: { ...axis.style, show: v } })
+          updateAxis(
+            { plotId, groupId, axisId },
+            { style: { ...axis.style, show: v } }
+          )
         }}
       />
 
@@ -36,20 +40,26 @@ export function AxisPlotPropsPanel({
         title="Title"
         checked={axis.style.title.show}
         onCheckedChange={(v) => {
-          updateAxis(plotId, axisId, {
-            style: produce(axis.style, (draft) => {
-              draft.title.show = v
-            }),
-          })
+          updateAxis(
+            { plotId, groupId, axisId },
+            {
+              style: produce(axis.style, (draft) => {
+                draft.title.show = v
+              }),
+            }
+          )
         }}
       >
         <Input
           title="Title"
           value={axis.title}
           onTextChanged={(v) => {
-            updateAxis(plotId, axisId, {
-              title: v,
-            })
+            updateAxis(
+              { plotId, groupId, axisId },
+              {
+                title: v,
+              }
+            )
           }}
           w="md"
         />
@@ -61,12 +71,15 @@ export function AxisPlotPropsPanel({
               textProps: axis.style.title,
               showEnabled: false,
               update: (f) =>
-                updateAxis(plotId, axisId, {
-                  style: {
-                    ...axis.style,
-                    title: Object.assign({}, axis.style.title, f),
-                  },
-                }),
+                updateAxis(
+                  { plotId, groupId, axisId },
+                  {
+                    style: {
+                      ...axis.style,
+                      title: Object.assign({}, axis.style.title, f),
+                    },
+                  }
+                ),
             },
           ]}
         />
@@ -79,14 +92,20 @@ export function AxisPlotPropsPanel({
           limit={[-Infinity, Infinity]}
           dp={2}
           onNumChanged1={(v) => {
-            updateAxis(plotId, axisId, {
-              domain: [v, axis.domain[1]],
-            })
+            updateAxis(
+              { plotId, groupId, axisId },
+              {
+                domain: [v, axis.domain[1]],
+              }
+            )
           }}
           onNumChanged2={(v) => {
-            updateAxis(plotId, axisId, {
-              domain: [axis.domain[0], v],
-            })
+            updateAxis(
+              { plotId, groupId, axisId },
+              {
+                domain: [axis.domain[0], v],
+              }
+            )
           }}
         >
           -
@@ -96,14 +115,12 @@ export function AxisPlotPropsPanel({
       <PropRow title="Ticks">
         <TickPlotPropsPopover
           title={`Major ${title} Ticks`}
-          plotId={plotId}
-          axisId={axisId}
+          plotAddress={plotAddress}
           which="major"
         />
         <TickPlotPropsPopover
           title={`Minor ${title} Ticks`}
-          plotId={plotId}
-          axisId={axisId}
+          plotAddress={plotAddress}
           which="minor"
         />
       </PropRow>

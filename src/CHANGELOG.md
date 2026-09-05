@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Axes provider overhauled to include groups.
 - Bug fixes and updates.
 - Venn svg now has margins.
 - Heatmap can now be scaled through ui rather than with a setting.
