@@ -1,4 +1,6 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis } from '@/components/plot/axes/axis'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { colZScore, rowZScore, zscore } from '@/lib/dataframe/dataframe-utils'
@@ -283,6 +285,8 @@ export function useVenn(): IVennStore & {
   const { settings } = useVennSettings()
   const { settings: edbSettings } = useEdbSettings()
   const { openFile } = useHistory()
+  const { addAxesPlots } = useAxes()
+
   const addList = useVennStore((state) => state.addList)
   const removeList = useVennStore((state) => state.removeList)
   const selectedItems = useVennStore((state) => state.selectedItems)
@@ -505,13 +509,30 @@ export function useVenn(): IVennStore & {
       plots: [plot],
       mode: 'set',
     })
+
+    const axesPlots: IPlotAxes[] = []
+
+    let xax = createAxis({
+      title: 'Color bar',
+      domain: displayOptions.range,
+      //length: settings.axes.x.length,
+      style: { title: { show: false } },
+      tickParams: { which: 'both', show: false },
+    })
+
+    axesPlots.push({
+      plotId: plot.id,
+      groupId: 'cbar',
+      axisIds: ['cbar'],
+      axes: { cbar: xax },
+    })
+
+    addAxesPlots(axesPlots)
   }, [vennElemMap, settings, edbSettings])
 
   return {
     selectedItems,
-
     vennLists,
-
     originalNames,
     combinationNames,
     vennElemMap,

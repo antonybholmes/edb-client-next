@@ -11,7 +11,7 @@ import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useAxes } from '@/components/plot/axes/axes-provider'
+import { useAxes } from '@/components/plot/axes/axes-store'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,

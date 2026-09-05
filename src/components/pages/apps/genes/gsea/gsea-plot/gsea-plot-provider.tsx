@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 
-import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-provider'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'

@@ -45,6 +45,7 @@ export function CoreProviders({ children }: IChildrenProps) {
         <AppInfoProvider>
           <HistoryProvider>
             <TabProvider>
+              {/* <AxesPlotProvider> */}
               <SVGProvider>
                 <FooterProvider>
                   <ToastProvider>
@@ -54,6 +55,7 @@ export function CoreProviders({ children }: IChildrenProps) {
                   </ToastProvider>
                 </FooterProvider>
               </SVGProvider>
+              {/* </AxesPlotProvider> */}
             </TabProvider>
           </HistoryProvider>
         </AppInfoProvider>

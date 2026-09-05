@@ -9,6 +9,7 @@ import { produce } from 'immer'
 
 import { PropRow } from '@/components/dialogs/prop-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { ITEM_REGEX } from '@/consts'
 import { numSort } from '@/lib/math/math'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
@@ -94,7 +95,10 @@ export function GapSettingsPanel() {
 }
 
 function findIndices(v: string, colNames: string[]): number[] {
-  const values = v.split(/[; \|]+/).map((v) => v.trim().toLowerCase())
+  const values = v
+    .split(ITEM_REGEX)
+    .map((s) => s.trim().toLowerCase())
+    .filter((s) => s !== '')
 
   const numIndexes = values.map((s) => parseInt(s, 10)).filter((n) => !isNaN(n))
 

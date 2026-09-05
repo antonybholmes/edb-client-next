@@ -36,7 +36,7 @@ export function AxesDisplayPropsPanel({
                             {axesIds.map(({ id: axisId, axis, title }) => (
                               <AxisPlotPropsPopover
                                 key={axisId}
-                                axis={axis}
+                                //axis={axis}
                                 title={title}
                                 plotAddress={{ plotId, groupId, axisId }}
                               />

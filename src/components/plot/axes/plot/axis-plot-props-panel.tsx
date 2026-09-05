@@ -4,7 +4,7 @@ import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { produce } from 'immer'
-import { IPlotAddress, useAxes } from '../axes-provider'
+import { IPlotAddress, useAxes } from '../axes-store'
 import { TickPlotPropsPopover } from './tick-plot-props-popover'
 
 export function AxisPlotPropsPanel({

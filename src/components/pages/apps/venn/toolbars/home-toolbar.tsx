@@ -7,7 +7,7 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
+import { ITEM_REGEX, TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
@@ -146,7 +146,11 @@ export function HomeToolbar() {
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.heatmap.dot.sizes = numSort(
-                      v.split(/[,\|;]+/).map((x) => parseFloat(x.trim()))
+                      v
+                        .split(ITEM_REGEX)
+                        .map((x) => x.trim())
+                        .filter((x) => x !== '')
+                        .map((x) => parseFloat(x))
                     )
                   })
                 )

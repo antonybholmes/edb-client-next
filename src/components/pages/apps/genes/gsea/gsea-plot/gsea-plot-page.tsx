@@ -62,7 +62,6 @@ import {
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { useUpdateEffect } from '@/hooks/update-effect'
 
-import { AxesPlotProvider } from '@/components/plot/axes/axes-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -457,11 +456,9 @@ export function GseaPlotPage() {
 export function GseaPlotQueryPage() {
   return (
     <ClientLayout>
-      <AxesPlotProvider>
-        <GseaPlotProvider>
-          <GseaPlotPage />
-        </GseaPlotProvider>
-      </AxesPlotProvider>
+      <GseaPlotProvider>
+        <GseaPlotPage />
+      </GseaPlotProvider>
     </ClientLayout>
   )
 }

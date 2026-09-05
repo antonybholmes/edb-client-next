@@ -18,7 +18,7 @@ export function AxesDisplayPropsPopover({
   axesGroups: {
     id: string
     title: string
-    axesIds: { id: string; axis: 'x' | 'y'; title: string }[]
+    axesIds: { id: string; title: string }[]
   }[]
 }) {
   const [open, setOpen] = useState(false)
@@ -40,20 +40,20 @@ export function AxesDisplayPropsPopover({
       />
 
       <PopoverContent className="gap-y-1 w-60 flex flex-col">
-        {plotIds.map(({ id: plotId, title }, pi) => {
+        {plotIds.map(({ id: plotId }, pi) => {
           return (
             <BaseCol key={plotId} className="grow">
-              {axesGroups.map(({ id: groupId, title: groupTitle, axesIds }) => (
+              {axesGroups.map(({ id: groupId }) => (
                 <Fragment key={groupId}>
                   {axesGroups.map(
                     ({ id: groupId, title: groupTitle, axesIds }) => (
                       <VCenterRow key={groupId} className="justify-between">
                         <strong>{groupTitle}</strong>
                         <VCenterRow>
-                          {axesIds.map(({ id: axisId, axis, title }) => (
+                          {axesIds.map(({ id: axisId, title }) => (
                             <AxisPlotPropsPopover
                               key={axisId}
-                              axis={axis}
+                              //axis={axis}
                               title={title}
                               plotAddress={{ plotId, groupId, axisId }}
                             />

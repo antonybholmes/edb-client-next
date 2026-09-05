@@ -9,12 +9,13 @@ import {
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
+import { ITEM_REGEX } from '@/consts'
 import { vfill } from '@/lib/fill'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
 import { useState } from 'react'
-import { IPlotAddress, useAxes } from '../axes-provider'
+import { IPlotAddress, useAxes } from '../axes-store'
 import { getAxisFormatter, getAxisTicks } from '../axis'
 
 export function TickPlotPropsPopover({
@@ -112,7 +113,9 @@ export function TickPlotPropsPopover({
               }
 
               const values = v
-                .split(';')
+                .split(ITEM_REGEX)
+                .map((s) => s.trim())
+                .filter((s) => s !== '')
                 .map((s) => parseFloat(s.trim().replace(/,/g, '')))
                 .filter(Number.isFinite)
               updateAxis(plotAddress, {
@@ -157,7 +160,7 @@ export function TickPlotPropsPopover({
                   values.push(...vfill('', items.length))
                   break
                 default:
-                  values.push(...v.split(';').map((s) => s.trim()))
+                  values.push(...v.split(ITEM_REGEX).map((s) => s.trim()))
                   break
               }
 
