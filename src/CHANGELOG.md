@@ -2,6 +2,10 @@
 
 ## 89.2.0 (Sep, 2026)
 
+### Added
+
+- Support for colorbar axis in heatmap using axes store api.
+
 ### Changed
 
 - Axes provider overhauled to include groups.

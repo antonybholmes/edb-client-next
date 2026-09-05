@@ -22,7 +22,7 @@ import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { useMemo } from 'react'
 
-import { createAxis } from '@/components/plot/axes/axis'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { CellGaps } from '@/components/plot/heatmap/cell-gaps'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
@@ -172,6 +172,14 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     })
   }
 
+  const { axis: cax } = useAxis({
+    plotId: plot.id,
+    groupId: 'cbar',
+    axisId: 'cbar',
+  })
+
+  console.log('cax', plot.id, cax)
+
   const { svg, width, height } = useMemo(() => {
     if (!cf) {
       return {
@@ -276,22 +284,22 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
         ? (legendBlockSize + displayOptions.padding) * groups0.length + 10
         : 0
 
-    const cax = createAxis({
-      domain: displayOptions.range,
-      length: displayOptions.colorbar.size.w,
-      ticks: [
-        displayOptions.range[0],
-        (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
-        displayOptions.range[1],
-      ],
-      minorTicks: [
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-      ],
-      tickParams: { which: 'minor', show: true },
-    })
+    // const cax = createAxis({
+    //   domain: displayOptions.range,
+    //   length: displayOptions.colorbar.size.w,
+    //   ticks: [
+    //     displayOptions.range[0],
+    //     (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
+    //     displayOptions.range[1],
+    //   ],
+    //   minorTicks: [
+    //     displayOptions.range[0] +
+    //       (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+    //     displayOptions.range[0] +
+    //       (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+    //   ],
+    //   tickParams: { which: 'minor', show: true },
+    // })
 
     const cmap = getColorMapFromICMAP(displayOptions.cmap)
 
@@ -462,29 +470,28 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
         {/* Plot the legend */}
 
-        {displayOptions.colorbar.show &&
-          displayOptions.colorbar.position === 'bottom' && (
-            <SvgHColorBar
-              ax={cax}
-              cmap={cmap}
+        {cax.style.show && displayOptions.colorbar.position === 'bottom' && (
+          <SvgHColorBar
+            ax={cax}
+            cmap={cmap}
 
-              pos={{
-                x: margin.left,
-                y:
-                  margin.top +
-                  innerHeight +
-                  displayOptions.padding +
-                  (displayOptions.labels.col.show &&
-                  displayOptions.labels.col.position === 'bottom'
-                    ? displayOptions.labels.col.width + displayOptions.padding
-                    : 0) +
-                  (displayOptions.legend.show &&
-                  displayOptions.legend.position === 'bottom'
-                    ? 2 * legendBlockSize + displayOptions.padding
-                    : 0),
-              }}
-            />
-          )}
+            pos={{
+              x: margin.left,
+              y:
+                margin.top +
+                innerHeight +
+                displayOptions.padding +
+                (displayOptions.labels.col.show &&
+                displayOptions.labels.col.position === 'bottom'
+                  ? displayOptions.labels.col.width + displayOptions.padding
+                  : 0) +
+                (displayOptions.legend.show &&
+                displayOptions.legend.position === 'bottom'
+                  ? 2 * legendBlockSize + displayOptions.padding
+                  : 0),
+            }}
+          />
+        )}
 
         {displayOptions.groups.show &&
           groupRows.length > 0 &&
@@ -510,13 +517,9 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           id="legend-right"
           transform={`translate(${legendPos.x}, ${legendPos.y})`}
         >
-          {displayOptions.colorbar.show &&
+          {cax.style.show &&
             displayOptions.colorbar.position.includes('right') && (
-              <SvgVColorBar
-                ax={cax}
-
-                cmap={cmap}
-              />
+              <SvgVColorBar ax={cax} cmap={cmap} />
             )}
           <g transform={`translate(0, ${legendGroupRightY})`}>
             {showLegendGroupRight && <LegendRightSvg groupRows={groupRows} />}
@@ -565,7 +568,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     )
 
     return { svg, width, height }
-  }, [cf, displayOptions, groupRows])
+  }, [cf, displayOptions, groupRows, cax])
 
   return (
     <SvgBase scale={scale} width={width} height={height}>

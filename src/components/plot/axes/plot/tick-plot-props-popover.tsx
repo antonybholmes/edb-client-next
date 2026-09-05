@@ -145,8 +145,7 @@ export function TickPlotPropsPopover({
         >
           <Input
             value={items
-              .map((v) => v.label)
-              .map((s) => s.trim())
+              .map((v) => v?.label?.trim() ?? '')
               .filter((s) => s.length > 0)
               .join('; ')}
             onTextChanged={(v) => {

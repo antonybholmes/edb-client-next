@@ -1,5 +1,5 @@
 import { produce } from 'immer'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useCallback, useEffect } from 'react'
 import { create } from 'zustand'
 import { IAxis } from './axis'
 
@@ -48,6 +48,7 @@ export const useAxesStore = create<IAxesStore>((set) => ({
 
   updateAxis: (address: IPlotAddress, patch) => {
     const { plotId, groupId, axisId } = address
+
     set((current) => {
       const group = current.plots[plotId]?.groups[groupId]
 
@@ -62,6 +63,8 @@ export const useAxesStore = create<IAxesStore>((set) => ({
       if (!group.axes[axisId]) {
         throw new Error(`Unknown axis "${axisId}" in plot "${plotId}"`)
       }
+
+      console.log('asdasd', plotId, groupId, axisId)
 
       return produce(current, (draft) => {
         draft.plots[plotId].groups[groupId].axes[axisId] = {
@@ -128,6 +131,37 @@ export function useAxes() {
   const removeAxis = useAxesStore((state) => state.removeAxis)
 
   return { plots, addAxesPlots, updateAxis, addAxis, removeAxis }
+}
+
+export function useAxesPlot(plotId: string) {
+  return useAxesStore((state) => state.plots[plotId])
+}
+
+export function useAxesGroup(plotId: string, groupId: string) {
+  return useAxesStore((state) => state.plots[plotId]?.groups[groupId])
+}
+
+export function useAxis(address: IPlotAddress): {
+  axis: IAxis | undefined
+  updateAxis: (patch: Partial<IAxis>) => void
+} {
+  const updateAxis = useAxesStore((state) => state.updateAxis)
+
+  const { plotId, groupId, axisId } = address
+
+  const axis = useAxesStore(
+    (state) => state.plots[plotId]?.groups[groupId]?.axes[axisId]
+  )
+
+  const _updateAxis = useCallback(
+    (patch: Partial<IAxis>) => {
+      console.log('updating axis', { plotId, groupId, axisId, patch })
+      updateAxis({ plotId, groupId, axisId }, patch)
+    },
+    [plotId, groupId, axisId, updateAxis]
+  )
+
+  return { axis, updateAxis: _updateAxis }
 }
 
 function updatePlots(newPlots: IPlotAxes[], current: IAxesPlots): IAxesPlots {

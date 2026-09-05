@@ -1,4 +1,6 @@
 import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis } from '@/components/plot/axes/axis'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { range } from '@/lib/math/range'
@@ -42,6 +44,7 @@ export function HeatmapProvider({
   plot?: IHeatMapPlot | undefined
   children: ReactNode
 }) {
+  const { addAxesPlots } = useAxes()
   const [_plot, setPlot] = useState<IHeatMapPlot | undefined>(plot)
   const [colLeaves, setColLeaves] = useState<number[]>([])
   const [rowLeaves, setRowLeaves] = useState<number[]>([])
@@ -88,6 +91,37 @@ export function HeatmapProvider({
     }
 
     setColLeaves(colLeaves)
+
+    let xax = createAxis({
+      id: 'cbar',
+      title: 'Color bar',
+
+      domain: displayOptions.range,
+      length: displayOptions.colorbar.size.w,
+      ticks: [
+        displayOptions.range[0],
+        (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
+        displayOptions.range[1],
+      ],
+      minorTicks: [
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+      ],
+      tickParams: { which: 'minor', show: true },
+
+      style: { title: { show: false } },
+    })
+
+    addAxesPlots([
+      {
+        plotId: plot.id,
+        groupId: 'cbar',
+        axisIds: [xax.id],
+        axes: { [xax.id]: xax },
+      },
+    ])
 
     setPlot(plot)
   }, [plot])

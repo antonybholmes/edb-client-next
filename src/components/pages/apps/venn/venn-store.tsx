@@ -1,6 +1,5 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
-import { createAxis } from '@/components/plot/axes/axis'
+import { useAxes } from '@/components/plot/axes/axes-store'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { colZScore, rowZScore, zscore } from '@/lib/dataframe/dataframe-utils'
@@ -510,24 +509,36 @@ export function useVenn(): IVennStore & {
       mode: 'set',
     })
 
-    const axesPlots: IPlotAxes[] = []
-
-    let xax = createAxis({
+    /* let xax = createAxis({
+      id: 'cbar',
       title: 'Color bar',
+
       domain: displayOptions.range,
-      //length: settings.axes.x.length,
+      length: displayOptions.colorbar.size.w,
+      ticks: [
+        displayOptions.range[0],
+        (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
+        displayOptions.range[1],
+      ],
+      minorTicks: [
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+        displayOptions.range[0] +
+          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+      ],
+      tickParams: { which: 'minor', show: true },
+
       style: { title: { show: false } },
-      tickParams: { which: 'both', show: false },
     })
 
-    axesPlots.push({
-      plotId: plot.id,
-      groupId: 'cbar',
-      axisIds: ['cbar'],
-      axes: { cbar: xax },
-    })
-
-    addAxesPlots(axesPlots)
+    addAxesPlots([
+      {
+        plotId: plot.id,
+        groupId: 'cbar',
+        axisIds: [xax.id],
+        axes: { [xax.id]: xax },
+      },
+    ]) */
   }, [vennElemMap, settings, edbSettings])
 
   return {

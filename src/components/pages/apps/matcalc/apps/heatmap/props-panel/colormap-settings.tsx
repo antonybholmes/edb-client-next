@@ -18,7 +18,7 @@ import { COLOR_MAPS, ColorMapName } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
 
-import { AxesPropRow } from '@/components/plot/axes/axes-prop-row'
+import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
@@ -46,7 +46,18 @@ export function ColormapSettingsPanel() {
         Colormap
       </AccordionTrigger>
       <AccordionContent>
-        <AxesPropRow axes={['colorbar']} />
+        {/* <AxesPropRow axes={['colorbar']} /> */}
+
+        <PropRow title="Axis">
+          <AxisPlotPropsPopover
+            plotAddress={{
+              plotId: plot.id,
+              groupId: 'cbar',
+              axisId: 'cbar',
+            }}
+            title="Colorbar"
+          />
+        </PropRow>
 
         <PropRow title="Colormap">
           <ColorMapMenu

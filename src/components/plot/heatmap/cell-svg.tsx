@@ -194,8 +194,6 @@ export function DotsSvg({
           const cy = 0.5 * blockSize.h
           const r = 0.5 * w * radius * props.dot.scale
 
-          console.log(r, radius, props.dot.scale)
-
           const textColor =
             props.cells.values.autoColor.on && radius > 0.4
               ? getTextColorForBackground(

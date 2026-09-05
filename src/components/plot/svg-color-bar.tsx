@@ -110,6 +110,8 @@ export function SvgVColorBar({
 
   ax = setAxisDirection(ax, 'y')
 
+  console.log('boobs axis', ax.id, ax)
+
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps
   const inc2 = 2 * inc

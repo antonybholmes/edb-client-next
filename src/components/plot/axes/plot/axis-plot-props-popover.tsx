@@ -11,11 +11,9 @@ import { AxisPlotPropsPanel } from './axis-plot-props-panel'
 
 export function AxisPlotPropsPopover({
   title,
-
   plotAddress,
 }: {
   title: string
-
   plotAddress: IPlotAddress
 }) {
   const [open, setOpen] = useState(false)
@@ -33,7 +31,7 @@ export function AxisPlotPropsPopover({
               className="relative z-0 opacity-50"
             />
             <span className="absolute z-10 right-1.5 top-1 font-bold">
-              {title}
+              {title.at(0).toUpperCase()}
             </span>
           </ToolbarIconButton>
         }
