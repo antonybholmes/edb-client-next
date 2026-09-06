@@ -139,11 +139,11 @@
     "name": "Oncoplot",
     "description": "Create oncoplots.",
     "color": "#ff99cc",
-    "version": "30.0.8",
+    "version": "30.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-02T15:22:13.203Z",
-    "hash": "69ac6c339db8d18d50b9030d219df78111363dc9c6f3317a7a11181b930980d1",
-    "build": 1128
+    "modified": "2026-09-06T23:34:00.289Z",
+    "hash": "8dd891757100034f0742177b4088014a78980d96262c4b373a618af58037f95d",
+    "build": 1130
   },
   {
     "name": "Overlap",

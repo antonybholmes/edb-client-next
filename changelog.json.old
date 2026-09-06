@@ -2725,6 +2725,10 @@
         {
           "msg": "Switched motifs to new axis system",
           "date": "2026-09-06T21:26:48.654Z"
+        },
+        {
+          "msg": "Lollipop switched to new axis model",
+          "date": "2026-09-06T23:28:17.449Z"
         }
       ],
       "Added": [

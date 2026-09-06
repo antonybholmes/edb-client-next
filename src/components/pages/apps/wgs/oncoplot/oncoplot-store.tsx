@@ -5,6 +5,9 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { useEffect } from 'react'
 
+import { useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis } from '@/components/plot/axes/axis'
+import { range } from '@/lib/math/range'
 import { useFiles } from '../../matcalc/history/history-provider/history-contexts'
 import { findSheet } from '../../matcalc/history/history-provider/history-hooks'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
@@ -90,6 +93,7 @@ export function useOncoplot(): IOncoplotStore {
   const { mutations, displayProps, setMutations } = useOncoplotSettings()
   const { present } = useHistory()
   const { file } = useFiles()
+  const { addAxes } = useAxes()
 
   useEffect(() => {
     function oncoplot() {
@@ -159,6 +163,54 @@ export function useOncoplot(): IOncoplotStore {
     setVariantsInUse,
     setMutations,
   ])
+
+  useEffect(() => {
+    // keep things simple and use ints for the graph limits
+    const maxSampleCount = mutationFrame
+      ? Math.round(
+          Math.max(...mutationFrame.sampleStats.map((stats) => stats.sum))
+        )
+      : 0
+
+    const yax = createAxis({
+      id: 'y',
+      direction: 'y',
+      domain: [0, maxSampleCount],
+      length: displayProps.samples.graphs.height,
+      title: displayProps.samples.graphs.yaxis.label,
+      ticks: range(maxSampleCount + 1),
+      tickParams: { which: 'minor', show: false },
+    })
+
+    const maxGeneCount = mutationFrame
+      ? Math.round(
+          Math.max(...mutationFrame?.geneStats.map((stats) => stats.sum))
+        )
+      : 0
+
+    const xax = createAxis({
+      id: 'x',
+      domain: [0, maxGeneCount],
+      length: displayProps.features.graphs.height,
+      title: 'No. of samples',
+      ticks: [
+        { v: 0, label: '0' },
+        {
+          v: maxGeneCount,
+          label: `${maxGeneCount} / ${mutationFrame?.shape[1]}`,
+        },
+      ],
+      tickParams: { which: 'minor', show: false },
+    })
+    addAxes([
+      {
+        plotId: 'oncoplot',
+        groupId: 'oncoplot',
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yax },
+      },
+    ])
+  }, [mutationFrame, displayProps, addAxes])
 
   return {
     mutationFrame,

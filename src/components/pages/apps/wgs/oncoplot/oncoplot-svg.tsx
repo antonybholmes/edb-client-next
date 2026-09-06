@@ -8,6 +8,7 @@ import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
@@ -606,6 +607,17 @@ export function OncoplotSvg() {
   const { mutations, displayProps } = useOncoplotSettings()
   const { mutationFrame: mf, mutationsInUse, clinicalTracks } = useOncoplot()
 
+  const { axis: xax } = useAxis({
+    plotId: 'oncoplot',
+    groupId: 'oncoplot',
+    axisId: 'x',
+  })
+  const { axis: yax } = useAxis({
+    plotId: 'oncoplot',
+    groupId: 'oncoplot',
+    axisId: 'y',
+  })
+
   const colorMap = mutationColorMapFromMutations(mutations)
 
   const blockSize: IBlock = displayProps.grid.cell
@@ -674,34 +686,6 @@ export function OncoplotSvg() {
 
   const samples: string[] = mf?.sampleStats.map((stats) => stats.sample)
 
-  // keep things simple and use ints for the graph limits
-  const maxSampleCount = mf
-    ? Math.round(Math.max(...mf.sampleStats.map((stats) => stats.sum)))
-    : 0
-
-  const yax = createAxis({
-    direction: 'y',
-    domain: [0, maxSampleCount],
-    length: displayProps.samples.graphs.height,
-    title: displayProps.samples.graphs.yaxis.label,
-    ticks: range(maxSampleCount + 1),
-    tickParams: { which: 'minor', show: false },
-  })
-
-  const maxGeneCount = mf
-    ? Math.round(Math.max(...mf?.geneStats.map((stats) => stats.sum)))
-    : 0
-
-  const xax = createAxis({
-    domain: [0, maxGeneCount],
-    length: displayProps.features.graphs.height,
-    title: 'No. of samples',
-    ticks: [
-      { v: 0, label: '0' },
-      { v: maxGeneCount, label: `${maxGeneCount} / ${mf?.shape[1]}` },
-    ],
-    tickParams: { which: 'minor', show: false },
-  })
   //.setTickLabels([0, `${maxGeneCount} / ${mf.shape[1]}`])
 
   // get list of all events in use

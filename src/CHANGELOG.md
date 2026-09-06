@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Oncoplot switched to new axis model.
 - Lollipop switched to new axis model.
 - Switched motifs to new axis system.
 - Volcano now use new axis system.
