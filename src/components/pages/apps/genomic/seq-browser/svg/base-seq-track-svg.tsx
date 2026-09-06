@@ -1,6 +1,10 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { axisDomainToRange, IAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRange,
+  axisLength,
+  IAxis,
+} from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
@@ -45,6 +49,8 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
   //const [isMouseDown, setIsMouseDown] = useState(false)
 
   const { pos: mousePos } = useContext(MouseEventContext)
+
+  const xl = axisLength(xax)
 
   function findClosestSeqPos(x: number, refPoints: ISeqPos[]): ISeqPos {
     if (refPoints.length === 0) {
@@ -167,7 +173,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
       <g transform={`translate(0, ${titleHeight})`}>
         {settings.titles.show && (
           <g
-            transform={`translate(${settings.titles.position === 'right' ? xax.length + settings.titles.offset : xax.length / 2}, ${settings.titles.position === 'right' ? tracks[0]!.track.displayOptions.height / 2 : -settings.titles.offset})`}
+            transform={`translate(${settings.titles.position === 'right' ? xl + settings.titles.offset : xl / 2}, ${settings.titles.position === 'right' ? tracks[0]!.track.displayOptions.height / 2 : -settings.titles.offset})`}
           >
             <text
               //transform={`translate(${xax.width / 2}, 0)`}
@@ -190,7 +196,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
                   )
                 ),
                 {
-                  length: Math.round(xax.length / 10),
+                  length: Math.round(xl / 10),
                 }
               )}
             </text>

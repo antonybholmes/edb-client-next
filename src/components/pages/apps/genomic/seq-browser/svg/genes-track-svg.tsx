@@ -1,6 +1,10 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  IAxis,
+} from '@/components/plot/axes/axis'
 
 import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'
@@ -42,6 +46,8 @@ export function getGeneTrackHeight(
 
   const xaf = axisDomainToRangeFunc(xax)
 
+  const xl = axisLength(xax)
+
   if (settings.tracks.genes.display === 'dense') {
     for (const [gi, gene] of genes.entries()) {
       //geneYMap.set(`gene-${gi}`, 0)
@@ -60,7 +66,7 @@ export function getGeneTrackHeight(
   } else if (settings.tracks.genes.display === 'pack') {
     // pack
 
-    const depths = range(0, xax.length).map(() => new Set<number>())
+    const depths = range(0, xl).map(() => new Set<number>())
     let maxRow = 0
     for (const [gi, gene] of genes.entries()) {
       for (const [ti, t] of (
@@ -79,7 +85,7 @@ export function getGeneTrackHeight(
         }
 
         x1 = Math.max(0, x1)
-        x2 = Math.min(xax.length - 1, x2)
+        x2 = Math.min(xl - 1, x2)
 
         // try all depths from 0 to maxDepth + 1 to find a free row
         for (let row = 0; row <= maxRow + 1; ++row) {
@@ -182,12 +188,14 @@ export function GenesTrackSvg({ track, titleHeight, geneYMap }: IProps) {
 
   const { gtf } = useGenomes()
 
+  const xl = axisLength(xax)
+
   return (
     <>
       {settings.titles.show && settings.titles.position === 'top' && (
         <g id="track-title" transform={`translate(0, ${titleHeight})`}>
           <SvgText
-            transform={`translate(${xax.length / 2}, 0)`}
+            transform={`translate(${xl / 2}, 0)`}
             //dominantBaseline="middle"
             textAnchor="middle"
             //fontWeight="bold"

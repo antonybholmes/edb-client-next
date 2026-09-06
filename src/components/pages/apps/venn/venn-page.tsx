@@ -328,20 +328,6 @@ function VennPage() {
     setShowFileMenu(false)
   }
 
-  // function onWheel(e: { deltaY: number }) {
-  //   if (keyPressed === 'Shift') {
-  //     setScale(
-  //       Math.max(
-  //         DEFAULT_ZOOM_SCALES[0]!,
-  //         Math.min(
-  //           DEFAULT_ZOOM_SCALES[DEFAULT_ZOOM_SCALES.length - 1]!,
-  //           scale + (e.deltaY >= 0 ? 0.25 : -0.25)
-  //         )
-  //       )
-  //     )
-  //   }
-  // }
-
   const fileMenuTabs: ITab[] = [
     {
       id: 'Open',

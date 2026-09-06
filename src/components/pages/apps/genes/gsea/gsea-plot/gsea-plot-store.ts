@@ -9,8 +9,6 @@ import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useGseaSettings } from './gsea-settings-store'
 
-export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
-
 export const MAX_NEG_LOG10_P = 50
 
 /**

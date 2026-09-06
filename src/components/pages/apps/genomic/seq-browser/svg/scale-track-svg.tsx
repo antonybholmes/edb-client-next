@@ -1,6 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { axisDomainToRange } from '@/components/plot/axes/axis'
+import { axisDomainToRange, axisLength } from '@/components/plot/axes/axis'
 import { SvgText } from '@/components/plot/svg-text'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
@@ -28,8 +28,10 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
 
   const w = Math.abs(x2 - x1)
 
-  x1 += (xax.length - w) / 2
-  x2 += (xax.length - w) / 2
+  const xl = axisLength(xax)
+
+  x1 += (xl - w) / 2
+  x2 += (xl - w) / 2
 
   return (
     <>

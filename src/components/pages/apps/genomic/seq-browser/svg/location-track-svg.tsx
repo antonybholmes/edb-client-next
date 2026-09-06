@@ -1,4 +1,4 @@
-import type { IAxis } from '@/components/plot/axes/axis'
+import { axisLength, type IAxis } from '@/components/plot/axes/axis'
 import { type IDivProps } from '@/interfaces/div-props'
 
 import { SvgText } from '@/components/plot/svg-text'
@@ -13,11 +13,10 @@ interface IProps extends IDivProps {
 
 export function LocationTrackSvg({ track, xax }: IProps) {
   const { location } = useContext(LocationContext)
+  const xl = axisLength(xax)
   return (
     <>
-      <g
-        transform={`translate(${xax.length / 2}, ${track.displayOptions.height / 2})`}
-      >
+      <g transform={`translate(${xl / 2}, ${track.displayOptions.height / 2})`}>
         <SvgText dominantBaseline="middle" font={track.displayOptions.text}>
           {locStr(location)} (
           {(location.end - location.start + 1).toLocaleString()} bp)

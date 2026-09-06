@@ -4,6 +4,7 @@ import { API_CYTOBANDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import {
   axisDomainToRangeFunc,
+  axisLength,
   createAxis,
   IAxis,
   setAxisDomain,
@@ -102,7 +103,9 @@ function CytobandsRoundStyleTrackSvg({
   const l1 = cytobands[0]!.loc
   const l2 = cytobands[cytobands.length - 1]!.loc
 
-  let cytoAx: IAxis = createAxis({ length: xax.length })
+  const xl = axisLength(xax)
+
+  let cytoAx: IAxis = createAxis({ length: xl })
 
   if (settings.reverse) {
     cytoAx = setAxisDomain(cytoAx, [l2.end, l1.start])
@@ -308,8 +311,9 @@ function CytobandsSquareStyleTrackSvg({
 
   const l1 = cytobands[0]!.loc
   const l2 = cytobands[cytobands.length - 1]!.loc
+  const xl = axisLength(xax)
 
-  let cytoAx = createAxis({ length: xax.length })
+  let cytoAx = createAxis({ length: xl })
 
   if (settings.reverse) {
     cytoAx = setAxisDomain(cytoAx, [l2.end, l1.start])
@@ -416,7 +420,7 @@ function CytobandsSquareStyleTrackSvg({
         />
 
         <polygon
-          points={`0,${h} 0,0 ${settings.reverse ? centerx2 : centerx1},0 ${settings.reverse ? centerx1 : centerx2},${h} ${xax.length},${h} ${xax.length},0 ${settings.reverse ? centerx1 : centerx2},0 ${settings.reverse ? centerx2 : centerx1},${h}`}
+          points={`0,${h} 0,0 ${settings.reverse ? centerx2 : centerx1},0 ${settings.reverse ? centerx1 : centerx2},${h} ${xl},${h} ${xl},0 ${settings.reverse ? centerx1 : centerx2},0 ${settings.reverse ? centerx2 : centerx1},${h}`}
           fill="none"
           stroke={track.displayOptions.stroke.value}
           strokeWidth={track.displayOptions.stroke.width}
@@ -450,6 +454,7 @@ function LabelSvg({
   settings: ISeqBrowserSettings
 }) {
   const xaf = axisDomainToRangeFunc(ax)
+  const xl = axisLength(ax)
 
   const bands = [...pbands, ...qbands]
 
@@ -472,7 +477,7 @@ function LabelSvg({
 
   // Use an empirical method to space labels out nicely
   const thresholdX = settings.tracks.cytobands.labels.skip.auto
-    ? Math.log2(ax.length) * 5
+    ? Math.log2(xl) * 5
     : settings.tracks.cytobands.labels.skip.x
 
   for (const label of labels) {

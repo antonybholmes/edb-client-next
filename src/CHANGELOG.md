@@ -20,6 +20,10 @@
 - Heatmap can now be scaled through ui rather than with a setting.
 - Revised venn clustering. Cluster props to make plot look better.
 
+### Fixed
+
+- Fixed axis lengths.
+
 
 ## 89.0.0 (Aug, 2026)
 

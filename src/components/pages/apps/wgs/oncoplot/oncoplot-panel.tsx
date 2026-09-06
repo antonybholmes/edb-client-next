@@ -29,7 +29,6 @@ import { useSVG } from '@/providers/svg-provider'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 
-//const PLOT_ZOOM_CHANNEL = 'oncoplot-plot-zoom'
 export const PANEL_ID = 'oncoplot-panel'
 
 interface IOncoplotPanelProps {

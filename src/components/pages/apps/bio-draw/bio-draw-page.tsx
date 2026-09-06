@@ -60,11 +60,9 @@ import { BioDrawSvg } from './bio-draw-canvas'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { ClientLayout } from '@/app/client-layout'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import { useMotifSettings, type Mode } from './motifs-settings'
-
-const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'

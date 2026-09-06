@@ -1,6 +1,10 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { axisDomainToRangeFunc, type IAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  type IAxis,
+} from '@/components/plot/axes/axis'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { locStr } from '@/lib/genomic/genomic'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'
@@ -38,12 +42,7 @@ interface IProps extends IDivProps {
   titleHeight: number
 }
 
-export function BaseBedTrackSvg({
-  tracks,
-  //allFeatures,
-  xax,
-  titleHeight,
-}: IProps) {
+export function BaseBedTrackSvg({ tracks, xax, titleHeight }: IProps) {
   const { settings } = useSeqBrowserSettings()
 
   const trackHeights: number[] = tracks.map((track) =>
@@ -54,11 +53,13 @@ export function BaseBedTrackSvg({
 
   const xaf = axisDomainToRangeFunc(xax)
 
+  const xl = axisLength(xax)
+
   return (
     <g transform={`translate(0, ${titleHeight})`}>
       {settings.titles.show && (
         <g
-          transform={`translate(${settings.titles.position === 'right' ? xax.length + settings.titles.offset : xax.length / 2}, ${settings.titles.position === 'right' ? tracks[0]!.track.displayOptions.height / 2 : -settings.titles.offset})`}
+          transform={`translate(${settings.titles.position === 'right' ? xl + settings.titles.offset : xl / 2}, ${settings.titles.position === 'right' ? tracks[0]!.track.displayOptions.height / 2 : -settings.titles.offset})`}
         >
           <text
             fill={COLOR_BLACK}
@@ -72,7 +73,7 @@ export function BaseBedTrackSvg({
             }
           >
             {truncate(textJoin(tracks.map((t) => t.track.name)), {
-              length: Math.round(xax.length / 10),
+              length: Math.round(xl / 10),
             })}
           </text>
         </g>

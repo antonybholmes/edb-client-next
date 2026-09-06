@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { axisLength } from '@/components/plot/axes/axis'
 import { locStr } from '@/lib/genomic/genomic'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
@@ -38,6 +39,7 @@ export function TracksColumnSvg() {
 
   const titleHeightUsingPosition =
     settings.titles.position === 'top' ? settings.titles.height : 0
+  const xl = axisLength(xax)
 
   // const { trackY } = useMemo(() => {
   //   const trackHeights: number[] = []
@@ -100,7 +102,7 @@ export function TracksColumnSvg() {
   useEffect(() => {
     let x = mousePos.x - pos.x
 
-    if (x < 0 || x > xax.length) {
+    if (x < 0 || x > xl) {
       x = -1
     }
 
@@ -111,7 +113,7 @@ export function TracksColumnSvg() {
     }
 
     setColMousePos({ x, y })
-  }, [mousePos.x, mousePos.y, pos.x, pos.y, xax.length, height])
+  }, [mousePos.x, mousePos.y, pos.x, pos.y, xl, height])
 
   if (trackY.length === 0) {
     return null

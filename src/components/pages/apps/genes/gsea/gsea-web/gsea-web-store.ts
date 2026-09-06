@@ -11,8 +11,6 @@ import {
   IGseaResult,
 } from '../gsea-plot/gsea-plot-store'
 
-export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
-
 export interface IGseaWebStore {
   phenotypes: string[]
   rankedGenes: IGseaGeneRankScore[]

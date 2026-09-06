@@ -75,8 +75,6 @@ import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-
 import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
-const PLOT_ZOOM_CHANNEL = 'gsea-bubble-zoom'
-
 export function GseaBubblePage() {
   const { setAppInfo } = useAppInfo()
 
