@@ -29,7 +29,7 @@ export interface IPlotAddress {
 
 interface IAxesStore extends IAxesPlots {
   updateAxis: (address: IPlotAddress, patch: Partial<IAxis>) => void
-  addAxesPlots: (plots: IPlotAxes[]) => void
+  addAxes: (plots: IPlotAxes[]) => void
   addAxis: (plotId: string, groupId: string, axis: IAxis) => void
   removeAxis: (address: IPlotAddress) => void
 }
@@ -42,7 +42,7 @@ const DEFAULT_AXES_PLOTS: IAxesPlots = {
 export const useAxesStore = create<IAxesStore>((set) => ({
   ...DEFAULT_AXES_PLOTS,
 
-  addAxesPlots: (newPlots) => {
+  addAxes: (newPlots) => {
     set((current) => updatePlots(newPlots, current))
   },
 
@@ -125,12 +125,12 @@ export const useAxesStore = create<IAxesStore>((set) => ({
 
 export function useAxes() {
   const plots = useAxesStore((state) => state.plots)
-  const addAxesPlots = useAxesStore((state) => state.addAxesPlots)
+  const addAxes = useAxesStore((state) => state.addAxes)
   const updateAxis = useAxesStore((state) => state.updateAxis)
   const addAxis = useAxesStore((state) => state.addAxis)
   const removeAxis = useAxesStore((state) => state.removeAxis)
 
-  return { plots, addAxesPlots, updateAxis, addAxis, removeAxis }
+  return { plots, addAxes, updateAxis, addAxis, removeAxis }
 }
 
 export function useAxesPlot(plotId: string) {
@@ -211,13 +211,13 @@ export function AxesPlotProvider({
   plots?: IPlotAxes[]
   children: ReactNode
 }) {
-  const { addAxesPlots } = useAxes()
+  const { addAxes } = useAxes()
 
   useEffect(() => {
     if (initialPlots !== undefined) {
-      addAxesPlots(initialPlots)
+      addAxes(initialPlots)
     }
-  }, [initialPlots, addAxesPlots])
+  }, [initialPlots, addAxes])
 
   return children
 }

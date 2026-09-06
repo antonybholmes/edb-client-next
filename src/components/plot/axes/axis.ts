@@ -326,6 +326,7 @@ export function getAxisTicks(
 /**
  * Calculate the length of the axis based on its range. This
  * is the size in pixels or units used in the axis range.
+ *
  * @param axis The axis object for which to calculate the length.
  * @returns The length of the axis in pixels.
  */

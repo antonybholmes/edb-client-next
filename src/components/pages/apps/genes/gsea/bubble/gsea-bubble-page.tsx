@@ -13,6 +13,7 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { useEffect, useState } from 'react'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import {
@@ -24,7 +25,6 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -336,6 +336,7 @@ export function GseaBubblePage() {
 
 export function GseaBubblePlotPage() {
   const allPlots = useAllPlots()
+  console.log('allPlots', allPlots)
 
   return (
     <GseaBubbleProvider

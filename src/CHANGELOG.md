@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Gsea bubble now has support for new axis system.
 - Axes provider overhauled to include groups.
 - Bug fixes and updates.
 - Venn svg now has margins.

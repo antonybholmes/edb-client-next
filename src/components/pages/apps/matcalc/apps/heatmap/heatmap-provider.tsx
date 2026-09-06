@@ -44,7 +44,7 @@ export function HeatmapProvider({
   plot?: IHeatMapPlot | undefined
   children: ReactNode
 }) {
-  const { addAxesPlots } = useAxes()
+  const { addAxes } = useAxes()
   const [_plot, setPlot] = useState<IHeatMapPlot | undefined>(plot)
   const [colLeaves, setColLeaves] = useState<number[]>([])
   const [rowLeaves, setRowLeaves] = useState<number[]>([])
@@ -114,7 +114,7 @@ export function HeatmapProvider({
       style: { show: displayOptions.colorbar.show, title: { show: false } },
     })
 
-    addAxesPlots([
+    addAxes([
       {
         plotId: plot.id,
         groupId: 'cbar',

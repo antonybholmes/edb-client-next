@@ -284,7 +284,7 @@ export function useVenn(): IVennStore & {
   const { settings } = useVennSettings()
   const { settings: edbSettings } = useEdbSettings()
   const { openFile } = useHistory()
-  const { addAxesPlots } = useAxes()
+  const { addAxes } = useAxes()
 
   const addList = useVennStore((state) => state.addList)
   const removeList = useVennStore((state) => state.removeList)
@@ -531,7 +531,7 @@ export function useVenn(): IVennStore & {
       style: { title: { show: false } },
     })
 
-    addAxesPlots([
+    addAxes([
       {
         plotId: plot.id,
         groupId: 'cbar',

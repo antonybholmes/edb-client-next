@@ -11,14 +11,16 @@ import { Fragment, useState } from 'react'
 import { AxisPlotPropsPopover } from './axis-plot-props-popover'
 
 export function AxesDisplayPropsPopover({
-  plotIds,
-  axesGroups,
+  plots,
 }: {
-  plotIds: { id: string; title: string }[]
-  axesGroups: {
+  plots: {
     id: string
     title: string
-    axesIds: { id: string; title: string }[]
+    groups: {
+      id: string
+      title: string
+      axes: { id: string; title: string }[]
+    }[]
   }[]
 }) {
   const [open, setOpen] = useState(false)
@@ -40,17 +42,17 @@ export function AxesDisplayPropsPopover({
       />
 
       <PopoverContent className="gap-y-1 w-60 flex flex-col">
-        {plotIds.map(({ id: plotId }, pi) => {
+        {plots.map(({ id: plotId, groups: groups }, pi) => {
           return (
             <BaseCol key={plotId} className="grow">
-              {axesGroups.map(({ id: groupId }) => (
+              {groups.map(({ id: groupId }) => (
                 <Fragment key={groupId}>
-                  {axesGroups.map(
-                    ({ id: groupId, title: groupTitle, axesIds }) => (
+                  {groups.map(
+                    ({ id: groupId, title: groupTitle, axes: axes }) => (
                       <VCenterRow key={groupId} className="justify-between">
                         <strong>{groupTitle}</strong>
                         <VCenterRow>
-                          {axesIds.map(({ id: axisId, title }) => (
+                          {axes.map(({ id: axisId, title }) => (
                             <AxisPlotPropsPopover
                               key={axisId}
                               //axis={axis}

@@ -42,14 +42,19 @@ function GseaReportItem({
 
       <VCenterRow>
         <AxesDisplayPropsPopover
-          plotIds={[{ id: report.id, title: report.name }]}
-          axesGroups={[
+          plots={[
             {
-              id: 'es',
-              title: 'ES',
-              axesIds: [
-                { id: 'es-x', title: 'ES X' },
-                { id: 'es-y', title: 'ES Y' },
+              id: report.id,
+              title: report.name,
+              groups: [
+                {
+                  id: 'es',
+                  title: 'ES',
+                  axes: [
+                    { id: 'es-x', title: 'ES X' },
+                    { id: 'es-y', title: 'ES Y' },
+                  ],
+                },
               ],
             },
           ]}

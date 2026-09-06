@@ -110,6 +110,7 @@ export function SvgVColorBar({
   }
 
   ax = setAxisDirection(ax, 'y')
+
   const length = axisLength(ax)
 
   const colorStep = 1 / (steps - 1)

@@ -2709,6 +2709,10 @@
         {
           "msg": "Axes provider overhauled to include groups",
           "date": "2026-09-05T03:06:59.117Z"
+        },
+        {
+          "msg": "Gsea bubble now has support for new axis system",
+          "date": "2026-09-06T16:42:45.443Z"
         }
       ],
       "Added": [

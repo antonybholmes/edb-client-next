@@ -1,4 +1,10 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  type ReactNode,
+} from 'react'
 
 import { makeUuid } from '@/lib/id'
 
@@ -7,7 +13,9 @@ import { argsort } from '@/lib/math/argsort'
 import { ILim } from '@/lib/math/math'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 
-import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
 import { IGseaBubble } from '../gsea-plot-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
@@ -119,7 +127,9 @@ export function GseaBubbleProvider({
   children: ReactNode
 }) {
   const { settings } = useGseaBubbleSettings()
-  const { updateAxes } = useHistory()
+  const { settings: edbSettings } = useEdbSettings()
+
+  const { addAxes } = useAxes()
 
   const xlims = useMemo(() => plots.map((p) => getXLim(p)), [plots])
 
@@ -142,7 +152,7 @@ export function GseaBubbleProvider({
       let sizes = plot.genesets.map((gs) => gs.size)
       let log10pvalues = plot.genesets.map((gs) => gs.log10q)
 
-      const xlim = xlims[pi]
+      //const xlim = xlims[pi]
 
       let idx: number[] = []
 
@@ -194,24 +204,99 @@ export function GseaBubbleProvider({
         }
       })
     })
-  }, [
-    plots,
-    settings.size.maxSize,
-    settings.bubbles.size,
-    settings.scale,
-    settings.plot.margin,
-    settings.margin,
-    settings.padding,
-    settings.legend,
-    settings.border,
-    settings.axes,
-    settings.bubbles,
-    settings.sortBy,
-  ])
+  }, [plots, globalXLim, settings])
 
-  // useEffect(() => {
-  //   updateAxes({ x: createNewAxisConfig({ domain: globalXLim }) })
-  // }, [globalXLim, updateAxes])
+  useEffect(() => {
+    const axes: IPlotAxes[] = []
+
+    for (const [pi, plot] of plots.entries()) {
+      const xlim = xlims[pi]
+      const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
+
+      // offer per plot x-axis domain
+      let xax = createAxis({
+        id: 'x',
+        title: plot.nes.label,
+        autoDomain: domain,
+        length: settings.axes.x.length,
+      })
+      xax = setAxisTickParams(xax, {
+        which: 'major',
+        show: edbSettings.plots.axes.x.ticks.major.show,
+      })
+      xax = setAxisTickParams(xax, {
+        which: 'minor',
+        show: edbSettings.plots.axes.x.ticks.minor.show,
+      })
+
+      axes.push({
+        plotId: plot.id,
+        groupId: 'nes',
+        axisIds: [xax.id],
+        axes: { [xax.id]: xax },
+      })
+    }
+
+    // now the colorbar
+    const rangeDiff =
+      settings.scale.mode === 'p'
+        ? settings.scale.p.range[1] - settings.scale.p.range[0]
+        : globalXLim[1] - globalXLim[0]
+
+    let cax =
+      settings.scale.mode === 'p'
+        ? createAxis({
+            id: 'cbar',
+            domain: settings.scale.p.range,
+            length: edbSettings.plots.colorbar.size.w,
+            ticks: [
+              settings.scale.p.range[0],
+              settings.scale.p.range[0] + rangeDiff / 2,
+              settings.scale.p.range[1],
+            ],
+            minorTicks: [
+              settings.scale.p.range[0] + rangeDiff * 0.25,
+              settings.scale.p.range[0] + rangeDiff * 0.75,
+            ],
+          })
+        : createAxis({
+            id: 'cbar',
+            domain: globalXLim,
+            length: edbSettings.plots.colorbar.size.w,
+            ticks: [
+              globalXLim[0],
+              globalXLim[0] + rangeDiff / 2,
+              globalXLim[1],
+            ],
+            minorTicks: [
+              globalXLim[0] + rangeDiff * 0.25,
+              globalXLim[0] + rangeDiff * 0.75,
+            ],
+          })
+
+    cax = setAxisTickParams(cax, {
+      which: 'major',
+      show: edbSettings.plots.axes.x.ticks.major.show,
+    })
+
+    cax = setAxisTickParams(cax, {
+      which: 'minor',
+      show: edbSettings.plots.axes.x.ticks.minor.show,
+    })
+
+    axes.push({
+      plotId: 'cbar',
+      groupId: 'cbar',
+      axisIds: [cax.id],
+      axes: { [cax.id]: cax },
+    })
+
+    console.log('boo 2', axes)
+
+    addAxes(axes)
+  }, [plots, xlims, settings, edbSettings, globalXLim, addAxes])
+
+  console.log('lsops', plots)
 
   return (
     <GseaBubbleContext.Provider

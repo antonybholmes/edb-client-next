@@ -23,7 +23,7 @@ export function useGseaPlot() {
 
 export function GseaPlotProvider({ children }: { children: ReactNode }) {
   const { settings } = useGseaSettings()
-  const { addAxesPlots } = useAxes()
+  const { addAxes } = useAxes()
   const { rankedGenes, inUseReports, resultsMap } = useGsea()
 
   // keep only pathways for which we have results, i.e. with
@@ -85,8 +85,8 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
         axes: { 'es-x': xax, 'es-y': yax },
       })
     }
-    addAxesPlots(axesPlots)
-  }, [pathways, resultsMap, rankedGenes, settings, addAxesPlots])
+    addAxes(axesPlots)
+  }, [pathways, resultsMap, rankedGenes, settings, addAxes])
 
   return (
     <GseaPlotContext.Provider value={{ pathways }}>
