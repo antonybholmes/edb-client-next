@@ -7,7 +7,7 @@ import {
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Move3d } from 'lucide-react'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { AxisPlotPropsPopover } from './axis-plot-props-popover'
 
 export function AxesDisplayPropsPopover({
@@ -42,29 +42,23 @@ export function AxesDisplayPropsPopover({
       />
 
       <PopoverContent className="gap-y-1 w-60 flex flex-col">
-        {plots.map(({ id: plotId, groups: groups }, pi) => {
+        {plots.map(({ id: plotId, groups: groups }) => {
           return (
             <BaseCol key={plotId} className="grow">
-              {groups.map(({ id: groupId }) => (
-                <Fragment key={groupId}>
-                  {groups.map(
-                    ({ id: groupId, title: groupTitle, axes: axes }) => (
-                      <VCenterRow key={groupId} className="justify-between">
-                        <strong>{groupTitle}</strong>
-                        <VCenterRow>
-                          {axes.map(({ id: axisId, title }) => (
-                            <AxisPlotPropsPopover
-                              key={axisId}
-                              //axis={axis}
-                              title={title}
-                              plotAddress={{ plotId, groupId, axisId }}
-                            />
-                          ))}
-                        </VCenterRow>
-                      </VCenterRow>
-                    )
-                  )}
-                </Fragment>
+              {groups.map(({ id: groupId, title: groupTitle, axes: axes }) => (
+                <VCenterRow key={groupId} className="justify-between">
+                  <strong>{groupTitle}</strong>
+                  <VCenterRow>
+                    {axes.map(({ id: axisId, title }) => (
+                      <AxisPlotPropsPopover
+                        key={axisId}
+                        //axis={axis}
+                        title={title}
+                        plotAddress={{ plotId, groupId, axisId }}
+                      />
+                    ))}
+                  </VCenterRow>
+                </VCenterRow>
               ))}
             </BaseCol>
           )

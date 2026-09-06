@@ -17,6 +17,7 @@ import {
 import { Button } from '@/themed/v2/button'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
@@ -87,7 +88,7 @@ export function VolcanoPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="X-axis limit">
+            {/* <PropRow title="X-axis limit">
               <DoubleNumericalInput
                 id="x-limit"
                 v1={displayProps.axes.xaxis.domain[0]}
@@ -117,9 +118,9 @@ export function VolcanoPropsPanel() {
                   )
                 }}
               />
-            </PropRow>
+            </PropRow> */}
 
-            <PropRow title="Y-max">
+            {/* <PropRow title="Y-max">
               <NumericalInput
                 id="size"
                 value={displayProps.axes.yaxis.domain[1]}
@@ -134,6 +135,27 @@ export function VolcanoPropsPanel() {
                     })
                   )
                 }}
+              />
+            </PropRow> */}
+
+            <PropRow title="Axes">
+              <AxesDisplayPropsPopover
+                plots={[
+                  {
+                    id: plot.id,
+                    title: 'Volcano Plot',
+                    groups: [
+                      {
+                        id: 'volcano',
+                        title: 'Volcano',
+                        axes: [
+                          { id: 'x', title: 'X-axis' },
+                          { id: 'y', title: 'Y-axis' },
+                        ],
+                      },
+                    ],
+                  },
+                ]}
               />
             </PropRow>
 

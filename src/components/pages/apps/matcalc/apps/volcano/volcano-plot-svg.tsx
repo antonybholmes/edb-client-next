@@ -15,7 +15,8 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 
-import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
+import { useAxis } from '@/components/plot/axes/axes-store'
+import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
@@ -220,21 +221,25 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
 }
 
 interface IProps {
-  x: string
-  y: string
   size?: string
   sizeFunc?: (x: number) => number
 
   //displayOptions?: IVolcanoDisplayOptions
 }
 
-export function VolcanoPlotSvg({
-  x,
-  y,
-
-  sizeFunc = (x: number) => x,
-}: IProps) {
+export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   const { plot, displayLabels } = useVolcanoContext()
+
+  const { axis: xax } = useAxis({
+    plotId: plot.id,
+    groupId: 'volcano',
+    axisId: 'x',
+  })
+  const { axis: yax } = useAxis({
+    plotId: plot.id,
+    groupId: 'volcano',
+    axisId: 'y',
+  })
 
   const { ref: svgRef } = useSVG()
 
@@ -280,11 +285,6 @@ export function VolcanoPlotSvg({
   function handleVariantEnter(row: number, p: IPos) {
     const screenP = svgPointToScreen(svgRef.current, p)
 
-    const newP = {
-      x: screenP.x,
-      y: screenP.y,
-    }
-
     showTooltip({
       pos: screenP,
       content: (
@@ -311,21 +311,10 @@ export function VolcanoPlotSvg({
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
     //const sizedata = size ? getNumCol(sheet, findCol(sheet, size)) : []
 
-    const xax = createAxis({
-      length: displayOptions.axes.xaxis.length,
-      autoDomain: displayOptions.axes.xaxis.domain,
-    })
-
-    const yax = createAxis({
-      direction: 'y',
-      length: displayOptions.axes.yaxis.length,
-      autoDomain: displayOptions.axes.yaxis.domain,
-    })
-
     console.log(xax, yax, displayOptions.axes.yaxis.length)
 
-    const innerWidth = xax.length
-    const innerHeight = yax.length
+    const innerWidth = axisLength(xax)
+    const innerHeight = axisLength(yax)
     const width = innerWidth + MARGIN.left + MARGIN.right
     const height = innerHeight + MARGIN.top + MARGIN.bottom
 
@@ -444,7 +433,7 @@ export function VolcanoPlotSvg({
           pos={{ x: MARGIN.left, y: MARGIN.top }}
           tickSize={displayOptions.axes.yaxis.tickSize}
           strokeWidth={displayOptions.axes.yaxis.stroke.width}
-          title={y}
+
           color={displayOptions.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
@@ -452,7 +441,7 @@ export function VolcanoPlotSvg({
           pos={{ x: MARGIN.left, y: MARGIN.top + innerHeight }}
           tickSize={displayOptions.axes.xaxis.tickSize}
           strokeWidth={displayOptions.axes.xaxis.stroke.width}
-          title={x}
+
           color={displayOptions.axes.xaxis.stroke.value}
         />
       </>
@@ -460,7 +449,8 @@ export function VolcanoPlotSvg({
     return { svg, width, height }
   }, [
     plot,
-    y,
+    xax,
+    yax,
     thresholdLogP,
     displayOptions,
     displayLabels,
