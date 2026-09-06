@@ -8,6 +8,7 @@
 
 ### Changed
 
+- GSEA plot now uses new axis system.
 - Gsea bubble now has support for new axis system.
 - Axes provider overhauled to include groups.
 - Bug fixes and updates.

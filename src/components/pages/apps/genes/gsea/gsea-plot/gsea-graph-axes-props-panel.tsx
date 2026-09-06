@@ -12,9 +12,14 @@ export function GseaGraphAxesPropsPanel() {
           id: 'es',
           title: 'ES',
           axesIds: [
-            { id: 'es-x', axis: 'x', title: 'ES X' },
-            { id: 'es-y', axis: 'y', title: 'ES Y' },
+            { id: 'x', axis: 'x', title: 'X' },
+            { id: 'y', axis: 'y', title: 'Y' },
           ],
+        },
+        {
+          id: 'snr',
+          title: 'SNR',
+          axesIds: [{ id: 'y', axis: 'y', title: 'Y' }],
         },
       ]}
     />

@@ -51,9 +51,14 @@ function GseaReportItem({
                   id: 'es',
                   title: 'ES',
                   axes: [
-                    { id: 'es-x', title: 'ES X' },
-                    { id: 'es-y', title: 'ES Y' },
+                    { id: 'x', title: 'X' },
+                    { id: 'y', title: 'Y' },
                   ],
+                },
+                {
+                  id: 'snr',
+                  title: 'SNR',
+                  axes: [{ id: 'y', title: 'Y' }],
                 },
               ],
             },

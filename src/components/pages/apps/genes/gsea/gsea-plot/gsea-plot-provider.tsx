@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
-import { IGseaGeneSet, useGsea } from './gsea-plot-store'
+import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
 type GseaPlotContext = {
@@ -47,7 +47,8 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
       const maxRank = rankedGenes.length - 1
 
       let xax = createAxis({
-        title: 'ES X-axis',
+        id: 'x',
+        title: 'Genes',
         domain: [0, maxRank],
         length: settings.axes.x.length,
         style: { title: { show: false } },
@@ -69,7 +70,8 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
         Math.max(...es.map((e) => e.score)),
       ]
 
-      let yax = createAxis({
+      let yaxEs = createAxis({
+        id: 'y',
         direction: 'y',
         title: 'ES',
         //style: { title: { show: false } },
@@ -81,8 +83,36 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
       axesPlots.push({
         plotId: pathway.id,
         groupId: 'es',
-        axisIds: ['es-x', 'es-y'],
-        axes: { 'es-x': xax, 'es-y': yax },
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yaxEs },
+      })
+
+      const sortedRankedGenes: IGseaGeneRankScore[] = settings.phenotypes.invert
+        ? rankedGenes
+            .map((e) => ({
+              ...e,
+              rank: maxRank - e.rank,
+              score: -e.score,
+            }))
+            .sort((a, b) => a.rank - b.rank)
+        : rankedGenes
+
+      const yMin = Math.min(...sortedRankedGenes.map((e) => e.score))
+      const yMax = Math.max(...sortedRankedGenes.map((e) => e.score))
+
+      let yaxSnr = createAxis({
+        direction: 'y',
+        title: 'SNR',
+        autoDomain: [yMin, yMax],
+        length: settings.ranking.axes.y.length,
+        tickParams: { which: 'minor', show: false },
+      })
+
+      axesPlots.push({
+        plotId: pathway.id,
+        groupId: 'snr',
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yaxSnr },
       })
     }
     addAxes(axesPlots)

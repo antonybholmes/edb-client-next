@@ -11,11 +11,10 @@ import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useAxes } from '@/components/plot/axes/axes-store'
+import { useAxes, useAxis } from '@/components/plot/axes/axes-store'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
-  createAxis,
   IAxis,
 } from '@/components/plot/axes/axis'
 import { SvgText } from '@/components/plot/svg-text'
@@ -91,7 +90,7 @@ export function GseaSvg() {
           .sort((a, b) => a.rank - b.rank)
       : rankedGenes
 
-    let xax = plots[pathway.id].groups['es'].axes['es-x']
+    let xax = plots[pathway.id].groups['es'].axes['x']
 
     //xax = xax.setTicks(xax.ticks.slice(1))
 
@@ -118,7 +117,7 @@ export function GseaSvg() {
     //   { which: 'minor', show: false }
     // )
 
-    let yax = plots[pathway.id].groups['es'].axes['es-y']
+    let yax = plots[pathway.id].groups['es'].axes['y']
 
     const xaf = axisDomainToRangeFunc(xax)
     const yaf = axisDomainToRangeFunc(yax)
@@ -169,12 +168,13 @@ export function GseaSvg() {
     if (settings.genes.show) {
       genesSvg = (
         <GenesSvg
+          xax={xax}
           points={points}
           es={es}
           sortedRankedGenes={sortedRankedGenes}
 
           crossing={crossing}
-          xax={xax}
+
           pos={{ x: 0, y: plotY }}
         />
       )
@@ -185,11 +185,13 @@ export function GseaSvg() {
     // ranking
     let rankingSvg: ReactNode | null = settings.ranking.show ? (
       <RankingSvg
+        xax={xax}
+        pathway={pathway}
         sortedRankedGenes={sortedRankedGenes}
         x0={x0}
         x1={x1}
         crossing={crossing}
-        xax={xax}
+
         pos={{ x: 0, y: plotY }}
       />
     ) : null
@@ -336,9 +338,7 @@ function EsSvg({
         s={settings.es.line}
       />
 
-      {edbSettings.plots.axes.y.style.show && (
-        <AxisLeftSvg ax={yax} title="ES" />
-      )}
+      {edbSettings.plots.axes.y.style.show && <AxisLeftSvg ax={yax} />}
 
       {edbSettings.plots.axes.x.style.show && (
         <g transform={`translate(0, ${y0})`}>
@@ -497,20 +497,22 @@ function EsLeadingEdgeSvg({
 }
 
 function GenesSvg({
+  xax,
   points,
   es,
   sortedRankedGenes,
 
   crossing,
-  xax,
+
   pos,
 }: {
+  xax: IAxis
   points: { x: number; y: number }[]
   es: IGseaGeneRankScore[]
   sortedRankedGenes: IGseaGeneRankScore[]
 
   crossing: { index: number; x: number }
-  xax: IAxis
+
   pos: IPos
 }) {
   const { settings } = useGseaSettings()
@@ -585,19 +587,22 @@ function GenesSvg({
 }
 
 function RankingSvg({
+  pathway,
+  xax,
   sortedRankedGenes,
 
   crossing,
-  xax,
+
   x0,
   x1,
   pos,
 }: {
+  pathway: IGseaGeneSet
+  xax: IAxis
   sortedRankedGenes: IGseaGeneRankScore[]
 
   crossing: { index: number; x: number }
 
-  xax: IAxis
   x0: number
   x1: number
   pos: IPos
@@ -605,21 +610,10 @@ function RankingSvg({
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
 
-  const yMin = Math.min(...sortedRankedGenes.map((e) => e.score))
-  const yMax = Math.max(...sortedRankedGenes.map((e) => e.score))
-
-  // const yax = new YAxis()
-  //   .autoDomain([yMin, yMax])
-  //   //.setDomain([0, plot.dna.seq.length])
-  //   .setLength(settings.ranking.axes.y.length)
-  //   .setTickParams({ which: 'minor', show: false })
-
-  let yax = createAxis({
-    direction: 'y',
-    title: 'SNR',
-    autoDomain: [yMin, yMax],
-    length: settings.ranking.axes.y.length,
-    tickParams: { which: 'minor', show: false },
+  const { axis: yax } = useAxis({
+    plotId: pathway.id,
+    groupId: 'snr',
+    axisId: 'y',
   })
 
   const y0 = axisDomainToRange(yax, [0])[0]
