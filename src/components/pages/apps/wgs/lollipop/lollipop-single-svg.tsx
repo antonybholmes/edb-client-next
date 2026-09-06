@@ -1,16 +1,11 @@
-import {
-  axisDomainToRangeFunc,
-  createAxis,
-  getAxisTicks,
-  IAxis,
-  setAxisTicks,
-} from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_WHITE } from '@/lib/color/color'
@@ -28,7 +23,7 @@ import {
   yTickLinesSvg,
 } from './lollipop-stack-svg'
 import { aaSum, type IAAData } from './lollipop-stats'
-import { useLollipopStore } from './lollipop-store'
+import { useLollipop } from './lollipop-store'
 import {
   DEFAULT_MUTATION_COLOR,
   type ILollipopDisplayProps,
@@ -249,7 +244,7 @@ export function LollipopSingleSvg() {
     domains: features,
     aaStats,
     labels,
-  } = useLollipopStore()
+  } = useLollipop()
 
   const { protein, displayProps, aaColor, showMaxVariantOnly } =
     useLollipopSettings()
@@ -263,6 +258,20 @@ export function LollipopSingleSvg() {
   const [tooltipText, setTooltipText] = useState<string[]>([])
 
   const { ref: svgRef } = useSVG()
+
+  const { axis: xax } = useAxis({
+    plotId: 'lollipop',
+    groupId: 'lollipop',
+    axisId: 'x',
+  })
+  const { axis: yax } = useAxis({
+    plotId: 'lollipop',
+    groupId: 'lollipop',
+    axisId: 'y',
+  })
+
+  const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
+  const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
   // const scaledPadding = {
   //   x: spacing.x * displayProps.scale,
@@ -306,55 +315,6 @@ export function LollipopSingleSvg() {
   )
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
-
-  const { ax: yax, af: yaf } = useMemo(() => {
-    let yax = createAxis({
-      direction: 'y',
-      domain: [0, maxSampleCount],
-      length: graphHeight,
-      title: 'Mutation count',
-    })
-
-    // small plots look better with fewer ticks
-    if (maxSampleCount < 10) {
-      if (maxSampleCount % 2 === 0) {
-        yax = setAxisTicks(yax, [0, maxSampleCount / 2, maxSampleCount])
-      } else {
-        yax = setAxisTicks(yax, [0, maxSampleCount])
-      }
-
-      yax = setAxisTicks(yax, [0, maxSampleCount])
-    }
-
-    return { ax: yax, af: axisDomainToRangeFunc(yax) }
-  }, [blockSize.w, aaStats])
-
-  const { ax: xax, af: xaf } = useMemo(() => {
-    let xax = createAxis({
-      domain: [1, n],
-      length: gridWidth,
-      title: 'Positions',
-    })
-    //.setTicks(ticks)
-
-    let ticks = getAxisTicks(xax)
-
-    const dx = ticks[ticks.length - 1]!.v - ticks[ticks.length - 2]!.v
-
-    // add last tick to end of plot if is more than half the distance btween the last two ticks
-    // so that we add it, but only if it will not overlap with the label of the last tick. This
-    // is a simple heuristic to avoid overlapping labels
-    if (
-      displayProps.axes.x.showEndTick &&
-      xax.domain[1]! - ticks[ticks.length - 1]!.v > dx / 2
-    ) {
-      ticks = ticks.concat({ v: n, label: xax.domain[1]!.toString() })
-
-      xax = setAxisTicks(xax, ticks)
-    }
-
-    return { ax: xax, af: axisDomainToRangeFunc(xax) }
-  }, [n, gridWidth, displayProps.axes.x.showEndTick])
 
   const flattenedPileups = useMemo(() => {
     const pileups: Record<number, Record<VariantClass, IAAData[]>> = {}

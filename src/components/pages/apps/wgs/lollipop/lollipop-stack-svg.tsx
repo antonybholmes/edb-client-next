@@ -2,10 +2,8 @@ import {
   axisDomainToRange,
   axisDomainToRangeFunc,
   axisLength,
-  createAxis,
   getAxisTicks,
   IAxis,
-  setAxisTicks,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
@@ -19,7 +17,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
 import { COLOR_WHITE } from '@/lib/color/color'
 
-import { ITickItem } from '@/components/plot/axes/svg-axis-props'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
@@ -29,7 +27,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { gsap } from 'gsap'
 import { useLollipopSettings, type IAAColor } from './lollipop-settings-store'
 import { aaSum } from './lollipop-stats'
-import { useLollipopStore } from './lollipop-store'
+import { useLollipop } from './lollipop-store'
 import {
   DEFAULT_MUTATION_COLOR,
   type IDomain,
@@ -617,9 +615,25 @@ export function LollipopStackSvg() {
     domains: features,
     aaStats,
     labels,
-  } = useLollipopStore()
+  } = useLollipop()
 
   const { ref: svgRef } = useSVG()
+
+  const { axis: xax } = useAxis({
+    plotId: 'lollipop',
+    groupId: 'lollipop',
+    axisId: 'x',
+  })
+  const { axis: yax } = useAxis({
+    plotId: 'lollipop',
+    groupId: 'lollipop',
+    axisId: 'y',
+  })
+
+  console.log(xax, yax)
+
+  const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
+  const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
   const { protein, displayProps, aaColor, showMaxVariantOnly } =
     useLollipopSettings()
@@ -676,53 +690,6 @@ export function LollipopStackSvg() {
   )
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
-
-  const { ax: yax, axisDomainToRangeFunc: yaxDomainToRangeFunc } =
-    useMemo(() => {
-      let yax = createAxis({
-        direction: 'y',
-        autoDomain: [0, maxSampleCount],
-        length: graphHeight,
-        title: 'Mutation count',
-      })
-
-      // small plots look better with fewer ticks
-      if (maxSampleCount < 10) {
-        if (maxSampleCount % 2 === 0) {
-          yax = setAxisTicks(yax, [0, maxSampleCount / 2, maxSampleCount])
-        } else {
-          yax = setAxisTicks(yax, [0, maxSampleCount])
-        }
-
-        yax = setAxisTicks(yax, [0, maxSampleCount])
-      }
-
-      return { ax: yax, axisDomainToRangeFunc: axisDomainToRangeFunc(yax) }
-    }, [blockSize.w, aaStats])
-
-  const { ax: xax, axisDomainToRangeFunc: xaxDomainToRangeFunc } =
-    useMemo(() => {
-      let xax = createAxis({
-        autoDomain: [1, n],
-        length: gridWidth,
-        title: 'Positions',
-      })
-
-      let ticks = getAxisTicks(xax)
-
-      // make sure first tick is shown at 1
-      if (ticks[0]!.v !== 1) {
-        ticks = ([{ v: 1, label: '1' }] as ITickItem[]).concat(ticks)
-      }
-
-      if (displayProps.axes.x.showEndTick) {
-        ticks = ticks.concat({ v: n, label: xax.domain[1]!.toString() })
-      }
-
-      xax = setAxisTicks(xax, ticks)
-
-      return { ax: xax, axisDomainToRangeFunc: axisDomainToRangeFunc(xax) }
-    }, [n, gridWidth, displayProps.axes.x.showEndTick])
 
   const flattenedPileups = useMemo(() => {
     const pileups: { variantType: VariantClass; mutations: string[] }[][] = []
@@ -787,11 +754,11 @@ export function LollipopStackSvg() {
 
     for (const [pi, pileup] of pileups.entries()) {
       let ei = 1
-      const x = xaxDomainToRangeFunc(pi + 1)
+      const x = xaf(pi + 1)
 
       for (const variantBlock of pileup) {
         for (const mutation of variantBlock.mutations) {
-          const y2 = yaxDomainToRangeFunc(ei)
+          const y2 = yaf(ei)
 
           const rect = {
             x,

@@ -122,9 +122,13 @@ export function createAxis(
 }
 
 export function setAxisDirection(
-  axis: IAxis,
+  axis: IAxis | undefined,
   direction: IAxis['direction']
 ): IAxis {
+  if (!axis) {
+    return axis
+  }
+
   // save copy operation if nothing changes
   if (axis.direction === direction) {
     return axis
@@ -292,6 +296,10 @@ export function getAxisTicks(
   axis: IAxis,
   opts: { which?: WhichTick } = {}
 ): ITickItem[] {
+  if (!axis) {
+    return []
+  }
+
   const { which = 'major' } = opts
 
   if (axis.ticks[which].items) {
@@ -330,7 +338,11 @@ export function getAxisTicks(
  * @param axis The axis object for which to calculate the length.
  * @returns The length of the axis in pixels.
  */
-export function axisLength(axis: IAxis): number {
+export function axisLength(axis: IAxis | undefined): number {
+  if (!axis) {
+    return 0
+  }
+
   return Math.abs(axis.range[1] - axis.range[0])
 }
 
@@ -361,7 +373,13 @@ export type RangeToDomainFunc = (v: number | ITickItem) => number
  * @param axis
  * @returns
  */
-export function axisDomainToRangeFunc(axis: IAxis): RangeToDomainFunc {
+export function axisDomainToRangeFunc(
+  axis: IAxis | undefined
+): RangeToDomainFunc {
+  if (!axis) {
+    return (v: number | ITickItem) => 0
+  }
+
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
 
   return (v: number | ITickItem) => {

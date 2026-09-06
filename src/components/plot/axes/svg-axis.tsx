@@ -34,7 +34,7 @@ export function AxisLeftSvg({ ax, title, pos = { ...ZERO_POS } }: IAxisProps) {
 
   const strokeWidth = settings.plots.axes.y.style.line.width
 
-  const _title = title ?? ax.title
+  const _title = title ?? ax?.title ?? ''
 
   const length = axisLength(ax)
 
@@ -80,7 +80,7 @@ export function AxisRightSvg({
 
   const strokeWidth = axisProps.style.line.width
 
-  const _title = title ?? ax.title
+  const _title = title ?? ax?.title ?? ''
 
   const length = axisLength(ax)
 
@@ -136,7 +136,7 @@ export function AxisBottomSvg({
       ? tickOffset + tickSize + axisProps.style.title.offset
       : 0)
 
-  const _title = title ?? ax.title
+  const _title = title ?? ax?.title ?? ''
 
   const length = axisLength(ax)
 
@@ -192,7 +192,7 @@ export function AxisTopSvg({
       ? tickOffset + tickSize
       : 0) + axisProps.style.title.offset
 
-  const _title = title ?? ax.title
+  const _title = title ?? ax?.title ?? ''
 
   const length = axisLength(ax)
 
