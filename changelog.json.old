@@ -2717,6 +2717,10 @@
         {
           "msg": "GSEA plot now uses new axis system",
           "date": "2026-09-06T17:05:26.475Z"
+        },
+        {
+          "msg": "Volcano now use new axis system",
+          "date": "2026-09-06T17:27:33.245Z"
         }
       ],
       "Added": [

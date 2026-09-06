@@ -5,6 +5,7 @@ import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-
 import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { useEffect } from 'react'
+import { AxesPropsPanel } from './axes-props-panel'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsTrackPropsPanel } from './motifs-track-props-panel'
 
@@ -23,6 +24,7 @@ export function MotifsPropsPanel() {
         id: 'display',
         name: 'Display',
       },
+      { id: 'axes', name: 'Axes' },
     ])
   }, [setTabs])
 
@@ -44,6 +46,9 @@ export function MotifsPropsPanel() {
         </TabsContent>
         <TabsContent value="display">
           <DisplayPropsPanel />
+        </TabsContent>
+        <TabsContent value="axes">
+          <AxesPropsPanel />
         </TabsContent>
         {/* <TabsList className="py-1">
         <TabsTrigger value="genesets" className="grow" variant="sidebar">

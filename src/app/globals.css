@@ -536,3 +536,41 @@ input[type='search']::-webkit-search-results-decoration {
 .virtual-dataframe-row-index[data-num='false'] {
   @apply justify-start;
 }
+
+/* Glass Effect Styles */
+
+/* The main container holds all the layers 
+*/
+.glass-container {
+  @apply relative overflow-hidden;
+}
+
+/* Layer 4: The Distortion Filter */
+.glass-filter {
+  @apply absolute inset-0 isolate z-0 backdrop-blur-[0px];
+
+  /* This is the key! We set blur(0px) to enable backdrop-filter,
+    but use our custom SVG filter for the *actual* effect.
+  */
+
+  filter: url(#lg-dist); /* This points to our SVG filter's ID */
+}
+
+/* Layer 3: The Semi-Transparent Background */
+.glass-overlay {
+  @apply absolute inset-0 z-1 bg-white/75;
+}
+
+/* Layer 2: The "Light" Highlight */
+.glass-specular {
+  @apply absolute inset-0 z-2 overflow-hidden rounded-[inherit];
+
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 0 5px rgba(255, 255, 255, 0.75);
+}
+
+/* Layer 1: Your Content */
+.glass-content {
+  @apply relative z-3 p-4; /* Sits normally on top and gives some space */
+}

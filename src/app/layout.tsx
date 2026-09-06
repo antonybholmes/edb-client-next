@@ -2,6 +2,7 @@
 
 import { THEME_KEY } from '@/components/edb/theme'
 //import { Auth0Provider } from '@auth0/nextjs-auth0/client'
+import { GlassSvg } from '@/components/shadcn/ui/themed/glass'
 import { cn } from '@/lib/shadcn-utils'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
@@ -97,6 +98,8 @@ export default function Layout({
         {/* <CoreProviders>{children}</CoreProviders> */}
 
         <ClientLayout>{children}</ClientLayout>
+
+        <GlassSvg />
       </body>
     </html>
   )

@@ -10,6 +10,7 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { useEffect, useState } from 'react'
 
+import { ClientLayout } from '@/app/client-layout'
 import { Autocomplete } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
@@ -23,8 +24,6 @@ import {
   TEXT_SAVE_TABLE,
   TEXT_SORT_BY,
 } from '@/consts'
-import { ClientLayout } from '@/app/client-layout'
-import { useZoom } from '@/providers/zoom-provider'
 
 import {
   DropdownMenu,
@@ -88,16 +87,16 @@ export function MotifsPage() {
 
   const { open: openDialog } = useDialogs()
 
-  useZoom({
-    onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-  })
+  // useZoom({
+  //   onChange: ({ zoom }) => {
+  //     console.log('Zoom changed:', zoom)
+  //     updateSettings(
+  //       produce(settings, (draft) => {
+  //         draft.scale = zoom
+  //       })
+  //     )
+  //   },
+  // })
 
   const { settings, updateSettings } = useMotifSettings()
 

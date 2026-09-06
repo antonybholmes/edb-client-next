@@ -16,7 +16,7 @@ import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v52`
+const SETTINGS_KEY = `${config.appId}:settings:v54`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -64,7 +64,7 @@ export interface IEdbSettings {
     cmap: ICMAP
     colorbar: IColorBarProps
     axes: IXYAxisDisplayProps
-    zoom: number
+    scale: number
   }
 }
 
@@ -122,7 +122,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
       y: { ...DEFAULT_AXIS_CONFIG },
       colorbar: { ...DEFAULT_AXIS_CONFIG },
     },
-    zoom: 1,
+    scale: 1,
   },
 }
 

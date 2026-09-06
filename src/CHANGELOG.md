@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Switched motifs to new axis system.
 - Volcano now use new axis system.
 - GSEA plot now uses new axis system.
 - Gsea bubble now has support for new axis system.

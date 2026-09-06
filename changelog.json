@@ -2721,6 +2721,10 @@
         {
           "msg": "Volcano now use new axis system",
           "date": "2026-09-06T17:27:33.245Z"
+        },
+        {
+          "msg": "Switched motifs to new axis system",
+          "date": "2026-09-06T21:26:48.654Z"
         }
       ],
       "Added": [

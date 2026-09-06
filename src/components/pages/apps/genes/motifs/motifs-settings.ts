@@ -5,6 +5,7 @@ import {
   DEFAULT_BOLD_FONT_PROPS,
   DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_COLOR_PROPS,
+  DEFAULT_MARGIN,
   DEFAULT_TEXT_PROPS,
   type IMarginProps,
   type ITextProps,
@@ -17,7 +18,7 @@ export type Mode = 'prob' | 'bits'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v38`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v40`
 
 export type MotifSortBy = 'dataset,motif-id' | 'motif-id'
 
@@ -29,12 +30,11 @@ export const SORT_ORDER_MAP: Record<MotifSortBy, string> = {
 export interface IMotifSettings {
   sort: { by: MotifSortBy; asc: boolean }
   view: Mode
-  plotHeight: number
-  letterWidth: number
-  cols: number
+  plot: { height: number; bases: { width: number } }
+
   mode: Mode
-  scale: number
-  margin: IMarginProps
+  //scale: number
+  page: { margin: IMarginProps; cols: number }
   bases: Record<string, ITextProps>
   title: { text: ITextProps; offset: number }
   gap: number
@@ -49,13 +49,11 @@ export interface IMotifSettings {
 
 export const DEFAULT_SETTINGS: IMotifSettings = {
   view: 'bits',
-  plotHeight: 100,
-  letterWidth: LW,
-  scale: 1,
-  cols: 1,
+  plot: { height: 100, bases: { width: LW } },
+  page: { margin: { ...DEFAULT_MARGIN }, cols: 1 },
   mode: 'bits',
   gap: 80,
-  margin: { top: 100, right: 100, bottom: 100, left: 100 },
+  //margin: { top: 100, right: 100, bottom: 100, left: 100 },
   bases: {
     a: {
       ...DEFAULT_TEXT_PROPS,
