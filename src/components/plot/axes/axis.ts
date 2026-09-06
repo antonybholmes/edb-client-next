@@ -23,7 +23,7 @@ export interface IAxis extends IAxisConfig {
   /**
    * The length of the axis in pixels derived from the range.
    */
-  length: number
+  //length: number
 
   //domainToRange?: d3.ScaleLinear<number, number>
   format?: IAxisFormat
@@ -65,7 +65,7 @@ export function createAxis(
     format?: IAxisFormat
   } = {}
 ): IAxis {
-  const {
+  let {
     config = DEFAULT_AXIS_CONFIG,
     id,
     title,
@@ -80,19 +80,20 @@ export function createAxis(
     tickParams,
     format,
   } = opts
+  id = id ?? makeUuid()
+
   let ret: IAxis = {
     ...structuredClone(config),
-    id: makeUuid(),
-    length: 1,
+    id,
 
-    ...definedProps({ id, title, direction, domain, range, format }),
+    ...definedProps({ title, direction, domain, range, format }),
   }
 
   if (length !== undefined) {
     ret.range = [0, length]
   }
 
-  ret.length = Math.abs(ret.range[1] - ret.range[0])
+  //ret.length = Math.abs(ret.range[1] - ret.range[0])
 
   if (autoDomain !== undefined && autoDomain) {
     ret = autoAxisDomain(
@@ -201,7 +202,7 @@ export function setAxisRange(axis: IAxis, range: ILim): IAxis {
   return invalidateCache(
     copyAxis(axis, {
       range,
-      length: Math.abs(range[1] - range[0]),
+      //length: Math.abs(range[1] - range[0]),
     })
   )
 }
@@ -320,6 +321,16 @@ export function getAxisTicks(
       label: '',
     }))
   })
+}
+
+/**
+ * Calculate the length of the axis based on its range. This
+ * is the size in pixels or units used in the axis range.
+ * @param axis The axis object for which to calculate the length.
+ * @returns The length of the axis in pixels.
+ */
+export function axisLength(axis: IAxis): number {
+  return Math.abs(axis.range[1] - axis.range[0])
 }
 
 // export function getAxisMinorTicks(axis: IAxis): ITickItem[] {

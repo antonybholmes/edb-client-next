@@ -94,7 +94,7 @@ export function HeatmapProvider({
 
     let xax = createAxis({
       id: 'cbar',
-      title: 'Color bar',
+      title: 'Z-score',
 
       domain: displayOptions.range,
       length: displayOptions.colorbar.size.w,
@@ -111,7 +111,7 @@ export function HeatmapProvider({
       ],
       tickParams: { which: 'minor', show: true },
 
-      style: { title: { show: false } },
+      style: { show: displayOptions.colorbar.show, title: { show: false } },
     })
 
     addAxesPlots([

@@ -2,6 +2,7 @@ import { PropRow } from '@/components/dialogs/prop-row'
 import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { produce } from 'immer'
 import { IPlotAddress, useAxis } from '../axes-store'
@@ -19,7 +20,7 @@ export function AxisPlotPropsPanel({
   return (
     <>
       <SwitchPropRow
-        title={title} //{`${capitalCase(axis)}-Axis`}
+        title={title}
         className="font-bold"
         checked={axis.style.show}
         onCheckedChange={(v) => {
@@ -86,6 +87,20 @@ export function AxisPlotPropsPanel({
         >
           -
         </DoubleNumericalInput>
+      </PropRow>
+
+      <PropRow title="Size">
+        <NumericalInput
+          value={axis.range[1]}
+
+          limit={[1, 1000]}
+          dp={0}
+          onNumChanged={(v) => {
+            updateAxis({
+              range: [axis.range[0], v],
+            })
+          }}
+        />
       </PropRow>
 
       <PropRow title="Ticks">

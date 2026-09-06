@@ -48,8 +48,8 @@ function GseaReportItem({
               id: 'es',
               title: 'ES',
               axesIds: [
-                { id: 'es-x', axis: 'x', title: 'ES X' },
-                { id: 'es-y', axis: 'y', title: 'ES Y' },
+                { id: 'es-x', title: 'ES X' },
+                { id: 'es-y', title: 'ES Y' },
               ],
             },
           ]}

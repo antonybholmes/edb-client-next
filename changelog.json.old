@@ -2710,6 +2710,12 @@
           "msg": "Axes provider overhauled to include groups",
           "date": "2026-09-05T03:06:59.117Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Support for colorbar axis in heatmap using axes store api",
+          "date": "2026-09-05T23:02:07.439Z"
+        }
       ]
     },
     "author": "Antony Holmes",

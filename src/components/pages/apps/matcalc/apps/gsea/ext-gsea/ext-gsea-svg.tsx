@@ -3,6 +3,7 @@ import { useMemo, type ReactNode } from 'react'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
+  axisLength,
   createAxis,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
@@ -273,7 +274,7 @@ export function ExtGseaSvg() {
 
           {displayProps.genes.labels.font.show && (
             <g
-              transform={`translate(${xax.length + displayProps.plot!.gap.x / 2}, ${displayProps.genes.height / 2})`}
+              transform={`translate(${axisLength(xax) + displayProps.plot!.gap.x / 2}, ${displayProps.genes.height / 2})`}
             >
               <SvgText
                 fill={

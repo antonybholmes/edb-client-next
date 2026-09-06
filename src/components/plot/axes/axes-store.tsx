@@ -155,7 +155,6 @@ export function useAxis(address: IPlotAddress): {
 
   const _updateAxis = useCallback(
     (patch: Partial<IAxis>) => {
-      console.log('updating axis', { plotId, groupId, axisId, patch })
       updateAxis({ plotId, groupId, axisId }, patch)
     },
     [plotId, groupId, axisId, updateAxis]

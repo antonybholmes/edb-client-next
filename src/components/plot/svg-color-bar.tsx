@@ -6,6 +6,7 @@ import { useEdbSettings } from '../edb/edb-settings'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
+  axisLength,
   IAxis,
   setAxisDirection,
 } from './axes/axis'
@@ -79,7 +80,7 @@ export function SvgHColorBar({
 
         {settings.plots.colorbar.stroke.show && (
           <SvgRect
-            width={ax.length}
+            width={length}
             height={settings.plots.colorbar.size.h}
             sp={settings.plots.colorbar.stroke}
           />
@@ -109,8 +110,7 @@ export function SvgVColorBar({
   }
 
   ax = setAxisDirection(ax, 'y')
-
-  console.log('boobs axis', ax.id, ax)
+  const length = axisLength(ax)
 
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps
@@ -150,7 +150,7 @@ export function SvgVColorBar({
         {settings.plots.colorbar.stroke.show && (
           <SvgRect
             width={settings.plots.colorbar.size.h}
-            height={ax.length}
+            height={length}
             sp={settings.plots.colorbar.stroke}
             shapeRendering={SVG_CRISP_EDGES}
           />

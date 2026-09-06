@@ -1,6 +1,7 @@
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
+  axisLength,
   createAxis,
   getAxisTicks,
   IAxis,
@@ -357,7 +358,7 @@ export function featuresSvg(
       {displayProps.features.background.show && (
         <rect
           y={3}
-          width={xax.length}
+          width={axisLength(xax)}
           height={displayProps.features.height - 6}
           fill={displayProps.features.background.value}
           stroke={displayProps.features.background.border.value}

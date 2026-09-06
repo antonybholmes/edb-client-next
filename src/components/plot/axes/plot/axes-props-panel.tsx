@@ -33,7 +33,7 @@ export function AxesDisplayPropsPanel({
                         <VCenterRow key={groupId} className="justify-between">
                           <strong>{groupTitle}</strong>
                           <VCenterRow>
-                            {axesIds.map(({ id: axisId, axis, title }) => (
+                            {axesIds.map(({ id: axisId, title }) => (
                               <AxisPlotPropsPopover
                                 key={axisId}
                                 //axis={axis}

@@ -112,7 +112,6 @@ export const DEFAULT_MINOR_AXIS_TICK_PROPS: IMinorAxisTicks = {
 
 export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
   title: '',
-
   clip: true,
   domain: [0, 100],
   range: [0, 100],
