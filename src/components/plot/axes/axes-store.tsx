@@ -64,8 +64,6 @@ export const useAxesStore = create<IAxesStore>((set) => ({
         throw new Error(`Unknown axis "${axisId}" in plot "${plotId}"`)
       }
 
-      console.log('asdasd', plotId, groupId, axisId)
-
       return produce(current, (draft) => {
         draft.plots[plotId].groups[groupId].axes[axisId] = {
           ...draft.plots[plotId].groups[groupId].axes[axisId],

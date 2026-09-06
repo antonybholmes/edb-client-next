@@ -178,7 +178,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     axisId: 'cbar',
   })
 
-  console.log('cax', plot.id, cax)
+  //console.log('cax', plot.id, cax)
 
   const { svg, width, height } = useMemo(() => {
     if (!cf) {
