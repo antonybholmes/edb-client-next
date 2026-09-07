@@ -13,6 +13,9 @@ import { SvgText } from '@/components/plot/svg-text'
 import type { IStringMap } from '@/interfaces/string-map'
 import { COLOR_BLACK } from '@/lib/color/color'
 
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgPolygon } from '@/components/plot/svg-polygon'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { range } from '@/lib/math/range'
@@ -346,9 +349,9 @@ function CytobandsSquareStyleTrackSvg({
 
   return (
     <>
-      <g
+      <SvgG
         id="p-bands"
-        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
+        pos={{ x: 0, y: (settings.tracks.cytobands.height - h) / 2 }}
       >
         {pbands.map((b, bi) => {
           const l = b.loc
@@ -368,11 +371,11 @@ function CytobandsSquareStyleTrackSvg({
             </rect>
           )
         })}
-      </g>
+      </SvgG>
 
-      <g
+      <SvgG
         id="q-bands"
-        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
+        pos={{ x: 0, y: (settings.tracks.cytobands.height - h) / 2 }}
       >
         {qbands.map((b, bi) => {
           const l = b.loc
@@ -392,12 +395,15 @@ function CytobandsSquareStyleTrackSvg({
             </rect>
           )
         })}
-      </g>
+      </SvgG>
 
       {settings.tracks.cytobands.labels.text.show && (
-        <g
+        <SvgG
           id="q-labels"
-          transform={`translate(0, ${settings.tracks.cytobands.height + settings.titles.offset})`}
+          pos={{
+            x: 0,
+            y: settings.tracks.cytobands.height + settings.titles.offset,
+          }}
         >
           <LabelSvg
             pbands={pbands}
@@ -405,12 +411,12 @@ function CytobandsSquareStyleTrackSvg({
             ax={cytoAx}
             settings={settings}
           />
-        </g>
+        </SvgG>
       )}
 
-      <g
+      <SvgG
         id="center"
-        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
+        pos={{ x: 0, y: (settings.tracks.cytobands.height - h) / 2 }}
       >
         <polygon
           points={`${centerx1},${h} ${centerx1},0 ${centerx2},${h} ${centerx2},0`}
@@ -419,24 +425,23 @@ function CytobandsSquareStyleTrackSvg({
           stroke="none"
         />
 
-        <polygon
+        <SvgPolygon
           points={`0,${h} 0,0 ${settings.reverse ? centerx2 : centerx1},0 ${settings.reverse ? centerx1 : centerx2},${h} ${xl},${h} ${xl},0 ${settings.reverse ? centerx1 : centerx2},0 ${settings.reverse ? centerx2 : centerx1},${h}`}
           fill="none"
-          stroke={track.displayOptions.stroke.value}
-          strokeWidth={track.displayOptions.stroke.width}
+          sp={track.displayOptions.stroke}
+
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-      </g>
+      </SvgG>
 
-      <rect
+      <SvgRect
         id="location"
         x={locx1 - (settings.reverse ? locw : 0)}
         width={locw}
         height={settings.tracks.cytobands.height}
-        stroke={track.displayOptions.location.stroke.value}
-        fill={track.displayOptions.location.fill.value}
-        fillOpacity={track.displayOptions.location.fill.opacity}
+        sp={track.displayOptions.location.stroke}
+        fp={track.displayOptions.location.fill}
       />
     </>
   )

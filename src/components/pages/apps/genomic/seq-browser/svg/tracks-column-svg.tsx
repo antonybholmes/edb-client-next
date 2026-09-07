@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { axisLength } from '@/components/plot/axes/axis'
+import { SvgG } from '@/components/plot/svg-g'
 import { locStr } from '@/lib/genomic/genomic'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
@@ -121,10 +122,7 @@ export function TracksColumnSvg() {
 
   return (
     <MouseEventProvider value={{ pos: colMousePos }}>
-      <g
-        id={`track-col-${locStr(location)}`}
-        transform={`translate(${pos.x}, ${pos.y})`}
-      >
+      <SvgG id={`track-col-${locStr(location)}`} pos={pos}>
         {tracks.map((ts, ti) => {
           let plotSvg: ReactNode = <text>{ts[0]!.type} not implemented</text>
           switch (ts[0]!.type) {
@@ -188,7 +186,7 @@ export function TracksColumnSvg() {
           }
 
           return (
-            <g transform={`translate(0, ${trackY[ti]!})`} key={ts[0]!.id}>
+            <SvgG pos={{ x: 0, y: trackY[ti]! }} key={ts[0]!.id}>
               {/* <rect width={xax.width} height={trackHeights[ti]} stroke='black' fill='none'/> */}
 
               {/* <rect
@@ -199,10 +197,10 @@ export function TracksColumnSvg() {
             /> */}
 
               {plotSvg}
-            </g>
+            </SvgG>
           )
         })}
-      </g>
+      </SvgG>
     </MouseEventProvider>
   )
 }

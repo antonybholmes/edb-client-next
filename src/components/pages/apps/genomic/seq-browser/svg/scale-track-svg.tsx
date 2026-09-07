@@ -1,12 +1,13 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
 import { axisDomainToRange, axisLength } from '@/components/plot/axes/axis'
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import { LocationContext, type IScaleTrack } from '../tracks-provider'
-
 interface IProps extends IDivProps {
   genome: string
   track: IScaleTrack
@@ -52,33 +53,26 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
 
       {/* <rect width={xax.width} height={track.displayOptions.height} stroke='black' fill='none'/> */}
 
-      <g transform={`translate(0, ${track.displayOptions.height / 2})`}>
-        <line
-          x1={x1}
-          x2={x2}
-          stroke={track.displayOptions.stroke.value}
-          strokeWidth={track.displayOptions.stroke.width}
-        />
+      <SvgG pos={{ x: 0, y: track.displayOptions.height / 2 }}>
+        <SvgLine x1={x1} x2={x2} s={track.displayOptions.stroke} />
 
         {track.displayOptions.caps.show && (
-          <g id="caps">
-            <line
+          <SvgG id="caps">
+            <SvgLine
               x1={x1}
               x2={x1}
               y1={-track.displayOptions.caps.height}
               y2={track.displayOptions.caps.height}
-              stroke={track.displayOptions.stroke.value}
-              strokeWidth={track.displayOptions.stroke.width}
+              s={track.displayOptions.stroke}
             />
-            <line
+            <SvgLine
               x1={x2}
               x2={x2}
               y1={-track.displayOptions.caps.height}
               y2={track.displayOptions.caps.height}
-              stroke={track.displayOptions.stroke.value}
-              strokeWidth={track.displayOptions.stroke.width}
+              s={track.displayOptions.stroke}
             />
-          </g>
+          </SvgG>
         )}
 
         <SvgText
@@ -100,7 +94,7 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
         >
           {genome}
         </SvgText>
-      </g>
+      </SvgG>
     </>
   )
 }

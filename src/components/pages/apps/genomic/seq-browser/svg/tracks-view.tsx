@@ -23,6 +23,7 @@ import { useTracks } from '../tracks-store'
 import { getBedTrackHeight } from './base-bed-track-svg'
 import { getGeneTrackHeight } from './genes-track-svg'
 
+import { SvgG } from '@/components/plot/svg-g'
 import { useDebounce } from '@/hooks/debounce'
 import { fill } from '@/lib/fill'
 import { locStr } from '@/lib/genomic/genomic'
@@ -589,7 +590,7 @@ export function TracksView({ className, style }: ISVGProps) {
             {TEXT_ZOOM}
           </text>
 
-          <g transform={`translate(0, ${12 + (height - 12) / 2})`}>
+          <SvgG pos={{ x: 0, y: 12 + (height - 12) / 2 }}>
             <path
               ref={zoomArrowRef2}
               d="M -6,-6 L 0,0 L -6,6"
@@ -600,7 +601,7 @@ export function TracksView({ className, style }: ISVGProps) {
               strokeWidth={2}
               opacity={0}
             />
-          </g>
+          </SvgG>
         </g>
 
         <g id="selection-line-1">

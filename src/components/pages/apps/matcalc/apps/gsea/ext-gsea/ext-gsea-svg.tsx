@@ -4,19 +4,20 @@ import {
   axisDomainToRange,
   axisDomainToRangeFunc,
   axisLength,
-  createAxis,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
-import { abs } from '@/lib/math/abs'
 
 import { range } from '@/lib/math/range'
 import { zip } from '@/lib/utils'
 
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgBase } from '@/components/plot/svg-base'
+import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgPolyLine } from '@/components/plot/svg-poly-line'
+import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'
 import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
@@ -27,6 +28,23 @@ import { IExtGseaDisplayOptions } from './ext-gsea-store'
 
 export function ExtGseaSvg() {
   const { plot } = useExtGseaContext()
+
+  const { axis: xax } = useAxis({
+    plotId: plot.id,
+    groupId: 'ext-gsea',
+    axisId: 'x',
+  })
+  const { axis: yaxEs } = useAxis({
+    plotId: plot.id,
+    groupId: 'es',
+    axisId: 'y',
+  })
+  const { axis: yaxSnr } = useAxis({
+    plotId: plot.id,
+    groupId: 'snr',
+    axisId: 'y',
+  })
+
   const displayProps: IExtGseaDisplayOptions = plot.props
 
   const rankedGenes: IRankedGenes = plot.rankedGenes
@@ -37,7 +55,7 @@ export function ExtGseaSvg() {
   const gseaRes1: IGseaResult = plot.gseaRes1
   const gseaRes2: IGseaResult = plot.gseaRes2
 
-  const { svg, pageSize } = useMemo(() => {
+  const { esSvg, genesSvg, rankingSvg, pageSize } = useMemo(() => {
     // size of plot with padding
     const plotSize: ILim = [
       displayProps.axes.x.length +
@@ -72,25 +90,6 @@ export function ExtGseaSvg() {
     y1[0] = 0
     y1[y1.length - 1] = 0
 
-    const xmax = Math.max(...x)
-    const ymax = Math.max(...abs([...y, ...gseaRes2.esAll]))
-    //ymax = round((ymax * 10) / 10, 1)
-
-    let xax = createAxis({
-      domain: [0, xmax],
-      length: displayProps.axes.x.length,
-      tickParams: { which: 'both', show: false },
-    })
-
-    //xax = xax.setTicks(xax.ticks.slice(1))
-
-    const yax = createAxis({
-      direction: 'y',
-      domain: [-ymax, ymax],
-      length: displayProps.es.axes.y.length,
-      tickParams: { which: 'minor', show: false },
-    })
-
     let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank]!)
     let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank]!)
 
@@ -106,7 +105,7 @@ export function ExtGseaSvg() {
 
     if (displayProps.es.gs1.leadingEdge.fill.show) {
       const xs = axisDomainToRange(xax, xlead)
-      const ys = axisDomainToRange(yax, ylead)
+      const ys = axisDomainToRange(yaxEs, ylead)
 
       const points = zip(xs, ys)
         .map(([px, py]) => `${px},${py}`)
@@ -126,7 +125,7 @@ export function ExtGseaSvg() {
 
     if (displayProps.es.gs1.line.show) {
       const xs = axisDomainToRange(xax, x1)
-      const ys = axisDomainToRange(yax, y1)
+      const ys = axisDomainToRange(yaxEs, y1)
 
       const points = zip(xs, ys)
         .map(([px, py]) => `${px},${py}`)
@@ -168,14 +167,14 @@ export function ExtGseaSvg() {
 
     if (displayProps.es.gs2.leadingEdge.fill.show) {
       const xs = axisDomainToRange(xax, xlead)
-      const ys = axisDomainToRange(yax, ylead)
+      const ys = axisDomainToRange(yaxEs, ylead)
 
       const points = zip(xs, ys)
         .map(([px, py]) => `${px},${py}`)
         .join(', ')
 
       leadingEdge2Svg = (
-        <polygon
+        <SvgPolyLine
           points={points}
           fill={gs2.color}
           fillOpacity={displayProps.es.gs2.leadingEdge.fill.opacity}
@@ -188,7 +187,7 @@ export function ExtGseaSvg() {
 
     if (displayProps.es.gs2.line.show) {
       const xs = axisDomainToRange(xax, x1)
-      const ys = axisDomainToRange(yax, y1)
+      const ys = axisDomainToRange(yaxEs, y1)
 
       const points = zip(xs, ys)
         .map(([px, py]) => `${px},${py}`)
@@ -203,6 +202,102 @@ export function ExtGseaSvg() {
       )
     }
 
+    const esSvg = (
+      <SvgG
+        pos={{
+          x: 0,
+          y: 0,
+        }}
+      >
+        {leadingEdge1Svg && leadingEdge1Svg}
+        {line1Svg && line1Svg}
+
+        {leadingEdge2Svg && leadingEdge2Svg}
+        {line2Svg && line2Svg}
+
+        <AxisLeftSvg ax={yaxEs} />
+        <SvgG
+          pos={{
+            x: 0,
+            y: axisDomainToRange(yaxEs, [0])[0],
+          }}
+        >
+          <AxisBottomSvg
+            ax={xax}
+            showTicks={displayProps.es.axes.x.showTicks}
+          />
+          <SvgG
+            pos={{
+              x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
+              y: 0,
+            }}
+          >
+            <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+              {rankedGenes.genes.length.toLocaleString()}
+            </SvgText>
+          </SvgG>
+        </SvgG>
+
+        <SvgG
+          pos={{
+            x: 0,
+            y: displayProps.es.axes.y.length + displayProps.plot!.gap.y / 2,
+          }}
+        >
+          <SvgG>
+            <SvgText
+              fill={COLOR_BLACK}
+              font={displayProps.axes.x.font}
+              //fontSize="x-small"
+              //textAnchor="middle"
+              //fontWeight="bold"
+            >
+              {rankedGenes.group1.name}
+            </SvgText>
+          </SvgG>
+
+          <SvgG
+            pos={{
+              x: displayProps.axes.x.length,
+              y: 0,
+            }}
+          >
+            <SvgText
+              fill={COLOR_BLACK}
+              font={displayProps.axes.x.font}
+              //fontSize="x-small"
+              textAnchor="end"
+              //fontWeight="bold"
+            >
+              {rankedGenes.group2.name}
+            </SvgText>
+          </SvgG>
+        </SvgG>
+
+        <SvgG
+          pos={{
+            x: displayProps.axes.x.length,
+            y: 0,
+          }}
+        >
+          <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+            NES: {extGseaRes.nes.toFixed(2)}
+          </SvgText>
+
+          <SvgG
+            pos={{
+              x: 0,
+              y: 20,
+            }}
+          >
+            <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+              P-value: {extGseaRes.pvalue.toFixed(3)}
+            </SvgText>
+          </SvgG>
+        </SvgG>
+      </SvgG>
+    )
+
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
@@ -211,8 +306,8 @@ export function ExtGseaSvg() {
       let xs = axisDomainToRange(xax, points)
 
       const gengseaRes1Svg = (
-        <g>
-          <g>
+        <SvgG>
+          <SvgG>
             {points.map((p, pointi) => {
               const x = xs[pointi]
 
@@ -228,11 +323,14 @@ export function ExtGseaSvg() {
                 />
               )
             })}
-          </g>
+          </SvgG>
 
           {displayProps.genes.labels.font.show && (
-            <g
-              transform={`translate(${displayProps.axes.x.length + displayProps.plot!.gap.x / 2}, ${displayProps.genes.height * 0.5})`}
+            <SvgG
+              pos={{
+                x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
+                y: displayProps.genes.height * 0.5,
+              }}
             >
               <SvgText
                 fill={
@@ -242,19 +340,22 @@ export function ExtGseaSvg() {
               >
                 {gs1.name}
               </SvgText>
-            </g>
+            </SvgG>
           )}
-        </g>
+        </SvgG>
       )
 
       points = where(gseaRes2.hits, (x) => x > 0)
       xs = axisDomainToRange(xax, points)
 
       const gengseaRes2Svg = (
-        <g
-          transform={`translate(0, ${displayProps.genes.height + 0.25 * displayProps.plot!.gap.y})`}
+        <SvgG
+          pos={{
+            x: 0,
+            y: displayProps.genes.height + 0.25 * displayProps.plot!.gap.y,
+          }}
         >
-          <g>
+          <SvgG>
             {points.map((p, pointi) => {
               const x = xs[pointi]
 
@@ -270,11 +371,14 @@ export function ExtGseaSvg() {
                 />
               )
             })}
-          </g>
+          </SvgG>
 
           {displayProps.genes.labels.font.show && (
-            <g
-              transform={`translate(${axisLength(xax) + displayProps.plot!.gap.x / 2}, ${displayProps.genes.height / 2})`}
+            <SvgG
+              pos={{
+                x: axisLength(xax) + displayProps.plot!.gap.x / 2,
+                y: displayProps.genes.height / 2,
+              }}
             >
               <SvgText
                 fill={
@@ -284,18 +388,21 @@ export function ExtGseaSvg() {
               >
                 {gs2.name}
               </SvgText>
-            </g>
+            </SvgG>
           )}
-        </g>
+        </SvgG>
       )
 
       genesSvg = (
-        <g
-          transform={`translate(0, ${displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y})`}
+        <SvgG
+          pos={{
+            x: 0,
+            y: displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y,
+          }}
         >
           {gengseaRes1Svg}
           {gengseaRes2Svg}
-        </g>
+        </SvgG>
       )
     }
 
@@ -303,19 +410,8 @@ export function ExtGseaSvg() {
     let rankingSvg: ReactNode | null = null
 
     if (displayProps.ranking.show) {
-      //const yMin = Math.min(...rankedGenes.map(e => e.score))
-      const yMax = Math.max(...abs(rankedGenes.genes.map((e) => e.score)))
-
-      const yax = createAxis({
-        direction: 'y',
-        title: 'SNR',
-        autoDomain: [-yMax, yMax],
-        length: displayProps.ranking.axes.y.length,
-        tickParams: { which: 'minor', show: false },
-      })
-
       const xaf = axisDomainToRangeFunc(xax)
-      const yaf = axisDomainToRangeFunc(yax)
+      const yaf = axisDomainToRangeFunc(yaxSnr)
       let displayPoints = rankedGenes.genes.map((e, ei) => [
         xaf(ei),
         yaf(e.score),
@@ -343,23 +439,37 @@ export function ExtGseaSvg() {
           : 0)
 
       rankingSvg = (
-        <g transform={`translate(0, ${y})`}>
-          <polygon
+        <SvgG
+          pos={{
+            x: 0,
+            y: y,
+          }}
+        >
+          <SvgPolygon
             points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
-            fill={displayProps.ranking.fill.value}
             stroke="none"
-            fillOpacity={displayProps.ranking.fill.opacity}
+            fp={displayProps.ranking.fill}
           />
           {displayProps.ranking.zeroCross.show && (
-            <g transform={`translate(${crossingX}, 0)`}>
+            <SvgG
+              pos={{
+                x: crossingX,
+                y: 0,
+              }}
+            >
               <line
                 y2={displayProps.ranking.axes.y.length}
                 stroke={COLOR_BLACK}
                 strokeWidth="2"
                 strokeDasharray="8"
               />
-              <g
-                transform={`translate(0, ${displayProps.ranking.axes.y.length + displayProps.plot!.gap.y})`}
+              <SvgG
+                pos={{
+                  x: 0,
+                  y:
+                    displayProps.ranking.axes.y.length +
+                    displayProps.plot!.gap.y,
+                }}
               >
                 <SvgText
                   font={displayProps.axes.x.font}
@@ -368,113 +478,15 @@ export function ExtGseaSvg() {
                 >
                   Zero cross at {crossIndex.toLocaleString()}
                 </SvgText>
-              </g>
-            </g>
+              </SvgG>
+            </SvgG>
           )}
-          <AxisLeftSvg ax={yax} />
-        </g>
+          <AxisLeftSvg ax={yaxSnr} />
+        </SvgG>
       )
     }
 
-    //   return (
-    //     <g
-    //       transform={`translate(${x}, ${y})`}
-    //       className="border"
-    //       key={pathwayi}
-    //     >
-    //       <text y="20">{pathway.name}</text>
-    //       <rect
-    //         fill="none"
-    //         stroke="blue"
-    //         width={plotSize[0]!}
-    //         height={plotSize[1]!}
-    //       />
-    //       <g
-    //         transform={`translate(${displayProps.plot!.padding.left}, ${displayProps.plot!.padding.top})`}
-    //       >
-    //         {esSvg}
-
-    //         {genesSvg && genesSvg}
-
-    //         {rankingSvg && rankingSvg}
-    //       </g>
-    //     </g>
-    //   )
-    // })
-
-    const svg = (
-      <>
-        <SvgMargin margin={displayProps.plot!.margin}>
-          <g>
-            {leadingEdge1Svg && leadingEdge1Svg}
-            {line1Svg && line1Svg}
-
-            {leadingEdge2Svg && leadingEdge2Svg}
-            {line2Svg && line2Svg}
-
-            <AxisLeftSvg ax={yax} />
-            <g transform={`translate(0, ${axisDomainToRange(yax, [0])[0]})`}>
-              <AxisBottomSvg
-                ax={xax}
-                showTicks={displayProps.es.axes.x.showTicks}
-              />
-              <g
-                transform={`translate(${displayProps.axes.x.length + displayProps.plot!.gap.x / 2}, 0)`}
-              >
-                <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-                  {rankedGenes.genes.length.toLocaleString()}
-                </SvgText>
-              </g>
-            </g>
-
-            <g
-              transform={`translate(0, ${displayProps.es.axes.y.length + displayProps.plot!.gap.y / 2})`}
-            >
-              <g>
-                <SvgText
-                  fill={COLOR_BLACK}
-                  font={displayProps.axes.x.font}
-                  //fontSize="x-small"
-                  //textAnchor="middle"
-                  //fontWeight="bold"
-                >
-                  {rankedGenes.group1.name}
-                </SvgText>
-              </g>
-
-              <g transform={`translate(${displayProps.axes.x.length}, 0)`}>
-                <SvgText
-                  fill={COLOR_BLACK}
-                  font={displayProps.axes.x.font}
-                  //fontSize="x-small"
-                  textAnchor="end"
-                  //fontWeight="bold"
-                >
-                  {rankedGenes.group2.name}
-                </SvgText>
-              </g>
-            </g>
-
-            <g transform={`translate(${displayProps.axes.x.length}, 0)`}>
-              <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-                NES: {extGseaRes.nes.toFixed(2)}
-              </SvgText>
-
-              <g transform={`translate(0, 20)`}>
-                <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-                  P-value: {extGseaRes.pvalue.toFixed(3)}
-                </SvgText>
-              </g>
-            </g>
-          </g>
-
-          {genesSvg && genesSvg}
-
-          {rankingSvg && rankingSvg}
-        </SvgMargin>
-      </>
-    )
-    return { svg, pageSize }
+    return { esSvg, genesSvg, rankingSvg, pageSize }
   }, [displayProps])
 
   return (
@@ -483,7 +495,13 @@ export function ExtGseaSvg() {
       height={pageSize[1]!}
       scale={displayProps.page.scale}
     >
-      {svg}
+      <SvgMargin margin={displayProps.plot!.margin}>
+        {esSvg}
+
+        {genesSvg && genesSvg}
+
+        {rankingSvg && rankingSvg}
+      </SvgMargin>
     </SvgBase>
   )
 }

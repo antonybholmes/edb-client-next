@@ -6,6 +6,8 @@ import {
   IAxis,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -170,12 +172,21 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
         fill="none"
       /> */}
 
-      <g transform={`translate(0, ${titleHeight})`}>
+      <SvgG pos={{ x: 0, y: titleHeight }}>
         {settings.titles.show && (
-          <g
-            transform={`translate(${settings.titles.position === 'right' ? xl + settings.titles.offset : xl / 2}, ${settings.titles.position === 'right' ? tracks[0]!.track.displayOptions.height / 2 : -settings.titles.offset})`}
+          <SvgG
+            pos={{
+              x:
+                settings.titles.position === 'right'
+                  ? xl + settings.titles.offset
+                  : xl / 2,
+              y:
+                settings.titles.position === 'right'
+                  ? tracks[0]!.track.displayOptions.height / 2
+                  : -settings.titles.offset,
+            }}
           >
-            <text
+            <SvgText
               //transform={`translate(${xax.width / 2}, 0)`}
               fill={COLOR_BLACK}
               dominantBaseline={
@@ -199,8 +210,8 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
                   length: Math.round(xl / 10),
                 }
               )}
-            </text>
-          </g>
+            </SvgText>
+          </SvgG>
         )}
 
         {tracks.map((t, ti) => {
@@ -301,7 +312,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             />
           </>
         )}
-      </g>
+      </SvgG>
 
       {tooltip.x !== -1 && (
         <g pointerEvents="none">

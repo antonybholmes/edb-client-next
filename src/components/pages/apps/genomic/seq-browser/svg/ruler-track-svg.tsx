@@ -12,6 +12,7 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
 
+import { SvgG } from '@/components/plot/svg-g'
 import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -142,8 +143,8 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       />
 
       {/* <g id="clip" clipPath="url(#ruler-clip)"> */}
-      <g
-        transform={`translate(0, ${settings.titles.height + h})`}
+      <SvgG
+        pos={{ x: 0, y: settings.titles.height + h }}
         style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
       >
         <g id="minor-ticks">
@@ -214,7 +215,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
               )
             })}
         </g>
-      </g>
+      </SvgG>
     </>
   )
 }

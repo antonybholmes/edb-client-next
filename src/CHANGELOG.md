@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Ext gsea switched to new axis system.
 - Oncoplot switched to new axis model.
 - Lollipop switched to new axis model.
 - Switched motifs to new axis system.
