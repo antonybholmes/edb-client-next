@@ -2740,6 +2740,12 @@
           "msg": "Support for colorbar axis in heatmap using axes store api",
           "date": "2026-09-05T23:02:07.439Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "Fixed axis lengths",
+          "date": "2026-09-06T23:50:49.392Z"
+        }
       ]
     },
     "author": "Antony Holmes",
