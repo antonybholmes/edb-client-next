@@ -364,8 +364,6 @@ export function AxisLeftTicksSvg({ ax }: IAxisProps) {
   const majorYs = axisDomainToRange(ax, ticks)
   const minorYs = axisDomainToRange(ax, minorTicks)
 
-  console.log('yax', ax)
-
   return (
     <>
       {minorTickProps.show &&

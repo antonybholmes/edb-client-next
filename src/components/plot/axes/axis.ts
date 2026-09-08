@@ -53,6 +53,7 @@ export function createAxis(
     config?: IAxisConfig
     id?: string
     title?: string
+    clip?: boolean
     direction?: IAxis['direction']
     length?: number
     domain?: ILim
@@ -72,6 +73,7 @@ export function createAxis(
     id,
     title,
     direction = 'x',
+    clip,
     length,
     style,
     domain,
@@ -90,7 +92,7 @@ export function createAxis(
     ...structuredClone(config),
     id,
 
-    ...definedProps({ title, direction, domain, range, format }),
+    ...definedProps({ title, clip, direction, domain, range, format }),
   }
 
   if (length !== undefined) {

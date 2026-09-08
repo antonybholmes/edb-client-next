@@ -265,14 +265,14 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> & {
     const axes: IPlotAxes[] = []
 
     for (const motif of motifsToPlot) {
-      const w = settings.plot.bases.width
-      const n = motif.weights.length
+      const letterWidth = settings.plot.bases.width
+      const motifLength = motif.weights.length
 
       const xax = createAxis({
         id: 'x',
         domain: [0.5, motif.weights.length + 0.5],
-        length: w * n,
-        ticks: range(1, n + 1).map((x) => ({
+        length: letterWidth * motifLength,
+        ticks: range(1, motifLength + 1).map((x) => ({
           v: x,
           label: x.toLocaleString(),
         })),

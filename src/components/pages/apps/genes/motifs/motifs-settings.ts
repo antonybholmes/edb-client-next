@@ -16,7 +16,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type Mode = 'prob' | 'bits'
 
-export const LW = 45
+export const DEFAULT_LETTER_WIDTH = 45
 
 const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v40`
 
@@ -49,7 +49,7 @@ export interface IMotifSettings {
 
 export const DEFAULT_SETTINGS: IMotifSettings = {
   view: 'bits',
-  plot: { height: 100, bases: { width: LW } },
+  plot: { height: 100, bases: { width: DEFAULT_LETTER_WIDTH } },
   page: { margin: { ...DEFAULT_MARGIN }, cols: 1 },
   mode: 'bits',
   gap: 80,

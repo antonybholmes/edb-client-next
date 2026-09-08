@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Axis controls now support using ranges for specifying ticks and tick labels.
 - Motifs now fully supports new axis system. Letter position rendering now uses axis rather than fixed sizes.
 - Ext gsea switched to new axis system.
 - Oncoplot switched to new axis model.

@@ -13,7 +13,11 @@ import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
-import { LW, useMotifSettings, type IMotifSettings } from './motifs-settings'
+import {
+  DEFAULT_LETTER_WIDTH,
+  useMotifSettings,
+  type IMotifSettings,
+} from './motifs-settings'
 import { useMotifs, type IMotif } from './motifs-store'
 
 const H = 100
@@ -31,7 +35,7 @@ interface IMotifPlotProps {
   settings: IMotifSettings
   plotWidth: number
   plotHeight: number
-  xScaleFactor: number
+
   yScaleFactor: number
 }
 
@@ -42,7 +46,7 @@ const MotifPlot = memo(function MotifPlot({
   settings,
   plotWidth,
   plotHeight,
-  xScaleFactor,
+
   yScaleFactor,
 }: IMotifPlotProps) {
   const { axis: xax } = useAxis({
@@ -50,8 +54,6 @@ const MotifPlot = memo(function MotifPlot({
     groupId: 'motif',
     axisId: 'x',
   })
-
-  const af = axisDomainToRangeFunc(xax)
 
   const row = Math.floor(index / settings.page.cols)
   const col = index % settings.page.cols
@@ -77,14 +79,31 @@ const MotifPlot = memo(function MotifPlot({
     return weights
   }, [motif.weights, settings.revComp])
 
+  if (!xax || !yax) {
+    return null
+  }
+
+  const af = axisDomainToRangeFunc(xax)
+
   const title = `${motif.name} ${motif.motifId ? ` (${motif.motifId}) ` : ' '}- ${motif.dataset.name}`
 
   // ideally 2 for bits, 1 for prob
   const yMax = yax.domain[1]
 
+  // we can determine where to cut off rendering
+  const xMax = xax.domain[1] - 1
+
+  const letterWidth = af(1) - af(0)
+
+  const xScaleFactor = letterWidth / DEFAULT_LETTER_WIDTH
+
   return (
     <SvgG pos={{ x: plotX, y: plotY }} id={motif.id} motif-id={motif.motifId}>
       {range(motifLength).map((positioni) => {
+        if (positioni > xMax) {
+          return null
+        }
+
         const npw = normalizedWeights[positioni]!
         const idx = argsort(npw)
         // max probability is 1
@@ -230,7 +249,7 @@ export function MotifsSvg() {
   const height =
     innerHeight + settings.page.margin.top + settings.page.margin.bottom
 
-  const xScaleFactor = settings.plot.bases.width / LW
+  //const xScaleFactor = settings.plot.bases.width / DEFAULT_LETTER_WIDTH
   const yScaleFactor = settings.plot.height / H
 
   const svg = (
@@ -255,7 +274,7 @@ export function MotifsSvg() {
               settings={settings}
               plotWidth={plotWidth}
               plotHeight={plotHeight}
-              xScaleFactor={xScaleFactor}
+
               yScaleFactor={yScaleFactor}
             />
           )
