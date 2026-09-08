@@ -1,5 +1,3 @@
-import { type INumMap } from '@/interfaces/num-map'
-
 import { memo, useMemo } from 'react'
 
 import { argsort } from '@/lib/math/argsort'
@@ -7,24 +5,164 @@ import { range } from '@/lib/math/range'
 import { sum } from '@/lib/math/sum'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useAxes, useAxis } from '@/components/plot/axes/axes-store'
+import { useAxis } from '@/components/plot/axes/axes-store'
+import { axisDomainToRangeFunc, type IAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
-import { LW, useMotifSettings } from './motifs-settings'
+import { LW, useMotifSettings, type IMotifSettings } from './motifs-settings'
 import { useMotifs, type IMotif } from './motifs-store'
 
 const H = 100
-const IC_TOTAL = 2
+
 const FONT_SIZE = 70
 const MIN_ADJ = 0.000001
 
 export const BASE_IDS = Object.freeze(['A', 'C', 'G', 'T'])
 
-const Y_SCALE_FACTORS: INumMap = Object.freeze({ A: 1.0, C: 1, G: 1, T: 1.0 })
+interface IMotifPlotProps {
+  index: number
+  motif: IMotif
+
+  yax: IAxis | undefined
+  settings: IMotifSettings
+  plotWidth: number
+  plotHeight: number
+  xScaleFactor: number
+  yScaleFactor: number
+}
+
+const MotifPlot = memo(function MotifPlot({
+  index,
+  motif,
+  yax,
+  settings,
+  plotWidth,
+  plotHeight,
+  xScaleFactor,
+  yScaleFactor,
+}: IMotifPlotProps) {
+  const { axis: xax } = useAxis({
+    plotId: motif.id,
+    groupId: 'motif',
+    axisId: 'x',
+  })
+
+  const af = axisDomainToRangeFunc(xax)
+
+  const row = Math.floor(index / settings.page.cols)
+  const col = index % settings.page.cols
+  const plotX = col * plotWidth
+  const plotY = row * plotHeight
+  const motifLength = motif.weights.length
+  const width = settings.plot.bases.width * motifLength
+
+  const normalizedWeights: number[][] = useMemo(() => {
+    const weights = motif.weights.map((pw) => {
+      const pw2 = pw.map((w) => w + MIN_ADJ)
+      const s = sum(pw2)
+      return pw2.map((w) => w / s)
+    })
+
+    if (settings.revComp) {
+      weights.reverse()
+      for (const pw of weights) {
+        pw.reverse()
+      }
+    }
+
+    return weights
+  }, [motif.weights, settings.revComp])
+
+  const title = `${motif.name} ${motif.motifId ? ` (${motif.motifId}) ` : ' '}- ${motif.dataset.name}`
+
+  // ideally 2 for bits, 1 for prob
+  const yMax = yax.domain[1]
+
+  return (
+    <SvgG pos={{ x: plotX, y: plotY }} id={motif.id} motif-id={motif.motifId}>
+      {range(motifLength).map((positioni) => {
+        const npw = normalizedWeights[positioni]!
+        const idx = argsort(npw)
+        // max probability is 1
+        let ic_final = 1
+
+        if (settings.mode === 'bits') {
+          const u = -idx
+            .map((basei) => npw[basei]!)
+            .filter((p) => p > 0)
+            .map((p) => p * Math.log2(p))
+            .reduce((a, b) => a + b)
+
+          ic_final = yMax - u
+        }
+
+        // when using bits height is proportional to information content
+        const ic_frac = ic_final / yMax
+        let y2 = settings.plot.height
+
+        const x = af(positioni + 1)
+
+        // settings.plot.bases.width * positioni +
+        //        0.5 * settings.plot.bases.width,
+
+        return (
+          <SvgG
+            pos={{
+              x,
+              y: 0,
+            }}
+            key={positioni}
+          >
+            {idx.map((basei) => {
+              const base: string = BASE_IDS[basei]!
+              const font = settings.bases[base.toLowerCase()]!
+              const weight: number = npw[basei]!
+              const yScale = weight * 2 * ic_frac * yScaleFactor
+              const h = weight * ic_frac * settings.plot.height
+              const y3 = y2
+              y2 -= h
+
+              return (
+                <g transform={`translate(0, ${y3})`} key={basei}>
+                  <g transform={`scale(${xScaleFactor}, ${yScale})`}>
+                    <SvgText
+                      textAnchor="middle"
+                      dominantBaseline="auto"
+                      fontSize={FONT_SIZE}
+                      font={font}
+                    >
+                      {base}
+                    </SvgText>
+                  </g>
+                </g>
+              )
+            })}
+          </SvgG>
+        )
+      })}
+
+      <SvgText
+        x={0.5 * width}
+        y={-settings.title.offset}
+        textAnchor="middle"
+        font={settings.title.text}
+      >
+        {title}
+      </SvgText>
+
+      {settings.axes.show && (
+        <>
+          <AxisLeftSvg ax={yax} />
+          <AxisBottomSvg ax={xax} pos={{ x: 0, y: settings.plot.height }} />
+        </>
+      )}
+    </SvgG>
+  )
+})
 
 // export interface IDisplayProps {
 //   plotHeight: number
@@ -67,8 +205,6 @@ export function MotifsSvg() {
 
   const { axis: yax } = useAxis({ plotId: 'y', groupId: 'y', axisId: 'y' })
 
-  const { plots } = useAxes()
-
   if (motifsToPlot.length === 0) {
     return null
   }
@@ -94,155 +230,8 @@ export function MotifsSvg() {
   const height =
     innerHeight + settings.page.margin.top + settings.page.margin.bottom
 
-  const x_scale_factor = settings.plot.bases.width / LW
-  const y_scale_factor = settings.plot.height / H
-
-  const MotifPlot = memo(function MotifPlot({
-    index,
-    motif,
-  }: {
-    index: number
-    motif: IMotif
-  }) {
-    const row = Math.floor(index / settings.page.cols)
-    const col = index % settings.page.cols
-
-    const plotX = col * plotWidth
-    const plotY = row * plotHeight
-
-    //const motif = state.motifs.get(id)!
-
-    // dataframes are n x 4 representations of motifs
-
-    //const shape = df.shape
-    const n = motif.weights.length
-    const w = settings.plot.bases.width * n //shape[1]
-
-    const xax = plots[motif.id].groups['motif'].axes['x']
-
-    // normalize
-
-    const normalizedWeights: number[][] = useMemo(() => {
-      const weights = motif.weights.map((pw) => {
-        const pw2 = pw.map((w) => w + MIN_ADJ)
-        const s = sum(pw2)
-        return pw2.map((w) => w / s)
-      })
-
-      if (settings.revComp) {
-        weights.reverse()
-
-        // complement
-        for (const pw of weights) {
-          pw.reverse()
-        }
-      }
-
-      return weights
-    }, [motif.weights, settings.revComp])
-
-    const title = `${motif.name} ${motif.motifId ? ` (${motif.motifId}) ` : ' '}- ${motif.dataset.name}`
-
-    return (
-      <SvgG
-        pos={{ x: plotX, y: plotY }}
-
-        key={index}
-        id={motif.id}
-        motif-id={motif.motifId}
-      >
-        {range(n).map((r) => {
-          const npw = normalizedWeights[r]!
-          // we want largest probs on top
-          const idx = argsort(npw) //dft.row(r)!.values)
-
-          let ic_final = 0
-
-          if (settings.mode === 'bits') {
-            // sum of p * log2(p)
-            const U = -idx
-              .map((c) => npw[c]!)
-              .filter((p) => p > 0)
-              .map((p) => p * Math.log2(p))
-              .reduce((a, b) => a + b)
-
-            ic_final = IC_TOTAL - U
-          } else {
-            ic_final = IC_TOTAL
-          }
-
-          const ic_frac = ic_final / IC_TOTAL
-
-          let y2 = settings.plot.height
-
-          return (
-            <SvgG
-              pos={{
-                x:
-                  settings.plot.bases.width * r +
-                  0.5 * settings.plot.bases.width,
-                y: 0,
-              }}
-
-              key={r}
-            >
-              {idx.map((c) => {
-                const base: string = BASE_IDS[c]!
-                const font = settings.bases[base.toLowerCase()]!
-                const p: number = npw[c]! //dft.get(r, c) as number
-                const y_scale =
-                  p * 2 * ic_frac * y_scale_factor * Y_SCALE_FACTORS[base]!
-                const h = p * ic_frac * settings.plot.height
-                const y3 = y2
-                y2 -= h
-                return (
-                  <g transform={`translate(0, ${y3})`} key={c}>
-                    <g transform={`scale(${x_scale_factor}, ${y_scale})`}>
-                      <SvgText
-                        textAnchor="middle"
-                        dominantBaseline="auto"
-                        fontSize={FONT_SIZE}
-                        font={font}
-                      >
-                        {base}
-                      </SvgText>
-                    </g>
-                  </g>
-                )
-              })}
-            </SvgG>
-          )
-        })}
-
-        <SvgText
-          x={0.5 * w}
-          y={-settings.title.offset}
-          textAnchor="middle"
-          font={settings.title.text}
-        >
-          {title}
-        </SvgText>
-
-        {settings.axes.show && (
-          <>
-            <AxisLeftSvg
-              ax={yax}
-              //font={settings.axes.labels}
-              //labelFont={settings.axes.title}
-              //showTicks={settings.axes.ticks.show}
-            />
-            <AxisBottomSvg
-              ax={xax}
-              pos={{ x: 0, y: settings.plot.height }}
-              //font={settings.axes.labels}
-              //labelFont={settings.axes.title}
-              //showTicks={settings.axes.ticks.show}
-            />
-          </>
-        )}
-      </SvgG>
-    )
-  })
+  const xScaleFactor = settings.plot.bases.width / LW
+  const yScaleFactor = settings.plot.height / H
 
   const svg = (
     <SvgBase
@@ -257,7 +246,19 @@ export function MotifsSvg() {
         id="inner-plot"
       >
         {motifsToPlot.map((motif, index) => {
-          return <MotifPlot key={motif.id} index={index} motif={motif} />
+          return (
+            <MotifPlot
+              key={motif.id}
+              index={index}
+              motif={motif}
+              yax={yax}
+              settings={settings}
+              plotWidth={plotWidth}
+              plotHeight={plotHeight}
+              xScaleFactor={xScaleFactor}
+              yScaleFactor={yScaleFactor}
+            />
+          )
         })}
       </SvgMargin>
     </SvgBase>

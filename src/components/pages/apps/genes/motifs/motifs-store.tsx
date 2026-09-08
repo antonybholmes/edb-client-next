@@ -270,10 +270,10 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> & {
 
       const xax = createAxis({
         id: 'x',
-        domain: [0, motif.weights.length],
+        domain: [0.5, motif.weights.length + 0.5],
         length: w * n,
         ticks: range(1, n + 1).map((x) => ({
-          v: x - 0.5,
+          v: x,
           label: x.toLocaleString(),
         })),
         tickParams: { which: 'minor', show: false },
@@ -294,15 +294,22 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> & {
             direction: 'y',
             domain: [0, 2],
             length: settings.plot.height,
+
             ticks: [0, 1, 2],
+            //minorTicks: [0, 0.5, 1, 1.5, 2],
+            minorTickDivisions: 2,
             title: 'Bits',
+            //tickParams: { which: 'minor', style:{DEFAULT_AXIS_LABEL_PROPS: {...DEFAULT_TEXT_PROPS, show:false }} },
           })
         : createAxis({
             id: 'y',
             direction: 'y',
             domain: [0, 1],
             length: settings.plot.height,
+
+            minorTickDivisions: 2,
             ticks: [0, 0.5, 1],
+            //minorTicks: [0, 0.25, 0.5, 0.75, 1],
             title: 'Prob',
           })
 

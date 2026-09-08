@@ -59,7 +59,9 @@ export function createAxis(
     range?: ILim
     autoDomain?: boolean | ILim
     ticks?: number[] | ITickItem[]
+    majorNumTicks?: number
     minorTicks?: number[] | ITickItem[]
+    minorTickDivisions?: number
     style?: DeepPartial<IAxisConfig['style']>
     tickParams?: Partial<ITickParamProps>
     format?: IAxisFormat
@@ -76,7 +78,9 @@ export function createAxis(
     range,
     autoDomain,
     ticks,
+    majorNumTicks,
     minorTicks,
+    minorTickDivisions,
     tickParams,
     format,
   } = opts
@@ -116,6 +120,14 @@ export function createAxis(
 
   if (style !== undefined) {
     ret.style = deepmerge(ret.style, style)
+  }
+
+  if (majorNumTicks !== undefined) {
+    ret.ticks.major.numTicks = majorNumTicks
+  }
+
+  if (minorTickDivisions !== undefined) {
+    ret.ticks.minor.divisions = minorTickDivisions
   }
 
   return ret

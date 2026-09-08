@@ -5,46 +5,35 @@ import { PropsPanel } from '@/components/props-panel'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { DragDropProvider } from '@dnd-kit/react'
+import { IDisplayPlot } from './axes-groups-popover'
 
-export function AxesDisplayPropsPanel({
-  plotIds,
-  axesGroups,
-}: {
-  plotIds: { id: string; title: string }[]
-  axesGroups: {
-    id: string
-    title: string
-    axesIds: { id: string; axis: 'x' | 'y'; title: string }[]
-  }[]
-}) {
+export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
   return (
     <PropsPanel>
       <VScrollPanel className="mb-2">
         <DragDropProvider>
           <ul className="flex flex-col">
-            {plotIds.map(({ id: plotId, title }, pi) => {
+            {plots.map(({ id: plotId, title, groups }, pi) => {
               return (
                 <SortableItem key={plotId} index={pi} id={plotId}>
                   <BaseCol className="grow">
                     <span>{title}</span>
 
-                    {axesGroups.map(
-                      ({ id: groupId, title: groupTitle, axesIds }) => (
-                        <VCenterRow key={groupId} className="justify-between">
-                          <strong>{groupTitle}</strong>
-                          <VCenterRow>
-                            {axesIds.map(({ id: axisId, title }) => (
-                              <AxisPlotPropsPopover
-                                key={axisId}
-                                //axis={axis}
-                                title={title}
-                                plotAddress={{ plotId, groupId, axisId }}
-                              />
-                            ))}
-                          </VCenterRow>
+                    {groups.map(({ id: groupId, title: groupTitle, axes }) => (
+                      <VCenterRow key={groupId} className="justify-between">
+                        <strong>{groupTitle}</strong>
+                        <VCenterRow>
+                          {axes.map(({ id: axisId, title }) => (
+                            <AxisPlotPropsPopover
+                              key={axisId}
+                              //axis={axis}
+                              title={title}
+                              plotAddress={{ plotId, groupId, axisId }}
+                            />
+                          ))}
                         </VCenterRow>
-                      )
-                    )}
+                      </VCenterRow>
+                    ))}
                   </BaseCol>
                 </SortableItem>
               )

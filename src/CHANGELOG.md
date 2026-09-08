@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Motifs now fully supports new axis system. Letter position rendering now uses axis rather than fixed sizes.
 - Ext gsea switched to new axis system.
 - Oncoplot switched to new axis model.
 - Lollipop switched to new axis model.

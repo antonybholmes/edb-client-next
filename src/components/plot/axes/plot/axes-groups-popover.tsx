@@ -10,19 +10,18 @@ import { Move3d } from 'lucide-react'
 import { useState } from 'react'
 import { AxisPlotPropsPopover } from './axis-plot-props-popover'
 
-export function AxesDisplayPropsPopover({
-  plots,
-}: {
-  plots: {
-    id: string
-    title: string
-    groups: {
-      id: string
-      title: string
-      axes: { id: string; title: string }[]
-    }[]
-  }[]
-}) {
+export interface IDisplayAxis {
+  id: string
+  title: string
+}
+
+export interface IDisplayPlot extends IDisplayAxis {
+  groups: (IDisplayAxis & {
+    axes: IDisplayAxis[]
+  })[]
+}
+
+export function AxesDisplayPropsPopover({ plots }: { plots: IDisplayPlot[] }) {
   const [open, setOpen] = useState(false)
 
   return (

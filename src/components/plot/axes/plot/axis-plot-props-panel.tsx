@@ -74,15 +74,30 @@ export function AxisPlotPropsPanel({
           v2={axis.domain[1]}
           limit={[-Infinity, Infinity]}
           dp={2}
+          inc={0.1}
           onNumChanged1={(v) => {
-            updateAxis({
-              domain: [v, axis.domain[1]],
-            })
+            if (v === axis.domain[0]) {
+              return
+            }
+
+            updateAxis(
+              produce(axis, (draft) => {
+                draft.domain[0] = v
+                draft.ticks.major.items = undefined
+              })
+            )
           }}
           onNumChanged2={(v) => {
-            updateAxis({
-              domain: [axis.domain[0], v],
-            })
+            if (v === axis.domain[1]) {
+              return
+            }
+
+            updateAxis(
+              produce(axis, (draft) => {
+                draft.domain[1] = v
+                draft.ticks.major.items = undefined
+              })
+            )
           }}
         >
           -
