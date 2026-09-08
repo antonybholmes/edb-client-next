@@ -94,7 +94,7 @@ export function GseaWebPage() {
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom({
+  useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(

@@ -236,8 +236,6 @@ function parseValues(v: string, ax: IAxis): ITickItem[] | undefined {
     }
   }
 
-  console.log(ticks, ax.domain)
-
   const ret = numSort([...ticks]).map((v) => ({ v, label: String(v) }))
 
   return ret
@@ -269,7 +267,7 @@ function parseTickLabels(
 
         if (rangeMatch) {
           const rangeValues = parseRange(rangeMatch, ax)
-          console.log('rangeValues:', rangeValues, rangeValues.map(String))
+
           values.push(...rangeValues.map(String))
 
           continue
@@ -280,8 +278,6 @@ function parseTickLabels(
 
       break
   }
-
-  console.log('vvv', values, items.length)
 
   // map to existing labels
   const newItems = items.map((item, i) => ({
@@ -302,8 +298,6 @@ function parseRange(rangeMatch: RegExpMatchArray, ax: IAxis): number[] {
 
   let endValue = rangeMatch[2]
   let negMode = false
-
-  console.log('endValue before negMode check:', endValue)
 
   let end: number
 
@@ -331,8 +325,6 @@ function parseRange(rangeMatch: RegExpMatchArray, ax: IAxis): number[] {
   for (let i = start; i <= end; i++) {
     values.push(i)
   }
-
-  console.log('start:', start, 'end:', end, values)
 
   return values
 }

@@ -16,6 +16,7 @@ import { Slider } from '@/themed/v2/slider'
 
 import { useDebounce } from '@/hooks/debounce'
 import { ChevronDown, Minus, Plus } from 'lucide-react'
+import { useEdbSettings } from '../edb/edb-settings'
 import { VCenterRow } from '../layout/v-center-row'
 import { Input } from '../shadcn/ui/themed/v2/input'
 import { ToolbarFooterButton } from './toolbar-footer-button'
@@ -32,6 +33,8 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
   const { index, levels, setZoom, increaseZoom, decreaseZoom } = useZoom({
     channel,
   })
+
+  const { updateSettings } = useEdbSettings()
 
   // We need to distinguish between user-initiated changes
   // to the slider and programmatic changes that occur when the zoom level

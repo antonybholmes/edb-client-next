@@ -22,7 +22,6 @@ import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
-import { AxesPropRow } from '../../../../../plot/axes/axes-prop-row'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 
@@ -70,7 +69,7 @@ export function GseaPlotDisplayPropsPanel() {
             <PropRow title="Margins">
               <MarginPopover />
             </PropRow>
-            <AxesPropRow />
+            {/* <AxesPropRow /> */}
 
             <CheckPropRow
               title="Invert Phenotypes"

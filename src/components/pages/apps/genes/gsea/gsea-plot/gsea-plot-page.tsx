@@ -60,7 +60,6 @@ import {
   GroupToggle,
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
-import { useUpdateEffect } from '@/hooks/update-effect'
 
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
@@ -102,13 +101,13 @@ export function GseaPlotPage() {
 
   const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
 
-  const { zoom, setZoom } = useZoom({
+  useZoom({
     onChange: ({ zoom }) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
+      // updateSettings(
+      //   produce(settings, (draft) => {
+      //     draft.page.scale = zoom
+      //   })
+      // )
 
       updateBubbleSettings(
         produce(bubbleSettings, (draft) => {
@@ -140,9 +139,9 @@ export function GseaPlotPage() {
     ])
   }, [setToolbarTabs])
 
-  useUpdateEffect(() => {
-    setZoom(zoom)
-  }, [settings.page.scale])
+  // useUpdateEffect(() => {
+  //   setZoom(zoom)
+  // }, [settings.page.scale])
 
   const searchIndex = useMemo(() => {
     return new Fuse(filteredReports, {

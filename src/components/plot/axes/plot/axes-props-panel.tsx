@@ -17,11 +17,11 @@ export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
               return (
                 <SortableItem key={plotId} index={pi} id={plotId}>
                   <BaseCol className="grow">
-                    <span>{title}</span>
+                    <strong>{title}</strong>
 
                     {groups.map(({ id: groupId, title: groupTitle, axes }) => (
                       <VCenterRow key={groupId} className="justify-between">
-                        <strong>{groupTitle}</strong>
+                        <span>{groupTitle}</span>
                         <VCenterRow>
                           {axes.map(({ id: axisId, title }) => (
                             <AxisPlotPropsPopover

@@ -18,6 +18,7 @@ import {
   IAxis,
 } from '@/components/plot/axes/axis'
 import { SvgText } from '@/components/plot/svg-text'
+import { useSVG } from '@/providers/svg-provider'
 import { useGseaPlot } from './gsea-plot-provider'
 import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
@@ -33,6 +34,7 @@ import { useGseaSettings } from './gsea-settings-store'
 export function GseaSvg() {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
+  const { ref } = useSVG()
 
   const { rankedGenes, resultsMap } = useGsea()
   const { pathways } = useGseaPlot()
@@ -63,7 +65,13 @@ export function GseaSvg() {
 
   let ploti = 0
 
-  const svgPlots = pathways.map((pathway, pi) => {
+  const svgPlots = pathways.map((pathway) => {
+    const plot = plots[pathway.id]
+
+    if (!plot) {
+      return null
+    }
+
     const col = ploti % settings.page.columns
     const row = Math.floor(ploti / settings.page.columns)
     const x =
@@ -243,11 +251,43 @@ export function GseaSvg() {
 
   return (
     <SvgBase
-      scale={settings.page.scale}
+      scale={edbSettings.plots.scale}
       width={pageSize[0]!}
       height={pageSize[1]!}
       //shapeRendering={SVG_CRISP_EDGES}
       //className="absolute"
+
+      onMouseMove={(e) => {
+        const margin = settings.plot.margin
+        const ml = margin.left * edbSettings.plots.scale
+        const mt = margin.top * edbSettings.plots.scale
+        const pw = settings.axes.x.length * edbSettings.plots.scale
+        let ph = settings.es.axes.y.length
+
+        if (settings.genes.show) {
+          ph += settings.genes.height + settings.plot.gap.y
+        }
+
+        if (settings.ranking.show) {
+          ph += settings.ranking.axes.y.length
+        }
+
+        ph *= edbSettings.plots.scale
+
+        console.log(edbSettings.plots.scale)
+
+        const p = {
+          x: e.clientX - ml - ref.current!.getBoundingClientRect().left,
+          y: e.clientY - mt - ref.current!.getBoundingClientRect().top,
+        }
+
+        const col = Math.floor(p.x / pw)
+        const row = Math.floor(p.y / ph)
+
+        const index = row * settings.page.columns + col
+
+        console.log(e.clientX, p, row, col)
+      }}
     >
       {svgPlots}
     </SvgBase>
@@ -420,7 +460,6 @@ function EsLeadingEdgeSvg({
   yax,
 }: {
   es: IGseaGeneRankScore[]
-
   rankMid: number
   x0: number
   x1: number
@@ -590,9 +629,7 @@ function RankingSvg({
   pathway,
   xax,
   sortedRankedGenes,
-
   crossing,
-
   x0,
   x1,
   pos,

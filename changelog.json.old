@@ -2741,6 +2741,10 @@
         {
           "msg": "Motifs now fully supports new axis system. Letter position rendering now uses axis rather than fixed sizes",
           "date": "2026-09-08T19:51:38.555Z"
+        },
+        {
+          "msg": "Axis controls now support using ranges for specifying ticks and tick labels",
+          "date": "2026-09-08T21:59:50.598Z"
         }
       ],
       "Added": [
