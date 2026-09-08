@@ -65,6 +65,7 @@ import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
+import { GseaBubbleProvider } from './bubble/gsea-bubble-provider'
 import { useGseaBubbleSettings } from './bubble/gsea-bubble-settings-store'
 import { GseaBubbleTabPanel } from './bubble/gsea-bubble-tab-panel'
 import { GeneSetFilter } from './gene-set-filter'
@@ -82,8 +83,10 @@ const HELP_URL = DOCS_URL + '/apps/gsea'
 export function GseaPlotPage() {
   const { settings: edbSettings } = useEdbSettings()
   const { settings, updateSettings } = useGseaSettings()
+
   const { settings: bubbleSettings, updateSettings: updateBubbleSettings } =
     useGseaBubbleSettings()
+
   const { setAppInfo } = useAppInfo()
 
   const [search, setSearch] = useState('')
@@ -314,11 +317,7 @@ export function GseaPlotPage() {
 
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
-            fileMenuShortcuts={
-              <>
-                <GeneSetFilter />
-              </>
-            }
+            fileMenuShortcuts={<GeneSetFilter />}
             rightShortcuts={
               <>
                 <ToolbarButton
@@ -457,7 +456,9 @@ export function GseaPlotQueryPage() {
   return (
     <ClientLayout>
       <GseaPlotProvider>
-        <GseaPlotPage />
+        <GseaBubbleProvider>
+          <GseaPlotPage />
+        </GseaBubbleProvider>
       </GseaPlotProvider>
     </ClientLayout>
   )

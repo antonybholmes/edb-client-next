@@ -101,7 +101,7 @@ export function GseaBubblePage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { autoSave, saveAs } = useSVG()
+  const { autoSave } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()
@@ -334,7 +334,6 @@ export function GseaBubblePage() {
 
 export function GseaBubblePlotPage() {
   const allPlots = useAllPlots()
-  console.log('allPlots', allPlots)
 
   return (
     <GseaBubbleProvider

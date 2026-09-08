@@ -1,9 +1,10 @@
 import {
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useMemo,
-  type ReactNode,
+  useState,
 } from 'react'
 
 import { makeUuid } from '@/lib/id'
@@ -34,15 +35,16 @@ export interface IBubblePoint {
   label: string
 }
 
-export interface GseaBubblePropsContextType {
+export interface IGseaBubblePropsContext {
   plots: IGseaBubble[]
   points: IBubblePoint[][]
   xlims: ILim[]
   globalXLim: ILim
+  setPlots(plots: IGseaBubble[]): void
 }
 
 export const GseaBubbleContext = createContext<
-  GseaBubblePropsContextType | undefined
+  IGseaBubblePropsContext | undefined
 >(undefined)
 
 export function useGseaBubbleContext() {
@@ -120,18 +122,25 @@ function getColor(v: number, lim: ILim, colorMap: ColorMap) {
 }
 
 export function GseaBubbleProvider({
-  plots,
+  plots = [],
   children,
 }: {
-  plots: IGseaBubble[]
+  plots?: IGseaBubble[]
   children: ReactNode
 }) {
+  const [_plots, setPlots] = useState<IGseaBubble[]>(plots)
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
   const { addAxes } = useAxes()
 
-  const xlims = useMemo(() => plots.map((p) => getXLim(p)), [plots])
+  useEffect(() => {
+    if (plots.length !== 0 && _plots !== plots) {
+      setPlots(plots)
+    }
+  }, [plots])
+
+  const xlims = useMemo(() => _plots.map((p) => getXLim(p)), [_plots])
 
   const globalXLim: ILim = useMemo(
     () => [
@@ -142,11 +151,11 @@ export function GseaBubbleProvider({
   )
 
   const points: IBubblePoint[][] = useMemo(() => {
-    if (plots.length === 0) {
+    if (_plots.length === 0) {
       return []
     }
 
-    return plots.map((plot, pi) => {
+    return _plots.map((plot, pi) => {
       let names = plot.genesets.map((gs) => gs.name)
       let nes = plot.genesets.map((gs) => gs.nes)
       let sizes = plot.genesets.map((gs) => gs.size)
@@ -204,12 +213,12 @@ export function GseaBubbleProvider({
         }
       })
     })
-  }, [plots, globalXLim, settings])
+  }, [_plots, globalXLim, settings])
 
   useEffect(() => {
     const axes: IPlotAxes[] = []
 
-    for (const [pi, plot] of plots.entries()) {
+    for (const [pi, plot] of _plots.entries()) {
       const xlim = xlims[pi]
       const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
 
@@ -291,20 +300,17 @@ export function GseaBubbleProvider({
       axes: { [cax.id]: cax },
     })
 
-    console.log('boo 2', axes)
-
     addAxes(axes)
-  }, [plots, xlims, settings, edbSettings, globalXLim, addAxes])
-
-  console.log('lsops', plots)
+  }, [_plots, xlims, settings, edbSettings, globalXLim, addAxes])
 
   return (
     <GseaBubbleContext.Provider
       value={{
-        plots,
+        plots: _plots,
         points,
         xlims,
         globalXLim,
+        setPlots,
       }}
     >
       {children}

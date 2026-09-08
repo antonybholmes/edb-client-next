@@ -487,7 +487,7 @@ export function ExtGseaSvg() {
     }
 
     return { esSvg, genesSvg, rankingSvg, pageSize }
-  }, [displayProps])
+  }, [xax, yaxEs, yaxSnr, displayProps])
 
   return (
     <SvgBase

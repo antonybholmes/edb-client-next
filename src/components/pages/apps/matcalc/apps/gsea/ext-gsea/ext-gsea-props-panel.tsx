@@ -22,6 +22,7 @@ import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { AxesPropRow } from '@/components/plot/axes/axes-prop-row'
+import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
@@ -92,6 +93,31 @@ export function ExtGseaPropsPanel() {
             </PropRow>
 
             <AxesPropRow axes={['x', 'y']} />
+            <PropRow title="Axes">
+              <AxesDisplayPropsPopover
+                plots={[
+                  {
+                    id: plot!.id,
+                    title: 'Ext GSEA',
+                    groups: [
+                      {
+                        id: 'es',
+                        title: 'ES',
+                        axes: [
+                          { id: 'x', title: 'X Axis' },
+                          { id: 'y', title: 'Y Axis' },
+                        ],
+                      },
+                      {
+                        id: 'snr',
+                        title: 'SNR',
+                        axes: [{ id: 'y', title: 'Y Axis' }],
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 

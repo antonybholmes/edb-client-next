@@ -15,7 +15,6 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import { AxesSettingsPropsPopover } from '../../../../../../plot/axes/settings/axes-settings-props-popover'
 import { useGsea } from '../gsea-plot-store'
 import { useGseaSettings } from '../gsea-settings-store'
 
@@ -113,11 +112,11 @@ export function HomeToolbar() {
             Invert Phenotypes
           </ToolbarButton>
         </ToolbarCol>
-        <ToolbarCol>
+        {/* <ToolbarCol>
           <ToolbarRow>
             <AxesSettingsPropsPopover />
           </ToolbarRow>
-        </ToolbarCol>
+        </ToolbarCol> */}
       </ToolbarTabGroup>
 
       {/* <ToolbarTabGroup title="View">

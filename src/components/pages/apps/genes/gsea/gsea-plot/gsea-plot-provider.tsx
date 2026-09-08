@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
+import { createContext, useContext, useEffect, useMemo } from 'react'
 
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
+import { IChildrenProps } from '@/interfaces/children-props'
 import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
@@ -21,7 +22,7 @@ export function useGseaPlot() {
   return context
 }
 
-export function GseaPlotProvider({ children }: { children: ReactNode }) {
+export function GseaPlotProvider({ children }: IChildrenProps) {
   const { settings } = useGseaSettings()
   const { addAxes } = useAxes()
   const { rankedGenes, inUseReports, resultsMap } = useGsea()

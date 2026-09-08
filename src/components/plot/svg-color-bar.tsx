@@ -12,6 +12,7 @@ import {
 } from './axes/axis'
 
 import { AxisBottomSvg, AxisRightSvg } from './axes/svg-axis'
+import { SvgG } from './svg-g'
 import { SvgRect } from './svg-rect'
 
 interface ISvgColorBarProps {
@@ -56,12 +57,8 @@ export function SvgHColorBar({
   x2 -= xinc
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
-      shapeRendering={SVG_CRISP_EDGES}
-      fontSize="small"
-    >
-      <g>
+    <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES} fontSize="small">
+      <SvgG>
         {range(steps).map((step) => {
           colorStart += colorStep
 
@@ -85,11 +82,11 @@ export function SvgHColorBar({
             sp={settings.plots.colorbar.stroke}
           />
         )}
-      </g>
-      <g transform={`translate(0, ${settings.plots.colorbar.size.h})`}>
+      </SvgG>
+      <SvgG pos={{ x: 0, y: settings.plots.colorbar.size.h }}>
         <AxisBottomSvg ax={ax} axis="colorbar" />
-      </g>
-    </g>
+      </SvgG>
+    </SvgG>
   )
 }
 
@@ -100,6 +97,10 @@ export function SvgVColorBar({
   pos = { ...ZERO_POS },
 }: ISvgColorBarProps) {
   const { settings } = useEdbSettings()
+
+  if (!ax) {
+    return null
+  }
 
   if (!steps) {
     steps = cmap.colors
@@ -126,12 +127,8 @@ export function SvgVColorBar({
   y2 -= yinc
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
-      shapeRendering={SVG_CRISP_EDGES}
-      fontSize="small"
-    >
-      <g>
+    <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES} fontSize="small">
+      <SvgG>
         {range(steps).map((step) => {
           colorStart += colorStep
 
@@ -156,11 +153,11 @@ export function SvgVColorBar({
             shapeRendering={SVG_CRISP_EDGES}
           />
         )}
-      </g>
+      </SvgG>
 
-      <g transform={`translate(${settings.plots.colorbar.size.h}, 0)`}>
+      <SvgG pos={{ x: settings.plots.colorbar.size.h, y: 0 }}>
         <AxisRightSvg ax={ax} axis="colorbar" />
-      </g>
-    </g>
+      </SvgG>
+    </SvgG>
   )
 }

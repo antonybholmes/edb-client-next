@@ -1,16 +1,17 @@
 import { makeUuid } from '@/lib/id'
 import { textJoin } from '@/lib/text/text'
-import { useMemo } from 'react'
+import { useEffect } from 'react'
 import { IGseaBubble, useGsea } from '../gsea-plot-store'
-import { GseaBubbleProvider } from './gsea-bubble-provider'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import { GseaBubblePlotSvg } from './gsea-bubble-svg'
 
 export function GseaBubbleTabPanel() {
   const { inUseReports, inUsePhenotypes } = useGsea()
   const { settings } = useGseaBubbleSettings()
+  const { setPlots } = useGseaBubbleContext()
 
-  const bubblePlots: IGseaBubble[] = useMemo(() => {
+  useEffect(() => {
     let plots = inUsePhenotypes
       .map((phen) => {
         const genesets = inUseReports.filter((r) => r.phen === phen)
@@ -39,12 +40,8 @@ export function GseaBubbleTabPanel() {
       plots = [mergedBubble]
     }
 
-    return plots
+    setPlots(plots)
   }, [inUseReports, inUsePhenotypes, settings.phenotypes.merge])
 
-  return (
-    <GseaBubbleProvider plots={bubblePlots}>
-      <GseaBubblePlotSvg />
-    </GseaBubbleProvider>
-  )
+  return <GseaBubblePlotSvg />
 }

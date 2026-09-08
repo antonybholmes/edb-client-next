@@ -51,12 +51,16 @@ export function ExtGseaProvider({
     const ymax = Math.max(...abs([...y, ...gseaRes2.esAll]))
 
     let xax = createAxis({
+      id: 'x',
+      title: 'Genes',
       domain: [0, xmax],
       length: displayProps.axes.x.length,
       tickParams: { which: 'both', show: false },
     })
 
     const yaxEs = createAxis({
+      id: 'y',
+      title: 'ES',
       direction: 'y',
       domain: [-ymax, ymax],
       length: displayProps.es.axes.y.length,
@@ -66,6 +70,7 @@ export function ExtGseaProvider({
     const yMax = Math.max(...abs(rankedGenes.genes.map((e) => e.score)))
 
     const yaxSnr = createAxis({
+      id: 'y',
       direction: 'y',
       title: 'SNR',
       autoDomain: [-yMax, yMax],
