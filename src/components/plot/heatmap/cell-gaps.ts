@@ -143,4 +143,30 @@ export class CellGaps {
   position(index: number): number {
     return this._positions[index]
   }
+
+  /**
+   * Finds nearest cell to the given position.
+   *
+   * @param p
+   * @returns
+   */
+  nearest(p: number): { x: number; index: number } {
+    // binary search for the nearest span
+    let low = 0
+    let high = this._positions.length - 1
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2)
+      const span = this._positions[mid]
+      if (p < span) {
+        high = mid - 1
+      } else if (p >= span + this._width) {
+        low = mid + 1
+      } else {
+        return { x: span, index: mid }
+      }
+    }
+
+    return { x: -1, index: -1 }
+  }
 }

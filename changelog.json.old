@@ -2782,6 +2782,10 @@
         {
           "msg": "Gsea render sped up and now has working crosshair",
           "date": "2026-09-09T17:01:20.245Z"
+        },
+        {
+          "msg": "Svg rendering and tooltip speedups",
+          "date": "2026-09-09T21:14:01.297Z"
         }
       ]
     },

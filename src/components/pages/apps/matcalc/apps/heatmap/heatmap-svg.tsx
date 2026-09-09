@@ -172,6 +172,16 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     })
   }
 
+  const xgaps = useMemo(
+    () => new CellGaps(displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]),
+    [displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]]
+  )
+
+  const ygaps = useMemo(
+    () => new CellGaps(displayOptions.gaps.rows, blockSize.h, dfMain.shape[0]),
+    [displayOptions.gaps.rows, blockSize.h, dfMain.shape[0]]
+  )
+
   const { axis: cax } = useAxis({
     plotId: plot.id,
     groupId: 'cbar',
@@ -217,17 +227,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
             .flat()
         ),
       ])
-    )
-
-    const xgaps = new CellGaps(
-      displayOptions.gaps.cols,
-      blockSize.w,
-      dfMain.shape[1]
-    )
-    const ygaps = new CellGaps(
-      displayOptions.gaps.rows,
-      blockSize.h,
-      dfMain.shape[0]
     )
 
     const unadjustedInnerWidth = colLeaves.length * blockSize.w
@@ -432,6 +431,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}
+              plotSize={{ w: innerWidth, h: innerHeight }}
               margin={margin}
               xgaps={xgaps}
               ygaps={ygaps}
@@ -448,6 +448,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
             <CellsSvg
               df={dfMain}
               margin={margin}
+              plotSize={{ w: innerWidth, h: innerHeight }}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               props={displayOptions}
