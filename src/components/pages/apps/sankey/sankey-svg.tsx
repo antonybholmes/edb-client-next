@@ -1,7 +1,7 @@
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
-import { getSvgPoint } from '@/lib/graphics/svg'
+import { screenToSvgPoint } from '@/lib/graphics/svg'
 import { useMemo, useRef } from 'react'
 import { IOutputGraph, IOutputLink, IOutputNode } from './sankey-layout'
 import { useSankey } from './sankey-provider'
@@ -44,7 +44,7 @@ export function SankeySvg() {
 
     console.log('pointer move', dragRef.current)
 
-    const p = getSvgPoint(svgRef.current!, { x: e.clientX, y: e.clientY })
+    const p = screenToSvgPoint(svgRef.current!, { x: e.clientX, y: e.clientY })
 
     const d = {
       x: p.x - dragRef.current.startX,
@@ -123,7 +123,10 @@ export function SankeySvg() {
 
       e.currentTarget.setPointerCapture(e.pointerId)
 
-      const start = getSvgPoint(svgRef.current!, { x: e.clientX, y: e.clientY })
+      const start = screenToSvgPoint(svgRef.current!, {
+        x: e.clientX,
+        y: e.clientY,
+      })
 
       console.log('pointer down', e, e.currentTarget)
 

@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.8.0",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-09-06T23:50:46.932Z",
-    "hash": "45bc7860df28e3f07ea01a8234d3514568a7049695fe3b3203c03926e190f684",
-    "build": 552
+    "modified": "2026-09-09T03:36:01.262Z",
+    "hash": "27a2af1507f1e91994aab0a96bca18f5ae5b80b60d05c8a92e1df60cfcd58ac3",
+    "build": 554
   },
   {
     "name": "Convert",
@@ -141,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-06T23:50:46.963Z",
-    "hash": "ba7a905a5cedd65bb9a92dfef6acd2aca1a8e77d2b79eebd4ff290342f9024fb",
-    "build": 1132
+    "modified": "2026-09-09T03:36:01.275Z",
+    "hash": "b99baed81d2cab9092a64407239df7432dd61ce5911cd338f38941c0326df1d6",
+    "build": 1134
   },
   {
     "name": "Overlap",
@@ -181,9 +181,9 @@
     "color": "#ff9900",
     "version": "1.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-06T23:50:46.960Z",
-    "hash": "54474f48dfd04e86b4af29af0fc6fbddb69a954a7a920e3456af78c09c56b3d5",
-    "build": 82
+    "modified": "2026-09-09T03:36:01.273Z",
+    "hash": "217928d70793078e8752896ddc17be91c8a3e9654e29387612c2ed7f58c763a2",
+    "build": 84
   },
   {
     "name": "Seq Browser",

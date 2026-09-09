@@ -1,6 +1,6 @@
 import type { IBox, IPos } from '@/interfaces/pos'
 
-import { getSvgPoint } from '@/lib/graphics/svg'
+import { screenToSvgPoint } from '@/lib/graphics/svg'
 import {
   useEffect,
   useImperativeHandle,
@@ -270,7 +270,10 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
     direction: string
   ) => {
     e.preventDefault()
-    const mouse = getSvgPoint(svgRef.current!, { x: e.clientX, y: e.clientY })
+    const mouse = screenToSvgPoint(svgRef.current!, {
+      x: e.clientX,
+      y: e.clientY,
+    })
 
     // const offsetX = direction.includes('e')
     //   ? -PADDING
@@ -299,7 +302,10 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
   }
 
   const handleMouseMoveResize = (e: MouseEvent) => {
-    const mouse = getSvgPoint(svgRef.current!, { x: e.clientX, y: e.clientY })
+    const mouse = screenToSvgPoint(svgRef.current!, {
+      x: e.clientX,
+      y: e.clientY,
+    })
 
     if (draggingIdx.current) {
       const newPoints = [...points.current]

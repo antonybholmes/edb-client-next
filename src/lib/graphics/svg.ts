@@ -47,7 +47,7 @@ export function svgPointToScreenRelative(svg: SVGSVGElement, p: IPos) {
  * @param clientY The y-coordinate in screen space (clientY).
  * @returns The corresponding SVG coordinates as an object with x and y properties.
  */
-export function getSvgPoint(svg: SVGSVGElement, p: IPos) {
+export function screenToSvgPoint(svg: SVGSVGElement, p: IPos): IPos {
   const pt = svg.createSVGPoint()
   pt.x = p.x
   pt.y = p.y
