@@ -4,6 +4,7 @@
 
 ### Changed
 
+- More optimizations for tooltips.
 - Sped up heatmap rendering.
 - Svg rendering and tooltip speedups.
 - Gsea render sped up and now has working crosshair.
