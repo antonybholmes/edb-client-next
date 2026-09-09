@@ -1,5 +1,3 @@
-import { cellStr } from '@/lib/dataframe/cell'
-
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
@@ -28,7 +26,6 @@ import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromICMAP } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { SvgTitle } from '../../../../../plot/svg-title'
@@ -151,26 +148,26 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     return { top, left, bottom, right }
   }, [displayOptions])
 
-  function handleVariantEnter(pos: IPos, cell: ICell) {
-    //console.log('handleVariantEnter', pos, cell)
-    const { screenP } = svgPointToScreen(ref.current, pos)
+  // function handleVariantEnter(pos: IPos, cell: ICell) {
+  //   //console.log('handleVariantEnter', pos, cell)
+  //   const { screenP } = svgPointToScreen(ref.current, pos)
 
-    screenP.x += blockSize.w + 2
-    screenP.y += blockSize.h + 2
+  //   screenP.x += blockSize.w + 2
+  //   screenP.y += blockSize.h + 2
 
-    showTooltip({
-      pos: screenP,
-      content: (
-        <>
-          <span className="font-semibold">{`${dfMain.rowName(
-            cell.row
-          )}, ${dfMain.colName(cell.col)}`}</span>
-          <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
-          <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
-        </>
-      ),
-    })
-  }
+  //   showTooltip({
+  //     pos: screenP,
+  //     content: (
+  //       <>
+  //         <span className="font-semibold">{`${dfMain.rowName(
+  //           cell.row
+  //         )}, ${dfMain.colName(cell.col)}`}</span>
+  //         <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
+  //         <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
+  //       </>
+  //     ),
+  //   })
+  // }
 
   const xgaps = useMemo(
     () => new CellGaps(displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]),
@@ -437,8 +434,8 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               ygaps={ygaps}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
-              handleVariantEnter={handleVariantEnter}
-              handleVariantLeave={hideTooltip}
+              // handleVariantEnter={handleVariantEnter}
+              // handleVariantLeave={hideTooltip}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
             />
@@ -455,8 +452,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               xgaps={xgaps}
               ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
-              handleVariantEnter={handleVariantEnter}
-              handleVariantLeave={hideTooltip}
             />
             <GridSvg
               width={innerWidth}
