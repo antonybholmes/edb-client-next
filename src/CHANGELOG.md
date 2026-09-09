@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Gsea render sped up and now has working crosshair.
 - Bug fixes and updates.
 
 

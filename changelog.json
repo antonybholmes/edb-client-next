@@ -2778,6 +2778,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-09-09T16:19:39.538Z"
+        },
+        {
+          "msg": "Gsea render sped up and now has working crosshair",
+          "date": "2026-09-09T17:01:20.245Z"
         }
       ]
     },

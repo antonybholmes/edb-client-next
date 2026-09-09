@@ -31,7 +31,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
-import { TOOLTIP_CLEAR_MS } from '@/providers/tooltip-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { useGseaPlot } from './gsea-plot-provider'
 import { useGseaSettings } from './gsea-settings-store'
 import { IGseaGeneRankScore, IGseaGeneSet, useGseaData } from './gsea-store'
@@ -452,7 +452,6 @@ const GseaPlot = memo(function GseaPlot({
   col,
   plotSize,
   innerPlotSize,
-  pos,
 }: {
   pathway: IGseaGeneSet
   index: number
@@ -460,13 +459,19 @@ const GseaPlot = memo(function GseaPlot({
   col: number
   plotSize: IDim
   innerPlotSize: IDim
-  pos: IPos
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
   const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
   const { ref } = useSVG()
-  const { setBarPos } = useBarContext()
+  const setBarPos = useSetBarPos()
+
+  const { showTooltip, hideTooltip: hideTooltipOrig } = useTooltip()
+
+  const pos = useMemo(
+    () => ({ x: col * plotSize.w, y: row * plotSize.h }),
+    [row, col, plotSize]
+  )
 
   const { axis: xax } = useAxis({
     plotId: pathway.id,
@@ -526,8 +531,9 @@ const GseaPlot = memo(function GseaPlot({
     // wait before removing. if we re-enter quickly, the tooltip won't flicker
     // as this timeout will be cancelled so the tooltip won't disappear
     // and will be moved to next location
-    timeoutRef.current = setTimeout(() => setBarPos(null), TOOLTIP_CLEAR_MS)
-  }, [])
+    timeoutRef.current = setTimeout(() => setBarPos(null), 100)
+    hideTooltipOrig()
+  }, [setBarPos])
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -547,10 +553,12 @@ const GseaPlot = memo(function GseaPlot({
 
       if (
         plotP.x < 0 ||
-        plotP.x > plotSize.w ||
+        plotP.x > innerPlotSize.w ||
         plotP.y < 0 ||
-        plotP.y > plotSize.h
+        plotP.y > innerPlotSize.h
       ) {
+        //setBarPos(null)
+        hideTooltip()
         return
       }
 
@@ -566,40 +574,43 @@ const GseaPlot = memo(function GseaPlot({
           right = mid - 1
         }
       }
+
       if (left < points.length) {
         nearestEsPoint = points[left]
       }
 
-      const barP = {
-        x: nearestEsPoint.x + settings.plot.margin.left,
-        y: plotP.y + settings.plot.margin.top,
+      if (Math.abs(plotP.x - nearestEsPoint.x) > 5) {
+        hideTooltip()
+        return
       }
 
-      const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
+      const barP = {
+        x: nearestEsPoint.x + settings.plot.margin.left + pos.x,
+        y: plotP.y + settings.plot.margin.top + pos.y,
+      }
+
+      const { relativeP: barScreenP, screenP } = svgPointToScreen(
+        ref.current,
+        barP
+      )
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
 
       setBarPos(barScreenP)
-
-      // const stats = mf?.data(row, col)
-
-      // showTooltip({
-      //   pos: { x: absoluteBlockScreenXY.x + 5, y: absoluteBlockScreenXY.y + 5 },
-      //   content: (
-      //     <>
-      //       <p className="font-semibold">{stats!.sample}</p>
-      //       <p>{stats!.feature}</p>
-      //       <p className="truncate">
-      //         {getEventLabel(stats!, mutationsInUse, 'single')}
-      //       </p>
-      //       <p>{`row: ${row + 1}, col: ${col + 1}`}</p>
-      //     </>
-      //   ),
-      // })
+      showTooltip({
+        pos: { x: screenP.x + 5, y: screenP.y + 5 },
+        content: (
+          <>
+            <strong>{result.es[left].gene}</strong>
+            <span>{`Rank: ${result.es[left].rank.toLocaleString()}`}</span>
+            <span>{`Score: ${result.es[left].score.toFixed(3)}`}</span>
+          </>
+        ),
+      })
     },
-    [top, hideTooltip, settings.plot.margin, points]
+    [pos, plotSize, ref, settings.plot.margin, points, setBarPos]
   )
 
   if (!xax || !yax || !result) {
@@ -666,12 +677,17 @@ const GseaPlot = memo(function GseaPlot({
   const titleX = settings.plot.margin.left + settings.axes.x.length / 2
 
   return (
-    <SvgG pos={pos} id={`plot-${index + 1}`} onMouseMove={onMouseMove}>
+    <SvgG
+      pos={pos}
+      id={`plot-${index + 1}`}
+      onMouseMove={onMouseMove}
+      onMouseLeave={hideTooltip}
+    >
       <rect
         width={plotSize.w}
         height={plotSize.h}
         fill="transparent"
-        stroke="blue"
+        //stroke="blue"
       />
 
       {edbSettings.plots.axes.x.style.title.show && (
@@ -697,30 +713,37 @@ const GseaPlot = memo(function GseaPlot({
   )
 })
 
-interface IBarContext {
-  barPos: IPos | null
-  setBarPos: (pos: IPos | null) => void
+// setBarPos is a stable useState setter, so consumers of this context
+// never re-render when barPos itself changes elsewhere
+const SetBarPosContext = createContext<(pos: IPos | null) => void>(() => {})
+
+function useSetBarPos() {
+  return useContext(SetBarPosContext)
 }
 
-const BarContext = createContext<IBarContext>({
-  barPos: null,
-  setBarPos: () => {},
-})
-
-function useBarContext() {
-  const ctx = useContext(BarContext)
-  if (!ctx) {
-    throw new Error('useBarContext must be used within a BarContext.Provider')
-  }
-  return ctx
-}
-
-function BarContextProvider({ children }: { children: ReactNode }) {
+// isolates the fast-changing crosshair position so mousemove only
+// re-renders this small overlay, not every GseaPlot in the grid
+function CrosshairProvider({ children }: { children: ReactNode }) {
   const [barPos, setBarPos] = useState<IPos | null>(null)
+
   return (
-    <BarContext.Provider value={{ barPos, setBarPos }}>
+    <SetBarPosContext.Provider value={setBarPos}>
       {children}
-    </BarContext.Provider>
+
+      {barPos && (
+        <>
+          <span
+            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
+            style={{ left: `${barPos.x}px` }}
+          ></span>
+
+          <span
+            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
+            style={{ top: `${barPos.y - 1}px` }}
+          ></span>
+        </>
+      )}
+    </SetBarPosContext.Provider>
   )
 }
 
@@ -735,28 +758,56 @@ function BarContextProvider({ children }: { children: ReactNode }) {
 function GseaSvgContent() {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
-  const { barPos } = useBarContext()
 
   const { pathways } = useGseaPlot()
 
+  // stable across renders so GseaPlot's memo() isn't defeated by
+  // fresh object literals on every GseaSvgContent render
+  const innerPlotSize = useMemo(
+    () => ({
+      w: settings.axes.x.length,
+      h:
+        settings.es.axes.y.length +
+        (settings.genes.show
+          ? settings.plot.gap.y + settings.genes.height
+          : 0) +
+        (settings.ranking.show
+          ? settings.plot.gap.y + settings.ranking.axes.y.length
+          : 0),
+    }),
+    [
+      settings.axes.x.length,
+      settings.es.axes.y.length,
+      settings.genes.show,
+      settings.genes.height,
+      settings.ranking.show,
+      settings.ranking.axes.y.length,
+      settings.plot.gap.y,
+    ]
+  )
+
+  const plotSize = useMemo(
+    () => ({
+      w:
+        innerPlotSize.w +
+        settings.plot.margin.left +
+        settings.plot.margin.right,
+      h:
+        innerPlotSize.h +
+        settings.plot.margin.top +
+        settings.plot.margin.bottom,
+    }),
+    [
+      innerPlotSize,
+      settings.plot.margin.left,
+      settings.plot.margin.right,
+      settings.plot.margin.top,
+      settings.plot.margin.bottom,
+    ]
+  )
+
   if (pathways.length === 0) {
     return null
-  }
-
-  // size of plot with padding
-  const innerPlotSize = {
-    w: settings.axes.x.length,
-    h:
-      settings.es.axes.y.length +
-      (settings.genes.show ? settings.plot.gap.y + settings.genes.height : 0) +
-      (settings.ranking.show
-        ? settings.plot.gap.y + settings.ranking.axes.y.length
-        : 0),
-  }
-
-  const plotSize = {
-    w: innerPlotSize.w + settings.plot.margin.left + settings.plot.margin.right,
-    h: innerPlotSize.h + settings.plot.margin.top + settings.plot.margin.bottom,
   }
 
   const rows = Math.ceil(pathways.length / settings.page.columns)
@@ -774,51 +825,27 @@ function GseaSvgContent() {
         col={col}
         plotSize={plotSize}
         innerPlotSize={innerPlotSize}
-        pos={{ x: col * plotSize.w, y: row * plotSize.h }}
       />
     )
   })
 
   return (
-    <>
-      <SvgBase
-        scale={edbSettings.plots.scale}
-        width={pageSize[0]!}
-        height={pageSize[1]!}
-        //shapeRendering={SVG_CRISP_EDGES}
-        //className="absolute"
-      >
-        {svgPlots}
-      </SvgBase>
-      {barPos && (
-        <>
-          <span
-            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
-            style={{
-              left: `${barPos.x}px`,
-
-              //height: (gridHeight + top - 10) * displayProps.scale,
-            }}
-          ></span>
-
-          <span
-            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
-            style={{
-              top: `${barPos.y - 1}px`,
-
-              //width: (gridWidth + top - 10) * displayProps.scale,
-            }}
-          ></span>
-        </>
-      )}
-    </>
+    <SvgBase
+      scale={edbSettings.plots.scale}
+      width={pageSize[0]!}
+      height={pageSize[1]!}
+      //shapeRendering={SVG_CRISP_EDGES}
+      //className="absolute"
+    >
+      {svgPlots}
+    </SvgBase>
   )
 }
 
 export function GseaSvg() {
   return (
-    <BarContextProvider>
+    <CrosshairProvider>
       <GseaSvgContent />
-    </BarContextProvider>
+    </CrosshairProvider>
   )
 }

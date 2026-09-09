@@ -47,11 +47,6 @@ export function PileupPlotSvg() {
 
   const { ref } = useSVG()
 
-  const scaledBlockSize = {
-    w: BASE_W * settings.scale,
-    h: BASE_H * settings.scale,
-  }
-
   // turn cmap into a map from token to color for easier access in getColor
   const cmap: Record<string, string> = Object.fromEntries(
     settings.variants.cmap.colors.map((c) => [c.name, c.color])
