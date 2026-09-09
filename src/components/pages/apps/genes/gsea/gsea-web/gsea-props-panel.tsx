@@ -15,7 +15,7 @@ import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { IGseaGeneSet } from '../gsea-plot/gsea-plot-store'
+import { IGseaGeneSet } from '../gsea-plot/gsea-store'
 import { useGsea } from './gsea-web-store'
 
 function PlotItem({ report, index }: { report: IGseaGeneSet; index: number }) {

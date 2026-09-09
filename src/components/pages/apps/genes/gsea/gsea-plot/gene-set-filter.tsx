@@ -9,8 +9,8 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
 import { ListFilter } from 'lucide-react'
 import { useState } from 'react'
-import { useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
+import { useGsea } from './gsea-store'
 
 export function GeneSetFilter() {
   const { settings, updateSettings } = useGseaSettings()

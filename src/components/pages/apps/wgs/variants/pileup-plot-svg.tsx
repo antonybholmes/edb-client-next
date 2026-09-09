@@ -139,17 +139,17 @@ export function PileupPlotSvg() {
   const motifOffset = settings.motifs.show ? 60 : 0
 
   function handleVariantEnter(v: IVariant, x: number, h: number) {
-    const pos = svgPointToScreen(ref.current, {
+    const { screenP } = svgPointToScreen(ref.current, {
       x: MARGIN.left + x,
       y: MARGIN.top + BASE_H - HALF_BASE_H + h + motifOffset,
     })
 
-    if (!pos) {
+    if (!screenP) {
       return
     }
 
     showTooltip({
-      pos,
+      pos: screenP,
       content: (
         <>
           <p className="font-semibold">

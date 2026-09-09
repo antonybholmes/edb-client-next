@@ -17,7 +17,7 @@ import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
-import { IGseaBubble } from '../gsea-plot-store'
+import { IGseaBubble } from '../gsea-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 export interface IGseaBubblePlot extends IBasePlot, IGseaBubble {

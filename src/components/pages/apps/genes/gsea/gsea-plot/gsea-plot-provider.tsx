@@ -3,8 +3,8 @@ import { createContext, useContext, useEffect, useMemo } from 'react'
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IChildrenProps } from '@/interfaces/children-props'
-import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
+import { IGseaGeneRankScore, IGseaGeneSet, useGseaInUse } from './gsea-store'
 
 type GseaPlotContext = {
   pathways: IGseaGeneSet[]
@@ -25,7 +25,7 @@ export function useGseaPlot() {
 export function GseaPlotProvider({ children }: IChildrenProps) {
   const { settings } = useGseaSettings()
   const { addAxes } = useAxes()
-  const { rankedGenes, inUseReports, resultsMap } = useGsea()
+  const { rankedGenes, inUseReports, resultsMap } = useGseaInUse()
 
   // keep only pathways for which we have results, i.e. with
   // suitable q values. If q == 1, unlikely GSEA generated it

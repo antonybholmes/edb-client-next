@@ -153,13 +153,13 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
   function handleVariantEnter(pos: IPos, cell: ICell) {
     //console.log('handleVariantEnter', pos, cell)
-    const screen = svgPointToScreen(ref.current, pos)
+    const { screenP } = svgPointToScreen(ref.current, pos)
 
-    screen.x += blockSize.w + 2
-    screen.y += blockSize.h + 2
+    screenP.x += blockSize.w + 2
+    screenP.y += blockSize.h + 2
 
     showTooltip({
-      pos: screen,
+      pos: screenP,
       content: (
         <>
           <span className="font-semibold">{`${dfMain.rowName(

@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Render speedups to oncoplot and gsea plot by memoing more functions and narrowing store scopes.
 - Added ability to add axes menu to gsea plots.
 - Axis controls now support using ranges for specifying ticks and tick labels.
 - Motifs now fully supports new axis system. Letter position rendering now uses axis rather than fixed sizes.

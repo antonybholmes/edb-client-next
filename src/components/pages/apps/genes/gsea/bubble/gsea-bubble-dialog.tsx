@@ -16,7 +16,7 @@ import {
   getGseaLog10q,
   IGseaBubble,
   IGseaGeneSet,
-} from '../gsea-plot/gsea-plot-store'
+} from '../gsea-plot/gsea-store'
 
 const MAX_COLS = 10
 

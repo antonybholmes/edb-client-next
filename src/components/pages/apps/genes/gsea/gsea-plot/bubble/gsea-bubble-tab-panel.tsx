@@ -1,7 +1,7 @@
 import { makeUuid } from '@/lib/id'
 import { textJoin } from '@/lib/text/text'
 import { useEffect } from 'react'
-import { IGseaBubble, useGsea } from '../gsea-plot-store'
+import { IGseaBubble, useGsea } from '../gsea-store'
 import { useGseaBubbleContext } from './gsea-bubble-provider'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import { GseaBubblePlotSvg } from './gsea-bubble-svg'

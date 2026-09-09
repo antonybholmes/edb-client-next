@@ -15,8 +15,8 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import { useGsea } from '../gsea-plot-store'
 import { useGseaSettings } from '../gsea-settings-store'
+import { useGsea } from '../gsea-store'
 
 export function HomeToolbar() {
   const { settings, updateSettings } = useGseaSettings()

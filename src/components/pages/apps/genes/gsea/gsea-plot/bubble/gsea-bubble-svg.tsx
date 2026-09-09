@@ -23,7 +23,7 @@ import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
-import { IGseaBubble } from '../gsea-plot-store'
+import { IGseaBubble } from '../gsea-store'
 import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
 
 const TOOLTIP_OFFSET = 10
@@ -300,7 +300,7 @@ export function GseaBubblePlotSvg() {
   const { showTooltip, hideTooltip } = useTooltip()
 
   function handleVariantEnter(plot: IGseaBubble, row: number, p: IPos) {
-    const screenP = svgPointToScreen(svgRef.current, p)
+    const { screenP } = svgPointToScreen(svgRef.current, p)
 
     const newP = {
       x: screenP.x,

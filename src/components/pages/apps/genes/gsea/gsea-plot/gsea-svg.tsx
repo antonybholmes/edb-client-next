@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { memo } from 'react'
 
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -11,7 +11,7 @@ import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useAxes, useAxis } from '@/components/plot/axes/axes-store'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
@@ -20,8 +20,148 @@ import {
 import { SvgText } from '@/components/plot/svg-text'
 import { useSVG } from '@/providers/svg-provider'
 import { useGseaPlot } from './gsea-plot-provider'
-import { IGseaGeneRankScore, IGseaGeneSet, useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
+import { IGseaGeneRankScore, IGseaGeneSet, useGseaData } from './gsea-store'
+
+const GseaPlot = memo(function GseaPlot({
+  pathway,
+  index,
+}: {
+  pathway: IGseaGeneSet
+  index: number
+}) {
+  const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
+  const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
+
+  const { axis: xax } = useAxis({
+    plotId: pathway.id,
+    groupId: 'es',
+    axisId: 'x',
+  })
+  const { axis: yax } = useAxis({
+    plotId: pathway.id,
+    groupId: 'es',
+    axisId: 'y',
+  })
+
+  if (!xax || !yax || !result) {
+    return null
+  }
+
+  const plotSize = [
+    settings.axes.x.length,
+    settings.es.axes.y.length +
+      (settings.genes.show ? settings.plot.gap.y + settings.genes.height : 0) +
+      (settings.ranking.show
+        ? settings.plot.gap.y + settings.ranking.axes.y.length
+        : 0),
+  ]
+
+  const maxRank = rankedGenes.length - 1
+  const sortedRankedGenes: IGseaGeneRankScore[] = settings.phenotypes.invert
+    ? rankedGenes
+        .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+        .sort((a, b) => a.rank - b.rank)
+    : rankedGenes
+  const es = settings.phenotypes.invert
+    ? result.es
+        .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+        .sort((a, b) => a.rank - b.rank)
+    : result.es
+  const xaf = axisDomainToRangeFunc(xax)
+  const yaf = axisDomainToRangeFunc(yax)
+  const points: IPos[] = es.map((e) => ({
+    x: xaf(e.rank),
+    y: yaf(e.score),
+  }))
+  const [x0, x1] = axisDomainToRange(xax, [0, maxRank])
+  let plotY = 0
+  const esSvg = settings.es.show ? (
+    <EsSvg
+      pathway={pathway}
+      sortedRankedGenes={sortedRankedGenes}
+      es={es}
+      maxRank={maxRank}
+      x0={x0}
+      x1={x1}
+      points={points}
+      xax={xax}
+      yax={yax}
+      phenotypes={phenotypes}
+    />
+  ) : null
+
+  if (settings.es.show) {
+    plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
+  }
+
+  const crossIndex =
+    sortedRankedGenes.findLastIndex((gene) => gene.score > 0) + 1
+  const crossing = {
+    index: crossIndex,
+    x: axisDomainToRange(xax, [crossIndex])[0],
+  }
+  const genesSvg = settings.genes.show ? (
+    <GenesSvg
+      xax={xax}
+      points={points}
+      es={es}
+      sortedRankedGenes={sortedRankedGenes}
+      crossing={crossing}
+      pos={{ x: 0, y: plotY }}
+    />
+  ) : null
+
+  if (settings.genes.show) {
+    plotY += settings.genes.height + settings.plot.gap.y
+  }
+
+  const rankingSvg = settings.ranking.show ? (
+    <RankingSvg
+      xax={xax}
+      pathway={pathway}
+      sortedRankedGenes={sortedRankedGenes}
+      x0={x0}
+      x1={x1}
+      crossing={crossing}
+      pos={{ x: 0, y: plotY }}
+    />
+  ) : null
+  const col = index % settings.page.columns
+  const row = Math.floor(index / settings.page.columns)
+  const x =
+    col *
+    (plotSize[0]! + settings.plot.margin.left + settings.plot.margin.right)
+  const y =
+    row *
+    (plotSize[1]! + settings.plot.margin.top + settings.plot.margin.bottom)
+  const titleX = settings.plot.margin.left + settings.axes.x.length / 2
+
+  return (
+    <g transform={`translate(${x}, ${y})`} id={`plot-${index + 1}`}>
+      {edbSettings.plots.axes.x.style.title.show && (
+        <SvgText
+          id={`title-${index + 1}`}
+          font={edbSettings.plots.axes.x.style.title}
+          textAnchor="middle"
+          x={titleX}
+          y={
+            settings.plot.margin.top -
+            edbSettings.plots.axes.x.style.title.offset * 0.5
+          }
+        >
+          {pathway.name}
+        </SvgText>
+      )}
+      <SvgMargin margin={settings.plot.margin}>
+        {esSvg}
+        {genesSvg}
+        {rankingSvg}
+      </SvgMargin>
+    </g>
+  )
+})
 
 /**
  * Create SVG for GSEA plot. We create separate SVG for each plot and then combine them in the main SVG.
@@ -36,11 +176,9 @@ export function GseaSvg() {
   const { settings: edbSettings } = useEdbSettings()
   const { ref } = useSVG()
 
-  const { rankedGenes, resultsMap } = useGsea()
   const { pathways } = useGseaPlot()
-  const { plots } = useAxes()
 
-  if (!plots || Object.keys(plots).length === 0) {
+  if (pathways.length === 0) {
     return null
   }
 
@@ -55,7 +193,6 @@ export function GseaSvg() {
   ]
 
   const rows = Math.ceil(pathways.flat().length / settings.page.columns)
-
   const pageSize = [
     (plotSize[0]! + settings.plot.margin.left + settings.plot.margin.right) *
       settings.page.columns,
@@ -63,191 +200,9 @@ export function GseaSvg() {
       rows,
   ]
 
-  let ploti = 0
-
-  const svgPlots = pathways.map((pathway) => {
-    const plot = plots[pathway.id]
-
-    if (!plot) {
-      return null
-    }
-
-    const col = ploti % settings.page.columns
-    const row = Math.floor(ploti / settings.page.columns)
-    const x =
-      col *
-      (plotSize[0]! + settings.plot.margin.left + settings.plot.margin.right)
-    const y =
-      row *
-      (plotSize[1]! + settings.plot.margin.top + settings.plot.margin.bottom)
-
-    //console.log('pathway', pathway)
-
-    const results = resultsMap[pathway.name]!
-
-    // ranks are 0-based in the results files
-    const maxRank = rankedGenes.length - 1
-
-    const sortedRankedGenes: IGseaGeneRankScore[] = settings.phenotypes.invert
-      ? rankedGenes
-          .map((e) => ({
-            ...e,
-            rank: maxRank - e.rank,
-            score: -e.score,
-          }))
-          .sort((a, b) => a.rank - b.rank)
-      : rankedGenes
-
-    let xax = plots[pathway.id].groups['es'].axes['x']
-
-    //xax = xax.setTicks(xax.ticks.slice(1))
-
-    const es = settings.phenotypes.invert
-      ? results.es
-          .map((e) => ({
-            ...e,
-            rank: maxRank - e.rank,
-            score: -e.score,
-          }))
-          .sort((a, b) => a.rank - b.rank)
-      : results.es
-
-    // const ylim: [number, number] = [
-    //   Math.min(...es.map((e) => e.score)),
-    //   Math.max(...es.map((e) => e.score)),
-    // ]
-
-    // let yax = setAxisTickParams(
-    //   setAxisLength(
-    //     autoAxisDomain(setAxisDirection(createAxis(), 'y'), ylim),
-    //     settings.es.axes.y.length
-    //   ),
-    //   { which: 'minor', show: false }
-    // )
-
-    let yax = plots[pathway.id].groups['es'].axes['y']
-
-    const xaf = axisDomainToRangeFunc(xax)
-    const yaf = axisDomainToRangeFunc(yax)
-    const points: IPos[] = es.map((e) => ({
-      x: xaf(e.rank),
-      y: yaf(e.score),
-    }))
-
-    // Some commonly used points on the graph. We calculate them here to
-    // avoid repeating the calculations in each plot component
-    // and to ensure consistency across plots.
-
-    const [x0, x1] = axisDomainToRange(xax, [0, maxRank])
-
-    let esSvg: ReactNode | null = null
-
-    let plotY: number = 0
-
-    if (settings.es.show) {
-      esSvg = (
-        <EsSvg
-          pathway={pathway}
-          sortedRankedGenes={sortedRankedGenes}
-          es={es}
-          maxRank={maxRank}
-          x0={x0}
-          x1={x1}
-          points={points}
-          xax={xax}
-          yax={yax}
-        />
-      )
-
-      plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
-    }
-
-    const crossIndex =
-      sortedRankedGenes.findLastIndex((gene) => gene.score > 0) + 1
-
-    //const crossingX = xax.domainToRange(crossIndex)
-    const crossing = {
-      index: crossIndex,
-      x: axisDomainToRange(xax, [crossIndex])[0],
-    }
-
-    let genesSvg: ReactNode | null = null
-
-    if (settings.genes.show) {
-      genesSvg = (
-        <GenesSvg
-          xax={xax}
-          points={points}
-          es={es}
-          sortedRankedGenes={sortedRankedGenes}
-
-          crossing={crossing}
-
-          pos={{ x: 0, y: plotY }}
-        />
-      )
-
-      plotY += settings.genes.height + settings.plot.gap.y
-    }
-
-    // ranking
-    let rankingSvg: ReactNode | null = settings.ranking.show ? (
-      <RankingSvg
-        xax={xax}
-        pathway={pathway}
-        sortedRankedGenes={sortedRankedGenes}
-        x0={x0}
-        x1={x1}
-        crossing={crossing}
-
-        pos={{ x: 0, y: plotY }}
-      />
-    ) : null
-
-    ploti++
-
-    // let titleX = settings.plot.margin.left
-
-    // switch (edbSettings.plots.axes.x.title.textAnchor) {
-    //   case 'middle':
-    //     titleX = settings.plot.margin.left + settings.axes.x.length / 2
-    //     break
-    //   case 'end':
-    //     titleX = settings.plot.margin.left + settings.axes.x.length
-    //     break
-    //   default:
-    //     titleX = settings.plot.margin.left
-    // }
-
-    const titleX = settings.plot.margin.left + settings.axes.x.length / 2
-
-    return (
-      <g transform={`translate(${x}, ${y})`} key={ploti} id={`plot-${ploti}`}>
-        {edbSettings.plots.axes.x.style.title.show && (
-          <SvgText
-            id={`title-${ploti}`}
-            font={edbSettings.plots.axes.x.style.title}
-            textAnchor="middle"
-            x={titleX}
-            y={
-              settings.plot.margin.top -
-              edbSettings.plots.axes.x.style.title.offset * 0.5
-            }
-          >
-            {pathway.name}
-          </SvgText>
-        )}
-
-        <SvgMargin margin={settings.plot.margin}>
-          {esSvg}
-
-          {genesSvg && genesSvg}
-
-          {rankingSvg && rankingSvg}
-        </SvgMargin>
-      </g>
-    )
-  })
+  const svgPlots = pathways.map((pathway, index) => (
+    <GseaPlot key={pathway.id} pathway={pathway} index={index} />
+  ))
 
   return (
     <SvgBase
@@ -304,6 +259,7 @@ function EsSvg({
   x1,
   xax,
   yax,
+  phenotypes,
 }: {
   pathway: IGseaGeneSet
   es: IGseaGeneRankScore[]
@@ -314,10 +270,10 @@ function EsSvg({
   x1: number
   xax: IAxis
   yax: IAxis
+  phenotypes: string[]
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
-  const { phenotypes } = useGsea()
   const nes = settings.phenotypes.invert ? -pathway.nes : pathway.nes
 
   const sortedPhenotypes = settings.phenotypes.invert

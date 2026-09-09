@@ -51,21 +51,21 @@
     "name": "GSEA Bubble Plot",
     "description": "GSEA bubble plots.",
     "color": "#4169E1",
-    "version": "1.2.0",
+    "version": "1.2.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-08T02:23:27.366Z",
-    "hash": "09a82d5f52a3b2594dd5f1fd2432860243ec8b9cee046a1e3ed7b20bf787b734",
-    "build": 58
+    "modified": "2026-09-09T14:41:32.978Z",
+    "hash": "ea8dcaa5e6fff80dbc796e96a281e32eef56202980d71d99e2b6ec195f12a7b1",
+    "build": 60
   },
   {
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "23.4.0",
+    "version": "23.4.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-08T22:48:58.796Z",
-    "hash": "a7c7a1aa53a7a88f998126edd0d7f080ee6d86f72877304b0da3c14b983c7d07",
-    "build": 928
+    "modified": "2026-09-09T14:41:32.979Z",
+    "hash": "b4a5aeb44582c9a72896d59523879e5bec9503c833512decd7694e788a681b9d",
+    "build": 930
   },
   {
     "name": "GSEA Web",
@@ -73,9 +73,9 @@
     "color": "#4169E1",
     "version": "3.4.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-08T22:48:58.797Z",
-    "hash": "4b8fca662073bd436ab25e354943baa24a7a45b7e204a603d4e70da526c55e27",
-    "build": 116
+    "modified": "2026-09-09T14:41:32.979Z",
+    "hash": "ca673048adf2c1c878f425bc55364a4b10a1acb924a27455e8883e05ded434da",
+    "build": 118
   },
   {
     "name": "History Viewer",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "50.4.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-08T02:23:27.380Z",
-    "hash": "7ef1b05e25094ac814e68b23b93bef9ecb6fc60b9fa0e12906e1c13649a7180d",
-    "build": 2030
+    "modified": "2026-09-09T14:41:32.983Z",
+    "hash": "a723c9768a51b6a7ac1a990eb61093127ef06e49f32fa92eb70306714e63a2e4",
+    "build": 2032
   },
   {
     "name": "Motifs",
@@ -141,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-09T03:36:01.275Z",
-    "hash": "b99baed81d2cab9092a64407239df7432dd61ce5911cd338f38941c0326df1d6",
-    "build": 1134
+    "modified": "2026-09-09T14:41:32.984Z",
+    "hash": "ab6476aa1359ee83996885e19b8ef77f2e901aa8aedc91dfeed02f9ba993da9f",
+    "build": 1136
   },
   {
     "name": "Overlap",
@@ -230,9 +230,9 @@
     "color": "#FA8072",
     "version": "26.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-02T15:22:13.204Z",
-    "hash": "8a91d69f711205e98c1460beda62d1ad72fceddd9797827429cf9e56c5d23f93",
-    "build": 1036
+    "modified": "2026-09-09T14:41:32.984Z",
+    "hash": "6f499d9e329a58074d1ce78b26e68390da4b5e1a394a477dea88131f39cf0b8a",
+    "build": 1038
   },
   {
     "name": "Venn",

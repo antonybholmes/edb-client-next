@@ -14,7 +14,7 @@ import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { GeneSetFilter } from './gene-set-filter'
-import { useGsea, type IGseaGeneSet } from './gsea-plot-store'
+import { useGsea, type IGseaGeneSet } from './gsea-store'
 
 function GseaReportItem({
   index,

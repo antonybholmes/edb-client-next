@@ -9,7 +9,7 @@ import {
   IGseaGeneRankScore,
   IGseaGeneSet,
   IGseaResult,
-} from '../gsea-plot/gsea-plot-store'
+} from '../gsea-plot/gsea-store'
 
 export interface IGseaWebStore {
   phenotypes: string[]

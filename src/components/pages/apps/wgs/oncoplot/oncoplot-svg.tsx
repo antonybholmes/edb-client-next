@@ -7,7 +7,6 @@ import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
-import { BaseCol } from '@/components/layout/base-col'
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -660,7 +659,7 @@ export function OncoplotSvg() {
 
   const { showTooltip, hideTooltip: hideTooltipOrig } = useTooltip()
 
-  const highlightRef = useRef<HTMLSpanElement>(null)
+  //const highlightRef = useRef<HTMLSpanElement>(null)
 
   //const [highlightCol, setHighlightCol] = useState(NO_SELECTION)
   //const [highlightRow, setHighlightRow] = useState(-1)
@@ -776,7 +775,7 @@ export function OncoplotSvg() {
         col = -1
       }
 
-      console.log('svgPoint', svgPoint, row, col, blockSize)
+      //console.log('svgPoint', svgPoint, row, col, blockSize)
 
       if (row === -1 || col === -1) {
         hideTooltip()
@@ -789,8 +788,6 @@ export function OncoplotSvg() {
       }
 
       lastCellRef.current = { r: row, c: col }
-
-      console.log('xxxxxxxxxxxx', col * blockSpaceSize.w + blockSize.w / 2)
 
       const blockXYMid = {
         x: col * blockSpaceSize.w + blockSize.w / 2 + marginLeft,
@@ -806,17 +803,15 @@ export function OncoplotSvg() {
         clearTimeout(timeoutRef.current)
       }
 
-      const blockScreenXY = svgPointToScreen(ref.current, blockXYMid)
-
-      console.log('vb', blockXYMid)
-      console.log('blockScreenXY', blockScreenXY)
+      const { screenP: absoluteBlockScreenXY, relativeP: blockScreenXY } =
+        svgPointToScreen(ref.current, blockXYMid)
 
       setBarPos(blockScreenXY)
 
       const stats = mf?.data(row, col)
 
       showTooltip({
-        pos: { x: e.pageX + 5, y: e.pageY + 5 },
+        pos: { x: absoluteBlockScreenXY.x + 5, y: absoluteBlockScreenXY.y + 5 },
         content: (
           <>
             <p className="font-semibold">{stats!.sample}</p>
@@ -1035,22 +1030,30 @@ export function OncoplotSvg() {
   )
 
   return (
-    <BaseCol className="relative">
+    <>
       {svgElem}
 
       {barPos && (
-        <span
-          ref={highlightRef}
-          className="absolute z-50 border-black pointer-events-none"
-          style={{
-            top: 10,
-            left: `${barPos.x - 1}px`,
-            width: `${scaledBlockSize.w + 1}px`,
-            height: (gridHeight + top - 10) * displayProps.scale,
-            borderWidth: `${Math.max(1, displayProps.scale)}px`,
-          }}
-        />
+        <>
+          <span
+            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
+            style={{
+              left: `${barPos.x}px`,
+
+              //height: (gridHeight + top - 10) * displayProps.scale,
+            }}
+          ></span>
+
+          <span
+            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
+            style={{
+              top: `${barPos.y - 1}px`,
+
+              //width: (gridWidth + top - 10) * displayProps.scale,
+            }}
+          ></span>
+        </>
       )}
-    </BaseCol>
+    </>
   )
 }

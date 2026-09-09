@@ -283,7 +283,7 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   }
 
   function handleVariantEnter(row: number, p: IPos) {
-    const screenP = svgPointToScreen(svgRef.current, p)
+    const { screenP } = svgPointToScreen(svgRef.current, p)
 
     showTooltip({
       pos: screenP,
