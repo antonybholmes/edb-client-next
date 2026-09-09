@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { axisLength } from '@/components/plot/axes/axis'
@@ -6,7 +6,6 @@ import { SvgG } from '@/components/plot/svg-g'
 import { locStr } from '@/lib/genomic/genomic'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
-  MouseEventProvider,
   useLocation,
   useMouseEvent,
   type IPeakTrack,
@@ -34,9 +33,7 @@ export function TracksColumnSvg() {
   const { settings: edbSettings } = useEdbSettings()
   const { pos: mousePos } = useMouseEvent()
 
-  const [colMousePos, setColMousePos] = useState({ x: -1, y: -1 })
-
-  const tracks = groups.map((g) => g.tracks)
+  const tracks = useMemo(() => groups.map((g) => g.tracks), [groups])
 
   const titleHeightUsingPosition =
     settings.titles.position === 'top' ? settings.titles.height : 0
@@ -100,7 +97,7 @@ export function TracksColumnSvg() {
   //   return { trackHeights, trackY }
   // }, [tracks, geneYMap, settings, titleHeightUsingPosition])
 
-  useEffect(() => {
+  const colMousePos = useMemo(() => {
     let x = mousePos.x - pos.x
 
     if (x < 0 || x > xl) {
@@ -113,94 +110,101 @@ export function TracksColumnSvg() {
       y = -1
     }
 
-    setColMousePos({ x, y })
+    return { x, y }
   }, [mousePos.x, mousePos.y, pos.x, pos.y, xl, height])
+
+  const mouseEventValue = useMemo(() => ({ pos: colMousePos }), [colMousePos])
+
+  const trackSvg = useMemo(
+    () =>
+      tracks.map((ts, ti) => {
+        let plotSvg: ReactNode = <text>{ts[0]!.type} not implemented</text>
+        switch (ts[0]!.type) {
+          case 'Seq':
+          case 'BigWig':
+          case 'RemoteBigWig':
+          case 'LocalBigWig':
+            plotSvg = (
+              <SeqTrackSvg
+                tracks={ts as ISeqDBTrack[]}
+                titleHeight={titleHeightUsingPosition}
+                key={ti}
+                scale={ts[0]!.type === 'BigWig' ? ts[0]!.scale : 'Count'}
+                pos={{ x: pos.x, y: pos.y + trackY[ti]! }}
+              />
+            )
+            break
+          case 'BED':
+          case 'BigBed':
+          case 'RemoteBigBed':
+          case 'LocalBigBed':
+          case 'LocalBED':
+            plotSvg = (
+              <BedTrackSvg
+                key={ti}
+                tracks={ts as IPeakTrack[]}
+                titleHeight={titleHeightUsingPosition}
+              />
+            )
+            break
+
+          case 'Gene':
+            plotSvg = (
+              <GenesTrackSvg
+                key={ti}
+                track={ts[0]!}
+                titleHeight={titleHeightUsingPosition}
+                geneYMap={geneYMap}
+              />
+            )
+            break
+          case 'Location':
+            plotSvg = <LocationTrackSvg key={ti} track={ts[0]!} xax={xax} />
+            break
+          case 'Scale':
+            plotSvg = (
+              <ScaleTrackSvg
+                genome={edbSettings.genomic.assembly}
+                key={ti}
+                track={ts[0]!}
+              />
+            )
+            break
+          case 'Ruler':
+            plotSvg = <RulerTrackSvg key={ti} track={ts[0]!} xax={xax} />
+            break
+          case 'Cytobands':
+            plotSvg = <CytobandsTrackSvg key={ti} track={ts[0]!} />
+            break
+          default:
+            break
+        }
+
+        return (
+          <SvgG pos={{ x: 0, y: trackY[ti]! }} key={ts[0]!.id}>
+            {plotSvg}
+          </SvgG>
+        )
+      }),
+    [
+      tracks,
+      titleHeightUsingPosition,
+      geneYMap,
+      xax,
+      edbSettings.genomic.assembly,
+      trackY,
+    ]
+  )
 
   if (trackY.length === 0) {
     return null
   }
 
   return (
-    <MouseEventProvider value={{ pos: colMousePos }}>
-      <SvgG id={`track-col-${locStr(location)}`} pos={pos}>
-        {tracks.map((ts, ti) => {
-          let plotSvg: ReactNode = <text>{ts[0]!.type} not implemented</text>
-          switch (ts[0]!.type) {
-            case 'Seq':
-            case 'BigWig':
-            case 'RemoteBigWig':
-            case 'LocalBigWig':
-              plotSvg = (
-                <SeqTrackSvg
-                  tracks={ts as ISeqDBTrack[]}
-                  titleHeight={titleHeightUsingPosition}
-                  key={ti}
-                  scale={ts[0]!.type === 'BigWig' ? ts[0]!.scale : 'Count'}
-                />
-              )
-              break
-            case 'BED':
-            case 'BigBed':
-            case 'RemoteBigBed':
-            case 'LocalBigBed':
-            case 'LocalBED':
-              plotSvg = (
-                <BedTrackSvg
-                  key={ti}
-                  tracks={ts as IPeakTrack[]}
-                  titleHeight={titleHeightUsingPosition}
-                />
-              )
-              break
-
-            case 'Gene':
-              plotSvg = (
-                <GenesTrackSvg
-                  key={ti}
-                  track={ts[0]!}
-                  titleHeight={titleHeightUsingPosition}
-                  geneYMap={geneYMap}
-                />
-              )
-              break
-            case 'Location':
-              plotSvg = <LocationTrackSvg key={ti} track={ts[0]!} xax={xax} />
-              break
-            case 'Scale':
-              plotSvg = (
-                <ScaleTrackSvg
-                  genome={edbSettings.genomic.assembly}
-                  key={ti}
-                  track={ts[0]!}
-                />
-              )
-              break
-            case 'Ruler':
-              plotSvg = <RulerTrackSvg key={ti} track={ts[0]!} xax={xax} />
-              break
-            case 'Cytobands':
-              plotSvg = <CytobandsTrackSvg key={ti} track={ts[0]!} />
-              break
-            default:
-              break
-          }
-
-          return (
-            <SvgG pos={{ x: 0, y: trackY[ti]! }} key={ts[0]!.id}>
-              {/* <rect width={xax.width} height={trackHeights[ti]} stroke='black' fill='none'/> */}
-
-              {/* <rect
-              width={xax.length}
-              height={trackHeights[trackHeights.length - 1]!}
-              fill="red"
-            
-            /> */}
-
-              {plotSvg}
-            </SvgG>
-          )
-        })}
-      </SvgG>
-    </MouseEventProvider>
+    // <MouseEventProvider value={mouseEventValue}>
+    <SvgG id={`track-col-${locStr(location)}`} pos={pos}>
+      {trackSvg}
+    </SvgG>
+    //  </MouseEventProvider>
   )
 }

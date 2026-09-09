@@ -9,13 +9,14 @@ import {
   type BaseSeqReader,
 } from '../readers/seq/base-seq-reader'
 
+import { IPos } from '@/interfaces/pos'
 import { SeqReader } from '../readers/seq/seq-reader'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
   getYMax,
   MIN_Y,
   useLocation,
-  type SignalTrack,
+  type ISignalTrack,
 } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 import { BaseSeqTrackSvg, type ISeqPos } from './base-seq-track-svg'
@@ -24,12 +25,18 @@ interface IProps extends IDivProps {
   // we can overlay multiple tracks on the same plot,
   // for example a signal track and a gene annotation track,
   // therefore we need to pass in an array
-  tracks: SignalTrack[]
+  tracks: ISignalTrack[]
   scale?: string
   titleHeight: number
+  pos: IPos
 }
 
-export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
+export function SeqTrackSvg({
+  tracks,
+  scale = 'Count',
+  titleHeight,
+  pos,
+}: IProps) {
   const { xax, location, binSize, seqSearchResult } = useLocation()
 
   const { globalY } = useTracks()
@@ -38,7 +45,7 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
 
   const [coreTracks, setCoreTracks] = useState<
     {
-      track: SignalTrack
+      track: ISignalTrack
       positions: ISeqPos[]
     }[]
   >([])
@@ -59,8 +66,6 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
         updateYMax(globalY!)
       } else {
         if (tracks[0]!.displayOptions.autoY) {
-          //ymax = getYMax(tracks, [locTrackBins], settings.tracks.seqs.scale.mode)
-
           updateYMax(
             await getYMax(
               tracks,
@@ -92,8 +97,9 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
     direction: 'y',
     domain: [0, ymax],
     length: tracks[0]!.displayOptions.height,
-    ticks: [0, ymax],
+    //ticks: [0, ymax],
     title: tracks[0]!.type === 'Seq' ? settings.tracks.seqs.scale.mode : scale,
+    tickParams: { which: 'minor', show: false },
   })
 
   //const refPoints: ISeqPos[] = getPoints(yax, tracks[0]!, allBinCounts[0]!)
@@ -101,7 +107,7 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
   useEffect(() => {
     async function getPoints() {
       let coreTracks: {
-        track: SignalTrack
+        track: ISignalTrack
         positions: ISeqPos[]
       }[] = []
 
@@ -172,6 +178,7 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
       xax={xax}
       yax={yax}
       titleHeight={titleHeight}
+      pos={pos}
     />
   )
 }

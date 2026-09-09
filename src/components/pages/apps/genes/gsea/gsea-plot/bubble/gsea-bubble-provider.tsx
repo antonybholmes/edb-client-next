@@ -155,6 +155,8 @@ export function GseaBubbleProvider({
       return []
     }
 
+    const colorMap = getColorMap(settings.scale.cmap)
+
     return _plots.map((plot, pi) => {
       let names = plot.genesets.map((gs) => gs.name)
       let nes = plot.genesets.map((gs) => gs.nes)
@@ -194,12 +196,8 @@ export function GseaBubbleProvider({
         const p = log10pvalues[i]!
         const color =
           settings.scale.mode === 'p'
-            ? getColor(
-                log10pvalues[i]!,
-                settings.scale.p.range,
-                getColorMap(settings.scale.cmap)
-              )
-            : getColor(nes[i]!, globalXLim, getColorMap(settings.scale.cmap))
+            ? getColor(log10pvalues[i]!, settings.scale.p.range, colorMap)
+            : getColor(nes[i]!, globalXLim, colorMap)
 
         return {
           x: score,

@@ -38,6 +38,7 @@ import {
   DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
   DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
   getYMax,
+  ISignalTrack,
   newTrackGroup,
   type IDBTrack,
   type ISeqDBDataTrack,
@@ -365,6 +366,14 @@ export function useTracks() {
     [locations]
   )
 
+  const seqTracks: ISignalTrack[][] = useMemo(
+    () =>
+      groups
+        .map((g) => g.tracks)
+        .filter((t) => SEQ_TRACK_TYPES.has(t[0].type)) as ISignalTrack[][],
+    [groups]
+  )
+
   const { data: locationFeatures = [] } = useQuery({
     queryKey: [
       'gtf',
@@ -557,6 +566,7 @@ export function useTracks() {
     selectedGroups,
     locationFeatures,
     tracks,
+    seqTracks,
     seqSearchResults,
     globalY,
     setLocations,

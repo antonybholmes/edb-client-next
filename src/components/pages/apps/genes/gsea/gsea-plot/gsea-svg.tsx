@@ -1,13 +1,4 @@
-import {
-  createContext,
-  memo,
-  ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { memo, useCallback, useMemo, useRef } from 'react'
 
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -27,9 +18,11 @@ import {
   IAxis,
 } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { useGseaPlot } from './gsea-plot-provider'
@@ -464,9 +457,9 @@ const GseaPlot = memo(function GseaPlot({
   const { settings: edbSettings } = useEdbSettings()
   const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
   const { ref } = useSVG()
-  const setBarPos = useSetBarPos()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
 
-  const { showTooltip, hideTooltip: hideTooltipOrig } = useTooltip()
+  const { showTooltip, hideTooltip } = useTooltip()
 
   const pos = useMemo(
     () => ({ x: col * plotSize.w, y: row * plotSize.h }),
@@ -486,7 +479,6 @@ const GseaPlot = memo(function GseaPlot({
 
   const maxRank = rankedGenes.length - 1
 
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // avoid re-rendering the whole svg tree when the hovered cell hasn't changed
   const lastCellRef = useRef<{ r: number; c: number } | null>(null)
 
@@ -523,17 +515,10 @@ const GseaPlot = memo(function GseaPlot({
     return es.map((e) => ({ x: xaf(e.rank), y: yaf(e.score) }))
   }, [es, xax, yax])
 
-  const hideTooltip = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    // wait before removing. if we re-enter quickly, the tooltip won't flicker
-    // as this timeout will be cancelled so the tooltip won't disappear
-    // and will be moved to next location
-    timeoutRef.current = setTimeout(() => setBarPos(null), 100)
-    hideTooltipOrig()
-  }, [setBarPos])
+  const _hideTooltip = useCallback(() => {
+    hideCrosshair()
+    hideTooltip()
+  }, [hideCrosshair, hideTooltip])
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -558,7 +543,7 @@ const GseaPlot = memo(function GseaPlot({
         plotP.y > innerPlotSize.h
       ) {
         //setBarPos(null)
-        hideTooltip()
+        _hideTooltip()
         return
       }
 
@@ -580,7 +565,7 @@ const GseaPlot = memo(function GseaPlot({
       }
 
       if (Math.abs(plotP.x - nearestEsPoint.x) > 5) {
-        hideTooltip()
+        _hideTooltip()
         return
       }
 
@@ -594,11 +579,7 @@ const GseaPlot = memo(function GseaPlot({
         barP
       )
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-
-      setBarPos(barScreenP)
+      showCrosshair(barScreenP)
       showTooltip({
         pos: { x: screenP.x + 5, y: screenP.y + 5 },
         content: (
@@ -610,7 +591,18 @@ const GseaPlot = memo(function GseaPlot({
         ),
       })
     },
-    [pos, plotSize, ref, settings.plot.margin, points, setBarPos]
+    [
+      pos,
+      ref,
+      settings.plot.margin,
+      points,
+      showCrosshair,
+      hideCrosshair,
+      result,
+      innerPlotSize,
+      showTooltip,
+      hideTooltip,
+    ]
   )
 
   if (!xax || !yax || !result) {
@@ -681,9 +673,10 @@ const GseaPlot = memo(function GseaPlot({
       pos={pos}
       id={`plot-${index + 1}`}
       onMouseMove={onMouseMove}
-      onMouseLeave={hideTooltip}
+      onMouseLeave={_hideTooltip}
     >
-      <rect
+      <SvgRect
+        id="mouse-rect"
         width={plotSize.w}
         height={plotSize.h}
         fill="transparent"
@@ -712,40 +705,6 @@ const GseaPlot = memo(function GseaPlot({
     </SvgG>
   )
 })
-
-// setBarPos is a stable useState setter, so consumers of this context
-// never re-render when barPos itself changes elsewhere
-const SetBarPosContext = createContext<(pos: IPos | null) => void>(() => {})
-
-function useSetBarPos() {
-  return useContext(SetBarPosContext)
-}
-
-// isolates the fast-changing crosshair position so mousemove only
-// re-renders this small overlay, not every GseaPlot in the grid
-function CrosshairProvider({ children }: { children: ReactNode }) {
-  const [barPos, setBarPos] = useState<IPos | null>(null)
-
-  return (
-    <SetBarPosContext.Provider value={setBarPos}>
-      {children}
-
-      {barPos && (
-        <>
-          <span
-            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
-            style={{ left: `${barPos.x}px` }}
-          ></span>
-
-          <span
-            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
-            style={{ top: `${barPos.y - 1}px` }}
-          ></span>
-        </>
-      )}
-    </SetBarPosContext.Provider>
-  )
-}
 
 /**
  * Create SVG for GSEA plot. We create separate SVG for each plot and then combine them in the main SVG.

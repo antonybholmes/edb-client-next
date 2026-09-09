@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 import { AxisBottomSvg } from '../../../../../../plot/axes/svg-axis'
@@ -299,26 +299,33 @@ export function GseaBubblePlotSvg() {
 
   const { showTooltip, hideTooltip } = useTooltip()
 
-  function handleVariantEnter(plot: IGseaBubble, row: number, p: IPos) {
-    const { screenP } = svgPointToScreen(svgRef.current, p)
+  const handleVariantEnter = useCallback(
+    (plot: IGseaBubble, row: number, p: IPos) => {
+      const { screenP } = svgPointToScreen(svgRef.current, p)
 
-    const newP = {
-      x: screenP.x,
-      y: screenP.y,
-    }
+      const newP = {
+        x: screenP.x,
+        y: screenP.y,
+      }
 
-    showTooltip({
-      pos: newP,
-      content: (
-        <>
-          <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
-          <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
-          <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
-          <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
-        </>
-      ),
-    })
-  }
+      showTooltip({
+        pos: newP,
+        content: (
+          <>
+            <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
+            <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
+            <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
+            <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+          </>
+        ),
+      })
+    },
+    [svgRef, showTooltip, hideTooltip]
+  )
+
+  const handleVariantLeave = useCallback(() => {
+    hideTooltip()
+  }, [hideTooltip])
 
   const { svg, width, height } = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
@@ -388,7 +395,7 @@ export function GseaBubblePlotSvg() {
                   innerPlotWidth={innerPlotWidth}
                   innerPlotHeight={innerPlotHeight}
                   handleVariantEnter={handleVariantEnter}
-                  handleVariantLeave={hideTooltip}
+                  handleVariantLeave={handleVariantLeave}
                 />
               </g>
             ))}

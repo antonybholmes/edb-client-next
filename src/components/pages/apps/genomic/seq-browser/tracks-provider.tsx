@@ -30,10 +30,19 @@ import {
   parseGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import type { BaseBedReader } from './readers/bed/base-bed-reader'
-import type { BaseSeqReader } from './readers/seq/base-seq-reader'
-import type { ReadScaleMode } from './seq-browser-settings'
+import {
+  EMPTY_SEQ_READER,
+  type BaseSeqReader,
+} from './readers/seq/base-seq-reader'
+import { SeqReader } from './readers/seq/seq-reader'
+import {
+  useSeqBrowserSettings,
+  type ReadScaleMode,
+} from './seq-browser-settings'
+import { ISeqPos } from './svg/base-seq-track-svg'
+import { useTracks } from './tracks-store'
 
 export const DEFAULT_GENOMIC_LOCATION = parseGenomicLocation(
   'chr3:187441954-187466041'
@@ -124,7 +133,7 @@ export type ISeqDBDataTrack = ISeqTrack | IBigWigTrack
 export type ISeqDBTrack = ISeqDBDataTrack | IRemoteBigWigTrack
 
 // All the signal track types including being able to load from local files
-export type SignalTrack = ISeqDBTrack | ILocalBigWigTrack
+export type ISignalTrack = ISeqDBTrack | ILocalBigWigTrack
 
 // The peak tracks that the peak db app can return
 export type IBedDBTrack = IBedDBDataTrackDisplay | IRemoteBigBedTrack
@@ -407,10 +416,10 @@ export const DEFAULT_BED_TRACK_DISPLAY_OPTIONS: IBedTrackDisplayOptions = {
 /**
  * All track types that represent sequenced data either as signal or regions.
  */
-export type SignalOrPeakTrack = SignalTrack | IPeakTrack
+export type SignalOrPeakTrack = ISignalTrack | IPeakTrack
 
 export type TrackPlot =
-  | SignalTrack
+  | ISignalTrack
   | IPeakTrack
   | IGeneTrack
   | IScaleTrack
@@ -715,7 +724,7 @@ export function autoBinSize(location: IGenomicLocation) {
  * @returns
  */
 export async function getYMax(
-  tracks: SignalTrack[],
+  tracks: ISignalTrack[],
   seqSearchResults: ISeqSearchResultMap[],
   binSizes: number[],
   scaleMode: ReadScaleMode,
@@ -821,6 +830,11 @@ export async function getYMax(
   return Math.max(ymin, ymax)
 }
 
+export interface ICoreTrack {
+  track: ISignalTrack
+  positions: ISeqPos[]
+}
+
 interface ILocationContextProps {
   xax: IAxis
   seqSearchResult: ISeqSearchResultMap | undefined
@@ -832,6 +846,7 @@ interface ILocationContextProps {
   geneYMap: Map<string, number>
   height: number
   trackY: number[]
+  coreTracks: ICoreTrack[]
   setLocation: (location: IGenomicLocation) => void
 }
 
@@ -850,14 +865,113 @@ export const LocationContext = createContext<ILocationContextProps>({
   height: 0,
   trackY: [], // for determining where tracks are for mouse events
   setLocation: () => {},
+  coreTracks: [],
 })
 
 export function LocationProvider({
   value,
   children,
 }: { value: ILocationContextProps } & IChildrenProps) {
+  const { seqTracks, globalY } = useTracks()
+  const { settings } = useSeqBrowserSettings()
+  const [coreTracks, setCoreTracks] = useState<ICoreTrack[]>([])
+
+  useEffect(() => {
+    async function load() {
+      let reader: BaseSeqReader = EMPTY_SEQ_READER
+
+      const coreTracks: ICoreTrack[] = []
+
+      console.log('value.seqSearchResult', value.seqSearchResult)
+
+      if (!value.seqSearchResult) {
+        return
+      }
+
+      // since tracks can be overlaid get all the data
+      for (const t of seqTracks) {
+        console.log('Processing track:', t[0])
+        switch (t[0].type) {
+          case 'Seq':
+          case 'BigWig':
+            // we have the tracks to display in this block and all
+            // the tracks we downloaded for this location, therefore
+            // we need to filter the locTrackBins to get the track with
+            // the publicId matching the track we want to display
+
+            reader = new SeqReader(
+              t[0],
+              value.seqSearchResult!.samples[t[0].id]!
+            )
+            break
+          case 'RemoteBigWig':
+          case 'LocalBigWig':
+            reader = t[0].reader
+            break
+          default:
+            console.warn('Unknown track type for point retrieval', t)
+            break
+        }
+
+        let yMax = 0
+
+        if (
+          settings.tracks.seqs.globalY.on &&
+          t[0]!.displayOptions.useGlobalY
+        ) {
+          yMax = globalY
+        } else {
+          if (t[0].displayOptions.autoY) {
+            yMax = await getYMax(
+              t,
+              [value.seqSearchResult!],
+              [value.binSize],
+              settings.tracks.seqs.scale.mode
+            )
+          } else {
+            yMax = t[0].displayOptions.ymax
+          }
+        }
+
+        const yax: IAxis = createAxis({
+          direction: 'y',
+          domain: [0, yMax],
+          length: t[0]!.displayOptions.height,
+          tickParams: { which: 'minor', show: false },
+        })
+
+        coreTracks.push({
+          track: t[0],
+          positions: await reader!.getPoints(
+            value.location,
+            value.xax,
+            yax,
+            value.binSize,
+            {
+              mode: settings.tracks.seqs.scale.mode,
+              smoothingFactor: settings.tracks.seqs.smoothing.on
+                ? settings.tracks.seqs.smoothing.factor
+                : 0,
+            }
+          ),
+        })
+      }
+
+      setCoreTracks(coreTracks)
+    }
+
+    load()
+  }, [
+    seqTracks,
+    settings,
+    value.seqSearchResult,
+    value.binSize,
+    value.location,
+    value.xax,
+  ])
+
   return (
-    <LocationContext.Provider value={value}>
+    <LocationContext.Provider value={{ ...value, coreTracks }}>
       {children}
     </LocationContext.Provider>
   )

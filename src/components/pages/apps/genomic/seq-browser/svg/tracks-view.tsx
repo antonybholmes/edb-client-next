@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 
 import {
   axisRangeToDomain,
@@ -8,29 +8,25 @@ import {
 } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { TEXT_ZOOM } from '@/consts'
-import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import { type IPos } from '@/interfaces/pos'
 import type { ISVGProps } from '@/interfaces/svg-props'
 
 import { produce } from 'immer'
 
 import { useSeqBrowserSettings } from '../seq-browser-settings'
-import {
-  LocationProvider,
-  MouseEventProvider,
-  type IPeakTrack,
-} from '../tracks-provider'
+import { LocationProvider, type IPeakTrack } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 import { getBedTrackHeight } from './base-bed-track-svg'
 import { getGeneTrackHeight } from './genes-track-svg'
 
 import { SvgG } from '@/components/plot/svg-g'
-import { useDebounce } from '@/hooks/debounce'
 import { fill } from '@/lib/fill'
 import { locStr } from '@/lib/genomic/genomic'
 import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { makeUuid } from '@/lib/id'
 import { cumsum } from '@/lib/math/cumsum'
 import { zeros } from '@/lib/math/zeros'
+import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { TracksColumnSvg } from './tracks-column-svg'
 
@@ -59,10 +55,14 @@ export function TracksView({ className, style }: ISVGProps) {
 
   //const [globalY, setGlobalY] = useState(1)
 
-  const [mousePos, setMousePos] = useState<IPos>({ ...ZERO_POS })
+  //const [mousePos, setMousePos] = useState<IPos>({ ...ZERO_POS })
 
   // try to reduce redraws
-  const debouncedMousePos = useDebounce(mousePos, { delayMs: 10 })
+  // const debouncedMousePos = useDebounce(mousePos, { delayMs: 10 })
+  // const mouseEventValue = useMemo(
+  //   () => ({ pos: debouncedMousePos }),
+  //   [debouncedMousePos]
+  // )
 
   const column = useRef<{ x: number; col: number }>({ x: 0, col: 0 })
 
@@ -490,64 +490,79 @@ export function TracksView({ className, style }: ISVGProps) {
     settings.margin.bottom,
   ])
 
+  const locationSvg = useMemo(
+    () =>
+      locations.map((location, li) => {
+        const x = li * columnWidth
+        return (
+          <LocationProvider
+            key={li}
+            value={{
+              location,
+              xax: axes[li]!,
+              pos: { x, y: settings.margin.top },
+              seqSearchResult: seqSearchResults?.[li],
+              binSize: binSizes[li]!,
+              genes:
+                locationFeatures && locationFeatures.length > li
+                  ? locationFeatures[li]!.features
+                  : [],
+              geneYMap: geneYMaps[li] || new Map(),
+              height: locationHeights?.[li]! || 0,
+              trackY: trackYs?.[li]! || [],
+              coreTracks: [],
+              setLocation: (location) => {
+                const newLocations = produce(locations, (draft) => {
+                  draft[li] = {
+                    id: makeUuid(),
+                    search: locStr(location),
+                    ...location,
+                  }
+                })
+
+                setLocations(newLocations)
+              },
+            }}
+          >
+            <TracksColumnSvg />
+          </LocationProvider>
+        )
+      }),
+    [
+      locations,
+      columnWidth,
+      settings.margin.top,
+      axes,
+      seqSearchResults,
+      binSizes,
+      locationFeatures,
+      geneYMaps,
+      locationHeights,
+      trackYs,
+      setLocations,
+    ]
+  )
+
   const svg = (
     <SvgBase
       scale={settings.scale}
       width={width}
       height={height}
       style={style}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const x = e.clientX - rect.left - settings.margin.left
-        const y = e.clientY - rect.top - settings.margin.top
+      // onMouseMove={(e) => {
+      //   const rect = e.currentTarget.getBoundingClientRect()
+      //   const x = e.clientX - rect.left - settings.margin.left
+      //   const y = e.clientY - rect.top - settings.margin.top
 
-        setMousePos({ x, y })
-      }}
+      //   setMousePos({ x, y })
+      // }}
     >
       <g
         transform={`translate(${settings.margin.left}, ${settings.margin.top})`}
       >
-        {locations.map((location, li) => {
-          const x = li * columnWidth
-          return (
-            <LocationProvider
-              key={li}
-              value={{
-                location,
-                xax: axes[li]!,
-                pos: { x, y: settings.margin.top },
-                seqSearchResult: seqSearchResults?.[li],
-                binSize: binSizes[li]!,
-                genes:
-                  locationFeatures && locationFeatures.length > li
-                    ? locationFeatures[li]!.features
-                    : [],
-                geneYMap: geneYMaps[li] || new Map(),
-                height: locationHeights?.[li]! || 0,
-                trackY: trackYs?.[li]! || [],
-                setLocation: (location) => {
-                  // for individual tracks, we can update their location
-                  // using, for example, the ruler to propogate its
-                  // changes back to here, where they can be subsequently
-                  // used to update the global locations
-                  const newLocations = produce(locations, (draft) => {
-                    draft[li] = {
-                      id: makeUuid(),
-                      search: locStr(location),
-                      ...location,
-                    }
-                  })
-
-                  setLocations(newLocations)
-                },
-              }}
-            >
-              <MouseEventProvider value={{ pos: debouncedMousePos }}>
-                <TracksColumnSvg />
-              </MouseEventProvider>
-            </LocationProvider>
-          )
-        })}
+        {/* <MouseEventProvider value={mouseEventValue}>*/}
+        {locationSvg}
+        {/* </MouseEventProvider> */}
       </g>
 
       <g opacity="0" ref={selectionGroupRef}>
@@ -646,14 +661,5 @@ export function TracksView({ className, style }: ISVGProps) {
     </SvgBase>
   )
 
-  return (
-    <div
-      className={className}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
-    >
-      {svg}
-    </div>
-  )
+  return <CrosshairProvider>{svg}</CrosshairProvider>
 }

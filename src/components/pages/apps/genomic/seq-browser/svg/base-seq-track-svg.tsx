@@ -1,21 +1,27 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
+import { BaseCol } from '@/components/layout/base-col'
 import {
   axisDomainToRange,
   axisLength,
+  axisRangeToDomain,
   IAxis,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgG } from '@/components/plot/svg-g'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
-import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { textJoin, truncate } from '@/lib/text/text'
+import { useCrosshair } from '@/providers/crosshair-provider'
+import { useSVG } from '@/providers/svg-provider'
+import { ITooltipState, useTooltip } from '@/providers/tooltip-provider'
 import * as d3 from 'd3'
-import { useContext, useMemo } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
-import { MouseEventContext, type SignalTrack } from '../tracks-provider'
+import { useLocation, type ISignalTrack } from '../tracks-provider'
 import { NO_TRACK_TOOLTIP } from '../use-tooltip'
 
 export interface ISeqPos extends IPos {
@@ -28,19 +34,32 @@ export interface ISeqPos extends IPos {
 
 interface IProps extends IDivProps {
   tracks: {
-    track: SignalTrack
+    track: ISignalTrack
     positions: ISeqPos[]
   }[]
 
   //locTrackBins: ILocTrackBins | null
   xax: IAxis
   yax: IAxis
-
+  pos: IPos
   titleHeight: number
 }
 
-export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
+export function BaseSeqTrackSvg({
+  tracks,
+  xax,
+  yax,
+  titleHeight,
+  pos: plotPos,
+}: IProps) {
   const { settings } = useSeqBrowserSettings()
+  const { ref } = useSVG()
+  const { coreTracks } = useLocation()
+  const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+
+  const tooltipFrame = useRef<number | null>(null)
+  const pendingTooltip = useRef<ITooltipState | null>(null)
 
   //const currentLocation = useRef<GenomicLocation | null>(null)
 
@@ -50,59 +69,9 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
   //const rectRef = useRef<SVGRectElement>(null)
   //const [isMouseDown, setIsMouseDown] = useState(false)
 
-  const { pos: mousePos } = useContext(MouseEventContext)
+  //const { pos: mousePos } = useMouseEvent()
 
-  const xl = axisLength(xax)
-
-  function findClosestSeqPos(x: number, refPoints: ISeqPos[]): ISeqPos {
-    if (refPoints.length === 0) {
-      return { ...NO_TRACK_TOOLTIP }
-    }
-
-    let left = 0
-    let right = refPoints.length - 1
-
-    // Binary search to find the closest index
-
-    if (settings.reverse) {
-      // flip the search when coordinates inverted
-      while (left <= right) {
-        const mid = Math.floor((left + right) / 2)
-        if (refPoints[mid]!.x === x) {
-          return refPoints[mid]! // Exact match
-        } else if (refPoints[mid]!.x > x) {
-          left = mid + 1
-        } else {
-          right = mid - 1
-        }
-      }
-    } else {
-      while (left <= right) {
-        const mid = Math.floor((left + right) / 2)
-        if (refPoints[mid]!.x === x) {
-          return refPoints[mid]! // Exact match
-        } else if (refPoints[mid]!.x < x) {
-          left = mid + 1
-        } else {
-          right = mid - 1
-        }
-      }
-    }
-
-    // After binary search, left will be the position of the closest coordinate
-    const closestIndex = left
-
-    if (closestIndex === 0) return refPoints[0]! // Closest is the first element
-
-    if (closestIndex === refPoints.length)
-      return refPoints[refPoints.length - 1]! // Closest is the last element
-
-    // Compare the two closest candidates (left-1 and left) and return the one closer
-    const prev = refPoints[closestIndex - 1]!
-    const next = refPoints[closestIndex]!
-
-    return Math.abs(x - prev.x) <= Math.abs(x - next.x) ? prev : next
-  }
+  const xl = useMemo(() => axisLength(xax), [xax])
 
   // function handleMouseMove(e: React.MouseEvent<SVGRectElement> | MouseEvent) {
   //   const { clientX, target } = e
@@ -125,18 +94,83 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
 
   //const deboundedMousePos = useDebounce(mousePos, {delayMs})
 
-  const tooltip = useMemo(() => {
-    const pos = findClosestSeqPos(mousePos.x, tracks[0]!.positions)
+  // const tooltip = useMemo(() => {
+  //   const pos = findClosestSeqPos(
+  //     mousePos.x,
+  //     tracks[0]!.positions,
+  //     settings.reverse
+  //   )
 
-    return {
-      start: pos.start,
-      end: pos.start,
-      //x2: relativeX,
-      x: mousePos.y !== -1 ? mousePos.x : -1, //e.clientX,
-      y: pos.y, //-titleHeight,
-      realY: pos.realY,
-    }
-  }, [mousePos.x, mousePos.y])
+  //   return {
+  //     start: pos.start,
+  //     end: pos.start,
+  //     //x2: relativeX,
+  //     x: mousePos.y !== -1 ? mousePos.x : -1, //e.clientX,
+  //     y: pos.y, //-titleHeight,
+  //     realY: pos.realY,
+  //   }
+  // }, [mousePos.x, mousePos.y, settings.reverse, tracks[0]?.positions])
+
+  const _hideTooltip = useCallback(() => {
+    hideTooltip()
+    hideCrosshair()
+  }, [hideTooltip, hideCrosshair])
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
+
+      const plotP = {
+        x: svgP.x - plotPos.x - settings.margin.left,
+        y: svgP.y - plotPos.y - titleHeight - settings.margin.top,
+      }
+
+      //console.log(plotP)
+
+      if (
+        plotP.x < 0 ||
+        plotP.y < 0 ||
+        plotP.x > xl ||
+        plotP.y > yax.range[1]
+      ) {
+        _hideTooltip()
+        return
+      }
+
+      const trackPosMap = Object.fromEntries(
+        coreTracks.map((t) => {
+          const pos = findClosestSeqPos(plotP.x, t.positions, settings.reverse)
+          return [t.track.id, pos]
+        })
+      )
+
+      const { screenP, relativeP } = svgPointToScreen(ref.current, {
+        x: plotP.x + plotPos.x + settings.margin.left,
+        y: plotP.y + plotPos.y + titleHeight + settings.margin.top,
+      })
+
+      showCrosshair({ x: relativeP.x, y: relativeP.y })
+
+      const x = axisRangeToDomain(xax, [plotP.x])[0]
+
+      showTooltip({
+        //className: '-translate-x-1/2',
+        pos: { x: screenP.x + 5, y: screenP.y + 5 },
+        content: (
+          <>
+            <span>x: {x.toFixed(0)}</span>
+            {coreTracks.map((t) => (
+              <BaseCol key={t.track.id}>
+                <strong>{t.track.name}</strong>
+                <span>y: {trackPosMap[t.track.id].realY}</span>
+              </BaseCol>
+            ))}
+          </>
+        ),
+      })
+    },
+    [findClosestSeqPos, coreTracks, titleHeight, settings, xl, yax]
+  )
 
   // const clean = () => {
   //   //window.removeEventListener('keydown', handleKeyDown)
@@ -214,108 +248,78 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
           </SvgG>
         )}
 
-        {tracks.map((t, ti) => {
-          const points: ISeqPos[] = t.positions
+        <SvgG id="plot" onMouseMove={onMouseMove} onMouseLeave={_hideTooltip}>
+          <SvgRect
+            id="mouse-rect"
+            width={xl}
+            height={tracks[0]!.track.displayOptions.height}
+            fill="transparent"
+            stroke="blue"
+          />
 
-          let line = d3
-            .line<IPos>()
-            .x((d: IPos) => d.x)
-            .y((d: IPos) => d.y)
+          {tracks.map((t, ti) => {
+            const points: ISeqPos[] = t.positions
 
-          if (settings.tracks.seqs.smoothing.on) {
-            line = line.curve(d3.curveBasis)
-          }
+            let line = d3
+              .line<IPos>()
+              .x((d: IPos) => d.x)
+              .y((d: IPos) => d.y)
 
-          const coords = line(points) ?? ''
+            if (settings.tracks.seqs.smoothing.on) {
+              line = line.curve(d3.curveBasis)
+            }
 
-          let area = d3
-            .area<IPos>()
-            .x((d: IPos) => d.x)
-            .y0(axisDomainToRange(yax, 0))
-            .y1((d: IPos) => d.y)
+            const coords = line(points) ?? ''
 
-          if (settings.tracks.seqs.smoothing.on) {
-            area = area.curve(d3.curveBasis)
-          }
+            let area = d3
+              .area<IPos>()
+              .x((d: IPos) => d.x)
+              .y0(axisDomainToRange(yax, 0))
+              .y1((d: IPos) => d.y)
 
-          const fillCoords = area(points) ?? ''
+            if (settings.tracks.seqs.smoothing.on) {
+              area = area.curve(d3.curveBasis)
+            }
 
-          // let smoothedPoints: string = ''
+            const fillCoords = area(points) ?? ''
 
-          // if (track.displayOptions.smooth) {
-          //   const line = d3
-          //     .line<IPos>()
-          //     .x(d => d.x)
-          //     .y(d => d.y)
-          //     .curve(d3.curveBasis)
+            return (
+              <g key={ti}>
+                {t.track.displayOptions.fill.show && (
+                  <path
+                    d={fillCoords}
+                    fill={t.track.displayOptions.fill.value}
+                    stroke="none"
+                    fillOpacity={t.track.displayOptions.fill.opacity}
+                  />
+                )}
 
-          //   smoothedPoints = line(points) ?? ''
-          // } else {
-          //   smoothedPoints = points
-          //     .map((p, pi) => `${pi === 0 ? 'M' : 'L'}${p.x},${p.y}`)
-          //     .join(' ')
-          // }
+                {t.track.displayOptions.stroke.show && (
+                  <path
+                    d={coords}
+                    fill="none"
+                    stroke={t.track.displayOptions.stroke.value}
+                    strokeWidth={t.track.displayOptions.stroke.width}
+                  />
+                )}
+              </g>
+            )
+          })}
 
-          //similar to points, but we add zero ends to ensure a nice polygon can be
-          // formed
-          // const polyPoints: IPos[] = [
-          //   { x: points[0]!.x, y: y0 },
-          //   ...points,
-          //   { x: points[points.length - 1]!.x, y: y0 },
-          // ]
-
-          // let smoothedPolyPoints: string = ''
-
-          // if (track.displayOptions.smooth) {
-          //   const line = d3
-          //     .line<IPos>()
-          //     .x(d => d.x)
-          //     .y(d => d.y)
-          //     .curve(d3.curveBasis)
-
-          //     smoothedPolyPoints = line(polyPoints) ?? ''
-          // } else {
-          //   smoothedPolyPoints = polyPoints
-          //     .map((p, pi) => `${pi === 0 ? 'M' : 'L'}${p.x},${p.y}`)
-          //     .join(' ')
-          // }
-
-          return (
-            <g key={ti}>
-              {t.track.displayOptions.fill.show && (
-                <path
-                  d={fillCoords}
-                  fill={t.track.displayOptions.fill.value}
-                  stroke="none"
-                  fillOpacity={t.track.displayOptions.fill.opacity}
-                />
-              )}
-
-              {t.track.displayOptions.stroke.show && (
-                <path
-                  d={coords}
-                  fill="none"
-                  stroke={t.track.displayOptions.stroke.value}
-                  strokeWidth={t.track.displayOptions.stroke.width}
-                />
-              )}
-            </g>
-          )
-        })}
-
-        {tracks[0]!.track.displayOptions.axes.show && (
-          <>
-            <AxisLeftSvg ax={yax} />
-            <AxisBottomSvg
-              ax={xax}
-              pos={{ x: 0, y: tracks[0]!.track.displayOptions.height }}
-            />
-          </>
-        )}
+          {tracks[0]!.track.displayOptions.axes.show && (
+            <>
+              <AxisLeftSvg ax={yax} />
+              <AxisBottomSvg
+                ax={xax}
+                pos={{ x: 0, y: tracks[0]!.track.displayOptions.height }}
+              />
+            </>
+          )}
+        </SvgG>
       </SvgG>
 
-      {tooltip.x !== -1 && (
-        <g pointerEvents="none">
+      {/* {tooltip.x !== -1 && (
+        <SvgG pointerEvents="none">
           <line
             x1={tooltip.x}
             x2={tooltip.x}
@@ -367,8 +371,8 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
               ? tooltip.realY
               : tooltip.realY.toFixed(2)}
           </text>
-        </g>
-      )}
+        </SvgG>
+      )} */}
 
       {/* for allowing mouse events to to be handled without affecting the svg output */}
       {/* <rect
@@ -386,4 +390,59 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
       /> */}
     </>
   )
+}
+
+function findClosestSeqPos(
+  x: number,
+  refPoints: ISeqPos[],
+  reverse: boolean
+): ISeqPos {
+  if (refPoints.length === 0) {
+    return { ...NO_TRACK_TOOLTIP }
+  }
+
+  let left = 0
+  let right = refPoints.length - 1
+
+  // Binary search to find the closest index
+
+  if (reverse) {
+    // flip the search when coordinates inverted
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2)
+      if (refPoints[mid]!.x === x) {
+        return refPoints[mid]! // Exact match
+      } else if (refPoints[mid]!.x > x) {
+        left = mid + 1
+      } else {
+        right = mid - 1
+      }
+    }
+  } else {
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2)
+      if (refPoints[mid]!.x === x) {
+        return refPoints[mid]! // Exact match
+      } else if (refPoints[mid]!.x < x) {
+        left = mid + 1
+      } else {
+        right = mid - 1
+      }
+    }
+  }
+
+  // After binary search, left will be the position of the closest coordinate
+  if (left === 0) {
+    return refPoints[0]!
+  } // Closest is the first element
+
+  if (left === refPoints.length) {
+    return refPoints[refPoints.length - 1]! // Closest is the last element
+  }
+
+  // Compare the two closest candidates (left-1 and left) and return the one closer
+  const prev = refPoints[left - 1]!
+  const next = refPoints[left]!
+
+  return Math.abs(x - prev.x) <= Math.abs(x - next.x) ? prev : next
 }
