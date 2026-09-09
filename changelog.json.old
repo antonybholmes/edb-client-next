@@ -2749,6 +2749,10 @@
         {
           "msg": "Added ability to add axes menu to gsea plots",
           "date": "2026-09-08T22:48:59.730Z"
+        },
+        {
+          "msg": "Render speedups to oncoplot and gsea plot by memoing more functions and narrowing store scopes",
+          "date": "2026-09-09T14:41:33.935Z"
         }
       ],
       "Added": [

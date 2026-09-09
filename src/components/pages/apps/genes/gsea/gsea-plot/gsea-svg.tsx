@@ -1,4 +1,13 @@
-import { memo } from 'react'
+import {
+  createContext,
+  memo,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -17,237 +26,15 @@ import {
   axisDomainToRangeFunc,
   IAxis,
 } from '@/components/plot/axes/axis'
+import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
+import { IDim } from '@/interfaces/dim'
+import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
+import { TOOLTIP_CLEAR_MS } from '@/providers/tooltip-provider'
 import { useGseaPlot } from './gsea-plot-provider'
 import { useGseaSettings } from './gsea-settings-store'
 import { IGseaGeneRankScore, IGseaGeneSet, useGseaData } from './gsea-store'
-
-const GseaPlot = memo(function GseaPlot({
-  pathway,
-  index,
-}: {
-  pathway: IGseaGeneSet
-  index: number
-}) {
-  const { settings } = useGseaSettings()
-  const { settings: edbSettings } = useEdbSettings()
-  const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
-
-  const { axis: xax } = useAxis({
-    plotId: pathway.id,
-    groupId: 'es',
-    axisId: 'x',
-  })
-  const { axis: yax } = useAxis({
-    plotId: pathway.id,
-    groupId: 'es',
-    axisId: 'y',
-  })
-
-  if (!xax || !yax || !result) {
-    return null
-  }
-
-  const plotSize = [
-    settings.axes.x.length,
-    settings.es.axes.y.length +
-      (settings.genes.show ? settings.plot.gap.y + settings.genes.height : 0) +
-      (settings.ranking.show
-        ? settings.plot.gap.y + settings.ranking.axes.y.length
-        : 0),
-  ]
-
-  const maxRank = rankedGenes.length - 1
-  const sortedRankedGenes: IGseaGeneRankScore[] = settings.phenotypes.invert
-    ? rankedGenes
-        .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-        .sort((a, b) => a.rank - b.rank)
-    : rankedGenes
-  const es = settings.phenotypes.invert
-    ? result.es
-        .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-        .sort((a, b) => a.rank - b.rank)
-    : result.es
-  const xaf = axisDomainToRangeFunc(xax)
-  const yaf = axisDomainToRangeFunc(yax)
-  const points: IPos[] = es.map((e) => ({
-    x: xaf(e.rank),
-    y: yaf(e.score),
-  }))
-  const [x0, x1] = axisDomainToRange(xax, [0, maxRank])
-  let plotY = 0
-  const esSvg = settings.es.show ? (
-    <EsSvg
-      pathway={pathway}
-      sortedRankedGenes={sortedRankedGenes}
-      es={es}
-      maxRank={maxRank}
-      x0={x0}
-      x1={x1}
-      points={points}
-      xax={xax}
-      yax={yax}
-      phenotypes={phenotypes}
-    />
-  ) : null
-
-  if (settings.es.show) {
-    plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
-  }
-
-  const crossIndex =
-    sortedRankedGenes.findLastIndex((gene) => gene.score > 0) + 1
-  const crossing = {
-    index: crossIndex,
-    x: axisDomainToRange(xax, [crossIndex])[0],
-  }
-  const genesSvg = settings.genes.show ? (
-    <GenesSvg
-      xax={xax}
-      points={points}
-      es={es}
-      sortedRankedGenes={sortedRankedGenes}
-      crossing={crossing}
-      pos={{ x: 0, y: plotY }}
-    />
-  ) : null
-
-  if (settings.genes.show) {
-    plotY += settings.genes.height + settings.plot.gap.y
-  }
-
-  const rankingSvg = settings.ranking.show ? (
-    <RankingSvg
-      xax={xax}
-      pathway={pathway}
-      sortedRankedGenes={sortedRankedGenes}
-      x0={x0}
-      x1={x1}
-      crossing={crossing}
-      pos={{ x: 0, y: plotY }}
-    />
-  ) : null
-  const col = index % settings.page.columns
-  const row = Math.floor(index / settings.page.columns)
-  const x =
-    col *
-    (plotSize[0]! + settings.plot.margin.left + settings.plot.margin.right)
-  const y =
-    row *
-    (plotSize[1]! + settings.plot.margin.top + settings.plot.margin.bottom)
-  const titleX = settings.plot.margin.left + settings.axes.x.length / 2
-
-  return (
-    <g transform={`translate(${x}, ${y})`} id={`plot-${index + 1}`}>
-      {edbSettings.plots.axes.x.style.title.show && (
-        <SvgText
-          id={`title-${index + 1}`}
-          font={edbSettings.plots.axes.x.style.title}
-          textAnchor="middle"
-          x={titleX}
-          y={
-            settings.plot.margin.top -
-            edbSettings.plots.axes.x.style.title.offset * 0.5
-          }
-        >
-          {pathway.name}
-        </SvgText>
-      )}
-      <SvgMargin margin={settings.plot.margin}>
-        {esSvg}
-        {genesSvg}
-        {rankingSvg}
-      </SvgMargin>
-    </g>
-  )
-})
-
-/**
- * Create SVG for GSEA plot. We create separate SVG for each plot and then combine them in the main SVG.
- * This allows us to have different y axes for ES and ranked genes, and to have different settings for each plot.
- *
- * Notes: Rank is 0-based in the results files.
- * @param param0
- * @returns
- */
-export function GseaSvg() {
-  const { settings } = useGseaSettings()
-  const { settings: edbSettings } = useEdbSettings()
-  const { ref } = useSVG()
-
-  const { pathways } = useGseaPlot()
-
-  if (pathways.length === 0) {
-    return null
-  }
-
-  // size of plot with padding
-  const plotSize = [
-    settings.axes.x.length,
-    settings.es.axes.y.length +
-      (settings.genes.show ? settings.plot.gap.y + settings.genes.height : 0) +
-      (settings.ranking.show
-        ? settings.plot.gap.y + settings.ranking.axes.y.length
-        : 0),
-  ]
-
-  const rows = Math.ceil(pathways.flat().length / settings.page.columns)
-  const pageSize = [
-    (plotSize[0]! + settings.plot.margin.left + settings.plot.margin.right) *
-      settings.page.columns,
-    (plotSize[1]! + settings.plot.margin.top + settings.plot.margin.bottom) *
-      rows,
-  ]
-
-  const svgPlots = pathways.map((pathway, index) => (
-    <GseaPlot key={pathway.id} pathway={pathway} index={index} />
-  ))
-
-  return (
-    <SvgBase
-      scale={edbSettings.plots.scale}
-      width={pageSize[0]!}
-      height={pageSize[1]!}
-      //shapeRendering={SVG_CRISP_EDGES}
-      //className="absolute"
-
-      onMouseMove={(e) => {
-        const margin = settings.plot.margin
-        const ml = margin.left * edbSettings.plots.scale
-        const mt = margin.top * edbSettings.plots.scale
-        const pw = settings.axes.x.length * edbSettings.plots.scale
-        let ph = settings.es.axes.y.length
-
-        if (settings.genes.show) {
-          ph += settings.genes.height + settings.plot.gap.y
-        }
-
-        if (settings.ranking.show) {
-          ph += settings.ranking.axes.y.length
-        }
-
-        ph *= edbSettings.plots.scale
-
-        console.log(edbSettings.plots.scale)
-
-        const p = {
-          x: e.clientX - ml - ref.current!.getBoundingClientRect().left,
-          y: e.clientY - mt - ref.current!.getBoundingClientRect().top,
-        }
-
-        const col = Math.floor(p.x / pw)
-        const row = Math.floor(p.y / ph)
-
-        const index = row * settings.page.columns + col
-
-        console.log(e.clientX, p, row, col)
-      }}
-    >
-      {svgPlots}
-    </SvgBase>
-  )
-}
 
 function EsSvg({
   pathway,
@@ -496,18 +283,14 @@ function GenesSvg({
   points,
   es,
   sortedRankedGenes,
-
   crossing,
-
   pos,
 }: {
   xax: IAxis
   points: { x: number; y: number }[]
   es: IGseaGeneRankScore[]
   sortedRankedGenes: IGseaGeneRankScore[]
-
   crossing: { index: number; x: number }
-
   pos: IPos
 }) {
   const { settings } = useGseaSettings()
@@ -659,5 +442,383 @@ function RankingSvg({
       )}
       <AxisLeftSvg ax={yax} />
     </g>
+  )
+}
+
+const GseaPlot = memo(function GseaPlot({
+  pathway,
+  index,
+  row,
+  col,
+  plotSize,
+  innerPlotSize,
+  pos,
+}: {
+  pathway: IGseaGeneSet
+  index: number
+  row: number
+  col: number
+  plotSize: IDim
+  innerPlotSize: IDim
+  pos: IPos
+}) {
+  const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
+  const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
+  const { ref } = useSVG()
+  const { setBarPos } = useBarContext()
+
+  const { axis: xax } = useAxis({
+    plotId: pathway.id,
+    groupId: 'es',
+    axisId: 'x',
+  })
+  const { axis: yax } = useAxis({
+    plotId: pathway.id,
+    groupId: 'es',
+    axisId: 'y',
+  })
+
+  const maxRank = rankedGenes.length - 1
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // avoid re-rendering the whole svg tree when the hovered cell hasn't changed
+  const lastCellRef = useRef<{ r: number; c: number } | null>(null)
+
+  const sortedRankedGenes: IGseaGeneRankScore[] = useMemo(
+    () =>
+      settings.phenotypes.invert
+        ? rankedGenes
+            .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+            .sort((a, b) => a.rank - b.rank)
+        : rankedGenes,
+    [rankedGenes, maxRank, settings.phenotypes.invert]
+  )
+
+  const es = useMemo(() => {
+    if (!result) {
+      return []
+    }
+
+    return settings.phenotypes.invert
+      ? result.es
+          .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+          .sort((a, b) => a.rank - b.rank)
+      : result.es
+  }, [result, maxRank, settings.phenotypes.invert])
+
+  const points: IPos[] = useMemo(() => {
+    if (!xax || !yax) {
+      return []
+    }
+
+    const xaf = axisDomainToRangeFunc(xax)
+    const yaf = axisDomainToRangeFunc(yax)
+
+    return es.map((e) => ({ x: xaf(e.rank), y: yaf(e.score) }))
+  }, [es, xax, yax])
+
+  const hideTooltip = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    // wait before removing. if we re-enter quickly, the tooltip won't flicker
+    // as this timeout will be cancelled so the tooltip won't disappear
+    // and will be moved to next location
+    timeoutRef.current = setTimeout(() => setBarPos(null), TOOLTIP_CLEAR_MS)
+  }, [])
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) {
+        return
+      }
+
+      const svgP = screenToSvgPoint(ref.current, {
+        x: e.clientX,
+        y: e.clientY,
+      })
+
+      const plotP = {
+        x: svgP.x - pos.x - settings.plot.margin.left,
+        y: svgP.y - pos.y - settings.plot.margin.top,
+      }
+
+      if (
+        plotP.x < 0 ||
+        plotP.x > plotSize.w ||
+        plotP.y < 0 ||
+        plotP.y > plotSize.h
+      ) {
+        return
+      }
+
+      // find nearest es point using binary search
+      let nearestEsPoint = points[0]
+      let left = 0
+      let right = points.length - 1
+      while (left <= right) {
+        const mid = Math.floor((left + right) / 2)
+        if (points[mid].x < plotP.x) {
+          left = mid + 1
+        } else {
+          right = mid - 1
+        }
+      }
+      if (left < points.length) {
+        nearestEsPoint = points[left]
+      }
+
+      const barP = {
+        x: nearestEsPoint.x + settings.plot.margin.left,
+        y: plotP.y + settings.plot.margin.top,
+      }
+
+      const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      setBarPos(barScreenP)
+
+      // const stats = mf?.data(row, col)
+
+      // showTooltip({
+      //   pos: { x: absoluteBlockScreenXY.x + 5, y: absoluteBlockScreenXY.y + 5 },
+      //   content: (
+      //     <>
+      //       <p className="font-semibold">{stats!.sample}</p>
+      //       <p>{stats!.feature}</p>
+      //       <p className="truncate">
+      //         {getEventLabel(stats!, mutationsInUse, 'single')}
+      //       </p>
+      //       <p>{`row: ${row + 1}, col: ${col + 1}`}</p>
+      //     </>
+      //   ),
+      // })
+    },
+    [top, hideTooltip, settings.plot.margin, points]
+  )
+
+  if (!xax || !yax || !result) {
+    return null
+  }
+
+  const [x0, x1] = axisDomainToRange(xax, [0, maxRank])
+  let plotY = 0
+
+  const esSvg = settings.es.show ? (
+    <EsSvg
+      pathway={pathway}
+      sortedRankedGenes={sortedRankedGenes}
+      es={es}
+      maxRank={maxRank}
+      x0={x0}
+      x1={x1}
+      points={points}
+      xax={xax}
+      yax={yax}
+      phenotypes={phenotypes}
+    />
+  ) : null
+
+  if (settings.es.show) {
+    plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
+  }
+
+  const crossIndex =
+    sortedRankedGenes.findLastIndex((gene) => gene.score > 0) + 1
+
+  const crossing = {
+    index: crossIndex,
+    x: axisDomainToRange(xax, [crossIndex])[0],
+  }
+
+  const genesSvg = settings.genes.show ? (
+    <GenesSvg
+      xax={xax}
+      points={points}
+      es={es}
+      sortedRankedGenes={sortedRankedGenes}
+      crossing={crossing}
+      pos={{ x: 0, y: plotY }}
+    />
+  ) : null
+
+  if (settings.genes.show) {
+    plotY += settings.genes.height + settings.plot.gap.y
+  }
+
+  const rankingSvg = settings.ranking.show ? (
+    <RankingSvg
+      xax={xax}
+      pathway={pathway}
+      sortedRankedGenes={sortedRankedGenes}
+      x0={x0}
+      x1={x1}
+      crossing={crossing}
+      pos={{ x: 0, y: plotY }}
+    />
+  ) : null
+
+  const titleX = settings.plot.margin.left + settings.axes.x.length / 2
+
+  return (
+    <SvgG pos={pos} id={`plot-${index + 1}`} onMouseMove={onMouseMove}>
+      <rect
+        width={plotSize.w}
+        height={plotSize.h}
+        fill="transparent"
+        stroke="blue"
+      />
+
+      {edbSettings.plots.axes.x.style.title.show && (
+        <SvgText
+          id={`title-${index + 1}`}
+          font={edbSettings.plots.axes.x.style.title}
+          textAnchor="middle"
+          x={titleX}
+          y={
+            settings.plot.margin.top -
+            edbSettings.plots.axes.x.style.title.offset * 0.5
+          }
+        >
+          {pathway.name}
+        </SvgText>
+      )}
+      <SvgMargin margin={settings.plot.margin}>
+        {esSvg}
+        {genesSvg}
+        {rankingSvg}
+      </SvgMargin>
+    </SvgG>
+  )
+})
+
+interface IBarContext {
+  barPos: IPos | null
+  setBarPos: (pos: IPos | null) => void
+}
+
+const BarContext = createContext<IBarContext>({
+  barPos: null,
+  setBarPos: () => {},
+})
+
+function useBarContext() {
+  const ctx = useContext(BarContext)
+  if (!ctx) {
+    throw new Error('useBarContext must be used within a BarContext.Provider')
+  }
+  return ctx
+}
+
+function BarContextProvider({ children }: { children: ReactNode }) {
+  const [barPos, setBarPos] = useState<IPos | null>(null)
+  return (
+    <BarContext.Provider value={{ barPos, setBarPos }}>
+      {children}
+    </BarContext.Provider>
+  )
+}
+
+/**
+ * Create SVG for GSEA plot. We create separate SVG for each plot and then combine them in the main SVG.
+ * This allows us to have different y axes for ES and ranked genes, and to have different settings for each plot.
+ *
+ * Notes: Rank is 0-based in the results files.
+ * @param param0
+ * @returns
+ */
+function GseaSvgContent() {
+  const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
+  const { barPos } = useBarContext()
+
+  const { pathways } = useGseaPlot()
+
+  if (pathways.length === 0) {
+    return null
+  }
+
+  // size of plot with padding
+  const innerPlotSize = {
+    w: settings.axes.x.length,
+    h:
+      settings.es.axes.y.length +
+      (settings.genes.show ? settings.plot.gap.y + settings.genes.height : 0) +
+      (settings.ranking.show
+        ? settings.plot.gap.y + settings.ranking.axes.y.length
+        : 0),
+  }
+
+  const plotSize = {
+    w: innerPlotSize.w + settings.plot.margin.left + settings.plot.margin.right,
+    h: innerPlotSize.h + settings.plot.margin.top + settings.plot.margin.bottom,
+  }
+
+  const rows = Math.ceil(pathways.length / settings.page.columns)
+  const pageSize = [plotSize.w * settings.page.columns, plotSize.h * rows]
+
+  const svgPlots = pathways.map((pathway, index) => {
+    const row = Math.floor(index / settings.page.columns)
+    const col = index % settings.page.columns
+    return (
+      <GseaPlot
+        key={pathway.id}
+        pathway={pathway}
+        index={index}
+        row={row}
+        col={col}
+        plotSize={plotSize}
+        innerPlotSize={innerPlotSize}
+        pos={{ x: col * plotSize.w, y: row * plotSize.h }}
+      />
+    )
+  })
+
+  return (
+    <>
+      <SvgBase
+        scale={edbSettings.plots.scale}
+        width={pageSize[0]!}
+        height={pageSize[1]!}
+        //shapeRendering={SVG_CRISP_EDGES}
+        //className="absolute"
+      >
+        {svgPlots}
+      </SvgBase>
+      {barPos && (
+        <>
+          <span
+            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
+            style={{
+              left: `${barPos.x}px`,
+
+              //height: (gridHeight + top - 10) * displayProps.scale,
+            }}
+          ></span>
+
+          <span
+            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
+            style={{
+              top: `${barPos.y - 1}px`,
+
+              //width: (gridWidth + top - 10) * displayProps.scale,
+            }}
+          ></span>
+        </>
+      )}
+    </>
+  )
+}
+
+export function GseaSvg() {
+  return (
+    <BarContextProvider>
+      <GseaSvgContent />
+    </BarContextProvider>
   )
 }

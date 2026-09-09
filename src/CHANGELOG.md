@@ -1,5 +1,12 @@
 # Changelog
 
+## 89.4.0 (Sep, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 89.2.0 (Sep, 2026)
 
 ### Added
