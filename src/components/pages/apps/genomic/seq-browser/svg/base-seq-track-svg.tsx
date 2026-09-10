@@ -15,11 +15,11 @@ import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { textJoin, truncate } from '@/lib/text/text'
-import { useCrosshair } from '@/providers/crosshair-provider'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { ITooltipState, useTooltip } from '@/providers/tooltip-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
 import * as d3 from 'd3'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import { useLocation, type ISignalTrack } from '../tracks-provider'
 import { NO_TRACK_TOOLTIP } from '../use-tooltip'
@@ -45,7 +45,7 @@ interface IProps extends IDivProps {
   titleHeight: number
 }
 
-export function BaseSeqTrackSvg({
+function BaseSeqTrackSvgContent({
   tracks,
   xax,
   yax,
@@ -57,19 +57,6 @@ export function BaseSeqTrackSvg({
   const { coreTracks } = useLocation()
   const { showTooltip, hideTooltip } = useTooltip()
   const { showCrosshair, hideCrosshair } = useCrosshair()
-
-  const tooltipFrame = useRef<number | null>(null)
-  const pendingTooltip = useRef<ITooltipState | null>(null)
-
-  //const currentLocation = useRef<GenomicLocation | null>(null)
-
-  //const { setTooltip } = useTooltip()
-  //const [tooltip, setTooltip] = useState({ ...NO_TRACK_TOOLTIP })
-
-  //const rectRef = useRef<SVGRectElement>(null)
-  //const [isMouseDown, setIsMouseDown] = useState(false)
-
-  //const { pos: mousePos } = useMouseEvent()
 
   const xl = useMemo(() => axisLength(xax), [xax])
 
@@ -389,6 +376,14 @@ export function BaseSeqTrackSvg({
         //onMouseMove={handleMouseMove}
       /> */}
     </>
+  )
+}
+
+export function BaseSeqTrackSvg(props: IProps) {
+  return (
+    <CrosshairProvider>
+      <BaseSeqTrackSvgContent {...props} />
+    </CrosshairProvider>
   )
 }
 

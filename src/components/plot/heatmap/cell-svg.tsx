@@ -9,6 +9,7 @@ import { cellStr } from '@/lib/dataframe/cell'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
+import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { ReactNode } from 'react'
@@ -58,7 +59,9 @@ export function CellsSvg({
 }: ICellsSvgProps) {
   const { ref } = useSVG()
   const { showTooltip, hideTooltip } = useTooltip()
-  const blockSize = props.blockSize
+  const { showCrosshair, hideCrosshair } = useCrosshair() // Assuming there is a useCrosshair hook similar to useTooltip
+
+  const { blockSize } = props
 
   const cmap = getColorMapFromICMAP(props.cmap)
 
@@ -88,6 +91,11 @@ export function CellsSvg({
     )
   })
 
+  function _hideTooltip() {
+    hideTooltip()
+    hideCrosshair()
+  }
+
   function handleMouseMove(e: React.MouseEvent) {
     const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
 
@@ -98,9 +106,12 @@ export function CellsSvg({
 
     const cell = { col: xgaps.nearest(plotP.x), row: ygaps.nearest(plotP.y) }
 
-    if (cell.col.index === -1 || cell.row.index === -1) {
-      return
-    }
+    //console.log('bb', cell.col.index, cell.row.index)
+
+    //if (cell.col.index === -1 || cell.row.index === -1) {
+    //  _hideTooltip()
+    //return
+    //}
 
     const { screenP } = svgPointToScreen(ref.current, {
       x: cell.col.x + blockSize.w + margin.left,
@@ -119,25 +130,19 @@ export function CellsSvg({
         </>
       ),
     })
+
+    const { relativeP } = svgPointToScreen(ref.current, {
+      x: cell.col.x + blockSize.w / 2 + margin.left,
+      y: cell.row.x + blockSize.h / 2 + margin.top,
+    })
+
+    showCrosshair(relativeP)
   }
 
   return (
     <>
       <defs>{uniqueColorRects}</defs>
-      <SvgG
-        pos={pos}
-        shapeRendering={SVG_CRISP_EDGES}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={hideTooltip}
-      >
-        <SvgRect
-          id="mouse-rect"
-          width={plotSize.w}
-          height={plotSize.h}
-          fill="transparent"
-          //stroke="blue"
-        />
-
+      <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES}>
         {rowLeaves.map((row, ri) => {
           const y = ygaps.position(ri)
 
@@ -157,6 +162,17 @@ export function CellsSvg({
             )
           })
         })}
+
+        <SvgRect
+          id="mouse-rect"
+          data-interaction-only="true"
+          width={plotSize.w}
+          height={plotSize.h}
+          fill="transparent"
+          pointerEvents="all"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={_hideTooltip}
+        />
       </SvgG>
     </>
   )

@@ -18,6 +18,7 @@ import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
+import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useMemo } from 'react'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
@@ -26,8 +27,6 @@ import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromICMAP } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
@@ -51,7 +50,11 @@ export function HeatMapSvg({ scale = 1 }: IProps) {
     return null
   }
 
-  return <HeatMapSvgContent scale={scale} />
+  return (
+    <CrosshairProvider>
+      <HeatMapSvgContent scale={scale} />
+    </CrosshairProvider>
+  )
 }
 
 function HeatMapSvgContent({ scale = 1 }: IProps) {
@@ -73,10 +76,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
   //   w: blockSize.w * displayOptions.zoom,
   //   h: blockSize.h * displayOptions.zoom,
   // }
-
-  const { ref } = useSVG()
-
-  const { showTooltip, hideTooltip } = useTooltip()
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h //Math.min(displayOptions.blockSize.w,displayOptions.blockSize.h)
 

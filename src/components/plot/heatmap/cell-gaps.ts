@@ -151,6 +151,13 @@ export class CellGaps {
    * @returns
    */
   nearest(p: number): { x: number; index: number } {
+    if (
+      p < 0 ||
+      p >= this._positions[this._positions.length - 1] + this._width
+    ) {
+      return { x: -1, index: -1 }
+    }
+
     // binary search for the nearest span
     let low = 0
     let high = this._positions.length - 1

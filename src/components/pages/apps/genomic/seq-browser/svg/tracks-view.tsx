@@ -26,7 +26,6 @@ import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { makeUuid } from '@/lib/id'
 import { cumsum } from '@/lib/math/cumsum'
 import { zeros } from '@/lib/math/zeros'
-import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { TracksColumnSvg } from './tracks-column-svg'
 
@@ -661,5 +660,5 @@ export function TracksView({ className, style }: ISVGProps) {
     </SvgBase>
   )
 
-  return <CrosshairProvider>{svg}</CrosshairProvider>
+  return svg
 }

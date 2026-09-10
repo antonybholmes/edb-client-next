@@ -1,7 +1,7 @@
 import { IPos } from '@/interfaces/pos'
 import { ReactNode, useEffect } from 'react'
 import { create } from 'zustand'
-import { TOOLTIP_CLEAR_MS } from './tooltip-provider'
+import { samePosition, TOOLTIP_CLEAR_MS } from './tooltip-provider'
 
 interface ICrosshairStore {
   crosshair: IPos | null
@@ -24,17 +24,19 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     pendingCrosshair = null
   }
 
-  const samePosition = (a: IPos | null, b: IPos | null) =>
-    a?.x === b?.x && a?.y === b?.y
-
   return {
     crosshair: null,
 
     showCrosshair: (pos) => {
-      if (samePosition(get().crosshair, pos)) {
-        cancelPendingFrame()
-        return
+      if (clearTimeoutId) {
+        clearTimeout(clearTimeoutId)
+        clearTimeoutId = null
       }
+
+      // if (samePosition(get().crosshair, pos)) {
+      //   cancelPendingFrame()
+      //   return
+      // }
 
       if (crosshairFrame !== null && samePosition(pendingCrosshair, pos)) {
         return
@@ -59,6 +61,7 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     },
 
     hideCrosshair: () => {
+      console.log('hideCrosshair')
       cancelPendingFrame()
 
       if (clearTimeoutId) {
@@ -72,6 +75,7 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     },
 
     dispose: () => {
+      console.log('dispose')
       cancelPendingFrame()
 
       if (clearTimeoutId) {
@@ -93,7 +97,7 @@ export function useCrosshair() {
 
 // isolates the fast-changing crosshair position so mousemove only
 // re-renders this small overlay, not every GseaPlot in the grid
-export function CrosshairProvider({ children }: { children: ReactNode }) {
+export function CrosshairProvider({ children }: { children?: ReactNode }) {
   const crosshair = useCrosshairStore((state) => state.crosshair)
   const dispose = useCrosshairStore((state) => state.dispose)
 
@@ -103,7 +107,7 @@ export function CrosshairProvider({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {children}
+      {children && children}
 
       {crosshair && (
         <>

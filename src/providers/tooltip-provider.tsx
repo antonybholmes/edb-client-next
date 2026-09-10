@@ -21,6 +21,10 @@ interface ITooltipStore {
   dispose: () => void
 }
 
+export function samePosition(a: IPos | null, b: IPos) {
+  return a?.x === b.x && a?.y === b.y
+}
+
 export const useTooltipStore = create<ITooltipStore>()((set, get) => {
   let clearTimeoutId: ReturnType<typeof setTimeout> | null = null
   let tooltipFrame: number | null = null
@@ -34,9 +38,6 @@ export const useTooltipStore = create<ITooltipStore>()((set, get) => {
 
     pendingTooltip = null
   }
-
-  const samePosition = (a: IPos | null, b: IPos) =>
-    a?.x === b.x && a?.y === b.y
 
   return {
     tooltip: null,
@@ -120,7 +121,7 @@ export function useTooltip() {
 }
 
 // renders the active tooltip into a portal; doesn't need to wrap children
-export function TooltipRenderer() {
+export function TooltipProvider() {
   const tooltip = useTooltipStore((s) => s.tooltip)
   const dispose = useTooltipStore((s) => s.dispose)
 

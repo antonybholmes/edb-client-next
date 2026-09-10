@@ -15,16 +15,10 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { range } from '@/lib/math/range'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { TOOLTIP_CLEAR_MS, useTooltip } from '@/providers/tooltip-provider'
-import {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react'
+import { useTooltip } from '@/providers/tooltip-provider'
+import { useCallback, useMemo, type ReactElement, type ReactNode } from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
@@ -603,7 +597,7 @@ function vLegendSvg(
 //   oncoProps: IOncoProps
 // }
 
-export function OncoplotSvg() {
+function OncoplotSvgContent() {
   const { ref } = useSVG()
 
   const { mutations, displayProps } = useOncoplotSettings()
@@ -657,7 +651,8 @@ export function OncoplotSvg() {
     [spacing.x, spacing.y, displayProps.scale]
   )
 
-  const { showTooltip, hideTooltip: hideTooltipOrig } = useTooltip()
+  const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
 
   //const highlightRef = useRef<HTMLSpanElement>(null)
 
@@ -728,21 +723,10 @@ export function OncoplotSvg() {
   //   ? mf?.data(toolTipInfo.cell.row, toolTipInfo.cell.col)
   //   : null
 
-  const [barPos, setBarPos] = useState<IPos | null>(null)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  // avoid re-rendering the whole svg tree when the hovered cell hasn't changed
-  const lastCellRef = useRef<{ r: number; c: number } | null>(null)
-
-  const hideTooltip = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    // wait before removing. if we re-enter quickly, the tooltip won't flicker
-    // as this timeout will be cancelled so the tooltip won't disappear
-    // and will be moved to next location
-    timeoutRef.current = setTimeout(() => setBarPos(null), TOOLTIP_CLEAR_MS)
-  }, [])
+  const _hideTooltip = useCallback(() => {
+    hideTooltip()
+    hideCrosshair()
+  }, [hideTooltip, hideCrosshair])
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -778,16 +762,10 @@ export function OncoplotSvg() {
       //console.log('svgPoint', svgPoint, row, col, blockSize)
 
       if (row === -1 || col === -1) {
-        hideTooltip()
-        hideTooltipOrig()
+        _hideTooltip()
+
         return
       }
-
-      if (lastCellRef.current?.r === row && lastCellRef.current?.c === col) {
-        return
-      }
-
-      lastCellRef.current = { r: row, c: col }
 
       const blockXYMid = {
         x: col * blockSpaceSize.w + blockSize.w / 2 + marginLeft,
@@ -799,14 +777,10 @@ export function OncoplotSvg() {
           displayProps.plotGap,
       }
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-
       const { screenP: absoluteBlockScreenXY, relativeP: blockScreenXY } =
         svgPointToScreen(ref.current, blockXYMid)
 
-      setBarPos(blockScreenXY)
+      showCrosshair(blockScreenXY)
 
       const stats = mf?.data(row, col)
 
@@ -838,8 +812,10 @@ export function OncoplotSvg() {
       blockSize.h,
       spacing.x,
       spacing.y,
-      hideTooltip,
-      hideTooltipOrig,
+      _hideTooltip,
+
+      showCrosshair,
+      showTooltip,
     ]
   )
 
@@ -1029,31 +1005,13 @@ export function OncoplotSvg() {
     </SvgBase>
   )
 
+  return svgElem
+}
+
+export function OncoplotSvg() {
   return (
-    <>
-      {svgElem}
-
-      {barPos && (
-        <>
-          <span
-            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
-            style={{
-              left: `${barPos.x}px`,
-
-              //height: (gridHeight + top - 10) * displayProps.scale,
-            }}
-          ></span>
-
-          <span
-            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
-            style={{
-              top: `${barPos.y - 1}px`,
-
-              //width: (gridWidth + top - 10) * displayProps.scale,
-            }}
-          ></span>
-        </>
-      )}
-    </>
+    <CrosshairProvider>
+      <OncoplotSvgContent />
+    </CrosshairProvider>
   )
 }
