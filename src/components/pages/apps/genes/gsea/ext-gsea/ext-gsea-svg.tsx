@@ -1,9 +1,10 @@
-import { useMemo, type ReactNode } from 'react'
+import { ReactElement, useMemo, type ReactNode } from 'react'
 
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
   axisLength,
+  IAxis,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
@@ -19,87 +20,189 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgPolyLine } from '@/components/plot/svg-poly-line'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
+import { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK } from '@/lib/color/color'
-import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
-import { end, type ILim } from '@/lib/math/math'
+import type { IGeneSet, IRankedGene } from '@/lib/gsea/geneset'
+import { end } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
-import { useExtGseaContext } from './ext-gsea-provider'
+import { IExtGseaPlotResult, useExtGseaContext } from './ext-gsea-provider'
 import { IExtGseaSettings } from './ext-gsea-settings'
 
-export function ExtGseaSvg() {
+function LineSvg({
+  result,
+  ix,
+  x,
+  y,
+  x1,
+  gsea1,
+  gs1,
+  xax,
+}: {
+  result: IExtGseaPlotResult
+  ix: number[]
+  x: number[]
+  y: number[]
+  x1: number[]
+  y1: number[]
+  gsea1: IGseaResult
+  gs1: IGeneSet
+  xax: IAxis
+}) {
   const { plot } = useExtGseaContext()
 
-  const { axis: xax } = useAxis({
-    plotId: plot.id,
-    groupId: 'ext-gsea',
-    axisId: 'x',
-  })
   const { axis: yaxEs } = useAxis({
-    plotId: plot.id,
+    plotId: result.id,
     groupId: 'es',
     axisId: 'y',
   })
+
+  const displayProps: IExtGseaSettings = plot.props
+
+  let y1 = ix.map((i) => y[i]!)
+
+  y1[0] = 0
+  y1[y1.length - 1] = 0
+
+  let leadingEdgeIdx =
+    gsea1.es >= 0
+      ? gsea1.leadingEdge[gsea1.leadingEdge.length - 1].rank
+      : gsea1.leadingEdge[0].rank
+
+  // now we want the ix that are within the leading edge
+  let leadingIdx =
+    gsea1.es >= 0
+      ? ix.filter((i) => i <= leadingEdgeIdx)
+      : ix.filter((i) => i >= leadingEdgeIdx)
+
+  let xlead = leadingIdx.map((i) => x[i]!)
+  let ylead = leadingIdx.map((i) => y[i]!)
+
+  // fix ends
+
+  xlead =
+    gsea1.es >= 0 ? [...xlead, xlead[xlead.length - 1]!] : [xlead[0]!, ...xlead]
+  ylead = gsea1.es >= 0 ? [...ylead, 0] : [0, ...ylead]
+
+  let leadingEdge1Svg: ReactNode | undefined = undefined
+
+  if (displayProps.es.gs1.leadingEdge.fill.show) {
+    const xs = axisDomainToRange(xax, xlead)
+    const ys = axisDomainToRange(yaxEs, ylead)
+
+    const points = zip(xs, ys)
+      .map(([px, py]) => `${px},${py}`)
+      .join(', ')
+
+    leadingEdge1Svg = (
+      <SvgPolyLine
+        points={points}
+        fill={gs1.color}
+        fillOpacity={displayProps.es.gs1.leadingEdge.fill.opacity}
+        stroke="none"
+      />
+    )
+  }
+
+  let line1Svg: ReactNode | undefined = undefined
+
+  if (displayProps.es.gs1.line.show) {
+    const xs = axisDomainToRange(xax, x1)
+    const ys = axisDomainToRange(yaxEs, y1)
+
+    const points = zip(xs, ys)
+      .map(([px, py]) => `${px},${py}`)
+      .join(', ')
+
+    line1Svg = (
+      <SvgPolyLine
+        points={points}
+        stroke={gs1.color}
+        s={displayProps.es.gs1.line}
+        fill="none"
+      />
+    )
+  }
+  return (
+    <>
+      {leadingEdge1Svg}
+      {line1Svg}
+    </>
+  )
+}
+
+function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
+  const { plot } = useExtGseaContext()
+
+  const { axis: xax } = useAxis({
+    plotId: result.id,
+    groupId: 'ext-gsea',
+    axisId: 'x',
+  })
+
+  const { axis: yaxEs } = useAxis({
+    plotId: result.id,
+    groupId: 'es',
+    axisId: 'y',
+  })
+
   const { axis: yaxSnr } = useAxis({
-    plotId: plot.id,
+    plotId: result.id,
     groupId: 'snr',
     axisId: 'y',
   })
 
   const displayProps: IExtGseaSettings = plot.props
 
-  const rankedGenes: IRankedGenes = plot.rankedGenes
-  const gs1: IGeneSet = plot.gs1
-  const gs2: IGeneSet = plot.gs2
+  const rankedGenes: IRankedGene[] = result.rankedGenes
+  const gs1: IGeneSet = result.gs1
+  const gs2: IGeneSet = result.gs2
 
-  const extGseaRes: IExtGseaResult = plot.extGseaRes
-  const gseaRes1: IGseaResult = plot.gseaRes1
-  const gseaRes2: IGseaResult = plot.gseaRes2
+  const extGsea: IExtGseaResult = result.extGsea
+  const gsea1: IGseaResult = result.gsea1
+  const gsea2: IGseaResult = result.gsea2
 
-  const { esSvg, genesSvg, rankingSvg, pageSize } = useMemo(() => {
+  const { esSvg, genesSvg, rankingSvg, titleSvg } = useMemo(() => {
     // size of plot with padding
-    const plotSize: ILim = [
-      displayProps.axes.x.length +
-        displayProps.plot!.margin.left +
-        displayProps.plot!.margin.right,
-      displayProps.es.axes.y.length +
-        (displayProps.genes.line.show
-          ? displayProps.plot!.gap.y + displayProps.genes.height
-          : 0) +
-        (displayProps.ranking.show
-          ? displayProps.plot!.gap.y + displayProps.ranking.axes.y.length
-          : 0) +
-        displayProps.plot!.margin.top +
-        displayProps.plot!.margin.bottom,
-    ]
 
-    const rows = 1
-
-    const pageSize: ILim = [
-      plotSize[0]! * displayProps.page.columns,
-      plotSize[1]! * rows,
-    ]
-
-    let y = gseaRes1.esAll //self._ranked_scores
+    let y = gsea1.esAll //self._ranked_scores
     const x = range(y.length)
 
     // subsample so we don't draw every point
     const ix = range(0, x.length, 100)
 
     const x1 = ix.map((i) => x[i]!)
+
+    // we must end at the last point so zero the ends and fix
+    // fix x
+    x1[0] = 0
+    x1[x1.length - 1] = x[x.length - 1]!
+
     let y1 = ix.map((i) => y[i]!)
     y1[0] = 0
     y1[y1.length - 1] = 0
 
-    let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank]!)
-    let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank]!)
+    let leadingEdgeIdx =
+      gsea1.es >= 0
+        ? gsea1.leadingEdge[gsea1.leadingEdge.length - 1].rank
+        : gsea1.leadingEdge[0].rank
+
+    // now we want the ix that are within the leading edge
+    let leadingIdx =
+      gsea1.es >= 0
+        ? where(x1, (xi) => xi <= leadingEdgeIdx)
+        : where(x1, (xi) => xi >= leadingEdgeIdx)
+
+    let xlead = leadingIdx.map((i) => x1[i]!)
+    let ylead = leadingIdx.map((i) => y1[i]!)
 
     // fix ends
 
-    xlead = [xlead[0]!, ...xlead]
-    ylead = [0, ...ylead]
+    xlead =
+      gsea1.es >= 0
+        ? [...xlead, xlead[xlead.length - 1]!]
+        : [xlead[0]!, ...xlead]
 
-    xlead = [...xlead, xlead[xlead.length - 1]!]
-    ylead = [...ylead, 0]
+    ylead = gsea1.es >= 0 ? [...ylead, 0] : [0, ...ylead]
 
     let leadingEdge1Svg: ReactNode | undefined = undefined
 
@@ -145,23 +248,55 @@ export function ExtGseaSvg() {
     // line 2
     //
 
-    y = gseaRes2.esAll //self._ranked_scores
-    //x = range(y.length)
+    y = gsea2.esAll //self._ranked_scores
 
     y1 = ix.map((i) => y[i]!)
+
+    // we must end at the last point so zero the ends and fix
+    // fix x
+
     y1[0] = 0
     y1[y1.length - 1] = 0
 
-    xlead = gseaRes2.leadingEdge.map((g) => x[g.rank]!)
-    ylead = gseaRes2.leadingEdge.map((g) => y[g.rank]!)
+    leadingEdgeIdx =
+      gsea2.es >= 0
+        ? gsea2.leadingEdge[gsea2.leadingEdge.length - 1].rank
+        : gsea2.leadingEdge[0].rank
+
+    console.log(leadingEdgeIdx, gsea2)
+
+    // now we want the indices that are within the leading edge
+    leadingIdx =
+      gsea2.es >= 0
+        ? where(x1, (xi) => xi <= leadingEdgeIdx)
+        : where(x1, (xi) => xi >= leadingEdgeIdx)
+
+    xlead = leadingIdx.map((i) => x1[i]!)
+    ylead = leadingIdx.map((i) => y1[i]!)
+
+    xlead =
+      gsea2.es >= 0
+        ? [...xlead, xlead[xlead.length - 1]!]
+        : [xlead[0]!, ...xlead]
+    ylead = gsea2.es >= 0 ? [...ylead, 0] : [0, ...ylead]
+
+    console.log('xx', xlead, ylead, leadingIdx)
+
+    //x = range(y.length)
+
+    //y1 = ix.map((i) => y[i]!)
+    //y1[0] = 0
+    //y1[y1.length - 1] = 0
+
+    //xlead = gsea2.leadingEdge.map((g) => x[g.rank]!)
+    //ylead = gsea2.leadingEdge.map((g) => y[g.rank]!)
 
     // fix ends
 
-    xlead = [xlead[0]!, ...xlead]
-    ylead = [0, ...ylead]
+    xlead = [xlead[0]!, ...xlead, xlead[xlead.length - 1]!]
+    ylead = [0, ...ylead, 0]
 
-    xlead = [...xlead, xlead[xlead.length - 1]!]
-    ylead = [...ylead, 0]
+    console.log(xlead)
 
     let leadingEdge2Svg: ReactNode | undefined = undefined
 
@@ -233,7 +368,7 @@ export function ExtGseaSvg() {
             }}
           >
             <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-              {rankedGenes.genes.length.toLocaleString()}
+              {rankedGenes.length.toLocaleString()}
             </SvgText>
           </SvgG>
         </SvgG>
@@ -252,7 +387,7 @@ export function ExtGseaSvg() {
               //textAnchor="middle"
               //fontWeight="bold"
             >
-              {rankedGenes.group1.name}
+              {gs1.name}
             </SvgText>
           </SvgG>
 
@@ -269,7 +404,7 @@ export function ExtGseaSvg() {
               textAnchor="end"
               //fontWeight="bold"
             >
-              {rankedGenes.group2.name}
+              {gs2.name}
             </SvgText>
           </SvgG>
         </SvgG>
@@ -281,7 +416,7 @@ export function ExtGseaSvg() {
           }}
         >
           <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-            NES: {extGseaRes.nes.toFixed(2)}
+            NES: {extGsea.nes.toFixed(2)}
           </SvgText>
 
           <SvgG
@@ -291,7 +426,7 @@ export function ExtGseaSvg() {
             }}
           >
             <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-              P-value: {extGseaRes.pvalue.toFixed(3)}
+              P-value: {extGsea.pvalue.toFixed(3)}
             </SvgText>
           </SvgG>
         </SvgG>
@@ -301,7 +436,7 @@ export function ExtGseaSvg() {
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      let points = where(gseaRes1.hits, (x) => x > 0)
+      let points = where(gsea1.hits, (x) => x > 0)
 
       let xs = axisDomainToRange(xax, points)
 
@@ -345,7 +480,7 @@ export function ExtGseaSvg() {
         </SvgG>
       )
 
-      points = where(gseaRes2.hits, (x) => x > 0)
+      points = where(gsea2.hits, (x) => x > 0)
       xs = axisDomainToRange(xax, points)
 
       const gengseaRes2Svg = (
@@ -412,22 +547,19 @@ export function ExtGseaSvg() {
     if (displayProps.ranking.show) {
       const xaf = axisDomainToRangeFunc(xax)
       const yaf = axisDomainToRangeFunc(yaxSnr)
-      let displayPoints = rankedGenes.genes.map((e, ei) => [
-        xaf(ei),
-        yaf(e.score),
-      ])
+      let displayPoints = rankedGenes.map((e, ei) => [xaf(ei), yaf(e.score)])
 
       displayPoints = [[xaf(0), yaf(0)], ...displayPoints]
 
-      displayPoints = [
-        ...displayPoints,
-        [xaf(rankedGenes.genes.length - 1), yaf(0)],
-      ]
+      displayPoints = [...displayPoints, [xaf(rankedGenes.length - 1), yaf(0)]]
 
       // crossing point
 
-      const crossIndex =
-        end(where(rankedGenes.genes, (gene) => gene.score > 0)) + 1
+      console.log('snr', rankedGenes.length, rankedGenes)
+
+      const crossIndex = end(where(rankedGenes, (gene) => gene.score > 0)) + 1
+
+      console.log('snr', rankedGenes.length, crossIndex)
 
       const crossingX = xaf(crossIndex)
 
@@ -486,22 +618,111 @@ export function ExtGseaSvg() {
       )
     }
 
-    return { esSvg, genesSvg, rankingSvg, pageSize }
+    let titleSvg: ReactNode = null
+
+    if (displayProps.title.show) {
+      titleSvg = (
+        <SvgG
+          pos={{
+            x: displayProps.axes.x.length / 2,
+            y: displayProps.title.offset,
+          }}
+        >
+          <SvgText
+            font={displayProps.title}
+            textAnchor="middle"
+            //fontWeight="bold"
+          >
+            {result.name}
+          </SvgText>
+        </SvgG>
+      )
+    }
+
+    return { esSvg, genesSvg, rankingSvg, titleSvg }
   }, [xax, yaxEs, yaxSnr, displayProps])
 
   return (
+    <>
+      {titleSvg && titleSvg}
+
+      {esSvg}
+
+      {genesSvg && genesSvg}
+
+      {rankingSvg && rankingSvg}
+    </>
+  )
+}
+
+export function ExtGseaSvg() {
+  const { plot } = useExtGseaContext()
+
+  const displayProps: IExtGseaSettings = plot.props
+
+  const innerPlotSize: IDim = useMemo(
+    () => ({
+      w: displayProps.axes.x.length,
+      h:
+        displayProps.es.axes.y.length +
+        (displayProps.genes.line.show
+          ? displayProps.plot!.gap.y + displayProps.genes.height
+          : 0) +
+        (displayProps.ranking.show
+          ? displayProps.plot!.gap.y + displayProps.ranking.axes.y.length
+          : 0),
+    }),
+    [displayProps]
+  )
+
+  const plotSize: IDim = useMemo(
+    () => ({
+      w:
+        innerPlotSize.w +
+        displayProps.plot!.margin.left +
+        displayProps.plot!.margin.right,
+      h:
+        innerPlotSize.h +
+        displayProps.plot!.margin.top +
+        displayProps.plot!.margin.bottom,
+    }),
+    [displayProps, innerPlotSize]
+  )
+
+  const rows = Math.ceil(plot.results.length / displayProps.page.columns)
+
+  const pageSize: IDim = {
+    w: plotSize.w * displayProps.page.columns,
+    h: plotSize.h * rows,
+  }
+
+  const elems: ReactElement[] = []
+
+  let x = 0
+  let y = 0
+
+  for (const [ri, result] of plot.results.entries()) {
+    elems.push(
+      <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={{ x, y }}>
+        <ExtGseaSvgPlot result={result} />
+      </SvgG>
+    )
+
+    x += plotSize.w
+
+    if (ri % displayProps.page.columns === displayProps.page.columns - 1) {
+      x = 0
+      y += plotSize.h
+    }
+  }
+
+  return (
     <SvgBase
-      width={pageSize[0]!}
-      height={pageSize[1]!}
+      width={pageSize.w}
+      height={pageSize.h}
       scale={displayProps.page.scale}
     >
-      <SvgMargin margin={displayProps.plot!.margin}>
-        {esSvg}
-
-        {genesSvg && genesSvg}
-
-        {rankingSvg && rankingSvg}
-      </SvgMargin>
+      <SvgMargin margin={displayProps.plot!.margin}>{elems}</SvgMargin>
     </SvgBase>
   )
 }

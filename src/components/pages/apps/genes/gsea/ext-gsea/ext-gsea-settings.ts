@@ -12,7 +12,7 @@ import { COLOR_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v16`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v18`
 
 export interface IExtGseaSettings {
   axes: {
@@ -59,7 +59,7 @@ export interface IExtGseaSettings {
       }
     }
   }
-  title: {
+  title: ITextProps & {
     offset: number
   }
   page: {
@@ -88,13 +88,14 @@ export interface IExtGseaSettings {
   }
 }
 
-export const DEFAULT_EXT_GSEA_PROPS: IExtGseaSettings = {
+export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
   page: {
-    columns: 2,
+    columns: 3,
     scale: 1,
   },
 
   title: {
+    ...DEFAULT_BOLD_TEXT_PROPS,
     offset: -10,
   },
   plot: {
@@ -178,7 +179,7 @@ export interface IExtGseaSettingsStore extends IExtGseaSettings {
 export const useExtGseaStore = create<IExtGseaSettingsStore>()(
   persist(
     (set) => ({
-      ...DEFAULT_EXT_GSEA_PROPS,
+      ...DEFAULT_EXT_GSEA_SETTINGS,
       updateSettings: (settings: Partial<IExtGseaSettings>) => {
         set((state) => ({ ...state, ...settings }))
       },
@@ -214,7 +215,7 @@ export function useExtGseaSettings(): {
 } {
   const settings = useExtGseaStore((state) => state)
   const updateSettings = useExtGseaStore((state) => state.updateSettings)
-  const resetSettings = () => updateSettings({ ...DEFAULT_EXT_GSEA_PROPS })
+  const resetSettings = () => updateSettings({ ...DEFAULT_EXT_GSEA_SETTINGS })
 
   return { settings, updateSettings, resetSettings }
 }

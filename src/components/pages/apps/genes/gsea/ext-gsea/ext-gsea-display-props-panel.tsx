@@ -27,9 +27,9 @@ import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
-import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-settings'
+import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
 
-export function ExtGseaPropsPanel() {
+export function ExtGseaDisplayPropsPanel() {
   // const { plotsState, historyDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -44,14 +44,18 @@ export function ExtGseaPropsPanel() {
   const { updatePlot } = useHistory()
   const { plot } = useExtGseaContext()
 
-  const displayOptions = plot!.props
-
   const [openTabs, setOpenTabs] = useState<string[]>([
     'plot',
     'enrichment',
     'genes-in-genesets',
     'ranked-genes',
   ])
+
+  if (!plot) {
+    return null
+  }
+
+  const displayOptions = plot!.props
 
   return (
     <PropsPanel className="pr-1">
@@ -60,7 +64,7 @@ export function ExtGseaPropsPanel() {
           onClick={() =>
             updatePlot(
               produce(plot, (draft) => {
-                draft.props = { ...DEFAULT_EXT_GSEA_PROPS }
+                draft.props = { ...DEFAULT_EXT_GSEA_SETTINGS }
               })
             )
           }

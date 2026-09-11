@@ -407,12 +407,12 @@ export function axisDomainToRangeFunc(
   }
 }
 
+export function axisDomainToRange(axis: IAxis, values: number): number
+export function axisDomainToRange(axis: IAxis, values: ITickItem): number
 export function axisDomainToRange(
   axis: IAxis,
   values: readonly (ITickItem | number)[]
 ): number[]
-export function axisDomainToRange(axis: IAxis, values: number): number
-export function axisDomainToRange(axis: IAxis, values: ITickItem): number
 export function axisDomainToRange(
   axis: IAxis,
   values: readonly (ITickItem | number)[] | number | ITickItem

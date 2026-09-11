@@ -21,6 +21,7 @@ import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
 
+import { makeUuid } from '@/lib/id'
 import { newExtGseaPlot } from '../../genes/gsea/ext-gsea/ext-gsea-provider'
 import { useExtGseaWorker } from '../../genes/gsea/ext-gsea/ext-gsea-worker'
 import { pathJoin } from '../history/history-provider/history-actions'
@@ -147,7 +148,7 @@ export function GeneToolbar() {
 
     runExtGseaWorker(
       {
-        rankedGenes: rankedGenes.genes,
+        rankedGenes,
         gs1,
         gs2,
       },
@@ -156,12 +157,18 @@ export function GeneToolbar() {
 
         const plot = {
           ...newExtGseaPlot('Extended GSEA', {
-            rankedGenes,
-            gs1: gs1,
-            gs2: gs2,
-            extGseaRes,
-            gseaRes1,
-            gseaRes2,
+            results: [
+              {
+                id: makeUuid(),
+                name: 'Extended GSEA',
+                rankedGenes,
+                gs1: gs1,
+                gs2: gs2,
+                extGsea: extGseaRes,
+                gsea1: gseaRes1,
+                gsea2: gseaRes2,
+              },
+            ],
           }),
         }
 

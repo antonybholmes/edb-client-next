@@ -1,5 +1,4 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
-import type { IClusterGroup } from '../cluster-group'
 import { randomHexColor } from '../color/color'
 import { makeUuid } from '../id'
 
@@ -32,11 +31,11 @@ export interface IRankedGene {
   leading?: boolean
 }
 
-export interface IRankedGenes {
-  group1: IClusterGroup
-  group2: IClusterGroup
-  genes: IRankedGene[]
-}
+// export interface IRankedGenes {
+//   group1: IClusterGroup
+//   group2: IClusterGroup
+//   genes: IRankedGene[]
+// }
 
 export function makeNewGeneset(name: string = 'Gene Set 1'): IGeneSet {
   return {

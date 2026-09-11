@@ -265,7 +265,7 @@ export class ExtGSEA {
           (_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] === 1
         )
         .sort((r1, r2) => r1.rank - r2.rank)
-        .reverse()
+      //.reverse()
     } else {
       //const ixpk = esAll.indexOf(maxEs)
 
@@ -273,9 +273,11 @@ export class ExtGSEA {
         leadingEdgeIndices[i] = 1
       }
 
-      leadingEdge = this._rankedGenes.filter(
-        (_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] === 1
-      )
+      leadingEdge = this._rankedGenes
+        .filter(
+          (_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] === 1
+        )
+        .sort((r1, r2) => r1.rank - r2.rank)
     }
 
     // just the indices of the leading edge

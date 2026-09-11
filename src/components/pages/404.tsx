@@ -1,7 +1,7 @@
 'use client'
 
-import { CenterLayout } from '@/layouts/center-layout'
 import { ClientLayout } from '@/app/client-layout'
+import { CenterLayout } from '@/layouts/center-layout'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import { DinoIcon } from '../icons/dino-icon'
@@ -83,8 +83,8 @@ export function Error404Page() {
 
     // Cleanup
     return () => {
-      ref.current!.removeEventListener('mouseenter', onMouseEnter)
-      ref.current!.removeEventListener('mouseleave', onMouseLeave)
+      ref.current?.removeEventListener('mouseenter', onMouseEnter)
+      ref.current?.removeEventListener('mouseleave', onMouseLeave)
       //spinTween.kill()
       jumpTl.kill()
     }
