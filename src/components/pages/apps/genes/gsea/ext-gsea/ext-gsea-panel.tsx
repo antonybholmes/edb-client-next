@@ -1,0 +1,151 @@
+import { useEffect, useState } from 'react'
+
+import { FooterPortal } from '@/components/toolbar/footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
+
+import {
+  DEFAULT_HEATMAP_PROPS,
+  type IHeatMapSettings,
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { TEXT_CANCEL } from '@/consts'
+import { SaveImageDialog } from '@/dialogs/save-image-dialog'
+
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom-provider'
+import { produce } from 'immer'
+
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { useSVG } from '@/providers/svg-provider'
+
+import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
+import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
+import { useExtGseaContext } from './ext-gsea-provider'
+import { ExtGseaSvg } from './ext-gsea-svg'
+
+export function makeDefaultHeatmapProps(mode: string): IHeatMapSettings {
+  return {
+    ...DEFAULT_HEATMAP_PROPS,
+    mode: mode.toLowerCase().includes('dot') ? 'dot' : 'heatmap',
+  }
+}
+
+export function ExtGseaPanel() {
+  // const { plotsState, plotsDispatch } = useContext(PlotsContext)
+
+  // const plot = plotsState.plotMap[plotId]
+
+  // if (!plot) {
+  //   return null
+  // }
+
+  const { updatePlot } = useHistory()
+
+  const { plot } = useExtGseaContext()
+
+  const { autoSave } = useSVG()
+
+  useZoom({
+    onChange: (z) => {
+      updatePlot(
+        produce(plot, (draft) => {
+          draft.props.page.scale = z.zoom
+        })
+      )
+    },
+  })
+
+  const [showSave, setShowSave] = useState(false)
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
+
+  useEffect(() => {
+    const filteredMessages = messages.filter(
+      (message) => message.target === plot?.id
+    )
+
+    for (const message of filteredMessages) {
+      if (typeof message.data === 'string' && message.data.includes('save')) {
+        if (message.data.includes(':')) {
+          autoSave(`extgsea.${messageImageFileFormat(message)}`)
+        } else {
+          setShowSave(true)
+        }
+      }
+
+      removeMessage(message.id)
+    }
+  }, [messages])
+
+  return (
+    <>
+      {showSave && (
+        <SaveImageDialog
+          name="ext-gsea"
+          onResponse={(response, data) => {
+            if (response !== TEXT_CANCEL) {
+              const d = data as { name: string }
+              autoSave(d.name)
+            }
+
+            setShowSave(false)
+          }}
+        />
+      )}
+
+      {/* <ResizablePanelGroup
+          orientation="horizontal"
+          id="plot-resizable-panels"
+          //autoSaveId="plot-resizable-panels"
+          className="grow"
+        >
+          <ResizablePanel
+            id="plot-svg"
+            order={1}
+            defaultSize="75%"
+            minSize="50%"
+            className="flex flex-col pl-2 pt-2 pb-2"
+          >
+            <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
+              <HeatMapSvg
+                ref={svgRef}
+                cf={plot!.cf}
+                groups={groups}
+                displayOptions={displayOptions}
+              />
+            </div>
+          </ResizablePanel>
+          <ThinHResizeHandle />
+          <ResizablePanel
+            id="plot-svg-right"
+            order={2}
+            className="flex flex-col"
+            defaultSize="25%"
+            minSize="15%"
+            collapsible={true}
+            collapsedSize={0}
+          >
+            <SideBarTextTabs tabs={plotRightTabs} />
+          </ResizablePanel>
+        </ResizablePanelGroup> */}
+
+      <ResizableSidebar side="right">
+        <ExtScrollCard>
+          <ExtGseaSvg />
+        </ExtScrollCard>
+        <ExtGseaPropsPanel />
+      </ResizableSidebar>
+
+      <FooterPortal className="shrink-0 grow-0 ">
+        <></>
+        <></>
+        <>
+          <ZoomSlider />
+        </>
+      </FooterPortal>
+    </>
+  )
+}

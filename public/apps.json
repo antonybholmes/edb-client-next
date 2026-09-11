@@ -39,6 +39,16 @@
     "build": 826
   },
   {
+    "name": "ExtGSEA Plot",
+    "description": "Extended GSEA plots.",
+    "color": "#ffb366",
+    "version": "2.0.0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-09-11T17:04:09.917Z",
+    "hash": "7ff3a7f88ecf8b1e2d9b91f7df627da0fb754dd39fbb8a44da41dbfe52cd612a",
+    "build": 938
+  },
+  {
     "name": "Get DNA",
     "description": "Get DNA for genomic locations.",
     "version": "19.0.8",
