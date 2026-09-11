@@ -112,14 +112,29 @@ export function CrosshairProvider({ children }: { children?: ReactNode }) {
       {crosshair && (
         <>
           <span
-            className="absolute z-50 border-r border-foreground/80 pointer-events-none w-px h-full top-0"
-            style={{ left: crosshair.x }}
-          ></span>
+            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 h-full top-0"
+            style={{ left: crosshair.x - 1, height: crosshair.y - 5 }}
+          />
 
           <span
-            className="absolute z-50 border-t border-foreground/80 pointer-events-none h-px w-full left-0"
-            style={{ top: crosshair.y }}
-          ></span>
+            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 top-0 bottom-0"
+            style={{ left: crosshair.x - 1, top: crosshair.y + 5 }}
+          />
+
+          <span
+            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 w-full left-0"
+            style={{ top: crosshair.y - 1, width: crosshair.x - 5 }}
+          />
+
+          <span
+            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 right-0"
+            style={{ top: crosshair.y - 1, left: crosshair.x + 5 }}
+          />
+
+          <span
+            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 w-0.5 top-0 left-0"
+            style={{ left: crosshair.x - 1, top: crosshair.y - 1 }}
+          />
         </>
       )}
     </>
