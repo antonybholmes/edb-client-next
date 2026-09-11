@@ -3,11 +3,12 @@ import { createContext, useContext, useEffect, useMemo } from 'react'
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IChildrenProps } from '@/interfaces/children-props'
+import { IRankedGene } from '@/lib/gsea/geneset'
 import { useGseaSettings } from './gsea-settings-store'
-import { IGseaGeneRankScore, IGseaGeneSet, useGseaInUse } from './gsea-store'
+import { IGseaTableResult, useGseaInUse } from './gsea-store'
 
 type GseaPlotContext = {
-  pathways: IGseaGeneSet[]
+  pathways: IGseaTableResult[]
 }
 
 export const GseaPlotContext = createContext<GseaPlotContext | null>(null)
@@ -88,7 +89,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         axes: { x: xax, y: yaxEs },
       })
 
-      const sortedRankedGenes: IGseaGeneRankScore[] = settings.phenotypes.invert
+      const sortedRankedGenes: IRankedGene[] = settings.phenotypes.invert
         ? rankedGenes
             .map((e) => ({
               ...e,

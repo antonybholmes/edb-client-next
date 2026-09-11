@@ -4,15 +4,15 @@ import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
-import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
+import { IGeneSet } from '@/lib/gsea/geneset'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { IGseaBubblePlot } from '../../../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 
 import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
-import { IExtGseaDisplayOptions } from '../../apps/gsea/ext-gsea/ext-gsea-store'
+
+import { IExtGseaPlot } from '../../../genes/gsea/ext-gsea/ext-gsea-provider'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from './history-manager'
 import { IBasePlot } from './plot'
@@ -67,22 +67,11 @@ export interface LollipopPlot extends IBasePlot {
   style: 'lollipop'
 }
 
-export interface ExtGseaPlot extends IBasePlot {
-  style: 'ext-gsea'
-  props: IExtGseaDisplayOptions
-  rankedGenes: IRankedGenes
-  gs1: IGeneSet
-  gs2: IGeneSet
-  extGseaRes: IExtGseaResult
-  gseaRes1: IGseaResult
-  gseaRes2: IGseaResult
-}
-
 export type HistoryPlot =
   | IHeatMapPlot
   | IVolcanoPlot
   | IGseaBubblePlot
-  | ExtGseaPlot
+  | IExtGseaPlot
   | BoxPlot
   | ISankeyPlot
 

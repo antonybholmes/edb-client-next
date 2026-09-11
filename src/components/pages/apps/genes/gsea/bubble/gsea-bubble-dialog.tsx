@@ -15,7 +15,7 @@ import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-
 import {
   getGseaLog10q,
   IGseaBubble,
-  IGseaGeneSet,
+  IGseaTableResult,
 } from '../gsea-plot/gsea-store'
 
 const MAX_COLS = 10
@@ -169,7 +169,7 @@ export function GseaBubbleDialog({
       names = idx.map((i) => names[i])
     }
 
-    const genesets: IGseaGeneSet[] = names.map((name, i) => {
+    const genesets: IGseaTableResult[] = names.map((name, i) => {
       return {
         id: makeUuid(),
         name,

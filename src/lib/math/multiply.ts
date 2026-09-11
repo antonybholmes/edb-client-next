@@ -1,3 +1,10 @@
+/**
+ * Multiply all elements in an array by a given number or array of numbers.
+ *
+ * @param x The array of numbers to be multiplied.
+ * @param y The number or array of numbers to multiply with.
+ * @returns A new array containing the results of the multiplication.
+ */
 export function mult(x: number[], y: number | number[]): number[] {
   if (y === 1) {
     return x
@@ -17,9 +24,9 @@ export function mult(x: number[], y: number | number[]): number[] {
  * array and is shorter than x, the position in y will be chosen
  * by modulo arithmetic.
  *
- * @param x
- * @param y
- * @returns
+ * @param x The array of numbers to be divided.
+ * @param y The number or array of numbers to divide by.
+ * @returns A new array containing the results of the division.
  */
 export function div(x: number[], y: number | number[]): number[] {
   if (y === 1) {

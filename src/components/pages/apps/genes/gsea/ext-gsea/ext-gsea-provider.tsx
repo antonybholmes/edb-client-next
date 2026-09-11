@@ -7,8 +7,9 @@ import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { abs } from '@/lib/math/abs'
 import { range } from '@/lib/math/range'
 
-import { IExtGseaSettings } from './ext-gsea-settings'
+import { DEFAULT_EXT_GSEA_PROPS, IExtGseaSettings } from './ext-gsea-settings'
 
+import { makeUuid } from '@/lib/id'
 import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
 
 export interface IExtGseaPlot extends IBasePlot {
@@ -25,6 +26,43 @@ export interface IExtGseaPlot extends IBasePlot {
 export interface ExtGseaPropsContextType {
   displayProps: IExtGseaSettings
   plot: IExtGseaPlot
+}
+
+export function newExtGseaPlot(
+  name: string,
+
+  opts: Partial<IExtGseaPlot> = {}
+): IExtGseaPlot {
+  const {
+    actions = [],
+    groupRows: groups = [],
+    extGseaRes = {} as IExtGseaResult,
+    gseaRes1 = {} as IGseaResult,
+    gseaRes2 = {} as IGseaResult,
+    rankedGenes = {} as IRankedGenes,
+    gs1 = {} as IGeneSet,
+    gs2 = {} as IGeneSet,
+    props = { ...DEFAULT_EXT_GSEA_PROPS },
+  } = opts
+
+  return {
+    id: makeUuid(),
+    //path: '',
+    style: 'ext-gsea',
+    name,
+    //dataframes,
+    groupRows: groups,
+    extGseaRes,
+    gseaRes1,
+    gseaRes2,
+    rankedGenes,
+    gs1,
+    gs2,
+    props,
+    actions,
+    type: 'plot',
+    createdAt: new Date().toISOString(),
+  }
 }
 
 export const ExtGseaContext = createContext<

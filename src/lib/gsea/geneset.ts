@@ -29,6 +29,7 @@ export interface IRankedGene {
   name: string
   score: number
   rank: number
+  leading?: boolean
 }
 
 export interface IRankedGenes {

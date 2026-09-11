@@ -15,12 +15,14 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../history/history-provider/history-contexts'
-import { newExtGseaPlot } from '../history/history-provider/history-factories'
+
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
-import { useExtGseaWorker } from '../apps/gsea/ext-gsea/ext-gsea-worker'
+
+import { newExtGseaPlot } from '../../genes/gsea/ext-gsea/ext-gsea-provider'
+import { useExtGseaWorker } from '../../genes/gsea/ext-gsea/ext-gsea-worker'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
@@ -145,7 +147,7 @@ export function GeneToolbar() {
 
     runExtGseaWorker(
       {
-        rankedGenes,
+        rankedGenes: rankedGenes.genes,
         gs1,
         gs2,
       },

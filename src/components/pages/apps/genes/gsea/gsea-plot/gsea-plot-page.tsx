@@ -71,7 +71,7 @@ import { GeneSetFilter } from './gene-set-filter'
 import { GseaPlotProvider } from './gsea-plot-provider'
 import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
-import { useGsea, type IGseaGeneSet } from './gsea-store'
+import { useGsea, type IGseaTableResult } from './gsea-store'
 import { GseaSvg } from './gsea-svg'
 import APP_INFO from './manifest.json'
 import { BubbleToolbar } from './toolbars/bubble'
@@ -99,7 +99,7 @@ export function GseaPlotPage() {
     loadGseaZipWithErrorHandling,
   } = useGsea()
 
-  const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
+  const [searchResults, setSearchResults] = useState<IGseaTableResult[]>([])
 
   useZoom({
     onChange: ({ zoom }) => {

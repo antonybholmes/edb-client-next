@@ -24,7 +24,8 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { AxesPropRow } from '@/components/plot/axes/axes-prop-row'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
-import { useHistory } from '../../../history/history-provider/history-provider'
+
+import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-settings'
 

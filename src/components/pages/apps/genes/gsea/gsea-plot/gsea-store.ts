@@ -5,6 +5,7 @@ import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
 import { IDBEntity } from '@/interfaces/db-entity'
+import { IRankedGene } from '@/lib/gsea/geneset'
 import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useGseaSettings } from './gsea-settings-store'
@@ -14,7 +15,7 @@ export const MAX_NEG_LOG10_P = 50
 /**
  * Represents a gene set in the GSEA report.
  */
-export interface IGseaGeneSet extends IDBEntity {
+export interface IGseaTableResult extends IDBEntity {
   phen: string
   size: number
   nes: number
@@ -24,32 +25,25 @@ export interface IGseaGeneSet extends IDBEntity {
 }
 
 export interface IGseaBubble extends IDBEntity {
-  genesets: IGseaGeneSet[]
+  genesets: IGseaTableResult[]
   nes: { label: string }
   size: { label: string }
   log10q: { label: string }
 }
 
-export interface IGseaGeneRankScore {
-  gene: string
-  rank: number
-  score: number
-  leading: boolean
-}
-
 export interface IGseaResult {
   name: string
-  es: IGseaGeneRankScore[]
+  es: IRankedGene[]
 }
 
 export interface IGseaStore {
   phenotypes: string[]
-  rankedGenes: IGseaGeneRankScore[]
-  searchResults: IGseaGeneSet[]
-  reportsMap: Record<string, IGseaGeneSet[]>
+  rankedGenes: IRankedGene[]
+  searchResults: IGseaTableResult[]
+  reportsMap: Record<string, IGseaTableResult[]>
   geneSetsInUse: Record<string, boolean>
   resultsMap: Record<string, IGseaResult>
-  allReports: IGseaGeneSet[]
+  allReports: IGseaTableResult[]
   //reports: IGseaGeneSet[]
   allowSelectAll: boolean
   phenotypesFilter: Record<string, boolean>
@@ -108,11 +102,11 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
       return
     }
 
-    const reportsMap: Record<string, IGseaGeneSet[]> = {}
+    const reportsMap: Record<string, IGseaTableResult[]> = {}
 
     const resultsMap: Record<string, IGseaResult> = {}
 
-    let rankedGenes: IGseaGeneRankScore[] = []
+    let rankedGenes: IRankedGene[] = []
     let phenotypes: string[] = []
 
     const file = files[0]!
@@ -152,7 +146,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
         const scoreIdx = headings.findIndex((h) => h === 'SCORE')
 
         rankedGenes = rows.map((tokens, ti) => ({
-          gene: tokens[geneIdx]!,
+          name: tokens[geneIdx]!,
           rank: ti,
           score: Number(tokens[scoreIdx]!),
           leading: false,
@@ -200,7 +194,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
           const q = Number(tokens[qIdx]!)
           const log10q = getGseaLog10q(q)
 
-          const report: IGseaGeneSet = {
+          const report: IGseaTableResult = {
             id: makeUuid(),
             name,
             phen,
@@ -231,9 +225,9 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
         const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
-        const es: IGseaGeneRankScore[] = rows.map((tokens) => {
+        const es: IRankedGene[] = rows.map((tokens) => {
           return {
-            gene: tokens[1]!,
+            name: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
             score: Number(tokens[scoreIdx]!),
             leading: tokens[leadingIdx]!.includes('Yes'),
@@ -250,7 +244,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
       phenotypes = Object.keys(reportsMap).sort()
     }
 
-    const allReports: IGseaGeneSet[] = phenotypes
+    const allReports: IGseaTableResult[] = phenotypes
       .filter((phen) => phen in reportsMap)
       .map((phen) => reportsMap[phen]!)
       .flat()
@@ -281,11 +275,11 @@ export function useGsea(): Omit<
   'allReports' | 'reportsMap' | 'reportOrder' | 'setReportOrder'
 > & {
   phenotypesFilter: Record<string, boolean>
-  filteredReports: IGseaGeneSet[]
-  inUseReports: IGseaGeneSet[]
+  filteredReports: IGseaTableResult[]
+  inUseReports: IGseaTableResult[]
   inUsePhenotypes: string[]
   setPhenotypesFilter: (filter: Record<string, boolean>) => void
-  setFilteredReports: (reports: IGseaGeneSet[]) => void
+  setFilteredReports: (reports: IGseaTableResult[]) => void
   loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
 } {
   const phenotypes = useGseaStore((state) => state.phenotypes)
@@ -323,7 +317,7 @@ export function useGsea(): Omit<
     }
   }
 
-  function _setFilteredReports(reports: IGseaGeneSet[]) {
+  function _setFilteredReports(reports: IGseaTableResult[]) {
     // ids must match the reports in the store as
     // this function is for reordering and not filtering
     const reportIds = new Set(allReports.map((report) => report.id))
@@ -366,7 +360,7 @@ export function useGsea(): Omit<
     const byId = new Map(filtered.map((report) => [report.id, report]))
     const ordered = reportOrder
       .map((id) => byId.get(id))
-      .filter((report): report is IGseaGeneSet => report != null)
+      .filter((report): report is IGseaTableResult => report != null)
     const orderedIds = new Set(ordered.map((report) => report.id))
     const remaining = filtered.filter((report) => !orderedIds.has(report.id))
 
@@ -411,7 +405,7 @@ export function useGsea(): Omit<
 
 export function useGseaData(resultName: string): {
   phenotypes: string[]
-  rankedGenes: IGseaGeneRankScore[]
+  rankedGenes: IRankedGene[]
   result: IGseaResult | undefined
 } {
   const phenotypes = useGseaStore((state) => state.phenotypes)
@@ -424,9 +418,9 @@ export function useGseaData(resultName: string): {
 // narrow selectors for building axes: avoids subscribing to search
 // results, report order, and actions that useGsea() also tracks
 export function useGseaInUse(): {
-  rankedGenes: IGseaGeneRankScore[]
+  rankedGenes: IRankedGene[]
   resultsMap: Record<string, IGseaResult>
-  inUseReports: IGseaGeneSet[]
+  inUseReports: IGseaTableResult[]
 } {
   const rankedGenes = useGseaStore((state) => state.rankedGenes)
   const resultsMap = useGseaStore((state) => state.resultsMap)

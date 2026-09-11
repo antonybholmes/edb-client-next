@@ -85,8 +85,9 @@ import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 
 import { GseaBubblePanel } from './apps/gsea/bubble/gsea-bubble-panel'
-import { ExtGseaPanel } from './apps/gsea/ext-gsea/ext-gsea-panel'
-import { ExtGseaProvider } from './apps/gsea/ext-gsea/ext-gsea-provider'
+
+import { ExtGseaPanel } from '../genes/gsea/ext-gsea/ext-gsea-panel'
+import { ExtGseaProvider } from '../genes/gsea/ext-gsea/ext-gsea-provider'
 import {
   useCurrentSelections,
   useCurrentSheets,

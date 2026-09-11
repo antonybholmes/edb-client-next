@@ -6,14 +6,14 @@ import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heat
 import { deepFreeze } from '@/lib/utils'
 import type { IBoxPlotDisplayOptions } from './apps/boxplot/boxplot-plot-svg'
 
-import { IExtGseaDisplayOptions } from './apps/gsea/ext-gsea/ext-gsea-store'
+import { IExtGseaSettings } from '../genes/gsea/ext-gsea/ext-gsea-settings'
 import type { IVolcanoDisplayOptions } from './apps/volcano/volcano-plot-svg'
 import { HistoryPlot } from './history/history-provider/history-types'
 
 export type IPlotDisplayOptions =
   | IHeatMapSettings
   | IVolcanoDisplayOptions
-  | IExtGseaDisplayOptions
+  | IExtGseaSettings
   | IBoxPlotDisplayOptions
 
 export type PlotStyle =

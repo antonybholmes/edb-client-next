@@ -68,3 +68,47 @@ export function transpose<T>(matrix: T[][]): T[][] {
 
   return result
 }
+
+export function max(x: number[]): number {
+  return Math.max(...x)
+}
+
+export function min(x: number[]): number {
+  return Math.min(...x)
+}
+
+/**
+ * Returns the value and index of the maximum element in an array.
+ *
+ * @param data
+ * @returns
+ */
+export function argmax(data: number[]): { v: number; i: number } {
+  let best = 0
+
+  for (let i = 1; i < data.length; i++) {
+    if (data[i] > data[best]) {
+      best = i
+    }
+  }
+
+  return { v: data[best], i: best }
+}
+
+/**
+ * Returns the value and index of the minimum element in an array.
+ *
+ * @param data
+ * @returns
+ */
+export function argmin(data: number[]): { v: number; i: number } {
+  let best = 0
+
+  for (let i = 1; i < data.length; i++) {
+    if (data[i] < data[best]) {
+      best = i
+    }
+  }
+
+  return { v: data[best], i: best }
+}

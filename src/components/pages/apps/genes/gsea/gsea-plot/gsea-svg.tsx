@@ -22,12 +22,13 @@ import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
+import { IRankedGene } from '@/lib/gsea/geneset'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { useGseaPlot } from './gsea-plot-provider'
 import { useGseaSettings } from './gsea-settings-store'
-import { IGseaGeneRankScore, IGseaGeneSet, useGseaData } from './gsea-store'
+import { IGseaTableResult, useGseaData } from './gsea-store'
 
 function EsSvg({
   pathway,
@@ -41,9 +42,9 @@ function EsSvg({
   yax,
   phenotypes,
 }: {
-  pathway: IGseaGeneSet
-  es: IGseaGeneRankScore[]
-  sortedRankedGenes: IGseaGeneRankScore[]
+  pathway: IGseaTableResult
+  es: IRankedGene[]
+  sortedRankedGenes: IRankedGene[]
   maxRank: number
   points: IPos[]
   x0: number
@@ -195,7 +196,7 @@ function EsLeadingEdgeSvg({
   xax,
   yax,
 }: {
-  es: IGseaGeneRankScore[]
+  es: IRankedGene[]
   rankMid: number
   x0: number
   x1: number
@@ -281,8 +282,8 @@ function GenesSvg({
 }: {
   xax: IAxis
   points: { x: number; y: number }[]
-  es: IGseaGeneRankScore[]
-  sortedRankedGenes: IGseaGeneRankScore[]
+  es: IRankedGene[]
+  sortedRankedGenes: IRankedGene[]
   crossing: { index: number; x: number }
   pos: IPos
 }) {
@@ -366,9 +367,9 @@ function RankingSvg({
   x1,
   pos,
 }: {
-  pathway: IGseaGeneSet
+  pathway: IGseaTableResult
   xax: IAxis
-  sortedRankedGenes: IGseaGeneRankScore[]
+  sortedRankedGenes: IRankedGene[]
 
   crossing: { index: number; x: number }
 
@@ -446,7 +447,7 @@ const GseaPlot = memo(function GseaPlot({
   plotSize,
   innerPlotSize,
 }: {
-  pathway: IGseaGeneSet
+  pathway: IGseaTableResult
   index: number
   row: number
   col: number
@@ -482,7 +483,7 @@ const GseaPlot = memo(function GseaPlot({
   // avoid re-rendering the whole svg tree when the hovered cell hasn't changed
   const lastCellRef = useRef<{ r: number; c: number } | null>(null)
 
-  const sortedRankedGenes: IGseaGeneRankScore[] = useMemo(
+  const sortedRankedGenes: IRankedGene[] = useMemo(
     () =>
       settings.phenotypes.invert
         ? rankedGenes
@@ -584,7 +585,7 @@ const GseaPlot = memo(function GseaPlot({
         pos: { x: screenP.x + 5, y: screenP.y + 5 },
         content: (
           <>
-            <strong>{result.es[left].gene}</strong>
+            <strong>{result.es[left].name}</strong>
             <span>{`Rank: ${result.es[left].rank.toLocaleString()}`}</span>
             <span>{`Score: ${result.es[left].score.toFixed(3)}`}</span>
           </>

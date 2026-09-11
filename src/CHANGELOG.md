@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Ext gsea now own module and api closer to original gsea. Added viper tools for converting viper output to gsea.
 - More optimizations for tooltips.
 - Sped up heatmap rendering.
 - Svg rendering and tooltip speedups.

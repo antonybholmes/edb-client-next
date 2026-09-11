@@ -16,8 +16,7 @@ export function where<T>(
   let k = 0
 
   for (let i = 0; i < len; i++) {
-    const v = data[i]!
-    if (f(v, i)) {
+    if (f(data[i], i)) {
       out[k++] = i
     }
   }
@@ -43,7 +42,7 @@ export function whereStr(
 ): number[] {
   const s = caseInsensitive ? search.toLowerCase() : search
 
-  return where(data, x =>
+  return where(data, (x) =>
     caseInsensitive ? x.toLowerCase().includes(s) : x.includes(s)
   )
 }
@@ -64,7 +63,7 @@ export function whereStartsWith(
 ): number[] {
   const s = caseInsensitive ? search.toLowerCase() : search
 
-  return where(data, x =>
+  return where(data, (x) =>
     caseInsensitive ? x.toLowerCase().startsWith(s) : x.startsWith(s)
   )
 }
