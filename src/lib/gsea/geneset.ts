@@ -2,8 +2,13 @@ import type { IDBEntity } from '@/interfaces/db-entity'
 import { randomHexColor } from '../color/color'
 import { makeUuid } from '../id'
 
+export interface IScoreGene {
+  name: string
+  score: number
+}
+
 export interface IGeneSet extends IDBEntity {
-  genes: string[]
+  genes: IScoreGene[]
   color?: string
   //type: 'geneset'
 }
@@ -24,9 +29,7 @@ export const EMPTY_GENE_SET: IGeneSet = {
   //type: 'geneset',
 }
 
-export interface IRankedGene {
-  name: string
-  score: number
+export interface IRankedGene extends IScoreGene {
   rank: number
   leading?: boolean
 }

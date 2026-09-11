@@ -23,7 +23,7 @@ export async function loadGMT(file: IGeneSetFile): Promise<IGeneSet[]> {
         id: makeUuid(),
         //type: 'geneset',
         name: tokens[0]!,
-        genes: tokens.slice(2),
+        genes: tokens.slice(2).map((g) => ({ name: g, score: 1 })),
         color: randomHexColor(),
       })
 

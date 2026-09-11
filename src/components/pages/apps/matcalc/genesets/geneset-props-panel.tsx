@@ -197,7 +197,10 @@ export function GenesetPropsPanel() {
         const name = df.columns[i]
         const gs = makeNewGeneset(name)
 
-        gs.genes = df.col(i).strs.filter((x) => x.length > 0)
+        gs.genes = df
+          .col(i)
+          .strs.filter((x) => x.length > 0)
+          .map((g) => ({ name: g, score: 1 }))
 
         genesets.push(gs)
       }

@@ -95,14 +95,14 @@ export class PathwayOverlap {
     let allData: SeriesData[][] = []
 
     genesets.forEach((geneset) => {
-      const genes = new Set<string>(geneset.genes)
+      const genes = new Set<string>(geneset.genes.map((g) => g.name))
       const K = genes.size
       let c = 0
       const data: SeriesData[][] = []
 
       this._collections.forEach((collection) => {
         collection.genesets.forEach((pathway, pi) => {
-          const pathwayGenes = new Set<string>(pathway.genes)
+          const pathwayGenes = new Set<string>(pathway.genes.map((g) => g.name))
 
           const n = pathwayGenes.size
 

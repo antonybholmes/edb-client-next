@@ -136,8 +136,8 @@ export class ExtGSEA {
     // Is ranked gene in gene set
     const isInGeneset = zeros(l)
 
-    const ids1 = new Set(gs1.genes)
-    const ids2 = new Set(gs2.genes)
+    const ids1 = new Set(gs1.genes.map((g) => g.name))
+    const ids2 = new Set(gs2.genes.map((g) => g.name))
 
     for (const i of range(l)) {
       if (
@@ -227,7 +227,7 @@ export class ExtGSEA {
 
     const isInGeneset = zeros(l)
 
-    const ids1 = new Set(gs1.genes)
+    const ids1 = new Set(gs1.genes.map((g) => g.name))
 
     for (const [index, gene] of this._rankedGenes.entries()) {
       if (ids1.has(gene.name)) {

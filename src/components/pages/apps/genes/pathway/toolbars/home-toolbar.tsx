@@ -135,7 +135,8 @@ export function HomeToolbar() {
         name: df.col(col).name.toString(),
         genes: df
           .col(col)
-          .strs.filter((v) => v !== '' && genes.has(v.toLowerCase())),
+          .strs.filter((v) => v !== '' && genes.has(v.toLowerCase()))
+          .map((g) => ({ name: g, score: 1 })),
         color: randomHexColor(),
         type: 'geneset',
       }

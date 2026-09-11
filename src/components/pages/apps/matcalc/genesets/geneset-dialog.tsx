@@ -38,7 +38,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
     onResponse?.(TEXT_OK, {
       ...geneset,
       name,
-      genes: textToLines(search),
+      genes: textToLines(search).map((g) => ({ name: g, score: 1 })),
       color,
     })
   }
