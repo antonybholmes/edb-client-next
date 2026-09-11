@@ -23,7 +23,7 @@ export interface IViper extends IDBEntity {
 }
 
 export function viperToGsea(viper: IViper): IExtGseaPlotResult[] {
-  const exg = new ExtGSEA(viper.signature)
+  const exg = new ExtGSEA(viper.signature, { weightByGeneScore: true })
 
   const plots: IExtGseaPlotResult[] = []
 

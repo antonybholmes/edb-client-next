@@ -58,12 +58,23 @@ export class ExtGSEA {
   private _nes: number
   private _gs1: IGeneSet
   private _gs2: IGeneSet
+  private _weightByGeneScore: boolean
   //private _rankedScores: number[]
 
-  constructor(rankedGenes: IRankedGene[], permutations = 1000, w = 1) {
+  constructor(
+    rankedGenes: IRankedGene[],
+
+    opts: {
+      permutations?: number
+      w?: number
+      weightByGeneScore?: boolean
+    } = {}
+  ) {
+    const { permutations = 1000, w = 1, weightByGeneScore = false } = opts
     this._w = w
     this._np = permutations
     this._rankedGenes = rankedGenes
+    this._weightByGeneScore = weightByGeneScore
 
     const l = rankedGenes.length
 
@@ -139,16 +150,34 @@ export class ExtGSEA {
     const ids1 = new Set(gs1.genes.map((g) => g.name))
     const ids2 = new Set(gs2.genes.map((g) => g.name))
 
+    const geneScores1 = new Map<string, number>(
+      gs1.genes.map((g) => [g.name, g.score])
+    )
+
+    const geneScores2 = new Map<string, number>(
+      gs2.genes.map((g) => [g.name, g.score])
+    )
+
     for (const i of range(l)) {
       if (
         (this._pn[i]! > 0 && ids1.has(this._rkc[i]!)) ||
         (this._pn[i]! < 0 && ids2.has(this._rkc[i]!))
       ) {
-        isInGeneset[i] = 1
+        if (this._weightByGeneScore) {
+          // rather than using 1, we can weight the hits by the gene score
+          isInGeneset[i] =
+            this._pn[i]! > 0
+              ? Math.abs(geneScores1.get(this._rkc[i]!) ?? 1)
+              : Math.abs(geneScores2.get(this._rkc[i]!) ?? 1)
+        } else {
+          isInGeneset[i] = 1
+        }
       }
     }
 
     this._scoreHits = cumsum(abs(pow(mult(this._rsc, isInGeneset), this._w)))
+
+    console.log(this._scoreHits)
 
     this._scoreHits = div(
       this._scoreHits,
@@ -176,7 +205,7 @@ export class ExtGSEA {
       }
 
       this._leadingEdge = this._rankedGenes
-        .filter((_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] === 1)
+        .filter((_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] > 0)
         .reverse()
     } else {
       for (const i of range(maxEsIndex + 1)) {
@@ -184,7 +213,7 @@ export class ExtGSEA {
       }
 
       this._leadingEdge = this._rankedGenes.filter(
-        (_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] === 1
+        (_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] > 0
       )
     }
 
@@ -229,9 +258,15 @@ export class ExtGSEA {
 
     const ids1 = new Set(gs1.genes.map((g) => g.name))
 
+    const geneScores1 = new Map<string, number>(
+      gs1.genes.map((g) => [g.name, g.score])
+    )
+
     for (const [index, gene] of this._rankedGenes.entries()) {
       if (ids1.has(gene.name)) {
-        isInGeneset[index] = 1
+        isInGeneset[index] = this._weightByGeneScore
+          ? Math.abs(geneScores1.get(gene.name) ?? 1)
+          : 1
       }
     }
 
@@ -261,9 +296,7 @@ export class ExtGSEA {
       }
 
       leadingEdge = this._rankedGenes
-        .filter(
-          (_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] === 1
-        )
+        .filter((_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] > 0)
         .sort((r1, r2) => r1.rank - r2.rank)
       //.reverse()
     } else {
@@ -274,9 +307,7 @@ export class ExtGSEA {
       }
 
       leadingEdge = this._rankedGenes
-        .filter(
-          (_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] === 1
-        )
+        .filter((_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] > 0)
         .sort((r1, r2) => r1.rank - r2.rank)
     }
 

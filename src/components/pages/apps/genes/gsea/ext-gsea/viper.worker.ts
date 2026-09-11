@@ -13,11 +13,7 @@ export interface IViperWorkerResult {
 self.onmessage = function (e: MessageEvent<IViperWorkerMessage>) {
   const { viper } = e.data
 
-  console.log('aha', viper)
-
   const results = viperToGsea(viper)
-
-  console.log(results)
 
   self.postMessage({ viper, results } as IViperWorkerResult)
 }
