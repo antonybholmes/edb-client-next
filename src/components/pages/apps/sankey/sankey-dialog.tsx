@@ -86,7 +86,7 @@ export function SankeyDialog({
           onResponse?.(r, undefined)
         }
       }}
-      bodyCls="gap-y-3"
+      contentCls="gap-y-3"
     >
       <ActionDialogCard>
         <DialogCardHeader title="Required Headings" />

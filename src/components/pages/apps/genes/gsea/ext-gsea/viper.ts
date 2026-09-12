@@ -18,8 +18,13 @@ export interface IViper extends IDBEntity {
   tfs: IViperTF[]
 }
 
-export function viperToGsea(viper: IViper): IExtGseaPlotResult[] {
-  const exg = new ExtGSEA(viper.signature, { weightByGeneScore: true })
+export function viperToGsea(
+  viper: IViper,
+  opts: { useGeneScoreForES?: boolean } = {}
+): IExtGseaPlotResult[] {
+  const { useGeneScoreForES = true } = opts
+
+  const exg = new ExtGSEA(viper.signature, { useGeneScoreForES })
 
   const plots: IExtGseaPlotResult[] = []
 

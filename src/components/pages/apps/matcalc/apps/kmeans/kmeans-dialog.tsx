@@ -178,7 +178,7 @@ export function KmeansDialog({
       }}
       //className="w-3/4 md:w-1/2 lg:w-1/3 3xl:w-1/4"
       //contentVariant="glass"
-      bodyCls="gap-y-3"
+      contentCls="gap-y-3"
     >
       {error && <span className="text-destructive">{error}</span>}
 

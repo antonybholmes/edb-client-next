@@ -3,6 +3,7 @@ import { IViper, viperToGsea } from './viper'
 
 export interface IViperWorkerMessage {
   viper: IViper
+  useGeneScoreForES: boolean
 }
 
 export interface IViperWorkerResult {
@@ -11,9 +12,9 @@ export interface IViperWorkerResult {
 }
 
 self.onmessage = function (e: MessageEvent<IViperWorkerMessage>) {
-  const { viper } = e.data
+  const { viper, useGeneScoreForES } = e.data
 
-  const results = viperToGsea(viper)
+  const results = viperToGsea(viper, { useGeneScoreForES })
 
   self.postMessage({ viper, results } as IViperWorkerResult)
 }

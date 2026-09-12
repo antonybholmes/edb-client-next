@@ -3,14 +3,17 @@ import { useHistory } from '@/components/pages/apps/matcalc/history/history-prov
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { useFooter } from '@/providers/footer-provider'
 import { newExtGseaPlot } from './ext-gsea-provider'
+import { useExtGseaSettings } from './ext-gsea-settings'
 
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { OKCancelDialog } from '@/components/dialogs/ok-cancel-dialog'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { IRankedGene, IScoreGene } from '@/lib/gsea/geneset'
 import { makeUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
+import { produce } from 'immer'
 import { IViper } from './viper'
 import { useViperWorker } from './viper-worker'
 
@@ -56,6 +59,7 @@ export function dfToViper(df: BaseDataFrame): IViper {
 
 export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
   const { sheet } = useCurrentSheets()
+  const { settings, updateSettings } = useExtGseaSettings()
   const { remove: removeFooter, addIndicator } = useFooter()
 
   const { addPlots } = useHistory()
@@ -67,7 +71,7 @@ export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
       title="Input Source"
       w="w-96"
       buttons={[]}
-
+      contentCls="gap-y-2"
       onResponse={() => {
         close()
       }}
@@ -92,11 +96,10 @@ export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
           runViperWorker(
             {
               viper,
+              useGeneScoreForES: settings.es.useGeneScoreForES,
             },
             (data) => {
               const { results } = data
-
-              console.log('slob', results)
 
               const plot = {
                 ...newExtGseaPlot('Extended GSEA', {
@@ -117,6 +120,21 @@ export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
       >
         Viper
       </Button>
+      <Checkbox
+        checked={settings.es.useGeneScoreForES}
+        onCheckedChange={(v) => {
+          // update the setting when the checkbox is toggled
+          // assuming you have an updateSettings function from useExtGseaSettings
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.es.useGeneScoreForES = v
+            })
+          )
+        }}
+        title="Enrichment scores will be weighted by gene scores if present"
+      >
+        Use gene scores to weight enrichment
+      </Checkbox>
     </OKCancelDialog>
   )
 }

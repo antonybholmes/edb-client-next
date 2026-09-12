@@ -28,17 +28,8 @@ export interface IExtGseaSettings {
       }
     }
   }
-  genes: {
-    line: IStrokeProps
-    height: number
-
-    labels: {
-      font: ITextProps
-      isColored: boolean
-    }
-    geneScoreWeight: number
-  }
   es: {
+    useGeneScoreForES: boolean
     gs1: {
       line: IStrokeProps
       leadingEdge: IPaintProps
@@ -59,6 +50,16 @@ export interface IExtGseaSettings {
     stats: {
       show: boolean
     }
+  }
+  genes: {
+    line: IStrokeProps
+    height: number
+
+    labels: {
+      font: ITextProps
+      isColored: boolean
+    }
+    geneScoreWeight: number
   }
   title: ITextProps & {
     offset: number
@@ -118,6 +119,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
     },
   },
   es: {
+    useGeneScoreForES: true,
     axes: {
       y: {
         length: 150,
@@ -128,14 +130,14 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       },
     },
     gs1: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_CORNFLOWER_BLUE, width: 2 },
-      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_CORNFLOWER_BLUE },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
+      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
     },
 
     gs2: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_CORNFLOWER_BLUE, width: 2 },
 
-      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
+      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_CORNFLOWER_BLUE },
     },
     stats: {
       show: true,

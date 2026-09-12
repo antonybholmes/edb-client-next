@@ -83,7 +83,7 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
       open={true}
       //buttons={[TEXT_OK]}
       title="Load BED Files From Device"
-      bodyCls="gap-y-4"
+      contentCls="gap-y-4"
       onResponse={(response) => {
         if (response === TEXT_OK) {
           if (lines.length === 0) {

@@ -2826,6 +2826,10 @@
         {
           "msg": "Better support for abbreviations in app info for configuring icons",
           "date": "2026-09-12T04:14:03.094Z"
+        },
+        {
+          "msg": "Added Ext gsea weighting by gene option to UI",
+          "date": "2026-09-12T04:34:18.399Z"
         }
       ]
     },

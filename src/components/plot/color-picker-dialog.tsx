@@ -96,7 +96,7 @@ export function ColorPickerDialog({
           onResponse?.(r, undefined)
         }
       }}
-      bodyCls="gap-y-4 color-picker"
+      contentCls="gap-y-4 color-picker"
     >
       {cp.allowAlpha ? (
         <HexAlphaColorPicker

@@ -52,7 +52,7 @@ export interface IModalProps<T = unknown> extends IOpenChange, IChildrenProps {
   buttons?: (string | { name: string; value: string })[]
   buttonOrder?: ButtonOrder
   modalType?: ModalType | undefined
-  bodyCls?: UndefStr
+  contentCls?: UndefStr
   w?: string | number
   h?: string | number
 }
@@ -189,7 +189,7 @@ export function OKCancelDialog({
   // headerVariant = 'default',
   // bodyVariant = 'default',
   // footerVariant = 'default',
-  bodyCls = 'gap-y-1',
+  contentCls: bodyCls = 'gap-y-1',
   modalType = 'default',
   w = 'w-11/12 sm:w-3/4 md:w-8/12 xl:w-2/5 2xl:w-1/3',
   h,

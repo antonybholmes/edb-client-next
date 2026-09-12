@@ -2822,6 +2822,10 @@
         {
           "msg": "Sidebar layout of matcalc changed to move groups and filters around",
           "date": "2026-09-12T03:59:39.413Z"
+        },
+        {
+          "msg": "Better support for abbreviations in app info for configuring icons",
+          "date": "2026-09-12T04:14:03.094Z"
         }
       ]
     },

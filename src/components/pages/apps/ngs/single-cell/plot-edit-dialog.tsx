@@ -60,7 +60,7 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
       //headerVariant="opaque"
       //bodyVariant="default"
       //footerVariant="default"
-      bodyCls="gap-y-4"
+      contentCls="gap-y-4"
     >
       <ActionDialogCard>
         <ActionDialogCardContent>

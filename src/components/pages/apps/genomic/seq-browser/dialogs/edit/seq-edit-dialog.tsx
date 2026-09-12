@@ -71,7 +71,7 @@ export function SeqEditDialog({ group, track, onResponse }: IProps) {
       //   />
       // }
       leftFooterChildren={footer}
-      bodyCls="gap-y-4"
+      contentCls="gap-y-4"
     >
       {/* <BaseCol className="bg-background p-4 rounded-lg gap-y-4"> */}
 

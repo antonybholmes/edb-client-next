@@ -212,7 +212,7 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
         <SafariTabs id={tabsId} defaultWidth={4.5} className="mt-2" />
       }
       h="h-56"
-      bodyCls="mt-4"
+      contentCls="mt-4"
     >
       <Tabs value={selectedTab?.id ?? ''} onValueChange={() => {}}>
         <TabsContent value="top-rows">

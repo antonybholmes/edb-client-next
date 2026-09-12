@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added Ext gsea weighting by gene option to UI.
 - Better support for abbreviations in app info for configuring icons.
 - Sidebar layout of matcalc changed to move groups and filters around.
 - Add gene weight option to control opacity of gene bars in Ext gsea.

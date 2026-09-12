@@ -58,7 +58,7 @@ export class ExtGSEA {
   private _nes: number
   private _gs1: IGeneSet
   private _gs2: IGeneSet
-  private _weightByGeneScore: boolean
+  private _useGeneScoreForES: boolean
   //private _rankedScores: number[]
 
   constructor(
@@ -67,14 +67,14 @@ export class ExtGSEA {
     opts: {
       permutations?: number
       w?: number
-      weightByGeneScore?: boolean
+      useGeneScoreForES?: boolean
     } = {}
   ) {
-    const { permutations = 1000, w = 1, weightByGeneScore = false } = opts
+    const { permutations = 1000, w = 1, useGeneScoreForES = false } = opts
     this._w = w
     this._np = permutations
     this._rankedGenes = rankedGenes
-    this._weightByGeneScore = weightByGeneScore
+    this._useGeneScoreForES = useGeneScoreForES
 
     const numGenes = rankedGenes.length
 
@@ -163,7 +163,7 @@ export class ExtGSEA {
         (this._pn[i]! > 0 && ids1.has(this._rkc[i]!)) ||
         (this._pn[i]! < 0 && ids2.has(this._rkc[i]!))
       ) {
-        if (this._weightByGeneScore) {
+        if (this._useGeneScoreForES) {
           // rather than using 1, we can weight the hits by the gene score
           isInGeneset[i] =
             this._pn[i]! > 0
@@ -264,7 +264,7 @@ export class ExtGSEA {
 
     for (const [index, gene] of this._rankedGenes.entries()) {
       if (ids1.has(gene.name)) {
-        isInGeneset[index] = this._weightByGeneScore
+        isInGeneset[index] = this._useGeneScoreForES
           ? Math.abs(geneScores1.get(gene.name) ?? 1)
           : 1
       }

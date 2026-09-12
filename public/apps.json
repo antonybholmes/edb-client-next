@@ -42,12 +42,12 @@
     "name": "Ext GSEA Plot",
     "description": "Extended GSEA plots.",
     "abbr": "ExG",
-    "color": "#ffb366",
+    "color": "#006666",
     "version": "2.0.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-12T03:57:41.802Z",
-    "hash": "7a324436149c69bc933b53745f6261b4acd82fa879cb4168c9dfa18fb3e85048",
-    "build": 952
+    "modified": "2026-09-12T04:34:15.825Z",
+    "hash": "8f3a88d5f8e949fd2220c736cfb18fc557e76264b94f904ec4dddf914466146a",
+    "build": 954
   },
   {
     "name": "Get DNA",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.4.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-12T03:57:41.818Z",
-    "hash": "6d00bd19ac234ea7b0f9425ae4bbc17137d321b231058525f49033432fc7acb3",
-    "build": 2046
+    "modified": "2026-09-12T04:34:15.849Z",
+    "hash": "c1eac2224cffee3c97851231b52be443f906954229475a8cdd2d88edfec84c30",
+    "build": 2048
   },
   {
     "name": "Motifs",
@@ -150,11 +150,11 @@
     "name": "Oncoplot",
     "description": "Create oncoplots.",
     "color": "#ff99cc",
-    "version": "30.2.0",
+    "version": "30.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-10T03:07:57.923Z",
-    "hash": "ba4c630f1c222012d5f2ed6a236cc7498aa4cc6e3b125d3562603370bd94fab0",
-    "build": 1138
+    "modified": "2026-09-12T04:34:15.853Z",
+    "hash": "663af3464e91c30feb37d246b3c4b12895530aff532688b67dbb6d0d5699772f",
+    "build": 1140
   },
   {
     "name": "Overlap",
@@ -192,19 +192,19 @@
     "color": "#ff9900",
     "version": "1.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-09T03:36:01.273Z",
-    "hash": "217928d70793078e8752896ddc17be91c8a3e9654e29387612c2ed7f58c763a2",
-    "build": 84
+    "modified": "2026-09-12T04:34:15.850Z",
+    "hash": "55951c155d55feafa24f5527e3f51922e5232d6aa1eef3f57591ca53e29d6852",
+    "build": 86
   },
   {
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.4.6",
+    "version": "32.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-10T03:07:57.910Z",
-    "hash": "bb9e25cb9ca74475fad5366c0c37c6fc43e6e72f5aa939fa79b4ddbbb12ec827",
-    "build": 1158
+    "modified": "2026-09-12T04:34:15.842Z",
+    "hash": "499e9b28c40175e15ab97d846d77e1848414599bd16f65fb1155ded3ba21ec11",
+    "build": 1160
   },
   {
     "name": "Single Cell",
@@ -212,9 +212,9 @@
     "color": "#9966ff",
     "version": "26.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-06T23:50:46.959Z",
-    "hash": "a5cc4d668ee536729ceae8d5b075aae2a0a48a11d8e0236073c66e04426782d1",
-    "build": 870
+    "modified": "2026-09-12T04:34:15.850Z",
+    "hash": "94dddcf47b2ffc8f3e8d6e0278d2ff3439b71ffca26bf348152d8e2e26098dfb",
+    "build": 872
   },
   {
     "name": "Table Viewer",

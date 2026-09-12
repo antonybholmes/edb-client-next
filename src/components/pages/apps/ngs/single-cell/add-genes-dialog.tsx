@@ -129,7 +129,7 @@ export function AddGenesDialog({ onResponse }: IModalProps) {
       //headerVariant="opaque"
       //bodyVariant="default"
       //footerVariant="default"
-      bodyCls="gap-y-4"
+      contentCls="gap-y-4"
     >
       <Textarea
         id="filter"

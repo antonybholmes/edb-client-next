@@ -79,7 +79,7 @@ export function SaveTableDialog({
           onResponse?.(response, undefined)
         }
       }}
-      bodyCls="gap-y-4"
+      contentCls="gap-y-4"
       // leftFooterChildren={
       //   <VCenterRow className="gap-x-2">
       //     <span>Save as type</span>

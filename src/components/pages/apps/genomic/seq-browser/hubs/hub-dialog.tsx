@@ -76,7 +76,7 @@ export function HubDialog({ hub, onResponse }: IProps) {
           ]}
         />
       }
-      bodyCls="gap-y-2"
+      contentCls="gap-y-2"
     >
       <ActionDialogCard>
         <ActionDialogCardContent>

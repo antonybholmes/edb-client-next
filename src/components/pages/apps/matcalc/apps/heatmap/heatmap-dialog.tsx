@@ -273,7 +273,7 @@ export function HeatMapDialog({
         }
       }}
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
-      bodyCls="gap-y-2"
+      contentCls="gap-y-2"
     >
       <ActionDialogCard>
         <DialogCardHeader>

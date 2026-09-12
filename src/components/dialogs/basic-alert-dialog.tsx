@@ -17,7 +17,7 @@ export function BasicAlertDialog({
   title,
   buttons = ['OK'],
   onResponse = () => {},
-  bodyCls,
+  contentCls: bodyCls,
   className,
   children,
   ...props
@@ -28,7 +28,7 @@ export function BasicAlertDialog({
       title={title ?? config.name}
       onResponse={onResponse}
       buttons={buttons}
-      bodyCls={bodyCls}
+      contentCls={bodyCls}
       className={className}
       {...props}
     >

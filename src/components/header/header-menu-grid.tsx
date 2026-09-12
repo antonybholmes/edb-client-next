@@ -145,7 +145,6 @@ export function SearchHeaderLinks({
   ref,
   search,
   handleClick,
-
   className,
 }: IHeaderLinksProps & { width: string; search?: string }) {
   const { settings } = useEdbSettings()
@@ -165,16 +164,6 @@ export function SearchHeaderLinks({
     )
     .sort((modA, modB) => modA.name.localeCompare(modB.name))
     .map((module, moduleIndex) => {
-      let abbr = ''
-
-      if (module.abbr) {
-        abbr = module.abbr
-      } else {
-        const words = module.name.split(' ')
-
-        abbr = `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
-      }
-
       return (
         <li key={moduleIndex}>
           <ButtonLink
@@ -189,19 +178,7 @@ export function SearchHeaderLinks({
             size="xl"
             className="w-full justify-start gap-3"
           >
-            <div
-              className={ICON_CLS}
-              style={{
-                //color: module.color ?? 'lightslategray',
-                backgroundColor: module.color ?? 'lightslategray',
-                //backgroundColor: `${module.color}cc`
-              }}
-            >
-              <span className="font-bold text-white/95">
-                {abbr[0]!.toUpperCase()}
-              </span>
-              <span className="text-white/80">{abbr[1]!.toLowerCase()}</span>
-            </div>
+            <AppIcon appInfo={module} />
 
             <p className="text-[0.7rem] text-center truncate font-medium">
               {module.name}

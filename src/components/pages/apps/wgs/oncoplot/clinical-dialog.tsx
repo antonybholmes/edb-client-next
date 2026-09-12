@@ -37,7 +37,7 @@ export function ClinicalDialog({
       onResponse={(r) => onResponse?.(r)}
       //contentVariant="glass"
       //bodyVariant="card"
-      bodyCls="gap-y-2"
+      contentCls="gap-y-2"
     >
       {track.categoriesInUse.map((category, ci) => (
         <VCenterRow className="gap-x-2" key={ci}>
