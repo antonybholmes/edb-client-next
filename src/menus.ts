@@ -107,6 +107,7 @@ export const HEADER_LINKS: IHeaderLink[] = [
       },
       {
         ...EXT_GSEA_APP,
+
         slug: '/apps/genes/gsea/ext-gsea',
         mode: 'prod',
       },

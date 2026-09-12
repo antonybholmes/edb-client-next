@@ -2818,6 +2818,10 @@
         {
           "msg": "Add gene weight option to control opacity of gene bars in Ext gsea",
           "date": "2026-09-12T03:57:44.266Z"
+        },
+        {
+          "msg": "Sidebar layout of matcalc changed to move groups and filters around",
+          "date": "2026-09-12T03:59:39.413Z"
         }
       ]
     },
