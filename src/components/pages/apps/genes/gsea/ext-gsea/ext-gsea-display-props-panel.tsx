@@ -21,8 +21,6 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
-import { AxesPropRow } from '@/components/plot/axes/axes-prop-row'
-import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
@@ -97,7 +95,7 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </PropRow>
 
-            <AxesPropRow axes={['x', 'y']} />
+            {/* <AxesPropRow axes={['x', 'y']} />
             <PropRow title="Axes">
               <AxesDisplayPropsPopover
                 plots={[
@@ -122,7 +120,7 @@ export function ExtGseaDisplayPropsPanel() {
                   },
                 ]}
               />
-            </PropRow>
+            </PropRow> */}
           </AccordionContent>
         </AccordionItem>
 
@@ -208,6 +206,17 @@ export function ExtGseaDisplayPropsPanel() {
                 }}
               />
             </CheckPropRow>
+            <CheckPropRow
+              title="Stats"
+              checked={displayOptions.es.stats.show}
+              onCheckedChange={(v) =>
+                updatePlot(
+                  produce(plot, (draft) => {
+                    draft.props.es.stats.show = v
+                  })
+                )
+              }
+            />
           </AccordionContent>
         </AccordionItem>
 

@@ -133,7 +133,7 @@ export function ExtGseaProvider({
       addAxes([
         {
           plotId: result.id,
-          groupId: 'ext-gsea',
+          groupId: 'es',
           axisIds: ['x'],
           axes: {
             x: xax,

@@ -76,7 +76,7 @@ export class ExtGSEA {
     this._rankedGenes = rankedGenes
     this._weightByGeneScore = weightByGeneScore
 
-    const l = rankedGenes.length
+    const numGenes = rankedGenes.length
 
     // the negative versions are for the second gene set
     const names = rankedGenes.map((g) => g.name)
@@ -88,7 +88,7 @@ export class ExtGSEA {
     //descending order
     const ix = argsort(rsc).reverse()
 
-    const pn = [...ones(l), ...vfill(-1, l)] //np.concatenate((np.ones(l), -np.ones(l)), axis=0)
+    const pn = [...ones(numGenes), ...vfill(-1, numGenes)] //np.concatenate((np.ones(l), -np.ones(l)), axis=0)
 
     this._gs1 = { ...EMPTY_GENE_SET }
     this._gs2 = { ...EMPTY_GENE_SET }
@@ -204,18 +204,18 @@ export class ExtGSEA {
         isEnriched[i] = 1
       }
 
-      this._leadingEdge = this._rankedGenes
-        .filter((_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] > 0)
-        .reverse()
+      // this._leadingEdge = this._rankedGenes
+      //   .filter((_, gi) => isEnriched[gi] > 0 && isInGeneset[gi] > 0)
+      //   .reverse()
     } else {
       for (const i of range(maxEsIndex + 1)) {
         isEnriched[i] = 1
       }
-
-      this._leadingEdge = this._rankedGenes.filter(
-        (_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] > 0
-      )
     }
+
+    this._leadingEdge = this._rankedGenes.filter(
+      (_, gi) => isEnriched[gi] > 0 && isInGeneset[gi] > 0
+    )
 
     if (this._np > 0) {
       const bgEs = zeros(this._np)
@@ -295,21 +295,21 @@ export class ExtGSEA {
         leadingEdgeIndices[i] = 1
       }
 
-      leadingEdge = this._rankedGenes
-        .filter((_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] > 0)
-        .sort((r1, r2) => r1.rank - r2.rank)
-      //.reverse()
+      // leadingEdge = this._rankedGenes
+      //   .filter((_, gi) => leadingEdgeIndices[gi] > 0 && isInGeneset[gi] > 0)
+      //   .sort((r1, r2) => r1.rank - r2.rank)
+      // //.reverse()
     } else {
       //const ixpk = esAll.indexOf(maxEs)
 
       for (const i of range(maxEsI + 1)) {
         leadingEdgeIndices[i] = 1
       }
-
-      leadingEdge = this._rankedGenes
-        .filter((_, gi) => leadingEdgeIndices[gi] === 1 && isInGeneset[gi] > 0)
-        .sort((r1, r2) => r1.rank - r2.rank)
     }
+
+    leadingEdge = this._rankedGenes
+      .filter((_, gi) => leadingEdgeIndices[gi] > 0 && isInGeneset[gi] > 0)
+      .sort((r1, r2) => r1.rank - r2.rank)
 
     // just the indices of the leading edge
     //leadingEdgeIndices = range(leadingEdgeIndices.length).filter(

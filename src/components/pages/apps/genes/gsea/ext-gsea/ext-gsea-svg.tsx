@@ -135,7 +135,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
   const { axis: xax } = useAxis({
     plotId: result.id,
-    groupId: 'ext-gsea',
+    groupId: 'es',
     axisId: 'x',
   })
 
@@ -409,27 +409,30 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           </SvgG>
         </SvgG>
 
-        <SvgG
-          pos={{
-            x: displayProps.axes.x.length,
-            y: 0,
-          }}
-        >
-          <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-            NES: {extGsea.nes.toFixed(2)}
-          </SvgText>
-
+        {displayProps.es.stats.show && (
           <SvgG
+            id="stats"
             pos={{
-              x: 0,
-              y: 20,
+              x: displayProps.axes.x.length,
+              y: 0,
             }}
           >
             <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-              P-value: {extGsea.pvalue.toFixed(3)}
+              NES: {extGsea.nes.toFixed(2)}
             </SvgText>
+
+            <SvgG
+              pos={{
+                x: 0,
+                y: 20,
+              }}
+            >
+              <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+                P-value: {extGsea.pvalue.toFixed(3)}
+              </SvgText>
+            </SvgG>
           </SvgG>
-        </SvgG>
+        )}
       </SvgG>
     )
 

@@ -58,6 +58,9 @@ export interface IExtGseaSettings {
         length: number
       }
     }
+    stats: {
+      show: boolean
+    }
   }
   title: ITextProps & {
     offset: number
@@ -118,13 +121,13 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
         truncate: -2,
         font: { ...DEFAULT_BOLD_TEXT_PROPS },
       },
-      length: 300,
+      length: 220,
     },
   },
   es: {
     axes: {
       y: {
-        length: 200,
+        length: 150,
         title: 'ES',
       },
       x: {
@@ -132,18 +135,21 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       },
     },
     gs1: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 2 },
       leadingEdge: {
         fill: { ...DEFAULT_FILL_PROPS, value: COLOR_BLUE },
       },
     },
 
     gs2: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
 
       leadingEdge: {
         fill: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
       },
+    },
+    stats: {
+      show: true,
     },
   },
   genes: {

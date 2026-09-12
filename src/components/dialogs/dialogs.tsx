@@ -61,8 +61,11 @@ type DialogTypeMap = {
     title?: string
     content?: ReactNode
     type?: ModalType
+    buttons?: string[]
+    showClose?: boolean
     callback?: (response: string) => void
   }
+
   error: {
     title?: string
     content?: ReactNode
@@ -85,13 +88,26 @@ interface IDialog<T extends DialogType> {
   payload: DialogTypeMap[T]
 }
 
-type Dialog = {
+type BuiltInDialog = {
   [T in DialogType]: IDialog<T>
 }[DialogType]
 
 type InputDialog = {
   [T in DialogType]: Omit<IDialog<T>, 'id' | 'time'>
 }[DialogType]
+
+export interface ICustomDialogProps<T> {
+  payload: T
+  close: () => void
+}
+
+export interface ICustomDialog {
+  id: string
+  time: number
+  render: (close: () => void) => ReactNode
+}
+
+type Dialog = BuiltInDialog | ICustomDialog
 
 export type ApplyToDialog = (id: string) => void
 
@@ -113,6 +129,10 @@ export interface IDialogCloser {
 interface IDialogStore {
   stack: Dialog[]
   open: (d: InputDialog) => IDialogCloser
+  openCustom: <T>(
+    Component: ComponentType<ICustomDialogProps<T>>,
+    payload: T
+  ) => IDialogCloser
   bringToFront: (id: string) => void
   close: ApplyToDialog
   clear: () => void
@@ -125,12 +145,18 @@ interface IDialogStore {
 //   return { ...dialog, time: Date.now() } as IDialog<T>
 // }
 
-export const useDialogStore = create<IDialogStore>((set) => ({
-  stack: [], //{ type: 'none', id: makeUuid(), time: Date.now() },
-
-  open: (d) => {
+export const useDialogStore = create<IDialogStore>((set) => {
+  function openCustom<T>(
+    Component: ComponentType<ICustomDialogProps<T>>,
+    payload: T
+  ) {
     const id = makeUuid()
-    const dialog = { ...d, id, time: Date.now() }
+
+    const dialog: ICustomDialog = {
+      id,
+      time: Date.now(),
+      render: (close) => <Component payload={payload} close={close} />,
+    }
 
     set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
@@ -143,50 +169,69 @@ export const useDialogStore = create<IDialogStore>((set) => ({
           stack: state.stack.filter((d) => d.id !== id),
         })),
     }
-  },
-  bringToFront: (id: string) =>
-    set((state) => {
-      const dialog = state.stack.find((d) => d.id === id)
+  }
 
-      if (!dialog) {
-        return state
-      }
+  return {
+    stack: [], //{ type: 'none', id: makeUuid(), time: Date.now() },
+
+    open: (d) => {
+      const id = makeUuid()
+      const dialog = { ...d, id, time: Date.now() }
+
+      set((state) => ({
+        stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
+      }))
 
       return {
-        stack: [
-          ...state.stack.filter((d) => d.id !== id),
-          { ...dialog, time: Date.now() },
-        ],
+        id,
+        close: () =>
+          set((state) => ({
+            stack: state.stack.filter((d) => d.id !== id),
+          })),
       }
-    }),
-  close: (id: string) =>
-    set((state) => ({
-      // if id is provided, remove that dialog. If not, remove the top dialog.
-      stack: id
-        ? state.stack.filter((d) => d.id !== id)
-        : state.stack.slice(0, -1),
-    })),
-  clear: () => set({ stack: [] }),
-}))
+    },
+
+    openCustom,
+
+    bringToFront: (id: string) =>
+      set((state) => {
+        const dialog = state.stack.find((d) => d.id === id)
+
+        if (!dialog) {
+          return state
+        }
+
+        return {
+          stack: [
+            ...state.stack.filter((d) => d.id !== id),
+            { ...dialog, time: Date.now() },
+          ],
+        }
+      }),
+    close: (id: string) =>
+      set((state) => ({
+        // if id is provided, remove that dialog. If not, remove the top dialog.
+        stack: id
+          ? state.stack.filter((d) => d.id !== id)
+          : state.stack.slice(0, -1),
+      })),
+    clear: () => set({ stack: [] }),
+  }
+})
 
 export function useDialogs() {
   const open = useDialogStore((s) => s.open)
   const close = useDialogStore((s) => s.close)
+  const openCustom = useDialogStore((s) => s.openCustom)
 
   //const { open, close } = useDialogStore(
   //  useShallow(s => ({ open: s.open, close: s.close }))
   // )
 
-  return { open, close }
+  return { open, close, openCustom }
 }
 
-function DialogRenderer({
-  dialog,
-  close,
-}: {
-  dialog: Dialog
-  close: ApplyToDialog
-}) {
+function dialogRenderer(dialog: BuiltInDialog, close: ApplyToDialog) {
   switch (dialog.type) {
     // case 'open': {
     //   const { fileTypes, callback } = dialog.payload
@@ -295,10 +340,13 @@ function DialogRenderer({
       )
     }
     case 'ok-cancel': {
-      const { title, content, type, callback } = dialog.payload
+      const { title, content, type, buttons, showClose, callback } =
+        dialog.payload
       return (
         <OKCancelDialog
           title={title}
+          buttons={buttons}
+          showClose={showClose}
           modalType={type}
           onResponse={(response) => {
             close(dialog.id)
@@ -309,6 +357,7 @@ function DialogRenderer({
         </OKCancelDialog>
       )
     }
+
     case 'warning': {
       const { title, content, callback } = dialog.payload
       return (
@@ -369,11 +418,19 @@ export function DialogsRoot({ filter = [] }: IProps) {
   const close = useDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
-  if (!dialog || (filter.length > 0 && !filter.includes(dialog.type))) {
+  if (!dialog) {
+    return null
+  }
+
+  if ('render' in dialog) {
+    return dialog.render(() => close(dialog.id))
+  }
+
+  if (filter.length > 0 && !filter.includes(dialog.type)) {
     return null
   }
 
   //const Renderer = dialogRenderers[dialog.type]!
   //return Renderer ? Renderer(dialog, close) : null
-  return <DialogRenderer dialog={dialog} close={close} />
+  return dialogRenderer(dialog, close)
 }

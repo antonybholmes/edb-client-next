@@ -2806,6 +2806,10 @@
         {
           "msg": "Ext gsea support for weighted hits",
           "date": "2026-09-11T23:00:46.440Z"
+        },
+        {
+          "msg": "Added viper interface for ext-gsea. More support for multiple axes.",
+          "date": "2026-09-12T02:22:10.274Z"
         }
       ]
     },

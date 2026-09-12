@@ -1,5 +1,6 @@
 import GENE_CONVERT_APP from './components/pages/apps/genes/gene-convert/manifest.json'
 import GSEA_BUBBLE_APP from './components/pages/apps/genes/gsea/bubble/manifest.json'
+import EXT_GSEA_APP from './components/pages/apps/genes/gsea/ext-gsea/manifest.json'
 import GSEA_PLOT_APP from './components/pages/apps/genes/gsea/gsea-plot/manifest.json'
 import GSEA_WEB_APP from './components/pages/apps/genes/gsea/gsea-web/manifest.json'
 import MOTIFS_APP from './components/pages/apps/genes/motifs/manifest.json'
@@ -102,6 +103,11 @@ export const HEADER_LINKS: IHeaderLink[] = [
       {
         ...GSEA_PLOT_APP,
         slug: '/apps/genes/gsea-plot',
+        mode: 'prod',
+      },
+      {
+        ...EXT_GSEA_APP,
+        slug: '/apps/genes/gsea/ext-gsea',
         mode: 'prod',
       },
       {

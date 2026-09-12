@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added viper interface for ext-gsea. More support for multiple axes.
 - Ext gsea support for weighted hits.
 - Can plot viper output as gsea.
 - Ext gsea now own module and api closer to original gsea. Added viper tools for converting viper output to gsea.

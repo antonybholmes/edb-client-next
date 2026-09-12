@@ -2802,6 +2802,10 @@
         {
           "msg": "Can plot viper output as gsea",
           "date": "2026-09-11T22:19:25.412Z"
+        },
+        {
+          "msg": "Ext gsea support for weighted hits",
+          "date": "2026-09-11T23:00:46.440Z"
         }
       ]
     },

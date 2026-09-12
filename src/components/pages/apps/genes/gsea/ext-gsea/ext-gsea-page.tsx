@@ -65,7 +65,7 @@ import { useHistory } from '../../../matcalc/history/history-provider/history-pr
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
 
-import { ExtGseaDisplayPropsPanel } from './ext-gsea-display-props-panel'
+import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import {
   ExtGseaProvider,
   IExtGseaPlot,
@@ -317,7 +317,7 @@ export function ExtGseaPage() {
             </ResizablePanel>
           </ResizablePanelGroup>
 
-          <ExtGseaDisplayPropsPanel />
+          <ExtGseaPropsPanel />
         </ResizableSidebar>
 
         <FooterPortal className="justify-between">
