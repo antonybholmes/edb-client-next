@@ -8,7 +8,7 @@ export interface IScoreGene {
 }
 
 export interface IGeneSet extends IDBEntity {
-  genes: IScoreGene[]
+  genes: (IScoreGene | string)[]
   color?: string
   //type: 'geneset'
 }
@@ -48,4 +48,12 @@ export function makeNewGeneset(name: string = 'Gene Set 1'): IGeneSet {
     color: randomHexColor(),
     //type: 'geneset',
   }
+}
+
+export function geneSetNames(geneset: IGeneSet): string[] {
+  return geneset.genes.map((g) => (typeof g === 'string' ? g : g.name))
+}
+
+export function geneSetScores(geneset: IGeneSet): number[] {
+  return geneset.genes.map((g) => (typeof g === 'string' ? 1 : g.score))
 }

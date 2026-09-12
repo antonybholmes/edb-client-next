@@ -13,7 +13,13 @@ import { permutation } from '../math/random'
 import { range } from '../math/range'
 import { zeros } from '../math/zeros'
 
-import { EMPTY_GENE_SET, type IGeneSet, type IRankedGene } from './geneset'
+import {
+  EMPTY_GENE_SET,
+  geneSetNames,
+  geneSetScores,
+  type IGeneSet,
+  type IRankedGene,
+} from './geneset'
 
 // https://www.mathworks.com/matlabcentral/fileexchange/33599-gsea2
 
@@ -147,15 +153,22 @@ export class ExtGSEA {
     // Is ranked gene in gene set
     const isInGeneset = zeros(l)
 
-    const ids1 = new Set(gs1.genes.map((g) => g.name))
-    const ids2 = new Set(gs2.genes.map((g) => g.name))
+    console.log('Running ExtGSEA with gene sets:', gs1.genes, gs2)
+
+    const names1 = geneSetNames(gs1)
+    const names2 = geneSetNames(gs2)
+    const scores1 = geneSetScores(gs1)
+    const scores2 = geneSetScores(gs2)
+
+    const ids1 = new Set(names1)
+    const ids2 = new Set(names2)
 
     const geneScores1 = new Map<string, number>(
-      gs1.genes.map((g) => [g.name, g.score])
+      names1.map((g, i) => [g, scores1[i]!])
     )
 
     const geneScores2 = new Map<string, number>(
-      gs2.genes.map((g) => [g.name, g.score])
+      names2.map((g, i) => [g, scores2[i]!])
     )
 
     for (const i of range(l)) {
@@ -177,8 +190,6 @@ export class ExtGSEA {
 
     this._scoreHits = cumsum(abs(pow(mult(this._rsc, isInGeneset), this._w)))
 
-    console.log(this._scoreHits)
-
     this._scoreHits = div(
       this._scoreHits,
       this._scoreHits[this._scoreHits.length - 1]!
@@ -196,6 +207,8 @@ export class ExtGSEA {
     const { v: minEs, i: minEsIndex } = argmin(this._esAllGenes)
 
     this._es = maxEs + minEs
+
+    console.log(this._es, 'es')
 
     const isEnriched = zeros(l)
 
@@ -241,6 +254,8 @@ export class ExtGSEA {
         this._pvalue = bgEs.filter((v) => v >= this._es).length / this._np
         this._nes = this._es / Math.abs(mean(bgEs.filter((es) => es > 0)))
       }
+
+      console.log(this._pvalue, bgEs, 'hmm')
     }
 
     return {
@@ -256,10 +271,12 @@ export class ExtGSEA {
 
     const isInGeneset = zeros(l)
 
-    const ids1 = new Set(gs1.genes.map((g) => g.name))
+    const names1 = geneSetNames(gs1)
+    const scores1 = geneSetScores(gs1)
+    const ids1 = new Set(names1)
 
     const geneScores1 = new Map<string, number>(
-      gs1.genes.map((g) => [g.name, g.score])
+      names1.map((g, i) => [g, scores1[i]!])
     )
 
     for (const [index, gene] of this._rankedGenes.entries()) {

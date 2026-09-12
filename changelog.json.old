@@ -2830,6 +2830,10 @@
         {
           "msg": "Added Ext gsea weighting by gene option to UI",
           "date": "2026-09-12T04:34:18.399Z"
+        },
+        {
+          "msg": "Support for controlling titles in Ext GSEA UI",
+          "date": "2026-09-12T05:12:56.236Z"
         }
       ]
     },

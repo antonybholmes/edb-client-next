@@ -20,6 +20,10 @@
 - Gsea render sped up and now has working crosshair.
 - Bug fixes and updates.
 
+### Fixed
+
+- Permutation now correctly randomizes indices.
+
 
 ## 89.2.0 (Sep, 2026)
 

@@ -22,7 +22,11 @@ import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK } from '@/lib/color/color'
-import type { IGeneSet, IRankedGene } from '@/lib/gsea/geneset'
+import {
+  geneSetScores,
+  type IGeneSet,
+  type IRankedGene,
+} from '@/lib/gsea/geneset'
 import { abs } from '@/lib/math/abs'
 import { end, max } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
@@ -133,6 +137,8 @@ function LineSvg({
 
 function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
   const { plot } = useExtGseaContext()
+
+  console.log(result, plot)
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -438,16 +444,13 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
+      const scores1 = geneSetScores(gs1)
+      const scores2 = geneSetScores(gs2)
       // scale colors to score, for generic ext gsea
       // score is always 1 so no effect, for viper
       // we can scale by strength of interaction with
       // target
-      let maxScore = max(
-        abs([
-          ...gs1.genes.map((g) => g.score),
-          ...gs2.genes.map((g) => g.score),
-        ])
-      )
+      let maxScore = max(abs([...scores1, ...scores2]))
 
       let hitIdx = where(gsea1.hits, (x) => x > 0)
 
@@ -459,7 +462,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
             {hitIdx.map((hit, hiti) => {
               const x = xs[hiti]
 
-              const score = Math.abs(gs1.genes[hiti].score) / maxScore
+              const score = scores1[hiti] / maxScore
               const diff = 1 - score
 
               //need to vary between 1 and score/max score according to the gene score
@@ -516,7 +519,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           <SvgG>
             {hitIdx.map((hit, hiti) => {
               const x = xs[hiti]
-              const score = Math.abs(gs2.genes[hiti].score) / maxScore
+              const score = scores2[hiti] / maxScore
               const diff = 1 - score
 
               // when weight is 0 -> score + diff = 1 -> no weighting

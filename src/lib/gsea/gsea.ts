@@ -2,7 +2,7 @@ import type { IDBEntity } from '@/interfaces/db-entity'
 import { abs } from '../math/abs'
 import { mean } from '../math/mean'
 import { fisherYatesShuffle } from '../math/random'
-import type { IGeneSet, IRankedGene } from './geneset'
+import { geneSetNames, type IGeneSet, type IRankedGene } from './geneset'
 
 interface EnrichmentResult {
   es: number
@@ -14,7 +14,7 @@ function calculateEnrichmentScore(
   geneSet: IGeneSet,
   p: number
 ): EnrichmentResult {
-  const geneNames = new Set(geneSet.genes.map((g) => g.name))
+  const geneNames = new Set(geneSetNames(geneSet))
   const N = rankedGenes.length
   const Nh = rankedGenes.filter((g) => geneNames.has(g.name)).length
 

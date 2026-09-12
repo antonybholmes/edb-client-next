@@ -1,7 +1,11 @@
 import type { SeriesData } from '@/lib/dataframe/series-data'
 import { intersect1d } from '../../collections'
 
-import type { ICollection, IGeneSet } from '../../gsea/geneset'
+import {
+  geneSetNames,
+  type ICollection,
+  type IGeneSet,
+} from '../../gsea/geneset'
 import { argsort } from '../../math/argsort'
 
 import { minusLog10 } from '@/lib/math/logs'
@@ -95,14 +99,14 @@ export class PathwayOverlap {
     let allData: SeriesData[][] = []
 
     genesets.forEach((geneset) => {
-      const genes = new Set<string>(geneset.genes.map((g) => g.name))
+      const genes = new Set<string>(geneSetNames(geneset))
       const K = genes.size
       let c = 0
       const data: SeriesData[][] = []
 
       this._collections.forEach((collection) => {
         collection.genesets.forEach((pathway, pi) => {
-          const pathwayGenes = new Set<string>(pathway.genes.map((g) => g.name))
+          const pathwayGenes = new Set<string>(geneSetNames(pathway))
 
           const n = pathwayGenes.size
 
