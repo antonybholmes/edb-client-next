@@ -2857,5 +2857,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-09-09T16:19:39.538Z"
+  },
+  {
+    "version": "89.6.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-12T14:49:59.031Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-12T14:49:59.031Z"
   }
 ]

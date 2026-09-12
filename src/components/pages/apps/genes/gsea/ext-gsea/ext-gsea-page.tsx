@@ -21,7 +21,6 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
@@ -58,7 +57,6 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 
-import { produce } from 'immer'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { useAllPlots } from '../../../matcalc/history/history-provider/history-hooks'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
@@ -71,7 +69,6 @@ import {
   IExtGseaPlot,
   useExtGseaContext,
 } from './ext-gsea-provider'
-import { useExtGseaSettings } from './ext-gsea-settings'
 import { ExtGseaSvg } from './ext-gsea-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
@@ -82,20 +79,9 @@ export function ExtGseaPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { setZoom } = useZoom({
-    onChange: ({ zoom }) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
-    },
-  })
-
   const { settings: edbSettings } = useEdbSettings()
 
   const { plot } = useExtGseaContext()
-  const { settings, updateSettings } = useExtGseaSettings()
 
   const { openFile } = useHistory()
 
@@ -152,11 +138,6 @@ export function ExtGseaPage() {
   //     })
   //   )
   // }, [debouncedQ])
-
-  // load saved zoom from settings
-  useEffect(() => {
-    setZoom(settings.page.scale)
-  }, [settings.page.scale])
 
   // useEffect(() => {
   //   if (!plot || settings.scale === zoom) {

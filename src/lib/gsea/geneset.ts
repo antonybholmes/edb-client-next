@@ -93,6 +93,11 @@ export function geneSetNames(geneset: IGeneSet): string[] {
  * @param geneset The gene set from which to extract gene scores.
  * @returns An array of gene scores contained in the gene set. If a gene is represented as a string, it is assigned a default score of 1.
  */
-export function geneSetScores(geneset: IGeneSet): number[] {
-  return geneset.genes.map((g) => (typeof g === 'string' ? 1 : g.score))
+export function geneSetScores(
+  geneset: IGeneSet,
+  defaultScore: number = 1
+): IScoreGene[] {
+  return geneset.genes.map((g) =>
+    typeof g === 'string' ? { name: g, score: defaultScore } : g
+  )
 }

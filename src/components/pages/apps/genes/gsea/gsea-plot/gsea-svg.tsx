@@ -26,6 +26,7 @@ import { IRankedGene } from '@/lib/gsea/geneset'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
+import { useZoom } from '@/providers/zoom-provider'
 import { useGseaPlot } from './gsea-plot-provider'
 import { useGseaSettings } from './gsea-settings-store'
 import { IGseaTableResult, useGseaData } from './gsea-store'
@@ -717,8 +718,7 @@ const GseaPlot = memo(function GseaPlot({
  */
 function GseaSvgContent() {
   const { settings } = useGseaSettings()
-  const { settings: edbSettings } = useEdbSettings()
-
+  const { zoom } = useZoom()
   const { pathways } = useGseaPlot()
 
   // stable across renders so GseaPlot's memo() isn't defeated by
@@ -791,7 +791,7 @@ function GseaSvgContent() {
 
   return (
     <SvgBase
-      scale={edbSettings.plots.scale}
+      scale={zoom}
       width={pageSize[0]!}
       height={pageSize[1]!}
       //shapeRendering={SVG_CRISP_EDGES}

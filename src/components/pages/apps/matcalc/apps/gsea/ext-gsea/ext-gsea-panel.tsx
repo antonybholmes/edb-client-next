@@ -14,8 +14,6 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom-provider'
-import { produce } from 'immer'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
@@ -25,7 +23,6 @@ import { ExtGseaViewPropsPanel } from '@/components/pages/apps/genes/gsea/ext-gs
 import { useExtGseaContext } from '../../../../genes/gsea/ext-gsea/ext-gsea-provider'
 import { ExtGseaSvg } from '../../../../genes/gsea/ext-gsea/ext-gsea-svg'
 import { MESSAGE_CHANNEL } from '../../../data/data-panel'
-import { useHistory } from '../../../history/history-provider/history-provider'
 
 export function makeDefaultHeatmapProps(mode: string): IHeatMapSettings {
   return {
@@ -43,21 +40,9 @@ export function ExtGseaPanel() {
   //   return null
   // }
 
-  const { updatePlot } = useHistory()
-
   const { plot } = useExtGseaContext()
 
   const { autoSave } = useSVG()
-
-  useZoom({
-    onChange: (z) => {
-      updatePlot(
-        produce(plot, (draft) => {
-          draft.props.page.scale = z.zoom
-        })
-      )
-    },
-  })
 
   const [showSave, setShowSave] = useState(false)
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')

@@ -174,11 +174,11 @@ export class ExtGSEA {
     const ids2 = new Set(names2)
 
     const geneScores1 = new Map<string, number>(
-      names1.map((g, i) => [g, scores1[i]!])
+      scores1.map((g) => [g.name, g.score])
     )
 
     const geneScores2 = new Map<string, number>(
-      names2.map((g, i) => [g, scores2[i]!])
+      scores2.map((g) => [g.name, g.score])
     )
 
     for (const i of range(l)) {
@@ -284,7 +284,7 @@ export class ExtGSEA {
     const ids1 = new Set(names1)
 
     const geneScores1 = new Map<string, number>(
-      names1.map((g, i) => [g, scores1[i]!])
+      scores1.map((g) => [g.name, g.score])
     )
 
     for (const [index, gene] of this._rankedGenes.entries()) {

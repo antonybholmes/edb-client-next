@@ -83,7 +83,7 @@ export class ColorMap {
       Math.round(lerp(c1[0], c2[0], t)),
       Math.round(lerp(c1[1], c2[1], t)),
       Math.round(lerp(c1[2], c2[2], t)),
-      clamp(lerp(c1[3], c2[3], t), 0, 1),
+      clamp(lerp(c1[3], c2[3], t), { min: 0, max: 1 }),
     ]
   }
 
