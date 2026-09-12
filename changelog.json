@@ -2834,6 +2834,10 @@
         {
           "msg": "Support for controlling titles in Ext GSEA UI",
           "date": "2026-09-12T05:12:56.236Z"
+        },
+        {
+          "msg": "Ext gsea in matcalc now working",
+          "date": "2026-09-12T05:52:13.958Z"
         }
       ],
       "Fixed": [

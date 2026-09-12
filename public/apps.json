@@ -43,11 +43,11 @@
     "description": "Extended GSEA plots.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.0.4",
+    "version": "2.0.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-12T05:40:44.912Z",
-    "hash": "cba32875460f88ccd719c4cbd3649ed21dcb6444b2b4df145ab9e174ab348b04",
-    "build": 958
+    "modified": "2026-09-12T05:52:11.176Z",
+    "hash": "93b2a42709465c7565ba1ff87c70cb683682d7193becfcbcacb67e7b51c91e62",
+    "build": 960
   },
   {
     "name": "Get DNA",
@@ -130,11 +130,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.4.2",
+    "version": "50.4.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-12T04:34:15.849Z",
-    "hash": "c1eac2224cffee3c97851231b52be443f906954229475a8cdd2d88edfec84c30",
-    "build": 2048
+    "modified": "2026-09-12T05:52:11.187Z",
+    "hash": "210364aa0692446bff9643b10114e1c05d19cef3bb101172b6f38a44898c0104",
+    "build": 2050
   },
   {
     "name": "Motifs",

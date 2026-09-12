@@ -6,12 +6,13 @@ import { SortableItem } from '@/components/sortable-item'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { DragDropProvider } from '@dnd-kit/react'
+import { Fragment } from 'react/jsx-runtime'
 import { IDisplayPlot } from './axes-groups-popover'
 
 export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
   return (
     <PropsPanel>
-      <VScrollPanel className="mb-2">
+      <VScrollPanel className="mb-2 mr-8">
         <DragDropProvider>
           <ul className="flex flex-col">
             {plots.map(({ id: plotId, title, groups }, pi) => {
@@ -22,7 +23,7 @@ export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
                     <VCenterRow className="gap-x-1">
                       {groups.map(
                         ({ id: groupId, title: groupTitle, axes }, gi) => (
-                          <>
+                          <Fragment key={groupId}>
                             {gi > 0 && <ToolbarSeparator />}
                             <VCenterRow key={groupId} className="gap-x-1">
                               <span>{groupTitle}</span>
@@ -37,7 +38,7 @@ export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
                                 ))}
                               </VCenterRow>
                             </VCenterRow>
-                          </>
+                          </Fragment>
                         )
                       )}
                     </VCenterRow>

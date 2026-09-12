@@ -21,10 +21,10 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
@@ -58,8 +58,8 @@ export function ExtGseaDisplayPropsPanel() {
   const displayOptions = plot!.props
 
   return (
-    <PropsPanel className="gap-y-1">
-      <VCenterRow className="justify-end">
+    <PropsPanel>
+      <SideBarHeader>
         <LinkButton
           onClick={() =>
             updatePlot(
@@ -72,7 +72,7 @@ export function ExtGseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
+      </SideBarHeader>
       <ScrollAccordion
         value={openTabs}
         onValueChange={(v) => setOpenTabs(v as string[])}

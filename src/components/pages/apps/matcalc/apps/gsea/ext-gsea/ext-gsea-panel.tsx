@@ -21,7 +21,7 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSVG } from '@/providers/svg-provider'
 
-import { ExtGseaDisplayPropsPanel } from '../../../../genes/gsea/ext-gsea/ext-gsea-display-props-panel'
+import { ExtGseaViewPropsPanel } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea-view-props-panel'
 import { useExtGseaContext } from '../../../../genes/gsea/ext-gsea/ext-gsea-provider'
 import { ExtGseaSvg } from '../../../../genes/gsea/ext-gsea/ext-gsea-svg'
 import { MESSAGE_CHANNEL } from '../../../data/data-panel'
@@ -136,7 +136,7 @@ export function ExtGseaPanel() {
         <ExtScrollCard>
           <ExtGseaSvg />
         </ExtScrollCard>
-        <ExtGseaDisplayPropsPanel />
+        <ExtGseaViewPropsPanel />
       </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 ">
