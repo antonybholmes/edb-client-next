@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Add gene weight option to control opacity of gene bars in Ext gsea.
 - Improved ui for customizing ext gsea plots.
 - Added viper interface for ext-gsea. More support for multiple axes.
 - Ext gsea support for weighted hits.

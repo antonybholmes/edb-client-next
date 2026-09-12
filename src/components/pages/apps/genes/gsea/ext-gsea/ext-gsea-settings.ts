@@ -36,6 +36,7 @@ export interface IExtGseaSettings {
       font: ITextProps
       isColored: boolean
     }
+    geneScoreWeight: number
   }
   es: {
     gs1: {
@@ -147,6 +148,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       font: { ...DEFAULT_BOLD_TEXT_PROPS },
       isColored: true,
     },
+    geneScoreWeight: 1,
   },
   ranking: {
     show: true,

@@ -24,6 +24,7 @@ import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
@@ -371,6 +372,22 @@ export function ExtGseaDisplayPropsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.genes.line.width = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
+            <PropRow title="Gene Weight">
+              <PercentSlider
+                min={0}
+                max={1}
+                step={0.01}
+                value={displayOptions.genes.geneScoreWeight}
+                onNumChanged={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.genes.geneScoreWeight = v
                     })
                   )
                 }}

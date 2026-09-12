@@ -1,18 +1,22 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { useResizableSidebarContext } from '@/components/sidebar/resizable-sidebar'
+import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
+import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
+import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { Filter, Group } from 'lucide-react'
 import { useEffect } from 'react'
 import { FilterPropsPanel } from './filter-props-panel'
 import { GroupingPropsPanel } from './grouping-props-panel'
-import { OutlookTabs } from './outlook-tabs'
 
 // const TAB_CLS =
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
 
 export function DataPropsPanel() {
-  const { selectedTab, setTabs } = useTabs('matcalc-data-props-panel')
-  //const [value, setValue] = useState('groups')
+  const { id } = useResizableSidebarContext()
+
+  const { selectedTab, setTabs } = useTabs(id)
 
   useEffect(() => {
     setTabs([
@@ -30,10 +34,15 @@ export function DataPropsPanel() {
   }, [setTabs])
 
   return (
-    <BaseCol className="grow mb-2">
+    <BaseCol className="grow gap-y-2">
+      <UnderlineTabs groupId={id} className="text-xs" tabListCls="gap-x-3">
+        <TabIndicatorFollowH />
+        <TabIndicatorSelectedH />
+      </UnderlineTabs>
+
       <Tabs
         value={selectedTab?.id ?? ''}
-        orientation="vertical"
+        //orientation="vertical"
         className="grow"
       >
         <TabsContent value="groups" className="grow">
@@ -53,7 +62,7 @@ export function DataPropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <OutlookTabs id="matcalc-data-props-panel" />
+      {/* <OutlookTabs id="matcalc-data-props-panel" /> */}
     </BaseCol>
   )
 }

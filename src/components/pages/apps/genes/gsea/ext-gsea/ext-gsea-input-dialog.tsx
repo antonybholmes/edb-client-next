@@ -54,7 +54,7 @@ export function dfToViper(df: BaseDataFrame): IViper {
   return { id: makeUuid(), name: 'Viper', signature, tfs }
 }
 
-export function InputDialog({ close }: ICustomDialogProps<unknown>) {
+export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
   const { sheet } = useCurrentSheets()
   const { remove: removeFooter, addIndicator } = useFooter()
 
@@ -65,6 +65,7 @@ export function InputDialog({ close }: ICustomDialogProps<unknown>) {
   return (
     <OKCancelDialog
       title="Input Source"
+      w="w-96"
       buttons={[]}
 
       onResponse={() => {
@@ -73,6 +74,16 @@ export function InputDialog({ close }: ICustomDialogProps<unknown>) {
     >
       <Button
         variant="app-theme"
+        size="lg"
+        onClick={() => {
+          close()
+        }}
+      >
+        Expression
+      </Button>
+      <Button
+        variant="secondary"
+        size="lg"
         onClick={() => {
           const id = addIndicator('Running Viper GSEA...')
 

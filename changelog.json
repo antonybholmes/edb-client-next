@@ -2814,6 +2814,10 @@
         {
           "msg": "Improved ui for customizing ext gsea plots",
           "date": "2026-09-12T03:08:48.794Z"
+        },
+        {
+          "msg": "Add gene weight option to control opacity of gene bars in Ext gsea",
+          "date": "2026-09-12T03:57:44.266Z"
         }
       ]
     },

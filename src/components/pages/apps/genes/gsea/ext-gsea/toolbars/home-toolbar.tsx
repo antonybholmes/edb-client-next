@@ -16,8 +16,8 @@ import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { ExtGseaInputDialog } from '../ext-gsea-input-dialog'
 import { useExtGseaSettings } from '../ext-gsea-settings'
-import { InputDialog } from '../input-dialog'
 
 export function HomeToolbar() {
   const { openCustom: openCustomDialog } = useDialogs()
@@ -58,7 +58,7 @@ export function HomeToolbar() {
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}
           onClick={() => {
-            openCustomDialog(InputDialog, {})
+            openCustomDialog(ExtGseaInputDialog, {})
           }}
         >
           <PlayIcon variant="app-theme" />

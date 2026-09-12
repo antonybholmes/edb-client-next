@@ -1,51 +1,46 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
-import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
-import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
-import { UnderlineTabs } from '@/components/tabs/underline-tabs'
+import { Move3D, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
-import { GroupingPropsPanel } from '../../../matcalc/data/grouping-props-panel'
-import { ExtGseaViewPropsPanel } from './ext-gsea-view-props-panel'
+import { OutlookTabs } from '../../../matcalc/data/outlook-tabs'
+import { ExtGseaDisplayPropsPanel } from './ext-gsea-display-props-panel'
+import { GseaGraphAxesPropsPanel } from './gsea-graph-axes-props-panel'
 
-const ID = 'ext-gsea-plot-props-panel'
+const ID = 'ext-gsea-view-props-panel'
 
-export function ExtGseaPropsPanel() {
+export function ExtGseaViewPropsPanel() {
   const { selectedTab, setTabs } = useTabs(ID)
 
   useEffect(() => {
     setTabs([
       {
-        id: 'groups',
-        name: 'Groups',
+        id: 'display',
+        name: 'Display',
+        icon: <SlidersHorizontal strokeWidth={2} size={18} />,
       },
       {
-        id: 'view',
-        name: 'View',
+        id: 'axes',
+        name: 'Axes',
+        icon: <Move3D strokeWidth={2} size={18} />,
       },
     ])
   }, [setTabs])
 
   return (
     <BaseCol className="grow gap-y-2">
-      <UnderlineTabs groupId={ID} tabListCls="gap-x-3" className="text-xs">
-        <TabIndicatorFollowH />
-        <TabIndicatorSelectedH />
-      </UnderlineTabs>
-
       <Tabs
         orientation="vertical"
         value={selectedTab?.id ?? ''}
         onValueChange={() => {}}
         className="grow"
       >
-        <TabsContent value="groups">
-          <GroupingPropsPanel />
+        <TabsContent value="display">
+          <ExtGseaDisplayPropsPanel />
         </TabsContent>
-        <TabsContent value="view">
-          <ExtGseaViewPropsPanel />
+        <TabsContent value="axes">
+          <GseaGraphAxesPropsPanel />
         </TabsContent>
-
         {/* <TabsList className="py-1">
         <TabsTrigger value="genesets" className="grow" variant="sidebar">
           Gene Sets
@@ -56,7 +51,7 @@ export function ExtGseaPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      {/* <OutlookTabs id={ID} className="border-t border-border/50 py-2" /> */}
+      <OutlookTabs id={ID} className="border-t border-border/50 py-2" />
     </BaseCol>
   )
 }

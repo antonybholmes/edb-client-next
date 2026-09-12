@@ -47,7 +47,7 @@ export const BASE_IOS_CLS = cn(
 
 export const BASE_SECONDARY_CLS = cn(
   FOCUS_RING_CLS,
-  'bg-background border border-border data-[checked=false]:hover:bg-faint',
+  'bg-background border border-border hover:bg-faint',
   'data-checked:bg-faint data-[state=open]:bg-faint'
 )
 

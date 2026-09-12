@@ -459,7 +459,12 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
             {hitIdx.map((hit, hiti) => {
               const x = xs[hiti]
 
-              const score = Math.abs(gs1.genes[hiti].score)
+              const score = Math.abs(gs1.genes[hiti].score) / maxScore
+              const diff = 1 - score
+
+              //need to vary between 1 and score/max score according to the gene score
+              const opacity =
+                score + diff * (1 - displayProps.genes.geneScoreWeight)
 
               return (
                 <SvgLine
@@ -470,7 +475,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
                   stroke={gs1.color || displayProps.es.gs1.line.value}
-                  strokeOpacity={score / maxScore}
+                  strokeOpacity={opacity}
                 />
               )
             })}
@@ -507,20 +512,27 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           }}
         >
           <SvgG>
-            {hitIdx.map((p, pointi) => {
-              const x = xs[pointi]
-              const score = Math.abs(gs2.genes[pointi].score)
+            {hitIdx.map((hit, hiti) => {
+              const x = xs[hiti]
+              const score = Math.abs(gs2.genes[hiti].score) / maxScore
+              const diff = 1 - score
+
+              // when weight is 0 -> score + diff = 1 -> no weighting
+              // when weight is 1 -> opacity = score -> full weighting as no
+              // influence of diff
+              const opacity =
+                score + diff * (1 - displayProps.genes.geneScoreWeight)
 
               return (
                 <SvgLine
-                  key={pointi}
+                  key={hiti}
                   x1={x}
                   x2={x}
                   y1={0}
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
                   stroke={gs2.color || displayProps.es.gs2.line.value}
-                  strokeOpacity={score / maxScore}
+                  strokeOpacity={opacity}
                 />
               )
             })}
