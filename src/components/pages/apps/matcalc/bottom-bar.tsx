@@ -21,8 +21,6 @@ import {
 } from './history/history-provider/history-contexts'
 import { useHistory } from './history/history-provider/history-provider'
 import { ReorderTabs } from './reorder-tabs'
-// const LINE_CLS =
-//   "tab-line absolute bottom-0 left-0 block h-0.5 bg-theme"
 
 interface IBottomBarProps extends IFileDropProps, ITabMenu, IClassProps {
   maxNameLength?: number
@@ -38,9 +36,6 @@ export function BottomBar({
   rightContent,
   onFileDrop = undefined,
   allowReorder = false,
-  className,
-  style = {},
-  //onReorder = () => {},
   menuCallback = () => {},
   menuActions = [],
 }: IBottomBarProps) {

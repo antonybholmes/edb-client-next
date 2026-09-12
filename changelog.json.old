@@ -2865,6 +2865,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-09-12T14:49:59.031Z"
+        },
+        {
+          "msg": "run ext gsea now in helper hook",
+          "date": "2026-09-12T15:01:42.585Z"
         }
       ]
     },

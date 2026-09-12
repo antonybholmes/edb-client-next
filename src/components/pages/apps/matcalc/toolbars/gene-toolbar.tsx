@@ -2,15 +2,11 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { useFooter } from '@/providers/footer-provider'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
 
 import {
-  useCurrentGenesets,
-  useCurrentGroups,
   useCurrentSheets,
   useFiles,
 } from '../history/history-provider/history-contexts'
@@ -20,7 +16,6 @@ import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
 
-import { useExtGseaWorker } from '../../genes/gsea/ext-gsea/ext-gsea-worker'
 import { useRunExtGsea } from '../../genes/gsea/use-run-ext-gsea'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
@@ -30,13 +25,9 @@ export function GeneToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
   const { sheet } = useCurrentSheets()
-  const { groups } = useCurrentGroups()
-  const { genesets } = useCurrentGenesets()
-  const { remove: removeFooter, addIndicator } = useFooter()
+
   const { addSheets, addPlots } = useHistory()
   const { selection } = useSelectionRange()
-  const { run: runExtGseaWorker } = useExtGseaWorker()
-  const { open: openDialog } = useDialogs()
 
   const { settings, updateSettings } = useMatcalcSettings()
   const { file } = useFiles()
@@ -56,11 +47,6 @@ export function GeneToolbar() {
     const df = makeGCT(sheet as AnnotationDataFrame) as AnnotationDataFrame
 
     addSheets([df])
-
-    // history.current = ({
-    //   step: history.current.step + 1,
-    //   history: [{ title: df.name, df: [df] }],
-    // })
   }
 
   return (

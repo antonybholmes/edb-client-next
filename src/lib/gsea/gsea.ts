@@ -164,7 +164,7 @@ export function gsea(
 
   // Step 6: FDR = fraction of null NES as extreme as NES* / fraction of observed NES as extreme as NES*
   // Both fractions are within the same sign subgroup (Subramanian et al. 2005)
-  const fdr = perGeneSet.map(({ gs, result, nes, pvalue }) => {
+  const results = perGeneSet.map(({ gs, result, nes, pvalue }) => {
     const isPositive = nes >= 0
     const nullNES = isPositive ? allPosNullNES : allNegNullNES
     const obsTotal = isPositive ? posObsTotal : negObsTotal
@@ -199,5 +199,5 @@ export function gsea(
     }
   })
 
-  return fdr
+  return results
 }
