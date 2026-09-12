@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined zoom system. ExtGSEA now supports zoom.
 - Removed levels from zoom.
 - Ext gsea in matcalc now working.
 - Support for controlling titles in Ext GSEA UI.

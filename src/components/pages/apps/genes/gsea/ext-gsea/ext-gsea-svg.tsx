@@ -4,7 +4,6 @@ import {
   axisDomainToRange,
   axisDomainToRangeFunc,
   axisLength,
-  IAxis,
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
@@ -29,115 +28,12 @@ import {
 import { abs } from '@/lib/math/abs'
 import { end, max } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
+import { useZoom } from '@/providers/zoom-provider'
 import { IExtGseaPlotResult, useExtGseaContext } from './ext-gsea-provider'
 import { IExtGseaSettings } from './ext-gsea-settings'
 
-function LineSvg({
-  result,
-  ix,
-  x,
-  y,
-  x1,
-  gsea1,
-  gs1,
-  xax,
-}: {
-  result: IExtGseaPlotResult
-  ix: number[]
-  x: number[]
-  y: number[]
-  x1: number[]
-  y1: number[]
-  gsea1: IGseaResult
-  gs1: IGeneSet
-  xax: IAxis
-}) {
-  const { plot } = useExtGseaContext()
-
-  const { axis: yaxEs } = useAxis({
-    plotId: result.id,
-    groupId: 'es',
-    axisId: 'y',
-  })
-
-  const displayProps: IExtGseaSettings = plot.props
-
-  let y1 = ix.map((i) => y[i]!)
-
-  y1[0] = 0
-  y1[y1.length - 1] = 0
-
-  let leadingEdgeIdx =
-    gsea1.es >= 0
-      ? gsea1.leadingEdge[gsea1.leadingEdge.length - 1].rank
-      : gsea1.leadingEdge[0].rank
-
-  // now we want the ix that are within the leading edge
-  let leadingIdx =
-    gsea1.es >= 0
-      ? ix.filter((i) => i <= leadingEdgeIdx)
-      : ix.filter((i) => i >= leadingEdgeIdx)
-
-  let xlead = leadingIdx.map((i) => x[i]!)
-  let ylead = leadingIdx.map((i) => y[i]!)
-
-  // fix ends
-
-  xlead =
-    gsea1.es >= 0 ? [...xlead, xlead[xlead.length - 1]!] : [xlead[0]!, ...xlead]
-  ylead = gsea1.es >= 0 ? [...ylead, 0] : [0, ...ylead]
-
-  let leadingEdge1Svg: ReactNode | undefined = undefined
-
-  if (displayProps.es.gs1.leadingEdge.show) {
-    const xs = axisDomainToRange(xax, xlead)
-    const ys = axisDomainToRange(yaxEs, ylead)
-
-    const points = zip(xs, ys)
-      .map(([px, py]) => `${px},${py}`)
-      .join(', ')
-
-    leadingEdge1Svg = (
-      <SvgPolyLine
-        points={points}
-        fill={gs1.color}
-        fillOpacity={displayProps.es.gs1.leadingEdge.opacity}
-        stroke="none"
-      />
-    )
-  }
-
-  let line1Svg: ReactNode | undefined = undefined
-
-  if (displayProps.es.gs1.curve.show) {
-    const xs = axisDomainToRange(xax, x1)
-    const ys = axisDomainToRange(yaxEs, y1)
-
-    const points = zip(xs, ys)
-      .map(([px, py]) => `${px},${py}`)
-      .join(', ')
-
-    line1Svg = (
-      <SvgPolyLine
-        points={points}
-        stroke={gs1.color}
-        s={displayProps.es.gs1.curve}
-        fill="none"
-      />
-    )
-  }
-  return (
-    <>
-      {leadingEdge1Svg}
-      {line1Svg}
-    </>
-  )
-}
-
 function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
   const { plot } = useExtGseaContext()
-
-  console.log(result, plot)
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -690,6 +586,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
 export function ExtGseaSvg() {
   const { plot } = useExtGseaContext()
+  const { zoom } = useZoom()
 
   const displayProps: IExtGseaSettings = plot.props
 
@@ -750,11 +647,7 @@ export function ExtGseaSvg() {
   }
 
   return (
-    <SvgBase
-      width={pageSize.w}
-      height={pageSize.h}
-      scale={displayProps.page.scale}
-    >
+    <SvgBase width={pageSize.w} height={pageSize.h} scale={zoom}>
       <SvgMargin margin={displayProps.plot!.margin}>{elems}</SvgMargin>
     </SvgBase>
   )

@@ -10,13 +10,13 @@ import {
   SelectItem,
 } from '@/themed/v2/select'
 import { useEffect, useState } from 'react'
+
 // import { Slider } from "../toolbar/slider"
 import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
 import { Slider } from '@/themed/v2/slider'
 
-import { useDebounce } from '@/hooks/debounce'
+import { useDebounceCallback } from '@/hooks/debounce'
 import { ChevronDown, Minus, Plus } from 'lucide-react'
-import { useEdbSettings } from '../edb/edb-settings'
 import { VCenterRow } from '../layout/v-center-row'
 import { Input } from '../shadcn/ui/themed/v2/input'
 import { ToolbarFooterButton } from './toolbar-footer-button'
@@ -34,38 +34,16 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
     channel,
   })
 
-  const { updateSettings } = useEdbSettings()
-
-  // We need to distinguish between user-initiated changes
-  // to the slider and programmatic changes that occur when the zoom level
-  // is updated from elsewhere in the app. To do this, we can keep track of
-  // whether the slider change was initiated by the user or not.
-  // When the slider value changes, we set a flag to indicate that
-  // it was a user-initiated change. We then use a debounced effect
-  // to update the zoom level after a short delay, but only if
-  // the change was initiated by the user. If the zoom level is updated
-  // programmatically (e.g., from another component), we reset the flag
-  // so that it doesn't trigger an unnecessary zoom update.
-  const [_index, _setIndex] = useState<{
-    index: number
-    userInitiated: boolean
-  }>({ index, userInitiated: false })
+  const [_index, _setIndex] = useState(index)
 
   useEffect(() => {
-    _setIndex({ index, userInitiated: false })
+    _setIndex(index)
   }, [index])
 
-  const debounceIndex = useDebounce(_index, { delayMs: 300 })
-
-  useEffect(() => {
-    if (
-      debounceIndex.index >= 0 &&
-      debounceIndex.index < levels.length &&
-      debounceIndex.userInitiated
-    ) {
-      setZoom(levels[debounceIndex.index])
-    }
-  }, [debounceIndex, setZoom, levels])
+  const { debounced: debouncedSetZoom } = useDebounceCallback(
+    (index: number) => setZoom(levels[index]),
+    { delayMs: 300 }
+  )
 
   return (
     <VCenterRow className={cn('gap-x-1', className)}>
@@ -79,13 +57,14 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         </ToolbarFooterButton>
 
         <Slider
-          value={_index.index}
+          value={_index}
           min={0}
           max={levels.length - 1}
           onValueChange={(v) => {
             const l = Array.isArray(v) ? v[0]! : v
 
-            _setIndex({ index: l, userInitiated: true })
+            _setIndex(l)
+            debouncedSetZoom(l)
           }}
           step={1}
           className="w-20"

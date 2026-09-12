@@ -2838,6 +2838,10 @@
         {
           "msg": "Ext gsea in matcalc now working",
           "date": "2026-09-12T05:52:13.958Z"
+        },
+        {
+          "msg": "Removed levels from zoom",
+          "date": "2026-09-12T12:44:05.078Z"
         }
       ],
       "Fixed": [

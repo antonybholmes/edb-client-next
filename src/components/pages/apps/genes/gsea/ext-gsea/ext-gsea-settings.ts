@@ -67,7 +67,7 @@ export interface IExtGseaSettings {
     offset: number
   }
   page: {
-    scale: number
+    //scale: number
     columns: number
   }
   plot: {
@@ -95,7 +95,7 @@ export interface IExtGseaSettings {
 export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
   page: {
     columns: 3,
-    scale: 1,
+    //scale: 1,
   },
 
   title: {

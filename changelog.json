@@ -2842,6 +2842,10 @@
         {
           "msg": "Removed levels from zoom",
           "date": "2026-09-12T12:44:05.078Z"
+        },
+        {
+          "msg": "Refined zoom system. ExtGSEA now supports zoom",
+          "date": "2026-09-12T14:22:42.319Z"
         }
       ],
       "Fixed": [
