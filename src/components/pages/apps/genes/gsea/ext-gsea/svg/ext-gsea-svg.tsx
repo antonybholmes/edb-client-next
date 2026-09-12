@@ -25,6 +25,8 @@ function ExtGseaSvgPlot({
 
   const displayProps: IExtGseaSettings = plot.props
 
+  const yOffset = displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y
+
   return (
     <>
       {displayProps.title.show && <ExtGseaTitleSvg name={result.name} />}
@@ -34,17 +36,14 @@ function ExtGseaSvgPlot({
       <SvgG
         pos={{
           x: 0,
-          y: displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y,
+          y: yOffset,
         }}
       >
         <ExtGseaGenesSvgPlot
           result={result}
           pos={{
             x: pos.x,
-            y:
-              pos.y +
-              displayProps.es.axes.y.length +
-              1.5 * displayProps.plot!.gap.y,
+            y: pos.y + yOffset,
           }}
         />
       </SvgG>

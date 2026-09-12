@@ -29,6 +29,7 @@ export function ExtGseaHitsSvg({
   result,
   gs,
   gsea,
+  scores,
   maxScore,
   gsMode,
   pos,
@@ -36,6 +37,7 @@ export function ExtGseaHitsSvg({
   result: IExtGseaPlotResult
   gs: IGeneSet
   gsea: IGseaResult
+  scores: number[]
   maxScore: number
   gsMode: 'gs1' | 'gs2'
   pos: IPos
@@ -139,14 +141,11 @@ export function ExtGseaHitsSvg({
       ref,
       displayProps,
       gsea,
-
       gs,
-
       points,
       result,
       showCrosshair,
       hideCrosshair,
-
       showTooltip,
       hideTooltip,
     ]
@@ -156,8 +155,6 @@ export function ExtGseaHitsSvg({
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      const scores1 = abs(geneSetScores(gs).map((g) => g.score))
-
       // scale colors to score, for generic ext gsea
       // score is always 1 so no effect, for viper
       // we can scale by strength of interaction with
@@ -173,7 +170,7 @@ export function ExtGseaHitsSvg({
             {hitIdx.map((hit, hiti) => {
               const x = xs[hiti]
 
-              const score = scores1[hiti] / maxScore
+              const score = scores[hiti] / maxScore
               const diff = 1 - score
 
               //need to vary between 1 and score/max score according to the gene score
@@ -264,36 +261,37 @@ export function ExtGseaGenesSvgPlot({
       // target
       let maxScore = max([...scores1, ...scores2])
 
+      const yOffset =
+        displayProps.genes.height + 0.25 * displayProps.plot!.gap.y
+
       return (
         <>
           <ExtGseaHitsSvg
             result={result}
             gs={gs1}
             gsea={gsea1}
+            scores={scores1}
             maxScore={maxScore}
             gsMode="gs1"
-
             pos={pos}
           />
 
           <SvgG
             pos={{
               x: 0,
-              y: displayProps.genes.height + 0.25 * displayProps.plot!.gap.y,
+              y: yOffset,
             }}
           >
             <ExtGseaHitsSvg
               result={result}
               gs={gs2}
               gsea={gsea2}
+              scores={scores2}
               maxScore={maxScore}
               gsMode="gs2"
               pos={{
                 x: pos.x,
-                y:
-                  pos.y +
-                  displayProps.genes.height +
-                  0.25 * displayProps.plot!.gap.y,
+                y: pos.y + yOffset,
               }}
             />
           </SvgG>
