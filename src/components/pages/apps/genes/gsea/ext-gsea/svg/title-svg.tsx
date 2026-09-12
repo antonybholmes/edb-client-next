@@ -1,14 +1,13 @@
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
+import { useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
-export function ExtGseaTitleSvg({
-  name,
-  displayProps,
-}: {
-  name: string
-  displayProps: IExtGseaSettings
-}) {
+export function ExtGseaTitleSvg({ name }: { name: string }) {
+  const { plot } = useExtGseaContext()
+
+  const displayProps: IExtGseaSettings = plot.props
+
   return (
     <SvgG
       pos={{

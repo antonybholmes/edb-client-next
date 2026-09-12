@@ -91,7 +91,7 @@ export function SaveAsDialog({
                   fileTypes.filter((f) => f.ext.toLowerCase() === v)[0]!
                 )
               }}
-              className="w-32 h-9"
+              className="w-full h-9"
 
               //h="lg"
             >

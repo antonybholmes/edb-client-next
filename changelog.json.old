@@ -2873,6 +2873,10 @@
         {
           "msg": "Added support for crosshair to ext gsea",
           "date": "2026-09-12T17:16:55.050Z"
+        },
+        {
+          "msg": "Split ext gsea into separate files since its a lot of svg",
+          "date": "2026-09-12T17:43:22.654Z"
         }
       ]
     },

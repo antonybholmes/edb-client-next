@@ -165,7 +165,7 @@ export function HomeToolbar() {
           </ToolbarButton>
 
           <ToolbarButton
-            title="GSEA Bubble Plot"
+            title="GSEA Bubble"
             onClick={() => {
               openMatcalcDialog({
                 type: 'gsea-bubble-plot',

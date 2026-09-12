@@ -216,8 +216,22 @@ export function findNearest(
   x: number,
   arr: number[]
 ): { value: number; index: number } {
+  if (arr.length === 0) {
+    throw new Error('Array must not be empty')
+  }
+
+  if (x <= arr[0]!) {
+    return { value: arr[0]!, index: 0 }
+  }
+
+  const lastIndex = arr.length - 1
+
+  if (x >= arr[lastIndex]!) {
+    return { value: arr[lastIndex]!, index: lastIndex }
+  }
+
   let left = 0
-  let right = arr.length - 1
+  let right = lastIndex
 
   while (left <= right) {
     const mid = Math.floor((left + right) / 2)
@@ -231,16 +245,6 @@ export function findNearest(
     } else {
       right = mid - 1
     }
-  }
-
-  // left = first element >= x
-  // right = last element < x
-  if (right < 0) {
-    return { value: arr[left], index: left }
-  }
-
-  if (left >= arr.length) {
-    return { value: arr[right], index: right }
   }
 
   return Math.abs(arr[left] - x) < Math.abs(arr[right] - x)

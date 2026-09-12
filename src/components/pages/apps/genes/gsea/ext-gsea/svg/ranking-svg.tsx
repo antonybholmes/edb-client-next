@@ -40,17 +40,7 @@ export function ExtGseaRankingSvg({ result }: { result: IExtGseaPlotResult }) {
   const crossingX = xaf(crossIndex)
 
   return (
-    <SvgG
-      pos={{
-        x: 0,
-        y:
-          displayProps.es.axes.y.length +
-          displayProps.plot.gap.y +
-          (displayProps.genes.line.show
-            ? 2 * (displayProps.genes.height + displayProps.plot.gap.y)
-            : 0),
-      }}
-    >
+    <>
       <SvgPolygon
         points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
         stroke="none"
@@ -75,6 +65,6 @@ export function ExtGseaRankingSvg({ result }: { result: IExtGseaPlotResult }) {
         </SvgG>
       )}
       <AxisLeftSvg ax={yax} />
-    </SvgG>
+    </>
   )
 }

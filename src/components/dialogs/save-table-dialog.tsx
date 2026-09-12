@@ -160,7 +160,7 @@ export function SaveTableDialog({
                   fileTypes.filter((f) => f.ext.toLowerCase() === v)[0]!
                 )
               }}
-              className="w-32 h-9"
+              className="w-fullh-9"
 
               //h="lg"
             >

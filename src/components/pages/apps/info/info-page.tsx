@@ -7,6 +7,7 @@ import LINKS from '@/about-links.json'
 import { AutoRowCol } from '@/components/layout/auto-row-col'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 
+import { ClientLayout } from '@/app/client-layout'
 import { API_ABOUT_URL } from '@/components/edb/edb'
 import { Card } from '@/components/shadcn/ui/themed/card'
 import { config } from '@/config'
@@ -14,7 +15,6 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { VCenterRow } from '@/layout/v-center-row'
 import { SignInLayout } from '@/layouts/signin-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { ClientLayout } from '@/app/client-layout'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
@@ -82,7 +82,7 @@ export function InfoPage({ children }: IChildrenProps) {
             <LineSeparator />
             <AutoRowCol className="justify-between gap-4" breakpoint={400}>
               <BaseCol>
-                <p className="font-semibold">Web App</p>
+                <p className="font-semibold">Web Client</p>
                 <p>
                   Build {config.version}.{config.build}
                 </p>

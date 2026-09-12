@@ -90,7 +90,7 @@ export function GeneToolbar() {
             Extended GSEA
           </ToolbarButton>
           <ToolbarButton
-            title="GSEA Bubble Plot"
+            title="GSEA Bubble"
             onClick={() => {
               openMatcalcDialog({
                 type: 'gsea-bubble-plot',

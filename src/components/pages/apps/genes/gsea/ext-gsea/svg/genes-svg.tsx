@@ -1,25 +1,49 @@
-import { useMemo, type ReactNode } from 'react'
+import { useCallback, useMemo, type ReactNode } from 'react'
 
-import { axisDomainToRange, axisLength } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRange,
+  axisDomainToRangeFunc,
+  axisLength,
+} from '@/components/plot/axes/axis'
 import type { IGseaResult } from '@/lib/gsea/ext-gsea'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
+import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { geneSetScores, type IGeneSet } from '@/lib/gsea/geneset'
 import { abs } from '@/lib/math/abs'
 import { max } from '@/lib/math/math'
+import { findNearest } from '@/lib/search'
+import { useCrosshair } from '@/providers/crosshair-provider'
+import { useSVG } from '@/providers/svg-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
-export function ExtGseaGenesSvgPlot({
+export function ExtGseaHitsSvg({
   result,
+  gs,
+  gsea,
+  maxScore,
+  gsMode,
+  pos,
 }: {
   result: IExtGseaPlotResult
+  gs: IGeneSet
+  gsea: IGseaResult
+  maxScore: number
+  gsMode: 'gs1' | 'gs2'
+  pos: IPos
 }) {
   const { plot } = useExtGseaContext()
+  const { ref } = useSVG()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+  const { showTooltip, hideTooltip } = useTooltip()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -27,11 +51,198 @@ export function ExtGseaGenesSvgPlot({
     axisId: 'x',
   })
 
-  const { axis: yaxEs } = useAxis({
-    plotId: result.id,
-    groupId: 'es',
-    axisId: 'y',
-  })
+  const w = useMemo(() => axisLength(xax), [xax])
+
+  const displayProps: IExtGseaSettings = plot.props
+
+  const points = useMemo(() => {
+    if (!xax) {
+      return []
+    }
+
+    const xaf = axisDomainToRangeFunc(xax)
+
+    const points = gsea.esHits.map((e) => ({
+      x: xaf(e.rank),
+      y: 0,
+    }))
+
+    return points
+  }, [gsea.esHits, xax])
+
+  const _hideTooltip = useCallback(() => {
+    hideCrosshair()
+    hideTooltip()
+  }, [hideCrosshair, hideTooltip])
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) {
+        return
+      }
+
+      const svgP = screenToSvgPoint(ref.current, {
+        x: e.clientX,
+        y: e.clientY,
+      })
+
+      const plotP = {
+        x: svgP.x - pos.x - displayProps.plot.margin.left,
+        y: svgP.y - pos.y - displayProps.plot.margin.top,
+      }
+
+      if (
+        plotP.x < 0 ||
+        plotP.x > w ||
+        plotP.y < 0 ||
+        plotP.y > displayProps.genes.height
+      ) {
+        //setBarPos(null)
+        _hideTooltip()
+        return
+      }
+
+      const { value: nearest, index: index } = findNearest(
+        plotP.x,
+        points.map((p) => p.x)
+      )
+
+      if (Math.abs(plotP.x - nearest) > 5) {
+        _hideTooltip()
+        return
+      }
+
+      const barP = {
+        x: nearest + displayProps.plot.margin.left + pos.x,
+        y: plotP.y + displayProps.plot.margin.top + pos.y,
+      }
+
+      const { relativeP: barScreenP, screenP } = svgPointToScreen(
+        ref.current,
+        barP
+      )
+
+      showCrosshair(barScreenP)
+      showTooltip({
+        pos: { x: screenP.x + 5, y: screenP.y + 5 },
+        content: (
+          <>
+            <strong>{gs.name}</strong>
+            <span>{`Name: ${gsea.esHits[index].name}`}</span>
+            <span>{`Rank: ${gsea.esHits[index].rank.toLocaleString()}, Score: ${gsea.esHits[index].score.toFixed(3)}`}</span>
+          </>
+        ),
+      })
+    },
+    [
+      pos,
+      ref,
+      displayProps,
+      gsea,
+
+      gs,
+
+      points,
+      result,
+      showCrosshair,
+      hideCrosshair,
+
+      showTooltip,
+      hideTooltip,
+    ]
+  )
+
+  const genesSvg = useMemo(() => {
+    let genesSvg: ReactNode | undefined = undefined
+
+    if (displayProps.genes.line.show) {
+      const scores1 = abs(geneSetScores(gs).map((g) => g.score))
+
+      // scale colors to score, for generic ext gsea
+      // score is always 1 so no effect, for viper
+      // we can scale by strength of interaction with
+      // target
+
+      let hitIdx = gsea.esHits.map((g) => g.rank)
+
+      let xs = axisDomainToRange(xax, hitIdx)
+
+      return (
+        <>
+          <SvgG id="hits">
+            {hitIdx.map((hit, hiti) => {
+              const x = xs[hiti]
+
+              const score = scores1[hiti] / maxScore
+              const diff = 1 - score
+
+              //need to vary between 1 and score/max score according to the gene score
+              const opacity =
+                score + diff * (1 - displayProps.genes.geneScoreWeight)
+
+              return (
+                <SvgLine
+                  key={hiti}
+                  x1={x}
+                  x2={x}
+                  y1={0}
+                  y2={displayProps.genes.height}
+                  s={displayProps.genes.line}
+                  stroke={gs.color ?? displayProps.es[gsMode].curve.value}
+                  strokeOpacity={opacity}
+                />
+              )
+            })}
+          </SvgG>
+
+          {displayProps.genes.labels.font.show && (
+            <SvgG
+              pos={{
+                x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
+                y: displayProps.genes.height * 0.5,
+              }}
+            >
+              <SvgText
+                fill={
+                  displayProps.genes.labels.isColored
+                    ? (gs.color ?? displayProps.es[gsMode].curve.value)
+                    : COLOR_BLACK
+                }
+                font={displayProps.genes.labels.font}
+              >
+                {gs.name}
+              </SvgText>
+            </SvgG>
+          )}
+
+          <SvgRect
+            id="mouse-rect"
+            data-interaction-only="true"
+            width={w}
+            height={displayProps.genes.height}
+            fill="transparent"
+            pointerEvents="all"
+            onMouseMove={onMouseMove}
+            onMouseLeave={_hideTooltip}
+          />
+        </>
+      )
+    }
+
+    return genesSvg
+  }, [xax, displayProps])
+
+  return genesSvg
+}
+
+export function ExtGseaGenesSvgPlot({
+  result,
+  pos,
+}: {
+  result: IExtGseaPlotResult
+  pos: IPos
+}) {
+  const { plot } = useExtGseaContext()
 
   const displayProps: IExtGseaSettings = plot.props
 
@@ -53,134 +264,45 @@ export function ExtGseaGenesSvgPlot({
       // target
       let maxScore = max([...scores1, ...scores2])
 
-      let hitIdx = gsea1.esHits.map((g) => g.rank)
+      return (
+        <>
+          <ExtGseaHitsSvg
+            result={result}
+            gs={gs1}
+            gsea={gsea1}
+            maxScore={maxScore}
+            gsMode="gs1"
 
-      let xs = axisDomainToRange(xax, hitIdx)
+            pos={pos}
+          />
 
-      const extGsea1Svg = (
-        <SvgG>
-          <SvgG>
-            {hitIdx.map((hit, hiti) => {
-              const x = xs[hiti]
-
-              const score = scores1[hiti] / maxScore
-              const diff = 1 - score
-
-              //need to vary between 1 and score/max score according to the gene score
-              const opacity =
-                score + diff * (1 - displayProps.genes.geneScoreWeight)
-
-              return (
-                <SvgLine
-                  key={hiti}
-                  x1={x}
-                  x2={x}
-                  y1={0}
-                  y2={displayProps.genes.height}
-                  s={displayProps.genes.line}
-                  stroke={gs1.color ?? displayProps.es.gs1.curve.value}
-                  strokeOpacity={opacity}
-                />
-              )
-            })}
-          </SvgG>
-
-          {displayProps.genes.labels.font.show && (
-            <SvgG
+          <SvgG
+            pos={{
+              x: 0,
+              y: displayProps.genes.height + 0.25 * displayProps.plot!.gap.y,
+            }}
+          >
+            <ExtGseaHitsSvg
+              result={result}
+              gs={gs2}
+              gsea={gsea2}
+              maxScore={maxScore}
+              gsMode="gs2"
               pos={{
-                x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
-                y: displayProps.genes.height * 0.5,
+                x: pos.x,
+                y:
+                  pos.y +
+                  displayProps.genes.height +
+                  0.25 * displayProps.plot!.gap.y,
               }}
-            >
-              <SvgText
-                fill={
-                  displayProps.genes.labels.isColored
-                    ? (gs1.color ?? displayProps.es.gs1.curve.value)
-                    : COLOR_BLACK
-                }
-                font={displayProps.genes.labels.font}
-              >
-                {gs1.name}
-              </SvgText>
-            </SvgG>
-          )}
-        </SvgG>
-      )
-
-      hitIdx = gsea2.esHits.map((g) => g.rank)
-      xs = axisDomainToRange(xax, hitIdx)
-
-      const extGsea2Svg = (
-        <SvgG
-          pos={{
-            x: 0,
-            y: displayProps.genes.height + 0.25 * displayProps.plot!.gap.y,
-          }}
-        >
-          <SvgG>
-            {hitIdx.map((hit, hiti) => {
-              const x = xs[hiti]
-              const score = scores2[hiti] / maxScore
-              const diff = 1 - score
-
-              // when weight is 0 -> score + diff = 1 -> no weighting
-              // when weight is 1 -> opacity = score -> full weighting as no
-              // influence of diff
-              const opacity =
-                score + diff * (1 - displayProps.genes.geneScoreWeight)
-
-              return (
-                <SvgLine
-                  key={hiti}
-                  x1={x}
-                  x2={x}
-                  y1={0}
-                  y2={displayProps.genes.height}
-                  s={displayProps.genes.line}
-                  stroke={gs2.color ?? displayProps.es.gs2.curve.value}
-                  strokeOpacity={opacity}
-                />
-              )
-            })}
+            />
           </SvgG>
-
-          {displayProps.genes.labels.font.show && (
-            <SvgG
-              pos={{
-                x: axisLength(xax) + displayProps.plot!.gap.x / 2,
-                y: displayProps.genes.height / 2,
-              }}
-            >
-              <SvgText
-                fill={
-                  displayProps.genes.labels.isColored
-                    ? (gs2.color ?? displayProps.es.gs2.curve.value)
-                    : COLOR_BLACK
-                }
-                font={displayProps.genes.labels.font}
-              >
-                {gs2.name}
-              </SvgText>
-            </SvgG>
-          )}
-        </SvgG>
-      )
-
-      genesSvg = (
-        <SvgG
-          pos={{
-            x: 0,
-            y: displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y,
-          }}
-        >
-          {extGsea1Svg}
-          {extGsea2Svg}
-        </SvgG>
+        </>
       )
     }
 
     return genesSvg
-  }, [xax, yaxEs, displayProps])
+  }, [displayProps])
 
   return genesSvg
 }

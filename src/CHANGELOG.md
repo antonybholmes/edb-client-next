@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Simplified ext gsea svg. Crosshair now works for up/down genes seperately.
 - Split ext gsea into separate files since its a lot of svg.
 - Added support for crosshair to ext gsea.
 - run ext gsea now in helper hook.

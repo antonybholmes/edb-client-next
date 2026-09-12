@@ -45,15 +45,15 @@ export const SIDE_OVERLAY_CLS = cn(
 
 export const BASE_MUTED_THEME_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'flex flex-col items-center shrink-0 grow-0 justify-center gap-3 group',
-  'aspect-10/9 relative'
+  'flex flex-col items-center shrink-0 grow-0 justify-center gap-2 group',
+  'aspect-10/8 relative'
   //'transition duration-300 ease-in-out'
 )
 
 const MODULE_BG_CLS = cn(
   'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all bg-background',
   'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  'data-hover:scale-105 data-hover:bg-muted/50 rounded-xl'
+  'data-hover:bg-muted/50 rounded-xl'
 )
 
 const ICON_CLS = `flex w-9 h-9 aspect-square shrink-0 flex-row  
@@ -74,7 +74,7 @@ export function ModuleButtonLink({
       {...props}
     >
       <span className={MODULE_BG_CLS} data-hover={present(hover)} />
-      <CenterCol className="grow w-full h-full z-10 relative gap-3">
+      <CenterCol className="grow w-full h-full z-10 relative gap-2.5">
         {children}
       </CenterCol>
     </BaseLink>
@@ -336,7 +336,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-10/9 w-full h-full"
+                  className="p-2 gap-3 aspect-10/8 w-full h-full"
                   onClick={() => {
                     window.open(
                       DOCS_URL,
@@ -364,7 +364,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-10/9 w-full h-full"
+                  className="p-2 gap-3 aspect-10/8 w-full h-full"
                   href="/about"
                   onClick={() => setOpen(false)}
                   aria-label="About"

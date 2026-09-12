@@ -184,7 +184,7 @@ export function GseaBubbleDialog({
 
     const bubblePlot: IGseaBubble = {
       id: makeUuid(),
-      name: 'GSEA Bubble Plot',
+      name: 'GSEA Bubble',
       genesets,
       nes: { label: nesCol },
       size: { label: sizeCol },
@@ -199,7 +199,7 @@ export function GseaBubbleDialog({
   return (
     <OKCancelDialog
       open={open}
-      title="GSEA Bubble Plot"
+      title="GSEA Bubble"
       onResponse={(r) => {
         if (r === TEXT_OK) {
           submit()
