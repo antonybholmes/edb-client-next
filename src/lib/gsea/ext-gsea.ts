@@ -11,6 +11,7 @@ import { ones } from '../math/ones'
 import { pow } from '../math/power'
 import { permutation } from '../math/random'
 import { range } from '../math/range'
+import { where } from '../math/where'
 import { zeros } from '../math/zeros'
 
 import {
@@ -33,9 +34,18 @@ export interface IExtGseaResult {
 
 export interface IGseaResult {
   es: number
+
+  /**
+   * Indices of the ranked genes that are hits in the gene set.
+   */
+  esHits: IRankedGene[]
+  /**
+   * Enrichment scores for all ranked genes.
+   */
   esAll: number[]
-  hits: number[]
-  //leadingEdgeIndices,
+  /**
+   * Enrichment scores for leading edge genes in the gene set.
+   */
   leadingEdge: IRankedGene[]
 }
 
@@ -254,8 +264,6 @@ export class ExtGSEA {
         this._pvalue = bgEs.filter((v) => v >= this._es).length / this._np
         this._nes = this._es / Math.abs(mean(bgEs.filter((es) => es > 0)))
       }
-
-      console.log(this._pvalue, bgEs, 'hmm')
     }
 
     return {
@@ -333,10 +341,19 @@ export class ExtGSEA {
     //  i => leadingEdgeIndices[i] === 1
     //)
 
+    const hits = where(isInGeneset, (v) => v > 0)
+
+    const esHits: IRankedGene[] = hits.map((i) => ({
+      rank: i,
+      name: this._rankedGenes[i]!.name,
+      score: esAll[i]!,
+    }))
+
     return {
       es,
       esAll,
-      hits: isInGeneset,
+      esHits, //: isInGeneset,
+
       //leadingEdgeIndices,
       leadingEdge,
     }

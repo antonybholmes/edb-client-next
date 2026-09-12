@@ -9,7 +9,6 @@ import {
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 
-import { range } from '@/lib/math/range'
 import { zip } from '@/lib/utils'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
@@ -171,22 +170,31 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
   const { esSvg, genesSvg, rankingSvg, titleSvg } = useMemo(() => {
     // size of plot with padding
 
-    let y = gsea1.esAll //self._ranked_scores
-    const x = range(y.length)
+    let x = gsea1.esHits.map((g) => g.rank)
+    let y = gsea1.esHits.map((g) => g.score) // esAll //self._ranked_scores
+    //range(y.length)
 
     // subsample so we don't draw every point
-    const ix = range(0, x.length, displayProps.es.step)
-
-    const x1 = ix.map((i) => x[i]!)
+    //const ix = range(0, x.length, displayProps.es.step)
+    //
+    //const x1 = ix.map((i) => x[i]!)
 
     // we must end at the last point so zero the ends and fix
     // fix x
-    x1[0] = 0
-    x1[x1.length - 1] = x[x.length - 1]!
 
-    let y1 = ix.map((i) => y[i]!)
-    y1[0] = 0
-    y1[y1.length - 1] = 0
+    if (x[0] !== 0) {
+      x = [0, ...x]
+      y = [0, ...y]
+    }
+
+    if (x[x.length - 1] !== result.rankedGenes.length - 1) {
+      x = [...x, result.rankedGenes.length - 1]
+      y = [...y, 0]
+    }
+
+    //let y1 = ix.map((i) => y[i]!)
+    //y1[0] = 0
+    //y1[y1.length - 1] = 0
 
     let leadingEdgeIdx =
       gsea1.es >= 0
@@ -196,11 +204,11 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     // now we want the ix that are within the leading edge
     let leadingIdx =
       gsea1.es >= 0
-        ? where(x1, (xi) => xi <= leadingEdgeIdx)
-        : where(x1, (xi) => xi >= leadingEdgeIdx)
+        ? where(x, (xi) => xi <= leadingEdgeIdx)
+        : where(x, (xi) => xi >= leadingEdgeIdx)
 
-    let xlead = leadingIdx.map((i) => x1[i]!)
-    let ylead = leadingIdx.map((i) => y1[i]!)
+    let xlead = leadingIdx.map((i) => x[i]!)
+    let ylead = leadingIdx.map((i) => y[i]!)
 
     // fix ends
 
@@ -234,8 +242,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     let line1Svg: ReactNode | undefined = undefined
 
     if (displayProps.es.gs1.curve.show) {
-      const xs = axisDomainToRange(xax, x1)
-      const ys = axisDomainToRange(yaxEs, y1)
+      const xs = axisDomainToRange(xax, x)
+      const ys = axisDomainToRange(yaxEs, y)
 
       const points = zip(xs, ys)
         .map(([px, py]) => `${px},${py}`)
@@ -255,31 +263,32 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     // line 2
     //
 
-    y = gsea2.esAll //self._ranked_scores
+    x = gsea2.esHits.map((g) => g.rank)
+    y = gsea2.esHits.map((g) => g.score)
 
-    y1 = ix.map((i) => y[i]!)
+    if (x[0] !== 0) {
+      x = [0, ...x]
+      y = [0, ...y]
+    }
 
-    // we must end at the last point so zero the ends and fix
-    // fix x
-
-    y1[0] = 0
-    y1[y1.length - 1] = 0
+    if (x[x.length - 1] !== result.rankedGenes.length - 1) {
+      x = [...x, result.rankedGenes.length - 1]
+      y = [...y, 0]
+    }
 
     leadingEdgeIdx =
       gsea2.es >= 0
         ? gsea2.leadingEdge[gsea2.leadingEdge.length - 1].rank
         : gsea2.leadingEdge[0].rank
 
-    console.log(leadingEdgeIdx, gsea2)
-
-    // now we want the indices that are within the leading edge
+    // now we want the ix that are within the leading edge
     leadingIdx =
       gsea2.es >= 0
-        ? where(x1, (xi) => xi <= leadingEdgeIdx)
-        : where(x1, (xi) => xi >= leadingEdgeIdx)
+        ? where(x, (xi) => xi <= leadingEdgeIdx)
+        : where(x, (xi) => xi >= leadingEdgeIdx)
 
-    xlead = leadingIdx.map((i) => x1[i]!)
-    ylead = leadingIdx.map((i) => y1[i]!)
+    xlead = leadingIdx.map((i) => x[i]!)
+    ylead = leadingIdx.map((i) => y[i]!)
 
     xlead =
       gsea2.es >= 0
@@ -295,13 +304,6 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
     //xlead = gsea2.leadingEdge.map((g) => x[g.rank]!)
     //ylead = gsea2.leadingEdge.map((g) => y[g.rank]!)
-
-    // fix ends
-
-    xlead = [xlead[0]!, ...xlead, xlead[xlead.length - 1]!]
-    ylead = [0, ...ylead, 0]
-
-    console.log(xlead)
 
     let leadingEdge2Svg: ReactNode | undefined = undefined
 
@@ -326,8 +328,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     let line2Svg: ReactNode | undefined = undefined
 
     if (displayProps.es.gs2.curve.show) {
-      const xs = axisDomainToRange(xax, x1)
-      const ys = axisDomainToRange(yaxEs, y1)
+      const xs = axisDomainToRange(xax, x)
+      const ys = axisDomainToRange(yaxEs, y)
 
       const points = zip(xs, ys)
         .map(([px, py]) => `${px},${py}`)
@@ -452,7 +454,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       // target
       let maxScore = max(abs([...scores1, ...scores2]))
 
-      let hitIdx = where(gsea1.hits, (x) => x > 0)
+      let hitIdx = gsea1.esHits.map((g) => g.rank)
 
       let xs = axisDomainToRange(xax, hitIdx)
 
@@ -506,7 +508,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         </SvgG>
       )
 
-      hitIdx = where(gsea2.hits, (x) => x > 0)
+      hitIdx = gsea2.esHits.map((g) => g.rank)
       xs = axisDomainToRange(xax, hitIdx)
 
       const extGsea2Svg = (

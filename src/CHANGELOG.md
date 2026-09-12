@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Removed levels from zoom.
 - Ext gsea in matcalc now working.
 - Support for controlling titles in Ext GSEA UI.
 - Added Ext gsea weighting by gene option to UI.

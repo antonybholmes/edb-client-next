@@ -260,19 +260,17 @@ export function TableData() {
     }
 
     const maxCol = df.shape[1] - 1
-    const c1 = clamp(Math.min(index, index2), 0, maxCol)
-    const c2 = clamp(Math.max(index, index2), 0, maxCol)
+    const c1 = clamp(Math.min(index, index2), { min: 0, max: maxCol })
+    const c2 = clamp(Math.max(index, index2), { min: 0, max: maxCol })
 
     const maxRow = df.shape[0] - 1
     const r1 = clamp(
       Math.floor(Math.min(startPos.current.y, newY) / scaledCell.h),
-      0,
-      maxRow
+      { min: 0, max: maxRow }
     )
     const r2 = clamp(
       Math.floor(Math.max(startPos.current.y, newY) / scaledCell.h),
-      0,
-      maxRow
+      { min: 0, max: maxRow }
     )
 
     updateSelection({
@@ -300,11 +298,10 @@ export function TableData() {
         (vScrollRef.current?.scrollTop ?? 0),
     }
 
-    let row = clamp(
-      Math.floor(startPos.current.y / scaledCell.h),
-      0,
-      df.shape[0] - 1
-    )
+    let row = clamp(Math.floor(startPos.current.y / scaledCell.h), {
+      min: 0,
+      max: df.shape[0] - 1,
+    })
 
     let x1 = 0
     let col = 0
@@ -320,7 +317,7 @@ export function TableData() {
     }
 
     // stop user selecting something outside the table dimensions
-    col = clamp(col, 0, df.shape[1] - 1)
+    col = clamp(col, { min: 0, max: df.shape[1] - 1 })
 
     setCurrentCell({ row, col })
 
