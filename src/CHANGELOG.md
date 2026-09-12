@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added support for crosshair to ext gsea.
 - run ext gsea now in helper hook.
 - Bug fixes and updates.
 

@@ -211,3 +211,39 @@ export class BoolSearchQuery {
     }
   }
 }
+
+export function findNearest(
+  x: number,
+  arr: number[]
+): { value: number; index: number } {
+  let left = 0
+  let right = arr.length - 1
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2)
+
+    if (arr[mid] === x) {
+      return { value: arr[mid], index: mid }
+    }
+
+    if (arr[mid] < x) {
+      left = mid + 1
+    } else {
+      right = mid - 1
+    }
+  }
+
+  // left = first element >= x
+  // right = last element < x
+  if (right < 0) {
+    return { value: arr[left], index: left }
+  }
+
+  if (left >= arr.length) {
+    return { value: arr[right], index: right }
+  }
+
+  return Math.abs(arr[left] - x) < Math.abs(arr[right] - x)
+    ? { value: arr[left], index: left }
+    : { value: arr[right], index: right }
+}

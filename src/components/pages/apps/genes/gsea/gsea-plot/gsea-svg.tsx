@@ -460,7 +460,6 @@ const GseaPlot = memo(function GseaPlot({
   const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
-
   const { showTooltip, hideTooltip } = useTooltip()
 
   const pos = useMemo(
@@ -677,14 +676,6 @@ const GseaPlot = memo(function GseaPlot({
       onMouseMove={onMouseMove}
       onMouseLeave={_hideTooltip}
     >
-      <SvgRect
-        id="mouse-rect"
-        width={plotSize.w}
-        height={plotSize.h}
-        fill="transparent"
-        //stroke="blue"
-      />
-
       {edbSettings.plots.axes.x.style.title.show && (
         <SvgText
           id={`title-${index + 1}`}
@@ -704,6 +695,17 @@ const GseaPlot = memo(function GseaPlot({
         {genesSvg}
         {rankingSvg}
       </SvgMargin>
+
+      <SvgRect
+        id="mouse-rect"
+        data-interaction-only="true"
+        width={plotSize.w}
+        height={plotSize.h}
+        fill="transparent"
+        pointerEvents="all"
+        onMouseMove={onMouseMove}
+        onMouseLeave={_hideTooltip}
+      />
     </SvgG>
   )
 })

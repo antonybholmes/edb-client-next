@@ -1,4 +1,4 @@
-import { ReactElement, useMemo, type ReactNode } from 'react'
+import { ReactElement, useCallback, useMemo, type ReactNode } from 'react'
 
 import {
   axisDomainToRange,
@@ -15,10 +15,12 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgPolyLine } from '@/components/plot/svg-poly-line'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import {
   geneSetScores,
   type IGeneSet,
@@ -27,11 +29,23 @@ import {
 import { abs } from '@/lib/math/abs'
 import { end, max } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
+import { findNearest } from '@/lib/search'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
+import { useSVG } from '@/providers/svg-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { IExtGseaPlotResult, useExtGseaContext } from './ext-gsea-provider'
 import { IExtGseaSettings } from './ext-gsea-settings'
 
-function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
+function ExtGseaSvgPlot({
+  result,
+  pos,
+  innerPlotSize,
+}: {
+  result: IExtGseaPlotResult
+  pos: IPos
+  innerPlotSize: IDim
+}) {
   const { plot } = useExtGseaContext()
 
   const { axis: xax } = useAxis({
@@ -52,6 +66,10 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     axisId: 'y',
   })
 
+  const { ref } = useSVG()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+  const { showTooltip, hideTooltip } = useTooltip()
+
   const displayProps: IExtGseaSettings = plot.props
 
   const rankedGenes: IRankedGene[] = result.rankedGenes
@@ -61,6 +79,120 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
   const extGsea: IExtGseaResult = result.extGsea
   const gsea1: IGseaResult = result.gsea1
   const gsea2: IGseaResult = result.gsea2
+
+  const { points1, points2 } = useMemo(() => {
+    if (!xax || !yaxEs) {
+      return { points1: [], points2: [] }
+    }
+
+    const xaf = axisDomainToRangeFunc(xax)
+    const yaf = axisDomainToRangeFunc(yaxEs)
+
+    const points1 = gsea1.esHits.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
+    const points2 = gsea2.esHits.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
+
+    return { points1, points2 }
+  }, [gsea1.esHits, gsea2.esHits, xax, yaxEs])
+
+  const _hideTooltip = useCallback(() => {
+    hideCrosshair()
+    hideTooltip()
+  }, [hideCrosshair, hideTooltip])
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) {
+        return
+      }
+
+      const svgP = screenToSvgPoint(ref.current, {
+        x: e.clientX,
+        y: e.clientY,
+      })
+
+      const plotP = {
+        x: svgP.x - pos.x - displayProps.plot.margin.left,
+        y: svgP.y - pos.y - displayProps.plot.margin.top,
+      }
+
+      if (
+        plotP.x < 0 ||
+        plotP.x > innerPlotSize.w ||
+        plotP.y < 0 ||
+        plotP.y > innerPlotSize.h
+      ) {
+        //setBarPos(null)
+        _hideTooltip()
+        return
+      }
+
+      const { value: nearest1, index: index1 } = findNearest(
+        plotP.x,
+        points1.map((p) => p.x)
+      )
+      const { value: nearest2, index: index2 } = findNearest(
+        plotP.x,
+        points2.map((p) => p.x)
+      )
+
+      if (
+        Math.abs(plotP.x - nearest1) > 5 &&
+        Math.abs(plotP.x - nearest2) > 5
+      ) {
+        _hideTooltip()
+        return
+      }
+
+      const barP = {
+        x: nearest1 + displayProps.plot.margin.left + pos.x,
+        y: plotP.y + displayProps.plot.margin.top + pos.y,
+      }
+
+      const { relativeP: barScreenP, screenP } = svgPointToScreen(
+        ref.current,
+        barP
+      )
+
+      showCrosshair(barScreenP)
+      showTooltip({
+        pos: { x: screenP.x + 5, y: screenP.y + 5 },
+        content: (
+          <>
+            <strong>{gs1.name}</strong>
+            <span>{`Name: ${gsea1.esHits[index1].name}`}</span>
+            <span>{`Rank: ${gsea1.esHits[index1].rank.toLocaleString()}, Score: ${gsea1.esHits[index1].score.toFixed(3)}`}</span>
+
+            <strong>{gs2.name}</strong>
+            <span>{`Name: ${gsea2.esHits[index2].name}`}</span>
+            <span>{`Rank: ${gsea2.esHits[index2].rank.toLocaleString()},Score: ${gsea2.esHits[index2].score.toFixed(3)}`}</span>
+          </>
+        ),
+      })
+    },
+    [
+      pos,
+      ref,
+      displayProps.plot.margin,
+      gsea1,
+      gsea2,
+      gs1,
+      gs2,
+      points1,
+      points2,
+      showCrosshair,
+      hideCrosshair,
+      result,
+      innerPlotSize,
+      showTooltip,
+      hideTooltip,
+    ]
+  )
 
   const { esSvg, genesSvg, rankingSvg, titleSvg } = useMemo(() => {
     // size of plot with padding
@@ -336,7 +468,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
       let xs = axisDomainToRange(xax, hitIdx)
 
-      const extGseaRes1Svg = (
+      const extGsea1Svg = (
         <SvgG>
           <SvgG>
             {hitIdx.map((hit, hiti) => {
@@ -452,7 +584,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
             y: displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y,
           }}
         >
-          {extGseaRes1Svg}
+          {extGsea1Svg}
           {extGsea2Svg}
         </SvgG>
       )
@@ -478,9 +610,9 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
       const y =
         displayProps.es.axes.y.length +
-        displayProps.plot!.gap.y +
+        displayProps.plot.gap.y +
         (displayProps.genes.line.show
-          ? 2 * (displayProps.genes.height + displayProps.plot!.gap.y)
+          ? 2 * (displayProps.genes.height + displayProps.plot.gap.y)
           : 0)
 
       rankingSvg = (
@@ -562,11 +694,22 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       {genesSvg && genesSvg}
 
       {rankingSvg && rankingSvg}
+
+      <SvgRect
+        id="mouse-rect"
+        data-interaction-only="true"
+        width={innerPlotSize.w}
+        height={innerPlotSize.h}
+        fill="transparent"
+        pointerEvents="all"
+        onMouseMove={onMouseMove}
+        onMouseLeave={_hideTooltip}
+      />
     </>
   )
 }
 
-export function ExtGseaSvg() {
+export function ExtGseaSvgContent() {
   const { plot } = useExtGseaContext()
   const { zoom } = useZoom()
 
@@ -578,10 +721,10 @@ export function ExtGseaSvg() {
       h:
         displayProps.es.axes.y.length +
         (displayProps.genes.line.show
-          ? displayProps.plot!.gap.y + displayProps.genes.height
+          ? 2 * (displayProps.plot.gap.y + displayProps.genes.height)
           : 0) +
         (displayProps.ranking.show
-          ? displayProps.plot!.gap.y + displayProps.ranking.axes.y.length
+          ? displayProps.plot.gap.y + displayProps.ranking.axes.y.length
           : 0),
     }),
     [displayProps]
@@ -614,9 +757,14 @@ export function ExtGseaSvg() {
   let y = 0
 
   for (const [ri, result] of plot.results.entries()) {
+    const pos: IPos = { x, y }
     elems.push(
-      <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={{ x, y }}>
-        <ExtGseaSvgPlot result={result} />
+      <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={pos}>
+        <ExtGseaSvgPlot
+          result={result}
+          innerPlotSize={innerPlotSize}
+          pos={pos}
+        />
       </SvgG>
     )
 
@@ -632,5 +780,13 @@ export function ExtGseaSvg() {
     <SvgBase width={pageSize.w} height={pageSize.h} scale={zoom}>
       <SvgMargin margin={displayProps.plot!.margin}>{elems}</SvgMargin>
     </SvgBase>
+  )
+}
+
+export function ExtGseaSvg() {
+  return (
+    <CrosshairProvider>
+      <ExtGseaSvgContent />
+    </CrosshairProvider>
   )
 }
