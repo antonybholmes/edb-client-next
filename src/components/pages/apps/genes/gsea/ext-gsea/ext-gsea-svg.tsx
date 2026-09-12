@@ -106,7 +106,7 @@ function LineSvg({
 
   let line1Svg: ReactNode | undefined = undefined
 
-  if (displayProps.es.gs1.line.show) {
+  if (displayProps.es.gs1.curve.show) {
     const xs = axisDomainToRange(xax, x1)
     const ys = axisDomainToRange(yaxEs, y1)
 
@@ -118,7 +118,7 @@ function LineSvg({
       <SvgPolyLine
         points={points}
         stroke={gs1.color}
-        s={displayProps.es.gs1.line}
+        s={displayProps.es.gs1.curve}
         fill="none"
       />
     )
@@ -169,7 +169,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     const x = range(y.length)
 
     // subsample so we don't draw every point
-    const ix = range(0, x.length, 100)
+    const ix = range(0, x.length, displayProps.es.step)
 
     const x1 = ix.map((i) => x[i]!)
 
@@ -227,7 +227,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
     let line1Svg: ReactNode | undefined = undefined
 
-    if (displayProps.es.gs1.line.show) {
+    if (displayProps.es.gs1.curve.show) {
       const xs = axisDomainToRange(xax, x1)
       const ys = axisDomainToRange(yaxEs, y1)
 
@@ -238,8 +238,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       line1Svg = (
         <SvgPolyLine
           points={points}
-          stroke={gs1.color ?? displayProps.es.gs1.line.value}
-          s={displayProps.es.gs1.line}
+          stroke={gs1.color ?? displayProps.es.gs1.curve.value}
+          s={displayProps.es.gs1.curve}
           fill="none"
         />
       )
@@ -319,7 +319,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
     let line2Svg: ReactNode | undefined = undefined
 
-    if (displayProps.es.gs2.line.show) {
+    if (displayProps.es.gs2.curve.show) {
       const xs = axisDomainToRange(xax, x1)
       const ys = axisDomainToRange(yaxEs, y1)
 
@@ -330,8 +330,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       line2Svg = (
         <SvgPolyLine
           points={points}
-          stroke={gs2.color ?? displayProps.es.gs2.line.value}
-          s={displayProps.es.gs2.line}
+          stroke={gs2.color ?? displayProps.es.gs2.curve.value}
+          s={displayProps.es.gs2.curve}
         />
       )
     }
@@ -474,7 +474,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
                   y1={0}
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
-                  stroke={gs1.color ?? displayProps.es.gs1.line.value}
+                  stroke={gs1.color ?? displayProps.es.gs1.curve.value}
                   strokeOpacity={opacity}
                 />
               )
@@ -491,7 +491,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
               <SvgText
                 fill={
                   displayProps.genes.labels.isColored
-                    ? (gs1.color ?? displayProps.es.gs1.line.value)
+                    ? (gs1.color ?? displayProps.es.gs1.curve.value)
                     : COLOR_BLACK
                 }
                 font={displayProps.genes.labels.font}
@@ -533,7 +533,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
                   y1={0}
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
-                  stroke={gs2.color ?? displayProps.es.gs2.line.value}
+                  stroke={gs2.color ?? displayProps.es.gs2.curve.value}
                   strokeOpacity={opacity}
                 />
               )
@@ -550,7 +550,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
               <SvgText
                 fill={
                   displayProps.genes.labels.isColored
-                    ? (gs2.color ?? displayProps.es.gs2.line.value)
+                    ? (gs2.color ?? displayProps.es.gs2.curve.value)
                     : COLOR_BLACK
                 }
                 font={displayProps.genes.labels.font}
@@ -619,11 +619,9 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
                 y: 0,
               }}
             >
-              <line
+              <SvgLine
                 y2={displayProps.ranking.axes.y.length}
-                stroke={COLOR_BLACK}
-                strokeWidth="2"
-                strokeDasharray="8"
+                s={displayProps.ranking.zeroCross}
               />
               <SvgG
                 pos={{
@@ -655,7 +653,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         <SvgG
           pos={{
             x: displayProps.axes.x.length / 2,
-            y: displayProps.title.offset,
+            y: -displayProps.title.offset,
           }}
         >
           <SvgText

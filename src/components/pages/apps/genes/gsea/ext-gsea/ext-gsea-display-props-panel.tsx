@@ -12,7 +12,6 @@ import { FontPopover } from '@/components/plot/font/font-popover'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_RESET } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
@@ -20,10 +19,11 @@ import { produce } from 'immer'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
-import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 
+import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
@@ -86,7 +86,7 @@ export function ExtGseaDisplayPropsPanel() {
                 value={displayOptions.axes.x.length}
                 limit={[1, 1000]}
                 placeholder="Width..."
-                className="w-16 rounded-theme"
+                w="xxs"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -94,6 +94,40 @@ export function ExtGseaDisplayPropsPanel() {
                     })
                   )
                 }}
+              />
+            </PropRow>
+
+            <PropRow title="Titles">
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Font',
+                    textProps: displayOptions.title,
+                    update: (textProps) =>
+                      updatePlot(
+                        produce(plot, (draft) => {
+                          draft.props.title = Object.assign(
+                            { ...draft.props.title },
+                            textProps
+                          )
+                        })
+                      ),
+                    ext: (
+                      <NumericalPropRow
+                        title="Offset"
+
+                        value={displayOptions.title.offset}
+                        onNumChanged={(state) =>
+                          updatePlot(
+                            produce(plot, (draft) => {
+                              draft.props.title.offset = state
+                            })
+                          )
+                        }
+                      />
+                    ),
+                  },
+                ]}
               />
             </PropRow>
 
@@ -135,7 +169,7 @@ export function ExtGseaDisplayPropsPanel() {
                 value={displayOptions.es.axes.y.length}
                 limit={[1, 1000]}
                 placeholder="Height..."
-                className="w-16 rounded-theme"
+                w="xxs"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -145,14 +179,32 @@ export function ExtGseaDisplayPropsPanel() {
                 }}
               />
             </PropRow>
+            <PropRow
+              title="Step"
+              htmlTooltip="Higher values give smoother enrichment curves"
+            >
+              <NumSlider
+                min={1}
+                max={500}
+                step={1}
+                value={displayOptions.es.step}
+                onNumChanged={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.es.step = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
 
-            <PropRow title="Lines">
+            <PropRow title="Curves">
               <OutlineButton
                 colors={[
                   {
-                    color: displayOptions.es.gs1.line.value,
-                    opacity: displayOptions.es.gs1.line.opacity,
-                    show: displayOptions.es.gs1.line.show,
+                    color: displayOptions.es.gs1.curve.value,
+                    opacity: displayOptions.es.gs1.curve.opacity,
+                    show: displayOptions.es.gs1.curve.show,
                     onColorChange: ({
                       color,
                       opacity,
@@ -162,13 +214,13 @@ export function ExtGseaDisplayPropsPanel() {
                     }) => {
                       updatePlot(
                         produce(plot, (draft) => {
-                          draft.props.es.gs1.line.show =
-                            show ?? draft.props.es.gs1.line.show
+                          draft.props.es.gs1.curve.show =
+                            show ?? draft.props.es.gs1.curve.show
 
-                          draft.props.es.gs1.line.value = color
-                          draft.props.es.gs1.line.opacity = opacity ?? 1
-                          draft.props.es.gs1.line.width =
-                            width ?? draft.props.es.gs1.line.width
+                          draft.props.es.gs1.curve.value = color
+                          draft.props.es.gs1.curve.opacity = opacity ?? 1
+                          draft.props.es.gs1.curve.width =
+                            width ?? draft.props.es.gs1.curve.width
                           //draft.props.es.gs1.line.dasharray =
                           //  dasharray ?? draft.props.es.gs1.line.dasharray
                         })
@@ -176,15 +228,15 @@ export function ExtGseaDisplayPropsPanel() {
                     },
                   },
                 ]}
-                title="ES 1"
+                title="Enrichment Curve 1"
               />
 
               <OutlineButton
                 colors={[
                   {
-                    color: displayOptions.es.gs2.line.value,
-                    opacity: displayOptions.es.gs2.line.opacity,
-                    show: displayOptions.es.gs2.line.show,
+                    color: displayOptions.es.gs2.curve.value,
+                    opacity: displayOptions.es.gs2.curve.opacity,
+                    show: displayOptions.es.gs2.curve.show,
                     onColorChange: ({
                       color,
                       opacity,
@@ -194,13 +246,13 @@ export function ExtGseaDisplayPropsPanel() {
                     }) => {
                       updatePlot(
                         produce(plot, (draft) => {
-                          draft.props.es.gs2.line.show =
-                            show ?? draft.props.es.gs2.line.show
+                          draft.props.es.gs2.curve.show =
+                            show ?? draft.props.es.gs2.curve.show
 
-                          draft.props.es.gs2.line.value = color
-                          draft.props.es.gs2.line.opacity = opacity ?? 1
-                          draft.props.es.gs2.line.width =
-                            width ?? draft.props.es.gs2.line.width
+                          draft.props.es.gs2.curve.value = color
+                          draft.props.es.gs2.curve.opacity = opacity ?? 1
+                          draft.props.es.gs2.curve.width =
+                            width ?? draft.props.es.gs2.curve.width
                           //draft.props.es.gs2.line.dasharray =
                           //  dasharray ?? draft.props.es.gs2.line.dasharray
                         })
@@ -208,7 +260,7 @@ export function ExtGseaDisplayPropsPanel() {
                     },
                   },
                 ]}
-                title="ES 2"
+                title="Enrichment Curve 2"
               />
             </PropRow>
 
@@ -242,7 +294,7 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </SwitchPropRow> */}
 
-            <PropRow title="Leading edges">
+            <PropRow title="Leading Edges">
               <FillButton
                 colors={[
                   {
@@ -258,7 +310,7 @@ export function ExtGseaDisplayPropsPanel() {
                       updatePlot(
                         produce(plot, (draft) => {
                           draft.props.es.gs1.leadingEdge.show =
-                            show ?? draft.props.es.gs1.line.show
+                            show ?? draft.props.es.gs1.curve.show
 
                           draft.props.es.gs1.leadingEdge.value = color
                           draft.props.es.gs1.leadingEdge.opacity = opacity ?? 1
@@ -267,7 +319,7 @@ export function ExtGseaDisplayPropsPanel() {
                     },
                   },
                 ]}
-                title="Leading edge 1"
+                title="Leading Edge 1"
               />
               <FillButton
                 colors={[
@@ -293,7 +345,7 @@ export function ExtGseaDisplayPropsPanel() {
                     },
                   },
                 ]}
-                title="Leading edge 2"
+                title="Leading Edge 2"
               />
             </PropRow>
 
@@ -362,12 +414,12 @@ export function ExtGseaDisplayPropsPanel() {
             Genes
           </AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Bars">
+            <PropRow title="Stroke">
               <NumericalInput
                 id="genes-stroke-width"
                 value={displayOptions.genes.line.width}
                 placeholder="Stroke..."
-                className="w-16 rounded-theme"
+                w="xxs"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -378,7 +430,10 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Gene Weight">
+            <PropRow
+              title="Gene Effect"
+              htmlTooltip="Higher values have a stronger effect on hit color opacity"
+            >
               <PercentSlider
                 min={0}
                 max={1}
@@ -407,9 +462,9 @@ export function ExtGseaDisplayPropsPanel() {
                         })
                       ),
                     ext: (
-                      <SwitchPropRow
+                      <CheckPropRow
                         title="Use colors"
-                        className="ml-2"
+                        className="ml-0.5 mt-1"
                         disabled={
                           !displayOptions.genes.line.show ||
                           !displayOptions.genes.labels.font.show
@@ -466,6 +521,38 @@ export function ExtGseaDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Color" className="ml-2">
+              <OutlineButton
+                colors={[
+                  {
+                    color: displayOptions.ranking.zeroCross.value,
+                    opacity: displayOptions.ranking.zeroCross.opacity,
+                    show: displayOptions.ranking.zeroCross.show,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
+                      updatePlot(
+                        produce(plot, (draft) => {
+                          draft.props.ranking.zeroCross.show =
+                            show ?? draft.props.ranking.zeroCross.show
+
+                          draft.props.ranking.zeroCross.value = color
+                          draft.props.ranking.zeroCross.opacity = opacity ?? 1
+                          draft.props.ranking.zeroCross.width =
+                            width ?? draft.props.ranking.zeroCross.width
+                          draft.props.ranking.zeroCross.dasharray =
+                            dasharray ?? draft.props.ranking.zeroCross.dasharray
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="Zero Cross"
+              />
+
               <FillButton
                 colors={[
                   {
@@ -482,7 +569,7 @@ export function ExtGseaDisplayPropsPanel() {
                   },
                 ]}
                 disabled={!displayOptions.ranking.show}
-                className={SIMPLE_COLOR_EXT_CLS}
+                title="Ranking Fill"
               />
 
               {/* <PercentSlider
@@ -502,7 +589,7 @@ export function ExtGseaDisplayPropsPanel() {
               /> */}
             </PropRow>
 
-            <CheckPropRow
+            {/* <CheckPropRow
               className="ml-2"
               title="Zero crossing"
               checked={displayOptions.ranking.zeroCross.show}
@@ -514,7 +601,7 @@ export function ExtGseaDisplayPropsPanel() {
                   })
                 )
               }
-            />
+            /> */}
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

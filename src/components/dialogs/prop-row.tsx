@@ -60,7 +60,10 @@ interface IProps
     VariantProps<typeof labelVariants>,
     VariantProps<typeof propRowVariants> {
   title: ReactNode
-
+  /**
+   * Use the native HTML tooltip via the `title` attribute.
+   */
+  htmlTooltip?: string
   items?: string
   contentCls?: string
   leftChildren?: ReactNode
@@ -78,6 +81,7 @@ export function PropRow({
   side = 'right',
   info,
   tooltip,
+  htmlTooltip,
   className,
   children,
 }: IProps) {
@@ -95,7 +99,9 @@ export function PropRow({
         })}
       >
         {side === 'right' && (
-          <label className={cn({ 'font-medium': info })}>{title}</label>
+          <label className={cn({ 'font-medium': info })} title={htmlTooltip}>
+            {title}
+          </label>
         )}
         <VCenterRow
           className={cn(

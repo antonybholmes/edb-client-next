@@ -7,13 +7,21 @@ export function VCenterRow({
   className,
   style,
   children,
+  'aria-label': ariaLabel,
+  title,
   ...props
 }: IDivProps) {
+  if (!ariaLabel) {
+    ariaLabel = title
+  }
+
   return (
     <div
       ref={ref}
       className={cn(V_CENTERED_ROW_CLS, className)}
       style={style}
+      aria-label={ariaLabel}
+      title={title}
       {...props}
     >
       {children}

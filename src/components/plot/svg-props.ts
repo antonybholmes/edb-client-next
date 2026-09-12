@@ -122,6 +122,9 @@ export const NO_FILL_PROPS: IPaintProps = {
 }
 
 export interface IStrokeProps extends IPaintProps {
+  /**
+   * Stroke width
+   */
   width: number
   dasharray: string
 }

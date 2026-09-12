@@ -1,5 +1,6 @@
 import {
   DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_DASH_PROPS,
   DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN_MEDIUM,
   DEFAULT_STROKE_PROPS,
@@ -31,11 +32,11 @@ export interface IExtGseaSettings {
   es: {
     useGeneScoreForES: boolean
     gs1: {
-      line: IStrokeProps
+      curve: IStrokeProps
       leadingEdge: IPaintProps
     }
     gs2: {
-      line: IStrokeProps
+      curve: IStrokeProps
       leadingEdge: IPaintProps
     }
     axes: {
@@ -50,6 +51,7 @@ export interface IExtGseaSettings {
     stats: {
       show: boolean
     }
+    step: number
   }
   genes: {
     line: IStrokeProps
@@ -79,7 +81,7 @@ export interface IExtGseaSettings {
   }
 
   ranking: {
-    zeroCross: { show: boolean }
+    zeroCross: IStrokeProps
     show: boolean
     axes: {
       y: {
@@ -98,7 +100,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
 
   title: {
     ...DEFAULT_BOLD_TEXT_PROPS,
-    offset: -10,
+    offset: 10,
   },
   plot: {
     margin: { ...DEFAULT_MARGIN_MEDIUM },
@@ -120,6 +122,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
   },
   es: {
     useGeneScoreForES: true,
+    step: 100,
     axes: {
       y: {
         length: 150,
@@ -130,12 +133,16 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       },
     },
     gs1: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
+      curve: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
       leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
     },
 
     gs2: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_CORNFLOWER_BLUE, width: 2 },
+      curve: {
+        ...DEFAULT_STROKE_PROPS,
+        value: COLOR_CORNFLOWER_BLUE,
+        width: 2,
+      },
 
       leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_CORNFLOWER_BLUE },
     },
@@ -164,9 +171,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       opacity: 0.2,
       show: true,
     },
-    zeroCross: {
-      show: true,
-    },
+    zeroCross: { ...DEFAULT_DASH_PROPS },
   },
 }
 
