@@ -2869,6 +2869,10 @@
         {
           "msg": "run ext gsea now in helper hook",
           "date": "2026-09-12T15:01:42.585Z"
+        },
+        {
+          "msg": "Added support for crosshair to ext gsea",
+          "date": "2026-09-12T17:16:55.050Z"
         }
       ]
     },

@@ -21,7 +21,7 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { ExtGseaViewPropsPanel } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea-view-props-panel'
 import { useExtGseaContext } from '../../../../genes/gsea/ext-gsea/ext-gsea-provider'
-import { ExtGseaSvg } from '../../../../genes/gsea/ext-gsea/ext-gsea-svg'
+import { ExtGseaSvg } from '../../../../genes/gsea/ext-gsea/svg/ext-gsea-svg'
 import { MESSAGE_CHANNEL } from '../../../data/data-panel'
 
 export function makeDefaultHeatmapProps(mode: string): IHeatMapSettings {

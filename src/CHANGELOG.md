@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Split ext gsea into separate files since its a lot of svg.
 - Added support for crosshair to ext gsea.
 - run ext gsea now in helper hook.
 - Bug fixes and updates.

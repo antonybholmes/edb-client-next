@@ -69,7 +69,7 @@ import {
   IExtGseaPlot,
   useExtGseaContext,
 } from './ext-gsea-provider'
-import { ExtGseaSvg } from './ext-gsea-svg'
+import { ExtGseaSvg } from './svg/ext-gsea-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function ExtGseaPage() {

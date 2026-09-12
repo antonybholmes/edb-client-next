@@ -45,9 +45,9 @@
     "color": "#006666",
     "version": "2.0.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-12T17:16:52.987Z",
-    "hash": "e1b1271f8a53b155c57d7653fb4577527620e3447a3584db03f946b96fa8a0c9",
-    "build": 970
+    "modified": "2026-09-12T17:43:20.584Z",
+    "hash": "7b2f11665c5e2559ad740c0286837a59905bdd5bb2ffbc074f75900ad55d5d80",
+    "build": 972
   },
   {
     "name": "Get DNA",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.4.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-12T15:53:00.970Z",
-    "hash": "1e6df8584a2c938f23300211c9c829d302526b8c49a9b83675d804421d9e0404",
-    "build": 2056
+    "modified": "2026-09-12T17:43:20.607Z",
+    "hash": "f750ac4938c90677c1e06ed6c3e86d8a83524d46e6933d785e0157816c88101e",
+    "build": 2058
   },
   {
     "name": "Motifs",
