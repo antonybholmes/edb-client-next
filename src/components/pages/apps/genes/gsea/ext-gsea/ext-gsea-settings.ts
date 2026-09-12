@@ -1,6 +1,7 @@
 import {
   DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_FILL_PROPS,
+  DEFAULT_MARGIN_MEDIUM,
   DEFAULT_STROKE_PROPS,
   DEFAULT_TEXT_PROPS,
   type IPaintProps,
@@ -8,7 +9,7 @@ import {
   type ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { COLOR_BLUE, COLOR_RED } from '@/lib/color/color'
+import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -39,15 +40,11 @@ export interface IExtGseaSettings {
   es: {
     gs1: {
       line: IStrokeProps
-      leadingEdge: {
-        fill: IPaintProps
-      }
+      leadingEdge: IPaintProps
     }
     gs2: {
       line: IStrokeProps
-      leadingEdge: {
-        fill: IPaintProps
-      }
+      leadingEdge: IPaintProps
     }
     axes: {
       x: {
@@ -102,12 +99,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
     offset: -10,
   },
   plot: {
-    margin: {
-      top: 100,
-      left: 100,
-      bottom: 100,
-      right: 100,
-    },
+    margin: { ...DEFAULT_MARGIN_MEDIUM },
     gap: {
       x: 20,
       y: 20,
@@ -135,18 +127,14 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       },
     },
     gs1: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 2 },
-      leadingEdge: {
-        fill: { ...DEFAULT_FILL_PROPS, value: COLOR_BLUE },
-      },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_CORNFLOWER_BLUE, width: 2 },
+      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_CORNFLOWER_BLUE },
     },
 
     gs2: {
       line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
 
-      leadingEdge: {
-        fill: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
-      },
+      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
     },
     stats: {
       show: true,

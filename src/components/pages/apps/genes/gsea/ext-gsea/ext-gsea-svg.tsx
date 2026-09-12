@@ -23,7 +23,8 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK } from '@/lib/color/color'
 import type { IGeneSet, IRankedGene } from '@/lib/gsea/geneset'
-import { end } from '@/lib/math/math'
+import { abs } from '@/lib/math/abs'
+import { end, max } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
 import { IExtGseaPlotResult, useExtGseaContext } from './ext-gsea-provider'
 import { IExtGseaSettings } from './ext-gsea-settings'
@@ -85,7 +86,7 @@ function LineSvg({
 
   let leadingEdge1Svg: ReactNode | undefined = undefined
 
-  if (displayProps.es.gs1.leadingEdge.fill.show) {
+  if (displayProps.es.gs1.leadingEdge.show) {
     const xs = axisDomainToRange(xax, xlead)
     const ys = axisDomainToRange(yaxEs, ylead)
 
@@ -97,7 +98,7 @@ function LineSvg({
       <SvgPolyLine
         points={points}
         fill={gs1.color}
-        fillOpacity={displayProps.es.gs1.leadingEdge.fill.opacity}
+        fillOpacity={displayProps.es.gs1.leadingEdge.opacity}
         stroke="none"
       />
     )
@@ -206,7 +207,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
     let leadingEdge1Svg: ReactNode | undefined = undefined
 
-    if (displayProps.es.gs1.leadingEdge.fill.show) {
+    if (displayProps.es.gs1.leadingEdge.show) {
       const xs = axisDomainToRange(xax, xlead)
       const ys = axisDomainToRange(yaxEs, ylead)
 
@@ -217,8 +218,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       leadingEdge1Svg = (
         <SvgPolyLine
           points={points}
-          fill={gs1.color}
-          fillOpacity={displayProps.es.gs1.leadingEdge.fill.opacity}
+          fill={gs1.color || displayProps.es.gs1.leadingEdge.value}
+          fillOpacity={displayProps.es.gs1.leadingEdge.opacity}
           stroke="none"
         />
       )
@@ -237,7 +238,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       line1Svg = (
         <SvgPolyLine
           points={points}
-          stroke={gs1.color}
+          stroke={gs1.color || displayProps.es.gs1.line.value}
           s={displayProps.es.gs1.line}
           fill="none"
         />
@@ -280,8 +281,6 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         : [xlead[0]!, ...xlead]
     ylead = gsea2.es >= 0 ? [...ylead, 0] : [0, ...ylead]
 
-    console.log('xx', xlead, ylead, leadingIdx)
-
     //x = range(y.length)
 
     //y1 = ix.map((i) => y[i]!)
@@ -300,7 +299,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
     let leadingEdge2Svg: ReactNode | undefined = undefined
 
-    if (displayProps.es.gs2.leadingEdge.fill.show) {
+    if (displayProps.es.gs2.leadingEdge.show) {
       const xs = axisDomainToRange(xax, xlead)
       const ys = axisDomainToRange(yaxEs, ylead)
 
@@ -311,8 +310,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       leadingEdge2Svg = (
         <SvgPolyLine
           points={points}
-          fill={gs2.color}
-          fillOpacity={displayProps.es.gs2.leadingEdge.fill.opacity}
+          fill={gs2.color || displayProps.es.gs2.leadingEdge.value}
+          fillOpacity={displayProps.es.gs2.leadingEdge.opacity}
           stroke="none"
         />
       )
@@ -331,7 +330,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       line2Svg = (
         <SvgPolyLine
           points={points}
-          stroke={gs2.color}
+          stroke={gs2.color || displayProps.es.gs2.line.value}
           s={displayProps.es.gs2.line}
         />
       )
@@ -439,25 +438,39 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      let points = where(gsea1.hits, (x) => x > 0)
+      // scale colors to score, for generic ext gsea
+      // score is always 1 so no effect, for viper
+      // we can scale by strength of interaction with
+      // target
+      let maxScore = max(
+        abs([
+          ...gs1.genes.map((g) => g.score),
+          ...gs2.genes.map((g) => g.score),
+        ])
+      )
 
-      let xs = axisDomainToRange(xax, points)
+      let hitIdx = where(gsea1.hits, (x) => x > 0)
 
-      const gengseaRes1Svg = (
+      let xs = axisDomainToRange(xax, hitIdx)
+
+      const extGseaRes1Svg = (
         <SvgG>
           <SvgG>
-            {points.map((p, pointi) => {
-              const x = xs[pointi]
+            {hitIdx.map((hit, hiti) => {
+              const x = xs[hiti]
+
+              const score = Math.abs(gs1.genes[hiti].score)
 
               return (
                 <SvgLine
-                  key={pointi}
+                  key={hiti}
                   x1={x}
                   x2={x}
                   y1={0}
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
-                  stroke={gs1.color}
+                  stroke={gs1.color || displayProps.es.gs1.line.value}
+                  strokeOpacity={score / maxScore}
                 />
               )
             })}
@@ -483,10 +496,10 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         </SvgG>
       )
 
-      points = where(gsea2.hits, (x) => x > 0)
-      xs = axisDomainToRange(xax, points)
+      hitIdx = where(gsea2.hits, (x) => x > 0)
+      xs = axisDomainToRange(xax, hitIdx)
 
-      const gengseaRes2Svg = (
+      const exxtGsea2Svg = (
         <SvgG
           pos={{
             x: 0,
@@ -494,8 +507,9 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           }}
         >
           <SvgG>
-            {points.map((p, pointi) => {
+            {hitIdx.map((p, pointi) => {
               const x = xs[pointi]
+              const score = Math.abs(gs2.genes[pointi].score)
 
               return (
                 <SvgLine
@@ -505,7 +519,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
                   y1={0}
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
-                  stroke={gs2.color}
+                  stroke={gs2.color || displayProps.es.gs2.line.value}
+                  strokeOpacity={score / maxScore}
                 />
               )
             })}
@@ -538,8 +553,8 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
             y: displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y,
           }}
         >
-          {gengseaRes1Svg}
-          {gengseaRes2Svg}
+          {extGseaRes1Svg}
+          {exxtGsea2Svg}
         </SvgG>
       )
     }
@@ -558,11 +573,7 @@ function ExtGseaSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
       // crossing point
 
-      console.log('snr', rankedGenes.length, rankedGenes)
-
       const crossIndex = end(where(rankedGenes, (gene) => gene.score > 0)) + 1
-
-      console.log('snr', rankedGenes.length, crossIndex)
 
       const crossingX = xaf(crossIndex)
 

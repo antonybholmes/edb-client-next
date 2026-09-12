@@ -179,6 +179,13 @@ export const DEFAULT_MARGIN_SMALL: IMarginProps = {
   right: 50,
 }
 
+export const DEFAULT_MARGIN_MEDIUM: IMarginProps = {
+  top: 80,
+  left: 80,
+  bottom: 80,
+  right: 80,
+}
+
 export interface IColorBarProps {
   show: boolean
   stroke: IStrokeProps

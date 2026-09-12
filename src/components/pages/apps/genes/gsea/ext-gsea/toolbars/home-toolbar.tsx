@@ -1,30 +1,27 @@
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
-import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { TEXT_OPTIONS, TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
-import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import { useGseaBubbleSettings } from '../../gsea-plot/bubble/gsea-bubble-settings-store'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { useExtGseaSettings } from '../ext-gsea-settings'
 import { InputDialog } from '../input-dialog'
 
 export function HomeToolbar() {
   const { openCustom: openCustomDialog } = useDialogs()
-  const { settings, updateSettings } = useGseaBubbleSettings()
+  const { settings, updateSettings } = useExtGseaSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
 
@@ -86,36 +83,22 @@ export function HomeToolbar() {
             }}
           />
         </ToolbarRow>
-        <ToolbarRow title="Row Height">
+        <ToolbarRow title="ES Height">
           <NumericalInput
             h="md"
-            value={settings.axes.y.rowHeight}
-            placeholder="Row Height"
+            value={settings.es.axes.y.length}
+            placeholder="Height"
             limit={[1, 1000]}
             dp={0}
             onNumChange={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.axes.y.rowHeight = v
+                  draft.es.axes.y.length = v
                 })
               )
             }}
           />
         </ToolbarRow>
-      </ToolbarTabGroup>
-      <ToolbarTabGroup title={TEXT_OPTIONS} className="gap-x-2">
-        <ToolbarCol>
-          <ColorMapToolbarMenu
-            cmap={getColorMap(settings.scale.cmap)}
-            onChange={(cmap) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.scale.cmap = cmap.id as ColorMapName
-                })
-              )
-            }}
-          />
-        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

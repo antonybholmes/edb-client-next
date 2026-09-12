@@ -2,9 +2,9 @@
   "name": "ExtGSEA Plot",
   "description": "Extended GSEA plots.",
   "color": "#ffb366",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-09-12T02:22:08.226Z",
-  "hash": "47624c91b570c6ef2692c98d0f4b9ad54cbef36d43aab5de3a0a808d1c7d6c28",
-  "build": 948
+  "modified": "2026-09-12T03:08:46.825Z",
+  "hash": "ea3f562ad18ccf71faa28f4a5c047e6bd89b7a891d5580d8917d31de1b903dcf",
+  "build": 950
 }

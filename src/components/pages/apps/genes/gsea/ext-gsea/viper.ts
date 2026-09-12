@@ -1,8 +1,4 @@
 import { IDBEntity } from '../../../../../../interfaces/db-entity'
-import {
-  COLOR_CORNFLOWER_BLUE,
-  COLOR_RED,
-} from '../../../../../../lib/color/color'
 import { ExtGSEA } from '../../../../../../lib/gsea/ext-gsea'
 import {
   IGeneSet,
@@ -32,13 +28,13 @@ export function viperToGsea(viper: IViper): IExtGseaPlotResult[] {
       id: makeUuid(),
       name: 'Up',
       genes: tf.targets.pos,
-      color: COLOR_RED,
+      //color: COLOR_RED,
     }
     const gs2: IGeneSet = {
       id: makeUuid(),
       name: 'Down',
       genes: tf.targets.neg,
-      color: COLOR_CORNFLOWER_BLUE,
+      //color: COLOR_CORNFLOWER_BLUE,
     }
 
     const extGsea = exg.runExtGsea(gs1, gs2)

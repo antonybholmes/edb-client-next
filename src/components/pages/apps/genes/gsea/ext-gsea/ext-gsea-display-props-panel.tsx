@@ -18,11 +18,12 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
@@ -56,8 +57,8 @@ export function ExtGseaDisplayPropsPanel() {
   const displayOptions = plot!.props
 
   return (
-    <PropsPanel className="pr-1">
-      <SideBarHeader className="justify-end">
+    <PropsPanel className="gap-y-1">
+      <VCenterRow className="justify-end">
         <LinkButton
           onClick={() =>
             updatePlot(
@@ -70,7 +71,7 @@ export function ExtGseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </SideBarHeader>
+      </VCenterRow>
       <ScrollAccordion
         value={openTabs}
         onValueChange={(v) => setOpenTabs(v as string[])}
@@ -144,7 +145,73 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </PropRow>
 
-            <SwitchPropRow
+            <PropRow title="Lines">
+              <OutlineButton
+                colors={[
+                  {
+                    color: displayOptions.es.gs1.line.value,
+                    opacity: displayOptions.es.gs1.line.opacity,
+                    show: displayOptions.es.gs1.line.show,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
+                      updatePlot(
+                        produce(plot, (draft) => {
+                          draft.props.es.gs1.line.show =
+                            show ?? draft.props.es.gs1.line.show
+
+                          draft.props.es.gs1.line.value = color
+                          draft.props.es.gs1.line.opacity = opacity ?? 1
+                          draft.props.es.gs1.line.width =
+                            width ?? draft.props.es.gs1.line.width
+                          //draft.props.es.gs1.line.dasharray =
+                          //  dasharray ?? draft.props.es.gs1.line.dasharray
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="ES 1"
+              />
+
+              <OutlineButton
+                colors={[
+                  {
+                    color: displayOptions.es.gs2.line.value,
+                    opacity: displayOptions.es.gs2.line.opacity,
+                    show: displayOptions.es.gs2.line.show,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
+                      updatePlot(
+                        produce(plot, (draft) => {
+                          draft.props.es.gs2.line.show =
+                            show ?? draft.props.es.gs2.line.show
+
+                          draft.props.es.gs2.line.value = color
+                          draft.props.es.gs2.line.opacity = opacity ?? 1
+                          draft.props.es.gs2.line.width =
+                            width ?? draft.props.es.gs2.line.width
+                          //draft.props.es.gs2.line.dasharray =
+                          //  dasharray ?? draft.props.es.gs2.line.dasharray
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="ES 2"
+              />
+            </PropRow>
+
+            {/* <SwitchPropRow
               title="Line"
               checked={displayOptions.es.gs1.line.show}
               onCheckedChange={(state) =>
@@ -172,16 +239,71 @@ export function ExtGseaDisplayPropsPanel() {
                   )
                 }}
               />
-            </SwitchPropRow>
+            </SwitchPropRow> */}
 
-            <CheckPropRow
+            <PropRow title="Leading edges">
+              <FillButton
+                colors={[
+                  {
+                    color: displayOptions.es.gs1.leadingEdge.value,
+                    opacity: displayOptions.es.gs1.leadingEdge.opacity,
+                    show: displayOptions.es.gs1.leadingEdge.show,
+                    onColorChange: ({
+                      color,
+                      opacity,
+
+                      show,
+                    }) => {
+                      updatePlot(
+                        produce(plot, (draft) => {
+                          draft.props.es.gs1.leadingEdge.show =
+                            show ?? draft.props.es.gs1.line.show
+
+                          draft.props.es.gs1.leadingEdge.value = color
+                          draft.props.es.gs1.leadingEdge.opacity = opacity ?? 1
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="Leading edge 1"
+              />
+              <FillButton
+                colors={[
+                  {
+                    color: displayOptions.es.gs2.leadingEdge.value,
+                    opacity: displayOptions.es.gs2.leadingEdge.opacity,
+                    show: displayOptions.es.gs2.leadingEdge.show,
+                    onColorChange: ({
+                      color,
+                      opacity,
+
+                      show,
+                    }) => {
+                      updatePlot(
+                        produce(plot, (draft) => {
+                          draft.props.es.gs2.leadingEdge.show =
+                            show ?? draft.props.es.gs2.leadingEdge.show
+
+                          draft.props.es.gs2.leadingEdge.value = color
+                          draft.props.es.gs2.leadingEdge.opacity = opacity ?? 1
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="Leading edge 2"
+              />
+            </PropRow>
+
+            {/* <CheckPropRow
               title="Leading edge"
-              checked={displayOptions.es.gs1.leadingEdge.fill.show}
+              checked={displayOptions.es.gs1.leadingEdge.show}
               onCheckedChange={(v) =>
                 updatePlot(
                   produce(plot, (draft) => {
-                    draft.props.es.gs1.leadingEdge.fill.show = v
-                    draft.props.es.gs2.leadingEdge.fill.show = v
+                    draft.props.es.gs1.leadingEdge.show = v
+                    draft.props.es.gs2.leadingEdge.show = v
                   })
                 )
               }
@@ -189,8 +311,8 @@ export function ExtGseaDisplayPropsPanel() {
               <NumericalInput
                 id="line1-leading-opacity"
                 title="Opacity"
-                disabled={!displayOptions.es.gs1.leadingEdge.fill.show}
-                value={displayOptions.es.gs1.leadingEdge.fill.opacity}
+                disabled={!displayOptions.es.gs1.leadingEdge.show}
+                value={displayOptions.es.gs1.leadingEdge.opacity}
                 dp={1}
                 step={0.1}
                 limit={[0, 1]}
@@ -199,13 +321,14 @@ export function ExtGseaDisplayPropsPanel() {
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
-                      draft.props.es.gs1.leadingEdge.fill.opacity = v
-                      draft.props.es.gs2.leadingEdge.fill.opacity = v
+                      draft.props.es.gs1.leadingEdge.opacity = v
+                      draft.props.es.gs2.leadingEdge.opacity = v
                     })
                   )
                 }}
               />
-            </CheckPropRow>
+            </CheckPropRow> */}
+
             <CheckPropRow
               title="Stats"
               checked={displayOptions.es.stats.show}

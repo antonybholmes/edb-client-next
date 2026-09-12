@@ -2810,6 +2810,10 @@
         {
           "msg": "Added viper interface for ext-gsea. More support for multiple axes.",
           "date": "2026-09-12T02:22:10.274Z"
+        },
+        {
+          "msg": "Improved ui for customizing ext gsea plots",
+          "date": "2026-09-12T03:08:48.794Z"
         }
       ]
     },
