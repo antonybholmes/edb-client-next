@@ -73,8 +73,8 @@ export function ExtGseaSvgContent() {
 
   const displayProps: IExtGseaSettings = plot.props
 
-  const innerPlotSize: IDim = useMemo(
-    () => ({
+  const innerPlotSize: IDim = useMemo(() => {
+    return {
       w: displayProps.axes.x.length,
       h:
         displayProps.es.axes.y.length +
@@ -84,59 +84,63 @@ export function ExtGseaSvgContent() {
         (displayProps.ranking.show
           ? displayProps.plot.gap.y + displayProps.ranking.axes.y.length
           : 0),
-    }),
-    [displayProps]
-  )
+    }
+  }, [displayProps])
 
-  const plotSize: IDim = useMemo(
-    () => ({
+  const plotSize: IDim = useMemo(() => {
+    return {
       w:
         innerPlotSize.w +
-        displayProps.plot!.margin.left +
-        displayProps.plot!.margin.right,
+        displayProps.plot.margin.left +
+        displayProps.plot.margin.right,
       h:
         innerPlotSize.h +
-        displayProps.plot!.margin.top +
-        displayProps.plot!.margin.bottom,
-    }),
-    [displayProps, innerPlotSize]
-  )
-
-  const rows = Math.ceil(plot.results.length / displayProps.page.columns)
-
-  const pageSize: IDim = {
-    w: plotSize.w * displayProps.page.columns,
-    h: plotSize.h * rows,
-  }
-
-  const elems: ReactElement[] = []
-
-  let x = 0
-  let y = 0
-
-  for (const [ri, result] of plot.results.entries()) {
-    const pos: IPos = { x, y }
-    elems.push(
-      <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={pos}>
-        <ExtGseaSvgPlot
-          result={result}
-
-          pos={pos}
-        />
-      </SvgG>
-    )
-
-    x += plotSize.w
-
-    if (ri % displayProps.page.columns === displayProps.page.columns - 1) {
-      x = 0
-      y += plotSize.h
+        displayProps.plot.margin.top +
+        displayProps.plot.margin.bottom,
     }
-  }
+  }, [innerPlotSize, displayProps])
+
+  const pageSize: IDim = useMemo(() => {
+    return {
+      w: plotSize.w * displayProps.page.columns,
+      h:
+        plotSize.h * Math.ceil(plot.results.length / displayProps.page.columns),
+    }
+  }, [plotSize, displayProps.page.columns, plot.results.length])
+
+  const svg = useMemo(() => {
+    const elems: ReactElement[] = []
+
+    let x = 0
+    let y = 0
+
+    for (const [ri, result] of plot.results.entries()) {
+      const pos: IPos = { x, y }
+      elems.push(
+        <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={pos}>
+          <ExtGseaSvgPlot result={result} pos={pos} />
+        </SvgG>
+      )
+
+      x += plotSize.w
+
+      if (ri % displayProps.page.columns === displayProps.page.columns - 1) {
+        x = 0
+        y += plotSize.h
+      }
+    }
+
+    return <SvgMargin margin={displayProps.plot.margin}>{elems}</SvgMargin>
+  }, [
+    plot.results,
+    plotSize,
+    displayProps.page.columns,
+    displayProps.plot.margin,
+  ])
 
   return (
     <SvgBase width={pageSize.w} height={pageSize.h} scale={zoom}>
-      <SvgMargin margin={displayProps.plot!.margin}>{elems}</SvgMargin>
+      {svg}
     </SvgBase>
   )
 }

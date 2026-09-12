@@ -227,7 +227,18 @@ export function ExtGseaHitsSvg({
     }
 
     return genesSvg
-  }, [xax, displayProps])
+  }, [
+    gs,
+    gsMode,
+    gsea,
+    xax,
+    scores,
+    maxScore,
+    displayProps,
+    pos,
+    onMouseMove,
+    _hideTooltip,
+  ])
 
   return genesSvg
 }
@@ -261,8 +272,7 @@ export function ExtGseaGenesSvgPlot({
       // target
       let maxScore = max([...scores1, ...scores2])
 
-      const yOffset =
-        displayProps.genes.height + 0.25 * displayProps.plot!.gap.y
+      const yOffset = displayProps.genes.height + 0.25 * displayProps.plot.gap.y
 
       return (
         <>
@@ -300,7 +310,7 @@ export function ExtGseaGenesSvgPlot({
     }
 
     return genesSvg
-  }, [displayProps])
+  }, [result, pos, gs1, gs2, gsea1, gsea2, displayProps])
 
   return genesSvg
 }
