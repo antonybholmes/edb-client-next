@@ -163,8 +163,6 @@ export class ExtGSEA {
     // Is ranked gene in gene set
     const isInGeneset = zeros(l)
 
-    console.log('Running ExtGSEA with gene sets:', gs1.genes, gs2)
-
     const names1 = geneSetNames(gs1)
     const names2 = geneSetNames(gs2)
     const scores1 = geneSetScores(gs1)
@@ -217,8 +215,6 @@ export class ExtGSEA {
     const { v: minEs, i: minEsIndex } = argmin(this._esAllGenes)
 
     this._es = maxEs + minEs
-
-    console.log(this._es, 'es')
 
     const isEnriched = zeros(l)
 

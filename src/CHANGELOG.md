@@ -4,6 +4,7 @@
 
 ### Changed
 
+- run ext gsea now in helper hook.
 - Bug fixes and updates.
 
 

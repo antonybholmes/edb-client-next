@@ -4,7 +4,6 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { snrRankGenes } from '@/lib/gsea/gsea2'
 import { useFooter } from '@/providers/footer-provider'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
@@ -21,9 +20,8 @@ import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
 
-import { makeUuid } from '@/lib/id'
-import { newExtGseaPlot } from '../../genes/gsea/ext-gsea/ext-gsea-provider'
 import { useExtGseaWorker } from '../../genes/gsea/ext-gsea/ext-gsea-worker'
+import { useRunExtGsea } from '../../genes/gsea/use-run-ext-gsea'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
@@ -31,7 +29,7 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
 export function GeneToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
-  const { sheets } = useCurrentSheets()
+  const { sheet } = useCurrentSheets()
   const { groups } = useCurrentGroups()
   const { genesets } = useCurrentGenesets()
   const { remove: removeFooter, addIndicator } = useFooter()
@@ -42,6 +40,7 @@ export function GeneToolbar() {
 
   const { settings, updateSettings } = useMatcalcSettings()
   const { file } = useFiles()
+  const { runExtGsea } = useRunExtGsea()
 
   function _addPlots(plots: HistoryPlot[]) {
     addPlots(plots)
@@ -54,7 +53,7 @@ export function GeneToolbar() {
   }
 
   function gct() {
-    const df = makeGCT(sheets[0] as AnnotationDataFrame) as AnnotationDataFrame
+    const df = makeGCT(sheet as AnnotationDataFrame) as AnnotationDataFrame
 
     addSheets([df])
 
@@ -62,123 +61,6 @@ export function GeneToolbar() {
     //   step: history.current.step + 1,
     //   history: [{ title: df.name, df: [df] }],
     // })
-  }
-
-  function runExtGsea() {
-    if (groups.length < 2) {
-      openDialog({
-        type: 'alert',
-        payload: {
-          title: 'Extended GSEA',
-          content: 'You need to create 2 groups/phenotypes.',
-        },
-      })
-      return
-    }
-
-    if (genesets.length < 2) {
-      openDialog({
-        type: 'alert',
-        payload: {
-          title: 'Extended GSEA',
-          content: 'You need to create 2 gene sets.',
-        },
-      })
-      return
-    }
-
-    /* const { dismiss: dismissSpinnerToast } = toast({
-        title: 'Extended GSEA',
-        description: (
-          <ToastSpinner>
-            Running extended GSEA, please do not refresh your browser window...
-          </ToastSpinner>
-        ),
-        durationMs: 60000,
-      })
-  
-      setTimeout(() => {
-        const group1 = groupState.groups[groupState.order[0]!]!
-        const group2 = groupState.groups[groupState.order[1]!]!
-  
-        const rankedGenes = rankGenes(df, group1, group2)
-  
-        const extGsea = new ExtGSEA(rankedGenes)
-  
-        const gs1 = genesetState.genesets[genesetState.order[0]!]!
-        const gs2 = genesetState.genesets[genesetState.order[1]!]!
-  
-        // run and cache results
-        extGsea.runExtGsea(gs1, gs2)
-  
-        dismissSpinnerToast()
-  
-        plotsDispatch({
-          type: 'add',
-          style: 'Extended GSEA',
-          //cf: { df },
-          customProps: { extGsea },
-        })
-      }, 1000) */
-
-    // const id = makeUuid()
-
-    // addToast({
-    //   id,
-    //   title: APP_INFO.name,
-    //   description:
-    //     'Running Extended GSEA, please do not refresh your browser window...',
-
-    //   timeout: 60000,
-    // })
-
-    const id = addIndicator('Running Extended GSEA...')
-
-    const group1 = groups[0]! //groupState.groups[groupState.order[0]!]!
-    const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
-
-    const rankedGenes = snrRankGenes(
-      sheets[0] as AnnotationDataFrame,
-      group1,
-      group2
-    )
-
-    const gs1 = genesets[0]! // genesets[genesetState.order[0]!]!
-    const gs2 = genesets[1]! // genesetState.genesets[genesetState.order[1]!]!
-
-    runExtGseaWorker(
-      {
-        rankedGenes,
-        gs1,
-        gs2,
-      },
-      (data) => {
-        const { extGseaRes, gseaRes1, gseaRes2 } = data
-
-        const plot = {
-          ...newExtGseaPlot('Extended GSEA', {
-            results: [
-              {
-                id: makeUuid(),
-                name: 'Extended GSEA',
-                rankedGenes,
-                gs1: gs1,
-                gs2: gs2,
-                extGsea: extGseaRes,
-                gsea1: gseaRes1,
-                gsea2: gseaRes2,
-              },
-            ],
-          }),
-        }
-
-        _addPlots([plot])
-        // we've finished so get rid of the animations
-        //closeToast(id)
-
-        removeFooter('left', id)
-      }
-    )
   }
 
   return (
@@ -217,7 +99,7 @@ export function GeneToolbar() {
         <ToolbarCol>
           <ToolbarButton
             aria-label="Run Extended GSEA"
-            onClick={() => runExtGsea()}
+            onClick={() => runExtGsea((plot) => _addPlots([plot]))}
           >
             Extended GSEA
           </ToolbarButton>

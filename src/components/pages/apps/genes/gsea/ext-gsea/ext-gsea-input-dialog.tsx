@@ -14,6 +14,7 @@ import { makeUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
 import { produce } from 'immer'
+import { useRunExtGsea } from '../use-run-ext-gsea'
 import { IViper } from './viper'
 import { useViperWorker } from './viper-worker'
 
@@ -65,6 +66,7 @@ export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
   const { addPlots } = useHistory()
 
   const { run: runViperWorker } = useViperWorker()
+  const { runExtGsea } = useRunExtGsea()
 
   return (
     <OKCancelDialog
@@ -80,7 +82,10 @@ export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
         variant="app-theme"
         size="lg"
         onClick={() => {
-          close()
+          runExtGsea((plot) => {
+            addPlots([plot])
+            close()
+          })
         }}
       >
         Expression
