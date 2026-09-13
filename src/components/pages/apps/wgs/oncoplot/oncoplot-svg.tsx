@@ -780,7 +780,7 @@ function OncoplotSvgContent() {
       const { screenP: absoluteBlockScreenXY, relativeP: blockScreenXY } =
         svgPointToScreen(ref.current, blockXYMid)
 
-      showCrosshair(blockScreenXY)
+      showCrosshair({ pos: blockScreenXY })
 
       const stats = mf?.data(row, col)
 

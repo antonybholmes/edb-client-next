@@ -136,7 +136,7 @@ export function CellsSvg({
       y: cell.row.x + blockSize.h / 2 + margin.top,
     })
 
-    showCrosshair(relativeP)
+    showCrosshair({ pos: relativeP })
   }
 
   return (

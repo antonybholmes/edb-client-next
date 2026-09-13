@@ -30,7 +30,7 @@ interface IZoomChannel {
   levels: number[]
 }
 
-const STORAGE_KEY = 'zoom-channels:v8'
+const STORAGE_KEY = 'zoom-channels:v10'
 
 export const DEFAULT_ZOOM_CHANNEL_NAME = 'default'
 

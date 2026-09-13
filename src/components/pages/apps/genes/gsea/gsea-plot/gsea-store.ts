@@ -234,6 +234,8 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
           }
         })
 
+        console.log('cheese', es)
+
         resultsMap[name] = { name, es }
       }
     }

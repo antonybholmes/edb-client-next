@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useRef } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
@@ -23,9 +23,9 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { IRankedGene } from '@/lib/gsea/geneset'
+import { findNearest } from '@/lib/search'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { useGseaPlot } from './gsea-plot-provider'
 import { useGseaSettings } from './gsea-settings-store'
@@ -274,21 +274,30 @@ function EsLeadingEdgeSvg({
 }
 
 function GenesSvg({
+  pathway,
   xax,
+  innerPlotSize,
   points,
   es,
   sortedRankedGenes,
   crossing,
   pos,
 }: {
+  pathway: IGseaTableResult
   xax: IAxis
-  points: { x: number; y: number }[]
+  points: IPos[]
   es: IRankedGene[]
   sortedRankedGenes: IRankedGene[]
   crossing: { index: number; x: number }
+  innerPlotSize: IDim
   pos: IPos
 }) {
   const { settings } = useGseaSettings()
+
+  const { ref } = useSVG()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+
+  const { result } = useGseaData(pathway.name)
 
   const c1 = settings.genes.pos.value
   const c2 = addAlphaToHex(
@@ -303,7 +312,7 @@ function GenesSvg({
   const cmap1 = new ColorMap('pos', 'pos', [c1, c2])
   const cmap2 = new ColorMap('neg', 'neg', [c3, c4])
 
-  //console.log(sortedRankedGenes)
+  const xp = points.map((p) => p.x)
 
   // for a given point, use its rank to find the corresponding gene in sortedRankedGenes,
   // then use its score to determine the color of the point. This is because we base
@@ -312,12 +321,86 @@ function GenesSvg({
   const posPoints = points.filter((_, pi) => {
     return sortedRankedGenes[es[pi]!.rank]!.score >= 0
   })
+
   const negPoints = points.filter(
     (_, pi) => sortedRankedGenes[es[pi]!.rank]!.score < 0
   )
 
+  // const _hideTooltip = useCallback(() => {
+  //   hideCrosshair()
+  //   hideTooltip()
+  // }, [hideCrosshair, hideTooltip])
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) {
+        return
+      }
+
+      const svgP = screenToSvgPoint(ref.current, {
+        x: e.clientX,
+        y: e.clientY,
+      })
+
+      const plotP = {
+        x: svgP.x - pos.x - settings.plot.margin.left,
+        y: svgP.y - pos.y - settings.plot.margin.top,
+      }
+
+      const { index } = findNearest(plotP.x, xp)
+
+      // find nearest es point using binary search
+      const nearestEsPoint = points[index]
+
+      if (Math.abs(plotP.x - nearestEsPoint.x) > 5) {
+        hideCrosshair()
+        return
+      }
+
+      const barP = {
+        x: nearestEsPoint.x + settings.plot.margin.left + pos.x,
+        y: settings.plot.margin.top + pos.y + settings.genes.height / 2,
+      }
+
+      const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
+
+      showCrosshair({
+        pos: barScreenP,
+        content: (
+          <>
+            <strong>{result.es[index].name}</strong>
+            <span>{`Rank: ${result.es[index].rank.toLocaleString()}`}</span>
+            <span>{`Score: ${result.es[index].score.toFixed(3)}`}</span>
+          </>
+        ),
+      })
+      // showTooltip({
+      //   pos: { x: screenP.x + 5, y: screenP.y + 5 },
+      //   content: (
+      //     <>
+      //       <strong>{result.es[left].name}</strong>
+      //       <span>{`Rank: ${result.es[left].rank.toLocaleString()}`}</span>
+      //       <span>{`Score: ${result.es[left].score.toFixed(3)}`}</span>
+      //     </>
+      //   ),
+      // })
+    },
+    [
+      pos,
+      ref,
+      settings.plot.margin,
+      points,
+      showCrosshair,
+      hideCrosshair,
+      result,
+      innerPlotSize,
+      // showTooltip,
+      // hideTooltip,
+    ]
+  )
+
   return (
-    <g transform={`translate(${pos.x}, ${pos.y})`}>
+    <SvgG pos={pos}>
       {posPoints.map((p, pi) => {
         const pc = p.x / crossing.x
 
@@ -355,7 +438,18 @@ function GenesSvg({
           />
         )
       })}
-    </g>
+
+      <SvgRect
+        id="mouse-rect"
+        data-interaction-only="true"
+        width={innerPlotSize.w}
+        height={settings.genes.height}
+        fill="transparent"
+        pointerEvents="all"
+        onMouseMove={onMouseMove}
+        onMouseLeave={hideCrosshair}
+      />
+    </SvgG>
   )
 }
 
@@ -458,9 +552,6 @@ const GseaPlot = memo(function GseaPlot({
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
   const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
-  const { ref } = useSVG()
-  const { showCrosshair, hideCrosshair } = useCrosshair()
-  const { showTooltip, hideTooltip } = useTooltip()
 
   const pos = useMemo(
     () => ({ x: col * plotSize.w, y: row * plotSize.h }),
@@ -479,9 +570,6 @@ const GseaPlot = memo(function GseaPlot({
   })
 
   const maxRank = rankedGenes.length - 1
-
-  // avoid re-rendering the whole svg tree when the hovered cell hasn't changed
-  const lastCellRef = useRef<{ r: number; c: number } | null>(null)
 
   const sortedRankedGenes: IRankedGene[] = useMemo(
     () =>
@@ -515,96 +603,6 @@ const GseaPlot = memo(function GseaPlot({
 
     return es.map((e) => ({ x: xaf(e.rank), y: yaf(e.score) }))
   }, [es, xax, yax])
-
-  const _hideTooltip = useCallback(() => {
-    hideCrosshair()
-    hideTooltip()
-  }, [hideCrosshair, hideTooltip])
-
-  const onMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!ref.current) {
-        return
-      }
-
-      const svgP = screenToSvgPoint(ref.current, {
-        x: e.clientX,
-        y: e.clientY,
-      })
-
-      const plotP = {
-        x: svgP.x - pos.x - settings.plot.margin.left,
-        y: svgP.y - pos.y - settings.plot.margin.top,
-      }
-
-      if (
-        plotP.x < 0 ||
-        plotP.x > innerPlotSize.w ||
-        plotP.y < 0 ||
-        plotP.y > innerPlotSize.h
-      ) {
-        //setBarPos(null)
-        _hideTooltip()
-        return
-      }
-
-      // find nearest es point using binary search
-      let nearestEsPoint = points[0]
-      let left = 0
-      let right = points.length - 1
-      while (left <= right) {
-        const mid = Math.floor((left + right) / 2)
-        if (points[mid].x < plotP.x) {
-          left = mid + 1
-        } else {
-          right = mid - 1
-        }
-      }
-
-      if (left < points.length) {
-        nearestEsPoint = points[left]
-      }
-
-      if (Math.abs(plotP.x - nearestEsPoint.x) > 5) {
-        _hideTooltip()
-        return
-      }
-
-      const barP = {
-        x: nearestEsPoint.x + settings.plot.margin.left + pos.x,
-        y: plotP.y + settings.plot.margin.top + pos.y,
-      }
-
-      const { relativeP: barScreenP, screenP } = svgPointToScreen(
-        ref.current,
-        barP
-      )
-
-      showCrosshair(barScreenP)
-      showTooltip({
-        pos: { x: screenP.x + 5, y: screenP.y + 5 },
-        content: (
-          <>
-            <strong>{result.es[left].name}</strong>
-            <span>{`Rank: ${result.es[left].rank.toLocaleString()}`}</span>
-            <span>{`Score: ${result.es[left].score.toFixed(3)}`}</span>
-          </>
-        ),
-      })
-    },
-    [
-      pos,
-      ref,
-      settings.plot.margin,
-      points,
-      showCrosshair,
-      hideCrosshair,
-      result,
-      innerPlotSize,
-      showTooltip,
-      hideTooltip,
-    ]
-  )
 
   if (!xax || !yax || !result) {
     return null
@@ -642,12 +640,14 @@ const GseaPlot = memo(function GseaPlot({
 
   const genesSvg = settings.genes.show ? (
     <GenesSvg
+      pathway={pathway}
       xax={xax}
       points={points}
       es={es}
       sortedRankedGenes={sortedRankedGenes}
       crossing={crossing}
       pos={{ x: 0, y: plotY }}
+      innerPlotSize={innerPlotSize}
     />
   ) : null
 
@@ -673,8 +673,8 @@ const GseaPlot = memo(function GseaPlot({
     <SvgG
       pos={pos}
       id={`plot-${index + 1}`}
-      onMouseMove={onMouseMove}
-      onMouseLeave={_hideTooltip}
+      //onMouseMove={onMouseMove}
+      //onMouseLeave={hideCrosshair}
     >
       {edbSettings.plots.axes.x.style.title.show && (
         <SvgText
@@ -696,7 +696,7 @@ const GseaPlot = memo(function GseaPlot({
         {rankingSvg}
       </SvgMargin>
 
-      <SvgRect
+      {/* <SvgRect
         id="mouse-rect"
         data-interaction-only="true"
         width={plotSize.w}
@@ -704,8 +704,8 @@ const GseaPlot = memo(function GseaPlot({
         fill="transparent"
         pointerEvents="all"
         onMouseMove={onMouseMove}
-        onMouseLeave={_hideTooltip}
-      />
+        onMouseLeave={hideCrosshair}
+      /> */}
     </SvgG>
   )
 })
