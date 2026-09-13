@@ -122,7 +122,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
   },
   es: {
     useGeneScoreForES: true,
-    step: 100,
+    step: 10,
     axes: {
       y: {
         length: 150,

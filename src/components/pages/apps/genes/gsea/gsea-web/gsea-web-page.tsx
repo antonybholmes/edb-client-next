@@ -62,7 +62,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import { IGseaTableResult } from '../gsea-plot/gsea-store'
-import { GseaSvg } from '../gsea-plot/gsea-svg'
+import { GseaSvg } from '../gsea-plot/svg/gsea-svg'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home'
 

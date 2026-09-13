@@ -33,16 +33,21 @@ export interface IExtGseaResult {
 }
 
 export interface IGseaResult {
+  /**
+   * The enrichment score for the gene set.
+   */
   es: number
 
   /**
-   * Indices of the ranked genes that are hits in the gene set.
+   * The scores of the genes that are hits in the gene set.
    */
   esHits: IRankedGene[]
+
   /**
-   * Enrichment scores for all ranked genes.
+   * Enrichment scores for all ranked genes. Will be several thousand
    */
-  esAll: number[]
+  esAll: IRankedGene[]
+
   /**
    * Enrichment scores for leading edge genes in the gene set.
    */
@@ -211,8 +216,8 @@ export class ExtGSEA {
     )
 
     this._esAllGenes = sub(this._scoreHits, this._scoreMisses)
-    const { v: maxEs, i: maxEsIndex } = argmax(this._esAllGenes)
-    const { v: minEs, i: minEsIndex } = argmin(this._esAllGenes)
+    const { value: maxEs, index: maxEsIndex } = argmax(this._esAllGenes)
+    const { value: minEs, index: minEsIndex } = argmin(this._esAllGenes)
 
     this._es = maxEs + minEs
 
@@ -301,8 +306,8 @@ export class ExtGSEA {
     scoreMisses = div(scoreMisses, scoreMisses[scoreMisses.length - 1]!)
 
     const esAll = sub(scoreHits, scoreMisses)
-    const { v: maxEs, i: maxEsI } = argmax(esAll)
-    const { v: minEs, i: minEsI } = argmin(esAll)
+    const { value: maxEs, index: maxEsI } = argmax(esAll)
+    const { value: minEs, index: minEsI } = argmin(esAll)
     const es = maxEs + minEs
 
     const leadingEdgeIndices = zeros(l)
@@ -345,10 +350,17 @@ export class ExtGSEA {
       score: esAll[i]!,
     }))
 
+    const esAllHits: IRankedGene[] = esAll.map((score, i) => ({
+      rank: i,
+      name: this._rankedGenes[i]!.name,
+      score,
+    }))
+
     return {
       es,
-      esAll,
+
       esHits, //: isInGeneset,
+      esAll: esAllHits,
 
       //leadingEdgeIndices,
       leadingEdge,

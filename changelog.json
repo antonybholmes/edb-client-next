@@ -2893,6 +2893,10 @@
         {
           "msg": "Smaller header links grid",
           "date": "2026-09-13T17:05:15.265Z"
+        },
+        {
+          "msg": "ext gsea shares more code with original gsea plot. Ext gsea now plots the full es for the curve to make line smoother",
+          "date": "2026-09-13T23:22:22.010Z"
         }
       ]
     },

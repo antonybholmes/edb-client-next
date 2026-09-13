@@ -83,7 +83,7 @@ export function min(x: number[]): number {
  * @param data
  * @returns
  */
-export function argmax(data: number[]): { v: number; i: number } {
+export function argmax(data: number[]): { value: number; index: number } {
   let best = 0
 
   for (let i = 1; i < data.length; i++) {
@@ -92,7 +92,19 @@ export function argmax(data: number[]): { v: number; i: number } {
     }
   }
 
-  return { v: data[best], i: best }
+  return { value: data[best], index: best }
+}
+
+export function argmaxAbs(data: number[]): { value: number; index: number } {
+  let best = 0
+
+  for (let i = 1; i < data.length; i++) {
+    if (Math.abs(data[i]) > Math.abs(data[best])) {
+      best = i
+    }
+  }
+
+  return { value: data[best], index: best }
 }
 
 /**
@@ -101,7 +113,7 @@ export function argmax(data: number[]): { v: number; i: number } {
  * @param data
  * @returns
  */
-export function argmin(data: number[]): { v: number; i: number } {
+export function argmin(data: number[]): { value: number; index: number } {
   let best = 0
 
   for (let i = 1; i < data.length; i++) {
@@ -110,5 +122,5 @@ export function argmin(data: number[]): { v: number; i: number } {
     }
   }
 
-  return { v: data[best], i: best }
+  return { value: data[best], index: best }
 }

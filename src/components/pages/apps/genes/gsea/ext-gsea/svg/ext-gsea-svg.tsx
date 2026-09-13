@@ -1,5 +1,7 @@
 import { ReactElement, useMemo } from 'react'
 
+import { useAxis } from '@/components/plot/axes/axes-store'
+import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
@@ -7,11 +9,11 @@ import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useZoom } from '@/providers/zoom-provider'
+import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 import { ExtGseaEsSvgPlot } from './es-svg'
 import { ExtGseaGenesSvgPlot } from './genes-svg'
-import { ExtGseaRankingSvg } from './ranking-svg'
 import { ExtGseaTitleSvg } from './title-svg'
 
 function ExtGseaSvgPlot({
@@ -26,6 +28,19 @@ function ExtGseaSvgPlot({
   const displayProps: IExtGseaSettings = plot.props
 
   const yOffset = displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y
+
+  const { axis: xax } = useAxis({
+    plotId: result.id,
+    groupId: 'es',
+    axisId: 'x',
+  })
+
+  const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
+
+  const crossing = useMemo(
+    () => crossingIndex(result.rankedGenes, xaf),
+    [result.rankedGenes, xaf]
+  )
 
   return (
     <>
@@ -60,7 +75,12 @@ function ExtGseaSvgPlot({
                 : 0),
           }}
         >
-          <ExtGseaRankingSvg result={result} />
+          <RankingSvg
+            plotId={result.id}
+            xaf={xaf}
+            rankedGenes={result.rankedGenes}
+            crossing={crossing}
+          />
         </SvgG>
       )}
     </>

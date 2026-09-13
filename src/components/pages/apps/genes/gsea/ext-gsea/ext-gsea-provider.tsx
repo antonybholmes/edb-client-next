@@ -99,7 +99,12 @@ export function ExtGseaProvider({
       const x = range(y.length)
 
       const xmax = max(x)
-      const ymax = max(abs([...y, ...gseaRes2.esAll]))
+      const ymax = max(
+        abs([
+          ...gseaRes1.esAll.map((g) => g.score),
+          ...gseaRes2.esAll.map((g) => g.score),
+        ])
+      )
 
       let xax = createAxis({
         id: 'x',

@@ -2889,6 +2889,10 @@
         {
           "msg": "crosshair supports content. crosshairs now in fixed positions for gsea",
           "date": "2026-09-13T04:04:04.791Z"
+        },
+        {
+          "msg": "Smaller header links grid",
+          "date": "2026-09-13T17:05:15.265Z"
         }
       ]
     },
