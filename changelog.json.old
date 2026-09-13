@@ -2885,6 +2885,10 @@
         {
           "msg": "More removal of duplicate code in ext gsea and optimizing dependencies",
           "date": "2026-09-12T23:43:00.430Z"
+        },
+        {
+          "msg": "crosshair supports content. crosshairs now in fixed positions for gsea",
+          "date": "2026-09-13T04:04:04.791Z"
         }
       ]
     },
