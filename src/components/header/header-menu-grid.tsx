@@ -31,33 +31,30 @@ import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
 import { Button } from '../shadcn/ui/themed/v2/button'
-import { LineSeparator } from '../shadcn/ui/themed/v2/dropdown-menu'
 import { VScrollPanel } from '../v-scroll-panel'
 
 import { present } from '@/lib/dom-utils'
-import { AppIcon } from './app-icon'
+import { APP_ICON_CLS, AppIcon } from './app-icon'
 import type { IHeaderLinksProps } from './header-menu'
 
 export const SIDE_OVERLAY_CLS = cn(
   'fixed inset-0 z-(--z-overlay) bg-overlay/30 backdrop-blur-xs duration-500 ease-in-out',
-  'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+  'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
+  'data-[state=open]:fade-in-0'
 )
 
 export const BASE_MUTED_THEME_CLS = cn(
   FOCUS_INSET_RING_CLS,
   'flex flex-col items-center shrink-0 grow-0 justify-center gap-2 group',
-  'aspect-10/8 relative'
+  'aspect-12/11 relative'
   //'transition duration-300 ease-in-out'
 )
 
 const MODULE_BG_CLS = cn(
-  'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all bg-background',
+  'absolute rounded-xl w-full h-full duration-300 ease-out transition-all bg-background',
   'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  'data-hover:bg-muted/50 rounded-xl'
+  'data-hover:bg-muted/50 scale-95 data-hover:scale-100'
 )
-
-const ICON_CLS = `flex w-9 h-9 aspect-square shrink-0 flex-row  
-  items-center justify-center rounded-2xl text-sm gap-x-0.25`
 
 export function ModuleButtonLink({
   className,
@@ -74,7 +71,7 @@ export function ModuleButtonLink({
       {...props}
     >
       <span className={MODULE_BG_CLS} data-hover={present(hover)} />
-      <CenterCol className="grow w-full h-full z-10 relative gap-2.5">
+      <CenterCol className="grow w-full h-full z-10 relative gap-2">
         {children}
       </CenterCol>
     </BaseLink>
@@ -131,14 +128,7 @@ export function HeaderLinks({
     )
   }
 
-  return (
-    <ul
-      className={cn('grid grid-cols-5 mt-2', className)}
-      style={{ width, minHeight: '6rem' }}
-    >
-      {items}
-    </ul>
-  )
+  return items
 }
 
 export function SearchHeaderLinks({
@@ -210,7 +200,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
   const [open, setOpen] = useState(false)
   const { settings } = useEdbSettings()
   //const windowSize = useWindowSize()
-  const width = `${5 * 6}rem`
+  const width = `${5 * 5.5}rem`
   const [search, setSearch] = useState('')
 
   const searchRef = useRef<HTMLDivElement>(null)
@@ -306,7 +296,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
       />
       {/* </SimpleTooltip> */}
       <PopoverContent
-        className="flex flex-col gap-y-4 pt-4 text-sm"
+        className="flex flex-col gap-y-3 py-4 text-sm"
         variant="none"
       >
         <VCenterCol className="px-4">
@@ -319,24 +309,25 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
             clear={() => setSearch('')}
           />
         </VCenterCol>
-        <VCenterCol className="relative overflow-hidden pb-2">
-          <VCenterCol ref={gridRef} className="gap-y-4 px-4 bg-background">
-            <HeaderLinks
-              tab={tab}
-              handleClick={() => setOpen(false)}
-              width={width}
-            />
+        <VCenterCol className="relative overflow-hidden">
+          <VCenterCol ref={gridRef} className="gap-y-4 px-4">
+            <ul
+              className={'grid grid-cols-5'}
+              style={{ width, minHeight: '6rem' }}
+            >
+              <HeaderLinks
+                tab={tab}
+                handleClick={() => setOpen(false)}
+                width={width}
+              />
 
-            <LineSeparator />
-
-            <ul className="grid grid-cols-5" style={{ width }}>
               <li>
                 <Button
                   variant="flat"
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-10/8 w-full h-full"
+                  className="p-2 gap-2 aspect-12/11 w-full h-full"
                   onClick={() => {
                     window.open(
                       DOCS_URL,
@@ -347,7 +338,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                   aria-label="Help"
                 >
                   <div
-                    className={ICON_CLS}
+                    className={APP_ICON_CLS}
                     style={{
                       backgroundColor: 'lightslategray',
                     }}
@@ -358,13 +349,14 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                   <p className="text-[0.7rem] text-center truncate">Help</p>
                 </Button>
               </li>
+
               <li>
                 <ButtonLink
                   variant="flat"
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-10/8 w-full h-full"
+                  className="p-2 gap-2 aspect-12/11 w-full h-full"
                   href="/about"
                   onClick={() => setOpen(false)}
                   aria-label="About"
@@ -374,7 +366,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                       : undefined
                   }
                 >
-                  <div className={cn(ICON_CLS, 'bg-theme/80')}>
+                  <div className={cn(APP_ICON_CLS, 'bg-theme/80')}>
                     <Info className="text-white/95" />
                   </div>
 

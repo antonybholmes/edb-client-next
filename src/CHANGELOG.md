@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Smaller header links grid.
 - crosshair supports content. crosshairs now in fixed positions for gsea.
 - More removal of duplicate code in ext gsea and optimizing dependencies.
 - Simplified ext gsea svg. Crosshair now works for up/down genes seperately.

@@ -5,8 +5,10 @@ import type { IAppInfo } from '@/lib/app-info'
 import { cn } from '@/lib/shadcn-utils'
 import { capitalCase } from '@/lib/text/capital-case'
 import type { IAppHeaderLink } from '@/menus'
-const ICON_CLS = `flex w-button-md h-button-md aspect-square shrink-0 flex-row  
-  items-center justify-center rounded-[0.9rem] text-sm gap-x-0.25`
+import { CSSProperties } from 'react'
+
+export const APP_ICON_CLS = `app-icon flex w-9 h-9 aspect-square shrink-0 flex-row  
+  items-center justify-center rounded-[1rem] text-sm`
 
 export function AppIcon({
   appInfo,
@@ -24,17 +26,16 @@ export function AppIcon({
 
   return (
     <div
-      className={cn(ICON_CLS, className)}
-      style={{
-        //color: appInfo.color ?? 'lightslategray',
-        backgroundColor: appInfo.color ?? 'lightslategray',
-        //backgroundColor: `${appInfo.color}cc`
-      }}
+      className={cn(APP_ICON_CLS, className)}
+      // style={{
+      //   backgroundColor: appInfo.color ?? 'lightslategray',
+      // }}
+      style={
+        { '--base-color': appInfo.color ?? 'lightslategray' } as CSSProperties
+      }
     >
-      <span className="font-medium text-white/95">
-        {abbr[0]!.toUpperCase()}
-      </span>
-      <span className="font-light text-white/95">{abbr.slice(1)}</span>
+      <span className="font-bold text-white">{abbr[0]!.toUpperCase()}</span>
+      <span className="font-light text-white">{abbr.slice(1)}</span>
     </div>
   )
 }
