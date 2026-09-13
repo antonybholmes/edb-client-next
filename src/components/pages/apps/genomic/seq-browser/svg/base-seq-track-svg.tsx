@@ -136,7 +136,7 @@ function BaseSeqTrackSvgContent({
         y: plotP.y + plotPos.y + titleHeight + settings.margin.top,
       })
 
-      showCrosshair({ x: relativeP.x, y: relativeP.y })
+      showCrosshair({ pos: { x: relativeP.x, y: relativeP.y } })
 
       const x = axisRangeToDomain(xax, [plotP.x])[0]
 
