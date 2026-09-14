@@ -169,6 +169,7 @@ export function HomeToolbar() {
                   produce(edbSettings, (draft) => {
                     draft.plots.cmap = {
                       name: cmap.id as ColorMapName,
+                      opacity: edbSettings.plots.cmap.opacity,
                       reversed,
                     }
                   })
