@@ -19,11 +19,13 @@ import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { getColorMap } from '@/lib/color/colormap'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
@@ -31,7 +33,6 @@ export function ExtGseaHitsSvg({
   xax,
   gs,
   esHits,
-
   maxScore,
   gsMode,
   pos,
@@ -47,9 +48,12 @@ export function ExtGseaHitsSvg({
   const { displayProps } = useExtGseaContext()
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
+  const { settings } = useGseaSettings()
   //const { showTooltip, hideTooltip } = useTooltip()
 
   const w = useMemo(() => axisLength(xax), [xax])
+
+  const cmap = getColorMap(settings.genes.cmap).reverse()
 
   const points = useMemo(() => {
     if (!xax) {
@@ -167,12 +171,16 @@ export function ExtGseaHitsSvg({
             {esHits.map((hit, hiti) => {
               const x = points[hiti].x // ?? xaf(gsea.esHits[hiti].rank)
 
-              const score = Math.abs(hit.score) / maxScore
+              const score = (Math.abs(hit.score) / maxScore) * 0.5
               const diff = 1 - score
 
               //need to vary between 1 and score/max score according to the gene score
               const opacity =
                 score + diff * (1 - displayProps.genes.geneScoreWeight)
+
+              const color = cmap.getHexColor(
+                score + (gsMode === 'gs2' ? 0.5 : 0)
+              )
 
               return (
                 <SvgLine
@@ -182,7 +190,7 @@ export function ExtGseaHitsSvg({
                   y1={0}
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
-                  stroke={gs.color ?? displayProps.es[gsMode].curve.value}
+                  stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
                   strokeOpacity={opacity}
                 />
               )

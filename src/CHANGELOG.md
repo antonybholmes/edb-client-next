@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added support for extgsea to use cmap to color hits.
 - GSEA now uses score to color bars and has opacity support.
 - GSEA now has score and esScore so we can give two scores to a gene, its original score than then the running enrichment score it is assigned.
 - Revised argsort. Refactored ext gsea. Viper now sorts genesets even if unneccessary.
