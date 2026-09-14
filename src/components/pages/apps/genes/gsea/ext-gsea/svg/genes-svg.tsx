@@ -6,6 +6,13 @@ import {
   IAxis,
 } from '@/components/plot/axes/axis'
 
+import {
+  geneSetScores,
+  IRankedGene,
+  IScoreGene,
+  type IGeneSet,
+} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import { gsea } from '@/components/pages/apps/genes/gsea/gsea-plot/gsea'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
@@ -14,13 +21,6 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
-import {
-  geneSetScores,
-  IRankedGene,
-  IScoreGene,
-  type IGeneSet,
-} from '@/lib/gsea/geneset'
-import { gsea } from '@/lib/gsea/gsea'
 import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'

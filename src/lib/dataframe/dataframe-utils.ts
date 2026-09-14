@@ -482,7 +482,7 @@ export function stdevFilter(df: BaseDataFrame, top = 1000) {
   const sd = rowStdev(df)
 
   // order from greatest std to smallest
-  const idx = argsort(sd).toReversed()
+  const idx = argsort(sd, { reverse: true })
 
   // pick the top
   const topIdx = idx.slice(0, top)
@@ -497,7 +497,7 @@ export function meanFilter(df: BaseDataFrame, top = 1000) {
   const sd = rowMean(df)
 
   // order from greatest std to smallest
-  const idx = argsort(sd).toReversed()
+  const idx = argsort(sd, { reverse: true })
 
   // pick the top
   const topIdx = idx.slice(0, top)
@@ -512,7 +512,7 @@ export function medianFilter(df: BaseDataFrame, top = 1000) {
   const sd = rowMedian(df)
 
   // order from greatest std to smallest
-  const idx = argsort(sd).toReversed()
+  const idx = argsort(sd, { reverse: true })
 
   // pick the top
   const topIdx = idx.slice(0, top)

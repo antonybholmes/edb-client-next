@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Revised argsort. Refactored ext gsea. Viper now sorts genesets even if unneccessary.
 - Refined names for gsea and ext gsea to be less confusing.
 - ext gsea shares more code with original gsea plot. Ext gsea now plots the full es for the curve to make line smoother.
 - Smaller header links grid.

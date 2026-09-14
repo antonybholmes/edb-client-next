@@ -1,18 +1,18 @@
-import { vfill } from '../fill'
-import { abs } from '../math/abs'
-import { sub } from '../math/add'
-import { argsort } from '../math/argsort'
-import { cumsum } from '../math/cumsum'
-import { argmax, argmin, max, min } from '../math/math'
+import { vfill } from '../../../../../../lib/fill'
+import { abs } from '../../../../../../lib/math/abs'
+import { sub } from '../../../../../../lib/math/add'
+import { argsort } from '../../../../../../lib/math/argsort'
+import { cumsum } from '../../../../../../lib/math/cumsum'
+import { argmax, argmin, max, min } from '../../../../../../lib/math/math'
 
-import { mean } from '../math/mean'
-import { div, mult } from '../math/multiply'
-import { ones } from '../math/ones'
-import { pow } from '../math/power'
-import { permutation } from '../math/random'
-import { range } from '../math/range'
-import { where } from '../math/where'
-import { zeros } from '../math/zeros'
+import { mean } from '../../../../../../lib/math/mean'
+import { div, mult } from '../../../../../../lib/math/multiply'
+import { ones } from '../../../../../../lib/math/ones'
+import { pow } from '../../../../../../lib/math/power'
+import { permutation } from '../../../../../../lib/math/random'
+import { range } from '../../../../../../lib/math/range'
+import { where } from '../../../../../../lib/math/where'
+import { zeros } from '../../../../../../lib/math/zeros'
 
 import {
   EMPTY_GENE_SET,
@@ -20,7 +20,7 @@ import {
   geneSetScores,
   type IGeneSet,
   type IRankedGene,
-} from './geneset'
+} from '../gsea-plot/geneset'
 
 // https://www.mathworks.com/matlabcentral/fileexchange/33599-gsea2
 
@@ -84,7 +84,6 @@ export class ExtGSEA {
 
   constructor(
     es: IRankedGene[],
-
     opts: {
       permutations?: number
       w?: number

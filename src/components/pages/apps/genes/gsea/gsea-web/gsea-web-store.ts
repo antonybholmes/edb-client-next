@@ -2,7 +2,7 @@ import type { IBinaryFileOpen } from '@/components/pages/open-files'
 import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
-import type { IRankedGene } from '../../../../../../lib/gsea/geneset'
+import type { IRankedGene } from '../gsea-plot/geneset'
 
 import { create } from 'zustand'
 import {

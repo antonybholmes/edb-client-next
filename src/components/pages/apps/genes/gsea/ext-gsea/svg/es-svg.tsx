@@ -1,14 +1,17 @@
 import { useMemo, type ReactNode } from 'react'
 
+import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea'
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
-import type { IGseaResult } from '@/lib/gsea/ext-gsea'
 
+import {
+  type IGeneSet,
+  type IRankedGene,
+} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { type IGeneSet, type IRankedGene } from '@/lib/gsea/geneset'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { EsCurveSvg, EsLeadingEdgeSvg } from '../../gsea-plot/svg/es-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'

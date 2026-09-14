@@ -1,15 +1,16 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
+
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { snrRankGenes } from '@/lib/gsea/gsea2'
 import { makeUuid } from '@/lib/id'
 import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentGenesets,
   useCurrentGroups,
   useCurrentSheets,
-} from '../../matcalc/history/history-provider/history-contexts'
-import { IExtGseaPlot, newExtGseaPlot } from './ext-gsea/ext-gsea-provider'
-import { useExtGseaWorker } from './ext-gsea/ext-gsea-worker'
+} from '../../../matcalc/history/history-provider/history-contexts'
+import { snrRankGenes } from '../gsea-plot/gsea'
+import { IExtGseaPlot, newExtGseaPlot } from './ext-gsea-provider'
+import { useExtGseaWorker } from './ext-gsea-worker'
 
 export function useRunExtGsea() {
   const { sheet } = useCurrentSheets()

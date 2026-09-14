@@ -169,14 +169,14 @@ export function GseaBubbleProvider({
 
       switch (settings.sortBy) {
         case 'nes':
-          idx = argsort(nes, true)
+          idx = argsort(nes, { reverse: true })
 
           break
         case 'size':
-          idx = argsort(sizes, true)
+          idx = argsort(sizes, { reverse: true })
           break
         case 'pvalue':
-          idx = argsort(log10pvalues, true)
+          idx = argsort(log10pvalues, { reverse: true })
           break
 
         default:

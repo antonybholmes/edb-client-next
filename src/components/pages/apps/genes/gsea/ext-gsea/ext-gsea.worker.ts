@@ -1,11 +1,7 @@
-import type { IRankedGene } from '../../../../../../lib/gsea/geneset'
+import type { IRankedGene } from '../gsea-plot/geneset'
 
-import {
-  ExtGSEA,
-  type IExtGseaResult,
-  type IGseaResult,
-} from '../../../../../../lib/gsea/ext-gsea'
-import type { IGeneSet } from '../../../../../../lib/gsea/geneset'
+import type { IGeneSet } from '../gsea-plot/geneset'
+import { ExtGSEA, type IExtGseaResult, type IGseaResult } from './ext-gsea'
 
 export interface IExtGseaWorkerMessage {
   scores: IRankedGene[]

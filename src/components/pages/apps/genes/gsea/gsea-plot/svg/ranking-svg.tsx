@@ -4,11 +4,11 @@ import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { IPos } from '@/interfaces/pos'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
-import { IRankedGene } from '@/lib/gsea/geneset'
 import { useGseaSettings } from '../gsea-settings-store'
 
 export function RankingSvg({

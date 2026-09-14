@@ -1,66 +1,56 @@
-import { IDBEntity } from '../../../../../../interfaces/db-entity'
-import { ExtGSEA } from '../../../../../../lib/gsea/ext-gsea'
-import {
-  IGeneSet,
-  IRankedGene,
-  IScoreGene,
-} from '../../../../../../lib/gsea/geneset'
-import { makeUuid } from '../../../../../../lib/id'
-import { IExtGseaPlotResult } from './ext-gsea-provider'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-export interface IViperTF extends IDBEntity {
-  targets: { pos: IScoreGene[]; neg: IScoreGene[] }
-}
+import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import { makeUuid } from '@/lib/id'
+import { argsort } from '@/lib/math/argsort'
+import { range } from '@/lib/math/range'
+import { IViper } from './viper-gsea'
 
-export interface IViper extends IDBEntity {
-  signature: IRankedGene[]
+export function dfToViper(df: BaseDataFrame): IViper {
+  const genes = df.rowNames
 
-  tfs: IViperTF[]
-}
+  const scores = df.col(0).nums
 
-export function viperToGsea(
-  viper: IViper,
-  opts: { useGeneScoreForES?: boolean } = {}
-): IExtGseaPlotResult[] {
-  const { useGeneScoreForES = true } = opts
+  // want largest to smallest
+  const idx = argsort(scores, { reverse: true })
 
-  const exg = new ExtGSEA(viper.signature, { useGeneScoreForES })
+  const signature: IRankedGene[] = idx.map((originalIndex, i) => ({
+    name: genes[originalIndex],
+    score: scores[originalIndex],
+    rank: i,
+  }))
 
-  const plots: IExtGseaPlotResult[] = []
+  const tfs = range(1, df.shape[1]).map((tfi) => {
+    const scores = df.col(tfi).nums
 
-  for (const tf of viper.tfs) {
-    const gs1: IGeneSet = {
-      id: makeUuid(),
-      name: 'Up',
-      genes: tf.targets.pos,
-      //color: COLOR_RED,
-    }
-    const gs2: IGeneSet = {
-      id: makeUuid(),
-      name: 'Down',
-      genes: tf.targets.neg,
-      //color: COLOR_CORNFLOWER_BLUE,
+    let pos: IRankedGene[] = []
+    let neg: IRankedGene[] = []
+
+    for (const gi of idx) {
+      const gene: IRankedGene = { name: genes[gi], score: scores[gi], rank: 0 }
+
+      if (scores[gi] === -1000) {
+        continue
+      }
+
+      if (scores[gi] > 0) {
+        pos.push(gene)
+      } else {
+        neg.push(gene)
+      }
     }
 
-    const extGsea = exg.runExtGsea(gs1, gs2)
+    pos = argsort(
+      pos.map((g) => g.score),
+      { reverse: true, abs: true }
+    ).map((i) => ({ ...pos[i], rank: i }))
+    neg = argsort(
+      neg.map((g) => g.score),
+      { reverse: true, abs: true }
+    ).map((i) => ({ ...neg[i], rank: i }))
 
-    const gsea1 = exg.runGSEA(gs1)
-    const gsea2 = exg.runGSEA(gs2)
+    return { id: makeUuid(), name: df.colName(tfi), targets: { pos, neg } }
+  })
 
-    const p: IExtGseaPlotResult = {
-      id: tf.id,
-      name: tf.name,
-      scores: viper.signature,
-      gs1,
-      gs2,
-      extGsea,
-      gsea1,
-      gsea2,
-    }
-
-    plots.push(p)
-
-    console.log(p)
-  }
-  return plots
+  return { id: makeUuid(), name: 'Viper', signature, tfs }
 }

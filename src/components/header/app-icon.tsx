@@ -8,7 +8,7 @@ import type { IAppHeaderLink } from '@/menus'
 import { CSSProperties } from 'react'
 
 export const APP_ICON_CLS = `app-icon flex w-9 h-9 aspect-square shrink-0 flex-row  
-  items-center justify-center rounded-[1rem] text-sm`
+  items-center justify-center rounded-full text-sm`
 
 export function AppIcon({
   appInfo,

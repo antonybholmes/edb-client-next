@@ -14,12 +14,15 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import {
+  makeNewGeneset,
+  type IGeneSet,
+} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import {
   DRAG_HANDLE_APPEAR_CLS,
   DRAG_ICON_ANIM_CLS,
   SortableItem,
 } from '@/components/sortable-item'
 import { VCenterCol } from '@/layout/v-center-col'
-import { makeNewGeneset, type IGeneSet } from '@/lib/gsea/geneset'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import { IconButton } from '@/themed/icon-button'

@@ -6,6 +6,11 @@ import {
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import {
+  ICollection,
+  IDataset,
+  IGeneSet,
+} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import {
   DEFAULT_PARSE_OPTS,
   filesToDataFrames,
   onTextFileChange,
@@ -19,7 +24,6 @@ import { TEXT_RUN, TEXT_SAVE_TABLE } from '@/consts'
 import { randomHexColor } from '@/lib/color/color'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DEFAULT_SHEET_NAME } from '@/lib/dataframe/base-dataframe'
-import { ICollection, IDataset, IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'
 import { range } from '@/lib/math/range'

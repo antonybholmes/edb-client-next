@@ -1,5 +1,5 @@
 import { IExtGseaPlotResult } from './ext-gsea-provider'
-import { IViper, viperToGsea } from './viper'
+import { IViper, viperToGsea } from './viper-gsea'
 
 export interface IViperWorkerMessage {
   viper: IViper

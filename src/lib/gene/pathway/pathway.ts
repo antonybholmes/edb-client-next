@@ -5,7 +5,7 @@ import {
   geneSetNames,
   type ICollection,
   type IGeneSet,
-} from '../../gsea/geneset'
+} from '../../../components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { argsort } from '../../math/argsort'
 
 import { minusLog10 } from '@/lib/math/logs'

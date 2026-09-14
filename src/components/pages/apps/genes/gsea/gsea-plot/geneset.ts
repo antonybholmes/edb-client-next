@@ -1,6 +1,6 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
-import { randomHexColor } from '../color/color'
-import { makeUuid } from '../id'
+import { randomHexColor } from '../../../../../../lib/color/color'
+import { makeUuid } from '../../../../../../lib/id'
 
 /**
  * Represents a gene and its associated score

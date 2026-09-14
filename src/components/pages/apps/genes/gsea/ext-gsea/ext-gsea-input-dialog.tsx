@@ -9,54 +9,10 @@ import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { OKCancelDialog } from '@/components/dialogs/ok-cancel-dialog'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { IRankedGene, IScoreGene } from '@/lib/gsea/geneset'
-import { makeUuid } from '@/lib/id'
-import { argsort } from '@/lib/math/argsort'
-import { range } from '@/lib/math/range'
 import { produce } from 'immer'
-import { useRunExtGsea } from '../use-run-ext-gsea'
-import { IViper } from './viper'
+import { useRunExtGsea } from './use-run-ext-gsea'
+import { dfToViper } from './viper'
 import { useViperWorker } from './viper-worker'
-
-export function dfToViper(df: BaseDataFrame): IViper {
-  const genes = df.rowNames
-
-  const scores = df.col(0).nums
-
-  // want largest to smallest
-  const idx = argsort(scores, true)
-
-  const signature: IRankedGene[] = idx.map((originalIndex, i) => ({
-    name: genes[originalIndex],
-    score: scores[originalIndex],
-    rank: i,
-  }))
-
-  const tfs = range(1, df.shape[1]).map((tfi) => {
-    const scores = df.col(tfi).nums
-
-    const pos: IScoreGene[] = []
-    const neg: IScoreGene[] = []
-
-    for (const gi of idx) {
-      const gene: IScoreGene = { name: genes[gi], score: scores[gi] }
-
-      if (scores[gi] === -1000) {
-        continue
-      }
-
-      if (scores[gi] > 0) {
-        pos.push(gene)
-      } else {
-        neg.push(gene)
-      }
-    }
-
-    return { id: makeUuid(), name: df.colName(tfi), targets: { pos, neg } }
-  })
-
-  return { id: makeUuid(), name: 'Viper', signature, tfs }
-}
 
 export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
   const { sheet } = useCurrentSheets()

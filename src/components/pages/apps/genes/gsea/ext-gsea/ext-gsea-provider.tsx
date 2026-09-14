@@ -1,9 +1,22 @@
-import { createContext, useContext, useEffect, type ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
 
+import {
+  IExtGseaResult,
+  IGseaResult,
+} from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea'
+import {
+  IGeneSet,
+  IRankedGene,
+} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
-import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
-import { IGeneSet, IRankedGene } from '@/lib/gsea/geneset'
 import { abs } from '@/lib/math/abs'
 import { range } from '@/lib/math/range'
 
@@ -16,6 +29,7 @@ import { IDBEntity } from '@/interfaces/db-entity'
 import { makeUuid } from '@/lib/id'
 import { max } from '@/lib/math/math'
 import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
+import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
 
 export interface IExtGseaPlotResult extends IDBEntity {
   scores: IRankedGene[]
@@ -85,8 +99,35 @@ export function ExtGseaProvider({
   children: ReactNode
 }) {
   const { addAxes } = useAxes()
+  const { settings } = useGseaSettings()
+  const [results, setResults] = useState<IExtGseaPlotResult[]>([])
 
-  const displayProps = plot?.props
+  const displayProps = useMemo(() => plot?.props, [plot])
+
+  useEffect(() => {
+    if (!plot || !plot.results.length) {
+      return
+    }
+
+    let results = [...plot.results]
+
+    if (settings.phenotypes.invert) {
+      results = results.map((result) => {
+        const maxRank = result.scores.length - 1
+
+        return {
+          ...result,
+          scores: result.scores.map((score) => ({
+            ...score,
+            rank: maxRank - score.rank,
+            score: -score.score,
+          })),
+        }
+      })
+    }
+
+    setResults(results)
+  }, [plot, settings.phenotypes.invert])
 
   useEffect(() => {
     for (const result of plot?.results ?? []) {

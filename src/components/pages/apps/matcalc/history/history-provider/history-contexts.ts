@@ -1,7 +1,7 @@
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 
+import { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
-import { IGeneSet } from '@/lib/gsea/geneset'
 import { createContext, useContext } from 'react'
 import {
   DataFrameType,

@@ -16,7 +16,7 @@ import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
 
-import { useRunExtGsea } from '../../genes/gsea/use-run-ext-gsea'
+import { useRunExtGsea } from '../../genes/gsea/ext-gsea/use-run-ext-gsea'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
