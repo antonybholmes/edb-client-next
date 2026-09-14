@@ -131,11 +131,7 @@ export function EsCurveSvg({
     }))
   }, [hits, xax, yax])
 
-  console.log('points', hits.length, points.length)
-
   const leadingEdge = useMemo(() => hits.filter((e) => e.leading), [hits])
-
-  console.log('sdtuf', points.length)
 
   return (
     <>

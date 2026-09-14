@@ -50,7 +50,7 @@ export function viperToGsea(
     const p: IExtGseaPlotResult = {
       id: tf.id,
       name: tf.name,
-      es: viper.signature,
+      scores: viper.signature,
       gs1,
       gs2,
       extGsea,

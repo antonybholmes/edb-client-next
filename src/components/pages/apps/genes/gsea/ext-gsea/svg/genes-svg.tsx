@@ -123,7 +123,7 @@ export function ExtGseaHitsSvg({
             <strong>
               {gsea.esHits[index].name} ({gs.name})
             </strong>
-            <span>{`Score: ${result.es[rank].score.toFixed(3)}`}</span>
+            <span>{`Score: ${result.scores[rank].score.toFixed(3)}`}</span>
             <span>{`Rank: ${gsea.esHits[index].rank.toLocaleString()}`}</span>
           </>
         ),

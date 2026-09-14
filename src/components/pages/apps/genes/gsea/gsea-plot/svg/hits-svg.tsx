@@ -69,8 +69,6 @@ export function GenesSvg({
 
   const xp = points.map((p) => p.x)
 
-  console.log('hits', es.length, hits.length)
-
   // for a given point, use its rank to find the corresponding gene in sortedRankedGenes,
   // then use its score to determine the color of the point. This is because we base
   // color on the ranking of all genes in the exp matrix so we are essentially using

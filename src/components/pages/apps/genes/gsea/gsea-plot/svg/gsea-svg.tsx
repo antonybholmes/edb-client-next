@@ -2,7 +2,6 @@ import { memo, useMemo } from 'react'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
-import { IPos } from '@/interfaces/pos'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { useAxis } from '@/components/plot/axes/axes-store'
@@ -64,8 +63,6 @@ const GseaPlot = memo(function GseaPlot({
   let subSampledEs = useMemo(() => {
     const genes = subsampleRankedGenes(es, 1000) //settings.es.step)
 
-    console.log('subsampled genes', genes.length)
-
     return settings.phenotypes.invert
       ? genes
           .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
@@ -95,18 +92,16 @@ const GseaPlot = memo(function GseaPlot({
       : result.hits
   }, [result, maxRank, settings.phenotypes.invert])
 
-  const points: IPos[] = useMemo(() => {
-    if (!xax || !yax) {
-      return []
-    }
+  // const points: IPos[] = useMemo(() => {
+  //   if (!xax || !yax) {
+  //     return []
+  //   }
 
-    return subSampledEs.map((e) => ({
-      x: xaf(e.rank),
-      y: yaf(e.score),
-    }))
-  }, [subSampledEs, xax, yax])
-
-  console.log('bbbbbbbbbbbb', points.length)
+  //   return subSampledEs.map((e) => ({
+  //     x: xaf(e.rank),
+  //     y: yaf(e.score),
+  //   }))
+  // }, [subSampledEs, xax, yax])
 
   if (!xax || !yax || !result) {
     return null
@@ -135,7 +130,6 @@ const GseaPlot = memo(function GseaPlot({
     <GenesSvg
       pathway={pathway}
       xax={xax}
-
       yaf={yaf}
       //points={points}
       es={sortedEs}
@@ -313,14 +307,6 @@ export function subsampleRankedGenes(
       { rank: rankedGenes[rankedGenes.length - 1]!.rank, name: '', score: 0 },
     ]
   }
-
-  console.log(
-    'dsfsdfsdfsdf',
-    subSampledRankedGenes.length,
-    rankedGenes.length,
-    ix.length,
-    step
-  )
 
   return subSampledRankedGenes
 }

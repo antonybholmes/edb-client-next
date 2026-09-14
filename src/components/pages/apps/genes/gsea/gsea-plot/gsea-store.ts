@@ -234,8 +234,6 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
           }
         })
 
-        console.log('cheese', hits)
-
         resultsMap[name] = { name, hits }
       }
     }

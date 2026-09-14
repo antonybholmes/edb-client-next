@@ -18,7 +18,7 @@ import { max } from '@/lib/math/math'
 import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
 
 export interface IExtGseaPlotResult extends IDBEntity {
-  es: IRankedGene[]
+  scores: IRankedGene[]
   id: string
   gs1: IGeneSet
   gs2: IGeneSet
@@ -90,19 +90,19 @@ export function ExtGseaProvider({
 
   useEffect(() => {
     for (const result of plot?.results ?? []) {
-      const es: IRankedGene[] = result.es
+      const scores: IRankedGene[] = result.scores
 
       const gseaRes1: IGseaResult = result.gsea1
       const gseaRes2: IGseaResult = result.gsea2
 
-      let y = gseaRes1.esAll //self._ranked_scores
+      let y = gseaRes1.es //self._ranked_scores
       const x = range(y.length)
 
       const xmax = max(x)
       const ymax = max(
         abs([
-          ...gseaRes1.esAll.map((g) => g.score),
-          ...gseaRes2.esAll.map((g) => g.score),
+          ...gseaRes1.es.map((g) => g.score),
+          ...gseaRes2.es.map((g) => g.score),
         ])
       )
 
@@ -124,7 +124,7 @@ export function ExtGseaProvider({
         tickParams: { which: 'minor', show: false },
       })
 
-      const yMax = max(abs(es.map((e) => e.score)))
+      const yMax = max(abs(scores.map((e) => e.score)))
 
       const yaxSnr = createAxis({
         id: 'y',

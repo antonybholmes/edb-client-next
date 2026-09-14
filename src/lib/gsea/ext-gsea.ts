@@ -36,7 +36,7 @@ export interface IGseaResult {
   /**
    * The enrichment score for the gene set.
    */
-  es: number
+  esScore: number
 
   /**
    * The scores of the genes that are hits in the gene set.
@@ -46,7 +46,7 @@ export interface IGseaResult {
   /**
    * Enrichment scores for all ranked genes. Will be several thousand
    */
-  esAll: IRankedGene[]
+  es: IRankedGene[]
 
   /**
    * Enrichment scores for leading edge genes in the gene set.
@@ -357,10 +357,10 @@ export class ExtGSEA {
     }))
 
     return {
-      es,
+      esScore: es,
 
       esHits, //: isInGeneset,
-      esAll: esAllHits,
+      es: esAllHits,
 
       //leadingEdgeIndices,
       leadingEdge,
