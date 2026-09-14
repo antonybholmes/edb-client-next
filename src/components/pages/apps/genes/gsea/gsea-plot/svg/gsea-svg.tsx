@@ -40,7 +40,7 @@ const GseaPlot = memo(function GseaPlot({
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
-  const { phenotypes, es, result } = useGseaData(pathway.name)
+  const { phenotypes, scores, result } = useGseaData(pathway.name)
 
   const pos = useMemo(
     () => ({ x: col * plotSize.w, y: row * plotSize.h }),
@@ -52,6 +52,7 @@ const GseaPlot = memo(function GseaPlot({
     groupId: 'es',
     axisId: 'x',
   })
+
   const { axis: yax } = useAxis({
     plotId: pathway.id,
     groupId: 'es',
@@ -61,7 +62,7 @@ const GseaPlot = memo(function GseaPlot({
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
   const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
-  const maxRank = es.length - 1
+  const maxRank = scores.length - 1
 
   // let subSampledEs = useMemo(() => {
   //   const genes = subsampleRankedGenes(es, 1000) //settings.es.step)
@@ -73,9 +74,9 @@ const GseaPlot = memo(function GseaPlot({
   //     : genes
   // }, [es, settings.es.step, settings.phenotypes.invert])
 
-  const sortedEs: IRankedGene[] = useMemo(
-    () => sortRankedGenes(es, maxRank, settings.phenotypes.invert),
-    [es, maxRank, settings.phenotypes.invert]
+  const sortedScores: IRankedGene[] = useMemo(
+    () => sortRankedGenes(scores, maxRank, settings.phenotypes.invert),
+    [scores, maxRank, settings.phenotypes.invert]
   )
 
   const hits = useMemo(() => {
@@ -103,7 +104,7 @@ const GseaPlot = memo(function GseaPlot({
     <EsSvg
       pathway={pathway}
       hits={hits}
-      numGenes={es.length}
+      numGenes={scores.length}
       xax={xax}
       yax={yax}
       phenotypes={phenotypes}
@@ -114,7 +115,7 @@ const GseaPlot = memo(function GseaPlot({
     plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
   }
 
-  const crossing = crossingIndex(sortedEs, xaf)
+  const crossing = crossingIndex(sortedScores, xaf)
 
   const genesSvg = settings.genes.show ? (
     <GenesSvg
@@ -122,7 +123,7 @@ const GseaPlot = memo(function GseaPlot({
       xax={xax}
       yaf={yaf}
       //points={points}
-      es={sortedEs}
+      scores={sortedScores}
       hits={hits}
       crossing={crossing}
       pos={{ x: 0, y: plotY }}
@@ -138,7 +139,7 @@ const GseaPlot = memo(function GseaPlot({
     <RankingSvg
       plotId={pathway.id}
       xaf={xaf}
-      es={sortedEs}
+      es={sortedScores}
       crossing={crossing}
       pos={{ x: 0, y: plotY }}
     />

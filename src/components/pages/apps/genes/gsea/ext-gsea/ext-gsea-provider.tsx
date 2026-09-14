@@ -127,6 +127,7 @@ export function ExtGseaProvider({
           maxRank,
           settings.phenotypes.invert
         )
+
         const gsea2 = sortGseaResult(
           result.gsea1,
           maxRank,

@@ -38,7 +38,10 @@ export interface IGseaResult {
 
 export interface IGseaStore {
   phenotypes: string[]
-  es: IRankedGene[]
+  /**
+   * The ranked gene scores for each gene in the expression matrix
+   */
+  scores: IRankedGene[]
   searchResults: IGseaTableResult[]
   reportsMap: Record<string, IGseaTableResult[]>
   geneSetsInUse: Record<string, boolean>
@@ -72,7 +75,7 @@ export function getGseaLog10q(q: number): number {
 
 export const useGseaStore = create<IGseaStore>()((set) => ({
   phenotypes: [],
-  es: [],
+  scores: [],
   searchResults: [],
   reportsMap: {},
   geneSetsInUse: {},
@@ -106,7 +109,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
 
     const resultsMap: Record<string, IGseaResult> = {}
 
-    let es: IRankedGene[] = []
+    let scores: IRankedGene[] = []
     let phenotypes: string[] = []
 
     const file = files[0]!
@@ -145,7 +148,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
 
         const scoreIdx = headings.findIndex((h) => h === 'SCORE')
 
-        es = rows.map((tokens, ti) => ({
+        scores = rows.map((tokens, ti) => ({
           name: tokens[geneIdx]!,
           rank: ti,
           // snr is stored in the score field for now
@@ -224,14 +227,15 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
 
         const rankIdx = headings.findIndex((h) => h === 'RANK IN GENE LIST')
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
-        const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
+        const scoreIdx = headings.findIndex((h) => h === 'RANK METRIC SCORE')
+        const esIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
         const hits: IRankedGene[] = rows.map((tokens) => {
           return {
             name: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
-            score: 1, // no weight for basic GSEA
-            esScore: Number(tokens[scoreIdx]!),
+            score: Number(tokens[scoreIdx]!),
+            esScore: Number(tokens[esIdx]!),
             leading: tokens[leadingIdx]!.includes('Yes'),
           }
         })
@@ -262,7 +266,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
     set({
       reportsMap,
       resultsMap,
-      es,
+      scores,
       phenotypes,
       allReports,
       geneSetsInUse,
@@ -285,7 +289,7 @@ export function useGsea(): Omit<
   loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
 } {
   const phenotypes = useGseaStore((state) => state.phenotypes)
-  const es = useGseaStore((state) => state.es)
+  const scores = useGseaStore((state) => state.scores)
   const searchResults = useGseaStore((state) => state.searchResults)
   //const reportsMap = useGseaPlotStore((state) => state.reportsMap)
   const geneSetsInUse = useGseaStore((state) => state.geneSetsInUse)
@@ -388,7 +392,7 @@ export function useGsea(): Omit<
   return {
     phenotypes,
     inUsePhenotypes,
-    es,
+    scores,
     searchResults,
     geneSetsInUse,
     resultsMap,
@@ -407,24 +411,24 @@ export function useGsea(): Omit<
 
 export function useGseaData(resultName: string): {
   phenotypes: string[]
-  es: IRankedGene[]
+  scores: IRankedGene[]
   result: IGseaResult | undefined
 } {
   const phenotypes = useGseaStore((state) => state.phenotypes)
-  const es = useGseaStore((state) => state.es)
+  const scores = useGseaStore((state) => state.scores)
   const result = useGseaStore((state) => state.resultsMap[resultName])
 
-  return { phenotypes, es, result }
+  return { phenotypes, scores, result }
 }
 
 // narrow selectors for building axes: avoids subscribing to search
 // results, report order, and actions that useGsea() also tracks
 export function useGseaInUse(): {
-  es: IRankedGene[]
+  scores: IRankedGene[]
   resultsMap: Record<string, IGseaResult>
   inUseReports: IGseaTableResult[]
 } {
-  const es = useGseaStore((state) => state.es)
+  const scores = useGseaStore((state) => state.scores)
   const resultsMap = useGseaStore((state) => state.resultsMap)
   const allReports = useGseaStore((state) => state.allReports)
   const geneSetsInUse = useGseaStore((state) => state.geneSetsInUse)
@@ -460,5 +464,5 @@ export function useGseaInUse(): {
     settings.genesets.filters.q.value,
   ])
 
-  return { es, resultsMap, inUseReports }
+  return { scores, resultsMap, inUseReports }
 }

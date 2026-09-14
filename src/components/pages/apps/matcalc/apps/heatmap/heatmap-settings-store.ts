@@ -260,7 +260,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   },
   padding: 10,
   //zoom: 1,
-  cmap: { name: 'bwr-v2', reversed: false },
+  cmap: { name: 'bwr-v2', opacity: 1, reversed: false },
   cells: {
     values: {
       show: false,

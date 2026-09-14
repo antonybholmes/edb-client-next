@@ -86,8 +86,6 @@ export function ExtGseaEsCurveSvg({
 
   const { leadingEdge, es, esHits } = gsea
 
-  //const maxRank = result.scores.length - 1
-
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])
 
@@ -97,7 +95,7 @@ export function ExtGseaEsCurveSvg({
         : [{ ...les[0]!, esScore: 0 }, ...les]
 
     return les
-  }, [leadingEdge, es]) //.map((g) => result.es[g.rank])
+  }, [leadingEdge, es])
 
   let leadingEdge1Svg: ReactNode | undefined = undefined
 

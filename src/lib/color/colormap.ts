@@ -723,12 +723,17 @@ export type ColorMapName =
   | 'plasma'
   | 'magma'
 
-export function getColorMap(name: string): ColorMap {
-  return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
+export function getColorMap(name: string | ICMAP): ColorMap {
+  if (typeof name === 'string') {
+    return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
+  } else {
+    return getColorMapFromICMAP(name)
+  }
 }
 
 export interface ICMAP {
   name: ColorMapName
+  opacity: number
   reversed: boolean
 }
 

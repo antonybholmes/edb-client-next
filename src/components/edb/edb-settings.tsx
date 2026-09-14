@@ -16,7 +16,7 @@ import { DEFAULT_COLORBAR_PROPS, IColorBarProps } from '../plot/svg-props'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v54`
+const SETTINGS_KEY = `${config.appId}:settings:v56`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -114,6 +114,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
     colors: { custom: [] },
     cmap: {
       name: 'bwr-v2',
+      opacity: 1,
       reversed: false,
     },
     colorbar: { ...DEFAULT_COLORBAR_PROPS },

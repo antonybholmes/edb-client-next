@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 
 import { IPos } from '@/interfaces/pos'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
-import { ColorMap } from '@/lib/color/colormap'
+import { getColorMap } from '@/lib/color/colormap'
 
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
@@ -10,6 +10,8 @@ import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
+import { abs } from '@/lib/math/abs'
+import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
@@ -18,10 +20,8 @@ import { IGseaTableResult, useGseaData } from '../gsea-store'
 
 export function GenesSvg({
   pathway,
-
   innerPlotSize,
-
-  es,
+  scores,
   hits,
   crossing,
   pos,
@@ -29,8 +29,7 @@ export function GenesSvg({
   yaf,
 }: {
   pathway: IGseaTableResult
-
-  es: IRankedGene[]
+  scores: IRankedGene[]
   hits: IRankedGene[]
   crossing: { index: number; x: number }
   innerPlotSize: IDim
@@ -45,39 +44,47 @@ export function GenesSvg({
 
   const { result } = useGseaData(pathway.name)
 
-  const c1 = settings.genes.pos.value
-  const c2 = addAlphaToHex(
-    settings.genes.pos.value,
-    settings.genes.gradient.opacity
-  )
-  const c3 = addAlphaToHex(
-    settings.genes.neg.value,
-    settings.genes.gradient.opacity
-  )
-  const c4 = settings.genes.neg.value
-  const cmap1 = new ColorMap('pos', 'pos', [c1, c2])
-  const cmap2 = new ColorMap('neg', 'neg', [c3, c4])
+  // const c1 = settings.genes.pos.value
+  // const c2 = addAlphaToHex(
+  //   settings.genes.pos.value,
+  //   settings.genes.gradient.opacity
+  // )
+  // const c3 = addAlphaToHex(
+  //   settings.genes.neg.value,
+  //   settings.genes.gradient.opacity
+  // )
+  //const c4 = settings.genes.neg.value
+  //const cmap1 = new ColorMap('pos', 'pos', [c1, c2])
+  //const cmap2 = new ColorMap('neg', 'neg', [c3, c4])
+
+  // we reverse the colormap because in a gsea plot,
+  // red/up appears on the left and blue/down appears on the right
+  const cmap = getColorMap(settings.genes.cmap).reverse()
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
-  const points: IPos[] = useMemo(() => {
-    return hits.map((e) => ({
-      x: xaf(e.rank),
-      y: yaf(e.score),
-    }))
+  //const rightWidth = xax.range[1] - crossing.x
+
+  const maxRank = scores.length - 1
+
+  const xp: number[] = useMemo(() => {
+    return hits.map((e) => xaf(e.rank))
   }, [hits, xaf, yaf])
 
-  const xp = points.map((p) => p.x)
+  const maxAbsScore = useMemo(
+    () => max(abs(scores.map((e) => e.score))),
+    [scores]
+  )
 
   // for a given point, use its rank to find the corresponding gene in sortedRankedGenes,
   // then use its score to determine the color of the point. This is because we base
   // color on the ranking of all genes in the exp matrix so we are essentially using
   // the signal to noise ratio to color the points from red (positive) to blue (negative)
-  const posPoints = points.filter((_, pi) => {
-    return es[hits[pi]!.rank]!.score >= 0
-  })
+  // const posPoints = xp.filter((_, pi) => {
+  //   return scores[hits[pi]!.rank]!.score >= 0
+  // })
 
-  const negPoints = points.filter((_, pi) => es[hits[pi]!.rank]!.score < 0)
+  // const negPoints = xp.filter((_, pi) => scores[hits[pi]!.rank]!.score < 0)
 
   // const _hideTooltip = useCallback(() => {
   //   hideCrosshair()
@@ -103,15 +110,15 @@ export function GenesSvg({
       const { index } = findNearest(plotP.x, xp)
 
       // find nearest es point using binary search
-      const nearestEsPoint = points[index]
+      const nearestEsPoint = xp[index]
 
-      if (Math.abs(plotP.x - nearestEsPoint.x) > 5) {
+      if (Math.abs(plotP.x - nearestEsPoint) > 5) {
         hideCrosshair()
         return
       }
 
       const barP = {
-        x: nearestEsPoint.x + settings.plot.margin.left + pos.x,
+        x: nearestEsPoint + settings.plot.margin.left + pos.x,
         y: settings.plot.margin.top + pos.y + settings.genes.height / 2,
       }
 
@@ -127,22 +134,12 @@ export function GenesSvg({
           </>
         ),
       })
-      // showTooltip({
-      //   pos: { x: screenP.x + 5, y: screenP.y + 5 },
-      //   content: (
-      //     <>
-      //       <strong>{result.es[left].name}</strong>
-      //       <span>{`Rank: ${result.es[left].rank.toLocaleString()}`}</span>
-      //       <span>{`Score: ${result.es[left].score.toFixed(3)}`}</span>
-      //     </>
-      //   ),
-      // })
     },
     [
       pos,
       ref,
       settings.plot.margin,
-      points,
+      xp,
       showCrosshair,
       hideCrosshair,
       result,
@@ -154,17 +151,32 @@ export function GenesSvg({
 
   return (
     <SvgG pos={pos}>
-      {posPoints.map((p, pi) => {
-        const pc = p.x / crossing.x
+      {hits.map((hit, hi) => {
+        const x = xp[hi]
 
-        const color = settings.genes.color.on
-          ? cmap1.getHexColor(pc)
-          : COLOR_BLACK
+        // scale from -1 to 1 and then normalize to 0-1 range
+        //const pc = (hit.score / maxAbsScore + 1) / 2
+
+        const pc =
+          hit.rank <= crossing.index
+            ? 0.5 * (hit.rank / crossing.index)
+            : 0.5 +
+              0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+
+        console.log(hit.score, hi, maxAbsScore, pc)
+
+        //const pc = p.x / crossing.x
+
+        const color = addAlphaToHex(
+          settings.genes.color.on ? cmap.getHexColor(pc) : COLOR_BLACK,
+          settings.genes.cmap.opacity
+        )
+
         return (
           <line
-            key={pi}
-            x1={p.x}
-            x2={p.x}
+            key={hi}
+            x1={x}
+            x2={x}
             y1={0}
             y2={settings.genes.height}
             strokeWidth={settings.genes.pos.width}
@@ -173,12 +185,13 @@ export function GenesSvg({
         )
       })}
 
-      {negPoints.map((p, pi) => {
-        const pc = (p.x - crossing.x) / (xax.range[1] - crossing.x)
+      {/* {negPoints.map((p, pi) => {
+        const pc = (p.x - crossing.x) / rightWidth
 
         const color = settings.genes.color.on
           ? cmap2.getHexColor(pc)
           : COLOR_BLACK
+
         return (
           <line
             key={posPoints.length + pi}
@@ -190,7 +203,7 @@ export function GenesSvg({
             stroke={color}
           />
         )
-      })}
+      })} */}
 
       <SvgRect
         id="mouse-rect"

@@ -27,7 +27,7 @@ export function useGseaPlot() {
 export function GseaPlotProvider({ children }: IChildrenProps) {
   const { settings } = useGseaSettings()
   const { addAxes } = useAxes()
-  const { es, inUseReports, resultsMap } = useGseaInUse()
+  const { scores, inUseReports, resultsMap } = useGseaInUse()
 
   // keep only pathways for which we have results, i.e. with
   // suitable q values. If q == 1, unlikely GSEA generated it
@@ -47,7 +47,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
       const result = resultsMap[pathway.name]!
 
       // ranks are 0-based in the results files
-      const maxRank = es.length - 1
+      const maxRank = scores.length - 1
 
       let xax = createAxis({
         id: 'x',
@@ -71,8 +71,6 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         Math.max(...hits.map((e) => e.esScore)),
       ]
 
-      console.log('what', ylim)
-
       let yaxEs = createAxis({
         id: 'y',
         direction: 'y',
@@ -90,10 +88,10 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         axes: { x: xax, y: yaxEs },
       })
 
-      // es score is snr
+      // scores is snr for all genes
       ylim = [
-        Math.min(...es.map((e) => e.score)),
-        Math.max(...es.map((e) => e.score)),
+        Math.min(...scores.map((e) => e.score)),
+        Math.max(...scores.map((e) => e.score)),
       ]
 
       let yaxSnr = createAxis({
@@ -112,7 +110,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
       })
     }
     addAxes(axesPlots)
-  }, [pathways, resultsMap, es, settings, addAxes])
+  }, [pathways, resultsMap, scores, settings, addAxes])
 
   return (
     <GseaPlotContext.Provider value={{ pathways }}>

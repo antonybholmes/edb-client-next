@@ -9,7 +9,6 @@ import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
@@ -24,7 +23,6 @@ function ExtGseaSvgPlot({
   pos: IPos
 }) {
   const { displayProps } = useExtGseaContext()
-  const { settings } = useGseaSettings()
 
   const yOffset = displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y
 
@@ -103,8 +101,6 @@ export function ExtGseaSvgContent() {
   const { results, displayProps } = useExtGseaContext()
   const { zoom } = useZoom()
 
-  // const displayProps: IExtGseaSettings = plot.props
-
   const innerPlotSize: IDim = useMemo(() => {
     return {
       w: displayProps.axes.x.length,
@@ -147,6 +143,7 @@ export function ExtGseaSvgContent() {
 
     for (const [ri, result] of results.entries()) {
       const pos: IPos = { x, y }
+
       elems.push(
         <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={pos}>
           <ExtGseaSvgPlot result={result} pos={pos} />

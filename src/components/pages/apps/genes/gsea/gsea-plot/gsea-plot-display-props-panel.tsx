@@ -22,6 +22,8 @@ import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 
@@ -259,7 +261,7 @@ export function GseaPlotDisplayPropsPanel() {
                 )
               }}
             >
-              <VCenterRow>
+              {/* <VCenterRow>
                 <FillButton
                   colors={[
                     {
@@ -296,7 +298,20 @@ export function GseaPlotDisplayPropsPanel() {
 
                   title="Negative Gene Color"
                 />
-              </VCenterRow>
+              </VCenterRow> */}
+
+              <ColorMapMenu
+                cmap={getColorMap(settings.genes.cmap.name)}
+                onChange={(cmap, reversed) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.cmap.name = cmap.id as ColorMapName
+                      //draft.genes.cmap.opacity = cmap.opacity
+                      draft.genes.cmap.reversed = reversed
+                    })
+                  )
+                }}
+              />
 
               {/* <ColorPickerButton
                 disabled={!settings.genes.show}
@@ -450,7 +465,7 @@ function GradientOpacityControl() {
   const { settings, updateSettings } = useGseaSettings()
 
   return (
-    <PropRow title="Gradient">
+    <PropRow title="Opacity">
       {/* <NumericalInput
                 value={settings.genes.gradient.alpha}
                 disabled={!settings.genes.gradient.on}
@@ -470,13 +485,13 @@ function GradientOpacityControl() {
               /> */}
 
       <PercentSlider
-        value={1 - settings.genes.gradient.opacity}
+        value={settings.genes.cmap.opacity}
         min={0}
         max={1}
         onNumChanged={(v) => {
           updateSettings(
             produce(settings, (draft) => {
-              draft.genes.gradient.opacity = 1 - v
+              draft.genes.cmap.opacity = v
             })
           )
         }}

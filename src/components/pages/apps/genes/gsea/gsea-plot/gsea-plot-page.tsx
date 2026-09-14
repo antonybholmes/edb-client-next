@@ -92,7 +92,7 @@ export function GseaPlotPage() {
 
   const {
     phenotypes,
-    es,
+    scores: es,
     filteredReports,
     geneSetsInUse,
     setGeneSetsInUse,

@@ -116,8 +116,6 @@ export function ExtGseaHitsSvg({
 
       const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
 
-      console.log(index, esHits)
-
       showCrosshair({
         pos: barScreenP,
         content: (

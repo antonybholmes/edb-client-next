@@ -73,7 +73,7 @@ export function EsLeadingEdgeSvg({
     ]
   } else {
     leadingPoints = [
-      { x: x1, y: y0 },
+      { x: linePos!.x, y: y0 },
       ...leadingPoints,
       {
         x: x1,
@@ -128,7 +128,7 @@ export function EsCurveSvg({
   const x1 = xax.range[1]
   const y0 = yaf(0)
 
-  const { leadingEdge, isLeft, maxEsScore, maxEsScoreIndex } = useMemo(() => {
+  const { leadingEdge } = useMemo(() => {
     const leadingEdge = hits.filter((e) => e.leading)
 
     const { value: maxEsScore, index: maxEsScoreIndex } = argmax(
@@ -141,9 +141,9 @@ export function EsCurveSvg({
     return { leadingEdge, isLeft, maxEsScore, maxEsScoreIndex }
   }, [hits])
 
-  const { points, leadingPoints } = useMemo(() => {
+  const points = useMemo(() => {
     if (!xax || !yax) {
-      return { points: [], leadingPoints: [] }
+      return []
     }
 
     let points = hits.map((e) => ({
@@ -170,19 +170,12 @@ export function EsCurveSvg({
       ]
     }
 
-    const leadingPoints = hits.filter((e) => e.leading)
-
-    return { points, leadingPoints }
+    return points
   }, [hits, xax, yax])
 
   return (
     <>
-      <EsLeadingEdgeSvg
-        leadingEdge={leadingEdge}
-
-        xax={xax}
-        yaf={yaf}
-      />
+      <EsLeadingEdgeSvg leadingEdge={leadingEdge} xax={xax} yaf={yaf} />
 
       <SvgPolyLine
         points={points.map((p) => `${p.x},${p.y}`).join(' ')}

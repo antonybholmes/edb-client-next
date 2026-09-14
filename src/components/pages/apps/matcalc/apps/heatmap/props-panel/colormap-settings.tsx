@@ -14,7 +14,7 @@ import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_BORDER } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
-import { COLOR_MAPS, ColorMapName } from '@/lib/color/colormap'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
 
@@ -62,7 +62,7 @@ export function ColormapSettingsPanel() {
         <PropRow title="Colormap">
           <ColorMapMenu
             align="end"
-            cmap={COLOR_MAPS[displayProps.cmap.name]}
+            cmap={getColorMap(displayProps.cmap.name)}
             reversed={displayProps.cmap.reversed}
 
             onChange={(cmap, reversed) =>

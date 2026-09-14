@@ -88,10 +88,10 @@ export function RankingSvg({
 }
 
 export function crossingIndex(
-  es: IRankedGene[],
+  scores: IRankedGene[],
   xaf: (domainValue: number) => number
 ): { index: number; x: number } {
-  const crossIndex = es.findLastIndex((gene) => gene.score > 0) + 1
+  const crossIndex = scores.findLastIndex((gene) => gene.score > 0) + 1
 
   const crossing = {
     index: crossIndex,
