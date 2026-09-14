@@ -4,18 +4,13 @@ import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ex
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 
-import {
-  type IGeneSet,
-  type IRankedGene,
-} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import { type IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { EsCurveSvg, EsLeadingEdgeSvg } from '../../gsea-plot/svg/es-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
-import { IExtGseaSettings } from '../ext-gsea-settings'
 
 export function ExtGseaEsCurveSvg({
   result,
@@ -28,8 +23,7 @@ export function ExtGseaEsCurveSvg({
   gsea: IGseaResult
   gsMode: 'gs1' | 'gs2'
 }) {
-  const { plot } = useExtGseaContext()
-  const { settings } = useGseaSettings()
+  const { displayProps } = useExtGseaContext()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -46,8 +40,6 @@ export function ExtGseaEsCurveSvg({
   if (gsea.leadingEdge.length === 0) {
     return null
   }
-
-  const displayProps: IExtGseaSettings = plot.props
 
   // size of plot with padding
 
@@ -93,34 +85,32 @@ export function ExtGseaEsCurveSvg({
   const xaf = axisDomainToRangeFunc(xax)
   const yaf = axisDomainToRangeFunc(yaxEs)
 
-  const maxRank = result.scores.length - 1
+  const { leadingEdge, es, esHits } = gsea
+
+  //const maxRank = result.scores.length - 1
 
   let leadingEdgeEs = useMemo(() => {
-    let es = gsea.leadingEdge.map((g) => gsea.es[g.rank])
+    let les = leadingEdge.map((g) => es[g.rank])
 
-    es =
+    les =
       gsea.esScore >= 0
-        ? [...es, { ...es[es.length - 1]!, score: 0 }]
-        : [{ ...es[0]!, score: 0 }, ...es]
+        ? [...les, { ...les[les.length - 1]!, esScore: 0 }]
+        : [{ ...les[0]!, esScore: 0 }, ...les]
 
-    if (settings.phenotypes.invert) {
-      es = es.map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-    }
-
-    return es
-  }, [gsea.leadingEdge, gsea.es, settings.phenotypes.invert]) //.map((g) => result.es[g.rank])
+    return les
+  }, [leadingEdge, es]) //.map((g) => result.es[g.rank])
 
   let leadingEdge1Svg: ReactNode | undefined = undefined
 
-  const esHits: IRankedGene[] = useMemo(
-    () =>
-      settings.phenotypes.invert
-        ? gsea.esHits
-            .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-            .sort((a, b) => a.rank - b.rank)
-        : gsea.esHits,
-    [gsea.esHits, maxRank, settings.phenotypes.invert]
-  )
+  // const esHits: IRankedGene[] = useMemo(
+  //   () =>
+  //     settings.phenotypes.invert
+  //       ? gsea.esHits
+  //           .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+  //           .sort((a, b) => a.rank - b.rank)
+  //       : gsea.esHits,
+  //   [gsea.esHits, maxRank, settings.phenotypes.invert]
+  // )
 
   if (displayProps.es[gsMode].leadingEdge.show) {
     leadingEdge1Svg = (
@@ -167,8 +157,7 @@ export function ExtGseaEsCurveSvg({
 }
 
 export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
-  const { plot } = useExtGseaContext()
-  const { settings } = useGseaSettings()
+  const { displayProps } = useExtGseaContext()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -182,18 +171,18 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     axisId: 'y',
   })
 
-  const displayProps: IExtGseaSettings = plot.props
+  // const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = useMemo(() => {
+  //   return {
+  //     scores: result.scores,
+  //     gs1: settings.phenotypes.invert ? result.gs2 : result.gs1,
+  //     gs2: settings.phenotypes.invert ? result.gs1 : result.gs2,
+  //     extGsea: result.extGsea,
+  //     gsea1: settings.phenotypes.invert ? result.gsea2 : result.gsea1,
+  //     gsea2: settings.phenotypes.invert ? result.gsea1 : result.gsea2,
+  //   }
+  // }, [result, settings.phenotypes.invert])
 
-  const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = useMemo(() => {
-    return {
-      scores: result.scores,
-      gs1: settings.phenotypes.invert ? result.gs2 : result.gs1,
-      gs2: settings.phenotypes.invert ? result.gs1 : result.gs2,
-      extGsea: result.extGsea,
-      gsea1: settings.phenotypes.invert ? result.gsea2 : result.gsea1,
-      gsea2: settings.phenotypes.invert ? result.gsea1 : result.gsea2,
-    }
-  }, [result, settings.phenotypes.invert])
+  const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = result
 
   const yaf = axisDomainToRangeFunc(yaxEs)
 

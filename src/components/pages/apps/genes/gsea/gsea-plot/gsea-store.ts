@@ -148,6 +148,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
         es = rows.map((tokens, ti) => ({
           name: tokens[geneIdx]!,
           rank: ti,
+          // snr is stored in the score field for now
           score: Number(tokens[scoreIdx]!),
           leading: false,
         }))
@@ -229,7 +230,8 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
           return {
             name: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
-            score: Number(tokens[scoreIdx]!),
+            score: 1, // no weight for basic GSEA
+            esScore: Number(tokens[scoreIdx]!),
             leading: tokens[leadingIdx]!.includes('Yes'),
           }
         })

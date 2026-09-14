@@ -2901,6 +2901,10 @@
         {
           "msg": "Refined names for gsea and ext gsea to be less confusing",
           "date": "2026-09-14T01:00:16.665Z"
+        },
+        {
+          "msg": "Revised argsort. Refactored ext gsea. Viper now sorts genesets even if unneccessary",
+          "date": "2026-09-14T14:30:41.708Z"
         }
       ]
     },

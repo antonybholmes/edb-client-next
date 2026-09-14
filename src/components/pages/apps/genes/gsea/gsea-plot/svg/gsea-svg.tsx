@@ -4,7 +4,10 @@ import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import {
+  IRankedGene,
+  sortRankedGenes,
+} from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
@@ -71,25 +74,12 @@ const GseaPlot = memo(function GseaPlot({
   // }, [es, settings.es.step, settings.phenotypes.invert])
 
   const sortedEs: IRankedGene[] = useMemo(
-    () =>
-      settings.phenotypes.invert
-        ? es
-            .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-            .sort((a, b) => a.rank - b.rank)
-        : es,
+    () => sortRankedGenes(es, maxRank, settings.phenotypes.invert),
     [es, maxRank, settings.phenotypes.invert]
   )
 
   const hits = useMemo(() => {
-    if (!result) {
-      return []
-    }
-
-    return settings.phenotypes.invert
-      ? result.hits
-          .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-          .sort((a, b) => a.rank - b.rank)
-      : result.hits
+    return sortRankedGenes(result.hits, maxRank, settings.phenotypes.invert)
   }, [result, maxRank, settings.phenotypes.invert])
 
   // const points: IPos[] = useMemo(() => {

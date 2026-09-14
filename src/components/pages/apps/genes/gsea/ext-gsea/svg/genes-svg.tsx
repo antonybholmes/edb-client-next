@@ -9,7 +9,6 @@ import {
 import {
   geneSetScores,
   IRankedGene,
-  IScoreGene,
   type IGeneSet,
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { gsea } from '@/components/pages/apps/genes/gsea/gsea-plot/gsea'
@@ -25,7 +24,6 @@ import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
@@ -33,7 +31,7 @@ export function ExtGseaHitsSvg({
   xax,
   gs,
   esHits,
-  scores,
+
   maxScore,
   gsMode,
   pos,
@@ -41,19 +39,17 @@ export function ExtGseaHitsSvg({
   xax: IAxis
   gs: IGeneSet
   esHits: IRankedGene[]
-  scores: IScoreGene[]
+  //scores: IRankedGene[]
   maxScore: number
   gsMode: 'gs1' | 'gs2'
   pos: IPos
 }) {
-  const { plot } = useExtGseaContext()
+  const { displayProps } = useExtGseaContext()
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
   //const { showTooltip, hideTooltip } = useTooltip()
 
   const w = useMemo(() => axisLength(xax), [xax])
-
-  const displayProps: IExtGseaSettings = plot.props
 
   const points = useMemo(() => {
     if (!xax) {
@@ -111,7 +107,7 @@ export function ExtGseaHitsSvg({
         return
       }
 
-      const rank = esHits[index].rank
+      //const rank = esHits[index].rank
 
       const barP = {
         x: nearest + displayProps.plot.margin.left + pos.x,
@@ -120,6 +116,8 @@ export function ExtGseaHitsSvg({
 
       const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
 
+      console.log(index, esHits)
+
       showCrosshair({
         pos: barScreenP,
         content: (
@@ -127,7 +125,7 @@ export function ExtGseaHitsSvg({
             <strong>
               {esHits[index].name} ({gs.name})
             </strong>
-            <span>{`Score: ${scores[rank].score.toFixed(3)}`}</span>
+            <span>{`Score: ${esHits[index].score.toFixed(3)}`}</span>
             <span>{`Rank: ${esHits[index].rank.toLocaleString()}`}</span>
           </>
         ),
@@ -168,10 +166,10 @@ export function ExtGseaHitsSvg({
       return (
         <>
           <SvgG id="hits">
-            {scores.map((hit, hiti) => {
+            {esHits.map((hit, hiti) => {
               const x = points[hiti].x // ?? xaf(gsea.esHits[hiti].rank)
 
-              const score = hit.score / maxScore
+              const score = Math.abs(hit.score) / maxScore
               const diff = 1 - score
 
               //need to vary between 1 and score/max score according to the gene score
@@ -233,7 +231,6 @@ export function ExtGseaHitsSvg({
     gsMode,
     gsea,
     xax,
-    scores,
     points,
     maxScore,
     displayProps,
@@ -253,7 +250,6 @@ export function ExtGseaGenesSvgPlot({
   pos: IPos
 }) {
   const { plot } = useExtGseaContext()
-  const { settings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -264,14 +260,19 @@ export function ExtGseaGenesSvgPlot({
   const displayProps: IExtGseaSettings = plot.props
 
   const { gs1, gs2, esHits1, esHits2, scores1, scores2 } = useMemo(() => {
-    let gs1 = settings.phenotypes.invert ? result.gs2 : result.gs1
+    /* let gs1 = settings.phenotypes.invert ? result.gs2 : result.gs1
     let gs2 = settings.phenotypes.invert ? result.gs1 : result.gs2
     let esHits1 = settings.phenotypes.invert
       ? result.gsea2.esHits
       : result.gsea1.esHits
     let esHits2 = settings.phenotypes.invert
       ? result.gsea1.esHits
-      : result.gsea2.esHits
+      : result.gsea2.esHits */
+
+    let gs1 = result.gs1
+    let gs2 = result.gs2
+    let esHits1 = result.gsea1.esHits
+    let esHits2 = result.gsea2.esHits
 
     let scores1 = geneSetScores(gs1).map((g) => ({
       ...g,
@@ -283,25 +284,25 @@ export function ExtGseaGenesSvgPlot({
       score: Math.abs(g.score),
     }))
 
-    if (settings.phenotypes.invert) {
-      const maxRank = result.scores.length - 1
-      esHits1 = esHits1.map((hit) => ({
-        ...hit,
-        rank: maxRank - hit.rank,
-        score: -hit.score,
-      })) // reverse the rank
-      esHits2 = esHits2.map((hit) => ({
-        ...hit,
-        rank: maxRank - hit.rank,
-        score: -hit.score,
-      })) // reverse the rank
+    // if (settings.phenotypes.invert) {
+    //   const maxRank = result.scores.length - 1
+    //   esHits1 = esHits1.map((hit) => ({
+    //     ...hit,
+    //     rank: maxRank - hit.rank,
+    //     score: -hit.score,
+    //   })) // reverse the rank
+    //   esHits2 = esHits2.map((hit) => ({
+    //     ...hit,
+    //     rank: maxRank - hit.rank,
+    //     score: -hit.score,
+    //   })) // reverse the rank
 
-      scores1 = scores1.reverse()
-      scores2 = scores2.reverse()
-    }
+    //   scores1 = scores1.reverse()
+    //   scores2 = scores2.reverse()
+    // }
 
     return { gs1, gs2, esHits1, esHits2, scores1, scores2 }
-  }, [result, settings.phenotypes.invert])
+  }, [result])
 
   const genesSvg = useMemo(() => {
     let genesSvg: ReactNode | undefined = undefined
@@ -324,7 +325,7 @@ export function ExtGseaGenesSvgPlot({
             xax={xax}
             gs={gs1}
             esHits={esHits1}
-            scores={scores1}
+            //scores={scores1}
             maxScore={maxScore}
             gsMode="gs1"
             pos={pos}
@@ -340,7 +341,7 @@ export function ExtGseaGenesSvgPlot({
               xax={xax}
               gs={gs2}
               esHits={esHits2}
-              scores={scores2}
+              //scores={scores2}
               maxScore={maxScore}
               gsMode="gs2"
               pos={{

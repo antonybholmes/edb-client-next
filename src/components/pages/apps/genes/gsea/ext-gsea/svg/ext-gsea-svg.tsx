@@ -12,7 +12,6 @@ import { useZoom } from '@/providers/zoom-provider'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
-import { IExtGseaSettings } from '../ext-gsea-settings'
 import { ExtGseaEsSvgPlot } from './es-svg'
 import { ExtGseaGenesSvgPlot } from './genes-svg'
 import { ExtGseaTitleSvg } from './title-svg'
@@ -24,10 +23,8 @@ function ExtGseaSvgPlot({
   result: IExtGseaPlotResult
   pos: IPos
 }) {
-  const { plot } = useExtGseaContext()
+  const { displayProps } = useExtGseaContext()
   const { settings } = useGseaSettings()
-
-  const displayProps: IExtGseaSettings = plot.props
 
   const yOffset = displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y
 
@@ -39,19 +36,21 @@ function ExtGseaSvgPlot({
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
-  const scores = useMemo(() => {
-    const maxRank = result.scores.length - 1
+  // const scores = useMemo(() => {
+  //   const maxRank = result.scores.length - 1
 
-    return settings.phenotypes.invert
-      ? result.scores
-          .map((e) => ({
-            ...e,
-            rank: maxRank - e.rank,
-            score: -e.score,
-          }))
-          .sort((a, b) => a.rank - b.rank)
-      : result.scores
-  }, [result.scores, settings.phenotypes.invert])
+  //   return settings.phenotypes.invert
+  //     ? result.scores
+  //         .map((e) => ({
+  //           ...e,
+  //           rank: maxRank - e.rank,
+  //           score: -e.score,
+  //         }))
+  //         .sort((a, b) => a.rank - b.rank)
+  //     : result.scores
+  // }, [result.scores, settings.phenotypes.invert])
+
+  const scores = result.scores
 
   const crossing = useMemo(() => crossingIndex(scores, xaf), [scores, xaf])
 
@@ -101,10 +100,10 @@ function ExtGseaSvgPlot({
 }
 
 export function ExtGseaSvgContent() {
-  const { plot } = useExtGseaContext()
+  const { results, displayProps } = useExtGseaContext()
   const { zoom } = useZoom()
 
-  const displayProps: IExtGseaSettings = plot.props
+  // const displayProps: IExtGseaSettings = plot.props
 
   const innerPlotSize: IDim = useMemo(() => {
     return {
@@ -136,10 +135,9 @@ export function ExtGseaSvgContent() {
   const pageSize: IDim = useMemo(() => {
     return {
       w: plotSize.w * displayProps.page.columns,
-      h:
-        plotSize.h * Math.ceil(plot.results.length / displayProps.page.columns),
+      h: plotSize.h * Math.ceil(results.length / displayProps.page.columns),
     }
-  }, [plotSize, displayProps.page.columns, plot.results.length])
+  }, [plotSize, displayProps.page.columns, results.length])
 
   const svg = useMemo(() => {
     const elems: ReactElement[] = []
@@ -147,7 +145,7 @@ export function ExtGseaSvgContent() {
     let x = 0
     let y = 0
 
-    for (const [ri, result] of plot.results.entries()) {
+    for (const [ri, result] of results.entries()) {
       const pos: IPos = { x, y }
       elems.push(
         <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={pos}>
@@ -164,12 +162,7 @@ export function ExtGseaSvgContent() {
     }
 
     return <SvgMargin margin={displayProps.plot.margin}>{elems}</SvgMargin>
-  }, [
-    plot.results,
-    plotSize,
-    displayProps.page.columns,
-    displayProps.plot.margin,
-  ])
+  }, [results, plotSize, displayProps.page.columns, displayProps.plot.margin])
 
   return (
     <SvgBase width={pageSize.w} height={pageSize.h} scale={zoom}>

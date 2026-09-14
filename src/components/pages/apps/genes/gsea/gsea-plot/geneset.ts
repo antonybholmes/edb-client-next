@@ -11,7 +11,41 @@ import { makeUuid } from '../../../../../../lib/id'
  */
 export interface IScoreGene {
   name: string
+  /**
+   * The primary score associated with the gene. In regular
+   * GSEA this will be ignored so set to 1, but in viper we
+   * can use it as a scaling factor per gene hit.
+   */
   score: number
+}
+
+export interface IESScoreGene extends IScoreGene {
+  /**
+   * The enrichment score (ES) associated with the gene.
+   */
+  esScore?: number
+}
+
+export interface IRankedGene extends IESScoreGene {
+  rank: number
+  leading?: boolean
+}
+
+export function sortRankedGenes(
+  genes: IRankedGene[],
+  maxRank: number = genes.length - 1,
+  invert: boolean = false
+): IRankedGene[] {
+  return (
+    invert
+      ? genes.map((e) => ({
+          ...e,
+          rank: maxRank - e.rank,
+          score: -e.score,
+          esScore: e.esScore !== undefined ? -e.esScore : undefined,
+        }))
+      : [...genes]
+  ).sort((a, b) => a.rank - b.rank)
 }
 
 export interface IGeneSet extends IDBEntity {
@@ -53,11 +87,6 @@ export const EMPTY_GENE_SET: IGeneSet = {
   //type: 'geneset',
 }
 
-export interface IRankedGene extends IScoreGene {
-  rank: number
-  leading?: boolean
-}
-
 // export interface IRankedGenes {
 //   group1: IClusterGroup
 //   group2: IClusterGroup
@@ -97,7 +126,7 @@ export function geneSetScores(
   geneset: IGeneSet,
   defaultScore: number = 1
 ): IScoreGene[] {
-  return geneset.genes.map((g) =>
+  return geneset.genes.map((g, gi) =>
     typeof g === 'string' ? { name: g, score: defaultScore } : g
   )
 }

@@ -40,12 +40,12 @@ export function EsLeadingEdgeSvg({
 
   let leadingPoints = leadingEdge.map((e) => ({
     x: xaf(e.rank),
-    y: yaf(e.score),
+    y: yaf(e.esScore),
   }))
 
-  const { value } = argmaxAbs(leadingEdge.map((e) => e.score))
+  const { value: maxAbsEsScore } = argmaxAbs(leadingEdge.map((e) => e.esScore))
 
-  const isLeft = value >= 0
+  const isLeft = maxAbsEsScore >= 0
 
   // To make the filled area under the leading edge curve,
   // we need to add points at the start and end of the leading edge curve to ensure it is closed.
@@ -127,7 +127,7 @@ export function EsCurveSvg({
 
     return hits.map((e) => ({
       x: xaf(e.rank),
-      y: yaf(e.score),
+      y: yaf(e.esScore),
     }))
   }, [hits, xax, yax])
 
@@ -176,7 +176,6 @@ export function EsSvg({
   const phenotypei = phenIndexMap.get(pathway.phen)!
   //const rankMid = maxRank / 2
 
-  const xaf = axisDomainToRangeFunc(xax)
   const yaf = axisDomainToRangeFunc(yax)
 
   const y0 = yaf(0)

@@ -14,6 +14,7 @@ import {
 import {
   IGeneSet,
   IRankedGene,
+  sortRankedGenes,
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
@@ -75,6 +76,7 @@ export function newExtGseaPlot(
 export interface IExtGseaPropsContextType {
   displayProps: IExtGseaSettings
   plot: IExtGseaPlot
+  results: IExtGseaPlotResult[]
 }
 
 export const ExtGseaContext = createContext<
@@ -117,11 +119,57 @@ export function ExtGseaProvider({
 
         return {
           ...result,
-          scores: result.scores.map((score) => ({
-            ...score,
-            rank: maxRank - score.rank,
-            score: -score.score,
-          })),
+
+          extGsea: {
+            ...result.extGsea,
+            leadingEdge: sortRankedGenes(
+              result.extGsea.leadingEdge,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+          },
+
+          gsea1: {
+            ...result.gsea1,
+            es: sortRankedGenes(
+              result.gsea1.es,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+            esHits: sortRankedGenes(
+              result.gsea1.esHits,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+            leadingEdge: sortRankedGenes(
+              result.gsea1.leadingEdge,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+          },
+          gsea2: {
+            ...result.gsea2,
+            es: sortRankedGenes(
+              result.gsea2.es,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+            esHits: sortRankedGenes(
+              result.gsea2.esHits,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+            leadingEdge: sortRankedGenes(
+              result.gsea2.leadingEdge,
+              maxRank,
+              settings.phenotypes.invert
+            ),
+          },
+          scores: sortRankedGenes(
+            result.scores,
+            maxRank,
+            settings.phenotypes.invert
+          ),
         }
       })
     }
@@ -142,8 +190,8 @@ export function ExtGseaProvider({
       const xmax = max(x)
       const ymax = max(
         abs([
-          ...gseaRes1.es.map((g) => g.score),
-          ...gseaRes2.es.map((g) => g.score),
+          ...gseaRes1.es.map((g) => g.esScore),
+          ...gseaRes2.es.map((g) => g.esScore),
         ])
       )
 
@@ -206,7 +254,9 @@ export function ExtGseaProvider({
   }, [plot])
 
   return (
-    <ExtGseaContext.Provider value={{ displayProps: plot?.props, plot }}>
+    <ExtGseaContext.Provider
+      value={{ displayProps: plot?.props, plot, results }}
+    >
       {children}
     </ExtGseaContext.Provider>
   )

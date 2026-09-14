@@ -4,6 +4,7 @@ import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { ILim } from '@/lib/math/math'
+import { IRankedGene, sortRankedGenes } from './geneset'
 import { useGseaSettings } from './gsea-settings-store'
 import { IGseaTableResult, useGseaInUse } from './gsea-store'
 
@@ -57,12 +58,20 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         tickParams: { which: 'both', show: false },
       })
 
-      const hits = results.hits
+      //const hits = results.hits
+
+      const hits: IRankedGene[] = sortRankedGenes(
+        results.hits,
+        maxRank,
+        settings.phenotypes.invert
+      )
 
       let ylim: ILim = [
-        Math.min(...hits.map((e) => e.score)),
-        Math.max(...hits.map((e) => e.score)),
+        Math.min(...hits.map((e) => e.esScore)),
+        Math.max(...hits.map((e) => e.esScore)),
       ]
+
+      console.log('what', ylim)
 
       let yaxEs = createAxis({
         id: 'y',
@@ -80,16 +89,6 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         axisIds: ['x', 'y'],
         axes: { x: xax, y: yaxEs },
       })
-
-      // const sortedHits: IRankedGene[] = settings.phenotypes.invert
-      //   ? hits
-      //       .map((e) => ({
-      //         ...e,
-      //         rank: maxRank - e.rank,
-      //         score: -e.score,
-      //       }))
-      //       .sort((a, b) => a.rank - b.rank)
-      //   : hits
 
       // es score is snr
       ylim = [

@@ -295,10 +295,10 @@ export class ExtGSEA {
       }
     }
 
-    const scores = this._es.map((g) => g.score)
+    const esScores = this._es.map((g) => g.score)
 
     // Compute ES
-    let scoreHits = cumsum(pow(abs(mult(scores, isInGeneset)), this._w))
+    let scoreHits = cumsum(pow(abs(mult(esScores, isInGeneset)), this._w))
     scoreHits = div(scoreHits, scoreHits[scoreHits.length - 1]!)
 
     let scoreMisses = cumsum(isInGeneset.map((v) => 1 - v))
@@ -343,17 +343,25 @@ export class ExtGSEA {
 
     const hits = where(isInGeneset, (v) => v > 0)
 
-    const esHits: IRankedGene[] = hits.map((i) => ({
-      rank: i,
-      name: this._es[i]!.name,
-      score: esAll[i]!,
-    }))
+    const esHits: IRankedGene[] = hits.map((i) => {
+      const name = this._es[i]!.name
+      return {
+        rank: i,
+        name,
+        score: geneScores1.get(name) ?? 1,
+        esScore: esAll[i]!,
+      }
+    })
 
-    const esAllHits: IRankedGene[] = esAll.map((score, i) => ({
-      rank: i,
-      name: this._es[i]!.name,
-      score,
-    }))
+    const esAllHits: IRankedGene[] = esAll.map((score, i) => {
+      const name = this._es[i]!.name
+      return {
+        rank: i,
+        name,
+        score: geneScores1.get(name) ?? 1,
+        esScore: score,
+      }
+    })
 
     return {
       esScore: es,
