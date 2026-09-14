@@ -12,7 +12,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
-import { ExtGseaEsSvgPlot } from './es-svg'
+import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
 import { ExtGseaGenesSvgPlot } from './genes-svg'
 import { ExtGseaTitleSvg } from './title-svg'
 

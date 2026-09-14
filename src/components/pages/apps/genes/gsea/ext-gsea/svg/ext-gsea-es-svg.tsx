@@ -82,7 +82,6 @@ export function ExtGseaEsCurveSvg({
 
   // fix ends
 
-  const xaf = axisDomainToRangeFunc(xax)
   const yaf = axisDomainToRangeFunc(yaxEs)
 
   const { leadingEdge, es, esHits } = gsea
@@ -116,7 +115,7 @@ export function ExtGseaEsCurveSvg({
     leadingEdge1Svg = (
       <EsLeadingEdgeSvg
         leadingEdge={leadingEdgeEs}
-        xaf={xaf}
+        xax={xax}
         yaf={yaf}
         fill={gs.color ?? displayProps.es[gsMode].leadingEdge.value}
         fillOpacity={displayProps.es[gsMode].leadingEdge.opacity}

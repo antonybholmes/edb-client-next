@@ -9,33 +9,34 @@ import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
-import { argmaxAbs } from '@/lib/math/math'
+import { argmax } from '@/lib/math/math'
 import { useMemo } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'
 import { IGseaTableResult } from '../gsea-store'
 
 export function EsLeadingEdgeSvg({
   leadingEdge,
-  xaf,
+  xax,
   yaf,
   fill,
   fillOpacity,
 }: {
   leadingEdge: IRankedGene[]
-
-  xaf: (domain: number) => number
+  xax: IAxis
   yaf: (domain: number) => number
   fill?: string
   fillOpacity?: number
 }) {
   const { settings } = useGseaSettings()
 
-  if (leadingEdge.length === 0) {
+  if (!xax || leadingEdge.length === 0) {
     return null
   }
 
-  const x0 = xaf(0)
-  const x1 = xaf(leadingEdge[leadingEdge.length - 1]!.rank)
+  const xaf = axisDomainToRangeFunc(xax)
+
+  const x0 = xax.range[0]
+  const x1 = xax.range[1]
   const y0 = yaf(0)
 
   let leadingPoints = leadingEdge.map((e) => ({
@@ -43,9 +44,12 @@ export function EsLeadingEdgeSvg({
     y: yaf(e.esScore),
   }))
 
-  const { value: maxAbsEsScore } = argmaxAbs(leadingEdge.map((e) => e.esScore))
+  const { value: maxEsScore } = argmax(
+    leadingEdge.map((e) => e.esScore),
+    { abs: true }
+  )
 
-  const isLeft = maxAbsEsScore >= 0
+  const isLeft = maxEsScore >= 0
 
   // To make the filled area under the leading edge curve,
   // we need to add points at the start and end of the leading edge curve to ensure it is closed.
@@ -69,7 +73,7 @@ export function EsLeadingEdgeSvg({
     ]
   } else {
     leadingPoints = [
-      { x: leadingPoints[0]!.x, y: y0 },
+      { x: x1, y: y0 },
       ...leadingPoints,
       {
         x: x1,
@@ -120,22 +124,65 @@ export function EsCurveSvg({
   const yaf = axisDomainToRangeFunc(yax)
   const xaf = axisDomainToRangeFunc(xax)
 
-  const points: IPos[] = useMemo(() => {
+  const x0 = xaf(0)
+  const x1 = xax.range[1]
+  const y0 = yaf(0)
+
+  const { leadingEdge, isLeft, maxEsScore, maxEsScoreIndex } = useMemo(() => {
+    const leadingEdge = hits.filter((e) => e.leading)
+
+    const { value: maxEsScore, index: maxEsScoreIndex } = argmax(
+      leadingEdge.map((e) => e.esScore),
+      { abs: true }
+    )
+
+    const isLeft = maxEsScore >= 0
+
+    return { leadingEdge, isLeft, maxEsScore, maxEsScoreIndex }
+  }, [hits])
+
+  const { points, leadingPoints } = useMemo(() => {
     if (!xax || !yax) {
-      return []
+      return { points: [], leadingPoints: [] }
     }
 
-    return hits.map((e) => ({
+    let points = hits.map((e) => ({
       x: xaf(e.rank),
       y: yaf(e.esScore),
     }))
-  }, [hits, xax, yax])
 
-  const leadingEdge = useMemo(() => hits.filter((e) => e.leading), [hits])
+    // fix starts and ends
+
+    if (points[0].x !== x0 || points[0].y !== y0) {
+      points = [{ x: x0, y: y0 }, ...points]
+    }
+
+    if (
+      points[points.length - 1]!.x !== x1 ||
+      points[points.length - 1]!.y !== y0
+    ) {
+      points = [
+        ...points,
+        {
+          x: x1,
+          y: y0,
+        },
+      ]
+    }
+
+    const leadingPoints = hits.filter((e) => e.leading)
+
+    return { points, leadingPoints }
+  }, [hits, xax, yax])
 
   return (
     <>
-      <EsLeadingEdgeSvg leadingEdge={leadingEdge} xaf={xaf} yaf={yaf} />
+      <EsLeadingEdgeSvg
+        leadingEdge={leadingEdge}
+
+        xax={xax}
+        yaf={yaf}
+      />
 
       <SvgPolyLine
         points={points.map((p) => `${p.x},${p.y}`).join(' ')}

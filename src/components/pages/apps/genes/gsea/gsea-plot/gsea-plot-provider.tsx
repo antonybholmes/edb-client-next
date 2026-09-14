@@ -44,7 +44,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
     const axesPlots: IPlotAxes[] = []
 
     for (const pathway of pathways) {
-      const results = resultsMap[pathway.name]!
+      const result = resultsMap[pathway.name]!
 
       // ranks are 0-based in the results files
       const maxRank = es.length - 1
@@ -61,7 +61,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
       //const hits = results.hits
 
       const hits: IRankedGene[] = sortRankedGenes(
-        results.hits,
+        result.hits,
         maxRank,
         settings.phenotypes.invert
       )

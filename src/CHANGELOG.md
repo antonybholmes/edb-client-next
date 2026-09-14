@@ -17,6 +17,10 @@
 - run ext gsea now in helper hook.
 - Bug fixes and updates.
 
+### Fixed
+
+- ExtGSEA ES score now inverted properly when phenotypes inverted.
+
 
 ## 89.4.0 (Sep, 2026)
 

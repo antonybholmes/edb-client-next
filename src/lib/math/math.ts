@@ -83,24 +83,22 @@ export function min(x: number[]): number {
  * @param data
  * @returns
  */
-export function argmax(data: number[]): { value: number; index: number } {
+export function argmax(
+  data: number[],
+  opts: { abs?: boolean } = {}
+): { value: number; index: number } {
+  const { abs = false } = opts
   let best = 0
 
   for (let i = 1; i < data.length; i++) {
-    if (data[i] > data[best]) {
-      best = i
-    }
-  }
-
-  return { value: data[best], index: best }
-}
-
-export function argmaxAbs(data: number[]): { value: number; index: number } {
-  let best = 0
-
-  for (let i = 1; i < data.length; i++) {
-    if (Math.abs(data[i]) > Math.abs(data[best])) {
-      best = i
+    if (abs) {
+      if (Math.abs(data[i]) > Math.abs(data[best])) {
+        best = i
+      }
+    } else {
+      if (data[i] > data[best]) {
+        best = i
+      }
     }
   }
 

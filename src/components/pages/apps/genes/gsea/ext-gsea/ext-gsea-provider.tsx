@@ -122,6 +122,7 @@ export function ExtGseaProvider({
 
           extGsea: {
             ...result.extGsea,
+            esScore: -result.extGsea.esScore,
             leadingEdge: sortRankedGenes(
               result.extGsea.leadingEdge,
               maxRank,
@@ -131,6 +132,7 @@ export function ExtGseaProvider({
 
           gsea1: {
             ...result.gsea1,
+            esScore: -result.gsea1.esScore,
             es: sortRankedGenes(
               result.gsea1.es,
               maxRank,
@@ -147,8 +149,10 @@ export function ExtGseaProvider({
               settings.phenotypes.invert
             ),
           },
+
           gsea2: {
             ...result.gsea2,
+            esScore: -result.gsea2.esScore,
             es: sortRankedGenes(
               result.gsea2.es,
               maxRank,
@@ -165,6 +169,7 @@ export function ExtGseaProvider({
               settings.phenotypes.invert
             ),
           },
+
           scores: sortRankedGenes(
             result.scores,
             maxRank,

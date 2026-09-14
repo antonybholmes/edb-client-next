@@ -2910,6 +2910,12 @@
           "msg": "GSEA now has score and esScore so we can give two scores to a gene, its original score than then the running enrichment score it is assigned",
           "date": "2026-09-14T15:53:03.262Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "ExtGSEA ES score now inverted properly when phenotypes inverted",
+          "date": "2026-09-14T17:11:24.873Z"
+        }
       ]
     },
     "author": "Antony Holmes",
