@@ -92,7 +92,7 @@ export function GseaPlotPage() {
 
   const {
     phenotypes,
-    rankedGenes,
+    es,
     filteredReports,
     geneSetsInUse,
     setGeneSetsInUse,
@@ -337,7 +337,7 @@ export function GseaPlotPage() {
 
         <ResizableSidebar>
           <BaseCol className="grow h-full gap-y-2">
-            {rankedGenes.length > 0 ? (
+            {es.length > 0 ? (
               <>
                 <FileDropZonePanel
                   className="grow h-full"

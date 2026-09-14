@@ -11,6 +11,7 @@ import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
 import { IRankedGene } from '@/lib/gsea/geneset'
+import { range } from '@/lib/math/range'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { useGseaPlot } from '../gsea-plot-provider'
@@ -37,7 +38,7 @@ const GseaPlot = memo(function GseaPlot({
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
-  const { phenotypes, rankedGenes, result } = useGseaData(pathway.name)
+  const { phenotypes, es, result } = useGseaData(pathway.name)
 
   const pos = useMemo(
     () => ({ x: col * plotSize.w, y: row * plotSize.h }),
@@ -58,28 +59,40 @@ const GseaPlot = memo(function GseaPlot({
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
   const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
-  const maxRank = rankedGenes.length - 1
+  const maxRank = es.length - 1
 
-  const sortedRankedGenes: IRankedGene[] = useMemo(
+  let subSampledEs = useMemo(() => {
+    const genes = subsampleRankedGenes(es, 1000) //settings.es.step)
+
+    console.log('subsampled genes', genes.length)
+
+    return settings.phenotypes.invert
+      ? genes
+          .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+          .sort((a, b) => a.rank - b.rank)
+      : genes
+  }, [es, settings.es.step, settings.phenotypes.invert])
+
+  const sortedEs: IRankedGene[] = useMemo(
     () =>
       settings.phenotypes.invert
-        ? rankedGenes
+        ? es
             .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
             .sort((a, b) => a.rank - b.rank)
-        : rankedGenes,
-    [rankedGenes, maxRank, settings.phenotypes.invert]
+        : es,
+    [es, maxRank, settings.phenotypes.invert]
   )
 
-  const es = useMemo(() => {
+  const hits = useMemo(() => {
     if (!result) {
       return []
     }
 
     return settings.phenotypes.invert
-      ? result.es
+      ? result.hits
           .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
           .sort((a, b) => a.rank - b.rank)
-      : result.es
+      : result.hits
   }, [result, maxRank, settings.phenotypes.invert])
 
   const points: IPos[] = useMemo(() => {
@@ -87,8 +100,13 @@ const GseaPlot = memo(function GseaPlot({
       return []
     }
 
-    return es.map((e) => ({ x: xaf(e.rank), y: yaf(e.score) }))
-  }, [es, xax, yax])
+    return subSampledEs.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
+  }, [subSampledEs, xax, yax])
+
+  console.log('bbbbbbbbbbbb', points.length)
 
   if (!xax || !yax || !result) {
     return null
@@ -99,9 +117,8 @@ const GseaPlot = memo(function GseaPlot({
   const esSvg = settings.es.show ? (
     <EsSvg
       pathway={pathway}
-      rankedGenes={rankedGenes}
-      es={es}
-      points={points}
+      hits={hits}
+      numGenes={es.length}
       xax={xax}
       yax={yax}
       phenotypes={phenotypes}
@@ -112,15 +129,17 @@ const GseaPlot = memo(function GseaPlot({
     plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
   }
 
-  const crossing = crossingIndex(sortedRankedGenes, xaf)
+  const crossing = crossingIndex(sortedEs, xaf)
 
   const genesSvg = settings.genes.show ? (
     <GenesSvg
       pathway={pathway}
       xax={xax}
-      points={points}
-      es={es}
-      sortedRankedGenes={sortedRankedGenes}
+
+      yaf={yaf}
+      //points={points}
+      es={sortedEs}
+      hits={hits}
       crossing={crossing}
       pos={{ x: 0, y: plotY }}
       innerPlotSize={innerPlotSize}
@@ -135,7 +154,7 @@ const GseaPlot = memo(function GseaPlot({
     <RankingSvg
       plotId={pathway.id}
       xaf={xaf}
-      rankedGenes={sortedRankedGenes}
+      es={sortedEs}
       crossing={crossing}
       pos={{ x: 0, y: plotY }}
     />
@@ -268,4 +287,40 @@ export function GseaSvg() {
       <GseaSvgContent />
     </CrosshairProvider>
   )
+}
+
+export function subsampleRankedGenes(
+  rankedGenes: IRankedGene[],
+  step: number
+): IRankedGene[] {
+  const ix = range(0, rankedGenes.length, step)
+
+  let subSampledRankedGenes = ix.map((i) => rankedGenes[i]!)
+
+  if (subSampledRankedGenes[0].rank !== 0) {
+    subSampledRankedGenes = [
+      { rank: 0, name: '', score: 0 },
+      ...subSampledRankedGenes,
+    ]
+  }
+
+  if (
+    subSampledRankedGenes[subSampledRankedGenes.length - 1].rank !==
+    rankedGenes[rankedGenes.length - 1]!.rank
+  ) {
+    subSampledRankedGenes = [
+      ...subSampledRankedGenes,
+      { rank: rankedGenes[rankedGenes.length - 1]!.rank, name: '', score: 0 },
+    ]
+  }
+
+  console.log(
+    'dsfsdfsdfsdf',
+    subSampledRankedGenes.length,
+    rankedGenes.length,
+    ix.length,
+    step
+  )
+
+  return subSampledRankedGenes
 }

@@ -9,9 +9,10 @@ import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { type IGeneSet, type IRankedGene } from '@/lib/gsea/geneset'
-import { range } from '@/lib/math/range'
 import { where } from '@/lib/math/where'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { EsCurveSvg, EsLeadingEdgeSvg } from '../../gsea-plot/svg/es-svg'
+import { subsampleRankedGenes } from '../../gsea-plot/svg/gsea-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
@@ -27,6 +28,7 @@ export function ExtGseaEsCurveSvg({
   gsMode: 'gs1' | 'gs2'
 }) {
   const { plot } = useExtGseaContext()
+  const { settings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -48,9 +50,10 @@ export function ExtGseaEsCurveSvg({
 
   // size of plot with padding
 
-  const ix = range(0, gsea.esAll.length, displayProps.es.step)
-
-  let subSampledRankedGenes = ix.map((i) => gsea.esAll[i]!)
+  const subSampledRankedGenes = subsampleRankedGenes(
+    gsea.esAll,
+    settings.es.step
+  )
 
   // let points: IPos[] = subSampledRankedGenes.map((g) => ({
   //   x: g.rank,
@@ -66,23 +69,6 @@ export function ExtGseaEsCurveSvg({
 
   // we must end at the last point so zero the ends and fix
   // fix x
-
-  if (subSampledRankedGenes[0].rank !== 0) {
-    subSampledRankedGenes = [
-      { rank: 0, name: '', score: 0 },
-      ...subSampledRankedGenes,
-    ]
-  }
-
-  if (
-    subSampledRankedGenes[subSampledRankedGenes.length - 1].rank !==
-    result.rankedGenes.length - 1
-  ) {
-    subSampledRankedGenes = [
-      ...subSampledRankedGenes,
-      { rank: result.rankedGenes.length - 1, name: '', score: 0 },
-    ]
-  }
 
   let leadingEdgeIdx =
     gsea.es >= 0
@@ -139,8 +125,7 @@ export function ExtGseaEsCurveSvg({
 
     line1Svg = (
       <EsCurveSvg
-        es={gsea.esHits}
-        points={points}
+        hits={gsea.esHits}
         xax={xax}
         yax={yaxEs}
         stroke={gs.color ?? displayProps.es[gsMode].curve.value}
@@ -182,7 +167,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
   const displayProps: IExtGseaSettings = plot.props
 
-  const rankedGenes: IRankedGene[] = result.rankedGenes
+  const es: IRankedGene[] = result.es
   const gs1: IGeneSet = result.gs1
   const gs2: IGeneSet = result.gs2
 
@@ -222,7 +207,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           }}
         >
           <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-            {rankedGenes.length.toLocaleString()}
+            {es.length.toLocaleString()}
           </SvgText>
         </SvgG>
       </SvgG>

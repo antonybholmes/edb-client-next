@@ -10,6 +10,7 @@ import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
 import { IRankedGene } from '@/lib/gsea/geneset'
 import { argmaxAbs } from '@/lib/math/math'
+import { useMemo } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'
 import { IGseaTableResult } from '../gsea-store'
 
@@ -104,14 +105,12 @@ export function EsLeadingEdgeSvg({
 }
 
 export function EsCurveSvg({
-  es,
-  points,
+  hits,
   xax,
   yax,
   stroke,
 }: {
-  es: IRankedGene[]
-  points: IPos[]
+  hits: IRankedGene[]
   xax: IAxis
   yax: IAxis
   stroke?: string
@@ -121,7 +120,22 @@ export function EsCurveSvg({
   const yaf = axisDomainToRangeFunc(yax)
   const xaf = axisDomainToRangeFunc(xax)
 
-  const leadingEdge = es.filter((e) => e.leading)
+  const points: IPos[] = useMemo(() => {
+    if (!xax || !yax) {
+      return []
+    }
+
+    return hits.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
+  }, [hits, xax, yax])
+
+  console.log('points', hits.length, points.length)
+
+  const leadingEdge = useMemo(() => hits.filter((e) => e.leading), [hits])
+
+  console.log('sdtuf', points.length)
 
   return (
     <>
@@ -138,17 +152,15 @@ export function EsCurveSvg({
 
 export function EsSvg({
   pathway,
-  es,
-  rankedGenes,
-  points,
+  numGenes,
+  hits,
   xax,
   yax,
   phenotypes,
 }: {
   pathway: IGseaTableResult
-  es: IRankedGene[]
-  rankedGenes: IRankedGene[]
-  points: IPos[]
+  numGenes: number
+  hits: IRankedGene[]
   xax: IAxis
   yax: IAxis
   phenotypes: string[]
@@ -168,13 +180,14 @@ export function EsSvg({
   const phenotypei = phenIndexMap.get(pathway.phen)!
   //const rankMid = maxRank / 2
 
+  const xaf = axisDomainToRangeFunc(xax)
   const yaf = axisDomainToRangeFunc(yax)
 
   const y0 = yaf(0)
 
   return (
     <>
-      <EsCurveSvg es={es} points={points} xax={xax} yax={yax} />
+      <EsCurveSvg hits={hits} xax={xax} yax={yax} />
 
       {yax.style.show && <AxisLeftSvg ax={yax} />}
 
@@ -191,7 +204,7 @@ export function EsSvg({
           dominantBaseline="central"
           font={edbSettings.plots.axes.x.ticks.major.style.labels}
         >
-          {rankedGenes.length.toLocaleString()}
+          {numGenes.toLocaleString()}
         </SvgText>
       </SvgG>
 

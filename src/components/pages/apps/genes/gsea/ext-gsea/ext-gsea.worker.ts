@@ -8,7 +8,7 @@ import {
 import type { IGeneSet } from '../../../../../../lib/gsea/geneset'
 
 export interface IExtGseaWorkerMessage {
-  rankedGenes: IRankedGene[]
+  es: IRankedGene[]
   gs1: IGeneSet
   gs2: IGeneSet
 }
@@ -20,9 +20,9 @@ export interface IExtGseaWorkerResult {
 }
 
 self.onmessage = function (e: MessageEvent<IExtGseaWorkerMessage>) {
-  const { rankedGenes, gs1, gs2 } = e.data
+  const { es, gs1, gs2 } = e.data
 
-  const extGsea = new ExtGSEA(rankedGenes)
+  const extGsea = new ExtGSEA(es)
 
   const extGseaRes = extGsea.runExtGsea(gs1, gs2)
 

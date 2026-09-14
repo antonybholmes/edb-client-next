@@ -26,6 +26,7 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
 
@@ -43,6 +44,7 @@ export function ExtGseaDisplayPropsPanel() {
 
   const { updatePlot } = useHistory()
   const { plot } = useExtGseaContext()
+  const { settings, updateSettings } = useGseaSettings()
 
   const [openTabs, setOpenTabs] = useState<string[]>([
     'plot',
@@ -187,11 +189,11 @@ export function ExtGseaDisplayPropsPanel() {
                 min={1}
                 max={500}
                 step={1}
-                value={displayOptions.es.step}
+                value={settings.es.step}
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.es.step = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.step = v
                     })
                   )
                 }}

@@ -1,10 +1,10 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { IPos } from '@/interfaces/pos'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
 
-import { IAxis } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { IDim } from '@/interfaces/dim'
@@ -18,22 +18,25 @@ import { IGseaTableResult, useGseaData } from '../gsea-store'
 
 export function GenesSvg({
   pathway,
-  xax,
+
   innerPlotSize,
-  points,
+
   es,
-  sortedRankedGenes,
+  hits,
   crossing,
   pos,
+  xax,
+  yaf,
 }: {
   pathway: IGseaTableResult
-  xax: IAxis
-  points: IPos[]
+
   es: IRankedGene[]
-  sortedRankedGenes: IRankedGene[]
+  hits: IRankedGene[]
   crossing: { index: number; x: number }
   innerPlotSize: IDim
   pos: IPos
+  xax: IAxis
+  yaf: (v: number) => number
 }) {
   const { settings } = useGseaSettings()
 
@@ -55,19 +58,28 @@ export function GenesSvg({
   const cmap1 = new ColorMap('pos', 'pos', [c1, c2])
   const cmap2 = new ColorMap('neg', 'neg', [c3, c4])
 
+  const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
+
+  const points: IPos[] = useMemo(() => {
+    return hits.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
+  }, [hits, xaf, yaf])
+
   const xp = points.map((p) => p.x)
+
+  console.log('hits', es.length, hits.length)
 
   // for a given point, use its rank to find the corresponding gene in sortedRankedGenes,
   // then use its score to determine the color of the point. This is because we base
   // color on the ranking of all genes in the exp matrix so we are essentially using
   // the signal to noise ratio to color the points from red (positive) to blue (negative)
   const posPoints = points.filter((_, pi) => {
-    return sortedRankedGenes[es[pi]!.rank]!.score >= 0
+    return es[hits[pi]!.rank]!.score >= 0
   })
 
-  const negPoints = points.filter(
-    (_, pi) => sortedRankedGenes[es[pi]!.rank]!.score < 0
-  )
+  const negPoints = points.filter((_, pi) => es[hits[pi]!.rank]!.score < 0)
 
   // const _hideTooltip = useCallback(() => {
   //   hideCrosshair()
@@ -111,9 +123,9 @@ export function GenesSvg({
         pos: barScreenP,
         content: (
           <>
-            <strong>{result.es[index].name}</strong>
-            <span>{`Rank: ${result.es[index].rank.toLocaleString()}`}</span>
-            <span>{`Score: ${result.es[index].score.toFixed(3)}`}</span>
+            <strong>{result.hits[index].name}</strong>
+            <span>{`Rank: ${result.hits[index].rank.toLocaleString()}`}</span>
+            <span>{`Score: ${result.hits[index].score.toFixed(3)}`}</span>
           </>
         ),
       })

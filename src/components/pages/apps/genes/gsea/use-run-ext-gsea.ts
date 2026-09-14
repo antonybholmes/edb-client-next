@@ -93,18 +93,14 @@ export function useRunExtGsea() {
     const group1 = groups[0]! //groupState.groups[groupState.order[0]!]!
     const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
 
-    const rankedGenes = snrRankGenes(
-      sheet as AnnotationDataFrame,
-      group1,
-      group2
-    )
+    const es = snrRankGenes(sheet as AnnotationDataFrame, group1, group2)
 
     const gs1 = genesets[0]! // genesets[genesetState.order[0]!]!
     const gs2 = genesets[1]! // genesetState.genesets[genesetState.order[1]!]!
 
     runExtGseaWorker(
       {
-        rankedGenes,
+        es,
         gs1,
         gs2,
       },
@@ -117,7 +113,7 @@ export function useRunExtGsea() {
               {
                 id: makeUuid(),
                 name: 'Extended GSEA',
-                rankedGenes,
+                es,
                 gs1: gs1,
                 gs2: gs2,
                 extGsea: extGseaRes,

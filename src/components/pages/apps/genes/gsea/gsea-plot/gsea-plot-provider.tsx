@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo } from 'react'
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { IChildrenProps } from '@/interfaces/children-props'
-import { IRankedGene } from '@/lib/gsea/geneset'
+import { ILim } from '@/lib/math/math'
 import { useGseaSettings } from './gsea-settings-store'
 import { IGseaTableResult, useGseaInUse } from './gsea-store'
 
@@ -26,7 +26,7 @@ export function useGseaPlot() {
 export function GseaPlotProvider({ children }: IChildrenProps) {
   const { settings } = useGseaSettings()
   const { addAxes } = useAxes()
-  const { rankedGenes, inUseReports, resultsMap } = useGseaInUse()
+  const { es, inUseReports, resultsMap } = useGseaInUse()
 
   // keep only pathways for which we have results, i.e. with
   // suitable q values. If q == 1, unlikely GSEA generated it
@@ -46,7 +46,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
       const results = resultsMap[pathway.name]!
 
       // ranks are 0-based in the results files
-      const maxRank = rankedGenes.length - 1
+      const maxRank = es.length - 1
 
       let xax = createAxis({
         id: 'x',
@@ -57,19 +57,11 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         tickParams: { which: 'both', show: false },
       })
 
-      const es = settings.phenotypes.invert
-        ? results.es
-            .map((e) => ({
-              ...e,
-              rank: maxRank - e.rank,
-              score: -e.score,
-            }))
-            .sort((a, b) => a.rank - b.rank)
-        : results.es
+      const hits = results.hits
 
-      const ylim: [number, number] = [
-        Math.min(...es.map((e) => e.score)),
-        Math.max(...es.map((e) => e.score)),
+      let ylim: ILim = [
+        Math.min(...hits.map((e) => e.score)),
+        Math.max(...hits.map((e) => e.score)),
       ]
 
       let yaxEs = createAxis({
@@ -89,23 +81,26 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         axes: { x: xax, y: yaxEs },
       })
 
-      const sortedRankedGenes: IRankedGene[] = settings.phenotypes.invert
-        ? rankedGenes
-            .map((e) => ({
-              ...e,
-              rank: maxRank - e.rank,
-              score: -e.score,
-            }))
-            .sort((a, b) => a.rank - b.rank)
-        : rankedGenes
+      // const sortedHits: IRankedGene[] = settings.phenotypes.invert
+      //   ? hits
+      //       .map((e) => ({
+      //         ...e,
+      //         rank: maxRank - e.rank,
+      //         score: -e.score,
+      //       }))
+      //       .sort((a, b) => a.rank - b.rank)
+      //   : hits
 
-      const yMin = Math.min(...sortedRankedGenes.map((e) => e.score))
-      const yMax = Math.max(...sortedRankedGenes.map((e) => e.score))
+      // es score is snr
+      ylim = [
+        Math.min(...es.map((e) => e.score)),
+        Math.max(...es.map((e) => e.score)),
+      ]
 
       let yaxSnr = createAxis({
         direction: 'y',
         title: 'SNR',
-        autoDomain: [yMin, yMax],
+        autoDomain: ylim,
         length: settings.ranking.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })
@@ -118,7 +113,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
       })
     }
     addAxes(axesPlots)
-  }, [pathways, resultsMap, rankedGenes, settings, addAxes])
+  }, [pathways, resultsMap, es, settings, addAxes])
 
   return (
     <GseaPlotContext.Provider value={{ pathways }}>

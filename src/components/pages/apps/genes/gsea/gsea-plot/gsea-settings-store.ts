@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v44`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v48`
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -79,6 +79,7 @@ export interface IGseaDisplayProps {
         length: number
       }
     }
+    step: number
   }
   //title: ITextProps & { offset: number }
   page: {
@@ -171,6 +172,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     show: true,
     labels: { ...DEFAULT_TEXT_PROPS },
     phenotypes: { ...DEFAULT_TEXT_PROPS },
+    step: 10,
   },
   genes: {
     height: 15,

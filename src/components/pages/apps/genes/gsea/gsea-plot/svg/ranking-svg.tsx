@@ -14,13 +14,13 @@ import { useGseaSettings } from '../gsea-settings-store'
 export function RankingSvg({
   plotId,
   xaf,
-  rankedGenes,
+  es,
   crossing,
   pos,
 }: {
   plotId: string
   xaf: (domainValue: number) => number
-  rankedGenes: IRankedGene[]
+  es: IRankedGene[]
   crossing: { index: number; x: number }
   pos?: IPos
 }) {
@@ -37,7 +37,7 @@ export function RankingSvg({
 
   const y0 = yaf(0)
 
-  const points = rankedGenes.map((e) => ({
+  const points = es.map((e) => ({
     x: xaf(e.rank),
     y: yaf(e.score),
   }))
@@ -47,7 +47,7 @@ export function RankingSvg({
     { x: xaf(0), y: y0 },
     ...points,
     {
-      x: xaf(rankedGenes.length - 1),
+      x: xaf(es.length - 1),
       y: y0,
     },
   ]
@@ -88,10 +88,10 @@ export function RankingSvg({
 }
 
 export function crossingIndex(
-  rankedGenes: IRankedGene[],
+  es: IRankedGene[],
   xaf: (domainValue: number) => number
 ): { index: number; x: number } {
-  const crossIndex = rankedGenes.findLastIndex((gene) => gene.score > 0) + 1
+  const crossIndex = es.findLastIndex((gene) => gene.score > 0) + 1
 
   const crossing = {
     index: crossIndex,

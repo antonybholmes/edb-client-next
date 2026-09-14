@@ -51,7 +51,6 @@ export interface IExtGseaSettings {
     stats: {
       show: boolean
     }
-    step: number
   }
   genes: {
     line: IStrokeProps
@@ -122,7 +121,6 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
   },
   es: {
     useGeneScoreForES: true,
-    step: 10,
     axes: {
       y: {
         length: 150,

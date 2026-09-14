@@ -155,7 +155,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
         const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
-        const es: IRankedGene[] = rows.map((tokens) => {
+        const hits: IRankedGene[] = rows.map((tokens) => {
           return {
             name: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
@@ -164,7 +164,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
           }
         })
 
-        resultsMap[name] = { name, es }
+        resultsMap[name] = { name, hits }
       }
     }
 

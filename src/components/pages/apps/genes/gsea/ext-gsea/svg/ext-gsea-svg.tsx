@@ -38,8 +38,8 @@ function ExtGseaSvgPlot({
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
   const crossing = useMemo(
-    () => crossingIndex(result.rankedGenes, xaf),
-    [result.rankedGenes, xaf]
+    () => crossingIndex(result.es, xaf),
+    [result.es, xaf]
   )
 
   return (
@@ -78,7 +78,7 @@ function ExtGseaSvgPlot({
           <RankingSvg
             plotId={result.id}
             xaf={xaf}
-            rankedGenes={result.rankedGenes}
+            es={result.es}
             crossing={crossing}
           />
         </SvgG>

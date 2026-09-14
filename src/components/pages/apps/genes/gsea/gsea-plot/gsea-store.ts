@@ -33,12 +33,12 @@ export interface IGseaBubble extends IDBEntity {
 
 export interface IGseaResult {
   name: string
-  es: IRankedGene[]
+  hits: IRankedGene[]
 }
 
 export interface IGseaStore {
   phenotypes: string[]
-  rankedGenes: IRankedGene[]
+  es: IRankedGene[]
   searchResults: IGseaTableResult[]
   reportsMap: Record<string, IGseaTableResult[]>
   geneSetsInUse: Record<string, boolean>
@@ -72,7 +72,7 @@ export function getGseaLog10q(q: number): number {
 
 export const useGseaStore = create<IGseaStore>()((set) => ({
   phenotypes: [],
-  rankedGenes: [],
+  es: [],
   searchResults: [],
   reportsMap: {},
   geneSetsInUse: {},
@@ -106,7 +106,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
 
     const resultsMap: Record<string, IGseaResult> = {}
 
-    let rankedGenes: IRankedGene[] = []
+    let es: IRankedGene[] = []
     let phenotypes: string[] = []
 
     const file = files[0]!
@@ -145,7 +145,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
 
         const scoreIdx = headings.findIndex((h) => h === 'SCORE')
 
-        rankedGenes = rows.map((tokens, ti) => ({
+        es = rows.map((tokens, ti) => ({
           name: tokens[geneIdx]!,
           rank: ti,
           score: Number(tokens[scoreIdx]!),
@@ -225,7 +225,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
         const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
-        const es: IRankedGene[] = rows.map((tokens) => {
+        const hits: IRankedGene[] = rows.map((tokens) => {
           return {
             name: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
@@ -234,9 +234,9 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
           }
         })
 
-        console.log('cheese', es)
+        console.log('cheese', hits)
 
-        resultsMap[name] = { name, es }
+        resultsMap[name] = { name, hits }
       }
     }
 
@@ -262,7 +262,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
     set({
       reportsMap,
       resultsMap,
-      rankedGenes,
+      es,
       phenotypes,
       allReports,
       geneSetsInUse,
@@ -285,7 +285,7 @@ export function useGsea(): Omit<
   loadGseaZipWithErrorHandling: (files: IBinaryFileOpen[]) => void
 } {
   const phenotypes = useGseaStore((state) => state.phenotypes)
-  const rankedGenes = useGseaStore((state) => state.rankedGenes)
+  const es = useGseaStore((state) => state.es)
   const searchResults = useGseaStore((state) => state.searchResults)
   //const reportsMap = useGseaPlotStore((state) => state.reportsMap)
   const geneSetsInUse = useGseaStore((state) => state.geneSetsInUse)
@@ -388,7 +388,7 @@ export function useGsea(): Omit<
   return {
     phenotypes,
     inUsePhenotypes,
-    rankedGenes,
+    es,
     searchResults,
     geneSetsInUse,
     resultsMap,
@@ -407,24 +407,24 @@ export function useGsea(): Omit<
 
 export function useGseaData(resultName: string): {
   phenotypes: string[]
-  rankedGenes: IRankedGene[]
+  es: IRankedGene[]
   result: IGseaResult | undefined
 } {
   const phenotypes = useGseaStore((state) => state.phenotypes)
-  const rankedGenes = useGseaStore((state) => state.rankedGenes)
+  const es = useGseaStore((state) => state.es)
   const result = useGseaStore((state) => state.resultsMap[resultName])
 
-  return { phenotypes, rankedGenes, result }
+  return { phenotypes, es, result }
 }
 
 // narrow selectors for building axes: avoids subscribing to search
 // results, report order, and actions that useGsea() also tracks
 export function useGseaInUse(): {
-  rankedGenes: IRankedGene[]
+  es: IRankedGene[]
   resultsMap: Record<string, IGseaResult>
   inUseReports: IGseaTableResult[]
 } {
-  const rankedGenes = useGseaStore((state) => state.rankedGenes)
+  const es = useGseaStore((state) => state.es)
   const resultsMap = useGseaStore((state) => state.resultsMap)
   const allReports = useGseaStore((state) => state.allReports)
   const geneSetsInUse = useGseaStore((state) => state.geneSetsInUse)
@@ -460,5 +460,5 @@ export function useGseaInUse(): {
     settings.genesets.filters.q.value,
   ])
 
-  return { rankedGenes, resultsMap, inUseReports }
+  return { es, resultsMap, inUseReports }
 }
