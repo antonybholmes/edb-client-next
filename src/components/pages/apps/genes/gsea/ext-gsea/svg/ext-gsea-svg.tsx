@@ -9,6 +9,7 @@ import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useZoom } from '@/providers/zoom-provider'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
@@ -24,6 +25,7 @@ function ExtGseaSvgPlot({
   pos: IPos
 }) {
   const { plot } = useExtGseaContext()
+  const { settings } = useGseaSettings()
 
   const displayProps: IExtGseaSettings = plot.props
 
@@ -37,10 +39,21 @@ function ExtGseaSvgPlot({
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
-  const crossing = useMemo(
-    () => crossingIndex(result.scores, xaf),
-    [result.scores, xaf]
-  )
+  const scores = useMemo(() => {
+    const maxRank = result.scores.length - 1
+
+    return settings.phenotypes.invert
+      ? result.scores
+          .map((e) => ({
+            ...e,
+            rank: maxRank - e.rank,
+            score: -e.score,
+          }))
+          .sort((a, b) => a.rank - b.rank)
+      : result.scores
+  }, [result.scores, settings.phenotypes.invert])
+
+  const crossing = useMemo(() => crossingIndex(scores, xaf), [scores, xaf])
 
   return (
     <>

@@ -11,17 +11,21 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
+import { TEXT_OPTIONS, TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { ExtGseaInputDialog } from '../ext-gsea-input-dialog'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
 export function HomeToolbar() {
   const { openCustom: openCustomDialog } = useDialogs()
   const { settings, updateSettings } = useExtGseaSettings()
+  const { settings: gseaSettings, updateSettings: updateGseaSettings } =
+    useGseaSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
 
@@ -99,6 +103,21 @@ export function HomeToolbar() {
             }}
           />
         </ToolbarRow>
+      </ToolbarTabGroup>
+      <ToolbarTabGroup title={TEXT_OPTIONS}>
+        <ToolbarButton
+          checked={gseaSettings.phenotypes.invert}
+          onClick={() =>
+            updateGseaSettings(
+              produce(gseaSettings, (draft) => {
+                draft.phenotypes.invert = !draft.phenotypes.invert
+              })
+            )
+          }
+          title="Switch the phenotypes to be plotted on the left and right side of the plot."
+        >
+          Invert Phenotypes
+        </ToolbarButton>
       </ToolbarTabGroup>
     </>
   )

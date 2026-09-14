@@ -60,15 +60,15 @@ const GseaPlot = memo(function GseaPlot({
 
   const maxRank = es.length - 1
 
-  let subSampledEs = useMemo(() => {
-    const genes = subsampleRankedGenes(es, 1000) //settings.es.step)
+  // let subSampledEs = useMemo(() => {
+  //   const genes = subsampleRankedGenes(es, 1000) //settings.es.step)
 
-    return settings.phenotypes.invert
-      ? genes
-          .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-          .sort((a, b) => a.rank - b.rank)
-      : genes
-  }, [es, settings.es.step, settings.phenotypes.invert])
+  //   return settings.phenotypes.invert
+  //     ? genes
+  //         .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
+  //         .sort((a, b) => a.rank - b.rank)
+  //     : genes
+  // }, [es, settings.es.step, settings.phenotypes.invert])
 
   const sortedEs: IRankedGene[] = useMemo(
     () =>

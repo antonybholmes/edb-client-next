@@ -1,7 +1,10 @@
 import { useCallback, useMemo, type ReactNode } from 'react'
 
-import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
-import type { IGseaResult } from '@/lib/gsea/ext-gsea'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  IAxis,
+} from '@/components/plot/axes/axis'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
@@ -11,26 +14,33 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
-import { geneSetScores, IScoreGene, type IGeneSet } from '@/lib/gsea/geneset'
+import {
+  geneSetScores,
+  IRankedGene,
+  IScoreGene,
+  type IGeneSet,
+} from '@/lib/gsea/geneset'
+import { gsea } from '@/lib/gsea/gsea'
 import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
 export function ExtGseaHitsSvg({
-  result,
+  xax,
   gs,
-  gsea,
+  esHits,
   scores,
   maxScore,
   gsMode,
   pos,
 }: {
-  result: IExtGseaPlotResult
+  xax: IAxis
   gs: IGeneSet
-  gsea: IGseaResult
+  esHits: IRankedGene[]
   scores: IScoreGene[]
   maxScore: number
   gsMode: 'gs1' | 'gs2'
@@ -40,12 +50,6 @@ export function ExtGseaHitsSvg({
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
   //const { showTooltip, hideTooltip } = useTooltip()
-
-  const { axis: xax } = useAxis({
-    plotId: result.id,
-    groupId: 'es',
-    axisId: 'x',
-  })
 
   const w = useMemo(() => axisLength(xax), [xax])
 
@@ -58,13 +62,13 @@ export function ExtGseaHitsSvg({
 
     const xaf = axisDomainToRangeFunc(xax)
 
-    const points = gsea.esHits.map((e) => ({
+    const points = esHits.map((e) => ({
       x: xaf(e.rank),
       y: 0,
     }))
 
     return points
-  }, [gsea.esHits, xax])
+  }, [esHits, xax])
 
   //   const _hideTooltip = useCallback(() => {
   //     hideCrosshair()
@@ -107,7 +111,7 @@ export function ExtGseaHitsSvg({
         return
       }
 
-      const rank = gsea.esHits[index].rank
+      const rank = esHits[index].rank
 
       const barP = {
         x: nearest + displayProps.plot.margin.left + pos.x,
@@ -121,10 +125,10 @@ export function ExtGseaHitsSvg({
         content: (
           <>
             <strong>
-              {gsea.esHits[index].name} ({gs.name})
+              {esHits[index].name} ({gs.name})
             </strong>
-            <span>{`Score: ${result.scores[rank].score.toFixed(3)}`}</span>
-            <span>{`Rank: ${gsea.esHits[index].rank.toLocaleString()}`}</span>
+            <span>{`Score: ${scores[rank].score.toFixed(3)}`}</span>
+            <span>{`Rank: ${esHits[index].rank.toLocaleString()}`}</span>
           </>
         ),
       })
@@ -133,23 +137,13 @@ export function ExtGseaHitsSvg({
       //     content: (
       //       <>
       //         <strong>{gs.name}</strong>
-      //         <span>{`Name: ${gsea.esHits[index].name}`}</span>
-      //         <span>{`Rank: ${gsea.esHits[index].rank.toLocaleString()}, Score: ${gsea.esHits[index].score.toFixed(3)}`}</span>
+      //         <span>{`Name: ${esHits[index].name}`}</span>
+      //         <span>{`Rank: ${esHits[index].rank.toLocaleString()}, Score: ${esHits[index].score.toFixed(3)}`}</span>
       //       </>
       //     ),
       //   })
     },
-    [
-      pos,
-      ref,
-      displayProps,
-      gsea,
-      gs,
-      points,
-      result,
-      showCrosshair,
-      hideCrosshair,
-    ]
+    [pos, ref, displayProps, esHits, gs, points, showCrosshair, hideCrosshair]
   )
 
   const genesSvg = useMemo(() => {
@@ -259,30 +253,60 @@ export function ExtGseaGenesSvgPlot({
   pos: IPos
 }) {
   const { plot } = useExtGseaContext()
+  const { settings } = useGseaSettings()
+
+  const { axis: xax } = useAxis({
+    plotId: result.id,
+    groupId: 'es',
+    axisId: 'x',
+  })
 
   const displayProps: IExtGseaSettings = plot.props
 
-  const gs1: IGeneSet = result.gs1
-  const gs2: IGeneSet = result.gs2
+  const { gs1, gs2, esHits1, esHits2, scores1, scores2 } = useMemo(() => {
+    let gs1 = settings.phenotypes.invert ? result.gs2 : result.gs1
+    let gs2 = settings.phenotypes.invert ? result.gs1 : result.gs2
+    let esHits1 = settings.phenotypes.invert
+      ? result.gsea2.esHits
+      : result.gsea1.esHits
+    let esHits2 = settings.phenotypes.invert
+      ? result.gsea1.esHits
+      : result.gsea2.esHits
 
-  const gsea1: IGseaResult = result.gsea1
-  const gsea2: IGseaResult = result.gsea2
+    let scores1 = geneSetScores(gs1).map((g) => ({
+      ...g,
+      score: Math.abs(g.score),
+    }))
+
+    let scores2 = geneSetScores(gs2).map((g) => ({
+      ...g,
+      score: Math.abs(g.score),
+    }))
+
+    if (settings.phenotypes.invert) {
+      const maxRank = result.scores.length - 1
+      esHits1 = esHits1.map((hit) => ({
+        ...hit,
+        rank: maxRank - hit.rank,
+        score: -hit.score,
+      })) // reverse the rank
+      esHits2 = esHits2.map((hit) => ({
+        ...hit,
+        rank: maxRank - hit.rank,
+        score: -hit.score,
+      })) // reverse the rank
+
+      scores1 = scores1.reverse()
+      scores2 = scores2.reverse()
+    }
+
+    return { gs1, gs2, esHits1, esHits2, scores1, scores2 }
+  }, [result, settings.phenotypes.invert])
 
   const genesSvg = useMemo(() => {
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      // the score weights of each gene hit, not the es
-      const scores1 = geneSetScores(gs1).map((g) => ({
-        ...g,
-        score: Math.abs(g.score),
-      }))
-
-      const scores2 = geneSetScores(gs2).map((g) => ({
-        ...g,
-        score: Math.abs(g.score),
-      }))
-
       // scale colors to score, for generic ext gsea
       // score is always 1 so no effect, for viper
       // we can scale by strength of interaction with
@@ -297,9 +321,9 @@ export function ExtGseaGenesSvgPlot({
       return (
         <>
           <ExtGseaHitsSvg
-            result={result}
+            xax={xax}
             gs={gs1}
-            gsea={gsea1}
+            esHits={esHits1}
             scores={scores1}
             maxScore={maxScore}
             gsMode="gs1"
@@ -313,9 +337,9 @@ export function ExtGseaGenesSvgPlot({
             }}
           >
             <ExtGseaHitsSvg
-              result={result}
+              xax={xax}
               gs={gs2}
-              gsea={gsea2}
+              esHits={esHits2}
               scores={scores2}
               maxScore={maxScore}
               gsMode="gs2"
@@ -330,7 +354,7 @@ export function ExtGseaGenesSvgPlot({
     }
 
     return genesSvg
-  }, [result, pos, gs1, gs2, gsea1, gsea2, displayProps])
+  }, [result, pos, gs1, gs2, esHits1, esHits2, displayProps])
 
   return genesSvg
 }
