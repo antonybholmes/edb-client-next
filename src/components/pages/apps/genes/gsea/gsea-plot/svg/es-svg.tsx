@@ -9,6 +9,7 @@ import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
+import { getColorMap } from '@/lib/color/colormap'
 import { argmax } from '@/lib/math/math'
 import { useMemo } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'
@@ -220,6 +221,8 @@ export function EsSvg({
 
   const y0 = yaf(0)
 
+  const cmap = getColorMap(settings.genes.cmap).reverse()
+
   return (
     <>
       <EsCurveSvg hits={hits} xax={xax} yax={yax} />
@@ -268,8 +271,8 @@ export function EsSvg({
           <SvgG>
             <SvgText
               fill={
-                settings.genes.color.on
-                  ? settings.genes.pos.value
+                settings.genes.color.on && settings.genes.labels.color.on
+                  ? cmap.getHexColor(0)
                   : settings.es.phenotypes.font.fill.value
               }
               dominantBaseline="hanging"
@@ -282,8 +285,8 @@ export function EsSvg({
           <SvgG pos={{ x: settings.axes.x.length, y: 0 }}>
             <SvgText
               fill={
-                settings.genes.color.on
-                  ? settings.genes.neg.value
+                settings.genes.color.on && settings.genes.labels.color.on
+                  ? cmap.getHexColor(1)
                   : settings.es.phenotypes.font.fill.value
               }
               dominantBaseline="hanging"

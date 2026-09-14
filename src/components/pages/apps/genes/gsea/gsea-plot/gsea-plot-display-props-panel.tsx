@@ -211,6 +211,18 @@ export function GseaPlotDisplayPropsPanel() {
                 />
               </VCenterRow>
             </PropRow>
+
+            <CheckPropRow
+              title="Color Phenotype Labels"
+              checked={settings.genes.labels.color.on}
+              onCheckedChange={(state) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.labels.color.on = state
+                  })
+                )
+              }}
+            />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="genes-plot">
@@ -251,7 +263,7 @@ export function GseaPlotDisplayPropsPanel() {
             </PropRow>
 
             <CheckPropRow
-              title="Colors"
+              title="Color Gradient"
               checked={settings.genes.color.on}
               onCheckedChange={(state) => {
                 updateSettings(

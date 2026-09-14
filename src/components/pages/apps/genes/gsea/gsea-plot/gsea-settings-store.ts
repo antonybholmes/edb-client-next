@@ -56,6 +56,7 @@ export interface IGseaDisplayProps {
     color: {
       on: boolean
     }
+    labels: ITextProps & { color: { on: boolean } }
     pos: IStrokeProps
     neg: IStrokeProps
     gradient: { opacity: number; on: boolean }
@@ -178,6 +179,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   },
   genes: {
     height: 15,
+    labels: { ...DEFAULT_TEXT_PROPS, color: { on: true } },
     color: {
       on: true,
     },
