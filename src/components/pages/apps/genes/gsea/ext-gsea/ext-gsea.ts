@@ -18,6 +18,7 @@ import {
   EMPTY_GENE_SET,
   geneSetNames,
   geneSetScores,
+  sortRankedGenes,
   type IGeneSet,
   type IRankedGene,
 } from '../gsea-plot/geneset'
@@ -30,6 +31,18 @@ export interface IExtGseaResult {
   pvalue: number
   //leadingEdgeIndices,
   leadingEdge: IRankedGene[]
+}
+
+export function sortExtGseaResult(
+  result: IExtGseaResult,
+  maxRank: number,
+  invert: boolean
+): IExtGseaResult {
+  return {
+    ...result,
+    esScore: -result.esScore,
+    leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, invert),
+  }
 }
 
 export interface IGseaResult {
@@ -52,6 +65,20 @@ export interface IGseaResult {
    * Enrichment scores for leading edge genes in the gene set.
    */
   leadingEdge: IRankedGene[]
+}
+
+export function sortGseaResult(
+  result: IGseaResult,
+  maxRank: number,
+  invert: boolean
+): IGseaResult {
+  return {
+    ...result,
+    esScore: -result.esScore,
+    es: sortRankedGenes(result.es, maxRank, invert),
+    esHits: sortRankedGenes(result.esHits, maxRank, invert),
+    leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, invert),
+  }
 }
 
 export class ExtGSEA {

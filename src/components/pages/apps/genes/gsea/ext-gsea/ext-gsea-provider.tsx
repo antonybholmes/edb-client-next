@@ -10,6 +10,8 @@ import {
 import {
   IExtGseaResult,
   IGseaResult,
+  sortExtGseaResult,
+  sortGseaResult,
 } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea'
 import {
   IGeneSet,
@@ -111,64 +113,40 @@ export function ExtGseaProvider({
       return
     }
 
-    let results = [...plot.results]
+    let results = plot.results
 
     if (settings.phenotypes.invert) {
       results = results.map((result) => {
         const maxRank = result.scores.length - 1
 
+        // assign 1 to 2 and vice versa and
+        // for gsea, invert and resort scores
+
+        const gsea1 = sortGseaResult(
+          result.gsea2,
+          maxRank,
+          settings.phenotypes.invert
+        )
+        const gsea2 = sortGseaResult(
+          result.gsea1,
+          maxRank,
+          settings.phenotypes.invert
+        )
+
+        const gs1 = result.gs2
+        const gs2 = result.gs1
+
         return {
           ...result,
-
-          extGsea: {
-            ...result.extGsea,
-            esScore: -result.extGsea.esScore,
-            leadingEdge: sortRankedGenes(
-              result.extGsea.leadingEdge,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-          },
-
-          gsea1: {
-            ...result.gsea1,
-            esScore: -result.gsea1.esScore,
-            es: sortRankedGenes(
-              result.gsea1.es,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-            esHits: sortRankedGenes(
-              result.gsea1.esHits,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-            leadingEdge: sortRankedGenes(
-              result.gsea1.leadingEdge,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-          },
-
-          gsea2: {
-            ...result.gsea2,
-            esScore: -result.gsea2.esScore,
-            es: sortRankedGenes(
-              result.gsea2.es,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-            esHits: sortRankedGenes(
-              result.gsea2.esHits,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-            leadingEdge: sortRankedGenes(
-              result.gsea2.leadingEdge,
-              maxRank,
-              settings.phenotypes.invert
-            ),
-          },
+          extGsea: sortExtGseaResult(
+            result.extGsea,
+            maxRank,
+            settings.phenotypes.invert
+          ),
+          gs1,
+          gs2,
+          gsea1,
+          gsea2,
 
           scores: sortRankedGenes(
             result.scores,
