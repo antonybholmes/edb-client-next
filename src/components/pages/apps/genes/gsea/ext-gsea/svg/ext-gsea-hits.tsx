@@ -173,8 +173,8 @@ export function ExtGseaHitsSvg({
                   x1={x}
                   x2={x}
                   y1={0}
-                  y2={displayProps.genes.height}
-                  s={displayProps.genes.line}
+                  y2={settings.genes.height}
+                  s={settings.genes.}
                   stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
                   strokeOpacity={settings.genes.color.gradient.opacity}
                 />
@@ -185,8 +185,8 @@ export function ExtGseaHitsSvg({
           {settings.genes.labels.show && (
             <SvgG
               pos={{
-                x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
-                y: displayProps.genes.height * 0.5,
+                x: settings.axes.x.length + displayProps.plot!.gap.x / 2,
+                y: settings.genes.height * 0.5,
               }}
             >
               <SvgText

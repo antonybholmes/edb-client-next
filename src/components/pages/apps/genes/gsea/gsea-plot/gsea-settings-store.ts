@@ -65,8 +65,9 @@ export interface IGseaDisplayProps {
       }
     }
     labels: ITextProps & { color: { on: boolean } }
-    pos: IStrokeProps
-    neg: IStrokeProps
+    stroke: IStrokeProps
+    pos: IPaintProps
+    neg: IPaintProps
     //gradient: { opacity: number; on: boolean }
     height: number
     //line: IStrokeProps
@@ -198,8 +199,9 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
         opacity: 1,
       },
     },
-    pos: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1 },
-    neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },
+    t: { ...DEFAULT_STROKE_PROPS, width: 1 },
+    pos: { ...DEFAULT_COLOR_PROPS, value: COLOR_RED },
+    neg: { ...DEFAULT_COLOR_PROPS, value: COLOR_BLUE },
 
     show: true,
     //gradient: { opacity: 0.2, on: true },
