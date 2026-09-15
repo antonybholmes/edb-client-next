@@ -9,11 +9,11 @@ import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
-import { getColorMap } from '@/lib/color/colormap'
 import { argmax } from '@/lib/math/math'
 import { useMemo } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'
 import { IGseaTableResult } from '../gsea-store'
+import { getColorMapFromSettings } from './hits-svg'
 
 export function EsLeadingEdgeSvg({
   leadingEdge,
@@ -220,7 +220,7 @@ export function EsSvg({
 
   const y0 = yaf(0)
 
-  const cmap = getColorMap(settings.genes.color.cmap).reverse()
+  const cmap = getColorMapFromSettings(settings)
 
   return (
     <>

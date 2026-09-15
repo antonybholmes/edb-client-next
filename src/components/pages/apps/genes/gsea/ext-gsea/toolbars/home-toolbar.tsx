@@ -123,12 +123,13 @@ export function HomeToolbar() {
               Invert
             </ToolbarButton>
             <ColorMapToolbarMenu
-              cmap={getColorMap(gseaSettings.genes.color.cmap)}
+              cmap={getColorMap(gseaSettings.genes.color.gradient.cmap)}
               onChange={(cmap, reversed) => {
                 updateGseaSettings(
                   produce(gseaSettings, (draft) => {
-                    draft.genes.color.cmap.name = cmap.id as ColorMapName
-                    draft.genes.color.cmap.reversed = reversed
+                    draft.genes.color.gradient.cmap.name =
+                      cmap.id as ColorMapName
+                    draft.genes.color.gradient.cmap.reversed = reversed
                   })
                 )
               }}

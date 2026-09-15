@@ -2940,6 +2940,10 @@
         {
           "msg": "Support for gradient weight on hit color in GSEA plots",
           "date": "2026-09-15T14:45:22.739Z"
+        },
+        {
+          "msg": "Added simple text viewer app",
+          "date": "2026-09-15T17:40:12.223Z"
         }
       ]
     },

@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v50`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v52`
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -56,9 +56,13 @@ export interface IGseaDisplayProps {
     color: {
       on: boolean
       mode: 'rank' | 'score'
-      cmap: ICMAP
 
-      gradient: { weight: number; opacity: number }
+      gradient: {
+        mode: 'user' | 'cmap'
+        cmap: ICMAP
+        weight: number
+        opacity: number
+      }
     }
     labels: ITextProps & { color: { on: boolean } }
     pos: IStrokeProps
@@ -186,9 +190,13 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     color: {
       on: true,
       mode: 'rank',
-      cmap: { name: 'bwr', reversed: false },
 
-      gradient: { weight: 1, opacity: 1 },
+      gradient: {
+        mode: 'user',
+        cmap: { name: 'bwr', reversed: false },
+        weight: 1,
+        opacity: 1,
+      },
     },
     pos: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1 },
     neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },

@@ -204,13 +204,14 @@ export function ExtGseaDisplayPropsPanel() {
 
             <PropRow title="Color">
               <ColorMapMenu
-                cmap={getColorMap(settings.genes.color.cmap.name)}
+                cmap={getColorMap(settings.genes.color.gradient.cmap.name)}
                 onChange={(cmap, reversed) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.genes.color.cmap.name = cmap.id as ColorMapName
-                      //draft.genes.color.cmap.opacity = cmap.opacity
-                      draft.genes.color.cmap.reversed = reversed
+                      draft.genes.color.gradient.cmap.name =
+                        cmap.id as ColorMapName
+                      //draft.genes.color.gradient.cmap.opacity = cmap.opacity
+                      draft.genes.color.gradient.cmap.reversed = reversed
                     })
                   )
                 }}

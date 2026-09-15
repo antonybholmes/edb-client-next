@@ -19,13 +19,13 @@ import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { getColorMap } from '@/lib/color/colormap'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
+import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { IExtGseaSettings } from '../ext-gsea-settings'
 
@@ -55,7 +55,7 @@ export function ExtGseaHitsSvg({
 
   const w = useMemo(() => axisLength(xax), [xax])
 
-  const cmap = getColorMap(settings.genes.color.cmap).reverse()
+  const cmap = getColorMapFromSettings(settings)
 
   const points = useMemo(() => {
     if (!xax) {

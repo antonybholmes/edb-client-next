@@ -213,7 +213,7 @@ export function GseaPlotDisplayPropsPanel() {
             </PropRow>
 
             <CheckPropRow
-              title="Color Phenotype Labels"
+              title="Color Phenotypes"
               checked={settings.genes.labels.color.on}
               onCheckedChange={(state) => {
                 updateSettings(
@@ -312,19 +312,6 @@ export function GseaPlotDisplayPropsPanel() {
                 />
               </VCenterRow> */}
 
-              <ColorMapMenu
-                cmap={getColorMap(settings.genes.color.cmap.name)}
-                onChange={(cmap, reversed) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.color.cmap.name = cmap.id as ColorMapName
-                      //draft.genes.color.cmap.opacity = cmap.opacity
-                      draft.genes.color.cmap.reversed = reversed
-                    })
-                  )
-                }}
-              />
-
               <SelectList
                 items={[
                   { label: 'Score', value: 'score' },
@@ -378,6 +365,82 @@ export function GseaPlotDisplayPropsPanel() {
                 className={SIMPLE_COLOR_EXT_CLS}
                 title="Positive/negative color"
               /> */}
+            </CheckPropRow>
+
+            <CheckPropRow
+              title="Colormap"
+              checked={settings.genes.color.gradient.mode === 'cmap'}
+              onCheckedChange={() => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.color.gradient.mode = 'cmap'
+                  })
+                )
+              }}
+            >
+              <ColorMapMenu
+                cmap={getColorMap(settings.genes.color.gradient.cmap.name)}
+                onChange={(cmap, reversed) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.gradient.cmap.name =
+                        cmap.id as ColorMapName
+                      //draft.genes.color.gradient.cmap.opacity = cmap.opacity
+                      draft.genes.color.gradient.cmap.reversed = reversed
+                      draft.genes.color.gradient.mode = 'cmap'
+                    })
+                  )
+                }}
+              />
+            </CheckPropRow>
+
+            <CheckPropRow
+              title="Custom colors"
+              checked={settings.genes.color.gradient.mode === 'user'}
+              onCheckedChange={() => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.color.gradient.mode = 'user'
+                  })
+                )
+              }}
+            >
+              <FillButton
+                colors={[
+                  {
+                    color: settings.genes.pos.value,
+                    opacity: settings.genes.pos.opacity,
+                    onColorChange: ({ color, opacity }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.genes.pos.value = color
+                          draft.genes.pos.opacity = opacity ?? 1
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="Positive Gene Color"
+              />
+
+              <FillButton
+                colors={[
+                  {
+                    color: settings.genes.neg.value,
+                    opacity: settings.genes.neg.opacity,
+                    onColorChange: ({ color, opacity }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.genes.neg.value = color
+                          draft.genes.neg.opacity = opacity ?? 1
+                        })
+                      )
+                    },
+                  },
+                ]}
+
+                title="Negative Gene Color"
+              />
             </CheckPropRow>
 
             <PropRow title="Opacity">
