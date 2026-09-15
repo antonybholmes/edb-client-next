@@ -29,13 +29,7 @@ interface IProps {
 export function VennList({ vennList }: IProps) {
   const { circles, updateCircles } = useVennSettings()
 
-  const {
-    vennLists,
-    setVennLists,
-    setVennListName,
-    updateVennListFromText,
-    updateCounter,
-  } = useVenn()
+  const { setVennListName, updateVennListFromText, updateCounter } = useVenn()
 
   const [text, setText] = useState(vennList.items.join('\n'))
 

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added simple text viewer app.
 - Support for gradient weight on hit color in GSEA plots.
 
 

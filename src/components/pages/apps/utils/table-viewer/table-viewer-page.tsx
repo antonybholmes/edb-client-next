@@ -29,9 +29,9 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { ClientLayout } from '@/app/client-layout'
-import { HistoryPanel } from '../matcalc/history/history-panel'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { HistoryPanel } from '../../matcalc/history/history-panel'
 
 import { BaseCol } from '@/components/layout/base-col'
 
@@ -39,8 +39,8 @@ import { useAppInfo } from '@/components/edb/edb-settings'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { formatString } from '@/lib/text/format-string'
 import { useFooter } from '@/providers/footer-provider'
-import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
-import { useHistory } from '../matcalc/history/history-provider/history-provider'
+import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
@@ -49,8 +49,6 @@ export function TableViewerPage() {
   const { setAppInfo } = useAppInfo()
 
   const { sheets } = useCurrentSheets()
-
-  const [showSideBar, setShowSideBar] = useState(false)
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
