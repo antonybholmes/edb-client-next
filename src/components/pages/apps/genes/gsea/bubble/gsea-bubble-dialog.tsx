@@ -15,8 +15,8 @@ import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-
 import {
   getGseaLog10q,
   IGseaBubble,
-  IGseaGeneSet,
-} from '../gsea-plot/gsea-plot-store'
+  IGseaTableResult,
+} from '../gsea-plot/gsea-store'
 
 const MAX_COLS = 10
 
@@ -148,14 +148,14 @@ export function GseaBubbleDialog({
 
     switch (settings.sortBy) {
       case 'nes':
-        idx = argsort(nes, true)
+        idx = argsort(nes, { reverse: true })
 
         break
       case 'size':
-        idx = argsort(sizes, true)
+        idx = argsort(sizes, { reverse: true })
         break
       case 'pvalue':
-        idx = argsort(log10q, true)
+        idx = argsort(log10q, { reverse: true })
         break
 
       default:
@@ -169,7 +169,7 @@ export function GseaBubbleDialog({
       names = idx.map((i) => names[i])
     }
 
-    const genesets: IGseaGeneSet[] = names.map((name, i) => {
+    const genesets: IGseaTableResult[] = names.map((name, i) => {
       return {
         id: makeUuid(),
         name,
@@ -184,7 +184,7 @@ export function GseaBubbleDialog({
 
     const bubblePlot: IGseaBubble = {
       id: makeUuid(),
-      name: 'GSEA Bubble Plot',
+      name: 'GSEA Bubble',
       genesets,
       nes: { label: nesCol },
       size: { label: sizeCol },
@@ -199,7 +199,7 @@ export function GseaBubbleDialog({
   return (
     <OKCancelDialog
       open={open}
-      title="GSEA Bubble Plot"
+      title="GSEA Bubble"
       onResponse={(r) => {
         if (r === TEXT_OK) {
           submit()

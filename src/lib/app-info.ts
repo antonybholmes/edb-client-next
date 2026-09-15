@@ -1,6 +1,7 @@
 export interface IAppInfo {
   name: string
   description: string
+  abbr?: string
   color?: string
   version: string
   build: number
@@ -13,7 +14,6 @@ export interface IAppInfo {
 export const NO_APP_INFO: IAppInfo = {
   name: '',
   description: '',
-
   version: '',
   build: 0,
   copyright: '',

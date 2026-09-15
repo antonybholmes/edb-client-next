@@ -61,8 +61,8 @@ import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
-import { IGseaGeneSet } from '../gsea-plot/gsea-plot-store'
-import { GseaSvg } from '../gsea-plot/gsea-svg'
+import { IGseaTableResult } from '../gsea-plot/gsea-store'
+import { GseaSvg } from '../gsea-plot/svg/gsea-svg'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home'
 
@@ -90,11 +90,11 @@ export function GseaWebPage() {
     loadGseaZip,
   } = useGsea()
 
-  const [searchResults, setSearchResults] = useState<IGseaGeneSet[]>([])
+  const [searchResults, setSearchResults] = useState<IGseaTableResult[]>([])
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom({
+  useZoom({
     onChange: ({ zoom }) => {
       console.log('Zoom changed:', zoom)
       updateSettings(

@@ -2,13 +2,10 @@ import { useEffect } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
-import { useResizableSidebarContext } from '@/components/sidebar/resizable-sidebar'
-import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
-import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
-import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
 import { GroupPropsPanel } from '../groups/group-props-panel'
+import { OutlookTabs } from './outlook-tabs'
 
 // export function GroupingPropsPanel() {
 //   const { id } = useResizableSidebarContext()
@@ -28,9 +25,11 @@ import { GroupPropsPanel } from '../groups/group-props-panel'
 //   return <SideBarTabs />
 // }
 
+const ID = 'matcalc-grouping-props-panel'
+
 export function GroupingPropsPanel() {
-  const { id } = useResizableSidebarContext()
-  const { selectedTab, setTabs } = useTabs(id)
+  //const { id } = useResizableSidebarContext()
+  const { selectedTab, setTabs } = useTabs(ID)
 
   useEffect(() => {
     setTabs([
@@ -44,10 +43,10 @@ export function GroupingPropsPanel() {
 
   return (
     <BaseCol className="grow gap-y-2">
-      <UnderlineTabs groupId={id} tabListCls="gap-x-3" className="text-xs">
+      {/* <UnderlineTabs groupId={id} tabListCls="gap-x-3" className="text-xs">
         <TabIndicatorFollowH />
         <TabIndicatorSelectedH />
-      </UnderlineTabs>
+      </UnderlineTabs> */}
 
       <Tabs
         orientation="vertical"
@@ -71,7 +70,7 @@ export function GroupingPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      {/* <OutlookTabs id={ID} className="border-t border-border/50 py-2" /> */}
+      <OutlookTabs id={ID} className="border-t border-border/50 py-2" />
     </BaseCol>
   )
 }

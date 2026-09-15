@@ -4,7 +4,12 @@ import { useMemo } from 'react'
 import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { axisDomainToRangeFunc, createAxis, IAxis } from './axes/axis'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  createAxis,
+  IAxis,
+} from './axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from './axes/svg-axis'
 import { SvgVColorBar } from './svg-color-bar'
 
@@ -112,8 +117,8 @@ export function VertBarPlotSvg({
   const xaf = axisDomainToRangeFunc(xax)
   const yaf = axisDomainToRangeFunc(yax)
 
-  const innerWidth = xax.length
-  const innerHeight = yax.length
+  const innerWidth = axisLength(xax)
+  const innerHeight = axisLength(yax)
   const width = innerWidth + margin.left + margin.right
   const height = innerHeight + margin.top + margin.bottom
 

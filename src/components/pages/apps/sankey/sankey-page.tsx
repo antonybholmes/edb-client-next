@@ -9,6 +9,7 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { useEffect, useState } from 'react'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import {
@@ -20,7 +21,6 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -67,8 +67,6 @@ import { SankeyProvider } from './sankey-provider'
 import { useSankeySettings } from './sankey-settings-store'
 import { SankeySvg } from './sankey-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
-
-const PLOT_ZOOM_CHANNEL = 'sankey-plot-zoom'
 
 export function SankeyPage() {
   const { setAppInfo } = useAppInfo()

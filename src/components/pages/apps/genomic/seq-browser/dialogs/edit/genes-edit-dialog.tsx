@@ -51,7 +51,7 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       //contentVariant="glass"
       //bodyVariant="card"
       //overlayColor="trans"
-      bodyCls="gap-y-3"
+      contentCls="gap-y-3"
       leftHeaderChildren={
         <FontPopover
           fonts={[

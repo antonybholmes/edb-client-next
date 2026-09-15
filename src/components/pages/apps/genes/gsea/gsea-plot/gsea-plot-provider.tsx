@@ -1,12 +1,15 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
+import { createContext, useContext, useEffect, useMemo } from 'react'
 
-import { IAxesPlot, useAxes } from '@/components/plot/axes/axes-provider'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
-import { IGseaGeneSet, useGsea } from './gsea-plot-store'
+import { IChildrenProps } from '@/interfaces/children-props'
+import { ILim } from '@/lib/math/math'
+import { IRankedGene, sortRankedGenes } from './geneset'
 import { useGseaSettings } from './gsea-settings-store'
+import { IGseaTableResult, useGseaInUse } from './gsea-store'
 
 type GseaPlotContext = {
-  pathways: IGseaGeneSet[]
+  pathways: IGseaTableResult[]
 }
 
 export const GseaPlotContext = createContext<GseaPlotContext | null>(null)
@@ -21,10 +24,10 @@ export function useGseaPlot() {
   return context
 }
 
-export function GseaPlotProvider({ children }: { children: ReactNode }) {
+export function GseaPlotProvider({ children }: IChildrenProps) {
   const { settings } = useGseaSettings()
-  const { addPlots } = useAxes()
-  const { rankedGenes, inUseReports, resultsMap } = useGsea()
+  const { addAxes } = useAxes()
+  const { scores, inUseReports, resultsMap } = useGseaInUse()
 
   // keep only pathways for which we have results, i.e. with
   // suitable q values. If q == 1, unlikely GSEA generated it
@@ -38,38 +41,38 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
   )
 
   useEffect(() => {
-    const axesPlots: IAxesPlot[] = []
+    const axesPlots: IPlotAxes[] = []
 
     for (const pathway of pathways) {
-      const results = resultsMap[pathway.name]!
+      const result = resultsMap[pathway.name]!
 
       // ranks are 0-based in the results files
-      const maxRank = rankedGenes.length - 1
+      const maxRank = scores.length - 1
 
       let xax = createAxis({
-        title: 'ES X-axis',
+        id: 'x',
+        title: 'Genes',
         domain: [0, maxRank],
         length: settings.axes.x.length,
         style: { title: { show: false } },
         tickParams: { which: 'both', show: false },
       })
 
-      const es = settings.phenotypes.invert
-        ? results.es
-            .map((e) => ({
-              ...e,
-              rank: maxRank - e.rank,
-              score: -e.score,
-            }))
-            .sort((a, b) => a.rank - b.rank)
-        : results.es
+      //const hits = results.hits
 
-      const ylim: [number, number] = [
-        Math.min(...es.map((e) => e.score)),
-        Math.max(...es.map((e) => e.score)),
+      const hits: IRankedGene[] = sortRankedGenes(
+        result.hits,
+        maxRank,
+        settings.phenotypes.invert
+      )
+
+      let ylim: ILim = [
+        Math.min(...hits.map((e) => e.esScore)),
+        Math.max(...hits.map((e) => e.esScore)),
       ]
 
-      let yax = createAxis({
+      let yaxEs = createAxis({
+        id: 'y',
         direction: 'y',
         title: 'ES',
         //style: { title: { show: false } },
@@ -78,10 +81,36 @@ export function GseaPlotProvider({ children }: { children: ReactNode }) {
         tickParams: { which: 'minor', show: false },
       })
 
-      axesPlots.push({ id: pathway.id, axes: { 'es-x': xax, 'es-y': yax } })
+      axesPlots.push({
+        plotId: pathway.id,
+        groupId: 'es',
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yaxEs },
+      })
+
+      // scores is snr for all genes
+      ylim = [
+        Math.min(...scores.map((e) => e.score)),
+        Math.max(...scores.map((e) => e.score)),
+      ]
+
+      let yaxSnr = createAxis({
+        direction: 'y',
+        title: 'SNR',
+        autoDomain: ylim,
+        length: settings.ranking.axes.y.length,
+        tickParams: { which: 'minor', show: false },
+      })
+
+      axesPlots.push({
+        plotId: pathway.id,
+        groupId: 'snr',
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yaxSnr },
+      })
     }
-    addPlots(axesPlots)
-  }, [pathways, resultsMap, rankedGenes, settings, addPlots])
+    addAxes(axesPlots)
+  }, [pathways, resultsMap, scores, settings, addAxes])
 
   return (
     <GseaPlotContext.Provider value={{ pathways }}>

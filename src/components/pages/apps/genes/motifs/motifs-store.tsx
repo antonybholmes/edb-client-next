@@ -12,9 +12,12 @@ import { getAppName } from '@/lib/app-info'
 import { useEffect, useMemo, useRef } from 'react'
 import { create } from 'zustand'
 
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis } from '@/components/plot/axes/axis'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
 import type { IDBEntity } from '@/interfaces/db-entity'
+import { range } from '@/lib/math/range'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { useMotifSettings } from './motifs-settings'
 
@@ -96,8 +99,11 @@ export const useMotifStore = create<IMotifStore>()(
   )
 )
 
-export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
+export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> & {
+  motifsToPlot: IMotif[]
+} {
   const { settings } = useMotifSettings()
+  const { addAxes } = useAxes()
 
   const search = useMotifStore((state) => state.search)
   const updateSearch = useMotifStore((state) => state.updateSearch)
@@ -250,6 +256,73 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     )
   }, [isSearchSuccess, searchData, settings.sort.by, settings.sort.asc])
 
+  const motifsToPlot = useMemo(
+    () => searchResult.motifs.filter((motif) => motifsInUse[motif.id] ?? true),
+    [searchResult.motifs, motifsInUse]
+  )
+
+  useEffect(() => {
+    const axes: IPlotAxes[] = []
+
+    for (const motif of motifsToPlot) {
+      const letterWidth = settings.plot.bases.width
+      const motifLength = motif.weights.length
+
+      const xax = createAxis({
+        id: 'x',
+        domain: [0.5, motif.weights.length + 0.5],
+        length: letterWidth * motifLength,
+        ticks: range(1, motifLength + 1).map((x) => ({
+          v: x,
+          label: x.toLocaleString(),
+        })),
+        tickParams: { which: 'minor', show: false },
+      })
+
+      axes.push({
+        plotId: motif.id,
+        groupId: 'motif',
+        axisIds: [xax.id],
+        axes: { [xax.id]: xax },
+      })
+    }
+
+    const yax =
+      settings.mode === 'bits'
+        ? createAxis({
+            id: 'y',
+            direction: 'y',
+            domain: [0, 2],
+            length: settings.plot.height,
+
+            ticks: [0, 1, 2],
+            //minorTicks: [0, 0.5, 1, 1.5, 2],
+            minorTickDivisions: 2,
+            title: 'Bits',
+            //tickParams: { which: 'minor', style:{DEFAULT_AXIS_LABEL_PROPS: {...DEFAULT_TEXT_PROPS, show:false }} },
+          })
+        : createAxis({
+            id: 'y',
+            direction: 'y',
+            domain: [0, 1],
+            length: settings.plot.height,
+
+            minorTickDivisions: 2,
+            ticks: [0, 0.5, 1],
+            //minorTicks: [0, 0.25, 0.5, 0.75, 1],
+            title: 'Prob',
+          })
+
+    axes.push({
+      plotId: 'y',
+      groupId: 'y',
+      axisIds: [yax.id],
+      axes: { [yax.id]: yax },
+    })
+
+    addAxes(axes)
+  }, [settings.mode, settings.plot.height])
+
   return {
     search,
     searchResult,
@@ -257,6 +330,7 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     datasets,
     datasetMap,
     datasetsInUse,
+    motifsToPlot,
     setDatasets,
     updateSearch,
     setSearchResult,

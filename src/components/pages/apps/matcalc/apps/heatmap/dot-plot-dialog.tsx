@@ -353,7 +353,7 @@ export function DotPlotDialog({
           makeDotPlot()
         }
       }}
-      bodyCls="gap-y-2 mt-4"
+      contentCls="gap-y-2 mt-4"
       className="h-96"
       centerHeaderChildren={<SafariTabs id={tabsId} defaultWidth={4} />}
     >

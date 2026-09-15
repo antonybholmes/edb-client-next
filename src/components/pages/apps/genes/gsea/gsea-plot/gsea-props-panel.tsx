@@ -4,7 +4,7 @@ import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
-import { List, SlidersHorizontal } from 'lucide-react'
+import { List, Move3D, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
 import { GseaAxesPropsPanel } from './gsea-axes-props-panel'
@@ -30,6 +30,7 @@ export function GseaPropsPanel() {
       {
         id: 'axes',
         name: 'Axes',
+        icon: <Move3D strokeWidth={2} size={18} />,
       },
     ])
   }, [setTabs])

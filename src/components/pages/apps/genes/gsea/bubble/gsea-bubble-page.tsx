@@ -13,6 +13,7 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { useEffect, useState } from 'react'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import {
@@ -24,7 +25,6 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { ClientLayout } from '@/app/client-layout'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -75,8 +75,6 @@ import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-
 import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
-const PLOT_ZOOM_CHANNEL = 'gsea-bubble-zoom'
-
 export function GseaBubblePage() {
   const { setAppInfo } = useAppInfo()
 
@@ -103,7 +101,7 @@ export function GseaBubblePage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { autoSave, saveAs } = useSVG()
+  const { autoSave } = useSVG()
 
   const { save } = useSave()
   const { addDFSize } = useFooter()

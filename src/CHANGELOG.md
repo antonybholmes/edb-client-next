@@ -1,12 +1,93 @@
 # Changelog
 
-## 89.2.0 (Sep, 2026)
+## 89.8.0 (Sep, 2026)
 
 ### Changed
 
+- Support for gradient weight on hit color in GSEA plots.
+
+
+## 89.6.0 (Sep, 2026)
+
+### Changed
+
+- GSEA and ExtGSEA now use colormaps to render.
+- Added support for extgsea to use cmap to color hits.
+- GSEA now uses score to color bars and has opacity support.
+- GSEA now has score and esScore so we can give two scores to a gene, its original score than then the running enrichment score it is assigned.
+- Revised argsort. Refactored ext gsea. Viper now sorts genesets even if unneccessary.
+- Refined names for gsea and ext gsea to be less confusing.
+- ext gsea shares more code with original gsea plot. Ext gsea now plots the full es for the curve to make line smoother.
+- Smaller header links grid.
+- crosshair supports content. crosshairs now in fixed positions for gsea.
+- More removal of duplicate code in ext gsea and optimizing dependencies.
+- Simplified ext gsea svg. Crosshair now works for up/down genes seperately.
+- Split ext gsea into separate files since its a lot of svg.
+- Added support for crosshair to ext gsea.
+- run ext gsea now in helper hook.
+- Bug fixes and updates.
+
+### Fixed
+
+- ExtGSEA ES score now inverted properly when phenotypes inverted.
+
+
+## 89.4.0 (Sep, 2026)
+
+### Changed
+
+- Refined zoom system. ExtGSEA now supports zoom.
+- Removed levels from zoom.
+- Ext gsea in matcalc now working.
+- Support for controlling titles in Ext GSEA UI.
+- Added Ext gsea weighting by gene option to UI.
+- Better support for abbreviations in app info for configuring icons.
+- Sidebar layout of matcalc changed to move groups and filters around.
+- Add gene weight option to control opacity of gene bars in Ext gsea.
+- Improved ui for customizing ext gsea plots.
+- Added viper interface for ext-gsea. More support for multiple axes.
+- Ext gsea support for weighted hits.
+- Can plot viper output as gsea.
+- Ext gsea now own module and api closer to original gsea. Added viper tools for converting viper output to gsea.
+- More optimizations for tooltips.
+- Sped up heatmap rendering.
+- Svg rendering and tooltip speedups.
+- Gsea render sped up and now has working crosshair.
+- Bug fixes and updates.
+
+### Fixed
+
+- Permutation now correctly randomizes indices.
+
+
+## 89.2.0 (Sep, 2026)
+
+### Added
+
+- Support for colorbar axis in heatmap using axes store api.
+
+### Changed
+
+- Render speedups to oncoplot and gsea plot by memoing more functions and narrowing store scopes.
+- Added ability to add axes menu to gsea plots.
+- Axis controls now support using ranges for specifying ticks and tick labels.
+- Motifs now fully supports new axis system. Letter position rendering now uses axis rather than fixed sizes.
+- Ext gsea switched to new axis system.
+- Oncoplot switched to new axis model.
+- Lollipop switched to new axis model.
+- Switched motifs to new axis system.
+- Volcano now use new axis system.
+- GSEA plot now uses new axis system.
+- Gsea bubble now has support for new axis system.
+- Axes provider overhauled to include groups.
+- Bug fixes and updates.
 - Venn svg now has margins.
 - Heatmap can now be scaled through ui rather than with a setting.
 - Revised venn clustering. Cluster props to make plot look better.
+
+### Fixed
+
+- Fixed axis lengths.
 
 
 ## 89.0.0 (Aug, 2026)

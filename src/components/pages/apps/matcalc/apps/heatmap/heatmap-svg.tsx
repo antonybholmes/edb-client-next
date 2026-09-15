@@ -1,5 +1,3 @@
-import { cellStr } from '@/lib/dataframe/cell'
-
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
@@ -20,17 +18,15 @@ import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
+import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useMemo } from 'react'
 
-import { createAxis } from '@/components/plot/axes/axis'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { CellGaps } from '@/components/plot/heatmap/cell-gaps'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromICMAP } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { svgPointToScreen } from '@/lib/graphics/svg'
-import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
@@ -54,7 +50,11 @@ export function HeatMapSvg({ scale = 1 }: IProps) {
     return null
   }
 
-  return <HeatMapSvgContent scale={scale} />
+  return (
+    <CrosshairProvider>
+      <HeatMapSvgContent scale={scale} />
+    </CrosshairProvider>
+  )
 }
 
 function HeatMapSvgContent({ scale = 1 }: IProps) {
@@ -76,10 +76,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
   //   w: blockSize.w * displayOptions.zoom,
   //   h: blockSize.h * displayOptions.zoom,
   // }
-
-  const { ref } = useSVG()
-
-  const { showTooltip, hideTooltip } = useTooltip()
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h //Math.min(displayOptions.blockSize.w,displayOptions.blockSize.h)
 
@@ -151,26 +147,44 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     return { top, left, bottom, right }
   }, [displayOptions])
 
-  function handleVariantEnter(pos: IPos, cell: ICell) {
-    //console.log('handleVariantEnter', pos, cell)
-    const screen = svgPointToScreen(ref.current, pos)
+  // function handleVariantEnter(pos: IPos, cell: ICell) {
+  //   //console.log('handleVariantEnter', pos, cell)
+  //   const { screenP } = svgPointToScreen(ref.current, pos)
 
-    screen.x += blockSize.w + 2
-    screen.y += blockSize.h + 2
+  //   screenP.x += blockSize.w + 2
+  //   screenP.y += blockSize.h + 2
 
-    showTooltip({
-      pos: screen,
-      content: (
-        <>
-          <span className="font-semibold">{`${dfMain.rowName(
-            cell.row
-          )}, ${dfMain.colName(cell.col)}`}</span>
-          <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
-          <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
-        </>
-      ),
-    })
-  }
+  //   showTooltip({
+  //     pos: screenP,
+  //     content: (
+  //       <>
+  //         <span className="font-semibold">{`${dfMain.rowName(
+  //           cell.row
+  //         )}, ${dfMain.colName(cell.col)}`}</span>
+  //         <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
+  //         <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
+  //       </>
+  //     ),
+  //   })
+  // }
+
+  const xgaps = useMemo(
+    () => new CellGaps(displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]),
+    [displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]]
+  )
+
+  const ygaps = useMemo(
+    () => new CellGaps(displayOptions.gaps.rows, blockSize.h, dfMain.shape[0]),
+    [displayOptions.gaps.rows, blockSize.h, dfMain.shape[0]]
+  )
+
+  const { axis: cax } = useAxis({
+    plotId: plot.id,
+    groupId: 'cbar',
+    axisId: 'cbar',
+  })
+
+  //console.log('cax', plot.id, cax)
 
   const { svg, width, height } = useMemo(() => {
     if (!cf) {
@@ -209,17 +223,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
             .flat()
         ),
       ])
-    )
-
-    const xgaps = new CellGaps(
-      displayOptions.gaps.cols,
-      blockSize.w,
-      dfMain.shape[1]
-    )
-    const ygaps = new CellGaps(
-      displayOptions.gaps.rows,
-      blockSize.h,
-      dfMain.shape[0]
     )
 
     const unadjustedInnerWidth = colLeaves.length * blockSize.w
@@ -276,22 +279,22 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
         ? (legendBlockSize + displayOptions.padding) * groups0.length + 10
         : 0
 
-    const cax = createAxis({
-      domain: displayOptions.range,
-      length: displayOptions.colorbar.size.w,
-      ticks: [
-        displayOptions.range[0],
-        (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
-        displayOptions.range[1],
-      ],
-      minorTicks: [
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-        displayOptions.range[0] +
-          (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-      ],
-      tickParams: { which: 'minor', show: true },
-    })
+    // const cax = createAxis({
+    //   domain: displayOptions.range,
+    //   length: displayOptions.colorbar.size.w,
+    //   ticks: [
+    //     displayOptions.range[0],
+    //     (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
+    //     displayOptions.range[1],
+    //   ],
+    //   minorTicks: [
+    //     displayOptions.range[0] +
+    //       (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
+    //     displayOptions.range[0] +
+    //       (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
+    //   ],
+    //   tickParams: { which: 'minor', show: true },
+    // })
 
     const cmap = getColorMapFromICMAP(displayOptions.cmap)
 
@@ -424,13 +427,14 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}
+              plotSize={{ w: innerWidth, h: innerHeight }}
               margin={margin}
               xgaps={xgaps}
               ygaps={ygaps}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
-              handleVariantEnter={handleVariantEnter}
-              handleVariantLeave={hideTooltip}
+              // handleVariantEnter={handleVariantEnter}
+              // handleVariantLeave={hideTooltip}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
             />
@@ -440,14 +444,13 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
             <CellsSvg
               df={dfMain}
               margin={margin}
+              plotSize={{ w: innerWidth, h: innerHeight }}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
               pos={{ x: margin.left, y: margin.top }}
-              handleVariantEnter={handleVariantEnter}
-              handleVariantLeave={hideTooltip}
             />
             <GridSvg
               width={innerWidth}
@@ -462,29 +465,28 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
         {/* Plot the legend */}
 
-        {displayOptions.colorbar.show &&
-          displayOptions.colorbar.position === 'bottom' && (
-            <SvgHColorBar
-              ax={cax}
-              cmap={cmap}
+        {cax.style.show && displayOptions.colorbar.position === 'bottom' && (
+          <SvgHColorBar
+            ax={cax}
+            cmap={cmap}
 
-              pos={{
-                x: margin.left,
-                y:
-                  margin.top +
-                  innerHeight +
-                  displayOptions.padding +
-                  (displayOptions.labels.col.show &&
-                  displayOptions.labels.col.position === 'bottom'
-                    ? displayOptions.labels.col.width + displayOptions.padding
-                    : 0) +
-                  (displayOptions.legend.show &&
-                  displayOptions.legend.position === 'bottom'
-                    ? 2 * legendBlockSize + displayOptions.padding
-                    : 0),
-              }}
-            />
-          )}
+            pos={{
+              x: margin.left,
+              y:
+                margin.top +
+                innerHeight +
+                displayOptions.padding +
+                (displayOptions.labels.col.show &&
+                displayOptions.labels.col.position === 'bottom'
+                  ? displayOptions.labels.col.width + displayOptions.padding
+                  : 0) +
+                (displayOptions.legend.show &&
+                displayOptions.legend.position === 'bottom'
+                  ? 2 * legendBlockSize + displayOptions.padding
+                  : 0),
+            }}
+          />
+        )}
 
         {displayOptions.groups.show &&
           groupRows.length > 0 &&
@@ -510,13 +512,9 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           id="legend-right"
           transform={`translate(${legendPos.x}, ${legendPos.y})`}
         >
-          {displayOptions.colorbar.show &&
+          {cax.style.show &&
             displayOptions.colorbar.position.includes('right') && (
-              <SvgVColorBar
-                ax={cax}
-
-                cmap={cmap}
-              />
+              <SvgVColorBar ax={cax} cmap={cmap} />
             )}
           <g transform={`translate(0, ${legendGroupRightY})`}>
             {showLegendGroupRight && <LegendRightSvg groupRows={groupRows} />}
@@ -565,7 +563,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     )
 
     return { svg, width, height }
-  }, [cf, displayOptions, groupRows])
+  }, [cf, displayOptions, groupRows, cax])
 
   return (
     <SvgBase scale={scale} width={width} height={height}>

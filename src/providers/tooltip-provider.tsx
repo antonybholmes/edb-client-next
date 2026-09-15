@@ -1,6 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { IPos } from '@/interfaces/pos'
-import { ReactNode } from 'react'
+import { cn } from '@/lib/shadcn-utils'
+import { ReactNode, useEffect } from 'react'
 
 import { createPortal } from 'react-dom'
 import { create } from 'zustand'
@@ -9,6 +10,7 @@ export const TOOLTIP_CLEAR_MS = 300
 
 export interface ITooltipState {
   pos: IPos
+  className?: string
   content: ReactNode
 }
 
@@ -16,47 +18,114 @@ interface ITooltipStore {
   tooltip: ITooltipState | null
   showTooltip: (tooltip: ITooltipState) => void
   hideTooltip: () => void
+  dispose: () => void
 }
 
-// module-level so it survives across calls without needing a ref in a component
-let clearTimeoutId: ReturnType<typeof setTimeout> | null = null
+export function samePosition(a: IPos | null, b: IPos) {
+  return a?.x === b.x && a?.y === b.y
+}
 
-export const useTooltipStore = create<ITooltipStore>()((set, get) => ({
-  tooltip: null,
-  showTooltip: (t) => {
-    if (clearTimeoutId) {
-      clearTimeout(clearTimeoutId)
-      clearTimeoutId = null
+export const useTooltipStore = create<ITooltipStore>()((set, get) => {
+  let clearTimeoutId: ReturnType<typeof setTimeout> | null = null
+  let tooltipFrame: number | null = null
+  let pendingTooltip: ITooltipState | null = null
+
+  const cancelPendingFrame = () => {
+    if (tooltipFrame !== null) {
+      cancelAnimationFrame(tooltipFrame)
+      tooltipFrame = null
     }
 
-    const { tooltip } = get()
+    pendingTooltip = null
+  }
 
-    if (!tooltip || tooltip.pos.x !== t.pos.x || tooltip.pos.y !== t.pos.y) {
-      set({ tooltip: t })
-    }
-  },
-  hideTooltip: () => {
-    if (clearTimeoutId) {
-      clearTimeout(clearTimeoutId)
-    }
+  return {
+    tooltip: null,
+    showTooltip: (t) => {
+      const current = get().tooltip
 
-    // wait before removing. if we re-enter quickly, the tooltip won't flicker
-    // as this timeout will be cancelled so the tooltip won't disappear
-    // and will be moved to next location
-    clearTimeoutId = setTimeout(() => set({ tooltip: null }), TOOLTIP_CLEAR_MS)
-  },
-}))
+      if (samePosition(current?.pos ?? null, t.pos)) {
+        cancelPendingFrame()
+        return
+      }
 
-export const useTooltip = () => {
-  const showTooltip = useTooltipStore((s) => s.showTooltip)
-  const hideTooltip = useTooltipStore((s) => s.hideTooltip)
+      if (
+        tooltipFrame !== null &&
+        pendingTooltip !== null &&
+        samePosition(pendingTooltip.pos, t.pos)
+      ) {
+        return
+      }
+
+      pendingTooltip = t
+
+      if (clearTimeoutId) {
+        clearTimeout(clearTimeoutId)
+        clearTimeoutId = null
+      }
+
+      if (tooltipFrame !== null) {
+        return
+      }
+
+      tooltipFrame = requestAnimationFrame(() => {
+        tooltipFrame = null
+
+        const tooltip = pendingTooltip
+        pendingTooltip = null
+
+        if (!tooltip) {
+          return
+        }
+
+        const current = get().tooltip
+
+        if (!samePosition(current?.pos ?? null, tooltip.pos)) {
+          set({ tooltip })
+        }
+      })
+    },
+    hideTooltip: () => {
+      cancelPendingFrame()
+
+      if (clearTimeoutId) {
+        clearTimeout(clearTimeoutId)
+      }
+
+      // wait before removing. if we re-enter quickly, the tooltip won't flicker
+      // as this timeout will be cancelled so the tooltip won't disappear
+      // and will be moved to next location
+      clearTimeoutId = setTimeout(() => {
+        clearTimeoutId = null
+        set({ tooltip: null })
+      }, TOOLTIP_CLEAR_MS)
+    },
+    dispose: () => {
+      cancelPendingFrame()
+
+      if (clearTimeoutId) {
+        clearTimeout(clearTimeoutId)
+        clearTimeoutId = null
+      }
+
+      set({ tooltip: null })
+    },
+  }
+})
+
+export function useTooltip() {
+  const showTooltip = useTooltipStore((state) => state.showTooltip)
+  const hideTooltip = useTooltipStore((state) => state.hideTooltip)
 
   return { showTooltip, hideTooltip }
 }
 
 // renders the active tooltip into a portal; doesn't need to wrap children
-export function TooltipRenderer() {
+export function TooltipProvider() {
   const tooltip = useTooltipStore((s) => s.tooltip)
+  const dispose = useTooltipStore((s) => s.dispose)
+
+  useEffect(() => dispose, [dispose])
 
   if (!tooltip) {
     return null
@@ -64,7 +133,10 @@ export function TooltipRenderer() {
 
   return createPortal(
     <BaseCol
-      className="fixed z-(--z-tooltip) rounded-lg bg-black/50 shadow-lg px-4 py-3 text-xs text-white"
+      className={cn(
+        'fixed z-(--z-tooltip) rounded-lg bg-black/50 shadow-lg px-4 py-3 text-xs text-white pointer-events-none',
+        tooltip.className
+      )}
       style={{
         left: tooltip.pos.x,
         top: tooltip.pos.y,

@@ -83,7 +83,7 @@ export class ColorMap {
       Math.round(lerp(c1[0], c2[0], t)),
       Math.round(lerp(c1[1], c2[1], t)),
       Math.round(lerp(c1[2], c2[2], t)),
-      clamp(lerp(c1[3], c2[3], t), 0, 1),
+      clamp(lerp(c1[3], c2[3], t), { min: 0, max: 1 }),
     ]
   }
 
@@ -723,12 +723,17 @@ export type ColorMapName =
   | 'plasma'
   | 'magma'
 
-export function getColorMap(name: string): ColorMap {
-  return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
+export function getColorMap(name: string | ICMAP): ColorMap {
+  if (typeof name === 'string') {
+    return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
+  } else {
+    return getColorMapFromICMAP(name)
+  }
 }
 
 export interface ICMAP {
   name: ColorMapName
+  //opacity: number
   reversed: boolean
 }
 

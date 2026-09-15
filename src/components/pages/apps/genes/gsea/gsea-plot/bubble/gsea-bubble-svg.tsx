@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 import { AxisBottomSvg } from '../../../../../../plot/axes/svg-axis'
@@ -12,11 +12,8 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import {
-  axisDomainToRange,
-  createAxis,
-  setAxisTickParams,
-} from '@/components/plot/axes/axis'
+import { useAxis } from '@/components/plot/axes/axes-store'
+import { axisDomainToRange } from '@/components/plot/axes/axis'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
@@ -26,7 +23,7 @@ import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
-import { IGseaBubble } from '../gsea-plot-store'
+import { IGseaBubble } from '../gsea-store'
 import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
 
 const TOOLTIP_OFFSET = 10
@@ -54,15 +51,20 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
 interface IPlotInfo {
   plot: IGseaBubble
   points: IBubblePoint[]
-  xlim: ILim
+  //xlim: ILim
   pos: IPos
 }
 
 function GseaBubbleLegendSvg() {
-  const { plots, globalXLim } = useGseaBubbleContext()
+  const { plots } = useGseaBubbleContext()
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
-  const { showTooltip, hideTooltip } = useTooltip()
+
+  const { axis: cax } = useAxis({
+    plotId: 'cbar',
+    groupId: 'cbar',
+    axisId: 'cbar',
+  })
 
   const sizes = settings.legend.bubbles.sizes
 
@@ -92,46 +94,6 @@ function GseaBubbleLegendSvg() {
     }
   }
 
-  const rangeDiff =
-    settings.scale.mode === 'p'
-      ? settings.scale.p.range[1] - settings.scale.p.range[0]
-      : globalXLim[1] - globalXLim[0]
-
-  let xax =
-    settings.scale.mode === 'p'
-      ? createAxis({
-          domain: settings.scale.p.range,
-          length: edbSettings.plots.colorbar.size.w,
-          ticks: [
-            settings.scale.p.range[0],
-            settings.scale.p.range[0] + rangeDiff / 2,
-            settings.scale.p.range[1],
-          ],
-          minorTicks: [
-            settings.scale.p.range[0] + rangeDiff * 0.25,
-            settings.scale.p.range[0] + rangeDiff * 0.75,
-          ],
-        })
-      : createAxis({
-          domain: globalXLim,
-          length: edbSettings.plots.colorbar.size.w,
-          ticks: [globalXLim[0], globalXLim[0] + rangeDiff / 2, globalXLim[1]],
-          minorTicks: [
-            globalXLim[0] + rangeDiff * 0.25,
-            globalXLim[0] + rangeDiff * 0.75,
-          ],
-        })
-
-  xax = setAxisTickParams(xax, {
-    which: 'major',
-    show: edbSettings.plots.axes.x.ticks.major.show,
-  })
-
-  xax = setAxisTickParams(xax, {
-    which: 'minor',
-    show: edbSettings.plots.axes.x.ticks.minor.show,
-  })
-
   const label =
     settings.scale.mode === 'p' ? `-log10(${plot.log10q.label})` : 'NES'
 
@@ -150,7 +112,7 @@ function GseaBubbleLegendSvg() {
               </SvgText>
               <g transform={`translate(0, ${settings.padding * 2})`}>
                 <SvgVColorBar
-                  ax={xax}
+                  ax={cax}
 
                   cmap={cmap}
                 />
@@ -218,23 +180,17 @@ function BubblePlot({
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
-  const domain = settings.axes.x.auto ? info.xlim : settings.axes.x.domain
-
-  // offer per plot x-axis domain
-  let xax = createAxis({
-    autoDomain: domain,
-    length: settings.axes.x.length,
-  })
-  xax = setAxisTickParams(xax, {
-    which: 'major',
-    show: edbSettings.plots.axes.x.ticks.major.show,
-  })
-  xax = setAxisTickParams(xax, {
-    which: 'minor',
-    show: edbSettings.plots.axes.x.ticks.minor.show,
+  const { axis: xax } = useAxis({
+    plotId: info.plot.id,
+    groupId: 'nes',
+    axisId: 'x',
   })
 
-  const xvs = axisDomainToRange(
+  if (!xax) {
+    return null
+  }
+
+  const xPoints = axisDomainToRange(
     xax,
     info.points.map((p) => p.x)
   )
@@ -243,7 +199,7 @@ function BubblePlot({
     <>
       <SvgMargin margin={settings.plot.margin}>
         {info.points.map((point, xi) => {
-          const x1 = xvs[xi]
+          const x1 = xPoints[xi]
           const y1 = point.y * settings.axes.y.rowHeight
 
           return (
@@ -328,7 +284,7 @@ function BubblePlot({
             y: settings.plot.margin.top + innerPlotHeight,
           }}
 
-          title={info.plot.nes.label}
+          //title={info.plot.nes.label}
         />
       )}
     </>
@@ -343,26 +299,33 @@ export function GseaBubblePlotSvg() {
 
   const { showTooltip, hideTooltip } = useTooltip()
 
-  function handleVariantEnter(plot: IGseaBubble, row: number, p: IPos) {
-    const screenP = svgPointToScreen(svgRef.current, p)
+  const handleVariantEnter = useCallback(
+    (plot: IGseaBubble, row: number, p: IPos) => {
+      const { screenP } = svgPointToScreen(svgRef.current, p)
 
-    const newP = {
-      x: screenP.x,
-      y: screenP.y,
-    }
+      const newP = {
+        x: screenP.x,
+        y: screenP.y,
+      }
 
-    showTooltip({
-      pos: newP,
-      content: (
-        <>
-          <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
-          <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
-          <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
-          <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
-        </>
-      ),
-    })
-  }
+      showTooltip({
+        pos: newP,
+        content: (
+          <>
+            <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
+            <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
+            <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
+            <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+          </>
+        ),
+      })
+    },
+    [svgRef, showTooltip, hideTooltip]
+  )
+
+  const handleVariantLeave = useCallback(() => {
+    hideTooltip()
+  }, [hideTooltip])
 
   const { svg, width, height } = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
@@ -432,7 +395,7 @@ export function GseaBubblePlotSvg() {
                   innerPlotWidth={innerPlotWidth}
                   innerPlotHeight={innerPlotHeight}
                   handleVariantEnter={handleVariantEnter}
-                  handleVariantLeave={hideTooltip}
+                  handleVariantLeave={handleVariantLeave}
                 />
               </g>
             ))}

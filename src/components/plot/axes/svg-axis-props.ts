@@ -15,8 +15,6 @@ import { deepmerge } from 'deepmerge-ts'
 
 export type TickLabel = string | number
 
-const MINOR_TICK_DIVISIONS = 5
-
 export interface ITickItem {
   v: number
   label?: string | undefined
@@ -114,10 +112,9 @@ export const DEFAULT_MINOR_AXIS_TICK_PROPS: IMinorAxisTicks = {
 
 export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
   title: '',
-
-  clip: true,
-  domain: [0, 1],
-  range: [0, 1],
+  clip: false,
+  domain: [0, 100],
+  range: [0, 100],
   style: {
     show: true,
     title: { ...DEFAULT_BOLD_TEXT_PROPS, offset: 30 },

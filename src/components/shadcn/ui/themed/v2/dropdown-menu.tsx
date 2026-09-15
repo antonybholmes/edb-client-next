@@ -341,7 +341,7 @@ export function LineSeparator({
   return (
     <hr
       ref={ref}
-      className={cn('my-1 border-t border-border/50', className)}
+      className={cn('my-0.5 border-t border-border/50', className)}
       {...props}
     />
   )

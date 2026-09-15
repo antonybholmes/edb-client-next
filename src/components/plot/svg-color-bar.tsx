@@ -6,11 +6,13 @@ import { useEdbSettings } from '../edb/edb-settings'
 import {
   axisDomainToRange,
   axisDomainToRangeFunc,
+  axisLength,
   IAxis,
   setAxisDirection,
 } from './axes/axis'
 
 import { AxisBottomSvg, AxisRightSvg } from './axes/svg-axis'
+import { SvgG } from './svg-g'
 import { SvgRect } from './svg-rect'
 
 interface ISvgColorBarProps {
@@ -55,12 +57,8 @@ export function SvgHColorBar({
   x2 -= xinc
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
-      shapeRendering={SVG_CRISP_EDGES}
-      fontSize="small"
-    >
-      <g>
+    <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES} fontSize="small">
+      <SvgG>
         {range(steps).map((step) => {
           colorStart += colorStep
 
@@ -79,16 +77,16 @@ export function SvgHColorBar({
 
         {settings.plots.colorbar.stroke.show && (
           <SvgRect
-            width={ax.length}
+            width={length}
             height={settings.plots.colorbar.size.h}
             sp={settings.plots.colorbar.stroke}
           />
         )}
-      </g>
-      <g transform={`translate(0, ${settings.plots.colorbar.size.h})`}>
+      </SvgG>
+      <SvgG pos={{ x: 0, y: settings.plots.colorbar.size.h }}>
         <AxisBottomSvg ax={ax} axis="colorbar" />
-      </g>
-    </g>
+      </SvgG>
+    </SvgG>
   )
 }
 
@@ -100,6 +98,10 @@ export function SvgVColorBar({
 }: ISvgColorBarProps) {
   const { settings } = useEdbSettings()
 
+  if (!ax) {
+    return null
+  }
+
   if (!steps) {
     steps = cmap.colors
   }
@@ -109,6 +111,8 @@ export function SvgVColorBar({
   }
 
   ax = setAxisDirection(ax, 'y')
+
+  const length = axisLength(ax)
 
   const colorStep = 1 / (steps - 1)
   const inc = (ax.domain[1] - ax.domain[0]) / steps
@@ -123,12 +127,8 @@ export function SvgVColorBar({
   y2 -= yinc
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
-      shapeRendering={SVG_CRISP_EDGES}
-      fontSize="small"
-    >
-      <g>
+    <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES} fontSize="small">
+      <SvgG>
         {range(steps).map((step) => {
           colorStart += colorStep
 
@@ -148,16 +148,16 @@ export function SvgVColorBar({
         {settings.plots.colorbar.stroke.show && (
           <SvgRect
             width={settings.plots.colorbar.size.h}
-            height={ax.length}
+            height={length}
             sp={settings.plots.colorbar.stroke}
             shapeRendering={SVG_CRISP_EDGES}
           />
         )}
-      </g>
+      </SvgG>
 
-      <g transform={`translate(${settings.plots.colorbar.size.h}, 0)`}>
+      <SvgG pos={{ x: settings.plots.colorbar.size.h, y: 0 }}>
         <AxisRightSvg ax={ax} axis="colorbar" />
-      </g>
-    </g>
+      </SvgG>
+    </SvgG>
   )
 }

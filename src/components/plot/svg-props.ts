@@ -122,6 +122,9 @@ export const NO_FILL_PROPS: IPaintProps = {
 }
 
 export interface IStrokeProps extends IPaintProps {
+  /**
+   * Stroke width
+   */
   width: number
   dasharray: string
 }
@@ -177,6 +180,13 @@ export const DEFAULT_MARGIN_SMALL: IMarginProps = {
   left: 50,
   bottom: 50,
   right: 50,
+}
+
+export const DEFAULT_MARGIN_MEDIUM: IMarginProps = {
+  top: 80,
+  left: 80,
+  bottom: 80,
+  right: 80,
 }
 
 export interface IColorBarProps {

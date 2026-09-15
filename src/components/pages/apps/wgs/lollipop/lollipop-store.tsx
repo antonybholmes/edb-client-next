@@ -2,8 +2,18 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { range } from '@/lib/math/range'
 import { create } from 'zustand'
 
+import { useAxes } from '@/components/plot/axes/axes-store'
+import {
+  createAxis,
+  getAxisTicks,
+  setAxisTicks,
+} from '@/components/plot/axes/axis'
+import { ITickItem } from '@/components/plot/axes/svg-axis-props'
 import { makeUuid } from '@/lib/id'
-import { aaSet, newAAStats, type ILollipopStats } from './lollipop-stats'
+import { useEffect } from 'react'
+import { IBlock } from '../../matcalc/apps/heatmap/heatmap-settings-store'
+import { useLollipopSettings } from './lollipop-settings-store'
+import { aaSet, aaSum, newAAStats, type ILollipopStats } from './lollipop-stats'
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOLLIPOP,
@@ -237,6 +247,10 @@ export const useLollipopStore = create<ILollipopStore>((set) => ({
 }))
 
 export function useLollipop(): ILollipopStore {
+  const { protein, displayProps } = useLollipopSettings()
+
+  const { addAxes } = useAxes()
+
   //const protein = useLollipopStore(state => state.protein)
   const aaStats = useLollipopStore((state) => state.aaStats)
   const datasets = useLollipopStore((state) => state.datasets)
@@ -245,6 +259,78 @@ export function useLollipop(): ILollipopStore {
 
   const domains = useLollipopStore((state) => state.domains)
   const labels = useLollipopStore((state) => state.labels)
+
+  useEffect(() => {
+    const blockSize: IBlock = displayProps.grid.cell
+
+    const maxSampleCount = Math.round(
+      Math.max(...aaStats.map((stats) => aaSum(stats)))
+    )
+    const gridWidth = displayProps.axes.x.width
+    const graphHeight = maxSampleCount * blockSize.w //blockSize.w
+
+    const n = Math.max(aaStats.length, protein?.sequence.length ?? 0)
+
+    let yax = createAxis({
+      id: 'y',
+      direction: 'y',
+      domain: [0, maxSampleCount],
+      length: graphHeight,
+      title: 'Mutation count',
+      tickParams: { which: 'minor', show: false },
+    })
+
+    // small plots look better with fewer ticks
+    if (maxSampleCount < 10) {
+      if (maxSampleCount % 2 === 0) {
+        yax = setAxisTicks(yax, [0, maxSampleCount / 2, maxSampleCount])
+      } else {
+        yax = setAxisTicks(yax, [0, maxSampleCount])
+      }
+
+      yax = setAxisTicks(yax, [0, maxSampleCount])
+    }
+
+    let xax = createAxis({
+      id: 'x',
+      domain: [1, n],
+      length: gridWidth,
+      title: 'Positions',
+      tickParams: { which: 'minor', show: false },
+    })
+    //.setTicks(ticks)
+
+    let ticks = getAxisTicks(xax)
+
+    ticks = ([{ v: 1, label: '1' }] as ITickItem[]).concat(ticks)
+
+    const dx = ticks[ticks.length - 1]!.v - ticks[ticks.length - 2]!.v
+
+    // add last tick to end of plot if is more than half the distance btween the last two ticks
+    // so that we add it, but only if it will not overlap with the label of the last tick. This
+    // is a simple heuristic to avoid overlapping labels
+    if (
+      displayProps.axes.x.showEndTick &&
+      xax.domain[1]! - ticks[ticks.length - 1]!.v > dx / 2
+    ) {
+      ticks = ticks.concat({ v: n, label: xax.domain[1]!.toString() })
+
+      console.log('added last tick:', ticks)
+    }
+
+    xax = setAxisTicks(xax, ticks)
+
+    console.log('x axis ticks:', xax)
+
+    addAxes([
+      {
+        plotId: 'lollipop',
+        groupId: 'lollipop',
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yax },
+      },
+    ])
+  }, [aaStats, datasetsForUse, mutationsForUse, displayProps, protein])
 
   return {
     aaStats,

@@ -1,18 +1,14 @@
 import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
-import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from '../../apps/boxplot/boxplot-plot-svg'
 
-import { DEFAULT_EXT_GSEA_PROPS } from '../../apps/gsea/ext-gsea/ext-gsea-store'
 import { DEFAULT_VOLCANO_PROPS } from '../../apps/volcano/volcano-plot-svg'
 import {
   BoxPlot,
   DataFrameType,
-  ExtGseaPlot,
   IHeatMapPlot,
   IHistoryApp,
   IVolcano,
@@ -100,43 +96,6 @@ export function newVolcanoPlot(
     name,
     volcano,
     groupRows: groups,
-    props,
-    actions,
-    type: 'plot',
-    createdAt: new Date().toISOString(),
-  }
-}
-
-export function newExtGseaPlot(
-  name: string,
-
-  opts: Partial<ExtGseaPlot> = {}
-): ExtGseaPlot {
-  const {
-    actions = [],
-    groupRows: groups = [],
-    extGseaRes = {} as IExtGseaResult,
-    gseaRes1 = {} as IGseaResult,
-    gseaRes2 = {} as IGseaResult,
-    rankedGenes = {} as IRankedGenes,
-    gs1 = {} as IGeneSet,
-    gs2 = {} as IGeneSet,
-    props = { ...DEFAULT_EXT_GSEA_PROPS },
-  } = opts
-
-  return {
-    id: makeUuid(),
-    //path: '',
-    style: 'ext-gsea',
-    name,
-    //dataframes,
-    groupRows: groups,
-    extGseaRes,
-    gseaRes1,
-    gseaRes2,
-    rankedGenes,
-    gs1,
-    gs2,
     props,
     actions,
     type: 'plot',

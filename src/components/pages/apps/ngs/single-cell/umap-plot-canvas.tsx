@@ -1,6 +1,10 @@
 import { resizeAndScaleCanvas } from '@/lib/canvas'
 
-import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  createAxis,
+} from '@/components/plot/axes/axis'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_TRANSPARENT } from '@/lib/color/color'
 import { BWR_CMAP_V2, COLOR_MAPS } from '@/lib/color/colormap'
@@ -36,8 +40,8 @@ export function drawUmap(
   const xaf = axisDomainToRangeFunc(xax)
   const yaf = axisDomainToRangeFunc(yax)
 
-  const innerWidth = xax.length
-  const innerHeight = yax.length
+  const innerWidth = axisLength(xax)
+  const innerHeight = axisLength(yax)
   // const width =
   //   innerWidth + displayProps.margin.left + displayProps.margin.right
   // const height =

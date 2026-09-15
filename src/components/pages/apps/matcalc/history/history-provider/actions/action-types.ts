@@ -1,10 +1,10 @@
 import { ITextFileOpen } from '@/components/pages/open-files'
 
+import type { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import type { IGeneSet } from '@/lib/gsea/geneset'
 import type { IAxesOpts } from '../history-types'
 import {
   AppendMode,

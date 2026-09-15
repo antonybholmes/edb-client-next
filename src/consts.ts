@@ -107,6 +107,8 @@ export const SVG_CRISP_EDGES = 'crispEdges'
 export const BIG0 = BigInt(0)
 export const BIG1 = BigInt(1)
 
+export const ITEM_REGEX = /[;\|, ]+/
+
 export type SortOrder = 'asc' | 'desc'
 
 export interface IDialogParams {

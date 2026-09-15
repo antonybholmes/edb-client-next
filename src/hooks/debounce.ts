@@ -109,12 +109,16 @@ export function useNumDebounce(
 }
 
 /**
- * Debounce for function calls
+ * Debounces a callback function by a specified delay so that it is only invoked
+ * after the delay has passed without any new calls.
+ * This is useful for scenarios like handling rapid user input events where you
+ * want to limit the frequency of function execution.
+ *
  * @param callback
  * @param delayMs
  * @returns
  */
-export function useDebounceCallback<T extends (...args: any[]) => void>(
+export function useDebounceCallback<T extends (...args: unknown[]) => void>(
   callback: T,
   opts: IDebounceOptions<T> = {}
 ) {
@@ -141,6 +145,7 @@ export function useDebounceCallback<T extends (...args: any[]) => void>(
       cancel()
 
       timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = null
         callbackRef.current(...args)
       }, delayMs)
     },
@@ -150,5 +155,5 @@ export function useDebounceCallback<T extends (...args: any[]) => void>(
   // Cleanup on unmount
   useEffect(() => cancel(), [cancel])
 
-  return debounced
+  return { debounced, cancel }
 }

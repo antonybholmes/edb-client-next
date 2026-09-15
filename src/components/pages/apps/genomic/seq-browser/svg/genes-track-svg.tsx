@@ -1,12 +1,18 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  IAxis,
+} from '@/components/plot/axes/axis'
 
 import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 
 import { useGenomes } from '@/components/edb/genome'
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgPolyLine } from '@/components/plot/svg-poly-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { IGenomicFeature } from '@/lib/genomic/genomic-feature'
 import {
@@ -42,6 +48,8 @@ export function getGeneTrackHeight(
 
   const xaf = axisDomainToRangeFunc(xax)
 
+  const xl = axisLength(xax)
+
   if (settings.tracks.genes.display === 'dense') {
     for (const [gi, gene] of genes.entries()) {
       //geneYMap.set(`gene-${gi}`, 0)
@@ -60,7 +68,7 @@ export function getGeneTrackHeight(
   } else if (settings.tracks.genes.display === 'pack') {
     // pack
 
-    const depths = range(0, xax.length).map(() => new Set<number>())
+    const depths = range(0, xl).map(() => new Set<number>())
     let maxRow = 0
     for (const [gi, gene] of genes.entries()) {
       for (const [ti, t] of (
@@ -79,7 +87,7 @@ export function getGeneTrackHeight(
         }
 
         x1 = Math.max(0, x1)
-        x2 = Math.min(xax.length - 1, x2)
+        x2 = Math.min(xl - 1, x2)
 
         // try all depths from 0 to maxDepth + 1 to find a free row
         for (let row = 0; row <= maxRow + 1; ++row) {
@@ -182,12 +190,14 @@ export function GenesTrackSvg({ track, titleHeight, geneYMap }: IProps) {
 
   const { gtf } = useGenomes()
 
+  const xl = axisLength(xax)
+
   return (
     <>
       {settings.titles.show && settings.titles.position === 'top' && (
-        <g id="track-title" transform={`translate(0, ${titleHeight})`}>
+        <SvgG id="track-title" pos={{ x: 0, y: titleHeight }}>
           <SvgText
-            transform={`translate(${xax.length / 2}, 0)`}
+            transform={`translate(${xl / 2}, 0)`}
             //dominantBaseline="middle"
             textAnchor="middle"
             //fontWeight="bold"
@@ -196,7 +206,7 @@ export function GenesTrackSvg({ track, titleHeight, geneYMap }: IProps) {
             {/* {track.name} ({db?.genome},{db?.version}) */}
             {track.name} ({gtf?.name})
           </SvgText>
-        </g>
+        </SvgG>
       )}
 
       {settings.tracks.genes.view === 'transcript' ? (
@@ -245,33 +255,31 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
   return (
     <>
       <defs>
-        <polyline
+        <SvgPolyLine
           id={`${track.id}-arrow-left`}
           points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
           stroke="white"
-          strokeWidth={track.displayOptions.arrows.stroke.width}
+          s={track.displayOptions.arrows.stroke}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
 
-        <polyline
+        <SvgPolyLine
           id={`${track.id}-arrow-right`}
           points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
           stroke="white"
-          strokeWidth={track.displayOptions.arrows.stroke.width}
+          s={track.displayOptions.arrows.stroke}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </defs>
 
-      <g
-        transform={`translate(0, ${titleHeight + settings.tracks.genes.offset})`}
-      >
+      <SvgG pos={{ x: 0, y: titleHeight + settings.tracks.genes.offset }}>
         {genes.map((gene, gi) => {
           return (
-            <g
+            <SvgG
               id={`gene-${gi}`}
               //transform={`translate(0, ${geneYMap.get(`gene-${gi}`) ?? 0})`}
               key={gi}
@@ -309,9 +317,12 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                   w = Math.abs(x2 - x1)
 
                   return (
-                    <g
+                    <SvgG
                       id="transcript"
-                      transform={`translate(0, ${geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0})`}
+                      pos={{
+                        x: 0,
+                        y: geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0,
+                      }}
                       key={ti}
                     >
                       <rect
@@ -329,8 +340,11 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                         <title>{`${transcript.transcript}, strand ${transcript.loc.strand}`}</title>
                       </rect>
 
-                      <g
-                        transform={`translate(0, ${settings.tracks.genes.transcripts.height / 2})`}
+                      <SvgG
+                        pos={{
+                          x: 0,
+                          y: settings.tracks.genes.transcripts.height / 2,
+                        }}
                       >
                         {settings.tracks.genes.labels.text.show &&
                           settings.tracks.genes.display !== 'dense' && (
@@ -354,7 +368,7 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                           )}
 
                         {settings.tracks.genes.arrows.show && (
-                          <g
+                          <SvgG
                             id="arrows"
                             //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                           >
@@ -367,16 +381,16 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                                 />
                               )
                             })}
-                          </g>
+                          </SvgG>
                         )}
-                      </g>
-                    </g>
+                      </SvgG>
+                    </SvgG>
                   )
                 })}
-            </g>
+            </SvgG>
           )
         })}
-      </g>
+      </SvgG>
     </>
   )
 }
@@ -428,39 +442,38 @@ export function GenesStructureTrackSvg({
       <defs>
         {settings.tracks.genes.arrows.style === 'lines' && (
           <>
-            <polyline
+            <SvgPolyLine
               id={`${track.id}-arrow-left`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
-              stroke={track.displayOptions.arrows.stroke.value}
-              strokeWidth={track.displayOptions.arrows.stroke.width}
+              s={track.displayOptions.arrows.stroke}
+
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <polyline
+            <SvgPolyLine
               id={`${track.id}-arrow-left-canonical`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
               stroke={settings.tracks.genes.canonical.fill.value}
-              strokeWidth={track.displayOptions.arrows.stroke.width}
+              s={track.displayOptions.arrows.stroke}
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
 
-            <polyline
+            <SvgPolyLine
               id={`${track.id}-arrow-right`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
-              stroke={track.displayOptions.arrows.stroke.value}
-              strokeWidth={track.displayOptions.arrows.stroke.width}
+              s={track.displayOptions.arrows.stroke}
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <polyline
+            <SvgPolyLine
               id={`${track.id}-arrow-right-canonical`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
               stroke={settings.tracks.genes.canonical.fill.value}
-              strokeWidth={track.displayOptions.arrows.stroke.width}
+              s={track.displayOptions.arrows.stroke}
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -511,7 +524,7 @@ export function GenesStructureTrackSvg({
         )}
       </defs>
 
-      <g
+      <SvgG
         transform={`translate(0, ${titleHeight + settings.tracks.genes.offset})`}
       >
         {genes.map((gene, gi) => {
@@ -520,7 +533,7 @@ export function GenesStructureTrackSvg({
           // x2 = xax.domainToRange(geneLoc.end)
 
           return (
-            <g
+            <SvgG
               id={`gene-${gi}`}
               //transform={`translate(0, ${geneYMap.get(`gene-${gi}`) ?? 0})`}
               key={gi}
@@ -567,7 +580,7 @@ export function GenesStructureTrackSvg({
                   w = Math.abs(x2 - x1)
 
                   return (
-                    <g
+                    <SvgG
                       id="transcript"
                       transform={`translate(0, ${geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0})`}
                       key={ti}
@@ -582,15 +595,18 @@ export function GenesStructureTrackSvg({
                         <title>{`${transcript.transcript}, strand ${transcript.loc.strand}`}</title>
                       </rect>
 
-                      <g
-                        transform={`translate(0, ${settings.tracks.genes.transcripts.height / 2})`}
+                      <SvgG
+                        pos={{
+                          x: 0,
+                          y: settings.tracks.genes.transcripts.height / 2,
+                        }}
                       >
                         {settings.tracks.genes.endArrows.show &&
                           settings.tracks.genes.display !== 'dense' &&
                           (!settings.tracks.genes.endArrows
                             .firstTranscriptOnly ||
                             ti === 0) && (
-                            <g
+                            <SvgG
                               id="end-arrow"
                               transform={`translate(${gene.loc.strand === '+' ? x1 : x2}, 0) scale(${gene.loc.strand === '+' ? 1 : -1},1)`}
                             >
@@ -611,7 +627,7 @@ export function GenesStructureTrackSvg({
                                         .value
                                 }
                               />
-                            </g>
+                            </SvgG>
                           )}
 
                         {settings.tracks.genes.labels.text.show &&
@@ -636,7 +652,7 @@ export function GenesStructureTrackSvg({
                           )}
 
                         {settings.tracks.genes.arrows.show && (
-                          <g
+                          <SvgG
                             id="arrows"
                             //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                           >
@@ -649,7 +665,7 @@ export function GenesStructureTrackSvg({
                                 />
                               )
                             })}
-                          </g>
+                          </SvgG>
                         )}
 
                         {settings.tracks.genes.stroke.show && (
@@ -686,14 +702,14 @@ export function GenesStructureTrackSvg({
                           exonCount={exonCount}
                           isCanonical={isCanonical}
                         />
-                      </g>
-                    </g>
+                      </SvgG>
+                    </SvgG>
                   )
                 })}
-            </g>
+            </SvgG>
           )
         })}
-      </g>
+      </SvgG>
     </>
   )
 }

@@ -131,9 +131,7 @@ export function VolcanoPanel() {
       <ResizableSidebar side="right">
         <ExtScrollCard>
           <VolcanoPlotSvg
-            //displayProps={displayOptions}
-            x={displayProps.axes.xaxis.name}
-            y={displayProps.axes.yaxis.name}
+          //displayProps={displayOptions}
           />
         </ExtScrollCard>
         <VolcanoPropsPanel />

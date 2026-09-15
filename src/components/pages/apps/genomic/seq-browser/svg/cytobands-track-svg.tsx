@@ -4,6 +4,7 @@ import { API_CYTOBANDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import {
   axisDomainToRangeFunc,
+  axisLength,
   createAxis,
   IAxis,
   setAxisDomain,
@@ -12,6 +13,9 @@ import { SvgText } from '@/components/plot/svg-text'
 import type { IStringMap } from '@/interfaces/string-map'
 import { COLOR_BLACK } from '@/lib/color/color'
 
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgPolygon } from '@/components/plot/svg-polygon'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { range } from '@/lib/math/range'
@@ -102,7 +106,9 @@ function CytobandsRoundStyleTrackSvg({
   const l1 = cytobands[0]!.loc
   const l2 = cytobands[cytobands.length - 1]!.loc
 
-  let cytoAx: IAxis = createAxis({ length: xax.length })
+  const xl = axisLength(xax)
+
+  let cytoAx: IAxis = createAxis({ length: xl })
 
   if (settings.reverse) {
     cytoAx = setAxisDomain(cytoAx, [l2.end, l1.start])
@@ -308,8 +314,9 @@ function CytobandsSquareStyleTrackSvg({
 
   const l1 = cytobands[0]!.loc
   const l2 = cytobands[cytobands.length - 1]!.loc
+  const xl = axisLength(xax)
 
-  let cytoAx = createAxis({ length: xax.length })
+  let cytoAx = createAxis({ length: xl })
 
   if (settings.reverse) {
     cytoAx = setAxisDomain(cytoAx, [l2.end, l1.start])
@@ -342,9 +349,9 @@ function CytobandsSquareStyleTrackSvg({
 
   return (
     <>
-      <g
+      <SvgG
         id="p-bands"
-        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
+        pos={{ x: 0, y: (settings.tracks.cytobands.height - h) / 2 }}
       >
         {pbands.map((b, bi) => {
           const l = b.loc
@@ -364,11 +371,11 @@ function CytobandsSquareStyleTrackSvg({
             </rect>
           )
         })}
-      </g>
+      </SvgG>
 
-      <g
+      <SvgG
         id="q-bands"
-        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
+        pos={{ x: 0, y: (settings.tracks.cytobands.height - h) / 2 }}
       >
         {qbands.map((b, bi) => {
           const l = b.loc
@@ -388,12 +395,15 @@ function CytobandsSquareStyleTrackSvg({
             </rect>
           )
         })}
-      </g>
+      </SvgG>
 
       {settings.tracks.cytobands.labels.text.show && (
-        <g
+        <SvgG
           id="q-labels"
-          transform={`translate(0, ${settings.tracks.cytobands.height + settings.titles.offset})`}
+          pos={{
+            x: 0,
+            y: settings.tracks.cytobands.height + settings.titles.offset,
+          }}
         >
           <LabelSvg
             pbands={pbands}
@@ -401,12 +411,12 @@ function CytobandsSquareStyleTrackSvg({
             ax={cytoAx}
             settings={settings}
           />
-        </g>
+        </SvgG>
       )}
 
-      <g
+      <SvgG
         id="center"
-        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
+        pos={{ x: 0, y: (settings.tracks.cytobands.height - h) / 2 }}
       >
         <polygon
           points={`${centerx1},${h} ${centerx1},0 ${centerx2},${h} ${centerx2},0`}
@@ -415,24 +425,23 @@ function CytobandsSquareStyleTrackSvg({
           stroke="none"
         />
 
-        <polygon
-          points={`0,${h} 0,0 ${settings.reverse ? centerx2 : centerx1},0 ${settings.reverse ? centerx1 : centerx2},${h} ${xax.length},${h} ${xax.length},0 ${settings.reverse ? centerx1 : centerx2},0 ${settings.reverse ? centerx2 : centerx1},${h}`}
+        <SvgPolygon
+          points={`0,${h} 0,0 ${settings.reverse ? centerx2 : centerx1},0 ${settings.reverse ? centerx1 : centerx2},${h} ${xl},${h} ${xl},0 ${settings.reverse ? centerx1 : centerx2},0 ${settings.reverse ? centerx2 : centerx1},${h}`}
           fill="none"
-          stroke={track.displayOptions.stroke.value}
-          strokeWidth={track.displayOptions.stroke.width}
+          sp={track.displayOptions.stroke}
+
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-      </g>
+      </SvgG>
 
-      <rect
+      <SvgRect
         id="location"
         x={locx1 - (settings.reverse ? locw : 0)}
         width={locw}
         height={settings.tracks.cytobands.height}
-        stroke={track.displayOptions.location.stroke.value}
-        fill={track.displayOptions.location.fill.value}
-        fillOpacity={track.displayOptions.location.fill.opacity}
+        sp={track.displayOptions.location.stroke}
+        fp={track.displayOptions.location.fill}
       />
     </>
   )
@@ -450,6 +459,7 @@ function LabelSvg({
   settings: ISeqBrowserSettings
 }) {
   const xaf = axisDomainToRangeFunc(ax)
+  const xl = axisLength(ax)
 
   const bands = [...pbands, ...qbands]
 
@@ -472,7 +482,7 @@ function LabelSvg({
 
   // Use an empirical method to space labels out nicely
   const thresholdX = settings.tracks.cytobands.labels.skip.auto
-    ? Math.log2(ax.length) * 5
+    ? Math.log2(xl) * 5
     : settings.tracks.cytobands.labels.skip.x
 
   for (const label of labels) {

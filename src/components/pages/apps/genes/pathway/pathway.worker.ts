@@ -1,6 +1,6 @@
 import type { SeriesData } from '../../../../../lib/dataframe/series-data'
 import { PathwayOverlap } from '../../../../../lib/gene/pathway/pathway'
-import type { ICollection, IGeneSet } from '../../../../../lib/gsea/geneset'
+import type { ICollection, IGeneSet } from '../gsea/gsea-plot/geneset'
 
 export interface IPathwayWorkerMessage {
   genesets: IGeneSet[]

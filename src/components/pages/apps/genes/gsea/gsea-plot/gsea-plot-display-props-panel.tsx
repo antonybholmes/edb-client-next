@@ -22,7 +22,9 @@ import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
-import { AxesPropRow } from '../../../../../plot/axes/axes-prop-row'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 
@@ -70,7 +72,6 @@ export function GseaPlotDisplayPropsPanel() {
             <PropRow title="Margins">
               <MarginPopover />
             </PropRow>
-            <AxesPropRow />
 
             <CheckPropRow
               title="Invert Phenotypes"
@@ -210,6 +211,18 @@ export function GseaPlotDisplayPropsPanel() {
                 />
               </VCenterRow>
             </PropRow>
+
+            <CheckPropRow
+              title="Color Phenotype Labels"
+              checked={settings.genes.labels.color.on}
+              onCheckedChange={(state) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.labels.color.on = state
+                  })
+                )
+              }}
+            />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="genes-plot">
@@ -250,7 +263,7 @@ export function GseaPlotDisplayPropsPanel() {
             </PropRow>
 
             <CheckPropRow
-              title="Colors"
+              title="Color"
               checked={settings.genes.color.on}
               onCheckedChange={(state) => {
                 updateSettings(
@@ -260,7 +273,7 @@ export function GseaPlotDisplayPropsPanel() {
                 )
               }}
             >
-              <VCenterRow>
+              {/* <VCenterRow>
                 <FillButton
                   colors={[
                     {
@@ -297,7 +310,39 @@ export function GseaPlotDisplayPropsPanel() {
 
                   title="Negative Gene Color"
                 />
-              </VCenterRow>
+              </VCenterRow> */}
+
+              <ColorMapMenu
+                cmap={getColorMap(settings.genes.color.cmap.name)}
+                onChange={(cmap, reversed) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.cmap.name = cmap.id as ColorMapName
+                      //draft.genes.color.cmap.opacity = cmap.opacity
+                      draft.genes.color.cmap.reversed = reversed
+                    })
+                  )
+                }}
+              />
+
+              <SelectList
+                items={[
+                  { label: 'Score', value: 'score' },
+                  { label: 'Rank', value: 'rank' },
+                ]}
+                value={settings.genes.color.mode}
+                onValueChange={(value) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.mode = value as 'score' | 'rank'
+                    })
+                  )
+                }}
+                w="xs"
+              >
+                <SelectItem value="score">Score</SelectItem>
+                <SelectItem value="rank">Rank</SelectItem>
+              </SelectList>
 
               {/* <ColorPickerButton
                 disabled={!settings.genes.show}
@@ -335,7 +380,37 @@ export function GseaPlotDisplayPropsPanel() {
               /> */}
             </CheckPropRow>
 
-            <GradientOpacityControl />
+            <PropRow title="Opacity">
+              <PercentSlider
+                value={settings.genes.color.gradient.opacity}
+                min={0}
+                max={1}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.gradient.opacity = v
+                    })
+                  )
+                }}
+                step={0.05}
+              />
+            </PropRow>
+
+            <PropRow title="Weight">
+              <PercentSlider
+                value={settings.genes.color.gradient.weight}
+                min={0}
+                max={1}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.gradient.weight = v
+                    })
+                  )
+                }}
+                step={0.05}
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
@@ -436,53 +511,5 @@ export function GseaPlotDisplayPropsPanel() {
         </AccordionItem>
       </ScrollAccordion>
     </PropsPanel>
-  )
-}
-
-/**
- * A control component for adjusting the opacity of the gene color gradient.
- * It includes a switch to toggle the gradient on and off,
- * a slider to adjust the opacity, and a percentage display of the current
- * opacity value. It requires debouncing to prevent excessive updates
- * while the slider is being adjusted.
- * @returns
- */
-function GradientOpacityControl() {
-  const { settings, updateSettings } = useGseaSettings()
-
-  return (
-    <PropRow title="Gradient">
-      {/* <NumericalInput
-                value={settings.genes.gradient.alpha}
-                disabled={!settings.genes.gradient.on}
-                placeholder="Alpha"
-                limit={[0, 1]}
-                step={0.1}
-                dp={1}
-                onNumChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.gradient.alpha = v
-                    })
-                  )
-                }}
-                w="xxs"
-                title="Opacity"
-              /> */}
-
-      <PercentSlider
-        value={1 - settings.genes.gradient.opacity}
-        min={0}
-        max={1}
-        onNumChanged={(v) => {
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.genes.gradient.opacity = 1 - v
-            })
-          )
-        }}
-        step={0.05}
-      />
-    </PropRow>
   )
 }

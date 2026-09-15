@@ -7,20 +7,21 @@ import {
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Move3d } from 'lucide-react'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { AxisPlotPropsPopover } from './axis-plot-props-popover'
 
-export function AxesDisplayPropsPopover({
-  plotIds,
-  axesGroups,
-}: {
-  plotIds: { id: string; title: string }[]
-  axesGroups: {
-    id: string
-    title: string
-    axesIds: { id: string; axis: 'x' | 'y'; title: string }[]
-  }[]
-}) {
+export interface IDisplayAxis {
+  id: string
+  title: string
+}
+
+export interface IDisplayPlot extends IDisplayAxis {
+  groups: (IDisplayAxis & {
+    axes: IDisplayAxis[]
+  })[]
+}
+
+export function AxesDisplayPropsPopover({ plots }: { plots: IDisplayPlot[] }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -40,30 +41,23 @@ export function AxesDisplayPropsPopover({
       />
 
       <PopoverContent className="gap-y-1 w-60 flex flex-col">
-        {plotIds.map(({ id: plotId, title }, pi) => {
+        {plots.map(({ id: plotId, groups: groups }) => {
           return (
             <BaseCol key={plotId} className="grow">
-              {axesGroups.map(({ id: groupId, title: groupTitle, axesIds }) => (
-                <Fragment key={groupId}>
-                  {axesGroups.map(
-                    ({ id: groupId, title: groupTitle, axesIds }) => (
-                      <VCenterRow key={groupId} className="justify-between">
-                        <strong>{groupTitle}</strong>
-                        <VCenterRow>
-                          {axesIds.map(({ id: axisId, axis, title }) => (
-                            <AxisPlotPropsPopover
-                              key={axisId}
-                              axis={axis}
-                              title={title}
-                              plotId={plotId}
-                              axisId={axisId}
-                            />
-                          ))}
-                        </VCenterRow>
-                      </VCenterRow>
-                    )
-                  )}
-                </Fragment>
+              {groups.map(({ id: groupId, title: groupTitle, axes: axes }) => (
+                <VCenterRow key={groupId} className="justify-between">
+                  <strong>{groupTitle}</strong>
+                  <VCenterRow>
+                    {axes.map(({ id: axisId, title }) => (
+                      <AxisPlotPropsPopover
+                        key={axisId}
+                        //axis={axis}
+                        title={title}
+                        plotAddress={{ plotId, groupId, axisId }}
+                      />
+                    ))}
+                  </VCenterRow>
+                </VCenterRow>
               ))}
             </BaseCol>
           )

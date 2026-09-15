@@ -1,10 +1,6 @@
+import { IRange } from '@/lib/math/limit'
 import { produce } from 'immer'
 import { create } from 'zustand'
-
-export interface IRange {
-  start: number
-  end: number
-}
 
 export interface ISelectionRange {
   rows: IRange | undefined

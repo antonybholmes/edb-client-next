@@ -2,30 +2,28 @@ import type { IBinaryFileOpen } from '@/components/pages/open-files'
 import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
+import type { IRankedGene } from '../gsea-plot/geneset'
 
 import { create } from 'zustand'
 import {
   getGseaLog10q,
-  IGseaGeneRankScore,
-  IGseaGeneSet,
   IGseaResult,
-} from '../gsea-plot/gsea-plot-store'
-
-export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
+  IGseaTableResult,
+} from '../gsea-plot/gsea-store'
 
 export interface IGseaWebStore {
   phenotypes: string[]
-  rankedGenes: IGseaGeneRankScore[]
-  searchResults: IGseaGeneSet[]
-  reportsMap: Record<string, IGseaGeneSet[]>
+  rankedGenes: IRankedGene[]
+  searchResults: IGseaTableResult[]
+  reportsMap: Record<string, IGseaTableResult[]>
   datasetsForUse: Record<string, boolean>
   resultsMap: Record<string, IGseaResult>
-  reports: IGseaGeneSet[]
+  reports: IGseaTableResult[]
   allowSelectAll: boolean
 
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
-  setReports: (reports: IGseaGeneSet[]) => void
+  setReports: (reports: IGseaTableResult[]) => void
   loadGseaZip: (files: IBinaryFileOpen[]) => void
 }
 
@@ -42,7 +40,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
     set({ datasetsForUse }),
 
-  setReports: (reports: IGseaGeneSet[]) => set({ reports }),
+  setReports: (reports: IGseaTableResult[]) => set({ reports }),
 
   setAllowSelectAll: (allowSelectAll: boolean) => set({ allowSelectAll }),
 
@@ -51,11 +49,11 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
       return
     }
 
-    const reportsMap: Record<string, IGseaGeneSet[]> = {}
+    const reportsMap: Record<string, IGseaTableResult[]> = {}
 
     const resultsMap: Record<string, IGseaResult> = {}
 
-    let rankedGenes: IGseaGeneRankScore[] = []
+    let rankedGenes: IRankedGene[] = []
     let phenotypes: string[] = []
 
     const file = files[0]!
@@ -80,7 +78,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
         const scoreIdx = headings.findIndex((h) => h === 'SCORE')
 
         rankedGenes = rows.map((tokens, ti) => ({
-          gene: tokens[geneIdx]!,
+          name: tokens[geneIdx]!,
           rank: ti,
           score: Number(tokens[scoreIdx]!),
           leading: false,
@@ -127,7 +125,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
           const q = Number(tokens[qIdx]!)
           const log10q = getGseaLog10q(q)
 
-          const report: IGseaGeneSet = {
+          const report: IGseaTableResult = {
             id: makeUuid(),
             name,
             phen,
@@ -157,20 +155,20 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
         const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
         const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
-        const es: IGseaGeneRankScore[] = rows.map((tokens) => {
+        const hits: IRankedGene[] = rows.map((tokens) => {
           return {
-            gene: tokens[1]!,
+            name: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
             score: Number(tokens[scoreIdx]!),
             leading: tokens[leadingIdx]!.includes('Yes'),
           }
         })
 
-        resultsMap[name] = { name, es }
+        resultsMap[name] = { name, hits }
       }
     }
 
-    const reports: IGseaGeneSet[] = phenotypes
+    const reports: IGseaTableResult[] = phenotypes
       .filter((phen) => phen in reportsMap)
       .map((phen) => reportsMap[phen]!)
       .flat()

@@ -1,5 +1,5 @@
+import { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
-import { IGeneSet } from '@/lib/gsea/geneset'
 import { useHistory } from './history-provider'
 import {
   DataFrameType,

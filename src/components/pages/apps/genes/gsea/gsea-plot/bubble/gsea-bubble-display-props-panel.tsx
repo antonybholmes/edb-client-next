@@ -11,6 +11,7 @@ import {
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
+import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
@@ -20,10 +21,10 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
-import { AxesPropRow } from '../../../../../../plot/axes/axes-prop-row'
 import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
 import {
   Mode,
   MODE_ITEMS,
@@ -33,6 +34,31 @@ import {
 
 export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
+  const { plots } = useGseaBubbleContext()
+
+  const axes = plots
+    .map((p) => ({
+      id: p.id,
+      title: p.name,
+      groups: [
+        {
+          id: 'nes',
+          title: 'NES',
+          axes: [{ id: 'x', title: 'X' }],
+        },
+      ],
+    }))
+    .concat({
+      id: 'cbar',
+      title: 'Color Bar',
+      groups: [
+        {
+          id: 'cbar',
+          title: 'Color Bar',
+          axes: [{ id: 'cbar', title: 'Color Bar Axis' }],
+        },
+      ],
+    })
 
   return (
     <PropsPanel>
@@ -129,7 +155,10 @@ export function GseaBubbleDisplayPropsPanel() {
               />
             </PropRow>
 
-            <AxesPropRow />
+            {/* <AxesPropRow /> */}
+            <PropRow title="Axes">
+              <AxesDisplayPropsPopover plots={axes} />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 

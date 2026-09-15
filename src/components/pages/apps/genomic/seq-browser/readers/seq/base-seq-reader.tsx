@@ -111,6 +111,15 @@ export function makePoints(
   })
 }
 
+/**
+ * Collapse points onto axis and keep only the unique ones
+ * to reduce rendering.
+ *
+ * @param points
+ * @param xax
+ * @param yax
+ * @returns
+ */
 export function collapsePoints(
   points: ISeqPos[],
   xax: IAxis,

@@ -8,20 +8,17 @@ import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { range } from '@/lib/math/range'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { TOOLTIP_CLEAR_MS, useTooltip } from '@/providers/tooltip-provider'
-import {
-  useCallback,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react'
+import { useTooltip } from '@/providers/tooltip-provider'
+import { useCallback, useMemo, type ReactElement, type ReactNode } from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
@@ -600,34 +597,69 @@ function vLegendSvg(
 //   oncoProps: IOncoProps
 // }
 
-export function OncoplotSvg() {
+function OncoplotSvgContent() {
   const { ref } = useSVG()
 
   const { mutations, displayProps } = useOncoplotSettings()
   const { mutationFrame: mf, mutationsInUse, clinicalTracks } = useOncoplot()
 
-  const colorMap = mutationColorMapFromMutations(mutations)
+  const { axis: xax } = useAxis({
+    plotId: 'oncoplot',
+    groupId: 'oncoplot',
+    axisId: 'x',
+  })
+
+  const { axis: yax } = useAxis({
+    plotId: 'oncoplot',
+    groupId: 'oncoplot',
+    axisId: 'y',
+  })
+
+  const colorMap = useMemo(
+    () => mutationColorMapFromMutations(mutations),
+    [mutations]
+  )
 
   const blockSize: IBlock = displayProps.grid.cell
   const spacing = displayProps.grid.spacing
-  const halfBlockSize: IBlock = { w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }
-  const scaledBlockSize = {
-    w: blockSize.w * displayProps.scale,
-    h: blockSize.h * displayProps.scale,
-  }
 
-  const scaledPadding = {
-    x: spacing.x * displayProps.scale,
-    y: spacing.y * displayProps.scale,
-  }
+  const blockSpaceSize: IBlock = useMemo(() => {
+    return {
+      w: blockSize.w + spacing.x,
+      h: blockSize.h + spacing.y,
+    }
+  }, [blockSize.w, blockSize.h, spacing.x, spacing.y])
 
-  const { showTooltip, hideTooltip: hideTooltipOrig } = useTooltip()
+  // memoized so these keep stable references across hover-only re-renders
+  const halfBlockSize: IBlock = useMemo(
+    () => ({ w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }),
+    [blockSize.w, blockSize.h]
+  )
+  const scaledBlockSize = useMemo(
+    () => ({
+      w: blockSize.w * displayProps.scale,
+      h: blockSize.h * displayProps.scale,
+    }),
+    [blockSize.w, blockSize.h, displayProps.scale]
+  )
 
-  const highlightRef = useRef<HTMLSpanElement>(null)
+  const scaledPadding = useMemo(
+    () => ({
+      x: spacing.x * displayProps.scale,
+      y: spacing.y * displayProps.scale,
+    }),
+    [spacing.x, spacing.y, displayProps.scale]
+  )
+
+  const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+
+  //const highlightRef = useRef<HTMLSpanElement>(null)
 
   //const [highlightCol, setHighlightCol] = useState(NO_SELECTION)
   //const [highlightRow, setHighlightRow] = useState(-1)
 
+  const marginTop = displayProps.margin.top
   const marginLeft = displayProps.margin.left
   const marginRight = displayProps.margin.right
 
@@ -672,36 +704,11 @@ export function OncoplotSvg() {
 
   const height = gridHeight + top + bottom
 
-  const samples: string[] = mf?.sampleStats.map((stats) => stats.sample)
+  const samples: string[] = useMemo(
+    () => mf?.sampleStats.map((stats) => stats.sample) ?? [],
+    [mf]
+  )
 
-  // keep things simple and use ints for the graph limits
-  const maxSampleCount = mf
-    ? Math.round(Math.max(...mf.sampleStats.map((stats) => stats.sum)))
-    : 0
-
-  const yax = createAxis({
-    direction: 'y',
-    domain: [0, maxSampleCount],
-    length: displayProps.samples.graphs.height,
-    title: displayProps.samples.graphs.yaxis.label,
-    ticks: range(maxSampleCount + 1),
-    tickParams: { which: 'minor', show: false },
-  })
-
-  const maxGeneCount = mf
-    ? Math.round(Math.max(...mf?.geneStats.map((stats) => stats.sum)))
-    : 0
-
-  const xax = createAxis({
-    domain: [0, maxGeneCount],
-    length: displayProps.features.graphs.height,
-    title: 'No. of samples',
-    ticks: [
-      { v: 0, label: '0' },
-      { v: maxGeneCount, label: `${maxGeneCount} / ${mf?.shape[1]}` },
-    ],
-    tickParams: { which: 'minor', show: false },
-  })
   //.setTickLabels([0, `${maxGeneCount} / ${mf.shape[1]}`])
 
   // get list of all events in use
@@ -716,62 +723,69 @@ export function OncoplotSvg() {
   //   ? mf?.data(toolTipInfo.cell.row, toolTipInfo.cell.col)
   //   : null
 
-  const [barPos, setBarPos] = useState<IPos | null>(null)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const _hideTooltip = useCallback(() => {
+    hideTooltip()
+    hideCrosshair()
+  }, [hideTooltip, hideCrosshair])
 
-  const hideTooltip = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    // wait before removing. if we re-enter quickly, the tooltip won't flicker
-    // as this timeout will be cancelled so the tooltip won't disappear
-    // and will be moved to next location
-    timeoutRef.current = setTimeout(() => setBarPos(null), TOOLTIP_CLEAR_MS)
-  }, [])
-
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!ref.current) {
-      return
-    }
-
-    const rect = ref.current.getBoundingClientRect()
-
-    let x =
-      e.pageX - marginLeft * displayProps.scale - rect.left - window.scrollX
-
-    let c = Math.floor(x / (scaledBlockSize.w + scaledPadding.x))
-
-    if (c < 0 || c > (mf?.shape[1] ?? 0) - 1) {
-      c = -1
-    }
-
-    let y = e.pageY - top * displayProps.scale - rect.top - window.scrollY
-
-    let r = Math.floor(y / (scaledBlockSize.h + scaledPadding.y))
-
-    if (r < 0 || r > (mf?.shape[0] ?? 0) - 1) {
-      r = -1
-    }
-
-    if (r === -1 || c === -1) {
-      hideTooltip()
-      hideTooltipOrig()
-    } else {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) {
+        return
       }
 
-      const x1 =
-        (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale
-      const y1 = (top + r * (blockSize.h + spacing.y)) * displayProps.scale
+      let svgPoint = screenToSvgPoint(ref.current, {
+        x: e.clientX,
+        y: e.clientY,
+      })
 
-      setBarPos({ x: x1, y: y1 })
+      svgPoint = {
+        x: svgPoint.x - marginLeft,
+        y:
+          svgPoint.y -
+          marginTop -
+          displayProps.samples.graphs.height -
+          displayProps.plotGap,
+      }
 
-      const stats = mf?.data(r, c)
+      let row = Math.floor(svgPoint.y / blockSpaceSize.h)
+      let col = Math.floor(svgPoint.x / blockSpaceSize.w)
+
+      if (row < 0 || row > (mf?.shape[0] ?? 0) - 1) {
+        row = -1
+      }
+
+      if (col < 0 || col > (mf?.shape[1] ?? 0) - 1) {
+        col = -1
+      }
+
+      //console.log('svgPoint', svgPoint, row, col, blockSize)
+
+      if (row === -1 || col === -1) {
+        _hideTooltip()
+
+        return
+      }
+
+      const blockXYMid = {
+        x: col * blockSpaceSize.w + blockSize.w / 2 + marginLeft,
+        y:
+          row * blockSpaceSize.h +
+          blockSize.h / 2 +
+          marginTop +
+          displayProps.samples.graphs.height +
+          displayProps.plotGap,
+      }
+
+      const { screenP: absoluteBlockScreenXY, relativeP: blockScreenXY } =
+        svgPointToScreen(ref.current, blockXYMid)
+
+      showCrosshair({ pos: blockScreenXY })
+
+      const stats = mf?.data(row, col)
 
       showTooltip({
-        pos: { x: e.pageX + 5, y: e.pageY + 5 },
+        pos: { x: absoluteBlockScreenXY.x + 5, y: absoluteBlockScreenXY.y + 5 },
         content: (
           <>
             <p className="font-semibold">{stats!.sample}</p>
@@ -779,22 +793,150 @@ export function OncoplotSvg() {
             <p className="truncate">
               {getEventLabel(stats!, mutationsInUse, 'single')}
             </p>
-            <p>{`row: ${r + 1}, col: ${c + 1}`}</p>
+            <p>{`row: ${row + 1}, col: ${col + 1}`}</p>
           </>
         ),
       })
+    },
+    [
+      ref,
+      marginLeft,
+      displayProps.scale,
+      scaledBlockSize.w,
+      scaledBlockSize.h,
+      scaledPadding.x,
+      scaledPadding.y,
+      mf,
+      top,
+      blockSize.w,
+      blockSize.h,
+      spacing.x,
+      spacing.y,
+      _hideTooltip,
 
-      // <p className="font-semibold">{stats!.sample}</p>
-      //       <p>{stats!.feature}</p>
-      //       <p className="truncate">
-      //         {/* Let's show all mutations in the label */}
-      //         {getEventLabel(stats!, mutationsInUse, 'single')}
-      //       </p>
-      //       <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
-      //         toolTipInfo.cell.col + 1
-      //       }`}</p>
-    }
-  }
+      showCrosshair,
+      showTooltip,
+    ]
+  )
+
+  const clinicalTracksSvgMemo = useMemo(
+    () =>
+      clinicalTracksSvg(
+        samples,
+        clinicalTracks,
+        displayProps.legend.clinical.tracks,
+        blockSize,
+        spacing,
+        displayProps
+      ),
+    [samples, clinicalTracks, displayProps, blockSize, spacing]
+  )
+
+  const colGraphsMemo = useMemo(
+    () =>
+      mf
+        ? colGraphs(
+            mf,
+            mutationsInUse,
+            colorMap,
+            yax,
+            blockSize,
+            spacing,
+            displayProps
+          )
+        : null,
+    [mf, mutationsInUse, colorMap, yax, blockSize, spacing, displayProps]
+  )
+
+  const rowGraphsMemo = useMemo(
+    () =>
+      mf
+        ? rowGraphs(
+            mf,
+            mutationsInUse,
+            colorMap,
+            xax,
+            blockSize,
+            spacing,
+            displayProps
+          )
+        : null,
+    [mf, mutationsInUse, colorMap, xax, blockSize, spacing, displayProps]
+  )
+
+  const matrixMemo = useMemo(
+    () =>
+      mf
+        ? makeMatrix(
+            mf,
+            mutationsInUse,
+            colorMap,
+            displayProps,
+            blockSize,
+            spacing
+          )
+        : null,
+    [mf, mutationsInUse, colorMap, displayProps, blockSize, spacing]
+  )
+
+  const gridMemo = useMemo(
+    () => makeGrid(displayProps, gridWidth, gridHeight, blockSize, spacing),
+    [displayProps, gridWidth, gridHeight, blockSize, spacing]
+  )
+
+  const rowLabelsMemo = useMemo(
+    () =>
+      mf?.geneStats.map((stats, ri) => {
+        return (
+          <SvgText
+            key={ri}
+            x={0}
+            y={ri * (blockSize.h + spacing.y) + halfBlockSize.h}
+            dominantBaseline="central"
+            textAnchor="end"
+            font={displayProps.title}
+          >
+            {stats.feature}
+          </SvgText>
+        )
+      }),
+    [mf, blockSize, spacing, halfBlockSize, displayProps]
+  )
+
+  const legendMemo = useMemo(
+    () =>
+      displayProps.legend.position === 'bottom' ? (
+        <g
+          id="legend"
+          transform={`translate(${marginLeft}, ${
+            top + gridHeight + displayProps.legend.offset
+          })`}
+        >
+          <g>{vLegendSvg(mutationsInUse, colorMap, blockSize, displayProps)}</g>
+
+          <g
+            transform={`translate(${displayProps.legend.width + displayProps.legend.gap}, 0)`}
+          >
+            {clinicalLegendSvgs(
+              clinicalTracks,
+              displayProps.legend.clinical.tracks,
+              blockSize,
+              displayProps
+            )}
+          </g>
+        </g>
+      ) : null,
+    [
+      displayProps,
+      marginLeft,
+      top,
+      gridHeight,
+      mutationsInUse,
+      colorMap,
+      blockSize,
+      clinicalTracks,
+    ]
+  )
 
   if (!mf) {
     return null
@@ -815,14 +957,7 @@ export function OncoplotSvg() {
           //className="pointer-events-none"
           pointerEvents="none"
         >
-          {clinicalTracksSvg(
-            samples,
-            clinicalTracks,
-            displayProps.legend.clinical.tracks,
-            blockSize,
-            spacing,
-            displayProps
-          )}
+          {clinicalTracksSvgMemo}
         </g>
       )}
 
@@ -833,15 +968,7 @@ export function OncoplotSvg() {
             top - displayProps.plotGap - displayProps.samples.graphs.height
           })`}
         >
-          {colGraphs(
-            mf,
-            mutationsInUse,
-            colorMap,
-            yax,
-            blockSize,
-            spacing,
-            displayProps
-          )}
+          {colGraphsMemo}
         </g>
       )}
 
@@ -852,122 +979,39 @@ export function OncoplotSvg() {
             marginLeft + gridWidth + displayProps.plotGap
           }, ${top})`}
         >
-          {rowGraphs(
-            mf,
-            mutationsInUse,
-            colorMap,
-            xax,
-            blockSize,
-            spacing,
-            displayProps
-          )}
+          {rowGraphsMemo}
         </g>
       )}
 
       {/* matrix */}
 
-      <g transform={`translate(${marginLeft}, ${top})`}>
-        {makeMatrix(
-          mf,
-          mutationsInUse,
-          colorMap,
-          displayProps,
-          blockSize,
-          spacing
-        )}
-      </g>
+      <g transform={`translate(${marginLeft}, ${top})`}>{matrixMemo}</g>
 
       {/* grid */}
 
-      <g transform={`translate(${marginLeft}, ${top})`}>
-        {makeGrid(displayProps, gridWidth, gridHeight, blockSize, spacing)}
-      </g>
+      <g transform={`translate(${marginLeft}, ${top})`}>{gridMemo}</g>
 
       {/* row labels */}
 
       <g
         transform={`translate(${marginLeft - displayProps.axisOffset}, ${top})`}
       >
-        {mf.geneStats.map((stats, ri) => {
-          return (
-            <SvgText
-              key={ri}
-              x={0}
-              y={ri * (blockSize.h + spacing.y) + halfBlockSize.h}
-              dominantBaseline="central"
-              textAnchor="end"
-              font={displayProps.title}
-            >
-              {stats.feature}
-            </SvgText>
-          )
-        })}
+        {rowLabelsMemo}
       </g>
 
       {/* legend */}
 
-      {displayProps.legend.position === 'bottom' && (
-        <g
-          id="legend"
-          transform={`translate(${marginLeft}, ${
-            top + gridHeight + displayProps.legend.offset
-          })`}
-        >
-          <g>{vLegendSvg(mutationsInUse, colorMap, blockSize, displayProps)}</g>
-
-          <g
-            transform={`translate(${displayProps.legend.width + displayProps.legend.gap}, 0)`}
-          >
-            {clinicalLegendSvgs(
-              clinicalTracks,
-              displayProps.legend.clinical.tracks,
-              blockSize,
-              displayProps
-            )}
-          </g>
-        </g>
-      )}
+      {legendMemo}
     </SvgBase>
   )
 
+  return svgElem
+}
+
+export function OncoplotSvg() {
   return (
-    <>
-      {svgElem}
-
-      {barPos && (
-        <>
-          {/* <div
-            ref={tooltipRef}
-            className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100 w-48 pointer-events-none"
-            style={{
-              left: toolTipInfo.pos.x + scaledBlockSize.w,
-              top: toolTipInfo.pos.y + scaledBlockSize.h,
-            }}
-          >
-            <p className="font-semibold">{stats!.sample}</p>
-            <p>{stats!.feature}</p>
-            <p className="truncate">
-        
-              {getEventLabel(stats!, mutationsInUse, 'single')}
-            </p>
-            <p>{`row: ${toolTipInfo.cell.row + 1}, col: ${
-              toolTipInfo.cell.col + 1
-            }`}</p>
-          </div> */}
-
-          <span
-            ref={highlightRef}
-            className="absolute z-50 border-black pointer-events-none"
-            style={{
-              top: 10,
-              left: `${barPos.x - 1}px`,
-              width: `${scaledBlockSize.w + 1}px`,
-              height: (gridHeight + top - 10) * displayProps.scale,
-              borderWidth: `${Math.max(1, displayProps.scale)}px`,
-            }}
-          />
-        </>
-      )}
-    </>
+    <CrosshairProvider>
+      <OncoplotSvgContent />
+    </CrosshairProvider>
   )
 }

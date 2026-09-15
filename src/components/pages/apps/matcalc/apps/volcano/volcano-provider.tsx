@@ -1,12 +1,15 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
 import { useVolcanoSettings } from './volcano-settings-store'
 
+import { useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis } from '@/components/plot/axes/axis'
 import { range } from '@/lib/math/range'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
 import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
@@ -44,8 +47,9 @@ export function VolcanoProvider({
   const [manualLabels, setManualLabels] = useState<string[]>([])
 
   const volcano = plot.volcano
-  const displayProps = useMemo(() => plot.props, [plot.props])
+  const displayOptions = useMemo(() => plot.props, [plot.props])
   const { settings } = useVolcanoSettings()
+  const { addAxes } = useAxes()
 
   // const sheet = useMemo(
   //   () => plot!.dataframes['main'] as BaseDataFrame,
@@ -97,9 +101,40 @@ export function VolcanoProvider({
   }, [
     volcano.log2foldChanges,
     volcano.logpvalues,
-    displayProps,
+    displayOptions,
     volcano.ids,
     thresholdLogP,
+  ])
+
+  useEffect(() => {
+    const xax = createAxis({
+      id: 'x',
+      title: displayOptions.axes.xaxis.name,
+      length: displayOptions.axes.xaxis.length,
+      autoDomain: displayOptions.axes.xaxis.domain,
+    })
+
+    const yax = createAxis({
+      id: 'y',
+      title: displayOptions.axes.yaxis.name,
+      direction: 'y',
+      length: displayOptions.axes.yaxis.length,
+      autoDomain: displayOptions.axes.yaxis.domain,
+    })
+
+    addAxes([
+      {
+        plotId: plot.id,
+        groupId: 'volcano',
+        axisIds: ['x', 'y'],
+        axes: { x: xax, y: yax },
+      },
+    ])
+  }, [
+    displayOptions.axes.xaxis.length,
+    displayOptions.axes.xaxis.domain,
+    displayOptions.axes.yaxis.length,
+    displayOptions.axes.yaxis.domain,
   ])
 
   const displayLabels = useMemo(

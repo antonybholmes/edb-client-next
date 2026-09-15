@@ -1,9 +1,9 @@
 import { enablePatches } from 'immer'
 
+import type { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { IChildrenProps } from '@/interfaces/children-props'
 import type { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import type { IGeneSet } from '@/lib/gsea/geneset'
 import {
   createContext,
   useCallback,

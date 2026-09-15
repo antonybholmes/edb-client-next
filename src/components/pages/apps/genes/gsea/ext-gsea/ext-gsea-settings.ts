@@ -1,6 +1,8 @@
 import {
   DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_DASH_PROPS,
   DEFAULT_FILL_PROPS,
+  DEFAULT_MARGIN_MEDIUM,
   DEFAULT_STROKE_PROPS,
   DEFAULT_TEXT_PROPS,
   type IPaintProps,
@@ -8,13 +10,13 @@ import {
   type ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { COLOR_BLUE, COLOR_RED } from '@/lib/color/color'
+import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v16`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v18`
 
-export interface IExtGseaDisplayOptions {
+export interface IExtGseaSettings {
   axes: {
     x: {
       length: number
@@ -27,27 +29,15 @@ export interface IExtGseaDisplayOptions {
       }
     }
   }
-  genes: {
-    line: IStrokeProps
-    height: number
-
-    labels: {
-      font: ITextProps
-      isColored: boolean
-    }
-  }
   es: {
+    useGeneScoreForES: boolean
     gs1: {
-      line: IStrokeProps
-      leadingEdge: {
-        fill: IPaintProps
-      }
+      curve: IStrokeProps
+      leadingEdge: IPaintProps
     }
     gs2: {
-      line: IStrokeProps
-      leadingEdge: {
-        fill: IPaintProps
-      }
+      curve: IStrokeProps
+      leadingEdge: IPaintProps
     }
     axes: {
       x: {
@@ -58,12 +48,25 @@ export interface IExtGseaDisplayOptions {
         length: number
       }
     }
+    stats: {
+      show: boolean
+    }
   }
-  title: {
+  genes: {
+    line: IStrokeProps
+    height: number
+
+    labels: {
+      font: ITextProps
+      isColored: boolean
+    }
+    geneScoreWeight: number
+  }
+  title: ITextProps & {
     offset: number
   }
   page: {
-    scale: number
+    //scale: number
     columns: number
   }
   plot: {
@@ -77,7 +80,7 @@ export interface IExtGseaDisplayOptions {
   }
 
   ranking: {
-    zeroCross: { show: boolean }
+    zeroCross: IStrokeProps
     show: boolean
     axes: {
       y: {
@@ -88,22 +91,18 @@ export interface IExtGseaDisplayOptions {
   }
 }
 
-export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
+export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
   page: {
-    columns: 2,
-    scale: 1,
+    columns: 3,
+    //scale: 1,
   },
 
   title: {
-    offset: -10,
+    ...DEFAULT_BOLD_TEXT_PROPS,
+    offset: 10,
   },
   plot: {
-    margin: {
-      top: 100,
-      left: 100,
-      bottom: 100,
-      right: 100,
-    },
+    margin: { ...DEFAULT_MARGIN_MEDIUM },
     gap: {
       x: 20,
       y: 20,
@@ -117,13 +116,14 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
         truncate: -2,
         font: { ...DEFAULT_BOLD_TEXT_PROPS },
       },
-      length: 300,
+      length: 220,
     },
   },
   es: {
+    useGeneScoreForES: true,
     axes: {
       y: {
-        length: 200,
+        length: 150,
         title: 'ES',
       },
       x: {
@@ -131,18 +131,21 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
       },
     },
     gs1: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE },
-      leadingEdge: {
-        fill: { ...DEFAULT_FILL_PROPS, value: COLOR_BLUE },
-      },
+      curve: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 2 },
+      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
     },
 
     gs2: {
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED },
-
-      leadingEdge: {
-        fill: { ...DEFAULT_FILL_PROPS, value: COLOR_RED },
+      curve: {
+        ...DEFAULT_STROKE_PROPS,
+        value: COLOR_CORNFLOWER_BLUE,
+        width: 2,
       },
+
+      leadingEdge: { ...DEFAULT_FILL_PROPS, value: COLOR_CORNFLOWER_BLUE },
+    },
+    stats: {
+      show: true,
     },
   },
   genes: {
@@ -152,6 +155,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
       font: { ...DEFAULT_BOLD_TEXT_PROPS },
       isColored: true,
     },
+    geneScoreWeight: 1,
   },
   ranking: {
     show: true,
@@ -165,22 +169,20 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
       opacity: 0.2,
       show: true,
     },
-    zeroCross: {
-      show: true,
-    },
+    zeroCross: { ...DEFAULT_DASH_PROPS },
   },
 }
 
-export interface IExtGseaStore extends IExtGseaDisplayOptions {
-  updateSettings: (settings: Partial<IExtGseaDisplayOptions>) => void
+export interface IExtGseaSettingsStore extends IExtGseaSettings {
+  updateSettings: (settings: Partial<IExtGseaSettings>) => void
 }
 
-export const useExtGseaStore = create<IExtGseaStore>()(
+export const useExtGseaStore = create<IExtGseaSettingsStore>()(
   persist(
-    set => ({
-      ...DEFAULT_EXT_GSEA_PROPS,
-      updateSettings: (settings: Partial<IExtGseaDisplayOptions>) => {
-        set(state => ({ ...state, ...settings }))
+    (set) => ({
+      ...DEFAULT_EXT_GSEA_SETTINGS,
+      updateSettings: (settings: Partial<IExtGseaSettings>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -207,14 +209,14 @@ export const useExtGseaStore = create<IExtGseaStore>()(
 //   extGseaAtom.set({ ...DEFAULT_EXT_GSEA_PROPS })
 // }
 
-export function useExtGsea(): {
-  settings: IExtGseaDisplayOptions
-  updateSettings: (settings: Partial<IExtGseaStore>) => void
+export function useExtGseaSettings(): {
+  settings: IExtGseaSettings
+  updateSettings: (settings: Partial<IExtGseaSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useExtGseaStore(state => state)
-  const updateSettings = useExtGseaStore(state => state.updateSettings)
-  const resetSettings = () => updateSettings({ ...DEFAULT_EXT_GSEA_PROPS })
+  const settings = useExtGseaStore((state) => state)
+  const updateSettings = useExtGseaStore((state) => state.updateSettings)
+  const resetSettings = () => updateSettings({ ...DEFAULT_EXT_GSEA_SETTINGS })
 
   return { settings, updateSettings, resetSettings }
 }

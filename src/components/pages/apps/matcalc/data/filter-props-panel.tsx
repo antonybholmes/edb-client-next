@@ -30,7 +30,6 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { CenterRow } from '@/components/layout/center-row'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { getTabName, useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
@@ -140,7 +139,7 @@ export function FilterPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2">
-      <SideBarHeader className="justify-end">
+      <VCenterRow className="justify-end">
         {/* <DialogFloatingToolbar className="mt-2">
           <SafariTabs id={tabsId} defaultWidth={4} />
         </DialogFloatingToolbar> */}
@@ -170,7 +169,7 @@ export function FilterPropsPanel() {
         >
           {TEXT_CLEAR}
         </LinkButton>
-      </SideBarHeader>
+      </VCenterRow>
 
       <CenterRow>
         <SafariTabs id={tabsId} defaultWidth={4} />

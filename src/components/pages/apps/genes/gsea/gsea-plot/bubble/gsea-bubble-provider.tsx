@@ -1,4 +1,11 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { makeUuid } from '@/lib/id'
 
@@ -7,8 +14,10 @@ import { argsort } from '@/lib/math/argsort'
 import { ILim } from '@/lib/math/math'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 
-import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
-import { IGseaBubble } from '../gsea-plot-store'
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
+import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
+import { IGseaBubble } from '../gsea-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 export interface IGseaBubblePlot extends IBasePlot, IGseaBubble {
@@ -26,15 +35,16 @@ export interface IBubblePoint {
   label: string
 }
 
-export interface GseaBubblePropsContextType {
+export interface IGseaBubblePropsContext {
   plots: IGseaBubble[]
   points: IBubblePoint[][]
   xlims: ILim[]
   globalXLim: ILim
+  setPlots(plots: IGseaBubble[]): void
 }
 
 export const GseaBubbleContext = createContext<
-  GseaBubblePropsContextType | undefined
+  IGseaBubblePropsContext | undefined
 >(undefined)
 
 export function useGseaBubbleContext() {
@@ -112,16 +122,25 @@ function getColor(v: number, lim: ILim, colorMap: ColorMap) {
 }
 
 export function GseaBubbleProvider({
-  plots,
+  plots = [],
   children,
 }: {
-  plots: IGseaBubble[]
+  plots?: IGseaBubble[]
   children: ReactNode
 }) {
+  const [_plots, setPlots] = useState<IGseaBubble[]>(plots)
   const { settings } = useGseaBubbleSettings()
-  const { updateAxes } = useHistory()
+  const { settings: edbSettings } = useEdbSettings()
 
-  const xlims = useMemo(() => plots.map((p) => getXLim(p)), [plots])
+  const { addAxes } = useAxes()
+
+  useEffect(() => {
+    if (plots.length !== 0 && _plots !== plots) {
+      setPlots(plots)
+    }
+  }, [plots])
+
+  const xlims = useMemo(() => _plots.map((p) => getXLim(p)), [_plots])
 
   const globalXLim: ILim = useMemo(
     () => [
@@ -132,30 +151,32 @@ export function GseaBubbleProvider({
   )
 
   const points: IBubblePoint[][] = useMemo(() => {
-    if (plots.length === 0) {
+    if (_plots.length === 0) {
       return []
     }
 
-    return plots.map((plot, pi) => {
+    const colorMap = getColorMap(settings.scale.cmap)
+
+    return _plots.map((plot, pi) => {
       let names = plot.genesets.map((gs) => gs.name)
       let nes = plot.genesets.map((gs) => gs.nes)
       let sizes = plot.genesets.map((gs) => gs.size)
       let log10pvalues = plot.genesets.map((gs) => gs.log10q)
 
-      const xlim = xlims[pi]
+      //const xlim = xlims[pi]
 
       let idx: number[] = []
 
       switch (settings.sortBy) {
         case 'nes':
-          idx = argsort(nes, true)
+          idx = argsort(nes, { reverse: true })
 
           break
         case 'size':
-          idx = argsort(sizes, true)
+          idx = argsort(sizes, { reverse: true })
           break
         case 'pvalue':
-          idx = argsort(log10pvalues, true)
+          idx = argsort(log10pvalues, { reverse: true })
           break
 
         default:
@@ -175,12 +196,8 @@ export function GseaBubbleProvider({
         const p = log10pvalues[i]!
         const color =
           settings.scale.mode === 'p'
-            ? getColor(
-                log10pvalues[i]!,
-                settings.scale.p.range,
-                getColorMap(settings.scale.cmap)
-              )
-            : getColor(nes[i]!, globalXLim, getColorMap(settings.scale.cmap))
+            ? getColor(log10pvalues[i]!, settings.scale.p.range, colorMap)
+            : getColor(nes[i]!, globalXLim, colorMap)
 
         return {
           x: score,
@@ -194,32 +211,104 @@ export function GseaBubbleProvider({
         }
       })
     })
-  }, [
-    plots,
-    settings.size.maxSize,
-    settings.bubbles.size,
-    settings.scale,
-    settings.plot.margin,
-    settings.margin,
-    settings.padding,
-    settings.legend,
-    settings.border,
-    settings.axes,
-    settings.bubbles,
-    settings.sortBy,
-  ])
+  }, [_plots, globalXLim, settings])
 
-  // useEffect(() => {
-  //   updateAxes({ x: createNewAxisConfig({ domain: globalXLim }) })
-  // }, [globalXLim, updateAxes])
+  useEffect(() => {
+    const axes: IPlotAxes[] = []
+
+    for (const [pi, plot] of _plots.entries()) {
+      const xlim = xlims[pi]
+      const domain = settings.axes.x.auto ? xlim : settings.axes.x.domain
+
+      // offer per plot x-axis domain
+      let xax = createAxis({
+        id: 'x',
+        title: plot.nes.label,
+        autoDomain: domain,
+        length: settings.axes.x.length,
+      })
+      xax = setAxisTickParams(xax, {
+        which: 'major',
+        show: edbSettings.plots.axes.x.ticks.major.show,
+      })
+      xax = setAxisTickParams(xax, {
+        which: 'minor',
+        show: edbSettings.plots.axes.x.ticks.minor.show,
+      })
+
+      axes.push({
+        plotId: plot.id,
+        groupId: 'nes',
+        axisIds: [xax.id],
+        axes: { [xax.id]: xax },
+      })
+    }
+
+    // now the colorbar
+    const rangeDiff =
+      settings.scale.mode === 'p'
+        ? settings.scale.p.range[1] - settings.scale.p.range[0]
+        : globalXLim[1] - globalXLim[0]
+
+    let cax =
+      settings.scale.mode === 'p'
+        ? createAxis({
+            id: 'cbar',
+            domain: settings.scale.p.range,
+            length: edbSettings.plots.colorbar.size.w,
+            ticks: [
+              settings.scale.p.range[0],
+              settings.scale.p.range[0] + rangeDiff / 2,
+              settings.scale.p.range[1],
+            ],
+            minorTicks: [
+              settings.scale.p.range[0] + rangeDiff * 0.25,
+              settings.scale.p.range[0] + rangeDiff * 0.75,
+            ],
+          })
+        : createAxis({
+            id: 'cbar',
+            domain: globalXLim,
+            length: edbSettings.plots.colorbar.size.w,
+            ticks: [
+              globalXLim[0],
+              globalXLim[0] + rangeDiff / 2,
+              globalXLim[1],
+            ],
+            minorTicks: [
+              globalXLim[0] + rangeDiff * 0.25,
+              globalXLim[0] + rangeDiff * 0.75,
+            ],
+          })
+
+    cax = setAxisTickParams(cax, {
+      which: 'major',
+      show: edbSettings.plots.axes.x.ticks.major.show,
+    })
+
+    cax = setAxisTickParams(cax, {
+      which: 'minor',
+      show: edbSettings.plots.axes.x.ticks.minor.show,
+    })
+
+    axes.push({
+      plotId: 'cbar',
+      groupId: 'cbar',
+      axisIds: [cax.id],
+      axes: { [cax.id]: cax },
+    })
+
+    addAxes(axes)
+  }, [_plots, xlims, settings, edbSettings, globalXLim, addAxes])
 
   return (
     <GseaBubbleContext.Provider
       value={{
-        plots,
+        plots: _plots,
         points,
         xlims,
         globalXLim,
+        setPlots,
       }}
     >
       {children}

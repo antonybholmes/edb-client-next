@@ -74,10 +74,6 @@ export function BaseGlassSideDialog({
         >
           {c[1]!}
         </BaseCol>
-
-        {/* <VisuallyHidden asChild>
-          <DialogDescription>{description ?? title}</DialogDescription>
-        </VisuallyHidden> */}
       </DialogContent>
     </Dialog>
   )

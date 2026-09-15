@@ -21,7 +21,6 @@ import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/v2/dropdown-m
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { DNABase } from '@/lib/genomic/dna'
 import { produce } from 'immer'
-import { AxesPropRow } from '../../../../plot/axes/axes-prop-row'
 import { useMotifSettings } from './motifs-settings'
 
 export function DisplayPropsPanel() {
@@ -74,16 +73,16 @@ export function DisplayPropsPanel() {
               />
             </PropRow>
 
-            <AxesPropRow axes={['x', 'y']} />
+            {/* <AxesPropRow axes={['x', 'y']} /> */}
             <PropRow title="Base Width">
               <NumericalInput
                 limit={[1, 100]}
-                value={settings.letterWidth}
+                value={settings.plot.bases.width}
                 placeholder="Base width..."
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.letterWidth = v
+                      draft.plot.bases.width = v
                     })
                   )
                 }}
@@ -93,12 +92,12 @@ export function DisplayPropsPanel() {
               <NumericalInput
                 id="h"
                 limit={[1, 200]}
-                value={settings.plotHeight}
+                value={settings.plot.height}
                 placeholder="Plot height..."
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.plotHeight = v
+                      draft.plot.height = v
                     })
                   )
                 }}
@@ -108,12 +107,12 @@ export function DisplayPropsPanel() {
               <NumericalInput
                 id="cols"
                 limit={[1, 100]}
-                value={settings.cols}
+                value={settings.page.cols}
                 placeholder="Cols..."
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.cols = v
+                      draft.page.cols = v
                     })
                   )
                 }}

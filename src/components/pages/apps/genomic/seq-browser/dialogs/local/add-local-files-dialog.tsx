@@ -87,7 +87,7 @@ export function AddLocalFilesDialog({
       open={true}
       //buttons={[TEXT_OK]}
       title="Load Files From Device"
-      bodyCls="gap-y-4"
+      contentCls="gap-y-4"
       onResponse={(response) => {
         if (response === TEXT_OK) {
           if (files.length > 0) {

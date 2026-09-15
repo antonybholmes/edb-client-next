@@ -1,14 +1,10 @@
-import type { IRankedGenes } from '../../../../../../../lib/gsea/geneset'
+import type { IRankedGene } from '../gsea-plot/geneset'
 
-import {
-  ExtGSEA,
-  type IExtGseaResult,
-  type IGseaResult,
-} from '../../../../../../../lib/gsea/ext-gsea'
-import type { IGeneSet } from '../../../../../../../lib/gsea/geneset'
+import type { IGeneSet } from '../gsea-plot/geneset'
+import { ExtGSEA, type IExtGseaResult, type IGseaResult } from './ext-gsea'
 
 export interface IExtGseaWorkerMessage {
-  rankedGenes: IRankedGenes
+  scores: IRankedGene[]
   gs1: IGeneSet
   gs2: IGeneSet
 }
@@ -20,9 +16,9 @@ export interface IExtGseaWorkerResult {
 }
 
 self.onmessage = function (e: MessageEvent<IExtGseaWorkerMessage>) {
-  const { rankedGenes, gs1, gs2 } = e.data
+  const { scores, gs1, gs2 } = e.data
 
-  const extGsea = new ExtGSEA(rankedGenes)
+  const extGsea = new ExtGSEA(scores)
 
   const extGseaRes = extGsea.runExtGsea(gs1, gs2)
 

@@ -116,7 +116,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
-      bodyCls="gap-y-2"
+      contentCls="gap-y-2"
     >
       <ActionDialogCard>
         <ActionDialogCardContent>

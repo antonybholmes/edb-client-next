@@ -21,7 +21,6 @@ export function fisherYatesShuffle<T>(arr: T[]): T[] {
  * @returns
  */
 export function permutation(x: number): number[] {
-  const ret = range(x)
-  fisherYatesShuffle(ret)
-  return ret
+  let ret = range(x)
+  return fisherYatesShuffle(ret)
 }

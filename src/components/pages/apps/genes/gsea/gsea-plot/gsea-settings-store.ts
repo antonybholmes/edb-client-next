@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v44`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v50`
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -22,6 +22,7 @@ import {
   COLOR_MEDIUM_SEA_GREEN,
   COLOR_RED,
 } from '@/lib/color/color'
+import { ICMAP } from '@/lib/color/colormap'
 
 interface IFilters {
   q: {
@@ -54,10 +55,15 @@ export interface IGseaDisplayProps {
     show: boolean
     color: {
       on: boolean
+      mode: 'rank' | 'score'
+      cmap: ICMAP
+
+      gradient: { weight: number; opacity: number }
     }
+    labels: ITextProps & { color: { on: boolean } }
     pos: IStrokeProps
     neg: IStrokeProps
-    gradient: { opacity: number; on: boolean }
+    //gradient: { opacity: number; on: boolean }
     height: number
     //line: IStrokeProps
   }
@@ -79,10 +85,11 @@ export interface IGseaDisplayProps {
         length: number
       }
     }
+    step: number
   }
   //title: ITextProps & { offset: number }
   page: {
-    scale: number
+    //scale: number
     columns: number
   }
   plot: {
@@ -114,7 +121,7 @@ export interface IGseaDisplayProps {
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   page: {
     columns: 3,
-    scale: 1,
+    //scale: 1,
   },
   phenotypes: {
     invert: false,
@@ -171,17 +178,24 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     show: true,
     labels: { ...DEFAULT_TEXT_PROPS },
     phenotypes: { ...DEFAULT_TEXT_PROPS },
+    step: 10,
   },
   genes: {
     height: 15,
+    labels: { ...DEFAULT_TEXT_PROPS, color: { on: true } },
     color: {
       on: true,
+      mode: 'rank',
+      cmap: { name: 'bwr', reversed: false },
+
+      gradient: { weight: 1, opacity: 1 },
     },
     pos: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1 },
     neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },
 
     show: true,
-    gradient: { opacity: 0.2, on: true },
+    //gradient: { opacity: 0.2, on: true },
+
     //line: { ...DEFAULT_STROKE_PROPS, width: 2 },
   },
   ranking: {

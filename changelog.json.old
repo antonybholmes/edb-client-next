@@ -2697,10 +2697,240 @@
         {
           "msg": "Heatmap can now be scaled through ui rather than with a setting",
           "date": "2026-09-04T17:40:38.330Z"
+        },
+        {
+          "msg": "Venn svg now has margins",
+          "date": "2026-09-04T17:54:22.177Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-04T23:14:06.704Z"
+        },
+        {
+          "msg": "Axes provider overhauled to include groups",
+          "date": "2026-09-05T03:06:59.117Z"
+        },
+        {
+          "msg": "Gsea bubble now has support for new axis system",
+          "date": "2026-09-06T16:42:45.443Z"
+        },
+        {
+          "msg": "GSEA plot now uses new axis system",
+          "date": "2026-09-06T17:05:26.475Z"
+        },
+        {
+          "msg": "Volcano now use new axis system",
+          "date": "2026-09-06T17:27:33.245Z"
+        },
+        {
+          "msg": "Switched motifs to new axis system",
+          "date": "2026-09-06T21:26:48.654Z"
+        },
+        {
+          "msg": "Lollipop switched to new axis model",
+          "date": "2026-09-06T23:28:17.449Z"
+        },
+        {
+          "msg": "Oncoplot switched to new axis model",
+          "date": "2026-09-06T23:34:02.339Z"
+        },
+        {
+          "msg": "Ext gsea switched to new axis system",
+          "date": "2026-09-07T18:57:14.937Z"
+        },
+        {
+          "msg": "Motifs now fully supports new axis system. Letter position rendering now uses axis rather than fixed sizes",
+          "date": "2026-09-08T19:51:38.555Z"
+        },
+        {
+          "msg": "Axis controls now support using ranges for specifying ticks and tick labels",
+          "date": "2026-09-08T21:59:50.598Z"
+        },
+        {
+          "msg": "Added ability to add axes menu to gsea plots",
+          "date": "2026-09-08T22:48:59.730Z"
+        },
+        {
+          "msg": "Render speedups to oncoplot and gsea plot by memoing more functions and narrowing store scopes",
+          "date": "2026-09-09T14:41:33.935Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Support for colorbar axis in heatmap using axes store api",
+          "date": "2026-09-05T23:02:07.439Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Fixed axis lengths",
+          "date": "2026-09-06T23:50:49.392Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-09-04T17:17:10.940Z"
+  },
+  {
+    "version": "89.4.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-09T16:19:39.538Z"
+        },
+        {
+          "msg": "Gsea render sped up and now has working crosshair",
+          "date": "2026-09-09T17:01:20.245Z"
+        },
+        {
+          "msg": "Svg rendering and tooltip speedups",
+          "date": "2026-09-09T21:14:01.297Z"
+        },
+        {
+          "msg": "Sped up heatmap rendering",
+          "date": "2026-09-09T21:57:07.041Z"
+        },
+        {
+          "msg": "More optimizations for tooltips",
+          "date": "2026-09-09T23:41:01.483Z"
+        },
+        {
+          "msg": "Ext gsea now own module and api closer to original gsea. Added viper tools for converting viper output to gsea",
+          "date": "2026-09-11T17:14:55.874Z"
+        },
+        {
+          "msg": "Can plot viper output as gsea",
+          "date": "2026-09-11T22:19:25.412Z"
+        },
+        {
+          "msg": "Ext gsea support for weighted hits",
+          "date": "2026-09-11T23:00:46.440Z"
+        },
+        {
+          "msg": "Added viper interface for ext-gsea. More support for multiple axes.",
+          "date": "2026-09-12T02:22:10.274Z"
+        },
+        {
+          "msg": "Improved ui for customizing ext gsea plots",
+          "date": "2026-09-12T03:08:48.794Z"
+        },
+        {
+          "msg": "Add gene weight option to control opacity of gene bars in Ext gsea",
+          "date": "2026-09-12T03:57:44.266Z"
+        },
+        {
+          "msg": "Sidebar layout of matcalc changed to move groups and filters around",
+          "date": "2026-09-12T03:59:39.413Z"
+        },
+        {
+          "msg": "Better support for abbreviations in app info for configuring icons",
+          "date": "2026-09-12T04:14:03.094Z"
+        },
+        {
+          "msg": "Added Ext gsea weighting by gene option to UI",
+          "date": "2026-09-12T04:34:18.399Z"
+        },
+        {
+          "msg": "Support for controlling titles in Ext GSEA UI",
+          "date": "2026-09-12T05:12:56.236Z"
+        },
+        {
+          "msg": "Ext gsea in matcalc now working",
+          "date": "2026-09-12T05:52:13.958Z"
+        },
+        {
+          "msg": "Removed levels from zoom",
+          "date": "2026-09-12T12:44:05.078Z"
+        },
+        {
+          "msg": "Refined zoom system. ExtGSEA now supports zoom",
+          "date": "2026-09-12T14:22:42.319Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Permutation now correctly randomizes indices",
+          "date": "2026-09-12T05:40:47.013Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-09T16:19:39.538Z"
+  },
+  {
+    "version": "89.6.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-12T14:49:59.031Z"
+        },
+        {
+          "msg": "run ext gsea now in helper hook",
+          "date": "2026-09-12T15:01:42.585Z"
+        },
+        {
+          "msg": "Added support for crosshair to ext gsea",
+          "date": "2026-09-12T17:16:55.050Z"
+        },
+        {
+          "msg": "Split ext gsea into separate files since its a lot of svg",
+          "date": "2026-09-12T17:43:22.654Z"
+        },
+        {
+          "msg": "Simplified ext gsea svg. Crosshair now works for up/down genes seperately",
+          "date": "2026-09-12T23:01:03.357Z"
+        },
+        {
+          "msg": "More removal of duplicate code in ext gsea and optimizing dependencies",
+          "date": "2026-09-12T23:43:00.430Z"
+        },
+        {
+          "msg": "crosshair supports content. crosshairs now in fixed positions for gsea",
+          "date": "2026-09-13T04:04:04.791Z"
+        },
+        {
+          "msg": "Smaller header links grid",
+          "date": "2026-09-13T17:05:15.265Z"
+        },
+        {
+          "msg": "ext gsea shares more code with original gsea plot. Ext gsea now plots the full es for the curve to make line smoother",
+          "date": "2026-09-13T23:22:22.010Z"
+        },
+        {
+          "msg": "Refined names for gsea and ext gsea to be less confusing",
+          "date": "2026-09-14T01:00:16.665Z"
+        },
+        {
+          "msg": "Revised argsort. Refactored ext gsea. Viper now sorts genesets even if unneccessary",
+          "date": "2026-09-14T14:30:41.708Z"
+        },
+        {
+          "msg": "GSEA now has score and esScore so we can give two scores to a gene, its original score than then the running enrichment score it is assigned",
+          "date": "2026-09-14T15:53:03.262Z"
+        },
+        {
+          "msg": "GSEA now uses score to color bars and has opacity support",
+          "date": "2026-09-14T21:52:36.016Z"
+        },
+        {
+          "msg": "Added support for extgsea to use cmap to color hits",
+          "date": "2026-09-14T22:31:28.734Z"
+        },
+        {
+          "msg": "GSEA and ExtGSEA now use colormaps to render",
+          "date": "2026-09-15T01:55:10.460Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "ExtGSEA ES score now inverted properly when phenotypes inverted",
+          "date": "2026-09-14T17:11:24.873Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-12T14:49:59.031Z"
   }
 ]

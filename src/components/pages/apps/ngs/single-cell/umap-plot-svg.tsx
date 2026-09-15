@@ -1,6 +1,10 @@
 import { useEffect, useState, type ReactNode } from 'react'
 
-import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
+import {
+  axisDomainToRangeFunc,
+  axisLength,
+  createAxis,
+} from '@/components/plot/axes/axis'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 
 import { SvgBase } from '@/components/plot/svg-base'
@@ -90,9 +94,12 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
       const xaf = axisDomainToRangeFunc(xax)
       const yaf = axisDomainToRangeFunc(yax)
 
+      const xl = axisLength(xax)
+      const yl = axisLength(yax)
+
       const umapPlotSize: IDim = {
-        w: gridMode ? settings.grid.axes.xaxis.length : xax.length!,
-        h: gridMode ? settings.grid.axes.yaxis.length : yax.length!,
+        w: gridMode ? settings.grid.axes.xaxis.length : xl!,
+        h: gridMode ? settings.grid.axes.yaxis.length : yl!,
       }
 
       const umapContainer: IDim = {

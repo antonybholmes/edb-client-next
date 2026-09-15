@@ -23,7 +23,7 @@ export interface IAxis extends IAxisConfig {
   /**
    * The length of the axis in pixels derived from the range.
    */
-  length: number
+  //length: number
 
   //domainToRange?: d3.ScaleLinear<number, number>
   format?: IAxisFormat
@@ -53,46 +53,53 @@ export function createAxis(
     config?: IAxisConfig
     id?: string
     title?: string
+    clip?: boolean
     direction?: IAxis['direction']
     length?: number
     domain?: ILim
     range?: ILim
     autoDomain?: boolean | ILim
     ticks?: number[] | ITickItem[]
+    majorNumTicks?: number
     minorTicks?: number[] | ITickItem[]
+    minorTickDivisions?: number
     style?: DeepPartial<IAxisConfig['style']>
     tickParams?: Partial<ITickParamProps>
     format?: IAxisFormat
   } = {}
 ): IAxis {
-  const {
+  let {
     config = DEFAULT_AXIS_CONFIG,
     id,
     title,
     direction = 'x',
+    clip,
     length,
     style,
     domain,
     range,
     autoDomain,
     ticks,
+    majorNumTicks,
     minorTicks,
+    minorTickDivisions,
     tickParams,
     format,
   } = opts
+  id = id ?? makeUuid()
+
   let ret: IAxis = {
     ...structuredClone(config),
-    id: makeUuid(),
-    length: 1,
+    id,
 
-    ...definedProps({ id, title, direction, domain, range, format }),
+    ...definedProps({ title, clip, direction, domain, range, format }),
   }
 
   if (length !== undefined) {
     ret.range = [0, length]
   }
 
-  ret.length = Math.abs(ret.range[1] - ret.range[0])
+  //ret.length = Math.abs(ret.range[1] - ret.range[0])
 
   if (autoDomain !== undefined && autoDomain) {
     ret = autoAxisDomain(
@@ -117,13 +124,25 @@ export function createAxis(
     ret.style = deepmerge(ret.style, style)
   }
 
+  if (majorNumTicks !== undefined) {
+    ret.ticks.major.numTicks = majorNumTicks
+  }
+
+  if (minorTickDivisions !== undefined) {
+    ret.ticks.minor.divisions = minorTickDivisions
+  }
+
   return ret
 }
 
 export function setAxisDirection(
-  axis: IAxis,
+  axis: IAxis | undefined,
   direction: IAxis['direction']
 ): IAxis {
+  if (!axis) {
+    return axis
+  }
+
   // save copy operation if nothing changes
   if (axis.direction === direction) {
     return axis
@@ -201,7 +220,7 @@ export function setAxisRange(axis: IAxis, range: ILim): IAxis {
   return invalidateCache(
     copyAxis(axis, {
       range,
-      length: Math.abs(range[1] - range[0]),
+      //length: Math.abs(range[1] - range[0]),
     })
   )
 }
@@ -291,6 +310,10 @@ export function getAxisTicks(
   axis: IAxis,
   opts: { which?: WhichTick } = {}
 ): ITickItem[] {
+  if (!axis) {
+    return []
+  }
+
   const { which = 'major' } = opts
 
   if (axis.ticks[which].items) {
@@ -322,6 +345,21 @@ export function getAxisTicks(
   })
 }
 
+/**
+ * Calculate the length of the axis based on its range. This
+ * is the size in pixels or units used in the axis range.
+ *
+ * @param axis The axis object for which to calculate the length.
+ * @returns The length of the axis in pixels.
+ */
+export function axisLength(axis: IAxis | undefined): number {
+  if (!axis) {
+    return 0
+  }
+
+  return Math.abs(axis.range[1] - axis.range[0])
+}
+
 // export function getAxisMinorTicks(axis: IAxis): ITickItem[] {
 //   if (axis.ticks.minor.items) {
 //     return axis.ticks.minor.items
@@ -349,7 +387,13 @@ export type RangeToDomainFunc = (v: number | ITickItem) => number
  * @param axis
  * @returns
  */
-export function axisDomainToRangeFunc(axis: IAxis): RangeToDomainFunc {
+export function axisDomainToRangeFunc(
+  axis: IAxis | undefined
+): RangeToDomainFunc {
+  if (!axis) {
+    return (v: number | ITickItem) => 0
+  }
+
   const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
 
   return (v: number | ITickItem) => {
@@ -363,12 +407,12 @@ export function axisDomainToRangeFunc(axis: IAxis): RangeToDomainFunc {
   }
 }
 
+export function axisDomainToRange(axis: IAxis, values: number): number
+export function axisDomainToRange(axis: IAxis, values: ITickItem): number
 export function axisDomainToRange(
   axis: IAxis,
   values: readonly (ITickItem | number)[]
 ): number[]
-export function axisDomainToRange(axis: IAxis, values: number): number
-export function axisDomainToRange(axis: IAxis, values: ITickItem): number
 export function axisDomainToRange(
   axis: IAxis,
   values: readonly (ITickItem | number)[] | number | ITickItem

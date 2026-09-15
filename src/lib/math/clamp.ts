@@ -1,3 +1,5 @@
+import { ILimit } from './limit'
+
 /**
  * Clamp a number between a lower and upper limit.
  *
@@ -6,6 +8,6 @@
  * @param upper
  * @returns
  */
-export function clamp(v: number, lower: number, upper: number) {
-  return Math.max(lower, Math.min(upper, v))
+export function clamp(v: number, limit: ILimit) {
+  return Math.max(limit.min, Math.min(limit.max, v))
 }

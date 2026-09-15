@@ -72,7 +72,7 @@ export function NumSlider({
   ])
 
   return (
-    <VCenterRow className="gap-x-2">
+    <VCenterRow className="gap-x-1">
       <Num v={_v} className={labelCls} format={f} />
       <Slider value={_v} onValueChange={_onValueChange} {...props} />
     </VCenterRow>

@@ -75,7 +75,7 @@ export function NumericalInput({
 
   function _clampValue(v: number): number {
     if (limit?.length === 2) {
-      v = clamp(v, limit[0], limit[1])
+      v = clamp(v, { min: limit[0], max: limit[1] })
     }
 
     return v

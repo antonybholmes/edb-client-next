@@ -58,11 +58,11 @@ import { DataPanel, MESSAGE_CHANNEL } from './data/data-panel'
 import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
+import type { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSlideBar } from '@/components/sidebar/slide-bar-store'
 import { HeaderButton } from '@/layouts/header-button'
 import { newGroupRow, type IClusterGroup } from '@/lib/cluster-group'
-import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
@@ -85,8 +85,9 @@ import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 
 import { GseaBubblePanel } from './apps/gsea/bubble/gsea-bubble-panel'
+
+import { ExtGseaProvider } from '../genes/gsea/ext-gsea/ext-gsea-provider'
 import { ExtGseaPanel } from './apps/gsea/ext-gsea/ext-gsea-panel'
-import { ExtGseaProvider } from './apps/gsea/ext-gsea/ext-gsea-provider'
 import {
   useCurrentSelections,
   useCurrentSheets,

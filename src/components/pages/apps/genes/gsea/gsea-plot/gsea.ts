@@ -1,12 +1,53 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
-import { abs } from '../math/abs'
-import { mean } from '../math/mean'
-import { fisherYatesShuffle } from '../math/random'
-import type { IGeneSet, IRankedGene } from './geneset'
+import { abs } from '../../../../../../lib/math/abs'
+import { mean } from '../../../../../../lib/math/mean'
+import { fisherYatesShuffle } from '../../../../../../lib/math/random'
+import { geneSetNames, type IGeneSet, type IRankedGene } from './geneset'
+
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import {
+  getColIdxFromGroup,
+  rowMean,
+  rowStdev,
+} from '@/lib/dataframe/dataframe-utils'
+import { add, sub } from '@/lib/math/add'
+import { argsort } from '@/lib/math/argsort'
+import { div } from '@/lib/math/multiply'
+import type { IClusterGroup } from '../../../../../../lib/cluster-group'
 
 interface EnrichmentResult {
   es: number
   leadingEdge: IRankedGene[]
+}
+
+export function snrRankGenes(
+  df: BaseDataFrame,
+  group1: IClusterGroup,
+  group2: IClusterGroup,
+  epsilon: number = 1e-100
+): IRankedGene[] {
+  // split table for each group
+  const tables = [group1, group2].map((group) => {
+    const colIdx = getColIdxFromGroup(df, group)
+
+    return df.iloc({ cols: colIdx })
+  })
+
+  const names = df.index.strs
+
+  const means = tables.map((df) => rowMean(df))
+
+  const sds = tables.map((df) => rowStdev(df))
+
+  const meanDiffs = sub(means[0]!, means[1]!)
+
+  // add small error so that we never have std 0
+  const sdSum = add(add(sds[0]!, sds[1]!), epsilon)
+  const snr = div(meanDiffs, sdSum)
+
+  const idx = argsort(snr, { reverse: true })
+
+  return idx.map((i, rank) => ({ name: names[i]!, score: snr[i]!, rank }))
 }
 
 function calculateEnrichmentScore(
@@ -14,8 +55,9 @@ function calculateEnrichmentScore(
   geneSet: IGeneSet,
   p: number
 ): EnrichmentResult {
+  const geneNames = new Set(geneSetNames(geneSet))
   const N = rankedGenes.length
-  const Nh = rankedGenes.filter(g => geneSet.genes.includes(g.name)).length
+  const Nh = rankedGenes.filter((g) => geneNames.has(g.name)).length
 
   if (Nh === 0 || Nh === N) {
     return { es: 0, leadingEdge: [] }
@@ -23,7 +65,7 @@ function calculateEnrichmentScore(
 
   let NR = 0
   for (let i = 0; i < N; i++) {
-    if (geneSet.genes.includes(rankedGenes[i]!.name)) {
+    if (geneNames.has(rankedGenes[i]!.name)) {
       NR += Math.abs(rankedGenes[i]!.score) ** p
     }
   }
@@ -44,7 +86,7 @@ function calculateEnrichmentScore(
     const gene = rankedGenes[i]!.name
     const score = rankedGenes[i]!.score
 
-    if (geneSet.genes.includes(gene)) {
+    if (geneNames.has(gene)) {
       runningES += Math.abs(score) ** p / NR
     } else {
       runningES -= missStep
@@ -65,10 +107,8 @@ function calculateEnrichmentScore(
   const ES = isPositive ? maxES : minES
 
   const leadingEdge = isPositive
-    ? rankedGenes
-        .slice(0, maxESIndex + 1)
-        .filter(g => geneSet.genes.includes(g.name))
-    : rankedGenes.slice(minESIndex).filter(g => geneSet.genes.includes(g.name))
+    ? rankedGenes.slice(0, maxESIndex + 1).filter((g) => geneNames.has(g.name))
+    : rankedGenes.slice(minESIndex).filter((g) => geneNames.has(g.name))
 
   return { es: ES, leadingEdge }
 }
@@ -81,7 +121,7 @@ function permuteES(
   geneSet: IGeneSet,
   p: number
 ): number {
-  const shuffledNames = fisherYatesShuffle(rankedGenes.map(g => g.name))
+  const shuffledNames = fisherYatesShuffle(rankedGenes.map((g) => g.name))
   const permuted = rankedGenes.map((g, i) => ({
     ...g,
     name: shuffledNames[i]!,
@@ -118,7 +158,7 @@ export function gsea(
   const { p = 1, numPermutations = 1000 } = opts
 
   // Step 1: Observed ES + leading edge per gene set
-  const observed = geneSets.map(gs => ({
+  const observed = geneSets.map((gs) => ({
     gs,
     result: calculateEnrichmentScore(rankedGenes, gs, p),
   }))
@@ -129,9 +169,9 @@ export function gsea(
   )
 
   // Step 3: Normalization factors from null distribution per gene set
-  const normFactors = nullESPerGeneSet.map(nullES => {
-    const pos = nullES.filter(x => x > 0)
-    const neg = nullES.filter(x => x < 0)
+  const normFactors = nullESPerGeneSet.map((nullES) => {
+    const pos = nullES.filter((x) => x > 0)
+    const neg = nullES.filter((x) => x < 0)
     const posMean = pos.length > 0 ? mean(pos) : 0
     const negMean = neg.length > 0 ? mean(abs(neg)) : 0
     return { posMean, negMean }
@@ -143,36 +183,42 @@ export function gsea(
     const nullES = nullESPerGeneSet[i]!
 
     const nes = normalizeES(result.es, posMean, negMean)
-    const nullNES = nullES.map(es => normalizeES(es, posMean, negMean))
+    const nullNES = nullES.map((es) => normalizeES(es, posMean, negMean))
     const absEs = Math.abs(result.es)
     const pvalue =
-      (nullES.filter(es => Math.abs(es) >= absEs).length + 1) /
+      (nullES.filter((es) => Math.abs(es) >= absEs).length + 1) /
       (numPermutations + 1)
 
     return { gs, result, nes, nullNES, pvalue }
   })
 
   // Step 5: Pool null NES across all gene sets for FDR
-  const allPosNullNES = perGeneSet.flatMap(s => s.nullNES.filter(x => x >= 0))
-  const allNegNullNES = perGeneSet.flatMap(s => s.nullNES.filter(x => x < 0))
+  const allPosNullNES = perGeneSet.flatMap((s) =>
+    s.nullNES.filter((x) => x >= 0)
+  )
+  const allNegNullNES = perGeneSet.flatMap((s) =>
+    s.nullNES.filter((x) => x < 0)
+  )
 
-  const posObsTotal = perGeneSet.filter(s => s.nes >= 0).length
-  const negObsTotal = perGeneSet.filter(s => s.nes < 0).length
+  const posObsTotal = perGeneSet.filter((s) => s.nes >= 0).length
+  const negObsTotal = perGeneSet.filter((s) => s.nes < 0).length
 
   // Step 6: FDR = fraction of null NES as extreme as NES* / fraction of observed NES as extreme as NES*
   // Both fractions are within the same sign subgroup (Subramanian et al. 2005)
-  const fdr = perGeneSet.map(({ gs, result, nes, pvalue }) => {
+  const results = perGeneSet.map(({ gs, result, nes, pvalue }) => {
     const isPositive = nes >= 0
     const nullNES = isPositive ? allPosNullNES : allNegNullNES
     const obsTotal = isPositive ? posObsTotal : negObsTotal
     const obsExtreme = (
       isPositive
-        ? perGeneSet.filter(s => s.nes >= nes)
-        : perGeneSet.filter(s => s.nes <= nes)
+        ? perGeneSet.filter((s) => s.nes >= nes)
+        : perGeneSet.filter((s) => s.nes <= nes)
     ).length
 
     const nullExtreme = (
-      isPositive ? nullNES.filter(x => x >= nes) : nullNES.filter(x => x <= nes)
+      isPositive
+        ? nullNES.filter((x) => x >= nes)
+        : nullNES.filter((x) => x <= nes)
     ).length
 
     let fdr = 1
@@ -194,5 +240,5 @@ export function gsea(
     }
   })
 
-  return fdr
+  return results
 }

@@ -9,31 +9,34 @@ import {
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
+import { ITEM_REGEX } from '@/consts'
 import { vfill } from '@/lib/fill'
+import { numSort } from '@/lib/math/math'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
 import { useState } from 'react'
-import { useAxes } from '../axes-provider'
-import { getAxisFormatter, getAxisTicks } from '../axis'
+import { IPlotAddress, useAxes, useAxis } from '../axes-store'
+import { getAxisFormatter, getAxisTicks, IAxis } from '../axis'
+import { ITickItem } from '../svg-axis-props'
+
+const RANGE_REGEX = /^(\d+|start)-(-?\d+|end)$/
 
 export function TickPlotPropsPopover({
   title,
-  plotId,
-  axisId,
+  plotAddress,
   which,
 }: {
   title: string
-  plotId: string
-  axisId: string
+  plotAddress: IPlotAddress
   which: 'major' | 'minor'
 }) {
   const [open, setOpen] = useState(false)
 
-  const { plots, updateAxis } = useAxes()
+  const { updateAxis } = useAxes()
 
-  const plot = plots[plotId]
-  const axis = plot.axes[axisId]
+  const { axis } = useAxis(plotAddress)
+
   const ticks = axis.ticks[which]
 
   const items = getAxisTicks(axis, { which })
@@ -59,7 +62,7 @@ export function TickPlotPropsPopover({
           className="font-bold"
           checked={ticks.show}
           onCheckedChange={(v) => {
-            updateAxis(plotId, axisId, {
+            updateAxis(plotAddress, {
               ticks: produce(axis.ticks, (draft) => {
                 draft[which].show = v
               }),
@@ -73,7 +76,7 @@ export function TickPlotPropsPopover({
                 textProps: ticks.style.labels,
                 showRotation: true,
                 update: (f) =>
-                  updateAxis(plotId, axisId, {
+                  updateAxis(plotAddress, {
                     ticks: produce(axis.ticks, (draft) => {
                       draft[which].style.labels = Object.assign(
                         {},
@@ -89,10 +92,10 @@ export function TickPlotPropsPopover({
 
         <SwitchPropRow
           title="Ticks"
-          tooltip="Specify the tick values using semicolons (e.g., 1; 2; 3) or use 'auto' for automatic ticks."
+          tooltip="Specify the tick values using semicolons (e.g., 1; 2; 3) or use 'auto' for automatic ticks. Use a-b for ranges, e.g. 1-5;6;7"
           checked={axis.ticks[which].style.line.show}
           onCheckedChange={(v) => {
-            updateAxis(plotId, axisId, {
+            updateAxis(plotAddress, {
               ticks: produce(axis.ticks, (draft) => {
                 draft[which].style.line.show = v
               }),
@@ -103,7 +106,7 @@ export function TickPlotPropsPopover({
             value={items.map((v) => format(v.v)).join('; ')}
             onTextChanged={(v) => {
               if (v === 'auto') {
-                updateAxis(plotId, axisId, {
+                updateAxis(plotAddress, {
                   ticks: produce(axis.ticks, (draft) => {
                     draft[which].items = undefined
                   }),
@@ -111,16 +114,9 @@ export function TickPlotPropsPopover({
                 return
               }
 
-              const values = v
-                .split(';')
-                .map((s) => parseFloat(s.trim().replace(/,/g, '')))
-                .filter(Number.isFinite)
-              updateAxis(plotId, axisId, {
+              updateAxis(plotAddress, {
                 ticks: produce(axis.ticks, (draft) => {
-                  draft[which].items = values.map((v) => ({
-                    v,
-                    label: format(v),
-                  }))
+                  draft[which].items = parseValues(v, axis)
                 }),
               })
             }}
@@ -133,7 +129,7 @@ export function TickPlotPropsPopover({
           tooltip="Specify the tick labels using semicolons (e.g., 1; 2; 3)"
           checked={axis.ticks[which].style.labels.show}
           onCheckedChange={(v) => {
-            updateAxis(plotId, axisId, {
+            updateAxis(plotAddress, {
               ticks: produce(axis.ticks, (draft) => {
                 draft[which].style.labels.show = v
               }),
@@ -142,33 +138,13 @@ export function TickPlotPropsPopover({
         >
           <Input
             value={items
-              .map((v) => v.label)
-              .map((s) => s.trim())
+              .map((v) => v?.label?.trim() ?? '')
               .filter((s) => s.length > 0)
               .join('; ')}
             onTextChanged={(v) => {
-              const values: string[] = []
-
-              switch (v) {
-                case 'auto':
-                  values.push(...items.map((v) => format(v.v)))
-                  break
-                case 'clear':
-                  values.push(...vfill('', items.length))
-                  break
-                default:
-                  values.push(...v.split(';').map((s) => s.trim()))
-                  break
-              }
-
-              const newItems = items.map((item, i) => ({
-                v: item.v,
-                label: i < values.length ? values[i] : '',
-              }))
-
-              updateAxis(plotId, axisId, {
+              updateAxis(plotAddress, {
                 ticks: produce(axis.ticks, (draft) => {
-                  draft[which].items = newItems
+                  draft[which].items = parseTickLabels(v, items, format, axis)
                 }),
               })
             }}
@@ -185,7 +161,7 @@ export function TickPlotPropsPopover({
             limit={[1, 1000]}
             dp={0}
             onNumChanged={(v) => {
-              updateAxis(plotId, axisId, {
+              updateAxis(plotAddress, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].style.line.size = v
                 }),
@@ -197,7 +173,7 @@ export function TickPlotPropsPopover({
             value={ticks.style.line.offset}
             title="Offset"
             onNumChanged={(v) => {
-              updateAxis(plotId, axisId, {
+              updateAxis(plotAddress, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].style.line.offset = v
                 }),
@@ -210,7 +186,7 @@ export function TickPlotPropsPopover({
             value={ticks.style.labels.offset}
             title="Label Offset"
             onNumChanged={(v) => {
-              updateAxis(plotId, axisId, {
+              updateAxis(plotAddress, {
                 ticks: produce(axis.ticks, (draft) => {
                   draft[which].style.labels.offset = v
                 }),
@@ -221,4 +197,134 @@ export function TickPlotPropsPopover({
       </PopoverContent>
     </Popover>
   )
+}
+
+function parseValues(v: string, ax: IAxis): ITickItem[] | undefined {
+  if (v === 'auto') {
+    return undefined
+  }
+
+  if (v === 'clear') {
+    return []
+  }
+
+  const values = v
+    .split(ITEM_REGEX)
+    .map((s) => s.trim().replaceAll(',', ''))
+    .filter((s) => s !== '')
+
+  const ticks = new Set<number>()
+
+  for (const value of values) {
+    // See if a range is specified, e.g., "1-5"
+    const rangeMatch = value.match(RANGE_REGEX)
+
+    if (rangeMatch) {
+      const rangeValues = parseRange(rangeMatch, ax)
+      for (const v of rangeValues) {
+        ticks.add(v)
+      }
+
+      continue
+    }
+
+    const v: number = parseFloat(value)
+
+    if (Number.isFinite(v)) {
+      ticks.add(v)
+      continue
+    }
+  }
+
+  const ret = numSort([...ticks]).map((v) => ({ v, label: String(v) }))
+
+  return ret
+}
+
+function parseTickLabels(
+  v: string,
+  items: ITickItem[],
+  format: (v: number) => string,
+  ax: IAxis
+): ITickItem[] | undefined {
+  const values: string[] = []
+
+  switch (v) {
+    case 'auto':
+      values.push(...items.map((v) => format(v.v)))
+      break
+    case 'clear':
+      values.push(...vfill('', items.length))
+      break
+    default:
+      const parsedValues = v
+        .split(ITEM_REGEX)
+        .map((s) => s.trim())
+        .filter((s) => s !== '')
+
+      for (const parsedValue of parsedValues) {
+        const rangeMatch = parsedValue.match(RANGE_REGEX)
+
+        if (rangeMatch) {
+          const rangeValues = parseRange(rangeMatch, ax)
+
+          values.push(...rangeValues.map(String))
+
+          continue
+        }
+
+        values.push(parsedValue)
+      }
+
+      break
+  }
+
+  // map to existing labels
+  const newItems = items.map((item, i) => ({
+    v: item.v,
+    label: i < values.length ? values[i] : '',
+  }))
+
+  return newItems
+}
+
+function parseRange(rangeMatch: RegExpMatchArray, ax: IAxis): number[] {
+  let start =
+    rangeMatch[1] === 'start' ? ax.domain[0] : parseFloat(rangeMatch[1])
+
+  if (!Number.isFinite(start)) {
+    return []
+  }
+
+  let endValue = rangeMatch[2]
+  let negMode = false
+
+  let end: number
+
+  if (endValue === 'end') {
+    end = ax.domain[1]
+  } else {
+    if (endValue.startsWith('-')) {
+      negMode = true
+      endValue = endValue.slice(1)
+    }
+
+    end = parseFloat(endValue)
+
+    if (!Number.isFinite(end)) {
+      return []
+    }
+
+    if (negMode) {
+      end = ax.domain[1] - end + 1
+    }
+  }
+
+  const values = []
+
+  for (let i = start; i <= end; i++) {
+    values.push(i)
+  }
+
+  return values
 }

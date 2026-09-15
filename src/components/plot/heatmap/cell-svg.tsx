@@ -1,11 +1,17 @@
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { ICell } from '@/interfaces/cell'
+import { IDim } from '@/interfaces/dim'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
 import { getColorMapFromICMAP } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { cellStr } from '@/lib/dataframe/cell'
+import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
+import { useCrosshair } from '@/providers/crosshair-provider'
+import { useSVG } from '@/providers/svg-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
 import { ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgCircle } from '../svg-circle'
@@ -22,6 +28,7 @@ import { CellGaps } from './cell-gaps'
 export interface ICellsSvgProps {
   df: BaseDataFrame
   margin: IMarginProps
+  plotSize: IDim
   xgaps: CellGaps
   ygaps: CellGaps
   dfRaw?: BaseDataFrame | undefined
@@ -43,15 +50,18 @@ export function CellsSvg({
   margin,
   xgaps,
   ygaps,
-
+  plotSize,
   rowLeaves,
   colLeaves,
   props,
-  handleVariantEnter,
-  handleVariantLeave,
+
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
-  const blockSize = props.blockSize
+  const { ref } = useSVG()
+  const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair() // Assuming there is a useCrosshair hook similar to useTooltip
+
+  const { blockSize } = props
 
   const cmap = getColorMapFromICMAP(props.cmap)
 
@@ -81,13 +91,58 @@ export function CellsSvg({
     )
   })
 
+  function _hideTooltip() {
+    hideTooltip()
+    hideCrosshair()
+  }
+
+  function handleMouseMove(e: React.MouseEvent) {
+    const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
+
+    const plotP = {
+      x: svgP.x - margin.left,
+      y: svgP.y - margin.top,
+    }
+
+    const cell = { col: xgaps.nearest(plotP.x), row: ygaps.nearest(plotP.y) }
+
+    //console.log('bb', cell.col.index, cell.row.index)
+
+    //if (cell.col.index === -1 || cell.row.index === -1) {
+    //  _hideTooltip()
+    //return
+    //}
+
+    const { screenP } = svgPointToScreen(ref.current, {
+      x: cell.col.x + blockSize.w + margin.left,
+      y: cell.row.x + blockSize.h + margin.top,
+    })
+
+    showTooltip({
+      pos: { x: screenP.x + 5, y: screenP.y + 5 },
+      content: (
+        <>
+          <span className="font-semibold">{`${df.rowName(
+            cell.row.index
+          )}, ${df.colName(cell.col.index)}`}</span>
+          <span>{`Row ${cell.row.index + 1}, col ${cell.col.index + 1}`}</span>
+          <span>{cellStr(df.get(cell.row.index, cell.col.index))}</span>
+        </>
+      ),
+    })
+
+    const { relativeP } = svgPointToScreen(ref.current, {
+      x: cell.col.x + blockSize.w / 2 + margin.left,
+      y: cell.row.x + blockSize.h / 2 + margin.top,
+    })
+
+    showCrosshair({ pos: relativeP })
+  }
+
   return (
     <>
       <defs>{uniqueColorRects}</defs>
-      <g
-        transform={`translate(${pos.x}, ${pos.y})`}
-        shapeRendering={SVG_CRISP_EDGES}
-      >
+      <SvgG pos={pos} shapeRendering={SVG_CRISP_EDGES}>
         {rowLeaves.map((row, ri) => {
           const y = ygaps.position(ri)
 
@@ -103,23 +158,22 @@ export function CellsSvg({
                 key={`${ri}:${ci}`}
                 xlinkHref={`#${id}`}
                 transform={`translate(${x},${y})`}
-                onMouseEnter={() => {
-                  handleVariantEnter?.(
-                    {
-                      x: x + margin.left,
-                      y: y + margin.top,
-                    },
-                    { row: ri, col: ci }
-                  )
-                }}
-                onMouseLeave={() => {
-                  handleVariantLeave?.()
-                }}
               />
             )
           })
         })}
-      </g>
+
+        <SvgRect
+          id="mouse-rect"
+          data-interaction-only="true"
+          width={plotSize.w}
+          height={plotSize.h}
+          fill="transparent"
+          pointerEvents="all"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={_hideTooltip}
+        />
+      </SvgG>
     </>
   )
 }
@@ -128,17 +182,52 @@ export function DotsSvg({
   df,
   dfRaw,
   dfSize,
+  plotSize,
   margin,
   xgaps,
   ygaps,
   rowLeaves,
   colLeaves,
-  handleVariantEnter,
-  handleVariantLeave,
+
   props,
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
   const blockSize = props.blockSize
+  const { ref } = useSVG()
+  const { showTooltip, hideTooltip } = useTooltip()
+
+  function handleMouseMove(e: React.MouseEvent) {
+    const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
+
+    const plotP = {
+      x: svgP.x - margin.left,
+      y: svgP.y - margin.top,
+    }
+
+    const cell = { col: xgaps.nearest(plotP.x), row: ygaps.nearest(plotP.y) }
+
+    if (cell.col.index === -1 || cell.row.index === -1) {
+      return
+    }
+
+    const { screenP } = svgPointToScreen(ref.current, {
+      x: cell.col.x + blockSize.w + margin.left,
+      y: cell.row.x + blockSize.h + margin.top,
+    })
+
+    showTooltip({
+      pos: { x: screenP.x + 2, y: screenP.y + 2 },
+      content: (
+        <>
+          <span className="font-semibold">{`${df.rowName(
+            cell.row.index
+          )}, ${df.colName(cell.col.index)}`}</span>
+          <span>{`Row ${cell.row.index + 1}, col ${cell.col.index + 1}`}</span>
+          <span>{cellStr(df.get(cell.row.index, cell.col.index))}</span>
+        </>
+      ),
+    })
+  }
 
   function bound(x: number) {
     const r = props.range[1] - props.range[0]
@@ -154,10 +243,19 @@ export function DotsSvg({
   const w = Math.min(blockSize.w, blockSize.h)
 
   return (
-    <g
-      transform={`translate(${pos.x}, ${pos.y})`}
+    <SvgG
+      pos={pos}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={hideTooltip}
       //shapeRendering={SVG_CRISP_EDGES}
     >
+      <SvgRect
+        id="mouse-rect"
+        width={plotSize.w}
+        height={plotSize.h}
+        fill="transparent"
+      />
+
       {rowLeaves.map((row, ri) => {
         const y = ygaps.position(ri)
         return colLeaves.map((col, ci) => {
@@ -194,8 +292,6 @@ export function DotsSvg({
           const cy = 0.5 * blockSize.h
           const r = 0.5 * w * radius * props.dot.scale
 
-          console.log(r, radius, props.dot.scale)
-
           const textColor =
             props.cells.values.autoColor.on && radius > 0.4
               ? getTextColorForBackground(
@@ -212,18 +308,6 @@ export function DotsSvg({
                 width={blockSize.w}
                 height={blockSize.h}
                 fill="transparent"
-                onMouseEnter={() => {
-                  handleVariantEnter?.(
-                    {
-                      x: x + margin.left,
-                      y: y + margin.top,
-                    },
-                    { row: ri, col: ci }
-                  )
-                }}
-                onMouseLeave={() => {
-                  handleVariantLeave?.()
-                }}
               />
               <SvgCircle
                 id={`${ri}:${ci}`}
@@ -255,7 +339,7 @@ export function DotsSvg({
           )
         })
       })}
-    </g>
+    </SvgG>
   )
 }
 

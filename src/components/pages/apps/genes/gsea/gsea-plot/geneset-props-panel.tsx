@@ -14,14 +14,14 @@ import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { GeneSetFilter } from './gene-set-filter'
-import { useGsea, type IGseaGeneSet } from './gsea-plot-store'
+import { useGsea, type IGseaTableResult } from './gsea-store'
 
 function GseaReportItem({
   index,
   report,
 }: {
   index: number
-  report: IGseaGeneSet
+  report: IGseaTableResult
 }) {
   const { geneSetsInUse, setGeneSetsInUse } = useGsea()
 
@@ -42,14 +42,24 @@ function GseaReportItem({
 
       <VCenterRow>
         <AxesDisplayPropsPopover
-          plotIds={[{ id: report.id, title: report.name }]}
-          axesGroups={[
+          plots={[
             {
-              id: 'es',
-              title: 'ES',
-              axesIds: [
-                { id: 'es-x', axis: 'x', title: 'ES X' },
-                { id: 'es-y', axis: 'y', title: 'ES Y' },
+              id: report.id,
+              title: report.name,
+              groups: [
+                {
+                  id: 'es',
+                  title: 'ES',
+                  axes: [
+                    { id: 'x', title: 'X' },
+                    { id: 'y', title: 'Y' },
+                  ],
+                },
+                {
+                  id: 'snr',
+                  title: 'SNR',
+                  axes: [{ id: 'y', title: 'Y' }],
+                },
               ],
             },
           ]}

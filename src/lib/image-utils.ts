@@ -11,8 +11,15 @@ export function getSvg(svg: SVGElement | null | undefined): string | null {
     return null
   }
 
-  //get svg source.
-  let source = new XMLSerializer().serializeToString(svg)
+  // remove elements that are only meant for interaction and
+  // should not be exported
+  const exportSvg = svg.cloneNode(true) as SVGElement
+
+  exportSvg
+    .querySelectorAll('[data-interaction-only]')
+    .forEach((element) => element.remove())
+
+  let source = new XMLSerializer().serializeToString(exportSvg)
 
   //add name spaces.
   if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {

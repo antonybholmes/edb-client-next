@@ -1,0 +1,11 @@
+{
+  "name": "Ext GSEA",
+  "description": "Extended GSEA.",
+  "abbr": "ExG",
+  "color": "#006666",
+  "version": "2.2.4",
+  "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
+  "modified": "2026-09-15T14:45:21.709Z",
+  "hash": "a890c1b6153940e54d8ec0d9092584191389160aa3b01bfe4879a653efa62c04",
+  "build": 1004
+}

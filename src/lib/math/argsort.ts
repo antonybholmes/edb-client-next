@@ -4,9 +4,13 @@
  * @param data
  * @returns
  */
-export function argsort(data: number[], reverse = false): number[] {
+export function argsort(
+  data: number[],
+  opts: { reverse?: boolean; abs?: boolean } = {}
+): number[] {
+  const { reverse = false, abs = false } = opts
   return data
-    .map((value, index) => ({ value, index }))
+    .map((value, index) => ({ value: abs ? Math.abs(value) : value, index }))
     .sort((a, b) => (reverse ? b.value - a.value : a.value - b.value))
     .map(({ index }) => index)
 }

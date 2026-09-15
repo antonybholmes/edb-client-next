@@ -3,6 +3,7 @@ import { type IDivProps } from '@/interfaces/div-props'
 import {
   autoTickInterval,
   axisDomainToRangeFunc,
+  axisLength,
   IAxis,
   setAxisClip,
   setAxisDomain,
@@ -11,6 +12,7 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
 
+import { SvgG } from '@/components/plot/svg-g'
 import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -54,7 +56,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       const dx = e.clientX - startPos.current.x
       //const dy = e.clientY - startPos.current.y
 
-      const domainX = (-dx / xax.length) * (xax.domain[1] - xax.domain[0] + 1)
+      const domainX = (-dx / xl) * (xax.domain[1] - xax.domain[0] + 1)
 
       startPos.current = null
 
@@ -74,7 +76,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       const dx = e.clientX - startPos.current.x
       //const dy = e.clientY - startPos.current.y
 
-      const domainX = (-dx / xax.length) * (xax.domain[1] - xax.domain[0] + 1)
+      const domainX = (-dx / xl) * (xax.domain[1] - xax.domain[0] + 1)
 
       // we use the current axes used in the ui to internally set an
       // axes object to track the mouse movements. Once the mouse is
@@ -117,19 +119,21 @@ export function RulerTrackSvg({ track, xax }: IProps) {
   const minX = xaf(_xax.domain[0])
   const maxX = xaf(_xax.domain[1])
 
+  const xl = axisLength(_xax)
+
   return (
     <>
       <defs>
         <clipPath id="ruler-clip">
           <rect
-            width={_xax.length}
+            width={xl}
             height={settings.titles.height + track.displayOptions.height}
           />
         </clipPath>
       </defs>
 
       <rect
-        width={_xax.length}
+        width={xl}
         height={settings.titles.height + track.displayOptions.height}
         stroke="none"
         fill="black"
@@ -139,8 +143,8 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       />
 
       {/* <g id="clip" clipPath="url(#ruler-clip)"> */}
-      <g
-        transform={`translate(0, ${settings.titles.height + h})`}
+      <SvgG
+        pos={{ x: 0, y: settings.titles.height + h }}
         style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
       >
         <g id="minor-ticks">
@@ -193,7 +197,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
         <g id="major-tick-labels">
           {ticks
             .map((tick) => ({ domain: tick, range: xaf(tick) }))
-            .filter((t, ti) => t.range >= dx1 && t.range <= dx2)
+            .filter((t) => t.range >= dx1 && t.range <= dx2)
             .map((t, pi) => {
               const { domain: tick, range: px1 } = t
               return (
@@ -211,7 +215,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
               )
             })}
         </g>
-      </g>
+      </SvgG>
     </>
   )
 }
