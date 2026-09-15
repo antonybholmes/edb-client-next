@@ -2944,6 +2944,10 @@
         {
           "msg": "Added simple text viewer app",
           "date": "2026-09-15T17:40:12.223Z"
+        },
+        {
+          "msg": "Added back abilty for user to specify their own colors for GSEA gene hits",
+          "date": "2026-09-15T18:07:17.732Z"
         }
       ]
     },

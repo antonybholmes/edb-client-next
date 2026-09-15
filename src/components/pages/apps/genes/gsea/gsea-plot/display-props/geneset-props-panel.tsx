@@ -13,8 +13,8 @@ import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { GeneSetFilter } from './gene-set-filter'
-import { useGsea, type IGseaTableResult } from './gsea-store'
+import { GeneSetFilter } from '../gene-set-filter'
+import { useGsea, type IGseaTableResult } from '../gsea-store'
 
 function GseaReportItem({
   index,

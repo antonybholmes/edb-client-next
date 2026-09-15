@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added back abilty for user to specify their own colors for GSEA gene hits.
 - Added simple text viewer app.
 - Support for gradient weight on hit color in GSEA plots.

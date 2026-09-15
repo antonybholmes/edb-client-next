@@ -182,7 +182,7 @@ export function ExtGseaHitsSvg({
             })}
           </SvgG>
 
-          {displayProps.genes.labels.font.show && (
+          {settings.genes.labels.show && (
             <SvgG
               pos={{
                 x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
@@ -191,7 +191,7 @@ export function ExtGseaHitsSvg({
             >
               <SvgText
                 fill={
-                  displayProps.genes.labels.isColored
+                  settings.genes.labels.color.on
                     ? cmap.getHexColor(gsMode === 'gs1' ? 0 : 1)
                     : COLOR_BLACK
                 }
