@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 
 import { IPos } from '@/interfaces/pos'
-import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
+import { COLOR_BLACK } from '@/lib/color/color'
 import { getColorMap } from '@/lib/color/colormap'
 
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
@@ -155,22 +155,22 @@ export function GenesSvg({
         const x = xp[hi]
 
         // scale from -1 to 1 and then normalize to 0-1 range
-        //const pc = (hit.score / maxAbsScore + 1) / 2
 
-        const pc =
-          hit.rank <= crossing.index
-            ? 0.5 * (hit.rank / crossing.index)
-            : 0.5 +
-              0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+        let pc = 0
 
-        console.log(hit.score, hi, maxAbsScore, pc)
+        if (settings.genes.color.mode === 'score') {
+          pc = (1 - hit.score / maxAbsScore) * 0.5
+        } else {
+          pc =
+            hit.rank <= crossing.index
+              ? 0.5 * (hit.rank / crossing.index)
+              : 0.5 +
+                0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+        }
 
-        //const pc = p.x / crossing.x
-
-        const color = addAlphaToHex(
-          settings.genes.color.on ? cmap.getHexColor(pc) : COLOR_BLACK,
-          settings.genes.cmap.opacity
-        )
+        const color = settings.genes.color.on
+          ? cmap.getHexColor(pc)
+          : COLOR_BLACK
 
         return (
           <line
@@ -181,29 +181,10 @@ export function GenesSvg({
             y2={settings.genes.height}
             strokeWidth={settings.genes.pos.width}
             stroke={color}
+            strokeOpacity={settings.genes.cmap.opacity}
           />
         )
       })}
-
-      {/* {negPoints.map((p, pi) => {
-        const pc = (p.x - crossing.x) / rightWidth
-
-        const color = settings.genes.color.on
-          ? cmap2.getHexColor(pc)
-          : COLOR_BLACK
-
-        return (
-          <line
-            key={posPoints.length + pi}
-            x1={p.x}
-            x2={p.x}
-            y1={0}
-            y2={settings.genes.height}
-            strokeWidth={settings.genes.neg.width}
-            stroke={color}
-          />
-        )
-      })} */}
 
       <SvgRect
         id="mouse-rect"

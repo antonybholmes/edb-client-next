@@ -22,6 +22,7 @@ import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useGseaSettings } from './gsea-settings-store'
@@ -71,7 +72,6 @@ export function GseaPlotDisplayPropsPanel() {
             <PropRow title="Margins">
               <MarginPopover />
             </PropRow>
-            {/* <AxesPropRow /> */}
 
             <CheckPropRow
               title="Invert Phenotypes"
@@ -263,7 +263,7 @@ export function GseaPlotDisplayPropsPanel() {
             </PropRow>
 
             <CheckPropRow
-              title="Color Gradient"
+              title="Color"
               checked={settings.genes.color.on}
               onCheckedChange={(state) => {
                 updateSettings(
@@ -324,6 +324,25 @@ export function GseaPlotDisplayPropsPanel() {
                   )
                 }}
               />
+
+              <SelectList
+                items={[
+                  { label: 'Score', value: 'score' },
+                  { label: 'Rank', value: 'rank' },
+                ]}
+                value={settings.genes.color.mode}
+                onValueChange={(value) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.mode = value as 'score' | 'rank'
+                    })
+                  )
+                }}
+                w="xs"
+              >
+                <SelectItem value="score">Score</SelectItem>
+                <SelectItem value="rank">Rank</SelectItem>
+              </SelectList>
 
               {/* <ColorPickerButton
                 disabled={!settings.genes.show}

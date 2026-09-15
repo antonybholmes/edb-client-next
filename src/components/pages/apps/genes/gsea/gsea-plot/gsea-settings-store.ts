@@ -55,6 +55,7 @@ export interface IGseaDisplayProps {
     show: boolean
     color: {
       on: boolean
+      mode: 'rank' | 'score'
     }
     labels: ITextProps & { color: { on: boolean } }
     pos: IStrokeProps
@@ -182,6 +183,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     labels: { ...DEFAULT_TEXT_PROPS, color: { on: true } },
     color: {
       on: true,
+      mode: 'rank',
     },
     pos: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1 },
     neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },

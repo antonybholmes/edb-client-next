@@ -9,6 +9,8 @@ import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { getColorMap } from '@/lib/color/colormap'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { EsCurveSvg, EsLeadingEdgeSvg } from '../../gsea-plot/svg/es-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 
@@ -24,6 +26,7 @@ export function ExtGseaEsCurveSvg({
   gsMode: 'gs1' | 'gs2'
 }) {
   const { displayProps } = useExtGseaContext()
+  const { settings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -41,50 +44,11 @@ export function ExtGseaEsCurveSvg({
     return null
   }
 
-  // size of plot with padding
-
-  // const subSampledRankedGenes = subsampleRankedGenes(
-  //   gsea.esAll,
-  //   settings.es.step
-  // )
-
-  // let points: IPos[] = subSampledRankedGenes.map((g) => ({
-  //   x: g.rank,
-  //   y: g.score,
-  // }))
-
-  //let hitPoints: IPos[] = gsea.esHits.map((g) => ({ x: g.rank, y: g.score }))
-
-  // subsample so we don't draw every point
-  //const ix = range(0, x.length, displayProps.es.step)
-  //
-  //const x1 = ix.map((i) => x[i]!)
-
-  // we must end at the last point so zero the ends and fix
-  // fix x
-
-  // let leadingEdgeIdx =
-  //   gsea.es >= 0
-  //     ? gsea.leadingEdge[gsea.leadingEdge.length - 1].rank
-  //     : gsea.leadingEdge[0].rank
-
-  // // now we want the ix that are within the leading edge
-  // let leadingIdx =
-  //   gsea.es >= 0
-  //     ?
-  //     : where(  hits, (p) => p.rank >= leadingEdgeIdx)
-
-  // const leadingHits = hits.filter((g) =>
-  //   gsea.es >= 0 ? g.rank <= leadingEdgeIdx : g.rank >= leadingEdgeIdx
-  // )
-
-  // let leadingRankedGenes = leadingIdx.map((i) => hits[i])
-
-  // fix ends
-
   const yaf = axisDomainToRangeFunc(yaxEs)
 
   const { leadingEdge, es, esHits } = gsea
+
+  const cmap = getColorMap(settings.genes.cmap).reverse()
 
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])
@@ -99,23 +63,13 @@ export function ExtGseaEsCurveSvg({
 
   let leadingEdge1Svg: ReactNode | undefined = undefined
 
-  // const esHits: IRankedGene[] = useMemo(
-  //   () =>
-  //     settings.phenotypes.invert
-  //       ? gsea.esHits
-  //           .map((e) => ({ ...e, rank: maxRank - e.rank, score: -e.score }))
-  //           .sort((a, b) => a.rank - b.rank)
-  //       : gsea.esHits,
-  //   [gsea.esHits, maxRank, settings.phenotypes.invert]
-  // )
-
   if (displayProps.es[gsMode].leadingEdge.show) {
     leadingEdge1Svg = (
       <EsLeadingEdgeSvg
         leadingEdge={leadingEdgeEs}
         xax={xax}
         yaf={yaf}
-        fill={gs.color ?? displayProps.es[gsMode].leadingEdge.value}
+        fill={cmap.getHexColor(gsMode === 'gs1' ? 0 : 1)} // gs.color ?? displayProps.es[gsMode].leadingEdge.value}
         fillOpacity={displayProps.es[gsMode].leadingEdge.opacity}
       />
     )
@@ -124,25 +78,15 @@ export function ExtGseaEsCurveSvg({
   let line1Svg: ReactNode | undefined = undefined
 
   if (displayProps.es[gsMode].curve.show) {
-    //const pointsStr = points.map((p) => `${p.x},${p.y}`).join(' ')
-
     line1Svg = (
       <EsCurveSvg
         hits={esHits}
         xax={xax}
         yax={yaxEs}
-        stroke={gs.color ?? displayProps.es[gsMode].curve.value}
+        //stroke={gs.color ?? displayProps.es[gsMode].curve.value}
+        stroke={cmap.getHexColor(gsMode === 'gs1' ? 0 : 1)}
       />
     )
-
-    // line1Svg = (
-    //   <SvgPolyLine
-    //     points={pointsStr}
-    //     stroke={gs.color ?? displayProps.es[gsMode].curve.value}
-    //     s={displayProps.es[gsMode].curve}
-    //     fill="none"
-    //   />
-    // )
   }
 
   return (

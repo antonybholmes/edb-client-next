@@ -16,7 +16,11 @@ import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { ExtGseaInputDialog } from '../ext-gsea-input-dialog'
 import { useExtGseaSettings } from '../ext-gsea-settings'
@@ -24,6 +28,7 @@ import { useExtGseaSettings } from '../ext-gsea-settings'
 export function HomeToolbar() {
   const { openCustom: openCustomDialog } = useDialogs()
   const { settings, updateSettings } = useExtGseaSettings()
+
   const { settings: gseaSettings, updateSettings: updateGseaSettings } =
     useGseaSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
@@ -105,19 +110,54 @@ export function HomeToolbar() {
         </ToolbarRow>
       </ToolbarTabGroup>
       <ToolbarTabGroup title={TEXT_OPTIONS}>
-        <ToolbarButton
-          checked={gseaSettings.phenotypes.invert}
-          onClick={() =>
-            updateGseaSettings(
-              produce(gseaSettings, (draft) => {
-                draft.phenotypes.invert = !draft.phenotypes.invert
-              })
-            )
-          }
-          title="Switch the phenotypes to be plotted on the left and right side of the plot."
-        >
-          Invert Phenotypes
-        </ToolbarButton>
+        <ToolbarCol>
+          <ToolbarRow>
+            <ToolbarButton
+              checked={gseaSettings.phenotypes.invert}
+              onClick={() =>
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.phenotypes.invert = !draft.phenotypes.invert
+                  })
+                )
+              }
+              title="Switch the phenotypes to be plotted on the left and right side of the plot."
+            >
+              Invert
+            </ToolbarButton>
+            <ColorMapToolbarMenu
+              cmap={getColorMap(gseaSettings.genes.cmap)}
+              onChange={(cmap) => {
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.genes.cmap.name = cmap.id as ColorMapName
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow>
+            <SelectList
+              items={[
+                { label: 'Score', value: 'score' },
+                { label: 'Rank', value: 'rank' },
+              ]}
+              value={gseaSettings.genes.color.mode}
+              onValueChange={(value) => {
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.genes.color.mode = value as 'score' | 'rank'
+                  })
+                )
+              }}
+              w="xs"
+              variant="toolbar"
+            >
+              <SelectItem value="score">Score</SelectItem>
+              <SelectItem value="rank">Rank</SelectItem>
+            </SelectList>
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

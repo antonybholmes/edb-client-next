@@ -83,17 +83,6 @@ const GseaPlot = memo(function GseaPlot({
     return sortRankedGenes(result.hits, maxRank, settings.phenotypes.invert)
   }, [result, maxRank, settings.phenotypes.invert])
 
-  // const points: IPos[] = useMemo(() => {
-  //   if (!xax || !yax) {
-  //     return []
-  //   }
-
-  //   return subSampledEs.map((e) => ({
-  //     x: xaf(e.rank),
-  //     y: yaf(e.score),
-  //   }))
-  // }, [subSampledEs, xax, yax])
-
   if (!xax || !yax || !result) {
     return null
   }

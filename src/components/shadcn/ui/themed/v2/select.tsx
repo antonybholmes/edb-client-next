@@ -277,6 +277,7 @@ export function SelectSeparator({
 
 interface ISelectListProps
   extends ComponentProps<typeof Select>, VariantProps<typeof triggerVariants> {
+  title?: string
   className?: string
 }
 
@@ -284,13 +285,19 @@ export function SelectList({
   variant,
   w = 'md',
   multiple = false,
+  title,
   className = '',
   children,
   ...props
 }: ISelectListProps) {
   return (
     <Select multiple={multiple} {...props}>
-      <SelectTrigger w={w} variant={variant} className={className}>
+      <SelectTrigger
+        w={w}
+        variant={variant}
+        className={className}
+        title={title}
+      >
         <SelectValue />
       </SelectTrigger>
       <SelectContent>{children}</SelectContent>

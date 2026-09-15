@@ -35,6 +35,7 @@ export function ExtGseaHitsSvg({
   esHits,
   maxScore,
   gsMode,
+  maxRank,
   pos,
 }: {
   xax: IAxis
@@ -42,6 +43,7 @@ export function ExtGseaHitsSvg({
   esHits: IRankedGene[]
   //scores: IRankedGene[]
   maxScore: number
+  maxRank: number
   gsMode: 'gs1' | 'gs2'
   pos: IPos
 }) {
@@ -132,16 +134,6 @@ export function ExtGseaHitsSvg({
           </>
         ),
       })
-      //   showTooltip({
-      //     pos: { x: screenP.x + 5, y: screenP.y + 5 },
-      //     content: (
-      //       <>
-      //         <strong>{gs.name}</strong>
-      //         <span>{`Name: ${esHits[index].name}`}</span>
-      //         <span>{`Rank: ${esHits[index].rank.toLocaleString()}, Score: ${esHits[index].score.toFixed(3)}`}</span>
-      //       </>
-      //     ),
-      //   })
     },
     [pos, ref, displayProps, esHits, gs, points, showCrosshair, hideCrosshair]
   )
@@ -154,33 +146,21 @@ export function ExtGseaHitsSvg({
     }
 
     if (displayProps.genes.line.show) {
-      // scale colors to score, for generic ext gsea
-      // score is always 1 so no effect, for viper
-      // we can scale by strength of interaction with
-      // target
-
-      //let hitIdx = gsea.esHits.map((g) => g.rank)
-
-      //let xs = axisDomainToRange(xax, hitIdx)
-
-      //const xaf = axisDomainToRangeFunc(xax)
-
       return (
         <>
           <SvgG id="hits">
             {esHits.map((hit, hiti) => {
               const x = points[hiti].x // ?? xaf(gsea.esHits[hiti].rank)
 
-              const score = (Math.abs(hit.score) / maxScore) * 0.5
-              const diff = 1 - score
+              let pc = 0
 
-              //need to vary between 1 and score/max score according to the gene score
-              const opacity =
-                score + diff * (1 - displayProps.genes.geneScoreWeight)
+              if (settings.genes.color.mode === 'score') {
+                pc = (1 - Math.abs(hit.score) / maxScore) * 0.5
+              } else {
+                pc = (hit.rank / maxRank) * 0.5
+              }
 
-              const color = cmap.getHexColor(
-                score + (gsMode === 'gs2' ? 0.5 : 0)
-              )
+              const color = cmap.getHexColor(pc + (gsMode === 'gs2' ? 0.5 : 0))
 
               return (
                 <SvgLine
@@ -191,7 +171,7 @@ export function ExtGseaHitsSvg({
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
                   stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
-                  strokeOpacity={opacity}
+                  strokeOpacity={settings.genes.cmap.opacity}
                 />
               )
             })}
@@ -207,7 +187,7 @@ export function ExtGseaHitsSvg({
               <SvgText
                 fill={
                   displayProps.genes.labels.isColored
-                    ? (gs.color ?? displayProps.es[gsMode].curve.value)
+                    ? cmap.getHexColor(gsMode === 'gs1' ? 0 : 1)
                     : COLOR_BLACK
                 }
                 font={displayProps.genes.labels.font}
@@ -264,6 +244,8 @@ export function ExtGseaGenesSvgPlot({
   })
 
   const displayProps: IExtGseaSettings = plot.props
+
+  const maxRank = result.scores.length - 1
 
   const { gs1, gs2, esHits1, esHits2, scores1, scores2 } = useMemo(() => {
     /* let gs1 = settings.phenotypes.invert ? result.gs2 : result.gs1
@@ -333,6 +315,7 @@ export function ExtGseaGenesSvgPlot({
             esHits={esHits1}
             //scores={scores1}
             maxScore={maxScore}
+            maxRank={maxRank}
             gsMode="gs1"
             pos={pos}
           />
@@ -349,6 +332,7 @@ export function ExtGseaGenesSvgPlot({
               esHits={esHits2}
               //scores={scores2}
               maxScore={maxScore}
+              maxRank={maxRank}
               gsMode="gs2"
               pos={{
                 x: pos.x,

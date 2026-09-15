@@ -6,6 +6,8 @@ import {
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
+import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -13,6 +15,7 @@ import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { useGseaSettings } from '../gsea-settings-store'
@@ -79,7 +82,7 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Options" className="gap-x-1">
         <ToolbarCol className="gap-x-1">
-          <ToolbarRow gap="gap-x-1">
+          <ToolbarRow>
             Columns
             <NumericalInput
               value={settings.page.columns}
@@ -96,21 +99,53 @@ export function HomeToolbar() {
               }}
               w="xxs"
             />
+            <ToolbarButton
+              checked={settings.phenotypes.invert}
+              onClick={() =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.invert = !draft.phenotypes.invert
+                  })
+                )
+              }
+              title="Switch the phenotypes to be plotted on the left and right side of the plot."
+            >
+              Invert
+            </ToolbarButton>
           </ToolbarRow>
+          <ToolbarRow>
+            <ColorMapToolbarMenu
+              cmap={getColorMap(settings.genes.cmap)}
+              onChange={(cmap) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.cmap.name = cmap.id as ColorMapName
+                  })
+                )
+              }}
+            />
 
-          <ToolbarButton
-            checked={settings.phenotypes.invert}
-            onClick={() =>
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.phenotypes.invert = !draft.phenotypes.invert
-                })
-              )
-            }
-            title="Switch the phenotypes to be plotted on the left and right side of the plot."
-          >
-            Invert Phenotypes
-          </ToolbarButton>
+            <SelectList
+              items={[
+                { label: 'Score', value: 'score' },
+                { label: 'Rank', value: 'rank' },
+              ]}
+              value={settings.genes.color.mode}
+              onValueChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.color.mode = value as 'score' | 'rank'
+                  })
+                )
+              }}
+              w="xs"
+              variant="toolbar"
+              title="Metric to use for coloring genes"
+            >
+              <SelectItem value="score">Score</SelectItem>
+              <SelectItem value="rank">Rank</SelectItem>
+            </SelectList>
+          </ToolbarRow>
         </ToolbarCol>
         {/* <ToolbarCol>
           <ToolbarRow>

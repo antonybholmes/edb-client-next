@@ -215,7 +215,6 @@ export function EsSvg({
   )
 
   const phenotypei = phenIndexMap.get(pathway.phen)!
-  //const rankMid = maxRank / 2
 
   const yaf = axisDomainToRangeFunc(yax)
 

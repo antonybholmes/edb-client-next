@@ -433,18 +433,18 @@ export function ExtGseaDisplayPropsPanel() {
             </PropRow>
 
             <PropRow
-              title="Gene Effect"
+              title="Opacity"
               htmlTooltip="Higher values have a stronger effect on hit color opacity"
             >
               <PercentSlider
                 min={0}
                 max={1}
                 step={0.01}
-                value={displayOptions.genes.geneScoreWeight}
+                value={settings.genes.cmap.opacity}
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.genes.geneScoreWeight = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.cmap.opacity = v
                     })
                   )
                 }}
