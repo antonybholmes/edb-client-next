@@ -29,8 +29,13 @@ interface IProps {
 export function VennList({ vennList }: IProps) {
   const { circles, updateCircles } = useVennSettings()
 
-  const { vennLists, setVennLists, updateVennListFromText, updateCounter } =
-    useVenn()
+  const {
+    vennLists,
+    setVennLists,
+    setVennListName,
+    updateVennListFromText,
+    updateCounter,
+  } = useVenn()
 
   const [text, setText] = useState(vennList.items.join('\n'))
 
@@ -81,12 +86,8 @@ export function VennList({ vennList }: IProps) {
         <Input
           id={`label${vennList.listId}`}
           value={vennList.name ?? ''}
-          onChange={(e) => {
-            setVennLists(
-              produce(vennLists, (draft) => {
-                draft[vennList.listId]!.name = e.target.value
-              })
-            )
+          onTextChange={(v) => {
+            setVennListName(vennList.listId, v)
           }}
           className="w-0 grow rounded-theme"
           placeholder={`List ${vennList.listId} name...`}

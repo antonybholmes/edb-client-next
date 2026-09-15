@@ -109,11 +109,7 @@ function VennPage() {
   const { settings, updateSettings } = useVennSettings()
   const { setAppInfo } = useAppInfo()
 
-  const {
-    setVennLists,
-
-    vennListsInUse,
-  } = useVenn()
+  const { setVennLists } = useVenn()
 
   //const [listIds] = useState<number[]>(range(4))
 

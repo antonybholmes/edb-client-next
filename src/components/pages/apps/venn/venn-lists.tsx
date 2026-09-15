@@ -18,14 +18,14 @@ import { VennList } from './venn-list'
 import { useVenn } from './venn-store'
 
 export function VennLists() {
-  const { vennLists, addList: addGroup, removeList } = useVenn()
+  const { vennLists, addList, removeList } = useVenn()
   const { open: openDialog } = useDialogs()
   return (
     <PropsPanel>
       <VCenterRow className="border-b border-border/50 mb-2 pb-1">
         <IconButton
           onClick={() => {
-            addGroup()
+            addList()
           }}
           title="New List"
         >

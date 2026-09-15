@@ -1,5 +1,4 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useAxes } from '@/components/plot/axes/axes-store'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { colZScore, rowZScore, zscore } from '@/lib/dataframe/dataframe-utils'
@@ -146,6 +145,7 @@ export interface IVennStore extends IVennOptions {
   removeList: (id: string) => void
   setSelectedItems: (name: string, items: string[]) => void
   setVennLists: (vennLists: IVennList[]) => void
+  setVennListName: (id: string, name: string) => void
   updateVennListFromText: (id: string, text: string) => void
   //updateVennElemMap: () => void
   //setVennListsInUse: (ids: Set<string>) => void
@@ -244,6 +244,24 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       updateCounter: 0,
     })
   },
+  setVennListName: (id: string, name: string) => {
+    set((state) => {
+      const vennLists = state.vennLists.map((vennList) =>
+        vennList.id === id || vennList.listId === id
+          ? {
+              ...vennList,
+              name,
+            }
+          : vennList
+      )
+
+      return {
+        vennLists,
+        vennElemMap: makeVennElemMap(vennLists),
+        updateCounter: state.updateCounter + 1,
+      }
+    })
+  },
   updateVennListFromText: (id: string, text: string) => {
     set((state) => {
       const items = getItems(text)
@@ -284,7 +302,6 @@ export function useVenn(): IVennStore & {
   const { settings } = useVennSettings()
   const { settings: edbSettings } = useEdbSettings()
   const { openFile } = useHistory()
-  const { addAxes } = useAxes()
 
   const addList = useVennStore((state) => state.addList)
   const removeList = useVennStore((state) => state.removeList)
@@ -297,6 +314,8 @@ export function useVenn(): IVennStore & {
   const setVennLists = useVennStore((state) => state.setVennLists)
 
   const updateCounter = useVennStore((state) => state.updateCounter)
+
+  const setVennListName = useVennStore((state) => state.setVennListName)
 
   const updateVennListFromText = useVennStore(
     (state) => state.updateVennListFromText
@@ -555,6 +574,7 @@ export function useVenn(): IVennStore & {
     removeList,
     setSelectedItems,
     setVennLists,
+    setVennListName,
     updateVennListFromText,
   }
 }
