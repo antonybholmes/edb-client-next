@@ -2932,5 +2932,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-09-12T14:49:59.031Z"
+  },
+  {
+    "version": "89.8.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Support for gradient weight on hit color in GSEA plots",
+          "date": "2026-09-15T14:45:22.739Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-15T14:45:22.739Z"
   }
 ]

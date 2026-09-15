@@ -1,17 +1,15 @@
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { PlayIcon } from '@/components/icons/play-icon'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { TEXT_OPTIONS, TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
+import { TEXT_OPTIONS, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
@@ -22,7 +20,6 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
-import { ExtGseaInputDialog } from '../ext-gsea-input-dialog'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
 export function HomeToolbar() {
@@ -62,8 +59,8 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Ext GSEA">
-        <ToolbarColButton
+      {/*<ToolbarTabGroup title="Ext GSEA">
+         <ToolbarColButton
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}
           onClick={() => {
@@ -73,7 +70,7 @@ export function HomeToolbar() {
           <PlayIcon variant="app-theme" />
           {TEXT_PLOT}
         </ToolbarColButton>
-      </ToolbarTabGroup>
+      </ToolbarTabGroup> */}
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
         <ToolbarRow title="Width">
@@ -126,11 +123,12 @@ export function HomeToolbar() {
               Invert
             </ToolbarButton>
             <ColorMapToolbarMenu
-              cmap={getColorMap(gseaSettings.genes.cmap)}
-              onChange={(cmap) => {
+              cmap={getColorMap(gseaSettings.genes.color.cmap)}
+              onChange={(cmap, reversed) => {
                 updateGseaSettings(
                   produce(gseaSettings, (draft) => {
-                    draft.genes.cmap.name = cmap.id as ColorMapName
+                    draft.genes.color.cmap.name = cmap.id as ColorMapName
+                    draft.genes.color.cmap.reversed = reversed
                   })
                 )
               }}

@@ -48,7 +48,7 @@ export function ExtGseaEsCurveSvg({
 
   const { leadingEdge, es, esHits } = gsea
 
-  const cmap = getColorMap(settings.genes.cmap).reverse()
+  const cmap = getColorMap(settings.genes.color.cmap).reverse()
 
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])

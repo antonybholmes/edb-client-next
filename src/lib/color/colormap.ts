@@ -733,7 +733,7 @@ export function getColorMap(name: string | ICMAP): ColorMap {
 
 export interface ICMAP {
   name: ColorMapName
-  opacity: number
+  //opacity: number
   reversed: boolean
 }
 

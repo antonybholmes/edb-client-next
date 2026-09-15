@@ -4,7 +4,13 @@ import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/genese
 import { makeUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
+import { useFooter } from '@/providers/footer-provider'
+import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
+import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { newExtGseaPlot } from './ext-gsea-provider'
+import { useExtGseaSettings } from './ext-gsea-settings'
 import { IViper } from './viper-gsea'
+import { useViperWorker } from './viper-worker'
 
 export function dfToViper(df: BaseDataFrame): IViper {
   const genes = df.rowNames
@@ -53,4 +59,46 @@ export function dfToViper(df: BaseDataFrame): IViper {
   })
 
   return { id: makeUuid(), name: 'Viper', signature, tfs }
+}
+
+export function useViper() {
+  const { sheet } = useCurrentSheets()
+  const { settings } = useExtGseaSettings()
+  const { remove: removeFooter, addIndicator } = useFooter()
+
+  const { addPlots } = useHistory()
+
+  const { run: runViperWorker } = useViperWorker()
+
+  function viperToExtGsea(callback: () => void = () => {}) {
+    const id = addIndicator('Running Viper GSEA...')
+
+    const viper = dfToViper(sheet as BaseDataFrame)
+
+    runViperWorker(
+      {
+        viper,
+        useGeneScoreForES: settings.es.useGeneScoreForES,
+      },
+      (data) => {
+        const { results } = data
+
+        const plot = {
+          ...newExtGseaPlot('Extended GSEA', {
+            results,
+          }),
+        }
+
+        addPlots([plot], { mode: 'set' })
+        // we've finished so get rid of the animations
+        //closeToast(id)
+
+        removeFooter('left', id)
+
+        callback?.()
+      }
+    )
+  }
+
+  return { viperToExtGsea }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## 89.8.0 (Sep, 2026)
+
+### Changed
+
+- Support for gradient weight on hit color in GSEA plots.
+
+
 ## 89.6.0 (Sep, 2026)
 
 ### Changed

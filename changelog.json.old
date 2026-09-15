@@ -2917,6 +2917,10 @@
         {
           "msg": "Added support for extgsea to use cmap to color hits",
           "date": "2026-09-14T22:31:28.734Z"
+        },
+        {
+          "msg": "GSEA and ExtGSEA now use colormaps to render",
+          "date": "2026-09-15T01:55:10.460Z"
         }
       ],
       "Fixed": [

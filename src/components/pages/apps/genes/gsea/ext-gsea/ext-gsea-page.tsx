@@ -71,6 +71,7 @@ import {
 } from './ext-gsea-provider'
 import { ExtGseaSvg } from './svg/ext-gsea-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
+import { ViperToolbar } from './toolbars/viper-toolbar'
 
 export function ExtGseaPage() {
   const { setAppInfo } = useAppInfo()
@@ -121,6 +122,10 @@ export function ExtGseaPage() {
       {
         id: 'Home',
         component: HomeToolbar,
+      },
+      {
+        id: 'Viper',
+        component: ViperToolbar,
       },
     ])
   }, [setToolbarTabs])

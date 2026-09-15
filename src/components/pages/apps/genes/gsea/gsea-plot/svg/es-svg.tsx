@@ -220,7 +220,7 @@ export function EsSvg({
 
   const y0 = yaf(0)
 
-  const cmap = getColorMap(settings.genes.cmap).reverse()
+  const cmap = getColorMap(settings.genes.color.cmap).reverse()
 
   return (
     <>

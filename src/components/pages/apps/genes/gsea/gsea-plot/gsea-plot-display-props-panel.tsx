@@ -313,13 +313,13 @@ export function GseaPlotDisplayPropsPanel() {
               </VCenterRow> */}
 
               <ColorMapMenu
-                cmap={getColorMap(settings.genes.cmap.name)}
+                cmap={getColorMap(settings.genes.color.cmap.name)}
                 onChange={(cmap, reversed) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.genes.cmap.name = cmap.id as ColorMapName
-                      //draft.genes.cmap.opacity = cmap.opacity
-                      draft.genes.cmap.reversed = reversed
+                      draft.genes.color.cmap.name = cmap.id as ColorMapName
+                      //draft.genes.color.cmap.opacity = cmap.opacity
+                      draft.genes.color.cmap.reversed = reversed
                     })
                   )
                 }}
@@ -380,7 +380,37 @@ export function GseaPlotDisplayPropsPanel() {
               /> */}
             </CheckPropRow>
 
-            <GradientOpacityControl />
+            <PropRow title="Opacity">
+              <PercentSlider
+                value={settings.genes.color.gradient.opacity}
+                min={0}
+                max={1}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.gradient.opacity = v
+                    })
+                  )
+                }}
+                step={0.05}
+              />
+            </PropRow>
+
+            <PropRow title="Weight">
+              <PercentSlider
+                value={settings.genes.color.gradient.weight}
+                min={0}
+                max={1}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.gradient.weight = v
+                    })
+                  )
+                }}
+                step={0.05}
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
@@ -481,53 +511,5 @@ export function GseaPlotDisplayPropsPanel() {
         </AccordionItem>
       </ScrollAccordion>
     </PropsPanel>
-  )
-}
-
-/**
- * A control component for adjusting the opacity of the gene color gradient.
- * It includes a switch to toggle the gradient on and off,
- * a slider to adjust the opacity, and a percentage display of the current
- * opacity value. It requires debouncing to prevent excessive updates
- * while the slider is being adjusted.
- * @returns
- */
-function GradientOpacityControl() {
-  const { settings, updateSettings } = useGseaSettings()
-
-  return (
-    <PropRow title="Opacity">
-      {/* <NumericalInput
-                value={settings.genes.gradient.alpha}
-                disabled={!settings.genes.gradient.on}
-                placeholder="Alpha"
-                limit={[0, 1]}
-                step={0.1}
-                dp={1}
-                onNumChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.gradient.alpha = v
-                    })
-                  )
-                }}
-                w="xxs"
-                title="Opacity"
-              /> */}
-
-      <PercentSlider
-        value={settings.genes.cmap.opacity}
-        min={0}
-        max={1}
-        onNumChanged={(v) => {
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.genes.cmap.opacity = v
-            })
-          )
-        }}
-        step={0.05}
-      />
-    </PropRow>
   )
 }

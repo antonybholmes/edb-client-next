@@ -115,11 +115,11 @@ export function HomeToolbar() {
           </ToolbarRow>
           <ToolbarRow>
             <ColorMapToolbarMenu
-              cmap={getColorMap(settings.genes.cmap)}
+              cmap={getColorMap(settings.genes.color.cmap)}
               onChange={(cmap) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.genes.cmap.name = cmap.id as ColorMapName
+                    draft.genes.color.cmap.name = cmap.id as ColorMapName
                   })
                 )
               }}

@@ -25,6 +25,8 @@ import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
 import { useExtGseaContext } from './ext-gsea-provider'
@@ -200,7 +202,22 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Curves">
+            <PropRow title="Color">
+              <ColorMapMenu
+                cmap={getColorMap(settings.genes.color.cmap.name)}
+                onChange={(cmap, reversed) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.cmap.name = cmap.id as ColorMapName
+                      //draft.genes.color.cmap.opacity = cmap.opacity
+                      draft.genes.color.cmap.reversed = reversed
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
+            {/* <PropRow title="Curves">
               <OutlineButton
                 colors={[
                   {
@@ -264,7 +281,7 @@ export function ExtGseaDisplayPropsPanel() {
                 ]}
                 title="Enrichment Curve 2"
               />
-            </PropRow>
+            </PropRow> */}
 
             {/* <SwitchPropRow
               title="Line"
@@ -296,7 +313,7 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </SwitchPropRow> */}
 
-            <PropRow title="Leading Edges">
+            {/* <PropRow title="Leading Edges">
               <FillButton
                 colors={[
                   {
@@ -349,7 +366,7 @@ export function ExtGseaDisplayPropsPanel() {
                 ]}
                 title="Leading Edge 2"
               />
-            </PropRow>
+            </PropRow> */}
 
             {/* <CheckPropRow
               title="Leading edge"
@@ -440,11 +457,30 @@ export function ExtGseaDisplayPropsPanel() {
                 min={0}
                 max={1}
                 step={0.01}
-                value={settings.genes.cmap.opacity}
+                value={settings.genes.color.gradient.opacity}
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.genes.cmap.opacity = v
+                      draft.genes.color.gradient.opacity = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
+            <PropRow
+              title="Weight"
+              htmlTooltip="Higher values have a stronger effect on hit color weight"
+            >
+              <PercentSlider
+                min={0}
+                max={1}
+                step={0.01}
+                value={settings.genes.color.gradient.weight}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.color.gradient.weight = v
                     })
                   )
                 }}

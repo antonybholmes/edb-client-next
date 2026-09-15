@@ -55,7 +55,7 @@ export function ExtGseaHitsSvg({
 
   const w = useMemo(() => axisLength(xax), [xax])
 
-  const cmap = getColorMap(settings.genes.cmap).reverse()
+  const cmap = getColorMap(settings.genes.color.cmap).reverse()
 
   const points = useMemo(() => {
     if (!xax) {
@@ -160,7 +160,12 @@ export function ExtGseaHitsSvg({
                 pc = (hit.rank / maxRank) * 0.5
               }
 
-              const color = cmap.getHexColor(pc + (gsMode === 'gs2' ? 0.5 : 0))
+              pc =
+                (1 - settings.genes.color.gradient.weight) *
+                  (gsMode === 'gs1' ? 0 : 1) +
+                settings.genes.color.gradient.weight * pc
+
+              const color = cmap.getHexColor(pc + (gsMode === 'gs1' ? 0 : 0.5))
 
               return (
                 <SvgLine
@@ -171,7 +176,7 @@ export function ExtGseaHitsSvg({
                   y2={displayProps.genes.height}
                   s={displayProps.genes.line}
                   stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
-                  strokeOpacity={settings.genes.cmap.opacity}
+                  strokeOpacity={settings.genes.color.gradient.opacity}
                 />
               )
             })}
@@ -226,6 +231,23 @@ export function ExtGseaHitsSvg({
   ])
 
   return genesSvg
+}
+
+function normHit(
+  hit: IRankedGene,
+  maxScore: number,
+  maxRank: number,
+  mode: 'score' | 'rank'
+) {
+  let pc = 0
+
+  if (mode === 'score') {
+    pc = (1 - Math.abs(hit.score) / maxScore) * 0.5
+  } else {
+    pc = (hit.rank / maxRank) * 0.5
+  }
+
+  return pc
 }
 
 export function ExtGseaGenesSvgPlot({

@@ -114,7 +114,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
     colors: { custom: [] },
     cmap: {
       name: 'bwr-v2',
-      opacity: 1,
+      //opacity: 1,
       reversed: false,
     },
     colorbar: { ...DEFAULT_COLORBAR_PROPS },

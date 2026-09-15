@@ -59,7 +59,7 @@ export function GenesSvg({
 
   // we reverse the colormap because in a gsea plot,
   // red/up appears on the left and blue/down appears on the right
-  const cmap = getColorMap(settings.genes.cmap).reverse()
+  const cmap = getColorMap(settings.genes.color.cmap).reverse()
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
@@ -158,15 +158,20 @@ export function GenesSvg({
 
         let pc = 0
 
+        const isLeft = hit.rank <= crossing.index
+
         if (settings.genes.color.mode === 'score') {
           pc = (1 - hit.score / maxAbsScore) * 0.5
         } else {
-          pc =
-            hit.rank <= crossing.index
-              ? 0.5 * (hit.rank / crossing.index)
-              : 0.5 +
-                0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+          pc = isLeft
+            ? 0.5 * (hit.rank / crossing.index)
+            : 0.5 +
+              0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
         }
+
+        pc =
+          (1 - settings.genes.color.gradient.weight) * (isLeft ? 0 : 1) +
+          settings.genes.color.gradient.weight * pc
 
         const color = settings.genes.color.on
           ? cmap.getHexColor(pc)
@@ -181,7 +186,7 @@ export function GenesSvg({
             y2={settings.genes.height}
             strokeWidth={settings.genes.pos.width}
             stroke={color}
-            strokeOpacity={settings.genes.cmap.opacity}
+            strokeOpacity={settings.genes.color.gradient.opacity}
           />
         )
       })}

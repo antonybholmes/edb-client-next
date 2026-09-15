@@ -1,8 +1,4 @@
-import { useCurrentSheets } from '@/components/pages/apps/matcalc/history/history-provider/history-contexts'
 import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
-import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { useFooter } from '@/providers/footer-provider'
-import { newExtGseaPlot } from './ext-gsea-provider'
 import { useExtGseaSettings } from './ext-gsea-settings'
 
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
@@ -11,18 +7,16 @@ import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { produce } from 'immer'
 import { useRunExtGsea } from './use-run-ext-gsea'
-import { dfToViper } from './viper'
-import { useViperWorker } from './viper-worker'
+import { useViper } from './viper'
 
 export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
-  const { sheet } = useCurrentSheets()
   const { settings, updateSettings } = useExtGseaSettings()
-  const { remove: removeFooter, addIndicator } = useFooter()
 
   const { addPlots } = useHistory()
 
-  const { run: runViperWorker } = useViperWorker()
   const { runExtGsea } = useRunExtGsea()
+
+  const { viperToExtGsea } = useViper()
 
   return (
     <OKCancelDialog
@@ -50,33 +44,9 @@ export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
         variant="secondary"
         size="lg"
         onClick={() => {
-          const id = addIndicator('Running Viper GSEA...')
-
-          const viper = dfToViper(sheet as BaseDataFrame)
-
-          runViperWorker(
-            {
-              viper,
-              useGeneScoreForES: settings.es.useGeneScoreForES,
-            },
-            (data) => {
-              const { results } = data
-
-              const plot = {
-                ...newExtGseaPlot('Extended GSEA', {
-                  results,
-                }),
-              }
-
-              addPlots([plot], { mode: 'set' })
-              // we've finished so get rid of the animations
-              //closeToast(id)
-
-              removeFooter('left', id)
-
-              close()
-            }
-          )
+          viperToExtGsea(() => {
+            close()
+          })
         }}
       >
         Viper

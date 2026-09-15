@@ -56,14 +56,16 @@ export interface IGseaDisplayProps {
     color: {
       on: boolean
       mode: 'rank' | 'score'
+      cmap: ICMAP
+
+      gradient: { weight: number; opacity: number }
     }
     labels: ITextProps & { color: { on: boolean } }
     pos: IStrokeProps
     neg: IStrokeProps
-    gradient: { opacity: number; on: boolean }
+    //gradient: { opacity: number; on: boolean }
     height: number
     //line: IStrokeProps
-    cmap: ICMAP
   }
   es: {
     labels: ITextProps
@@ -184,13 +186,16 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     color: {
       on: true,
       mode: 'rank',
+      cmap: { name: 'bwr', reversed: false },
+
+      gradient: { weight: 1, opacity: 1 },
     },
     pos: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1 },
     neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },
 
     show: true,
-    gradient: { opacity: 0.2, on: true },
-    cmap: { name: 'bwr', opacity: 1, reversed: false },
+    //gradient: { opacity: 0.2, on: true },
+
     //line: { ...DEFAULT_STROKE_PROPS, width: 2 },
   },
   ranking: {
