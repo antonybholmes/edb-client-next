@@ -16,7 +16,7 @@ import {
   MoreColors,
   StandardColors,
   ThemeColors,
-} from './outline-dropdown-menu'
+} from './stroke-dropdown-menu'
 
 export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   colors: IColorPickerProps[]

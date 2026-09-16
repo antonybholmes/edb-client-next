@@ -332,8 +332,6 @@ export function useVenn(): IVennStore & {
   )
 
   useEffect(() => {
-    // make a dataframe
-
     if (vennListsInUse.length === 0 || Object.keys(vennElemMap).length === 0) {
       return
     }
@@ -398,8 +396,16 @@ export function useVenn(): IVennStore & {
         overlapData[i]![j] = overlap
         distData[i]![j] = 1 - jaccard
 
-        if (i !== j) {
-          zData[i]![j] = jaccard
+        const showLower =
+          i < j || (!settings.heatmap.upperTriangular && i !== j)
+
+        const isDiagonal = i === j && settings.heatmap.showDiagonal
+
+        //if (i !== j) {
+        zData[i]![j] = jaccard
+        //}
+
+        if (showLower || isDiagonal) {
           sizeData[i]![j] = Math.max(MIN_RADIUS, jaccard)
         }
       }

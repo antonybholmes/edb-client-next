@@ -79,6 +79,7 @@ import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
 import { IHeatMapPlot } from '../matcalc/history/history-provider/history-types'
 import { SvgVenn } from './svg/svg-venn'
+import { HeatmapToolbar } from './toolbars/heatmap-toolbar'
 import { VennPropsPanel } from './venn-props-panel'
 import { makeVennList, useVenn } from './venn-store'
 
@@ -215,6 +216,10 @@ function VennPage() {
       {
         id: 'Home',
         component: HomeToolbar,
+      },
+      {
+        id: 'Heatmap',
+        component: HeatmapToolbar,
       },
     ])
   }, [setToolbarTabs])
@@ -499,7 +504,6 @@ function VennPage() {
                       <SvgVenn scale={zoom} />
                     </TabsContent>
                     <TabsContent value="heatmap">
-                      {/* <HeatmapPanel /> */}
                       <HeatMapSvg scale={zoom} />
                     </TabsContent>
                   </Tabs>

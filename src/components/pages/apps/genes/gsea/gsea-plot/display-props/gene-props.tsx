@@ -7,14 +7,19 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { ColorMapMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../gsea-settings-store'
 
 export function GeneProps() {
   const { settings, updateSettings } = useGseaSettings()
+  const { settings: edbSettings, updateSettings: updateEdbSettings } =
+    useEdbSettings()
 
   return (
     <>
@@ -33,6 +38,24 @@ export function GeneProps() {
               })
             )
           }}
+        />
+      </PropRow>
+
+      <PropRow title="Stroke">
+        <StrokeButton
+          colors={[
+            {
+              width: settings.genes.stroke.width,
+              onColorChange: ({ width }) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.stroke.width = width ?? draft.genes.stroke.width
+                  })
+                )
+              },
+            },
+          ]}
+          title="Stroke"
         />
       </PropRow>
 
@@ -153,14 +176,18 @@ export function GeneProps() {
         }}
       >
         <ColorMapMenu
-          cmap={getColorMap(settings.genes.color.gradient.cmap.name)}
+          cmap={getColorMap(edbSettings.plots.cmap)}
           onChange={(cmap, reversed) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.genes.color.gradient.cmap.name = cmap.id as ColorMapName
-                //draft.genes.color.gradient.cmap.opacity = cmap.opacity
-                draft.genes.color.gradient.cmap.reversed = reversed
                 draft.genes.color.gradient.mode = 'cmap'
+              })
+            )
+            updateEdbSettings(
+              produce(edbSettings, (draft) => {
+                draft.plots.cmap.name = cmap.id as ColorMapName
+                //draft.genes.color.gradient.cmap.opacity = cmap.opacity
+                draft.plots.cmap.reversed = reversed
               })
             )
           }}
@@ -178,44 +205,46 @@ export function GeneProps() {
           )
         }}
       >
-        <FillButton
-          colors={[
-            {
-              color: settings.genes.pos.value,
-              opacity: settings.genes.pos.opacity,
-              onColorChange: ({ color, opacity }) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.genes.pos.value = color
-                    draft.genes.pos.opacity = opacity ?? 1
-                    draft.genes.color.gradient.mode = 'user'
-                  })
-                )
+        <VCenterRow>
+          <FillButton
+            colors={[
+              {
+                color: settings.genes.pos.value,
+                opacity: settings.genes.pos.opacity,
+                onColorChange: ({ color, opacity }) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.pos.value = color
+                      draft.genes.pos.opacity = opacity ?? 1
+                      draft.genes.color.gradient.mode = 'user'
+                    })
+                  )
+                },
               },
-            },
-          ]}
-          title="Positive Gene Color"
-        />
+            ]}
+            title="Positive Gene Color"
+          />
 
-        <FillButton
-          colors={[
-            {
-              color: settings.genes.neg.value,
-              opacity: settings.genes.neg.opacity,
-              onColorChange: ({ color, opacity }) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.genes.neg.value = color
-                    draft.genes.neg.opacity = opacity ?? 1
-                    draft.genes.color.gradient.mode = 'user'
-                  })
-                )
+          <FillButton
+            colors={[
+              {
+                color: settings.genes.neg.value,
+                opacity: settings.genes.neg.opacity,
+                onColorChange: ({ color, opacity }) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.neg.value = color
+                      draft.genes.neg.opacity = opacity ?? 1
+                      draft.genes.color.gradient.mode = 'user'
+                    })
+                  )
+                },
               },
-            },
-          ]}
+            ]}
 
-          title="Negative Gene Color"
-        />
+            title="Negative Gene Color"
+          />
+        </VCenterRow>
       </CheckPropRow>
 
       <PropRow title="Opacity">

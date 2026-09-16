@@ -11,7 +11,7 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -127,7 +127,7 @@ export function CellSettingsPanel() {
         </CheckPropRow>
 
         <PropRow title="Border">
-          <OutlineButton
+          <StrokeButton
             align="end"
             colors={[
               {

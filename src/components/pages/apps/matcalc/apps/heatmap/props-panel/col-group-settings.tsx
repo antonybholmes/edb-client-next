@@ -10,7 +10,7 @@ import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -57,7 +57,7 @@ export function ColGroupsSettingsPanel() {
         </PropRow>
 
         <PropRow title="Grid">
-          <OutlineButton
+          <StrokeButton
             colors={[
               {
                 color: displayProps.groups.grid.value,
@@ -85,7 +85,7 @@ export function ColGroupsSettingsPanel() {
         </PropRow>
 
         <PropRow title={TEXT_BORDER}>
-          <OutlineButton
+          <StrokeButton
             colors={[
               {
                 color: displayProps.groups.border.value,

@@ -220,7 +220,7 @@ export function EsSvg({
 
   const y0 = yaf(0)
 
-  const cmap = getColorMapFromSettings(settings)
+  const cmap = getColorMapFromSettings(settings, edbSettings)
 
   return (
     <>

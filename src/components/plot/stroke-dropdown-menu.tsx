@@ -23,6 +23,14 @@ import { ColorButton } from './color-picker-button'
 import { IColorPickerProps, PRESET_COLORS } from './color-picker-popover'
 import { THEME_COLOR_GRID } from './theme'
 
+const WEIGHTS = [
+  { label: '0.5pt', value: 0.5 },
+  { label: '1pt', value: 1 },
+  { label: '2pt', value: 2 },
+  { label: '3pt', value: 3 },
+  { label: '4pt', value: 4 },
+]
+
 export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   colors: IColorPickerProps[]
   align?: 'start' | 'end'
@@ -31,9 +39,8 @@ export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   onOpenChanged?: (open: boolean) => void
 }
 
-export function OutlineButton({
+export function StrokeButton({
   colors,
-
   align = 'start',
   className = '',
   title,
@@ -41,14 +48,6 @@ export function OutlineButton({
   children,
   ...props
 }: IOutlineButtonProps) {
-  if (!colors || colors.length === 0) {
-    return null
-  }
-
-  // if (!ariaLabel) {
-  //   ariaLabel = tooltip
-  // }
-
   if (!ariaLabel) {
     ariaLabel = 'Choose color'
   }
@@ -56,7 +55,7 @@ export function OutlineButton({
   const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
 
   return (
-    <OutlineDropdownMenu
+    <StrokeDropdownMenu
       colors={colors}
       align={align}
       className={className}
@@ -69,7 +68,7 @@ export function OutlineButton({
           </ToolbarIconButton>
         }
       />
-    </OutlineDropdownMenu>
+    </StrokeDropdownMenu>
   )
 }
 
@@ -119,7 +118,7 @@ export function addStandardDefaultsToColorPickerProps(
   }
 }
 
-export function OutlineDropdownMenu({
+export function StrokeDropdownMenu({
   colors,
   align = 'start',
   children,
@@ -140,63 +139,46 @@ export function OutlineDropdownMenu({
         //variant="content"
         className="flex flex-col"
       >
-        {color0.showThemeColors && (
+        {color0.color && (
           <>
-            <ThemeColors cp={color0} />
+            {color0.showThemeColors && (
+              <>
+                <ThemeColors cp={color0} />
+                <MenuSeparator />
+              </>
+            )}
+
+            {color0.showPresets && (
+              <>
+                <StandardColors cp={color0} mode="outline" />
+                <MenuSeparator />
+              </>
+            )}
+
+            <MoreColors cp={color0} />
             <MenuSeparator />
           </>
         )}
-
-        {color0.showPresets && (
-          <>
-            <StandardColors cp={color0} mode="outline" />
-            <MenuSeparator />
-          </>
-        )}
-
-        <MoreColors cp={color0} />
-        <MenuSeparator />
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Weight</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <DropdownMenuItem
-                onClick={() => {
-                  color0.onColorChange?.({
-                    color: color0.color,
-                    opacity,
-                    width: 0.5,
-                    show: true,
-                  })
-                }}
-              >
-                <span>0.5 pt</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  color0.onColorChange?.({
-                    color: color0.color,
-                    opacity,
-                    width: 1,
-                    show: true,
-                  })
-                }}
-              >
-                <span>1 pt</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  color0.onColorChange?.({
-                    color: color0.color,
-                    opacity,
-                    width: 2,
-                    show: true,
-                  })
-                }}
-              >
-                <span>2 pt</span>
-              </DropdownMenuItem>
+              {WEIGHTS.map(({ label, value }) => (
+                <DropdownMenuItem
+                  key={value}
+                  onClick={() => {
+                    color0.onColorChange?.({
+                      color: color0.color,
+                      opacity,
+                      width: value,
+                      show: true,
+                    })
+                  }}
+                >
+                  <span>{label}</span>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>

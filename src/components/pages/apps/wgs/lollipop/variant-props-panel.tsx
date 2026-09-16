@@ -1,6 +1,6 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -73,7 +73,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
       </PropRow>
 
       <PropRow title={TEXT_BORDER}>
-        <OutlineButton
+        <StrokeButton
           colors={[
             {
               color: displayProps.variants.plot.border.value,

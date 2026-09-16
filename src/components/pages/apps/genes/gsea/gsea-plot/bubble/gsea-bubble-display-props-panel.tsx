@@ -13,7 +13,7 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { TEXT_SORT } from '@/consts'
@@ -340,7 +340,7 @@ export function GseaBubbleDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Border">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: settings.bubbles.stroke.value,

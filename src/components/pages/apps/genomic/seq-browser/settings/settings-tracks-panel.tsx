@@ -1,7 +1,7 @@
 import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
@@ -289,7 +289,7 @@ export function SettingsTracksPanel() {
         </Switch>
       </SwitchPropRow>
 
-      <OutlineButton
+      <StrokeButton
         colors={[
           {
             color: settings.tracks.genes.endArrows.stroke.value,

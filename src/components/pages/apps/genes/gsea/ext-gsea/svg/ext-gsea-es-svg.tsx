@@ -4,6 +4,7 @@ import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ex
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { type IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
@@ -27,6 +28,7 @@ export function ExtGseaEsCurveSvg({
 }) {
   const { displayProps } = useExtGseaContext()
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -48,7 +50,7 @@ export function ExtGseaEsCurveSvg({
 
   const { leadingEdge, es, esHits } = gsea
 
-  const cmap = getColorMapFromSettings(settings)
+  const cmap = getColorMapFromSettings(settings, edbSettings)
 
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])

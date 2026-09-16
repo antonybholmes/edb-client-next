@@ -21,7 +21,8 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
@@ -46,6 +47,8 @@ export function ExtGseaDisplayPropsPanel() {
   const { updatePlot } = useHistory()
   const { plot } = useExtGseaContext()
   const { settings, updateSettings } = useGseaSettings()
+  const { settings: edbSettings, updateSettings: updateEdbSettings } =
+    useEdbSettings()
 
   const [openTabs, setOpenTabs] = useState<string[]>([
     'plot',
@@ -203,14 +206,12 @@ export function ExtGseaDisplayPropsPanel() {
 
             <PropRow title="Color">
               <ColorMapMenu
-                cmap={getColorMap(settings.genes.color.gradient.cmap.name)}
+                cmap={getColorMap(edbSettings.plots.cmap)}
                 onChange={(cmap, reversed) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.color.gradient.cmap.name =
-                        cmap.id as ColorMapName
-                      //draft.genes.color.gradient.cmap.opacity = cmap.opacity
-                      draft.genes.color.gradient.cmap.reversed = reversed
+                  updateEdbSettings(
+                    produce(edbSettings, (draft) => {
+                      draft.plots.cmap.name = cmap.id as ColorMapName
+                      draft.plots.cmap.reversed = reversed
                     })
                   )
                 }}
@@ -547,7 +548,7 @@ export function ExtGseaDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Color" className="ml-2">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: displayOptions.ranking.zeroCross.value,

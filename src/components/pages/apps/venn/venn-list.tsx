@@ -16,7 +16,7 @@ import {
   useVennSettings,
 } from '@/components/pages/apps/venn/venn-settings-store'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
@@ -107,7 +107,7 @@ export function VennList({ vennList }: IProps) {
             ]}
             title="Fill"
           />
-          <OutlineButton
+          <StrokeButton
             colors={[
               {
                 color: circle.stroke.value,

@@ -16,7 +16,7 @@ import { LinkButton } from '@/themed/link-button'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
@@ -103,7 +103,7 @@ export function GseaPlotDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Line">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: settings.es.line.value,
@@ -154,7 +154,7 @@ export function GseaPlotDisplayPropsPanel() {
 
             <PropRow title="Leading Edge">
               <VCenterRow>
-                <OutlineButton
+                <StrokeButton
                   colors={[
                     {
                       color: settings.es.leadingEdge.line.value,
@@ -286,7 +286,7 @@ export function GseaPlotDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Zero Crossing">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: settings.ranking.zeroCross.line.value,

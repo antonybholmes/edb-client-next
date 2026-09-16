@@ -22,7 +22,6 @@ import {
   COLOR_MEDIUM_SEA_GREEN,
   COLOR_RED,
 } from '@/lib/color/color'
-import { ICMAP } from '@/lib/color/colormap'
 
 interface IFilters {
   q: {
@@ -59,7 +58,7 @@ export interface IGseaDisplayProps {
 
       gradient: {
         mode: 'user' | 'cmap'
-        cmap: ICMAP
+        //cmap: ICMAP
         weight: number
         opacity: number
       }
@@ -194,12 +193,12 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
 
       gradient: {
         mode: 'user',
-        cmap: { name: 'bwr', reversed: false },
+        //cmap: { name: 'bwr', reversed: false },
         weight: 1,
         opacity: 1,
       },
     },
-    t: { ...DEFAULT_STROKE_PROPS, width: 1 },
+    stroke: { ...DEFAULT_STROKE_PROPS, width: 1 },
     pos: { ...DEFAULT_COLOR_PROPS, value: COLOR_RED },
     neg: { ...DEFAULT_COLOR_PROPS, value: COLOR_BLUE },
 

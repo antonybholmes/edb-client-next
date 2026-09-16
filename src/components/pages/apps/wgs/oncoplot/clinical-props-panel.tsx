@@ -1,5 +1,5 @@
 import { BaseCol } from '@/components/layout/base-col'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -53,7 +53,7 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
             )
           }
         >
-          <OutlineButton
+          <StrokeButton
             colors={[
               {
                 color: displayProps.clinical.border.value,

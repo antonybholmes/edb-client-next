@@ -16,7 +16,6 @@ import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
-import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
@@ -59,7 +58,7 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Heatmap" className="gap-x-2">
+      <ToolbarTabGroup title="Cluster" className="gap-x-2">
         <ToolbarCol gap="gap-x-2">
           <ToolbarRow>
             <Checkbox
@@ -72,7 +71,7 @@ export function HomeToolbar() {
                 )
               }}
             >
-              Cluster rows
+              Rows
             </Checkbox>
           </ToolbarRow>
           <ToolbarRow>
@@ -86,11 +85,12 @@ export function HomeToolbar() {
                 )
               }}
             >
-              Cluster columns
+              Columns
             </Checkbox>
           </ToolbarRow>
         </ToolbarCol>
-        <ToolbarSeparator />
+      </ToolbarTabGroup>
+      <ToolbarTabGroup title="Heatmap" className="gap-x-2">
         <ToolbarCol>
           <ToolbarRow>
             Z-score
@@ -138,27 +138,6 @@ export function HomeToolbar() {
         </ToolbarCol>
         <ToolbarCol>
           <ToolbarRow>
-            Legend
-            <Input
-              title="Legend"
-              value={settings.heatmap.dot.sizes.join(', ')}
-              onTextChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.heatmap.dot.sizes = numSort(
-                      v
-                        .split(ITEM_REGEX)
-                        .map((x) => x.trim())
-                        .filter((x) => x !== '')
-                        .map((x) => parseFloat(x))
-                    )
-                  })
-                )
-              }}
-              w="md"
-            />
-          </ToolbarRow>
-          <ToolbarRow>
             <ColorMapMenu
               align="end"
               cmap={getColorMap(edbSettings.plots.cmap.name)}
@@ -178,6 +157,29 @@ export function HomeToolbar() {
             />
           </ToolbarRow>
         </ToolbarCol>
+      </ToolbarTabGroup>
+      <ToolbarTabGroup title="Legend" className="gap-x-2">
+        <ToolbarRow>
+          Legend
+          <Input
+            title="Legend"
+            value={settings.heatmap.dot.sizes.join(', ')}
+            onTextChanged={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.heatmap.dot.sizes = numSort(
+                    v
+                      .split(ITEM_REGEX)
+                      .map((x) => x.trim())
+                      .filter((x) => x !== '')
+                      .map((x) => parseFloat(x))
+                  )
+                })
+              )
+            }}
+            w="md"
+          />
+        </ToolbarRow>
       </ToolbarTabGroup>
     </>
   )

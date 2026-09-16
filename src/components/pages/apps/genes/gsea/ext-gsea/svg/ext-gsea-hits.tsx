@@ -6,6 +6,7 @@ import {
   IAxis,
 } from '@/components/plot/axes/axis'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import {
   geneSetScores,
   IRankedGene,
@@ -51,11 +52,11 @@ export function ExtGseaHitsSvg({
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
   const { settings } = useGseaSettings()
-  //const { showTooltip, hideTooltip } = useTooltip()
+  const { settings: edbSettings } = useEdbSettings()
 
   const w = useMemo(() => axisLength(xax), [xax])
 
-  const cmap = getColorMapFromSettings(settings)
+  const cmap = getColorMapFromSettings(settings, edbSettings)
 
   const points = useMemo(() => {
     if (!xax) {
@@ -174,7 +175,7 @@ export function ExtGseaHitsSvg({
                   x2={x}
                   y1={0}
                   y2={settings.genes.height}
-                  s={settings.genes.}
+                  s={settings.genes.stroke}
                   stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
                   strokeOpacity={settings.genes.color.gradient.opacity}
                 />

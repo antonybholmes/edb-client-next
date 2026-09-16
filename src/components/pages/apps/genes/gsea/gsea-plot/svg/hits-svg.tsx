@@ -4,6 +4,7 @@ import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { ColorMap, getColorMap } from '@/lib/color/colormap'
 
+import { IEdbSettings, useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
@@ -19,9 +20,12 @@ import { useSVG } from '@/providers/svg-provider'
 import { IGseaDisplayProps, useGseaSettings } from '../gsea-settings-store'
 import { IGseaTableResult, useGseaData } from '../gsea-store'
 
-export function getColorMapFromSettings(settings: IGseaDisplayProps): ColorMap {
+export function getColorMapFromSettings(
+  settings: IGseaDisplayProps,
+  edbSettings: IEdbSettings
+): ColorMap {
   if (settings.genes.color.gradient.mode === 'cmap') {
-    return getColorMap(settings.genes.color.gradient.cmap).reverse()
+    return getColorMap(edbSettings.plots.cmap).reverse()
   }
 
   //we make a custom heatmap using the user specified colors
@@ -53,7 +57,7 @@ export function GenesSvg({
   yaf: (v: number) => number
 }) {
   const { settings } = useGseaSettings()
-
+  const { settings: edbSettings } = useEdbSettings()
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
@@ -74,7 +78,8 @@ export function GenesSvg({
 
   // we reverse the colormap because in a gsea plot,
   // red/up appears on the left and blue/down appears on the right
-  const cmap = getColorMapFromSettings(settings)
+
+  const cmap = getColorMapFromSettings(settings, edbSettings)
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
@@ -199,7 +204,7 @@ export function GenesSvg({
             x2={x}
             y1={0}
             y2={settings.genes.height}
-            strokeWidth={settings.genes.pos.width}
+            strokeWidth={settings.genes.stroke.width}
             stroke={color}
             strokeOpacity={settings.genes.color.gradient.opacity}
           />

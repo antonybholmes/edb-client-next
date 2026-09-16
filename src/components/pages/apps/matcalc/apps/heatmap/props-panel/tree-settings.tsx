@@ -12,7 +12,7 @@ import type { LeftRightPos } from '@/components/side'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
@@ -71,7 +71,7 @@ export function TreeSettingsPanel() {
               title="Row Tree Width"
             />
 
-            <OutlineButton
+            <StrokeButton
               align="end"
               colors={[
                 {
@@ -118,7 +118,7 @@ export function TreeSettingsPanel() {
               title="Col Tree Width"
             />
 
-            <OutlineButton
+            <StrokeButton
               align="end"
               colors={[
                 {
