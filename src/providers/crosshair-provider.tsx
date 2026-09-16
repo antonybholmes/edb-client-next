@@ -124,22 +124,22 @@ export function CrosshairProvider({ children }: { children?: ReactNode }) {
         <>
           <span
             className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 h-full top-0"
-            style={{ left: crosshair.pos.x - 1, height: crosshair.pos.y - 5 }}
+            style={{ left: crosshair.pos.x - 1, height: crosshair.pos.y - 4 }}
           />
 
           <span
             className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 top-0 bottom-0"
-            style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y + 5 }}
+            style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y + 4 }}
           />
 
           <span
             className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 w-full left-0"
-            style={{ top: crosshair.pos.y - 1, width: crosshair.pos.x - 5 }}
+            style={{ top: crosshair.pos.y - 1, width: crosshair.pos.x - 4 }}
           />
 
           <span
             className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 right-0"
-            style={{ top: crosshair.pos.y - 1, left: crosshair.pos.x + 5 }}
+            style={{ top: crosshair.pos.y - 1, left: crosshair.pos.x + 4 }}
           />
 
           <span

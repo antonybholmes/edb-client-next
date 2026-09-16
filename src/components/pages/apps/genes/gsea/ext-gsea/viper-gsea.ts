@@ -27,13 +27,13 @@ export function viperToGsea(
   for (const tf of viper.tfs) {
     const gs1: IGeneSet = {
       id: makeUuid(),
-      name: 'Up',
+      name: 'Activated',
       genes: tf.targets.pos,
       //color: COLOR_RED,
     }
     const gs2: IGeneSet = {
       id: makeUuid(),
-      name: 'Down',
+      name: 'Repressed',
       genes: tf.targets.neg,
       //color: COLOR_CORNFLOWER_BLUE,
     }
