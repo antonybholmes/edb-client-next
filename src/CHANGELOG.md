@@ -4,6 +4,7 @@
 
 ### Changed
 
+- ExtGSEA modified to use weights for genes that do not affect inGeneset so misses are correctly calculated.
 - Support for upper triangular display of heatmaps when square.
 - Bug fixes and updates.
 - Added back abilty for user to specify their own colors for GSEA gene hits.

@@ -193,6 +193,7 @@ export class ExtGSEA {
 
     // Is ranked gene in gene set
     const isInGeneset = zeros(l)
+    const weights = zeros(l)
 
     const names1 = geneSetNames(gs1)
     const names2 = geneSetNames(gs2)
@@ -217,17 +218,21 @@ export class ExtGSEA {
       ) {
         if (this._useGeneScoreForES) {
           // rather than using 1, we can weight the hits by the gene score
-          isInGeneset[i] =
+          weights[i] =
             this._pn[i]! > 0
               ? Math.abs(geneScores1.get(this._rkc[i]!) ?? 1)
               : Math.abs(geneScores2.get(this._rkc[i]!) ?? 1)
         } else {
-          isInGeneset[i] = 1
+          weights[i] = 1
         }
+
+        isInGeneset[i] = 1
       }
     }
 
-    this._scoreHits = cumsum(abs(pow(mult(this._rsc, isInGeneset), this._w)))
+    this._scoreHits = cumsum(
+      abs(pow(mult(this._rsc, isInGeneset, weights), this._w))
+    )
 
     this._scoreHits = div(
       this._scoreHits,
@@ -305,6 +310,7 @@ export class ExtGSEA {
     const l = this._es.length
 
     const isInGeneset = zeros(l)
+    const weights = zeros(l)
 
     const names1 = geneSetNames(gs1)
     const scores1 = geneSetScores(gs1)
@@ -316,16 +322,20 @@ export class ExtGSEA {
 
     for (const [index, gene] of this._es.entries()) {
       if (ids1.has(gene.name)) {
-        isInGeneset[index] = this._useGeneScoreForES
+        weights[index] = this._useGeneScoreForES
           ? Math.abs(geneScores1.get(gene.name) ?? 1)
           : 1
+
+        isInGeneset[index] = 1
       }
     }
 
     const esScores = this._es.map((g) => g.score)
 
     // Compute ES
-    let scoreHits = cumsum(pow(abs(mult(esScores, isInGeneset)), this._w))
+    let scoreHits = cumsum(
+      pow(abs(mult(esScores, isInGeneset, weights)), this._w)
+    )
     scoreHits = div(scoreHits, scoreHits[scoreHits.length - 1]!)
 
     let scoreMisses = cumsum(isInGeneset.map((v) => 1 - v))
@@ -334,26 +344,16 @@ export class ExtGSEA {
     const esAll = sub(scoreHits, scoreMisses)
     const { value: maxEs, index: maxEsI } = argmax(esAll)
     const { value: minEs, index: minEsI } = argmin(esAll)
-    const es = maxEs + minEs
+    const esScore = maxEs + minEs
 
     const leadingEdgeIndices = zeros(l)
     let leadingEdge: IRankedGene[] = []
 
-    if (es < 0) {
-      // where does the leading edge start
-      //const ixpk = esAll.indexOf(minEs)
-
+    if (esScore < 0) {
       for (const i of range(minEsI, leadingEdgeIndices.length)) {
         leadingEdgeIndices[i] = 1
       }
-
-      // leadingEdge = this._es
-      //   .filter((_, gi) => leadingEdgeIndices[gi] > 0 && isInGeneset[gi] > 0)
-      //   .sort((r1, r2) => r1.rank - r2.rank)
-      // //.reverse()
     } else {
-      //const ixpk = esAll.indexOf(maxEs)
-
       for (const i of range(maxEsI + 1)) {
         leadingEdgeIndices[i] = 1
       }
@@ -362,11 +362,6 @@ export class ExtGSEA {
     leadingEdge = this._es
       .filter((_, gi) => leadingEdgeIndices[gi] > 0 && isInGeneset[gi] > 0)
       .sort((r1, r2) => r1.rank - r2.rank)
-
-    // just the indices of the leading edge
-    //leadingEdgeIndices = range(leadingEdgeIndices.length).filter(
-    //  i => leadingEdgeIndices[i] === 1
-    //)
 
     const hits = where(isInGeneset, (v) => v > 0)
 
@@ -391,12 +386,9 @@ export class ExtGSEA {
     })
 
     return {
-      esScore: es,
-
-      esHits, //: isInGeneset,
+      esScore,
+      esHits,
       es: esAllHits,
-
-      //leadingEdgeIndices,
       leadingEdge,
     }
   }

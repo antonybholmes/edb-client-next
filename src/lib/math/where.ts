@@ -1,6 +1,7 @@
 /**
  * Returns the indices of an array that pass a filtering criteria. Useful
  * for getting the indices in a dataframe that you want to keep etc.
+ * Works similarly to Python's `numpy.where` function.
  *
  * @param data  an array of data to filter
  * @param f     a function that maps a value in the array to true or false to
@@ -9,7 +10,7 @@
  */
 export function where<T>(
   data: T[],
-  f: (x: T, idx: number) => boolean
+  f: (x: T, idx: number) => boolean = (x) => Boolean(x)
 ): number[] {
   const len = data.length
   const out = new Array<number>(len)
@@ -23,6 +24,7 @@ export function where<T>(
 
   // trim the output array to the correct length
   out.length = k
+
   return out
 }
 

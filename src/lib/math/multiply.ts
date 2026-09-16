@@ -2,19 +2,24 @@
  * Multiply all elements in an array by a given number or array of numbers.
  *
  * @param x The array of numbers to be multiplied.
- * @param y The number or array of numbers to multiply with.
+ * @param ys The numbers or arrays of numbers to multiply with. If multiple
+ * arrays are specified then each value is multiplied in sequence. If
+ * array is shorter than x, the position in the array will be chosen by modulo arithmetic.
+ * Therefore you must ensure arrays are of the same length to get correct multiplication.
  * @returns A new array containing the results of the multiplication.
  */
-export function mult(x: number[], y: number | number[]): number[] {
-  if (y === 1) {
-    return x
+export function mult(x: number[], ...ys: (number | number[])[]): number[] {
+  const _ys = ys.map((v) => (Array.isArray(v) ? v : [v]))
+
+  const ret = [...x]
+
+  for (let i = 0; i < x.length; i++) {
+    for (const y of _ys) {
+      ret[i] *= y[i % y.length]!
+    }
   }
 
-  if (!Array.isArray(y)) {
-    y = [y]
-  }
-
-  return x.map((v, vi) => v * y[vi % y.length]!)
+  return ret
 }
 
 /**
@@ -28,14 +33,16 @@ export function mult(x: number[], y: number | number[]): number[] {
  * @param y The number or array of numbers to divide by.
  * @returns A new array containing the results of the division.
  */
-export function div(x: number[], y: number | number[]): number[] {
-  if (y === 1) {
-    return x
+export function div(x: number[], ...ys: (number | number[])[]): number[] {
+  const _ys = ys.map((v) => (Array.isArray(v) ? v : [v]))
+
+  const ret = [...x]
+
+  for (let i = 0; i < x.length; i++) {
+    for (const y of _ys) {
+      ret[i] /= y[i % y.length]!
+    }
   }
 
-  if (!Array.isArray(y)) {
-    y = [y]
-  }
-
-  return x.map((v, vi) => v / y[vi % y.length]!)
+  return ret
 }

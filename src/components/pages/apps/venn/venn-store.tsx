@@ -420,8 +420,6 @@ export function useVenn(): IVennStore & {
       }
     }
 
-    console.log(sizeData)
-
     const dfOverlap = new AnnotationDataFrame({
       name: 'Venn Overlap',
       data: overlapData,

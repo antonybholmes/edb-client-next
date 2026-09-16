@@ -2952,6 +2952,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-09-15T23:38:18.747Z"
+        },
+        {
+          "msg": "Support for upper triangular display of heatmaps when square",
+          "date": "2026-09-16T17:52:36.612Z"
         }
       ]
     },

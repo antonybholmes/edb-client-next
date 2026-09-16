@@ -314,6 +314,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.tree.col.show &&
           displayOptions.tree.col.position === 'top' && (
             <ColTreeTopSvg
+              df={cf.df}
               tree={cf.colTree}
               width={ungappedInnerWidth}
               gaps={xgaps}
@@ -364,6 +365,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.tree.row.show &&
           displayOptions.tree.row.position === 'left' && (
             <RowTreeSvg
+              df={cf.df}
               tree={cf.rowTree}
               gaps={ygaps}
               width={ungappedInnerHeight}
@@ -378,6 +380,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.tree.row.show &&
           displayOptions.tree.row.position === 'right' && (
             <RowTreeSvg
+              df={cf.df}
               tree={cf.rowTree}
               gaps={ygaps}
               width={ungappedInnerHeight}

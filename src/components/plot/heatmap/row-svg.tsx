@@ -10,6 +10,7 @@ import { SvgText } from '../svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
 export function RowTreeSvg({
+  df,
   tree,
   width,
   height,
@@ -21,6 +22,8 @@ export function RowTreeSvg({
   const gElems: ReactElement[] = []
 
   const points = range(4)
+
+  const upperTriangular = props.upperTriangular && df.shape[0] === df.shape[1]
 
   for (let [ri, branch] of tree.coords.entries()) {
     const p = points.map((i) => {

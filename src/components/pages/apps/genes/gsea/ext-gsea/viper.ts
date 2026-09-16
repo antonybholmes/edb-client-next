@@ -15,7 +15,10 @@ import { useViperWorker } from './viper-worker'
 export function dfToViper(df: BaseDataFrame): IViper {
   const genes = df.rowNames
 
-  const scores = df.col(0).nums
+  let scores = df.col(0).nums
+
+  // invert so negative scores appear first
+  scores = scores.map((s) => -s)
 
   // want largest to smallest
   const idx = argsort(scores, { reverse: true })

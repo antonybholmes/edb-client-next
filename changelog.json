@@ -2956,6 +2956,10 @@
         {
           "msg": "Support for upper triangular display of heatmaps when square",
           "date": "2026-09-16T17:52:36.612Z"
+        },
+        {
+          "msg": "ExtGSEA modified to use weights for genes that do not affect inGeneset so misses are correctly calculated",
+          "date": "2026-09-16T20:03:47.627Z"
         }
       ]
     },
