@@ -77,8 +77,6 @@ export function RunningIndicator({
 
   const _message = message ?? runningMessage?.message
 
-  console.log('message', _message)
-
   // if message is null or undefined or empty string, show children, else show spinner with message
   if (!_message) {
     return children
