@@ -259,6 +259,7 @@ export function ExtGseaGenesSvgPlot({
   pos: IPos
 }) {
   const { plot } = useExtGseaContext()
+  const { settings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -328,7 +329,7 @@ export function ExtGseaGenesSvgPlot({
         ...scores2.map((g) => g.score),
       ])
 
-      const yOffset = displayProps.genes.height + 0.25 * displayProps.plot.gap.y
+      const yOffset = settings.genes.height + 0.25 * displayProps.plot.gap.y
 
       return (
         <>

@@ -70,6 +70,7 @@ export function HomeToolbar() {
                   })
                 )
               }}
+              title="Cluster Rows"
             >
               Rows
             </Checkbox>
@@ -84,6 +85,7 @@ export function HomeToolbar() {
                   })
                 )
               }}
+              title="Cluster Columns"
             >
               Columns
             </Checkbox>

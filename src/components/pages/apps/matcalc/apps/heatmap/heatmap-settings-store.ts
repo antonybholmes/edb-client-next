@@ -92,6 +92,8 @@ export interface IHeatMapSettings {
     show: boolean
   }
   //margin: IMarginProps
+  upperTriangular: boolean
+  showDiagonal: boolean
   blockSize: IBlock
   grid: IStrokeProps
   border: IStrokeProps
@@ -178,6 +180,8 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   },
   border: { ...DEFAULT_STROKE_PROPS },
   range: [-2, 2],
+  upperTriangular: false,
+  showDiagonal: true,
   mode: 'heatmap',
   title: { ...DEFAULT_BOLD_TEXT_PROPS, text: '', offset: 20 },
   actions: { show: true },

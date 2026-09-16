@@ -385,33 +385,42 @@ export function useVenn(): IVennStore & {
       cols: vennListsInUse.length,
     })
 
-    for (const [i, vlA] of vennListsInUse.entries()) {
-      for (const [j, vlB] of vennListsInUse.entries()) {
+    for (const [row, vlA] of vennListsInUse.entries()) {
+      for (const [col, vlB] of vennListsInUse.entries()) {
         const s1 = new Set(vlA.uniqueItems.keys())
         const s2 = new Set(vlB.uniqueItems.keys())
         const overlap = [...s1].filter((item) => s2.has(item)).length
 
         const jaccard = overlap / (s1.size + s2.size - overlap)
 
-        overlapData[i]![j] = overlap
-        distData[i]![j] = 1 - jaccard
+        overlapData[row]![col] = overlap
+        distData[row]![col] = 1 - jaccard
 
-        const showLower =
-          i < j || (!settings.heatmap.upperTriangular && i !== j)
+        const showUpper = col > row
 
-        const isDiagonal = i === j && settings.heatmap.showDiagonal
+        const showLower = col < row && !settings.heatmap.upperTriangular
 
-        //if (i !== j) {
-        zData[i]![j] = jaccard
+        const showDiagonal = row === col && settings.heatmap.showDiagonal
+
+        if (row !== col || showDiagonal) {
+          zData[row]![col] = jaccard
+        }
+
+        //if (showUpper || showLower || showDiagonal) {
+        sizeData[row]![col] = Math.max(MIN_RADIUS, jaccard)
         //}
 
-        if (showLower || isDiagonal) {
-          sizeData[i]![j] = Math.max(MIN_RADIUS, jaccard)
-        }
+        // if (row === 1 && col === 0) {
+        //   console.log('stupid', showUpper, showLower, isDiagonal)
+        // }
+
+        // if (showUpper || showLower || isDiagonal) {
+        //   sizeData[row]![col] = Math.max(MIN_RADIUS, jaccard)
+        // }
       }
     }
 
-    //console.log(overlapData)
+    console.log(sizeData)
 
     const dfOverlap = new AnnotationDataFrame({
       name: 'Venn Overlap',
@@ -489,6 +498,8 @@ export function useVenn(): IVennStore & {
 
     let displayOptions: IHeatMapSettings = {
       ...DEFAULT_HEATMAP_PROPS,
+      showDiagonal: settings.heatmap.showDiagonal,
+      upperTriangular: settings.heatmap.upperTriangular,
       labels: {
         ...DEFAULT_HEATMAP_PROPS.labels,
         col: {
