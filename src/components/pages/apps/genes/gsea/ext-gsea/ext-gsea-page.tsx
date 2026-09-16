@@ -138,32 +138,6 @@ export function ExtGseaPage() {
     ])
   }, [setToolbarTabs])
 
-  // // sync local query state when the global search query changes
-  // useEffect(() => {
-  //   setQ(search.query)
-  // }, [search.query])
-
-  // // periodically trigger a search when the debounced query changes
-  // useEffect(() => {
-  //   updateSearch(
-  //     produce(search, draft => {
-  //       draft.query = debouncedQ
-  //     })
-  //   )
-  // }, [debouncedQ])
-
-  // useEffect(() => {
-  //   if (!plot || settings.scale === zoom) {
-  //     return
-  //   }
-
-  //   updateSettings(
-  //     produce(settings, (draft) => {
-  //       draft.scale = zoom
-  //     })
-  //   )
-  // }, [plot, zoom])
-
   const fileMenuTabs: ITab[] = [
     {
       id: 'Open',

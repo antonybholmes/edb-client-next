@@ -204,11 +204,12 @@ export function EsSvg({
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
-  const nes = settings.phenotypes.invert ? -pathway.nes : pathway.nes
+  const nes = settings.phenotypes.mode !== 'normal' ? -pathway.nes : pathway.nes
 
-  const sortedPhenotypes = settings.phenotypes.invert
-    ? phenotypes.slice().reverse()
-    : phenotypes
+  const sortedPhenotypes =
+    settings.phenotypes.mode !== 'normal'
+      ? phenotypes.slice().reverse()
+      : phenotypes
 
   const phenIndexMap = new Map<string, number>(
     sortedPhenotypes.map((phen, i) => [phen, i])

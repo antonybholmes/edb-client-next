@@ -58,13 +58,11 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         tickParams: { which: 'both', show: false },
       })
 
-      //const hits = results.hits
+      const hits: IRankedGene[] = sortRankedGenes(result.hits, maxRank, {
+        reverse: settings.phenotypes.mode !== 'normal',
+      })
 
-      const hits: IRankedGene[] = sortRankedGenes(
-        result.hits,
-        maxRank,
-        settings.phenotypes.invert
-      )
+      console.log('hits', hits, settings.phenotypes.mode)
 
       let ylim: ILim = [
         Math.min(...hits.map((e) => e.esScore)),

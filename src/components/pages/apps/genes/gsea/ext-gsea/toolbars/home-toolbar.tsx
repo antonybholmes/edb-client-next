@@ -16,9 +16,9 @@ import { produce } from 'immer'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { PhenotypeModeList } from '../../gsea-plot/display-props/phenotype-mode'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
@@ -110,19 +110,10 @@ export function HomeToolbar() {
       <ToolbarTabGroup title={TEXT_OPTIONS}>
         <ToolbarCol>
           <ToolbarRow>
-            <ToolbarButton
-              checked={gseaSettings.phenotypes.invert}
-              onClick={() =>
-                updateGseaSettings(
-                  produce(gseaSettings, (draft) => {
-                    draft.phenotypes.invert = !draft.phenotypes.invert
-                  })
-                )
-              }
-              title="Switch the phenotypes to be plotted on the left and right side of the plot."
-            >
-              Invert
-            </ToolbarButton>
+            <span>Mode</span>
+            <PhenotypeModeList />
+          </ToolbarRow>
+          <ToolbarRow>
             <ColorMapToolbarMenu
               cmap={getColorMap(edbSettings.plots.cmap)}
               onChange={(cmap, reversed) => {
@@ -134,8 +125,6 @@ export function HomeToolbar() {
                 )
               }}
             />
-          </ToolbarRow>
-          <ToolbarRow>
             <SelectList
               items={[
                 { label: 'Score', value: 'score' },

@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v52`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v54`
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -36,7 +36,7 @@ interface IFilters {
 
 export interface IGseaDisplayProps {
   phenotypes: {
-    invert: boolean
+    mode: 'normal' | 'reversed' | 'inverted'
   }
   axes: {
     //show: boolean
@@ -128,7 +128,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     //scale: 1,
   },
   phenotypes: {
-    invert: false,
+    mode: 'normal',
   },
 
   // title: {

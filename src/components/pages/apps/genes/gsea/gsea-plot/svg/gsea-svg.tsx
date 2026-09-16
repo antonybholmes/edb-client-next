@@ -75,13 +75,18 @@ const GseaPlot = memo(function GseaPlot({
   // }, [es, settings.es.step, settings.phenotypes.invert])
 
   const sortedScores: IRankedGene[] = useMemo(
-    () => sortRankedGenes(scores, maxRank, settings.phenotypes.invert),
-    [scores, maxRank, settings.phenotypes.invert]
+    () =>
+      sortRankedGenes(scores, maxRank, {
+        reverse: settings.phenotypes.mode !== 'normal',
+      }),
+    [scores, maxRank, settings.phenotypes.mode]
   )
 
   const hits = useMemo(() => {
-    return sortRankedGenes(result.hits, maxRank, settings.phenotypes.invert)
-  }, [result, maxRank, settings.phenotypes.invert])
+    return sortRankedGenes(result.hits, maxRank, {
+      reverse: settings.phenotypes.mode !== 'normal',
+    })
+  }, [result, maxRank, settings.phenotypes.mode])
 
   if (!xax || !yax || !result) {
     return null

@@ -115,51 +115,40 @@ export function ExtGseaProvider({
 
     let results = plot.results
 
-    if (settings.phenotypes.invert) {
+    if (settings.phenotypes.mode !== 'normal') {
       results = results.map((result) => {
         const maxRank = result.scores.length - 1
 
         // assign 1 to 2 and vice versa and
         // for gsea, invert and resort scores
 
-        const gsea1 = sortGseaResult(
-          result.gsea2,
-          maxRank,
-          settings.phenotypes.invert
-        )
+        const gsea1 = sortGseaResult(result.gsea2, maxRank, { reverse: true })
 
-        const gsea2 = sortGseaResult(
-          result.gsea1,
-          maxRank,
-          settings.phenotypes.invert
-        )
+        const gsea2 = sortGseaResult(result.gsea1, maxRank, { reverse: true })
 
-        const gs1 = result.gs2
-        const gs2 = result.gs1
+        // swap around groups if inverted
+        const gs1 =
+          settings.phenotypes.mode === 'inverted' ? result.gs2 : result.gs1
+        const gs2 =
+          settings.phenotypes.mode === 'inverted' ? result.gs1 : result.gs2
 
         return {
           ...result,
-          extGsea: sortExtGseaResult(
-            result.extGsea,
-            maxRank,
-            settings.phenotypes.invert
-          ),
+          extGsea: sortExtGseaResult(result.extGsea, maxRank, {
+            reverse: true,
+          }),
           gs1,
           gs2,
           gsea1,
           gsea2,
 
-          scores: sortRankedGenes(
-            result.scores,
-            maxRank,
-            settings.phenotypes.invert
-          ),
+          scores: sortRankedGenes(result.scores, maxRank, { reverse: true }),
         }
       })
     }
 
     setResults(results)
-  }, [plot, settings.phenotypes.invert])
+  }, [plot, settings.phenotypes.mode])
 
   useEffect(() => {
     for (const result of plot?.results ?? []) {

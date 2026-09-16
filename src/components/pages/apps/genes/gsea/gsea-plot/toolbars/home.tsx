@@ -103,16 +103,17 @@ export function HomeToolbar() {
               }}
               w="xxs"
             />
+            {/* <PhenotypeModeList /> */}
             <ToolbarButton
-              checked={settings.phenotypes.invert}
-              onClick={() =>
+              checked={settings.phenotypes.mode !== 'normal'}
+              onClick={() => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.phenotypes.invert = !draft.phenotypes.invert
+                    draft.phenotypes.mode =
+                      draft.phenotypes.mode === 'normal' ? 'inverted' : 'normal'
                   })
                 )
-              }
-              title="Switch the phenotypes to be plotted on the left and right side of the plot."
+              }}
             >
               Invert
             </ToolbarButton>
