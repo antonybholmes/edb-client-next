@@ -10,7 +10,6 @@ import {
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
-import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { LinkButton } from '@/themed/link-button'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -23,6 +22,7 @@ import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/marg
 import { useGseaSettings } from '../gsea-settings-store'
 import APP_INFO from '../manifest.json'
 import { GeneProps } from './gene-props'
+import { PhenotypeModeList } from './phenotype-mode'
 
 export function GseaPlotDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
@@ -69,17 +69,9 @@ export function GseaPlotDisplayPropsPanel() {
               <MarginPopover />
             </PropRow>
 
-            <CheckPropRow
-              title="Invert Phenotypes"
-              checked={settings.phenotypes.invert}
-              onCheckedChange={(state) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.phenotypes.invert = state
-                  })
-                )
-              }
-            />
+            <PropRow title="Phenotype Mode">
+              <PhenotypeModeList />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 

@@ -272,15 +272,6 @@ export function ExtGseaGenesSvgPlot({
   const maxRank = result.scores.length - 1
 
   const { gs1, gs2, esHits1, esHits2, scores1, scores2 } = useMemo(() => {
-    /* let gs1 = settings.phenotypes.invert ? result.gs2 : result.gs1
-    let gs2 = settings.phenotypes.invert ? result.gs1 : result.gs2
-    let esHits1 = settings.phenotypes.invert
-      ? result.gsea2.esHits
-      : result.gsea1.esHits
-    let esHits2 = settings.phenotypes.invert
-      ? result.gsea1.esHits
-      : result.gsea2.esHits */
-
     let gs1 = result.gs1
     let gs2 = result.gs2
     let esHits1 = result.gsea1.esHits
@@ -295,23 +286,6 @@ export function ExtGseaGenesSvgPlot({
       ...g,
       score: Math.abs(g.score),
     }))
-
-    // if (settings.phenotypes.invert) {
-    //   const maxRank = result.scores.length - 1
-    //   esHits1 = esHits1.map((hit) => ({
-    //     ...hit,
-    //     rank: maxRank - hit.rank,
-    //     score: -hit.score,
-    //   })) // reverse the rank
-    //   esHits2 = esHits2.map((hit) => ({
-    //     ...hit,
-    //     rank: maxRank - hit.rank,
-    //     score: -hit.score,
-    //   })) // reverse the rank
-
-    //   scores1 = scores1.reverse()
-    //   scores2 = scores2.reverse()
-    // }
 
     return { gs1, gs2, esHits1, esHits2, scores1, scores2 }
   }, [result])

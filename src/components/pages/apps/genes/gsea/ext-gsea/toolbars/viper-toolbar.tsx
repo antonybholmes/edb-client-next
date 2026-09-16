@@ -3,7 +3,7 @@ import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { TEXT_OPTIONS } from '@/consts'
 import { produce } from 'immer'
 import { useExtGseaSettings } from '../ext-gsea-settings'
@@ -25,7 +25,23 @@ export function ViperToolbar() {
           <PlayIcon variant="app-theme" />
           Viper
         </ToolbarColButton>
-        <ToolbarRow>
+        <ToolbarCol>
+          {/* <ToolbarButton
+            checked={settings.viper.reverse}
+            onClick={() => {
+              // update the setting when the checkbox is toggled
+              // assuming you have an updateSettings function from useExtGseaSettings
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.viper.reverse = !settings.viper.reverse
+                })
+              )
+            }}
+            title="Reverse the groups in the Viper analysis"
+          >
+            Reverse
+          </ToolbarButton> */}
+
           <ToolbarButton
             checked={settings.es.useGeneScoreForES}
             onClick={() => {
@@ -41,7 +57,7 @@ export function ViperToolbar() {
           >
             Target weights
           </ToolbarButton>
-        </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
       <ToolbarTabGroup title={TEXT_OPTIONS}>
         <ToolbarButton

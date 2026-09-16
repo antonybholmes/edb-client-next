@@ -33,11 +33,12 @@ export interface IRankedGene extends IESScoreGene {
 
 export function sortRankedGenes(
   genes: IRankedGene[],
-  maxRank: number = genes.length - 1,
-  invert: boolean = false
+  maxRank: number,
+  opts: { reverse?: boolean } = {}
 ): IRankedGene[] {
+  const { reverse = false } = opts
   return (
-    invert
+    reverse
       ? genes.map((e) => ({
           ...e,
           rank: maxRank - e.rank,

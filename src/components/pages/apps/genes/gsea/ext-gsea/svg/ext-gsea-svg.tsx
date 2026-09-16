@@ -38,20 +38,6 @@ function ExtGseaSvgPlot({
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
-  // const scores = useMemo(() => {
-  //   const maxRank = result.scores.length - 1
-
-  //   return settings.phenotypes.invert
-  //     ? result.scores
-  //         .map((e) => ({
-  //           ...e,
-  //           rank: maxRank - e.rank,
-  //           score: -e.score,
-  //         }))
-  //         .sort((a, b) => a.rank - b.rank)
-  //     : result.scores
-  // }, [result.scores, settings.phenotypes.invert])
-
   const scores = result.scores
 
   const crossing = useMemo(() => crossingIndex(scores, xaf), [scores, xaf])

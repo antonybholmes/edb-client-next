@@ -4,7 +4,7 @@ vi.mock('../math/shuffle', () => ({
   fisherYatesShuffle: <T>(arr: T[]) => [...arr],
 }))
 
-import type { IGeneSet, IRankedGene } from './geneset'
+import { IGeneSet, IRankedGene } from './geneset'
 import { gsea } from './gsea'
 
 const rankedGenes: IRankedGene[] = [

@@ -36,12 +36,14 @@ export interface IExtGseaResult {
 export function sortExtGseaResult(
   result: IExtGseaResult,
   maxRank: number,
-  invert: boolean
+  opts: { reverse?: boolean } = {}
 ): IExtGseaResult {
+  const { reverse = false } = opts
+
   return {
     ...result,
     esScore: -result.esScore,
-    leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, invert),
+    leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, { reverse }),
   }
 }
 
@@ -70,14 +72,16 @@ export interface IGseaResult {
 export function sortGseaResult(
   result: IGseaResult,
   maxRank: number,
-  invert: boolean
+  opts: { reverse?: boolean } = {}
 ): IGseaResult {
+  const { reverse = false } = opts
+
   return {
     ...result,
     esScore: -result.esScore,
-    es: sortRankedGenes(result.es, maxRank, invert),
-    esHits: sortRankedGenes(result.esHits, maxRank, invert),
-    leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, invert),
+    es: sortRankedGenes(result.es, maxRank, { reverse }),
+    esHits: sortRankedGenes(result.esHits, maxRank, { reverse }),
+    leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, { reverse }),
   }
 }
 

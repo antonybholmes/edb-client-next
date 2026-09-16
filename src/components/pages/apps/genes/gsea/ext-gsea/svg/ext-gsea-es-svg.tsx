@@ -114,17 +114,6 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     axisId: 'y',
   })
 
-  // const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = useMemo(() => {
-  //   return {
-  //     scores: result.scores,
-  //     gs1: settings.phenotypes.invert ? result.gs2 : result.gs1,
-  //     gs2: settings.phenotypes.invert ? result.gs1 : result.gs2,
-  //     extGsea: result.extGsea,
-  //     gsea1: settings.phenotypes.invert ? result.gsea2 : result.gsea1,
-  //     gsea2: settings.phenotypes.invert ? result.gsea1 : result.gsea2,
-  //   }
-  // }, [result, settings.phenotypes.invert])
-
   const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = result
 
   const yaf = axisDomainToRangeFunc(yaxEs)

@@ -14,7 +14,7 @@ import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v20`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v22`
 
 export interface IExtGseaSettings {
   axes: {
@@ -66,7 +66,6 @@ export interface IExtGseaSettings {
     offset: number
   }
   page: {
-    //scale: number
     columns: number
   }
   plot: {
@@ -88,6 +87,10 @@ export interface IExtGseaSettings {
       }
     }
     fill: IPaintProps
+  }
+
+  viper: {
+    reverse: boolean
   }
 }
 
@@ -170,6 +173,9 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       show: true,
     },
     zeroCross: { ...DEFAULT_DASH_PROPS },
+  },
+  viper: {
+    reverse: true,
   },
 }
 
