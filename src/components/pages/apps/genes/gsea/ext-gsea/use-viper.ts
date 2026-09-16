@@ -1,6 +1,7 @@
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
+import { useRunning } from '@/components/toolbar/running-indicator'
 import { makeUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
@@ -73,8 +74,11 @@ export function useViper() {
 
   const { run: runViperWorker } = useViperWorker()
 
+  const { setMessage, clearMessage } = useRunning('ext-gsea')
+
   function viperToExtGsea(callback: () => void = () => {}) {
     const id = addIndicator('Running Viper GSEA...')
+    setMessage('Running Viper GSEA...')
 
     const viper = dfToViper(sheet as BaseDataFrame)
 
@@ -98,6 +102,7 @@ export function useViper() {
 
         removeFooter('left', id)
 
+        clearMessage()
         callback?.()
       }
     )

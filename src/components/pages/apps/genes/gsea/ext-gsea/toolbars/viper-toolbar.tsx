@@ -7,7 +7,7 @@ import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { TEXT_OPTIONS } from '@/consts'
 import { produce } from 'immer'
 import { useExtGseaSettings } from '../ext-gsea-settings'
-import { useViper } from '../viper'
+import { useViper } from '../use-viper'
 
 export function ViperToolbar() {
   const { viperToExtGsea } = useViper()

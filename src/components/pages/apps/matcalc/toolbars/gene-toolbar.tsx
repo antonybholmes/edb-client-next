@@ -16,7 +16,7 @@ import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { makeGCT } from '@/lib/dataframe/dataframe-utils'
 
-import { useRunExtGsea } from '../../genes/gsea/ext-gsea/use-run-ext-gsea'
+import { useExtGsea } from '../../genes/gsea/ext-gsea/use-ext-gsea'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
@@ -31,7 +31,7 @@ export function GeneToolbar() {
 
   const { settings, updateSettings } = useMatcalcSettings()
   const { file } = useFiles()
-  const { runExtGsea } = useRunExtGsea()
+  const { runExtGsea } = useExtGsea()
 
   function _addPlots(plots: HistoryPlot[]) {
     addPlots(plots)
