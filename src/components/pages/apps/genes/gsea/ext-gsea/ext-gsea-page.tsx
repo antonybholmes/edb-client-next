@@ -70,6 +70,7 @@ import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
+import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { useOpenFiles } from '../../../matcalc/hooks/open'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import {
@@ -276,7 +277,15 @@ export function ExtGseaPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <ExtScrollCard>{plot && <ExtGseaSvg />}</ExtScrollCard>
+              <ExtScrollCard>
+                <RunningIndicator
+                  id="ext-gsea"
+                  //message="Running Extended GSEA..."
+                  className="w-full p-4"
+                >
+                  {plot && <ExtGseaSvg />}
+                </RunningIndicator>
+              </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel

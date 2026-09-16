@@ -1,5 +1,6 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 
+import { useRunning } from '@/components/toolbar/running-indicator'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
 import { useFooter } from '@/providers/footer-provider'
@@ -12,11 +13,12 @@ import { snrRankGenes } from '../gsea-plot/gsea'
 import { IExtGseaPlot, newExtGseaPlot } from './ext-gsea-provider'
 import { useExtGseaWorker } from './ext-gsea-worker'
 
-export function useRunExtGsea() {
+export function useExtGsea() {
   const { sheet } = useCurrentSheets()
   const { groups } = useCurrentGroups()
   const { genesets } = useCurrentGenesets()
   const { remove: removeFooter, addIndicator } = useFooter()
+  const { setMessage, clearMessage } = useRunning('ext-gsea')
 
   const { run: runExtGseaWorker } = useExtGseaWorker()
   const { open: openDialog } = useDialogs()
@@ -44,52 +46,8 @@ export function useRunExtGsea() {
       return
     }
 
-    /* const { dismiss: dismissSpinnerToast } = toast({
-            title: 'Extended GSEA',
-            description: (
-              <ToastSpinner>
-                Running extended GSEA, please do not refresh your browser window...
-              </ToastSpinner>
-            ),
-            durationMs: 60000,
-          })
-      
-          setTimeout(() => {
-            const group1 = groupState.groups[groupState.order[0]!]!
-            const group2 = groupState.groups[groupState.order[1]!]!
-      
-            const rankedGenes = rankGenes(df, group1, group2)
-      
-            const extGsea = new ExtGSEA(rankedGenes)
-      
-            const gs1 = genesetState.genesets[genesetState.order[0]!]!
-            const gs2 = genesetState.genesets[genesetState.order[1]!]!
-      
-            // run and cache results
-            extGsea.runExtGsea(gs1, gs2)
-      
-            dismissSpinnerToast()
-      
-            plotsDispatch({
-              type: 'add',
-              style: 'Extended GSEA',
-              //cf: { df },
-              customProps: { extGsea },
-            })
-          }, 1000) */
-
-    // const id = makeUuid()
-
-    // addToast({
-    //   id,
-    //   title: APP_INFO.name,
-    //   description:
-    //     'Running Extended GSEA, please do not refresh your browser window...',
-
-    //   timeout: 60000,
-    // })
-
     const id = addIndicator('Running Extended GSEA...')
+    setMessage('Running Extended GSEA...')
 
     const group1 = groups[0]! //groupState.groups[groupState.order[0]!]!
     const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
@@ -125,10 +83,8 @@ export function useRunExtGsea() {
           }),
         }
 
-        // we've finished so get rid of the animations
-        //closeToast(id)
-
         removeFooter('left', id)
+        clearMessage()
 
         callback(plot)
       }

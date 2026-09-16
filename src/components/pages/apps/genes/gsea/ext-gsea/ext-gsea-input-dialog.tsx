@@ -6,15 +6,15 @@ import { OKCancelDialog } from '@/components/dialogs/ok-cancel-dialog'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { produce } from 'immer'
-import { useRunExtGsea } from './use-run-ext-gsea'
-import { useViper } from './viper'
+import { useExtGsea } from './use-ext-gsea'
+import { useViper } from './use-viper'
 
 export function ExtGseaInputDialog({ close }: ICustomDialogProps<unknown>) {
   const { settings, updateSettings } = useExtGseaSettings()
 
   const { addPlots } = useHistory()
 
-  const { runExtGsea } = useRunExtGsea()
+  const { runExtGsea } = useExtGsea()
 
   const { viperToExtGsea } = useViper()
 
