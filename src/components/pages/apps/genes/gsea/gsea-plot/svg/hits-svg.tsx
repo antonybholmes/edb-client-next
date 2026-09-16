@@ -1,22 +1,41 @@
 import { useCallback, useMemo } from 'react'
 
 import { IPos } from '@/interfaces/pos'
-import { COLOR_BLACK } from '@/lib/color/color'
-import { getColorMap } from '@/lib/color/colormap'
+import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { ColorMap, getColorMap } from '@/lib/color/colormap'
 
+import { IEdbSettings, useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
+import { makeUuid } from '@/lib/id'
 import { abs } from '@/lib/math/abs'
 import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useGseaSettings } from '../gsea-settings-store'
+import { IGseaDisplayProps, useGseaSettings } from '../gsea-settings-store'
 import { IGseaTableResult, useGseaData } from '../gsea-store'
+
+export function getColorMapFromSettings(
+  settings: IGseaDisplayProps,
+  edbSettings: IEdbSettings
+): ColorMap {
+  if (settings.genes.color.gradient.mode === 'cmap') {
+    return getColorMap(edbSettings.plots.cmap).reverse()
+  }
+
+  //we make a custom heatmap using the user specified colors
+
+  return new ColorMap(makeUuid(), 'user', [
+    settings.genes.pos.value,
+    COLOR_WHITE,
+    settings.genes.neg.value,
+  ])
+}
 
 export function GenesSvg({
   pathway,
@@ -38,7 +57,7 @@ export function GenesSvg({
   yaf: (v: number) => number
 }) {
   const { settings } = useGseaSettings()
-
+  const { settings: edbSettings } = useEdbSettings()
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
@@ -59,7 +78,8 @@ export function GenesSvg({
 
   // we reverse the colormap because in a gsea plot,
   // red/up appears on the left and blue/down appears on the right
-  const cmap = getColorMap(settings.genes.color.cmap).reverse()
+
+  const cmap = getColorMapFromSettings(settings, edbSettings)
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
@@ -184,7 +204,7 @@ export function GenesSvg({
             x2={x}
             y1={0}
             y2={settings.genes.height}
-            strokeWidth={settings.genes.pos.width}
+            strokeWidth={settings.genes.stroke.width}
             stroke={color}
             strokeOpacity={settings.genes.color.gradient.opacity}
           />

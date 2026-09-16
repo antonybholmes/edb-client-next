@@ -21,13 +21,13 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { GeneProps } from '../gsea-plot/display-props/gene-props'
 import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
@@ -47,6 +47,8 @@ export function ExtGseaDisplayPropsPanel() {
   const { updatePlot } = useHistory()
   const { plot } = useExtGseaContext()
   const { settings, updateSettings } = useGseaSettings()
+  const { settings: edbSettings, updateSettings: updateEdbSettings } =
+    useEdbSettings()
 
   const [openTabs, setOpenTabs] = useState<string[]>([
     'plot',
@@ -183,7 +185,7 @@ export function ExtGseaDisplayPropsPanel() {
                 }}
               />
             </PropRow>
-            <PropRow
+            {/* <PropRow
               title="Step"
               htmlTooltip="Higher values give smoother enrichment curves"
             >
@@ -200,17 +202,16 @@ export function ExtGseaDisplayPropsPanel() {
                   )
                 }}
               />
-            </PropRow>
+            </PropRow> */}
 
             <PropRow title="Color">
               <ColorMapMenu
-                cmap={getColorMap(settings.genes.color.cmap.name)}
+                cmap={getColorMap(edbSettings.plots.cmap)}
                 onChange={(cmap, reversed) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.color.cmap.name = cmap.id as ColorMapName
-                      //draft.genes.color.cmap.opacity = cmap.opacity
-                      draft.genes.color.cmap.reversed = reversed
+                  updateEdbSettings(
+                    produce(edbSettings, (draft) => {
+                      draft.plots.cmap.name = cmap.id as ColorMapName
+                      draft.plots.cmap.reversed = reversed
                     })
                   )
                 }}
@@ -433,7 +434,7 @@ export function ExtGseaDisplayPropsPanel() {
             Genes
           </AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Stroke">
+            {/* <PropRow title="Stroke">
               <NumericalInput
                 id="genes-stroke-width"
                 value={displayOptions.genes.line.width}
@@ -520,23 +521,11 @@ export function ExtGseaDisplayPropsPanel() {
                   },
                 ]}
               />
-            </PropRow>
-            {/* <SwitchPropRow
-              title="Color labels"
-              className="ml-2"
-              disabled={
-                !displayOptions.genes.line.show ||
-                !displayOptions.genes.labels.font.show
-              }
-              checked={displayOptions.genes.labels.isColored}
-              onCheckedChange={state =>
-                updatePlot(
-                  produce(plot, draft => {
-                    draft.props.genes.labels.isColored = state
-                  })
-                )
-              }
-            /> */}
+
+              
+            </PropRow> */}
+
+            <GeneProps />
           </AccordionContent>
         </AccordionItem>
 
@@ -559,7 +548,7 @@ export function ExtGseaDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Color" className="ml-2">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: displayOptions.ranking.zeroCross.value,

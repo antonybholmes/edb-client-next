@@ -6,9 +6,9 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { List, Move3D, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
-import { GeneSetsPropsPanel } from './geneset-props-panel'
-import { GseaAxesPropsPanel } from './gsea-axes-props-panel'
-import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
+import { GeneSetsPropsPanel } from './display-props/geneset-props-panel'
+import { GseaAxesPropsPanel } from './display-props/gsea-axes-props-panel'
+import { GseaDisplayPropsPanel } from './display-props/gsea-display-props-panel'
 
 const ID = 'gsea-plot-props-panel'
 

@@ -6,6 +6,7 @@ import {
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
@@ -23,6 +24,9 @@ import { useGsea } from '../gsea-store'
 
 export function HomeToolbar() {
   const { settings, updateSettings } = useGseaSettings()
+  const { settings: edbSettings, updateSettings: updateEdbSettings } =
+    useEdbSettings()
+
   const { loadGseaZipWithErrorHandling } = useGsea()
   const { saveAs } = useSVG()
 
@@ -115,11 +119,11 @@ export function HomeToolbar() {
           </ToolbarRow>
           <ToolbarRow>
             <ColorMapToolbarMenu
-              cmap={getColorMap(settings.genes.color.cmap)}
+              cmap={getColorMap(edbSettings.plots.cmap)}
               onChange={(cmap) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.genes.color.cmap.name = cmap.id as ColorMapName
+                updateEdbSettings(
+                  produce(edbSettings, (draft) => {
+                    draft.plots.cmap.name = cmap.id as ColorMapName
                   })
                 )
               }}

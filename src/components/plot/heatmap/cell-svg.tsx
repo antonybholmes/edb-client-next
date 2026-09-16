@@ -139,6 +139,8 @@ export function CellsSvg({
     showCrosshair({ pos: relativeP })
   }
 
+  const isSquare = df.shape[0] === df.shape[1]
+
   return (
     <>
       <defs>{uniqueColorRects}</defs>
@@ -148,6 +150,17 @@ export function CellsSvg({
 
           return colLeaves.map((col, ci) => {
             const x = xgaps.position(ci)
+
+            if (!props.showDiagonal && ri === ci) {
+              return null
+            }
+
+            const isLowerTriangle = ri > ci
+
+            // only apply if we are square
+            if (isSquare && props.upperTriangular && isLowerTriangle) {
+              return null
+            }
 
             const fill = colors[ri]![ci]!
 
@@ -242,6 +255,10 @@ export function DotsSvg({
 
   const w = Math.min(blockSize.w, blockSize.h)
 
+  console.log('dfSize', dfSize.get(1, 0))
+
+  const isSquare = df.shape[0] === df.shape[1]
+
   return (
     <SvgG
       pos={pos}
@@ -260,6 +277,18 @@ export function DotsSvg({
         const y = ygaps.position(ri)
         return colLeaves.map((col, ci) => {
           const x = xgaps.position(ci)
+
+          if (!props.showDiagonal && ri === ci) {
+            return null
+          }
+
+          const isLowerTriangle = ri > ci
+
+          // only apply if we are square
+          if (isSquare && props.upperTriangular && isLowerTriangle) {
+            return null
+          }
+
           const v = df.get(row, col) as number
 
           const radius =

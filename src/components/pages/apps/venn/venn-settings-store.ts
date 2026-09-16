@@ -12,7 +12,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v70`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v72`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -121,12 +121,13 @@ export interface IVennSettings {
         on: boolean
       }
       zscore: 'row' | 'col' | 'all' | 'none'
-      //cmap: ColorMapName
     }
     dot: {
       sizes: number[]
       scale: number
     }
+    showDiagonal: boolean
+    upperTriangular: boolean
   }
   page: {
     margin: IMarginProps
@@ -162,12 +163,13 @@ const DEFAULT_SETTINGS: IVennSettings = {
         on: true,
       },
       zscore: 'row',
-      //cmap: 'bwr-v2',
     },
     dot: {
       sizes: [25, 50, 75, 100],
       scale: 1,
     },
+    showDiagonal: false,
+    upperTriangular: false,
   },
 
   page: {
@@ -213,7 +215,7 @@ export const useVennSettingsStore = create<IVennStore>()(
       },
     }),
     {
-      name: SETTINGS_KEY, // name in localStorage
+      name: SETTINGS_KEY,
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)

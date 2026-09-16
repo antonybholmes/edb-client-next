@@ -33,7 +33,7 @@ CenteredCardContainer.displayName = 'CenteredCardContainer'
 export const variants = cva('border border-border/25', {
   variants: {
     variant: {
-      default: 'bg-background p-6',
+      default: 'bg-background p-4',
       content: 'bg-white p-2',
       simple: 'bg-background',
     },

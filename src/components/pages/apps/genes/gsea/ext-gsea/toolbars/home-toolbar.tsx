@@ -13,7 +13,7 @@ import { TEXT_OPTIONS, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
@@ -23,11 +23,12 @@ import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
 export function HomeToolbar() {
-  const { openCustom: openCustomDialog } = useDialogs()
   const { settings, updateSettings } = useExtGseaSettings()
-
+  const { settings: edbSettings, updateSettings: updateEdbSettings } =
+    useEdbSettings()
   const { settings: gseaSettings, updateSettings: updateGseaSettings } =
     useGseaSettings()
+
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
 
@@ -123,12 +124,12 @@ export function HomeToolbar() {
               Invert
             </ToolbarButton>
             <ColorMapToolbarMenu
-              cmap={getColorMap(gseaSettings.genes.color.cmap)}
+              cmap={getColorMap(edbSettings.plots.cmap)}
               onChange={(cmap, reversed) => {
-                updateGseaSettings(
-                  produce(gseaSettings, (draft) => {
-                    draft.genes.color.cmap.name = cmap.id as ColorMapName
-                    draft.genes.color.cmap.reversed = reversed
+                updateEdbSettings(
+                  produce(edbSettings, (draft) => {
+                    draft.plots.cmap.name = cmap.id as ColorMapName
+                    draft.plots.cmap.reversed = reversed
                   })
                 )
               }}

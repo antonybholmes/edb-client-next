@@ -14,7 +14,7 @@ import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v18`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v20`
 
 export interface IExtGseaSettings {
   axes: {

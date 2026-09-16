@@ -4,14 +4,15 @@ import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ex
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { type IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { EsCurveSvg, EsLeadingEdgeSvg } from '../../gsea-plot/svg/es-svg'
+import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 
 export function ExtGseaEsCurveSvg({
@@ -27,6 +28,7 @@ export function ExtGseaEsCurveSvg({
 }) {
   const { displayProps } = useExtGseaContext()
   const { settings } = useGseaSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -48,7 +50,7 @@ export function ExtGseaEsCurveSvg({
 
   const { leadingEdge, es, esHits } = gsea
 
-  const cmap = getColorMap(settings.genes.color.cmap).reverse()
+  const cmap = getColorMapFromSettings(settings, edbSettings)
 
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])

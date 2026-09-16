@@ -225,16 +225,16 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
       ])
     )
 
-    const unadjustedInnerWidth = colLeaves.length * blockSize.w
+    const ungappedInnerWidth = colLeaves.length * blockSize.w
 
     const innerWidth =
-      unadjustedInnerWidth +
+      ungappedInnerWidth +
       displayOptions.gaps.cols.size * displayOptions.gaps.cols.indexes.length
 
-    const unadjustedInnerHeight = rowLeaves.length * blockSize.h
+    const ungappedInnerHeight = rowLeaves.length * blockSize.h
 
     const innerHeight =
-      unadjustedInnerHeight +
+      ungappedInnerHeight +
       displayOptions.gaps.rows.size * displayOptions.gaps.rows.indexes.length
 
     const width = innerWidth + margin.left + margin.right
@@ -314,8 +314,9 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.tree.col.show &&
           displayOptions.tree.col.position === 'top' && (
             <ColTreeTopSvg
+              df={cf.df}
               tree={cf.colTree}
-              width={unadjustedInnerWidth}
+              width={ungappedInnerWidth}
               gaps={xgaps}
               height={displayOptions.tree.col.width}
               props={displayOptions}
@@ -364,9 +365,10 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.tree.row.show &&
           displayOptions.tree.row.position === 'left' && (
             <RowTreeSvg
+              df={cf.df}
               tree={cf.rowTree}
               gaps={ygaps}
-              width={unadjustedInnerHeight}
+              width={ungappedInnerHeight}
               height={displayOptions.tree.row.width}
               mode="left"
               props={displayOptions}
@@ -378,9 +380,10 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           displayOptions.tree.row.show &&
           displayOptions.tree.row.position === 'right' && (
             <RowTreeSvg
+              df={cf.df}
               tree={cf.rowTree}
               gaps={ygaps}
-              width={unadjustedInnerHeight}
+              width={ungappedInnerHeight}
               height={displayOptions.tree.row.width}
               mode="right"
               props={displayOptions}

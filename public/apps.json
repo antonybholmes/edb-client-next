@@ -43,11 +43,11 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.2.4",
+    "version": "2.2.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-15T14:45:21.709Z",
-    "hash": "a890c1b6153940e54d8ec0d9092584191389160aa3b01bfe4879a653efa62c04",
-    "build": 1004
+    "modified": "2026-09-16T20:03:46.381Z",
+    "hash": "1829f163433c50a62bdf6571d6374be5e13436b722c537c9480c7e3b333036d9",
+    "build": 1018
   },
   {
     "name": "Get DNA",
@@ -72,11 +72,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "23.4.8",
+    "version": "23.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-15T14:45:21.711Z",
-    "hash": "fe5b321e4c3956330671abbbb04d1e43b6ac7be6ba5f420e752951820de85b7f",
-    "build": 968
+    "modified": "2026-09-16T03:35:22.821Z",
+    "hash": "3832da14121952de05e640644962634d7b6f46c177c5aba47660049356968df0",
+    "build": 976
   },
   {
     "name": "GSEA Web",
@@ -122,19 +122,19 @@
     "color": "#DA70D6",
     "version": "27.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-06T23:28:15.410Z",
-    "hash": "5c7d26474bddaca97cdebf1ac0d183ce9daa62101a61d9c00b8a8abbd523830d",
-    "build": 1124
+    "modified": "2026-09-16T03:35:22.843Z",
+    "hash": "e83c8f493ff932e1ddcd8f3aa5018570250004b6197843eb47e5b43b833aaf48",
+    "build": 1126
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.4.6",
+    "version": "50.4.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-15T14:45:21.744Z",
-    "hash": "4b9db6f816e4bee749ff751c935a9c436b3a9b02c2bbbe37ea5da0211b0f4d24",
-    "build": 2066
+    "modified": "2026-09-16T20:03:46.412Z",
+    "hash": "406bf106482c38b67394ee16303c5b4ab75b5573be33a5a95a7db7fb6c73535e",
+    "build": 2074
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#ff99cc",
     "version": "30.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-13T04:04:02.660Z",
-    "hash": "c9065a3a7f2c3c43f031ed17dbaf65618821a43e2a3f3d99bc9d2d2840a2b249",
-    "build": 1142
+    "modified": "2026-09-16T03:35:22.844Z",
+    "hash": "af25262a1eb56bbdc4615b37fbc8d45ec9fffc6f58df9bc561c6cc5fe29eabb9",
+    "build": 1144
   },
   {
     "name": "Overlap",
@@ -202,9 +202,9 @@
     "color": "#FF0000",
     "version": "32.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-13T04:16:32.395Z",
-    "hash": "0e9970f023e73c867e120b647d387d8111ea735a6b2611495fd14c8fa7be4af4",
-    "build": 1162
+    "modified": "2026-09-16T03:35:22.833Z",
+    "hash": "3b9933e27bd1944c82a6cf7ec2d7fc3f78ee2164b5faac639effda976bfb541d",
+    "build": 1164
   },
   {
     "name": "Single Cell",
@@ -222,9 +222,19 @@
     "version": "14.8.0",
     "color": "#000000",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-30T00:53:16.886Z",
-    "hash": "d0a32e0f20286f53da4a7c5f4f2cd94021635344afac859f760bb16fdb097c41",
-    "build": 482
+    "modified": "2026-09-15T17:40:11.271Z",
+    "hash": "ef7cb4605b1cf968a2aecbf6ac64d652c3b3f615cfadb105914a4668c22886ab",
+    "build": 484
+  },
+  {
+    "name": "Text Viewer",
+    "description": "A basic text viewer.",
+    "version": "1.0.0",
+    "color": "#000000",
+    "copyright": "© 2026 Antony Holmes",
+    "modified": "2026-09-15T17:40:11.272Z",
+    "hash": "1799ec55a51b068c67a94caf35d42e2b919e587406250934f813aa86981e2c92",
+    "build": 4
   },
   {
     "name": "Users",
@@ -241,18 +251,18 @@
     "color": "#FA8072",
     "version": "26.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-09T17:01:19.308Z",
-    "hash": "29bb0d4b23e902ab5522f4825ea2b602620590399229a0165c2d2dd2d745e132",
-    "build": 1040
+    "modified": "2026-09-16T03:35:22.845Z",
+    "hash": "40742e90fb5a7609b4e32d45207123eab234fa023e3e157f6a1519b377155168",
+    "build": 1042
   },
   {
     "name": "Venn",
     "description": "Make Venn diagrams.",
     "color": "#00008B",
-    "version": "26.6.2",
+    "version": "26.6.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-15T14:45:21.750Z",
-    "hash": "c9c00a1c8ed011f7ad51b2ab0558d86bfe4d99596ec5f8e60d36fb2a90990675",
-    "build": 934
+    "modified": "2026-09-16T20:03:46.419Z",
+    "hash": "084cf2cc615a80f00ec858b829f7541e6cd935557e2ba1c8b4d8408d5380359d",
+    "build": 942
   }
 ]

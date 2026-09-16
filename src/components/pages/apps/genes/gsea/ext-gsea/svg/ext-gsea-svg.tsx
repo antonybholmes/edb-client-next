@@ -9,8 +9,10 @@ import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useZoom } from '@/providers/zoom-provider'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
+import { useExtGseaSettings } from '../ext-gsea-settings'
 import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
 import { ExtGseaGenesSvgPlot } from './ext-gsea-hits'
 import { ExtGseaTitleSvg } from './title-svg'
@@ -23,6 +25,8 @@ function ExtGseaSvgPlot({
   pos: IPos
 }) {
   const { displayProps } = useExtGseaContext()
+  const { settings } = useExtGseaSettings()
+  const { settings: gseaSettings } = useGseaSettings()
 
   const yOffset = displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y
 
@@ -78,10 +82,10 @@ function ExtGseaSvgPlot({
           pos={{
             x: 0,
             y:
-              displayProps.es.axes.y.length +
-              displayProps.plot.gap.y +
-              (displayProps.genes.line.show
-                ? 2 * (displayProps.genes.height + displayProps.plot.gap.y)
+              settings.es.axes.y.length +
+              gseaSettings.plot.gap.y +
+              (gseaSettings.genes.show
+                ? 2 * (gseaSettings.genes.height + gseaSettings.plot.gap.y)
                 : 0),
           }}
         >

@@ -30,7 +30,11 @@ function _ExtScrollCard({
   cardCls,
   ...props
 }: ExtScrollCardProps) {
-  const { vScrollRef } = useExtScrollRefsContext()
+  const { vScrollRef, hScrollRef } = useExtScrollRefsContext()
+
+  const isDragging = useRef(false)
+  const dragStart = useRef({ x: 0, y: 0, scrollTop: 0, scrollLeft: 0 })
+
   const { size, scrollLeft, scrollTop, setSize } = useExtScrollStateContext()
 
   const [scrollableArea, setScrollableArea] = useState<IDim>({ w: 0, h: 0 })
@@ -55,6 +59,44 @@ function _ExtScrollCard({
       w: Math.max(contentSize.w - clientSize.w, 0),
       h: Math.max(contentSize.h - clientSize.h, 0),
     })
+  }
+
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.button !== 0) return
+
+    isDragging.current = true
+    dragStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      scrollTop: vScrollRef.current?.scrollTop ?? 0,
+      scrollLeft: hScrollRef.current?.scrollLeft ?? 0,
+    }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!isDragging.current) return
+
+    const deltaX = e.clientX - dragStart.current.x
+    const deltaY = e.clientY - dragStart.current.y
+
+    if (vScrollRef.current) {
+      vScrollRef.current.scrollTop = dragStart.current.scrollTop + deltaY
+    }
+    if (hScrollRef.current) {
+      hScrollRef.current.scrollLeft = dragStart.current.scrollLeft - deltaX
+    }
+  }
+
+  function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    if (isDragging.current) {
+      isDragging.current = false
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId)
+      } catch {
+        // ignore if pointer capture was already released
+      }
+    }
   }
 
   useSizeObserver(containerRef, _setContainerSize)
@@ -87,6 +129,11 @@ function _ExtScrollCard({
                 vScrollRef.current.scrollTop += e.deltaY
               }
             }}
+
+            //onPointerDown={handlePointerDown}
+            //onPointerMove={handlePointerMove}
+            //onPointerUp={handlePointerUp}
+            //onPointerCancel={handlePointerUp}
             {...props}
           >
             <div className="relative overflow-hidden grow" ref={containerRef}>

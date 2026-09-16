@@ -2,7 +2,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
@@ -176,7 +176,7 @@ export function PileupPropsPanel({ ref }: IProps) {
           <AccordionContent>
             <PropRow title="Line">
               <VCenterRow>
-                <OutlineButton
+                <StrokeButton
                   colors={[
                     {
                       color: settings.mafs.plot.line.value,
@@ -267,7 +267,7 @@ export function PileupPropsPanel({ ref }: IProps) {
             />
 
             <PropRow title="Border">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: settings.dna.border.value,

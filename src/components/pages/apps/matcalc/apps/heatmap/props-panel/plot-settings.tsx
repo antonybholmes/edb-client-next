@@ -16,7 +16,7 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import {
   GroupToggle,
   ToggleGroup,
@@ -116,7 +116,7 @@ export function PlotSettingsPanel() {
 
         <PropRow title="Grid">
           <VCenterRow>
-            <OutlineButton
+            <StrokeButton
               colors={[
                 {
                   color: displayProps.grid.value,
@@ -145,7 +145,7 @@ export function PlotSettingsPanel() {
               title="Grid Outline"
             />
 
-            <OutlineButton
+            <StrokeButton
               colors={[
                 {
                   color: displayProps.border.value,

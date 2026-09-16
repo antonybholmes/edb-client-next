@@ -19,7 +19,7 @@ import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
 
 import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -167,7 +167,7 @@ export function ColormapSettingsPanel() {
             )
           }}
         >
-          <OutlineButton
+          <StrokeButton
             colors={[
               {
                 color: displayProps.colorbar.stroke.value,

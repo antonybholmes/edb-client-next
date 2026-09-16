@@ -127,7 +127,7 @@ export interface IColorChangeProps {
    * without the alpha channel and instead use fillOpacity and strokeOpacity to set
    * the color opacity on the svg element.
    */
-  color: string
+  color?: string
 
   /**
    * The opacity of the color, represented as a number between 0 and 1,

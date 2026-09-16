@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v50`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v52`
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -22,7 +22,6 @@ import {
   COLOR_MEDIUM_SEA_GREEN,
   COLOR_RED,
 } from '@/lib/color/color'
-import { ICMAP } from '@/lib/color/colormap'
 
 interface IFilters {
   q: {
@@ -56,13 +55,18 @@ export interface IGseaDisplayProps {
     color: {
       on: boolean
       mode: 'rank' | 'score'
-      cmap: ICMAP
 
-      gradient: { weight: number; opacity: number }
+      gradient: {
+        mode: 'user' | 'cmap'
+        //cmap: ICMAP
+        weight: number
+        opacity: number
+      }
     }
     labels: ITextProps & { color: { on: boolean } }
-    pos: IStrokeProps
-    neg: IStrokeProps
+    stroke: IStrokeProps
+    pos: IPaintProps
+    neg: IPaintProps
     //gradient: { opacity: number; on: boolean }
     height: number
     //line: IStrokeProps
@@ -186,12 +190,17 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     color: {
       on: true,
       mode: 'rank',
-      cmap: { name: 'bwr', reversed: false },
 
-      gradient: { weight: 1, opacity: 1 },
+      gradient: {
+        mode: 'user',
+        //cmap: { name: 'bwr', reversed: false },
+        weight: 1,
+        opacity: 1,
+      },
     },
-    pos: { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1 },
-    neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },
+    stroke: { ...DEFAULT_STROKE_PROPS, width: 1 },
+    pos: { ...DEFAULT_COLOR_PROPS, value: COLOR_RED },
+    neg: { ...DEFAULT_COLOR_PROPS, value: COLOR_BLUE },
 
     show: true,
     //gradient: { opacity: 0.2, on: true },

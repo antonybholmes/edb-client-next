@@ -16,7 +16,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -151,7 +151,7 @@ export function LegendSettingsPanel() {
             )
           }}
         >
-          <OutlineButton
+          <StrokeButton
             colors={[
               {
                 color: displayProps.legend.stroke.value,

@@ -1,3 +1,4 @@
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { rangeMap } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
@@ -53,7 +54,41 @@ export function useOpen() {
     // setShowFileMenu(false)
   }
 
+  function openDataframe(df: BaseDataFrame) {
+    setVennLists(
+      rangeMap((ri) => {
+        const id = (ri + 1).toString()
+
+        return makeVennList(id, df.index.str(ri), df.row(ri).strs)
+      }, df.shape[0])
+    )
+
+    // setListTextMap(
+    //   new Map(
+    //     table.values.map((r, ri) => [ri, r.map((c) => c.toString()).join('\n')])
+    //   )
+    // )
+
+    //resolve({ ...table, name: file.name })
+
+    // historyDispatch({
+    //   type: "reset",
+    //   title: `Load ${name}`,
+    //   df: table.setName(truncate(name, { length: 16 })),
+    // })
+
+    // historyState.current = {
+    //   step: 0,
+    //   history: [{ title: `Load ${name}`, df: [table.setName(name)] }],
+    // }
+
+    //setShowLoadingDialog(false)
+
+    // setShowFileMenu(false)
+  }
+
   return {
     openFiles,
+    openDataframe,
   }
 }

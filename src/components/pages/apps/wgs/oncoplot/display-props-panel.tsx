@@ -12,7 +12,7 @@ import {
 
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
 import { produce } from 'immer'
@@ -122,7 +122,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               />
             </PropRow>
             <PropRow title="Border">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: displayProps.grid.value,
@@ -138,7 +138,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 ]}
                 title="Grid"
               />
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: displayProps.border.value,
@@ -188,7 +188,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
             </PropRow>
 
             <PropRow title="Border">
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: displayProps.samples.graphs.border.value,
@@ -223,7 +223,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 )
               }
             >
-              <OutlineButton
+              <StrokeButton
                 colors={[
                   {
                     color: displayProps.features.graphs.border.value,

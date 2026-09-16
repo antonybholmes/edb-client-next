@@ -18,6 +18,7 @@ import {
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
+  TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
@@ -63,6 +64,13 @@ import { useHistory } from '../../../matcalc/history/history-provider/history-pr
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
 
+import { OpenIcon } from '@/components/icons/open-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
+import { useOpenFiles } from '../../../matcalc/hooks/open'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import {
   ExtGseaProvider,
@@ -77,7 +85,7 @@ export function ExtGseaPage() {
   const { setAppInfo } = useAppInfo()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
-
+  const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { open: openDialog } = useDialogs()
 
   const { settings: edbSettings } = useEdbSettings()
@@ -157,6 +165,31 @@ export function ExtGseaPage() {
   // }, [plot, zoom])
 
   const fileMenuTabs: ITab[] = [
+    {
+      id: 'Open',
+      icon: <OpenIcon variant="colorful" />,
+      render: (
+        <DropdownMenuItem
+          aria-label={TEXT_OPEN_FILE}
+          onClick={() =>
+            openFilesDialog({
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openDataFrames(files, { indexCols: 1 })
+                })
+              },
+            })
+          }
+        >
+          <UploadIcon stroke="" />
+
+          <span>{TEXT_OPEN_FILE}</span>
+        </DropdownMenuItem>
+      ),
+    },
     {
       id: TEXT_SAVE_AS,
       render: (

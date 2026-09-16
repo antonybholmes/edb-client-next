@@ -72,6 +72,8 @@ import {
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { usePasteText } from '@/hooks/paste-text'
+import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
+import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 import { HeatmapProvider } from '../matcalc/apps/heatmap/heatmap-provider'
 import { HeatMapSvg } from '../matcalc/apps/heatmap/heatmap-svg'
@@ -79,11 +81,12 @@ import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
 import { IHeatMapPlot } from '../matcalc/history/history-provider/history-types'
 import { SvgVenn } from './svg/svg-venn'
+import { HeatmapToolbar } from './toolbars/heatmap-toolbar'
 import { VennPropsPanel } from './venn-props-panel'
-import { makeVennList, useVenn } from './venn-store'
+import { useVenn } from './venn-store'
 
 function VennPage() {
-  const { openFiles } = useOpen()
+  const { openFiles, openDataframe } = useOpen()
   const { autoSave } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
@@ -195,15 +198,23 @@ function VennPage() {
   // }
 
   async function loadTestData() {
-    const res = await httpFetch.getJson<{ name: string; items: string[] }[]>(
-      '/data/test/venn.json'
-    )
+    // const res = await httpFetch.getJson<{ name: string; items: string[] }[]>(
+    //   '/data/test/venn.json'
+    // )
 
-    setVennLists(
-      res.map(({ items }, ci) =>
-        makeVennList((ci + 1).toString(), `List ${ci + 1}`, items)
-      )
-    )
+    // setVennLists(
+    //   res.map(({ items }, ci) =>
+    //     makeVennList((ci + 1).toString(), `List ${ci + 1}`, items)
+    //   )
+    // )
+
+    const res = await httpFetch.getText('/data/test/venn.tsv')
+
+    const lines = textToLines(res)
+
+    const table = new DataFrameReader().indexCols(0).colNames(1).read(lines).t
+
+    openDataframe(table)
   }
 
   useEffect(() => {
@@ -215,6 +226,10 @@ function VennPage() {
       {
         id: 'Home',
         component: HomeToolbar,
+      },
+      {
+        id: 'Heatmap',
+        component: HeatmapToolbar,
       },
     ])
   }, [setToolbarTabs])
@@ -499,7 +514,6 @@ function VennPage() {
                       <SvgVenn scale={zoom} />
                     </TabsContent>
                     <TabsContent value="heatmap">
-                      {/* <HeatmapPanel /> */}
                       <HeatMapSvg scale={zoom} />
                     </TabsContent>
                   </Tabs>
