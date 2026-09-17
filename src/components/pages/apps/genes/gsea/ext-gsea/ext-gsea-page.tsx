@@ -98,7 +98,7 @@ export function ExtGseaPage() {
 
   const { plot } = useExtGseaContext()
 
-  const { openFile } = useHistory()
+  const { openFile, updatePlot } = useHistory()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
@@ -282,10 +282,12 @@ export function ExtGseaPage() {
               className="flex flex-col text-sm gap-y-2"
               collapsible={true}
             >
-              <CenterRow className="gap-x-4 text-xs">
-                <VCenterRow className="gap-x-2">
-                  <span>Phenotype 1</span>
+              <CenterRow className="gap-x-8 text-xs">
+                <VCenterRow className="gap-x-1">
+                  <span>Phenotypes</span>
+
                   <Input
+                    placeholder="Phenotype 1..."
                     value={settings.phenotypes.p1.name}
                     onTextChange={(v) =>
                       updateSettings(
@@ -296,12 +298,12 @@ export function ExtGseaPage() {
                     }
                     w="md"
                   />
-                </VCenterRow>
-                <VCenterRow className="gap-x-2">
-                  <span>Phenotype 2</span>
+                  <span>/</span>
+
                   <Input
+                    placeholder="Phenotype 2..."
                     value={settings.phenotypes.p2.name}
-                    onTextChange={(v) =>
+                    onTextChanged={(v) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.phenotypes.p2.name = v
@@ -311,6 +313,42 @@ export function ExtGseaPage() {
                     w="md"
                   />
                 </VCenterRow>
+
+                {plot && plot.results.length > 0 && (
+                  <VCenterRow className="gap-x-1">
+                    <span>Genesets</span>
+
+                    <Input
+                      placeholder="Geneset 1..."
+                      value={plot.results[0].gs1.name}
+                      onTextChange={(v) =>
+                        updatePlot(
+                          produce(plot, (draft) => {
+                            for (let i = 0; i < draft.results.length; i++) {
+                              draft.results[i].gs1.name = v
+                            }
+                          })
+                        )
+                      }
+                      w="md"
+                    />
+                    <span>/</span>
+                    <Input
+                      placeholder="Geneset 2..."
+                      value={plot.results[0].gs2.name}
+                      onTextChange={(v) =>
+                        updatePlot(
+                          produce(plot, (draft) => {
+                            for (let i = 0; i < draft.results.length; i++) {
+                              draft.results[i].gs2.name = v
+                            }
+                          })
+                        )
+                      }
+                      w="md"
+                    />
+                  </VCenterRow>
+                )}
               </CenterRow>
               <ExtScrollCard>
                 <RunningIndicator
