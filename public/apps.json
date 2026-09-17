@@ -45,9 +45,9 @@
     "color": "#006666",
     "version": "2.2.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-16T22:23:44.146Z",
-    "hash": "8895ab961ae57b517825969888405af3d015524ce032002e7652dec0484bb011",
-    "build": 1020
+    "modified": "2026-09-17T16:46:22.282Z",
+    "hash": "9ff9b6f49cf7c3c896cf7da5d547fa0688f2ba642bcf9f9a29067f7fdc48d6bc",
+    "build": 1024
   },
   {
     "name": "Get DNA",
@@ -72,11 +72,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "23.6.0",
+    "version": "23.6.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-16T22:23:44.148Z",
-    "hash": "5b74be56e061666a0aac45ac96b55b2012b576f4a14a200b8c557cf29d81b67a",
-    "build": 978
+    "modified": "2026-09-17T16:46:22.283Z",
+    "hash": "ac7dab6b78db86062bc9cadec504f01e9fad8d5076948159ecf6ab171ca49c9a",
+    "build": 980
   },
   {
     "name": "GSEA Web",

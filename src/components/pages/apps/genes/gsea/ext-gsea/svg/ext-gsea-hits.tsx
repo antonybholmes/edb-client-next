@@ -156,17 +156,28 @@ export function ExtGseaHitsSvg({
               let pc = 0
 
               if (settings.genes.color.mode === 'score') {
-                pc = (1 - Math.abs(hit.score) / maxScore) * 0.5
+                pc =
+                  gsMode === 'gs1'
+                    ? (1 - Math.abs(hit.score) / maxScore) * 0.5
+                    : (Math.abs(hit.score) / maxScore) * 0.5 + 0.5
               } else {
-                pc = (hit.rank / maxRank) * 0.5
+                pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
               }
 
-              pc =
-                (1 - settings.genes.color.gradient.weight) *
-                  (gsMode === 'gs1' ? 0 : 1) +
-                settings.genes.color.gradient.weight * pc
+              if (gsMode === 'gs1') {
+                pc *= settings.genes.color.gradient.weight
+              } else {
+                pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+              }
 
-              const color = cmap.getHexColor(pc + (gsMode === 'gs1' ? 0 : 0.5))
+              //pc += gsMode === 'gs1' ? 0 : 0.5
+
+              // pc =
+              //   (1 - settings.genes.color.gradient.weight) *
+              //     (gsMode === 'gs1' ? 0 : 1) +
+              //   settings.genes.color.gradient.weight * pc
+
+              const color = cmap.getHexColor(pc)
 
               return (
                 <SvgLine

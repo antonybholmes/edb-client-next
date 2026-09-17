@@ -14,6 +14,7 @@ import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { EsCurveSvg, EsLeadingEdgeSvg } from '../../gsea-plot/svg/es-svg'
 import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
+import { useExtGseaSettings } from '../ext-gsea-settings'
 
 export function ExtGseaEsCurveSvg({
   result,
@@ -101,6 +102,8 @@ export function ExtGseaEsCurveSvg({
 
 export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
   const { displayProps } = useExtGseaContext()
+  const { settings } = useExtGseaSettings()
+  const { settings: gseaSettings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
@@ -161,7 +164,9 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       >
         <SvgG>
           <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
-            {gs1.name}
+            {gseaSettings.phenotypes.mode === 'normal'
+              ? settings.phenotypes.p1.name
+              : settings.phenotypes.p2.name}
           </SvgText>
         </SvgG>
 
@@ -176,7 +181,9 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
             font={displayProps.axes.x.font}
             textAnchor="end"
           >
-            {gs2.name}
+            {gseaSettings.phenotypes.mode === 'normal'
+              ? settings.phenotypes.p2.name
+              : settings.phenotypes.p1.name}
           </SvgText>
         </SvgG>
       </SvgG>
