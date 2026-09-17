@@ -62,8 +62,6 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         reverse: settings.phenotypes.mode !== 'normal',
       })
 
-      console.log('hits', hits, settings.phenotypes.mode)
-
       let ylim: ILim = [
         Math.min(...hits.map((e) => e.esScore)),
         Math.max(...hits.map((e) => e.esScore)),

@@ -77,13 +77,13 @@ export function HomeToolbar() {
         <ToolbarRow title="Width">
           <NumericalInput
             h="md"
-            value={settings.axes.x.length}
+            value={gseaSettings.axes.x.length}
             placeholder="Width"
             limit={[1, 1000]}
             dp={0}
             onNumChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
+              updateGseaSettings(
+                produce(gseaSettings, (draft) => {
                   draft.axes.x.length = v
                 })
               )
@@ -93,13 +93,13 @@ export function HomeToolbar() {
         <ToolbarRow title="ES Height">
           <NumericalInput
             h="md"
-            value={settings.es.axes.y.length}
+            value={gseaSettings.es.axes.y.length}
             placeholder="Height"
             limit={[1, 1000]}
             dp={0}
             onNumChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
+              updateGseaSettings(
+                produce(gseaSettings, (draft) => {
                   draft.es.axes.y.length = v
                 })
               )

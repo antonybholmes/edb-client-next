@@ -4,6 +4,7 @@
 
 ### Changed
 
+- ExtGSEA uses more gsea props for consistency. Sliders have manual input.
 - New message system for showing when something is running.
 - ExtGSEA modified to use weights for genes that do not affect inGeneset so misses are correctly calculated.
 - Support for upper triangular display of heatmaps when square.

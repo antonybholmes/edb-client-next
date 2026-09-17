@@ -1,11 +1,10 @@
 import { useMemo, type ReactNode } from 'react'
 
 import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea'
-import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { type IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
@@ -18,12 +17,10 @@ import { useExtGseaSettings } from '../ext-gsea-settings'
 
 export function ExtGseaEsCurveSvg({
   result,
-  gs,
   gsea,
   gsMode,
 }: {
   result: IExtGseaPlotResult
-  gs: IGeneSet
   gsea: IGseaResult
   gsMode: 'gs1' | 'gs2'
 }) {
@@ -119,11 +116,13 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
   const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = result
 
-  const yaf = axisDomainToRangeFunc(yaxEs)
-
   if (!gsea1 || !gsea2) {
     return null
   }
+  const yaf = axisDomainToRangeFunc(yaxEs)
+
+  const ylen = axisLength(yaxEs)
+  const xlen = axisLength(xax)
 
   return (
     <SvgG
@@ -132,9 +131,9 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         y: 0,
       }}
     >
-      <ExtGseaEsCurveSvg result={result} gs={gs1} gsea={gsea1} gsMode="gs1" />
+      <ExtGseaEsCurveSvg result={result} gsea={gsea1} gsMode="gs1" />
 
-      <ExtGseaEsCurveSvg result={result} gs={gs2} gsea={gsea2} gsMode="gs2" />
+      <ExtGseaEsCurveSvg result={result} gsea={gsea2} gsMode="gs2" />
 
       <AxisLeftSvg ax={yaxEs} />
       <SvgG
@@ -146,11 +145,11 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         <AxisBottomSvg ax={xax} showTicks={displayProps.es.axes.x.showTicks} />
         <SvgG
           pos={{
-            x: displayProps.axes.x.length + displayProps.plot!.gap.x / 2,
+            x: gseaSettings.axes.x.length + displayProps.plot!.gap.x / 2,
             y: 0,
           }}
         >
-          <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+          <SvgText fill={COLOR_BLACK} font={xax.ticks.major.style.labels}>
             {scores.length.toLocaleString()}
           </SvgText>
         </SvgG>
@@ -159,11 +158,11 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       <SvgG
         pos={{
           x: 0,
-          y: displayProps.es.axes.y.length + displayProps.plot!.gap.y / 2,
+          y: ylen + displayProps.plot!.gap.y / 2,
         }}
       >
         <SvgG>
-          <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+          <SvgText fill={COLOR_BLACK} font={xax.ticks.major.style.labels}>
             {gseaSettings.phenotypes.mode === 'normal'
               ? settings.phenotypes.p1.name
               : settings.phenotypes.p2.name}
@@ -172,13 +171,13 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
 
         <SvgG
           pos={{
-            x: displayProps.axes.x.length,
+            x: xlen,
             y: 0,
           }}
         >
           <SvgText
             fill={COLOR_BLACK}
-            font={displayProps.axes.x.font}
+            font={xax.ticks.major.style.labels}
             textAnchor="end"
           >
             {gseaSettings.phenotypes.mode === 'normal'
@@ -192,11 +191,11 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         <SvgG
           id="stats"
           pos={{
-            x: displayProps.axes.x.length,
+            x: xlen,
             y: 0,
           }}
         >
-          <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+          <SvgText fill={COLOR_BLACK} font={xax.ticks.major.style.labels}>
             NES: {extGsea.nes.toFixed(2)}
           </SvgText>
 
@@ -206,7 +205,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
               y: 20,
             }}
           >
-            <SvgText fill={COLOR_BLACK} font={displayProps.axes.x.font}>
+            <SvgText fill={COLOR_BLACK} font={xax.ticks.major.style.labels}>
               P-value: {extGsea.pvalue.toFixed(3)}
             </SvgText>
           </SvgG>

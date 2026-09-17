@@ -170,17 +170,19 @@ export function ExtGseaProvider({
         id: 'x',
         title: 'Genes',
         domain: [0, xmax],
-        length: displayProps.axes.x.length,
+        length: settings.axes.x.length,
         style: { title: { show: false } },
         tickParams: { which: 'both', show: false },
       })
+
+      console.log('y', settings.es.axes.y.length)
 
       const yaxEs = createAxis({
         id: 'y',
         title: 'ES',
         direction: 'y',
         domain: [-ymax, ymax],
-        length: displayProps.es.axes.y.length,
+        length: settings.es.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })
 
@@ -191,7 +193,7 @@ export function ExtGseaProvider({
         direction: 'y',
         title: 'SNR',
         autoDomain: [-yMax, yMax],
-        length: displayProps.ranking.axes.y.length,
+        length: settings.ranking.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })
 
@@ -222,7 +224,7 @@ export function ExtGseaProvider({
         },
       ])
     }
-  }, [plot])
+  }, [plot, settings])
 
   return (
     <ExtGseaContext.Provider

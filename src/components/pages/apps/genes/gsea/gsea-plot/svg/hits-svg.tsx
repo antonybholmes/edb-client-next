@@ -181,17 +181,31 @@ export function GenesSvg({
         const isLeft = hit.rank <= crossing.index
 
         if (settings.genes.color.mode === 'score') {
-          pc = (1 - hit.score / maxAbsScore) * 0.5
-        } else {
           pc = isLeft
-            ? 0.5 * (hit.rank / crossing.index)
-            : 0.5 +
-              0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+            ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+            : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
+        } else {
+          pc = (hit.rank / maxRank) * 0.5 + (isLeft ? 0 : 0.5)
         }
 
-        pc =
-          (1 - settings.genes.color.gradient.weight) * (isLeft ? 0 : 1) +
-          settings.genes.color.gradient.weight * pc
+        if (isLeft) {
+          pc *= settings.genes.color.gradient.weight
+        } else {
+          pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+        }
+
+        // if (settings.genes.color.mode === 'score') {
+        //   pc = (1 - hit.score / maxAbsScore) * 0.5
+        // } else {
+        //   pc = isLeft
+        //     ? 0.5 * (hit.rank / crossing.index)
+        //     : 0.5 +
+        //       0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+        // }
+
+        // pc =
+        //   (1 - settings.genes.color.gradient.weight) * (isLeft ? 0 : 1) +
+        //   settings.genes.color.gradient.weight * pc
 
         const color = settings.genes.color.on
           ? cmap.getHexColor(pc)

@@ -1,6 +1,6 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 
-import { useNumDebounce } from '@/hooks/debounce'
+import { useDebounceCallback, useNumDebounce } from '@/hooks/debounce'
 import { IClassProps } from '@/interfaces/class-props'
 import { cn } from '@/lib/shadcn-utils'
 import { formatNumber } from '@/lib/text/text'
@@ -11,7 +11,18 @@ import {
   useState,
   type ComponentProps,
 } from 'react'
+import { Input } from './input'
 import { Slider } from './slider'
+
+type INumParser = (v: string) => number
+
+function parseNumber(v: string): number {
+  v = v.trim().replaceAll(',', '')
+
+  const num = parseFloat(v)
+
+  return num
+}
 
 export function Num({
   v,
@@ -27,9 +38,12 @@ export function Num({
 
 export function NumSlider({
   value,
+  min,
+  max,
   dp = 0,
   labelCls,
   delayMs = 300,
+  parser = parseNumber,
   onNumChange,
   onNumChanged,
   format,
@@ -37,6 +51,7 @@ export function NumSlider({
 }: ComponentProps<typeof Slider> & {
   labelCls?: string
   dp?: number
+  parser?: INumParser
   format?: (v: number) => string
 }) {
   const [_v, setV] = useState<number>(
@@ -65,6 +80,13 @@ export function NumSlider({
     onNumChange?.(v)
   }
 
+  const { debounced: debouncedValueChange } = useDebounceCallback(
+    (value: number) => {
+      _onValueChange(value)
+    },
+    { delayMs: 500 }
+  )
+
   const f = useCallback(format ?? ((v: number) => formatNumber(v, { dp })), [
     format,
     formatNumber,
@@ -72,9 +94,28 @@ export function NumSlider({
   ])
 
   return (
-    <VCenterRow className="gap-x-1">
-      <Num v={_v} className={labelCls} format={f} />
-      <Slider value={_v} onValueChange={_onValueChange} {...props} />
+    <VCenterRow>
+      <Input
+        value={f(_v)}
+        onTextChange={(t) => {
+          const v = parser(t)
+
+          if (!isNaN(v)) {
+            debouncedValueChange(v)
+          }
+        }}
+        inputCls={cn('text-right', labelCls)}
+        w="xs"
+        h="sm"
+        variant="flat"
+      />
+      <Slider
+        value={_v}
+        onValueChange={_onValueChange}
+        min={min}
+        max={max}
+        {...props}
+      />
     </VCenterRow>
   )
 }

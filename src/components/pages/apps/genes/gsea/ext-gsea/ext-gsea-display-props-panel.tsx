@@ -23,6 +23,7 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
@@ -89,14 +90,14 @@ export function ExtGseaDisplayPropsPanel() {
             <PropRow title="Width">
               <NumericalInput
                 id="width"
-                value={displayOptions.axes.x.length}
+                value={settings.axes.x.length}
                 limit={[1, 1000]}
                 placeholder="Width..."
                 w="xxs"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.x.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.length = v
                     })
                   )
                 }}
@@ -169,22 +170,41 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="enrichment">
           <AccordionTrigger>Enrichment</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Height">
+            {/* <PropRow title="Height">
               <NumericalInput
                 id="height"
-                value={displayOptions.es.axes.y.length}
+                value={settings.es.axes.y.length}
                 limit={[1, 1000]}
                 placeholder="Height..."
                 w="xxs"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.es.axes.y.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.axes.y.length = v
+                    })
+                  )
+                }}
+              />
+            </PropRow> */}
+            <PropRow
+              title="Height"
+              htmlTooltip="Higher values give smoother enrichment curves"
+            >
+              <NumSlider
+                min={1}
+                max={500}
+                step={1}
+                value={settings.es.axes.y.length}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.axes.y.length = v
                     })
                   )
                 }}
               />
             </PropRow>
+
             {/* <PropRow
               title="Step"
               htmlTooltip="Higher values give smoother enrichment curves"
@@ -217,190 +237,6 @@ export function ExtGseaDisplayPropsPanel() {
                 }}
               />
             </PropRow>
-
-            {/* <PropRow title="Curves">
-              <OutlineButton
-                colors={[
-                  {
-                    color: displayOptions.es.gs1.curve.value,
-                    opacity: displayOptions.es.gs1.curve.opacity,
-                    show: displayOptions.es.gs1.curve.show,
-                    onColorChange: ({
-                      color,
-                      opacity,
-                      width,
-                      dasharray,
-                      show,
-                    }) => {
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.es.gs1.curve.show =
-                            show ?? draft.props.es.gs1.curve.show
-
-                          draft.props.es.gs1.curve.value = color
-                          draft.props.es.gs1.curve.opacity = opacity ?? 1
-                          draft.props.es.gs1.curve.width =
-                            width ?? draft.props.es.gs1.curve.width
-                          //draft.props.es.gs1.line.dasharray =
-                          //  dasharray ?? draft.props.es.gs1.line.dasharray
-                        })
-                      )
-                    },
-                  },
-                ]}
-                title="Enrichment Curve 1"
-              />
-
-              <OutlineButton
-                colors={[
-                  {
-                    color: displayOptions.es.gs2.curve.value,
-                    opacity: displayOptions.es.gs2.curve.opacity,
-                    show: displayOptions.es.gs2.curve.show,
-                    onColorChange: ({
-                      color,
-                      opacity,
-                      width,
-                      dasharray,
-                      show,
-                    }) => {
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.es.gs2.curve.show =
-                            show ?? draft.props.es.gs2.curve.show
-
-                          draft.props.es.gs2.curve.value = color
-                          draft.props.es.gs2.curve.opacity = opacity ?? 1
-                          draft.props.es.gs2.curve.width =
-                            width ?? draft.props.es.gs2.curve.width
-                          //draft.props.es.gs2.line.dasharray =
-                          //  dasharray ?? draft.props.es.gs2.line.dasharray
-                        })
-                      )
-                    },
-                  },
-                ]}
-                title="Enrichment Curve 2"
-              />
-            </PropRow> */}
-
-            {/* <SwitchPropRow
-              title="Line"
-              checked={displayOptions.es.gs1.line.show}
-              onCheckedChange={(state) =>
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.es.gs1.line.show = state
-                    draft.props.es.gs2.line.show = state
-                  })
-                )
-              }
-            >
-              <NumericalInput
-                id="line1-stroke-width"
-                title="Stroke width"
-                value={displayOptions.es.gs1.line.width}
-                disabled={!displayOptions.es.gs1.line.show}
-                placeholder="Stroke..."
-                className="w-16 rounded-theme"
-                onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.es.gs1.line.width = v
-                      draft.props.es.gs2.line.width = v
-                    })
-                  )
-                }}
-              />
-            </SwitchPropRow> */}
-
-            {/* <PropRow title="Leading Edges">
-              <FillButton
-                colors={[
-                  {
-                    color: displayOptions.es.gs1.leadingEdge.value,
-                    opacity: displayOptions.es.gs1.leadingEdge.opacity,
-                    show: displayOptions.es.gs1.leadingEdge.show,
-                    onColorChange: ({
-                      color,
-                      opacity,
-
-                      show,
-                    }) => {
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.es.gs1.leadingEdge.show =
-                            show ?? draft.props.es.gs1.curve.show
-
-                          draft.props.es.gs1.leadingEdge.value = color
-                          draft.props.es.gs1.leadingEdge.opacity = opacity ?? 1
-                        })
-                      )
-                    },
-                  },
-                ]}
-                title="Leading Edge 1"
-              />
-              <FillButton
-                colors={[
-                  {
-                    color: displayOptions.es.gs2.leadingEdge.value,
-                    opacity: displayOptions.es.gs2.leadingEdge.opacity,
-                    show: displayOptions.es.gs2.leadingEdge.show,
-                    onColorChange: ({
-                      color,
-                      opacity,
-
-                      show,
-                    }) => {
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.es.gs2.leadingEdge.show =
-                            show ?? draft.props.es.gs2.leadingEdge.show
-
-                          draft.props.es.gs2.leadingEdge.value = color
-                          draft.props.es.gs2.leadingEdge.opacity = opacity ?? 1
-                        })
-                      )
-                    },
-                  },
-                ]}
-                title="Leading Edge 2"
-              />
-            </PropRow> */}
-
-            {/* <CheckPropRow
-              title="Leading edge"
-              checked={displayOptions.es.gs1.leadingEdge.show}
-              onCheckedChange={(v) =>
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.es.gs1.leadingEdge.show = v
-                    draft.props.es.gs2.leadingEdge.show = v
-                  })
-                )
-              }
-            >
-              <NumericalInput
-                id="line1-leading-opacity"
-                title="Opacity"
-                disabled={!displayOptions.es.gs1.leadingEdge.show}
-                value={displayOptions.es.gs1.leadingEdge.opacity}
-                dp={1}
-                step={0.1}
-                limit={[0, 1]}
-                placeholder="Opacity..."
-                className="w-16 rounded-theme"
-                onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.es.gs1.leadingEdge.opacity = v
-                      draft.props.es.gs2.leadingEdge.opacity = v
-                    })
-                  )
-                }}
-              />
-            </CheckPropRow> */}
 
             <CheckPropRow
               title="Stats"
@@ -547,6 +383,23 @@ export function ExtGseaDisplayPropsPanel() {
             Ranked Genes
           </AccordionTrigger>
           <AccordionContent>
+            <PropRow title="Height">
+              <NumericalInput
+                id="height"
+                value={settings.ranking.axes.y.length}
+                limit={[1, 1000]}
+                placeholder="Height..."
+                w="xxs"
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.ranking.axes.y.length = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
             <PropRow title="Color" className="ml-2">
               <StrokeButton
                 colors={[
@@ -615,20 +468,6 @@ export function ExtGseaDisplayPropsPanel() {
                 }}
               /> */}
             </PropRow>
-
-            {/* <CheckPropRow
-              className="ml-2"
-              title="Zero crossing"
-              checked={displayOptions.ranking.zeroCross.show}
-              disabled={!displayOptions.ranking.show}
-              onCheckedChange={(v) =>
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.ranking.zeroCross.show = v
-                  })
-                )
-              }
-            /> */}
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

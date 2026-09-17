@@ -6,7 +6,7 @@ import { IPos } from '@/interfaces/pos'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { useGseaSettings } from '../gsea-settings-store'
@@ -36,6 +36,8 @@ export function RankingSvg({
   const yaf = axisDomainToRangeFunc(yax)
 
   const y0 = yaf(0)
+
+  const ylen = axisLength(yax)
 
   const points = es.map((e) => ({
     x: xaf(e.rank),

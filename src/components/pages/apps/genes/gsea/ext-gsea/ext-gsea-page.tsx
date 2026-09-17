@@ -303,7 +303,7 @@ export function ExtGseaPage() {
                   <Input
                     placeholder="Phenotype 2..."
                     value={settings.phenotypes.p2.name}
-                    onTextChanged={(v) =>
+                    onTextChange={(v) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.phenotypes.p2.name = v

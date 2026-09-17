@@ -4,7 +4,6 @@ import {
   DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN_MEDIUM,
   DEFAULT_STROKE_PROPS,
-  DEFAULT_TEXT_PROPS,
   type IPaintProps,
   type IStrokeProps,
   type ITextProps,
@@ -17,18 +16,18 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v24`
 
 export interface IExtGseaSettings {
-  axes: {
-    x: {
-      length: number
-      font: ITextProps
+  // axes: {
+  //   x: {
+  //     length: number
+  //     font: ITextProps
 
-      labels: {
-        rotate: boolean
-        truncate: number
-        font: ITextProps
-      }
-    }
-  }
+  //     labels: {
+  //       rotate: boolean
+  //       truncate: number
+  //       font: ITextProps
+  //     }
+  //   }
+  // }
   phenotypes: {
     p1: {
       name: string
@@ -53,7 +52,7 @@ export interface IExtGseaSettings {
       }
       y: {
         title: string
-        length: number
+        //length: number
       }
     }
     stats: {
@@ -119,17 +118,17 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       y: 20,
     },
   },
-  axes: {
-    x: {
-      font: { ...DEFAULT_TEXT_PROPS },
-      labels: {
-        rotate: false,
-        truncate: -2,
-        font: { ...DEFAULT_BOLD_TEXT_PROPS },
-      },
-      length: 220,
-    },
-  },
+  // axes: {
+  //   x: {
+  //     font: { ...DEFAULT_TEXT_PROPS },
+  //     labels: {
+  //       rotate: false,
+  //       truncate: -2,
+  //       font: { ...DEFAULT_BOLD_TEXT_PROPS },
+  //     },
+  //     length: 220,
+  //   },
+  // },
   phenotypes: {
     p1: {
       name: '',
@@ -142,7 +141,7 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
     useGeneScoreForES: true,
     axes: {
       y: {
-        length: 150,
+        //length: 150,
         title: 'ES',
       },
       x: {
