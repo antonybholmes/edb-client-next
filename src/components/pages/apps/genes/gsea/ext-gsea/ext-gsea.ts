@@ -78,7 +78,7 @@ export function sortGseaResult(
 
   return {
     ...result,
-    esScore: -result.esScore,
+    esScore: reverse ? -result.esScore : result.esScore,
     es: sortRankedGenes(result.es, maxRank, { reverse }),
     esHits: sortRankedGenes(result.esHits, maxRank, { reverse }),
     leadingEdge: sortRankedGenes(result.leadingEdge, maxRank, { reverse }),

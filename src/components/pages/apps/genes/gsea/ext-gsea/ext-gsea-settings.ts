@@ -14,7 +14,7 @@ import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v22`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v24`
 
 export interface IExtGseaSettings {
   axes: {
@@ -27,6 +27,14 @@ export interface IExtGseaSettings {
         truncate: number
         font: ITextProps
       }
+    }
+  }
+  phenotypes: {
+    p1: {
+      name: string
+    }
+    p2: {
+      name: string
     }
   }
   es: {
@@ -89,9 +97,9 @@ export interface IExtGseaSettings {
     fill: IPaintProps
   }
 
-  viper: {
-    reverse: boolean
-  }
+  // viper: {
+  //   reverse: boolean
+  // }
 }
 
 export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
@@ -120,6 +128,14 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
         font: { ...DEFAULT_BOLD_TEXT_PROPS },
       },
       length: 220,
+    },
+  },
+  phenotypes: {
+    p1: {
+      name: '',
+    },
+    p2: {
+      name: '',
     },
   },
   es: {
@@ -174,9 +190,9 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
     },
     zeroCross: { ...DEFAULT_DASH_PROPS },
   },
-  viper: {
-    reverse: true,
-  },
+  // viper: {
+  //   reverse: true,
+  // },
 }
 
 export interface IExtGseaSettingsStore extends IExtGseaSettings {

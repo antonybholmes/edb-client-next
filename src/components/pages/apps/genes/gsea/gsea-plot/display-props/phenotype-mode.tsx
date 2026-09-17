@@ -14,14 +14,14 @@ export function PhenotypeModeList({
     <SelectList
       items={[
         { label: 'Normal', value: 'normal' },
-        { label: 'Reversed', value: 'reversed' },
+        //{ label: 'Reversed', value: 'reversed' },
         { label: 'Inverted', value: 'inverted' },
       ]}
       value={settings.phenotypes.mode}
       onValueChange={(value) => {
         updateSettings(
           produce(settings, (draft) => {
-            draft.phenotypes.mode = value as 'normal' | 'reversed' | 'inverted'
+            draft.phenotypes.mode = value as 'normal' | 'inverted'
           })
         )
       }}
@@ -31,7 +31,7 @@ export function PhenotypeModeList({
       {...props}
     >
       <SelectItem value="normal">Normal</SelectItem>
-      <SelectItem value="reversed">Reversed</SelectItem>
+      {/* <SelectItem value="reversed">Reversed</SelectItem> */}
       <SelectItem value="inverted">Inverted</SelectItem>
     </SelectList>
   )

@@ -66,11 +66,15 @@ import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
 
 import { OpenIcon } from '@/components/icons/open-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
+import { CenterRow } from '@/components/layout/center-row'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
+import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
+import { produce } from 'immer'
 import { useOpenFiles } from '../../../matcalc/hooks/open'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import {
@@ -78,6 +82,7 @@ import {
   IExtGseaPlot,
   useExtGseaContext,
 } from './ext-gsea-provider'
+import { useExtGseaSettings } from './ext-gsea-settings'
 import { ExtGseaSvg } from './svg/ext-gsea-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { ViperToolbar } from './toolbars/viper-toolbar'
@@ -88,7 +93,7 @@ export function ExtGseaPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { open: openDialog } = useDialogs()
-
+  const { settings, updateSettings } = useExtGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
 
   const { plot } = useExtGseaContext()
@@ -274,9 +279,39 @@ export function ExtGseaPage() {
               id="chart"
               defaultSize="70%"
               minSize="0%"
-              className="flex flex-col text-sm"
+              className="flex flex-col text-sm gap-y-2"
               collapsible={true}
             >
+              <CenterRow className="gap-x-4 text-xs">
+                <VCenterRow className="gap-x-2">
+                  <span>Phenotype 1</span>
+                  <Input
+                    value={settings.phenotypes.p1.name}
+                    onTextChange={(v) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.phenotypes.p1.name = v
+                        })
+                      )
+                    }
+                    w="md"
+                  />
+                </VCenterRow>
+                <VCenterRow className="gap-x-2">
+                  <span>Phenotype 2</span>
+                  <Input
+                    value={settings.phenotypes.p2.name}
+                    onTextChange={(v) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.phenotypes.p2.name = v
+                        })
+                      )
+                    }
+                    w="md"
+                  />
+                </VCenterRow>
+              </CenterRow>
               <ExtScrollCard>
                 <RunningIndicator
                   id="ext-gsea"

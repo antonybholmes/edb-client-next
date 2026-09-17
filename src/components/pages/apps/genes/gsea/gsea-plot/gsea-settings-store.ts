@@ -36,7 +36,7 @@ interface IFilters {
 
 export interface IGseaDisplayProps {
   phenotypes: {
-    mode: 'normal' | 'reversed' | 'inverted'
+    mode: 'normal' | 'inverted'
   }
   axes: {
     //show: boolean
