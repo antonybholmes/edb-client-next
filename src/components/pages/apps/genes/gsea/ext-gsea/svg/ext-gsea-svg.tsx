@@ -1,7 +1,7 @@
 import { ReactElement, useMemo } from 'react'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
@@ -12,7 +12,6 @@ import { useZoom } from '@/providers/zoom-provider'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
-import { useExtGseaSettings } from '../ext-gsea-settings'
 import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
 import { ExtGseaGenesSvgPlot } from './ext-gsea-hits'
 import { ExtGseaTitleSvg } from './title-svg'
@@ -25,16 +24,24 @@ function ExtGseaSvgPlot({
   pos: IPos
 }) {
   const { displayProps } = useExtGseaContext()
-  const { settings } = useExtGseaSettings()
-  const { settings: gseaSettings } = useGseaSettings()
 
-  const yOffset = displayProps.es.axes.y.length + 1.5 * displayProps.plot!.gap.y
+  const { settings: gseaSettings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
     groupId: 'es',
     axisId: 'x',
   })
+
+  const { axis: yax } = useAxis({
+    plotId: result.id,
+    groupId: 'es',
+    axisId: 'y',
+  })
+
+  const ylen = axisLength(yax)
+
+  const yOffset = ylen + 1.5 * displayProps.plot!.gap.y
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
@@ -44,7 +51,9 @@ function ExtGseaSvgPlot({
 
   return (
     <>
-      {displayProps.title.show && <ExtGseaTitleSvg name={result.name} />}
+      {displayProps.title.show && (
+        <ExtGseaTitleSvg name={result.name} xax={xax} />
+      )}
 
       <ExtGseaEsSvgPlot result={result} />
 
@@ -68,7 +77,7 @@ function ExtGseaSvgPlot({
           pos={{
             x: 0,
             y:
-              settings.es.axes.y.length +
+              ylen +
               gseaSettings.plot.gap.y +
               (gseaSettings.genes.show
                 ? 2 * (gseaSettings.genes.height + gseaSettings.plot.gap.y)
@@ -89,13 +98,14 @@ function ExtGseaSvgPlot({
 
 export function ExtGseaSvgContent() {
   const { results, displayProps } = useExtGseaContext()
+  const { settings } = useGseaSettings()
   const { zoom } = useZoom()
 
   const innerPlotSize: IDim = useMemo(() => {
     return {
-      w: displayProps.axes.x.length,
+      w: settings.axes.x.length,
       h:
-        displayProps.es.axes.y.length +
+        settings.es.axes.y.length +
         (displayProps.genes.line.show
           ? 2 * (displayProps.plot.gap.y + displayProps.genes.height)
           : 0) +

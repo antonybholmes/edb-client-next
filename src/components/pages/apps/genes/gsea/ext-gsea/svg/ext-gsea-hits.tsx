@@ -34,7 +34,7 @@ export function ExtGseaHitsSvg({
   xax,
   gs,
   esHits,
-  maxScore,
+  maxAbsScore,
   gsMode,
   maxRank,
   pos,
@@ -43,7 +43,7 @@ export function ExtGseaHitsSvg({
   gs: IGeneSet
   esHits: IRankedGene[]
   //scores: IRankedGene[]
-  maxScore: number
+  maxAbsScore: number
   maxRank: number
   gsMode: 'gs1' | 'gs2'
   pos: IPos
@@ -158,8 +158,8 @@ export function ExtGseaHitsSvg({
               if (settings.genes.color.mode === 'score') {
                 pc =
                   gsMode === 'gs1'
-                    ? (1 - Math.abs(hit.score) / maxScore) * 0.5
-                    : (Math.abs(hit.score) / maxScore) * 0.5 + 0.5
+                    ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+                    : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
               } else {
                 pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
               }
@@ -235,7 +235,7 @@ export function ExtGseaHitsSvg({
     gsea,
     xax,
     points,
-    maxScore,
+    maxAbsScore,
     displayProps,
     pos,
     onMouseMove,
@@ -309,7 +309,7 @@ export function ExtGseaGenesSvgPlot({
       // score is always 1 so no effect, for viper
       // we can scale by strength of interaction with
       // target
-      let maxScore = max([
+      let maxAbsScore = max([
         ...scores1.map((g) => g.score),
         ...scores2.map((g) => g.score),
       ])
@@ -323,7 +323,7 @@ export function ExtGseaGenesSvgPlot({
             gs={gs1}
             esHits={esHits1}
             //scores={scores1}
-            maxScore={maxScore}
+            maxAbsScore={maxAbsScore}
             maxRank={maxRank}
             gsMode="gs1"
             pos={pos}
@@ -340,7 +340,7 @@ export function ExtGseaGenesSvgPlot({
               gs={gs2}
               esHits={esHits2}
               //scores={scores2}
-              maxScore={maxScore}
+              maxAbsScore={maxAbsScore}
               maxRank={maxRank}
               gsMode="gs2"
               pos={{

@@ -2964,6 +2964,10 @@
         {
           "msg": "New message system for showing when something is running",
           "date": "2026-09-16T22:23:45.225Z"
+        },
+        {
+          "msg": "ExtGSEA uses more gsea props for consistency. Sliders have manual input",
+          "date": "2026-09-17T22:00:59.546Z"
         }
       ]
     },

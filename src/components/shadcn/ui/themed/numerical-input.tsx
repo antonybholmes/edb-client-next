@@ -4,7 +4,7 @@ import { useDebounce } from '@/hooks/debounce'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { clamp } from '@/lib/math/clamp'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Input, type IInputProps } from './v2/input'
 
 const BUTTON_CLS = `w-4 flex h-3 min-h-0 overflow-hidden shrink-0 flex-row justify-center items-center
@@ -31,7 +31,7 @@ export interface INumericalInputProps extends Omit<IInputProps, 'value'> {
    */
   onNumChange?: (v: number) => void
   onNumChanged?: (v: number) => void
-
+  suffix?: string
   delay?: number
 }
 
@@ -51,6 +51,7 @@ export function NumericalInput({
   w = 'xxs',
   variant = 'default',
   delay = UPDATE_INTERVAL_MS,
+  suffix = '',
   className = '',
   title,
   ...props
@@ -66,7 +67,7 @@ export function NumericalInput({
 
   const [textValue, setTextValue] = useState<string>('')
 
-  //const [numValue, setNumValue] = useState<number>(value)
+  const suffixRegex = useMemo(() => new RegExp(`${suffix}$`), [suffix])
 
   // debounce the text value, so we don't call onNumChange too frequently as user types
   const debouncedTextValue = useDebounce(textValue, {
@@ -92,7 +93,7 @@ export function NumericalInput({
       formattedValue = formattedValue.replace(REMOVE_TRAILING_ZEROS_REGEX, '')
     }
 
-    setTextValue(formattedValue)
+    setTextValue(formattedValue + suffix)
   }
 
   // const debouncedNumValue = useDebounce(numValue, {
@@ -128,6 +129,10 @@ export function NumericalInput({
   function _onChange(text: string, triggerChanged: boolean = false) {
     // remove commas for thousands separators, since they interfere with parsing
     let v = Number(text.replaceAll(',', ''))
+
+    if (suffix) {
+      text = text.replace(suffixRegex, '')
+    }
 
     if (Number.isNaN(v)) {
       return

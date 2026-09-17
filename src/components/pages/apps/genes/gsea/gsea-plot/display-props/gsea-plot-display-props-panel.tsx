@@ -19,10 +19,10 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { useGseaSettings } from '../gsea-settings-store'
 import APP_INFO from '../manifest.json'
 import { GeneProps } from './gene-props'
-import { PhenotypeModeList } from './phenotype-mode'
 
 export function GseaPlotDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
@@ -67,10 +67,6 @@ export function GseaPlotDisplayPropsPanel() {
           <AccordionContent>
             <PropRow title="Margins">
               <MarginPopover />
-            </PropRow>
-
-            <PropRow title="Phenotype Mode">
-              <PhenotypeModeList />
             </PropRow>
           </AccordionContent>
         </AccordionItem>
@@ -123,25 +119,6 @@ export function GseaPlotDisplayPropsPanel() {
                 ]}
                 title="Line Outline"
               />
-
-              {/* <ColorPickerButton
-                colors={[
-                  {
-                    color: settings.es.line.value,
-                    opacity: settings.es.line.opacity,
-                    onColorChange: ({ color, opacity }) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.es.line.value = color
-                          draft.es.line.opacity = opacity ?? 1
-                        })
-                      )
-                    },
-                  },
-                ]}
-                className={SIMPLE_COLOR_EXT_CLS}
-                title="Line color"
-              /> */}
             </PropRow>
 
             <PropRow title="Leading Edge">
@@ -199,18 +176,6 @@ export function GseaPlotDisplayPropsPanel() {
                 />
               </VCenterRow>
             </PropRow>
-
-            {/* <CheckPropRow
-              title="Color Phenotypes"
-              checked={settings.genes.labels.color.on}
-              onCheckedChange={(state) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.genes.labels.color.on = state
-                  })
-                )
-              }}
-            /> */}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="genes-plot">
@@ -255,6 +220,22 @@ export function GseaPlotDisplayPropsPanel() {
             Ranked Genes
           </AccordionTrigger>
           <AccordionContent>
+            <PropRow title="Height">
+              <NumSlider
+                value={settings.ranking.axes.y.length}
+
+                min={1}
+                max={500}
+                step={1}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.ranking.axes.y.length = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
             <PropRow title="Fill">
               <FillButton
                 colors={[
