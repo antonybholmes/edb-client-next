@@ -79,7 +79,10 @@ export function GenesSvg({
   // we reverse the colormap because in a gsea plot,
   // red/up appears on the left and blue/down appears on the right
 
-  const cmap = getColorMapFromSettings(settings, edbSettings)
+  const cmap = useMemo(
+    () => getColorMapFromSettings(settings, edbSettings),
+    [settings, edbSettings]
+  )
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 

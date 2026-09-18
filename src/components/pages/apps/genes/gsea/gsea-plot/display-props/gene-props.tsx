@@ -13,7 +13,7 @@ import { ColorMapMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../gsea-settings-store'
 
 export function GeneProps() {
@@ -177,7 +177,7 @@ export function GeneProps() {
       >
         <ColorMapMenu
           cmap={getColorMap(edbSettings.plots.cmap)}
-          onChange={(cmap, reversed) => {
+          onChange={(cmap) => {
             updateSettings(
               produce(settings, (draft) => {
                 draft.genes.color.gradient.mode = 'cmap'
@@ -185,9 +185,7 @@ export function GeneProps() {
             )
             updateEdbSettings(
               produce(edbSettings, (draft) => {
-                draft.plots.cmap.name = cmap.id as ColorMapName
-                //draft.genes.color.gradient.cmap.opacity = cmap.opacity
-                draft.plots.cmap.reversed = reversed
+                draft.plots.cmap = getCmapFromColorMap(cmap)
               })
             )
           }}

@@ -25,7 +25,7 @@ import { useAxis } from '@/components/plot/axes/axes-store'
 import { CellGaps } from '@/components/plot/heatmap/cell-gaps'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
-import { getColorMapFromICMAP } from '@/lib/color/colormap'
+import { getColorMapFromCmap } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
@@ -296,7 +296,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     //   tickParams: { which: 'minor', show: true },
     // })
 
-    const cmap = getColorMapFromICMAP(displayOptions.cmap)
+    const cmap = getColorMapFromCmap(displayOptions.cmap)
 
     const svg = (
       <>

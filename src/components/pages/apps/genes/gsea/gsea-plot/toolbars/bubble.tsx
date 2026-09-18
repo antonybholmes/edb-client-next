@@ -60,7 +60,6 @@ export function BubbleToolbar() {
         </ToolbarCol>
         <ToolbarCol>
           <ColorMapMenu
-            align="end"
             cmap={getColorMap(settings.scale.cmap)}
             onChange={(cmap) => {
               // store the cmap the user likes

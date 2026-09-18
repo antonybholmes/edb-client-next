@@ -19,7 +19,7 @@ import {
   TopBottomPos,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { ICMAP } from '@/lib/color/colormap'
+import { ICmap } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -165,7 +165,7 @@ export interface IHeatMapSettings {
   }
   padding: number
   //zoom: number
-  cmap: ICMAP
+  cmap: ICmap
   tooltip: {
     show: boolean
   }

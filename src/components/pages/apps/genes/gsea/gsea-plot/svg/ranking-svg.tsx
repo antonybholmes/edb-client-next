@@ -6,7 +6,7 @@ import { IPos } from '@/interfaces/pos'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { useGseaSettings } from '../gsea-settings-store'
@@ -37,8 +37,6 @@ export function RankingSvg({
 
   const y0 = yaf(0)
 
-  const ylen = axisLength(yax)
-
   const points = es.map((e) => ({
     x: xaf(e.rank),
     y: yaf(e.score),
@@ -63,11 +61,11 @@ export function RankingSvg({
         />
       )}
 
-      {settings.ranking.zeroCross.line.show && (
+      {settings.ranking.zeroCross.show && (
         <SvgG pos={{ x: crossing.x, y: 0 }}>
           <SvgLine
             y2={settings.ranking.axes.y.length}
-            s={settings.ranking.zeroCross.line}
+            s={settings.ranking.zeroCross}
           />
           <SvgG
             pos={{

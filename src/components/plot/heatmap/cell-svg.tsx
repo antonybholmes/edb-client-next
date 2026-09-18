@@ -3,7 +3,7 @@ import type { ICell } from '@/interfaces/cell'
 import { IDim } from '@/interfaces/dim'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
-import { getColorMapFromICMAP } from '@/lib/color/colormap'
+import { getColorMapFromCmap } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { cellStr } from '@/lib/dataframe/cell'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
@@ -63,7 +63,7 @@ export function CellsSvg({
 
   const { blockSize } = props
 
-  const cmap = getColorMapFromICMAP(props.cmap)
+  const cmap = getColorMapFromCmap(props.cmap)
 
   const colors = rowLeaves.map((row) => {
     return colLeaves.map((col) => {
@@ -251,7 +251,7 @@ export function DotsSvg({
     )
   }
 
-  const cmap = getColorMapFromICMAP(props.cmap)
+  const cmap = getColorMapFromCmap(props.cmap)
 
   const w = Math.min(blockSize.w, blockSize.h)
 

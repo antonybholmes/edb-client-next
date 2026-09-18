@@ -439,7 +439,6 @@ export function DisplayPropsPanel() {
           <AccordionContent>
             <PropRow title="Colormap">
               <ColorMapMenu
-                align="end"
                 cmap={getColorMap(settings.cmap)} // COLOR_MAPS[settings.cmap]!}
                 onChange={(cmap) => {
                   // store the cmap the user likes

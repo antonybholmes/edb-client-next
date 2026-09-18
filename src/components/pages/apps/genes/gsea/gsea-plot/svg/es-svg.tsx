@@ -40,10 +40,14 @@ export function EsLeadingEdgeSvg({
   const x1 = xax.range[1]
   const y0 = yaf(0)
 
-  let leadingPoints = leadingEdge.map((e) => ({
-    x: xaf(e.rank),
-    y: yaf(e.esScore),
-  }))
+  let leadingPoints = useMemo(
+    () =>
+      leadingEdge.map((e) => ({
+        x: xaf(e.rank),
+        y: yaf(e.esScore),
+      })),
+    [leadingEdge]
+  )
 
   const { value: maxEsScore } = argmax(
     leadingEdge.map((e) => e.esScore),

@@ -262,8 +262,8 @@ export function GseaPlotDisplayPropsPanel() {
               <StrokeButton
                 colors={[
                   {
-                    color: settings.ranking.zeroCross.line.value,
-                    opacity: settings.ranking.zeroCross.line.opacity,
+                    color: settings.ranking.zeroCross.value,
+                    opacity: settings.ranking.zeroCross.opacity,
                     onColorChange: ({
                       color,
                       opacity,
@@ -273,15 +273,15 @@ export function GseaPlotDisplayPropsPanel() {
                     }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.ranking.zeroCross.line.show =
-                            show ?? draft.ranking.zeroCross.line.show
+                          draft.ranking.zeroCross.show =
+                            show ?? draft.ranking.zeroCross.show
 
-                          draft.ranking.zeroCross.line.value = color
-                          draft.ranking.zeroCross.line.opacity = opacity ?? 1
-                          draft.ranking.zeroCross.line.width =
-                            width ?? draft.ranking.zeroCross.line.width
-                          draft.ranking.zeroCross.line.dasharray =
-                            dasharray ?? draft.ranking.zeroCross.line.dasharray
+                          draft.ranking.zeroCross.value = color
+                          draft.ranking.zeroCross.opacity = opacity ?? 1
+                          draft.ranking.zeroCross.width =
+                            width ?? draft.ranking.zeroCross.width
+                          draft.ranking.zeroCross.dasharray =
+                            dasharray ?? draft.ranking.zeroCross.dasharray
                         })
                       )
                     },

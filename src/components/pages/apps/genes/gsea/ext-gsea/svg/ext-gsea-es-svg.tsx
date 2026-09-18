@@ -40,10 +40,6 @@ export function ExtGseaEsCurveSvg({
     axisId: 'y',
   })
 
-  if (gsea.leadingEdge.length === 0) {
-    return null
-  }
-
   const yaf = axisDomainToRangeFunc(yaxEs)
 
   const { leadingEdge, es, esHits } = gsea
@@ -60,6 +56,10 @@ export function ExtGseaEsCurveSvg({
 
     return les
   }, [leadingEdge, es])
+
+  if (gsea.leadingEdge.length === 0) {
+    return null
+  }
 
   let leadingEdge1Svg: ReactNode | undefined = undefined
 
@@ -98,7 +98,6 @@ export function ExtGseaEsCurveSvg({
 }
 
 export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
-  const { displayProps } = useExtGseaContext()
   const { settings } = useExtGseaSettings()
   const { settings: gseaSettings } = useGseaSettings()
 
@@ -114,7 +113,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     axisId: 'y',
   })
 
-  const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = result
+  const { scores, extGsea, gsea1, gsea2 } = result
 
   if (!gsea1 || !gsea2) {
     return null
@@ -142,10 +141,10 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           y: yaf(0),
         }}
       >
-        <AxisBottomSvg ax={xax} showTicks={displayProps.es.axes.x.showTicks} />
+        <AxisBottomSvg ax={xax} showTicks={gseaSettings.es.axes.x.showTicks} />
         <SvgG
           pos={{
-            x: gseaSettings.axes.x.length + displayProps.plot!.gap.x / 2,
+            x: gseaSettings.axes.x.length + gseaSettings.plot!.gap.x / 2,
             y: 0,
           }}
         >
@@ -158,7 +157,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       <SvgG
         pos={{
           x: 0,
-          y: ylen + displayProps.plot!.gap.y / 2,
+          y: ylen + gseaSettings.plot!.gap.y / 2,
         }}
       >
         <SvgG>
@@ -187,7 +186,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         </SvgG>
       </SvgG>
 
-      {displayProps.es.stats.show && (
+      {settings.es.stats.show && (
         <SvgG
           id="stats"
           pos={{

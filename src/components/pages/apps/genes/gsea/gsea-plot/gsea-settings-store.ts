@@ -3,9 +3,10 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v54`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v56`
 
 import {
+  DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_COLOR_PROPS,
   DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN_SMALL,
@@ -35,6 +36,10 @@ interface IFilters {
 }
 
 export interface IGseaDisplayProps {
+  title: ITextProps & {
+    offset: number
+  }
+
   phenotypes: {
     mode: 'normal' | 'inverted'
   }
@@ -105,7 +110,7 @@ export interface IGseaDisplayProps {
   }
 
   ranking: {
-    zeroCross: { show: boolean; line: IStrokeProps }
+    zeroCross: IStrokeProps
     show: boolean
     axes: {
       y: {
@@ -123,6 +128,10 @@ export interface IGseaDisplayProps {
 }
 
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
+  title: {
+    ...DEFAULT_BOLD_TEXT_PROPS,
+    offset: 10,
+  },
   page: {
     columns: 3,
     //scale: 1,
@@ -215,10 +224,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       },
     },
     fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_GRAY, opacity: 0.3 },
-    zeroCross: {
-      show: true,
-      line: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
-    },
+    zeroCross: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
   },
   genesets: {
     filters: {

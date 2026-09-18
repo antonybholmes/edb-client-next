@@ -47,10 +47,25 @@ import { hexToRgba, rgba2hex, type IRGBA } from './color'
 // }
 
 export class ColorMap {
+  /**
+   * A unique identifier for the colormap.
+   */
+  private _id: string
+
+  /**
+   * The array of RGBA colors that make up the colormap.
+   */
   private _cmap: IRGBA[]
+  /**
+   * The maximum index in the colormap array.
+   */
   private _maxIndex: number
   private _name: string
-  private _id: string
+
+  /**
+   * Indicates whether the colormap has been reversed.
+   */
+  private _isReversed: boolean
 
   constructor(id: string, name: string, cmap: (string | IRGBA)[]) {
     this._id = id
@@ -64,6 +79,7 @@ export class ColorMap {
     })
 
     this._maxIndex = this._cmap.length - 1
+    this._isReversed = false
   }
 
   get id(): string {
@@ -76,6 +92,10 @@ export class ColorMap {
 
   get colors(): number {
     return this._cmap.length
+  }
+
+  get isReversed(): boolean {
+    return this._isReversed
   }
 
   private _interpolateColor(c1: IRGBA, c2: IRGBA, t: number): IRGBA {
@@ -116,7 +136,13 @@ export class ColorMap {
 
   reverse(): ColorMap {
     const reversedColors = [...this._cmap].reverse()
-    return new ColorMap(this._id, this._name + ' (Reversed)', reversedColors)
+    const reversedMap = new ColorMap(
+      this._id,
+      this._name + (!this._isReversed ? ' (Reversed)' : ''),
+      reversedColors
+    )
+    reversedMap._isReversed = !this._isReversed
+    return reversedMap
   }
 
   /**
@@ -723,21 +749,40 @@ export type ColorMapName =
   | 'plasma'
   | 'magma'
 
-export function getColorMap(name: string | ICMAP): ColorMap {
+export function getColorMap(name: string | ICmap): ColorMap {
   if (typeof name === 'string') {
     return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
   } else {
-    return getColorMapFromICMAP(name)
+    return getColorMapFromCmap(name)
   }
 }
 
-export interface ICMAP {
+export interface ICmap {
   name: ColorMapName
-  //opacity: number
   reversed: boolean
 }
 
-export function getColorMapFromICMAP(icmap: ICMAP): ColorMap {
-  const cmap = COLOR_MAPS[icmap.name]!
-  return icmap.reversed ? cmap.reverse() : cmap
+/**
+ * Converts an ICmap object to a ColorMap object.
+ *
+ * @param cmap The ICmap object to convert.
+ * @returns The corresponding ColorMap object.
+ */
+export function getColorMapFromCmap(cmap: ICmap): ColorMap {
+  const colormap = COLOR_MAPS[cmap.name]!
+  return cmap.reversed ? colormap.reverse() : colormap
+}
+
+/**
+ * Converts a ColorMap object to an ICmap object suitable for
+ * serializing into stored settings etc.
+ *
+ * @param colormap The ColorMap object to convert.
+ * @returns The corresponding ICmap object.
+ */
+export function getCmapFromColorMap(colormap: ColorMap): ICmap {
+  return {
+    name: colormap.id as ColorMapName,
+    reversed: colormap.isReversed,
+  }
 }

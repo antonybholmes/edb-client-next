@@ -41,12 +41,12 @@ export function ColorMapMenuIcon({ cmap }: { cmap: ColorMap }) {
 
 export function ColorMapMenuContent({
   cmap,
-  reversed = false,
+
   onChange,
 }: {
   cmap: ColorMap
-  reversed?: boolean
-  onChange?: (cmap: ColorMap, reversed: boolean) => void
+
+  onChange?: (cmap: ColorMap) => void
 }) {
   return (
     <DropdownMenuContent>
@@ -83,7 +83,7 @@ export function ColorMapMenuContent({
                 <DropdownMenuCheckboxItem
                   key={cm.id}
                   onClick={() => {
-                    onChange(cm, reversed)
+                    onChange(cm)
                   }}
                   checked={cm.id === cmap.id}
                 >
@@ -104,9 +104,9 @@ export function ColorMapMenuContent({
       <MenuSeparator />
       <DropdownMenuCheckboxItem
         onClick={() => {
-          onChange(cmap, !reversed)
+          onChange(cmap.reverse())
         }}
-        checked={reversed}
+        checked={cmap.isReversed}
       >
         Reverse
       </DropdownMenuCheckboxItem>
@@ -116,21 +116,18 @@ export function ColorMapMenuContent({
 
 interface IProps {
   cmap: ColorMap
-  align?: 'start' | 'end'
-  reversed?: boolean
-
-  onChange?: (cmap: ColorMap, reversed: boolean) => void
+  onChange?: (cmap: ColorMap) => void
 }
 
 export function ColorMapMenu({
   cmap = BWR_CMAP_V2,
-  reversed = false,
+
   onChange,
 }: IProps) {
   const [open, setOpen] = useState(false)
 
-  function _onChange(cmap: ColorMap, reversed: boolean) {
-    onChange?.(cmap, reversed)
+  function _onChange(cmap: ColorMap) {
+    onChange?.(cmap)
   }
 
   return (
@@ -187,7 +184,7 @@ export function ColorMapMenu({
       />
       <ColorMapMenuContent
         cmap={cmap}
-        reversed={reversed}
+
         onChange={_onChange}
       />
     </DropdownMenu>
@@ -196,15 +193,14 @@ export function ColorMapMenu({
 
 export function ColorMapToolbarMenu({
   cmap = BWR_CMAP_V2,
-  align = 'start',
-  reversed = false,
+
   onChange,
 }: IProps) {
   const [open, setOpen] = useState(false)
 
-  function _onChange(cmap: ColorMap, reversed: boolean) {
+  function _onChange(cmap: ColorMap) {
     //setOpen(false)
-    onChange?.(cmap, reversed)
+    onChange?.(cmap)
   }
 
   return (
@@ -221,7 +217,7 @@ export function ColorMapToolbarMenu({
 
       <ColorMapMenuContent
         cmap={cmap}
-        reversed={reversed}
+
         onChange={_onChange}
       />
     </DropdownMenu>
