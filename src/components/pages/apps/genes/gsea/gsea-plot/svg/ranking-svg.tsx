@@ -9,9 +9,10 @@ import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
+import { memo, useMemo } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'
 
-export function RankingSvg({
+export const RankingSvg = memo(function RankingSvg({
   plotId,
   xaf,
   es,
@@ -33,24 +34,26 @@ export function RankingSvg({
     axisId: 'y',
   })
 
-  const yaf = axisDomainToRangeFunc(yax)
+  const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
   const y0 = yaf(0)
 
-  const points = es.map((e) => ({
-    x: xaf(e.rank),
-    y: yaf(e.score),
-  }))
+  const displayPoints = useMemo(() => {
+    const points = es.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
 
-  // fix starts and end
-  const displayPoints = [
-    { x: xaf(0), y: y0 },
-    ...points,
-    {
-      x: xaf(es.length - 1),
-      y: y0,
-    },
-  ]
+    // fix starts and end
+    return [
+      { x: xaf(0), y: y0 },
+      ...points,
+      {
+        x: xaf(es.length - 1),
+        y: y0,
+      },
+    ]
+  }, [es, xaf, yaf, y0])
 
   return (
     <SvgG pos={pos}>
@@ -85,7 +88,7 @@ export function RankingSvg({
       <AxisLeftSvg ax={yax} />
     </SvgG>
   )
-}
+})
 
 export function crossingIndex(
   scores: IRankedGene[],

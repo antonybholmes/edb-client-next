@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from 'react'
+import { memo, ReactElement, useMemo } from 'react'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
@@ -16,7 +16,7 @@ import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
 import { ExtGseaGenesSvgPlot } from './ext-gsea-hits'
 import { ExtGseaTitleSvg } from './title-svg'
 
-function ExtGseaSvgPlot({
+const ExtGseaSvgPlot = memo(function ExtGseaSvgPlot({
   result,
   pos,
 }: {
@@ -92,7 +92,7 @@ function ExtGseaSvgPlot({
       )}
     </>
   )
-}
+})
 
 export function ExtGseaSvgContent() {
   const { results } = useExtGseaContext()

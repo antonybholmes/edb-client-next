@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
@@ -37,7 +37,7 @@ export function getColorMapFromSettings(
   ])
 }
 
-export function GenesSvg({
+export const GenesSvg = memo(function GenesSvg({
   pathway,
   innerPlotSize,
   scores,
@@ -240,4 +240,4 @@ export function GenesSvg({
       />
     </SvgG>
   )
-}
+})

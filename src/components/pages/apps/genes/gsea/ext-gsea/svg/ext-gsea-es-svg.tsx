@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react'
+import { memo, useMemo, type ReactNode } from 'react'
 
 import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
@@ -15,7 +15,7 @@ import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
-export function ExtGseaEsCurveSvg({
+export const ExtGseaEsCurveSvg = memo(function ExtGseaEsCurveSvg({
   result,
   gsea,
   gsMode,
@@ -40,11 +40,14 @@ export function ExtGseaEsCurveSvg({
     axisId: 'y',
   })
 
-  const yaf = axisDomainToRangeFunc(yaxEs)
+  const yaf = useMemo(() => axisDomainToRangeFunc(yaxEs), [yaxEs])
 
   const { leadingEdge, es, esHits } = gsea
 
-  const cmap = getColorMapFromSettings(settings, edbSettings)
+  const cmap = useMemo(
+    () => getColorMapFromSettings(settings, edbSettings),
+    [settings, edbSettings]
+  )
 
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])
@@ -95,9 +98,13 @@ export function ExtGseaEsCurveSvg({
       {line1Svg && line1Svg}
     </>
   )
-}
+})
 
-export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
+export const ExtGseaEsSvgPlot = memo(function ExtGseaEsSvgPlot({
+  result,
+}: {
+  result: IExtGseaPlotResult
+}) {
   const { settings } = useExtGseaSettings()
   const { settings: gseaSettings } = useGseaSettings()
 
@@ -212,4 +219,4 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       )}
     </SvgG>
   )
-}
+})

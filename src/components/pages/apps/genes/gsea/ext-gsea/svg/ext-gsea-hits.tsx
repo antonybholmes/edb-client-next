@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type ReactNode } from 'react'
+import { memo, useCallback, useMemo, type ReactNode } from 'react'
 
 import {
   axisDomainToRangeFunc,
@@ -28,7 +28,7 @@ import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult } from '../ext-gsea-provider'
 
-export function ExtGseaHitsSvg({
+export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
   xax,
   gs,
   esHits,
@@ -221,9 +221,9 @@ export function ExtGseaHitsSvg({
       </>
     )
   }
-}
+})
 
-export function ExtGseaGenesSvgPlot({
+export const ExtGseaGenesSvgPlot = memo(function ExtGseaGenesSvgPlot({
   result,
   pos,
 }: {
@@ -259,18 +259,18 @@ export function ExtGseaGenesSvgPlot({
     return { gs1, gs2, esHits1, esHits2, scores1, scores2 }
   }, [result])
 
-  if (!gseaSettings.genes.stroke.show) {
-    return null
-  }
-
   // scale colors to score, for generic ext gsea
   // score is always 1 so no effect, for viper
   // we can scale by strength of interaction with
   // target
-  let maxAbsScore = useMemo(
+  const maxAbsScore = useMemo(
     () => max([...scores1.map((g) => g.score), ...scores2.map((g) => g.score)]),
     [scores1, scores2]
   )
+
+  if (!gseaSettings.genes.stroke.show) {
+    return null
+  }
 
   const yOffset = gseaSettings.genes.height + 0.25 * gseaSettings.plot.gap.y
 
@@ -309,4 +309,4 @@ export function ExtGseaGenesSvgPlot({
       </SvgG>
     </>
   )
-}
+})

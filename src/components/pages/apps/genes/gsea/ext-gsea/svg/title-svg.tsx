@@ -1,9 +1,16 @@
 import { axisLength, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
+import { memo } from 'react'
 import { useGseaSettings } from '../../gsea-web/gsea-settings-store'
 
-export function ExtGseaTitleSvg({ name, xax }: { name: string; xax: IAxis }) {
+export const ExtGseaTitleSvg = memo(function ExtGseaTitleSvg({
+  name,
+  xax,
+}: {
+  name: string
+  xax: IAxis
+}) {
   const { settings } = useGseaSettings()
 
   const xlen = axisLength(xax)
@@ -20,4 +27,4 @@ export function ExtGseaTitleSvg({ name, xax }: { name: string; xax: IAxis }) {
       </SvgText>
     </SvgG>
   )
-}
+})
