@@ -166,7 +166,7 @@ const GseaPlot = memo(function GseaPlot({
     )
   }, [settings.ranking.show, plotY, pathway.id, xaf, sortedScores, crossing])
 
-  const titleX = settings.plot.margin.left + settings.axes.x.length / 2
+  const titleX = settings.plot.margin.left + settings.es.axes.x.length / 2
 
   return (
     <>
@@ -210,7 +210,7 @@ function GseaSvgContent() {
   // fresh object literals on every GseaSvgContent render
   const innerPlotSize = useMemo(
     () => ({
-      w: settings.axes.x.length,
+      w: settings.es.axes.x.length,
       h:
         settings.es.axes.y.length +
         (settings.genes.show
@@ -221,7 +221,7 @@ function GseaSvgContent() {
           : 0),
     }),
     [
-      settings.axes.x.length,
+      settings.es.axes.x.length,
       settings.es.axes.y.length,
       settings.genes.show,
       settings.genes.height,

@@ -6,7 +6,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_WHITE } from '@/lib/color/color'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { range } from '@/lib/math/range'
-import { ReactElement } from 'react'
+import { memo, ReactElement } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgG } from '../svg-g'
 import { SvgText } from '../svg-text'
@@ -22,7 +22,7 @@ export interface ITreeSvgProps {
   pos?: IPos
 }
 
-export function ColTreeTopSvg({
+export const ColTreeTopSvg = memo(function ColTreeTopSvg({
   df,
   tree,
   width,
@@ -34,8 +34,6 @@ export function ColTreeTopSvg({
   const gElems: ReactElement[] = []
 
   const points = range(4)
-
-  const upperTriangular = props.upperTriangular && df.shape[0] === df.shape[1]
 
   //const coords = upperTriangular ? tree.coords.slice(1) : tree.coords
 
@@ -67,7 +65,7 @@ export function ColTreeTopSvg({
       {gElems}
     </SvgG>
   )
-}
+})
 
 export interface IColLabelsSvgProps {
   leaves: number[]
@@ -77,7 +75,7 @@ export interface IColLabelsSvgProps {
   pos?: IPos
 }
 
-export function ColLabelsSvg({
+export const ColLabelsSvg = memo(function ColLabelsSvg({
   leaves,
   gaps,
   colorMap,
@@ -120,9 +118,9 @@ export function ColLabelsSvg({
   }
 
   return <SvgG pos={pos}>{gElems}</SvgG>
-}
+})
 
-export function ColGroupsSvg({
+export const ColGroupsSvg = memo(function ColGroupsSvg({
   leaves,
   gaps,
   colorMap,
@@ -212,4 +210,4 @@ export function ColGroupsSvg({
   }
 
   return <SvgG pos={pos}>{elems}</SvgG>
-}
+})

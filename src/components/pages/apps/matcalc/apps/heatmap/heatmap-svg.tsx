@@ -72,12 +72,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
   const blockSize = displayOptions.blockSize
 
-  // const scaledBlockSize = {
-  //   w: blockSize.w * displayOptions.zoom,
-  //   h: blockSize.h * displayOptions.zoom,
-  // }
-
-  const legendBlockSize = LEGEND_BLOCK_SIZE.h //Math.min(displayOptions.blockSize.w,displayOptions.blockSize.h)
+  const legendBlockSize = LEGEND_BLOCK_SIZE.h
 
   const dfMain = cf.df
 
@@ -146,27 +141,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
 
     return { top, left, bottom, right }
   }, [displayOptions])
-
-  // function handleVariantEnter(pos: IPos, cell: ICell) {
-  //   //console.log('handleVariantEnter', pos, cell)
-  //   const { screenP } = svgPointToScreen(ref.current, pos)
-
-  //   screenP.x += blockSize.w + 2
-  //   screenP.y += blockSize.h + 2
-
-  //   showTooltip({
-  //     pos: screenP,
-  //     content: (
-  //       <>
-  //         <span className="font-semibold">{`${dfMain.rowName(
-  //           cell.row
-  //         )}, ${dfMain.colName(cell.col)}`}</span>
-  //         <span>{`Row ${cell.row + 1}, col ${cell.col + 1}`}</span>
-  //         <span>{cellStr(dfMain.get(cell.row, cell.col))}</span>
-  //       </>
-  //     ),
-  //   })
-  // }
 
   const xgaps = useMemo(
     () => new CellGaps(displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]),
@@ -278,23 +252,6 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
       displayOptions.legend.show && displayOptions.groups.show
         ? (legendBlockSize + displayOptions.padding) * groups0.length + 10
         : 0
-
-    // const cax = createAxis({
-    //   domain: displayOptions.range,
-    //   length: displayOptions.colorbar.size.w,
-    //   ticks: [
-    //     displayOptions.range[0],
-    //     (displayOptions.range[0] + displayOptions.range[1]) * 0.5,
-    //     displayOptions.range[1],
-    //   ],
-    //   minorTicks: [
-    //     displayOptions.range[0] +
-    //       (displayOptions.range[1] - displayOptions.range[0]) * 0.25,
-    //     displayOptions.range[0] +
-    //       (displayOptions.range[1] - displayOptions.range[0]) * 0.75,
-    //   ],
-    //   tickParams: { which: 'minor', show: true },
-    // })
 
     const cmap = getColorMapFromCmap(displayOptions.cmap)
 

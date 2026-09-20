@@ -2976,6 +2976,10 @@
         {
           "msg": "Cross hairs now work on gsea plots with multiple rows and cols",
           "date": "2026-09-20T03:47:35.595Z"
+        },
+        {
+          "msg": "Preference for moving elements using <g> rather than with component itself",
+          "date": "2026-09-20T04:19:39.162Z"
         }
       ]
     },

@@ -4,7 +4,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { range } from 'd3'
-import { ReactElement } from 'react'
+import { memo, ReactElement } from 'react'
 import { SvgG } from '../svg-g'
 import { SvgText } from '../svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
@@ -58,10 +58,9 @@ export function RowTreeSvg({
   )
 }
 
-export function RowLabelsSvg({
+export const RowLabelsSvg = memo(function RowLabelsSvg({
   leaves,
   gaps,
-  colorMap,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
   const { plot } = useHeatmapContext()
@@ -99,4 +98,4 @@ export function RowLabelsSvg({
   }
 
   return <SvgG pos={pos}>{gElems}</SvgG>
-}
+})

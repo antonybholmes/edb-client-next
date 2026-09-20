@@ -151,7 +151,7 @@ export const ExtGseaEsSvgPlot = memo(function ExtGseaEsSvgPlot({
         <AxisBottomSvg ax={xax} showTicks={gseaSettings.es.axes.x.showTicks} />
         <SvgG
           pos={{
-            x: gseaSettings.axes.x.length + gseaSettings.plot!.gap.x / 2,
+            x: gseaSettings.es.axes.x.length + gseaSettings.plot!.gap.x / 2,
             y: 0,
           }}
         >

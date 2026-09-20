@@ -86,7 +86,6 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     },
 
     dispose: () => {
-      console.log('dispose')
       cancelPendingFrame()
 
       if (clearTimeoutId) {

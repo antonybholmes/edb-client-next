@@ -53,7 +53,7 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
         id: 'x',
         title: 'Genes',
         domain: [0, maxRank],
-        length: settings.axes.x.length,
+        length: settings.es.axes.x.length,
         style: { title: { show: false } },
         tickParams: { which: 'both', show: false },
       })

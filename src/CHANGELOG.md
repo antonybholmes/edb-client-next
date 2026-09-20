@@ -4,6 +4,7 @@
 
 ### Changed
 
+- heatmaps now use memo and have rendering tweaks.
 - Preference for moving elements using <g> rather than with component itself.
 - Cross hairs now work on gsea plots with multiple rows and cols.
 - Colormaps now default to 32 color quantization. GSEA hits now render as paths grouped by quantized colors.

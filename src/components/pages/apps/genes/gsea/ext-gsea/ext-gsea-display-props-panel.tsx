@@ -90,14 +90,14 @@ export function ExtGseaDisplayPropsPanel() {
             <PropRow title="Width">
               <NumericalInput
                 id="width"
-                value={settings.axes.x.length}
+                value={settings.es.axes.x.length}
                 limit={[1, 1000]}
                 placeholder="Width..."
                 w="xxs"
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.axes.x.length = v
+                      draft.es.axes.x.length = v
                     })
                   )
                 }}

@@ -36,67 +36,15 @@ export interface IExtGseaSettings {
       }
       y: {
         title: string
-        //length: number
       }
     }
     stats: {
       show: boolean
     }
   }
-
-  // page: {
-  //   columns: number
-  // }
-  // plot: {
-  //   margin: {
-  //     top: number
-  //     left: number
-  //     bottom: number
-  //     right: number
-  //   }
-  //   gap: { x: number; y: number }
-  // }
-
-  // ranking: {
-  //   zeroCross: IStrokeProps
-  //   show: boolean
-  //   axes: {
-  //     y: {
-  //       length: number
-  //     }
-  //   }
-  //   fill: IPaintProps
-  // }
-
-  // viper: {
-  //   reverse: boolean
-  // }
 }
 
 export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
-  // page: {
-  //   columns: 3,
-  //   //scale: 1,
-  // },
-
-  // plot: {
-  //   margin: { ...DEFAULT_MARGIN_MEDIUM },
-  //   gap: {
-  //     x: 20,
-  //     y: 20,
-  //   },
-  // },
-  // axes: {
-  //   x: {
-  //     font: { ...DEFAULT_TEXT_PROPS },
-  //     labels: {
-  //       rotate: false,
-  //       truncate: -2,
-  //       font: { ...DEFAULT_BOLD_TEXT_PROPS },
-  //     },
-  //     length: 220,
-  //   },
-  // },
   phenotypes: {
     p1: {
       name: '',
@@ -109,7 +57,6 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
     useGeneScoreForES: true,
     axes: {
       y: {
-        //length: 150,
         title: 'ES',
       },
       x: {

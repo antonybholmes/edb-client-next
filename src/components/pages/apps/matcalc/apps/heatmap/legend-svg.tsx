@@ -5,7 +5,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IClusterGroupRow } from '@/lib/cluster-group'
 import { COLOR_BLACK } from '@/lib/color/color'
-import type { ReactElement, ReactNode } from 'react'
+import { memo, type ReactElement, type ReactNode } from 'react'
 import { useHeatmapContext } from './heatmap-provider'
 
 export interface ILegendSvgProps {
@@ -100,7 +100,7 @@ export function LegendRightSvg({
   )
 }
 
-export function LegendBottomSvg({
+export const LegendBottomSvg = memo(function LegendBottomSvg({
   groupRows,
 
   pos = { ...ZERO_POS },
@@ -178,9 +178,11 @@ export function LegendBottomSvg({
   }
 
   return <g transform={`translate(${pos.x}, ${pos.y})`}>{items}</g>
-}
+})
 
-export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
+export const DotLegend = memo(function DotLegend({
+  pos = { ...ZERO_POS },
+}: ILegendSvgProps) {
   const { plot } = useHeatmapContext()
 
   const props = plot.props
@@ -222,4 +224,4 @@ export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
       </g>
     </g>
   )
-}
+})

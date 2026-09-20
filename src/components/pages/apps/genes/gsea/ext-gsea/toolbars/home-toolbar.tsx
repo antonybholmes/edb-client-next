@@ -77,14 +77,14 @@ export function HomeToolbar() {
         <ToolbarRow title="Width">
           <NumericalInput
             h="md"
-            value={gseaSettings.axes.x.length}
+            value={gseaSettings.es.axes.x.length}
             placeholder="Width"
             limit={[1, 1000]}
             dp={0}
             onNumChange={(v) => {
               updateGseaSettings(
                 produce(gseaSettings, (draft) => {
-                  draft.axes.x.length = v
+                  draft.es.axes.x.length = v
                 })
               )
             }}

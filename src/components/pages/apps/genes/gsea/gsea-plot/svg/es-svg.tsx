@@ -230,7 +230,7 @@ export const EsSvg = memo(function EsSvg({
       )}
 
       <SvgG
-        pos={{ x: settings.axes.x.length + settings.plot.gap.x / 4, y: y0 }}
+        pos={{ x: settings.es.axes.x.length + settings.plot.gap.x / 4, y: y0 }}
       >
         <SvgText
           dominantBaseline="central"
@@ -243,7 +243,7 @@ export const EsSvg = memo(function EsSvg({
       {settings.es.labels.show && (
         <SvgG
           pos={{
-            x: phenotypei === 0 ? settings.axes.x.length - 70 : 10,
+            x: phenotypei === 0 ? settings.es.axes.x.length - 70 : 10,
             y: phenotypei === 0 ? 10 : settings.es.axes.y.length - 20,
           }}
           fontSize="small"
@@ -276,7 +276,7 @@ export const EsSvg = memo(function EsSvg({
             </SvgText>
           </SvgG>
 
-          <SvgG pos={{ x: settings.axes.x.length, y: 0 }}>
+          <SvgG pos={{ x: settings.es.axes.x.length, y: 0 }}>
             <SvgText
               fill={
                 settings.genes.color.on && settings.genes.labels.color.on

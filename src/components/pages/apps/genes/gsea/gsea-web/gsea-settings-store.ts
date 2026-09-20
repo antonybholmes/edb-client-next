@@ -26,18 +26,18 @@ import {
 } from '@/lib/color/color'
 
 export interface IGseaDisplayProps {
-  axes: {
-    show: boolean
-    labels: ITextProps
-    ticks: ITextProps
-    x: {
-      length: number
-      labels: {
-        rotate: boolean
-        truncate: number
-      }
-    }
-  }
+  // axes: {
+  //   show: boolean
+  //   labels: ITextProps
+  //   ticks: ITextProps
+  //   x: {
+  //     length: number
+  //     labels: {
+  //       rotate: boolean
+  //       truncate: number
+  //     }
+  //   }
+  // }
   genes: {
     show: boolean
     color: {
@@ -61,6 +61,7 @@ export interface IGseaDisplayProps {
     axes: {
       x: {
         showTicks: boolean
+        length: number
       }
       y: {
         length: number
@@ -114,18 +115,18 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       x: 20,
     },
   },
-  axes: {
-    show: true,
-    labels: { ...DEFAULT_BOLD_TEXT_PROPS },
-    ticks: { ...DEFAULT_TEXT_PROPS },
-    x: {
-      labels: {
-        rotate: false,
-        truncate: -2,
-      },
-      length: 220,
-    },
-  },
+  // axes: {
+  //   show: true,
+  //   labels: { ...DEFAULT_BOLD_TEXT_PROPS },
+  //   ticks: { ...DEFAULT_TEXT_PROPS },
+  //   x: {
+  //     labels: {
+  //       rotate: false,
+  //       truncate: -2,
+  //     },
+  //     length: 220,
+  //   },
+  // },
   es: {
     axes: {
       y: {
@@ -133,6 +134,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       },
       x: {
         showTicks: false,
+        length: 220,
       },
     },
     line: { ...DEFAULT_STROKE_PROPS, value: COLOR_MEDIUM_SEA_GREEN, width: 2 },
@@ -141,7 +143,6 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       show: true,
     },
     show: true,
-    //labels: { ...DEFAULT_TEXT_PROPS },
     phenotypes: { ...DEFAULT_TEXT_PROPS },
   },
   genes: {

@@ -101,7 +101,7 @@ export function ExtGseaSvgContent() {
 
   const innerPlotSize: IDim = useMemo(() => {
     return {
-      w: gseaSettings.axes.x.length,
+      w: gseaSettings.es.axes.x.length,
       h:
         gseaSettings.es.axes.y.length +
         (gseaSettings.genes.stroke.show

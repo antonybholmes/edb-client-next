@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v56`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v58`
 
 import {
   DEFAULT_BOLD_TEXT_PROPS,
@@ -43,17 +43,26 @@ export interface IGseaDisplayProps {
   phenotypes: {
     mode: 'normal' | 'inverted'
   }
-  axes: {
-    //show: boolean
-    //labels: ITextProps
-    //ticks: ITextProps
-    x: {
-      length: number
-      // labels: {
-      //   rotate: boolean
-      //   truncate: number
-      // }
+  es: {
+    labels: ITextProps
+    phenotypes: ITextProps
+    show: boolean
+    line: IStrokeProps
+    leadingEdge: {
+      show: boolean
+      fill: IPaintProps
+      line: IStrokeProps
     }
+    axes: {
+      x: {
+        showTicks: boolean
+        length: number
+      }
+      y: {
+        length: number
+      }
+    }
+    step: number
   }
   genes: {
     show: boolean
@@ -76,26 +85,7 @@ export interface IGseaDisplayProps {
     height: number
     //line: IStrokeProps
   }
-  es: {
-    labels: ITextProps
-    phenotypes: ITextProps
-    show: boolean
-    line: IStrokeProps
-    leadingEdge: {
-      show: boolean
-      fill: IPaintProps
-      line: IStrokeProps
-    }
-    axes: {
-      x: {
-        showTicks: boolean
-      }
-      y: {
-        length: number
-      }
-    }
-    step: number
-  }
+
   //title: ITextProps & { offset: number }
   page: {
     //scale: number
@@ -156,24 +146,14 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       x: 20,
     },
   },
-  axes: {
-    //show: true,
-    //labels: { ...DEFAULT_BOLD_TEXT_PROPS },
-    //ticks: { ...DEFAULT_TEXT_PROPS },
-    x: {
-      // labels: {
-      //   rotate: false,
-      //   truncate: -2,
-      // },
-      length: 220,
-    },
-  },
+
   es: {
     axes: {
       y: {
         length: 100,
       },
       x: {
+        length: 220,
         showTicks: false,
       },
     },

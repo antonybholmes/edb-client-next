@@ -99,8 +99,6 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
         return
       }
 
-      //const rank = esHits[index].rank
-
       const barP = {
         x: nearest + settings.plot.margin.left + pos.x,
         y: settings.plot.margin.top + pos.y + settings.genes.height / 2,
@@ -173,42 +171,6 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
     }
 
     return elems
-
-    // return esHits.map((hit, hiti) => {
-    //   const x = xp[hiti] // ?? xaf(gsea.esHits[hiti].rank)
-
-    //   let pc = 0
-
-    //   if (settings.genes.color.mode === 'score') {
-    //     pc =
-    //       gsMode === 'gs1'
-    //         ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
-    //         : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
-    //   } else {
-    //     pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
-    //   }
-
-    //   if (gsMode === 'gs1') {
-    //     pc *= settings.genes.color.gradient.weight
-    //   } else {
-    //     pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
-    //   }
-
-    //   const color = cmap.getHexColor(pc)
-
-    //   return (
-    //     <SvgLine
-    //       key={hiti}
-    //       x1={x}
-    //       x2={x}
-    //       y1={0}
-    //       y2={settings.genes.height}
-    //       s={settings.genes.stroke}
-    //       stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
-    //       strokeOpacity={settings.genes.color.gradient.opacity}
-    //     />
-    //   )
-    // })
   }, [esHits, xp, settings, gsMode, maxAbsScore, maxRank, cmap])
 
   if (!xp || xp.length === 0) {
@@ -223,7 +185,7 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
         {settings.genes.labels.show && (
           <SvgG
             pos={{
-              x: settings.axes.x.length + settings.plot.gap.x / 2,
+              x: settings.es.axes.x.length + settings.plot.gap.x / 2,
               y: settings.genes.height * 0.5,
             }}
           >

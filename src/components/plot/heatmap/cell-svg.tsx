@@ -11,8 +11,7 @@ import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
-import { ReactNode } from 'react'
+import { memo, ReactNode } from 'react'
 import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgCircle } from '../svg-circle'
 import { SvgG } from '../svg-g'
@@ -45,7 +44,7 @@ function getUseRectId(color: string): string {
   return `rect-${color.slice(1)}`
 }
 
-export function CellsSvg({
+export const CellsSvg = memo(function CellsSvg({
   df,
   margin,
   xgaps,
@@ -58,7 +57,7 @@ export function CellsSvg({
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
   const { ref } = useSVG()
-  const { showTooltip, hideTooltip } = useTooltip()
+
   const { showCrosshair, hideCrosshair } = useCrosshair() // Assuming there is a useCrosshair hook similar to useTooltip
 
   const { blockSize } = props
@@ -91,10 +90,10 @@ export function CellsSvg({
     )
   })
 
-  function _hideTooltip() {
-    hideTooltip()
-    hideCrosshair()
-  }
+  // function _hideTooltip() {
+  //   hideTooltip()
+  //   hideCrosshair()
+  // }
 
   function handleMouseMove(e: React.MouseEvent) {
     const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
@@ -113,13 +112,13 @@ export function CellsSvg({
     //return
     //}
 
-    const { screenP } = svgPointToScreen(ref.current, {
-      x: cell.col.x + blockSize.w + margin.left,
-      y: cell.row.x + blockSize.h + margin.top,
+    const { relativeP } = svgPointToScreen(ref.current, {
+      x: cell.col.x + blockSize.w / 2 + margin.left,
+      y: cell.row.x + blockSize.h / 2 + margin.top,
     })
 
-    showTooltip({
-      pos: { x: screenP.x + 5, y: screenP.y + 5 },
+    showCrosshair({
+      pos: relativeP,
       content: (
         <>
           <span className="font-semibold">{`${df.rowName(
@@ -130,13 +129,6 @@ export function CellsSvg({
         </>
       ),
     })
-
-    const { relativeP } = svgPointToScreen(ref.current, {
-      x: cell.col.x + blockSize.w / 2 + margin.left,
-      y: cell.row.x + blockSize.h / 2 + margin.top,
-    })
-
-    showCrosshair({ pos: relativeP })
   }
 
   const isSquare = df.shape[0] === df.shape[1]
@@ -184,14 +176,14 @@ export function CellsSvg({
           fill="transparent"
           pointerEvents="all"
           onMouseMove={handleMouseMove}
-          onMouseLeave={_hideTooltip}
+          onMouseLeave={hideCrosshair}
         />
       </SvgG>
     </>
   )
-}
+})
 
-export function DotsSvg({
+export const DotsSvg = memo(function DotsSvg({
   df,
   dfRaw,
   dfSize,
@@ -207,7 +199,8 @@ export function DotsSvg({
 }: ICellsSvgProps) {
   const blockSize = props.blockSize
   const { ref } = useSVG()
-  const { showTooltip, hideTooltip } = useTooltip()
+  //const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
 
   function handleMouseMove(e: React.MouseEvent) {
     const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
@@ -223,13 +216,31 @@ export function DotsSvg({
       return
     }
 
-    const { screenP } = svgPointToScreen(ref.current, {
-      x: cell.col.x + blockSize.w + margin.left,
-      y: cell.row.x + blockSize.h + margin.top,
+    // const { screenP } = svgPointToScreen(ref.current, {
+    //   x: cell.col.x + blockSize.w + margin.left,
+    //   y: cell.row.x + blockSize.h + margin.top,
+    // })
+
+    const { relativeP } = svgPointToScreen(ref.current, {
+      x: cell.col.x + blockSize.w / 2 + margin.left,
+      y: cell.row.x + blockSize.h / 2 + margin.top,
     })
 
-    showTooltip({
-      pos: { x: screenP.x + 2, y: screenP.y + 2 },
+    // showTooltip({
+    //   pos: { x: screenP.x + 2, y: screenP.y + 2 },
+    //   content: (
+    //     <>
+    //       <span className="font-semibold">{`${df.rowName(
+    //         cell.row.index
+    //       )}, ${df.colName(cell.col.index)}`}</span>
+    //       <span>{`Row ${cell.row.index + 1}, col ${cell.col.index + 1}`}</span>
+    //       <span>{cellStr(df.get(cell.row.index, cell.col.index))}</span>
+    //     </>
+    //   ),
+    // })
+
+    showCrosshair({
+      pos: relativeP,
       content: (
         <>
           <span className="font-semibold">{`${df.rowName(
@@ -263,7 +274,7 @@ export function DotsSvg({
     <SvgG
       pos={pos}
       onMouseMove={handleMouseMove}
-      onMouseLeave={hideTooltip}
+      onMouseLeave={hideCrosshair}
       //shapeRendering={SVG_CRISP_EDGES}
     >
       <SvgRect
@@ -370,7 +381,7 @@ export function DotsSvg({
       })}
     </SvgG>
   )
-}
+})
 
 interface IGridSvgProps {
   width: number
@@ -381,7 +392,7 @@ interface IGridSvgProps {
   ygaps: CellGaps
 }
 
-export function GridSvg({
+export const GridSvg = memo(function GridSvg({
   props,
   xgaps,
   ygaps,
@@ -456,4 +467,4 @@ export function GridSvg({
       {props.border.show && <>{rects}</>}
     </g>
   )
-}
+})
