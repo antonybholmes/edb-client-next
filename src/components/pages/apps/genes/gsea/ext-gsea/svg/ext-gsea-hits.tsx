@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, type ReactNode } from 'react'
+import { memo, ReactElement, useCallback, useMemo } from 'react'
 
 import {
   axisDomainToRangeFunc,
@@ -14,7 +14,6 @@ import {
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgLine } from '@/components/plot/svg-line'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
@@ -40,7 +39,6 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
   xax: IAxis
   gs: IGeneSet
   esHits: IRankedGene[]
-  //scores: IRankedGene[]
   maxAbsScore: number
   maxRank: number
   gsMode: 'gs1' | 'gs2'
@@ -58,19 +56,14 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
     [settings, edbSettings]
   )
 
-  const points = useMemo(() => {
+  const xp = useMemo(() => {
     if (!xax) {
       return []
     }
 
     const xaf = axisDomainToRangeFunc(xax)
 
-    const points = esHits.map((e) => ({
-      x: xaf(e.rank),
-      y: 0,
-    }))
-
-    return points
+    return esHits.map((e) => xaf(e.rank))
   }, [esHits, xax])
 
   const onMouseMove = useCallback(
@@ -99,10 +92,7 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
         return
       }
 
-      const { value: nearest, index: index } = findNearest(
-        plotP.x,
-        points.map((p) => p.x)
-      )
+      const { value: nearest, index: index } = findNearest(plotP.x, xp)
 
       if (Math.abs(plotP.x - nearest) > 5) {
         hideCrosshair()
@@ -131,62 +121,104 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
         ),
       })
     },
-    [pos, ref, settings, esHits, gs, points, showCrosshair, hideCrosshair]
+    [pos, ref, settings, esHits, gs, xp, showCrosshair, hideCrosshair]
   )
 
-  let genesSvg: ReactNode | undefined = undefined
+  const svgHits = useMemo(() => {
+    const pointsByColor = new Map<string, number[]>()
 
-  if (!points || points.length === 0) {
+    for (const [hiti, hit] of esHits.entries()) {
+      const x = xp[hiti]
+
+      let pc = 0
+
+      if (settings.genes.color.mode === 'score') {
+        pc =
+          gsMode === 'gs1'
+            ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+            : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
+      } else {
+        pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
+      }
+
+      if (gsMode === 'gs1') {
+        pc *= settings.genes.color.gradient.weight
+      } else {
+        pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+      }
+
+      const color = cmap.getHexColor(pc)
+
+      if (!pointsByColor.has(color)) {
+        pointsByColor.set(color, [])
+      }
+      pointsByColor.get(color)!.push(x)
+    }
+
+    const elems: ReactElement[] = []
+
+    for (const [color, xs] of pointsByColor.entries()) {
+      // You can now use `color` and `xs` to render points or perform other operations
+
+      elems.push(
+        <path
+          key={color}
+          d={xs.map((x) => `M${x},0 L${x},${settings.genes.height}`).join(' ')}
+          stroke={color}
+          strokeWidth={settings.genes.stroke.width}
+          strokeOpacity={settings.genes.color.gradient.opacity}
+          fill="none"
+        />
+      )
+    }
+
+    return elems
+
+    // return esHits.map((hit, hiti) => {
+    //   const x = xp[hiti] // ?? xaf(gsea.esHits[hiti].rank)
+
+    //   let pc = 0
+
+    //   if (settings.genes.color.mode === 'score') {
+    //     pc =
+    //       gsMode === 'gs1'
+    //         ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+    //         : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
+    //   } else {
+    //     pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
+    //   }
+
+    //   if (gsMode === 'gs1') {
+    //     pc *= settings.genes.color.gradient.weight
+    //   } else {
+    //     pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+    //   }
+
+    //   const color = cmap.getHexColor(pc)
+
+    //   return (
+    //     <SvgLine
+    //       key={hiti}
+    //       x1={x}
+    //       x2={x}
+    //       y1={0}
+    //       y2={settings.genes.height}
+    //       s={settings.genes.stroke}
+    //       stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
+    //       strokeOpacity={settings.genes.color.gradient.opacity}
+    //     />
+    //   )
+    // })
+  }, [esHits, xp, settings, gsMode, maxAbsScore, maxRank, cmap])
+
+  if (!xp || xp.length === 0) {
     return null
   }
 
   if (settings.genes.stroke.show) {
     return (
       <>
-        <SvgG id="hits">
-          {esHits.map((hit, hiti) => {
-            const x = points[hiti].x // ?? xaf(gsea.esHits[hiti].rank)
-
-            let pc = 0
-
-            if (settings.genes.color.mode === 'score') {
-              pc =
-                gsMode === 'gs1'
-                  ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
-                  : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
-            } else {
-              pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
-            }
-
-            if (gsMode === 'gs1') {
-              pc *= settings.genes.color.gradient.weight
-            } else {
-              pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
-            }
-
-            //pc += gsMode === 'gs1' ? 0 : 0.5
-
-            // pc =
-            //   (1 - settings.genes.color.gradient.weight) *
-            //     (gsMode === 'gs1' ? 0 : 1) +
-            //   settings.genes.color.gradient.weight * pc
-
-            const color = cmap.getHexColor(pc)
-
-            return (
-              <SvgLine
-                key={hiti}
-                x1={x}
-                x2={x}
-                y1={0}
-                y2={settings.genes.height}
-                s={settings.genes.stroke}
-                stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
-                strokeOpacity={settings.genes.color.gradient.opacity}
-              />
-            )
-          })}
-        </SvgG>
+        <SvgG id="hits">{svgHits}</SvgG>
 
         {settings.genes.labels.show && (
           <SvgG
