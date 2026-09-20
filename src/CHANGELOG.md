@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Preference for moving elements using <g> rather than with component itself.
 - Cross hairs now work on gsea plots with multiple rows and cols.
 - Colormaps now default to 32 color quantization. GSEA hits now render as paths grouped by quantized colors.
 - ExtGSEA uses more gsea props for consistency. Sliders have manual input.

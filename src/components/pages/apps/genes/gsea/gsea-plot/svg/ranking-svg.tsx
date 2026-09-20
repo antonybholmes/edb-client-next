@@ -1,7 +1,6 @@
 import { AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
-import { IPos } from '@/interfaces/pos'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
@@ -17,13 +16,11 @@ export const RankingSvg = memo(function RankingSvg({
   xaf,
   es,
   crossing,
-  pos,
 }: {
   plotId: string
   xaf: (domainValue: number) => number
   es: IRankedGene[]
   crossing: { index: number; x: number }
-  pos?: IPos
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
@@ -56,7 +53,7 @@ export const RankingSvg = memo(function RankingSvg({
   }, [es, xaf, yaf, y0])
 
   return (
-    <SvgG pos={pos}>
+    <>
       {settings.ranking.fill.show && (
         <SvgPolygon
           points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
@@ -86,7 +83,7 @@ export const RankingSvg = memo(function RankingSvg({
         </SvgG>
       )}
       <AxisLeftSvg ax={yax} />
-    </SvgG>
+    </>
   )
 })
 

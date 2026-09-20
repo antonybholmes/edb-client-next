@@ -195,7 +195,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   },
   genes: {
     height: 15,
-    labels: { ...DEFAULT_TEXT_PROPS, color: { on: true } },
+    labels: { ...DEFAULT_BOLD_TEXT_PROPS, color: { on: true } },
     color: {
       on: true,
       mode: 'rank',
