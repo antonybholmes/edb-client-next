@@ -2972,6 +2972,10 @@
         {
           "msg": "Colormaps now default to 32 color quantization. GSEA hits now render as paths grouped by quantized colors",
           "date": "2026-09-20T00:46:07.623Z"
+        },
+        {
+          "msg": "Cross hairs now work on gsea plots with multiple rows and cols",
+          "date": "2026-09-20T03:47:35.595Z"
         }
       ]
     },

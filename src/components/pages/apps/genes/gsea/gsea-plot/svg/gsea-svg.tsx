@@ -120,7 +120,8 @@ const GseaPlot = memo(function GseaPlot({
       scores={sortedScores}
       hits={hits}
       crossing={crossing}
-      pos={{ x: 0, y: plotY }}
+      pos={{ x: pos.x, y: pos.y + plotY }}
+      plotY={plotY}
       innerPlotSize={innerPlotSize}
     />
   ) : null
@@ -231,21 +232,26 @@ function GseaSvgContent() {
   const rows = Math.ceil(pathways.length / settings.page.columns)
   const pageSize = [plotSize.w * settings.page.columns, plotSize.h * rows]
 
-  const svgPlots = pathways.map((pathway, index) => {
-    const row = Math.floor(index / settings.page.columns)
-    const col = index % settings.page.columns
-    return (
-      <GseaPlot
-        key={pathway.id}
-        pathway={pathway}
-        index={index}
-        row={row}
-        col={col}
-        plotSize={plotSize}
-        innerPlotSize={innerPlotSize}
-      />
-    )
-  })
+  const svgPlots = useMemo(
+    () =>
+      pathways.map((pathway, index) => {
+        const row = Math.floor(index / settings.page.columns)
+        const col = index % settings.page.columns
+
+        return (
+          <GseaPlot
+            key={pathway.id}
+            pathway={pathway}
+            index={index}
+            row={row}
+            col={col}
+            plotSize={plotSize}
+            innerPlotSize={innerPlotSize}
+          />
+        )
+      }),
+    [pathways, settings.page.columns, plotSize, innerPlotSize]
+  )
 
   return (
     <SvgBase

@@ -44,6 +44,7 @@ export const GenesSvg = memo(function GenesSvg({
   hits,
   crossing,
   pos,
+  plotY,
   xax,
   yaf,
 }: {
@@ -55,6 +56,7 @@ export const GenesSvg = memo(function GenesSvg({
   pos: IPos
   xax: IAxis
   yaf: (v: number) => number
+  plotY: number
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
@@ -278,7 +280,7 @@ export const GenesSvg = memo(function GenesSvg({
   )
 
   return (
-    <SvgG pos={pos}>
+    <SvgG pos={{ x: 0, y: plotY }}>
       {svgHits}
 
       <SvgRect
