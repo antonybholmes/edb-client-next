@@ -5,6 +5,9 @@ import { ReactNode, useEffect } from 'react'
 import { create } from 'zustand'
 import { samePosition, TOOLTIP_CLEAR_MS } from './tooltip-provider'
 
+const CROSSHAIR_CLS =
+  'absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 h-0.5 top-0 left-0'
+
 interface ICrosshair {
   pos: IPos
   content?: ReactNode
@@ -122,28 +125,37 @@ export function CrosshairProvider({ children }: { children?: ReactNode }) {
       {crosshair?.pos && (
         <>
           <span
-            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 h-full top-0"
+            className={CROSSHAIR_CLS}
             style={{ left: crosshair.pos.x - 1, height: crosshair.pos.y - 4 }}
           />
 
+          {/* Center dot */}
           <span
-            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 top-0 bottom-0"
-            style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y + 4 }}
+            className={CROSSHAIR_CLS}
+            style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y - 1 }}
           />
 
           <span
-            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 w-full left-0"
+            className={CROSSHAIR_CLS}
             style={{ top: crosshair.pos.y - 1, width: crosshair.pos.x - 4 }}
           />
 
           <span
-            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 right-0"
-            style={{ top: crosshair.pos.y - 1, left: crosshair.pos.x + 4 }}
+            className={CROSSHAIR_CLS}
+            style={{
+              top: crosshair.pos.y - 1,
+              left: crosshair.pos.x + 4,
+              width: '100%',
+            }}
           />
 
           <span
-            className="absolute z-(--z-modal) bg-foreground/50 pointer-events-none h-0.5 w-0.5 top-0 left-0"
-            style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y - 1 }}
+            className={CROSSHAIR_CLS}
+            style={{
+              left: crosshair.pos.x - 1,
+              top: crosshair.pos.y + 4,
+              height: '100%',
+            }}
           />
 
           {crosshair?.content && (

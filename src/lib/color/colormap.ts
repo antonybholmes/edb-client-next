@@ -110,6 +110,9 @@ export class ColorMap {
     return this._cmap.length
   }
 
+  /**
+   * The number of discrete colors used in the colormap, if specified.
+   */
   get colorCount(): number | undefined {
     return this._colorCount !== undefined ? this._colorCount + 1 : undefined
   }

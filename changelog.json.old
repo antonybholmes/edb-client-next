@@ -2980,6 +2980,10 @@
         {
           "msg": "Preference for moving elements using <g> rather than with component itself",
           "date": "2026-09-20T04:19:39.162Z"
+        },
+        {
+          "msg": "heatmaps now use memo and have rendering tweaks",
+          "date": "2026-09-20T22:17:54.502Z"
         }
       ]
     },

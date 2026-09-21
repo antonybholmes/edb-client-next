@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Dot plot now correctly shows dots. Right legend placement adjust on heatmaps.
 - heatmaps now use memo and have rendering tweaks.
 - Preference for moving elements using <g> rather than with component itself.
 - Cross hairs now work on gsea plots with multiple rows and cols.

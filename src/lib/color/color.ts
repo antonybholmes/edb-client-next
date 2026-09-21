@@ -48,6 +48,25 @@ export type IRGB = [number, number, number]
 
 export type IRGBA = [number, number, number, number]
 
+export type IRGBAColor = {
+  /**
+   * Red channel, an integer in the range [0, 255].
+   */
+  r: number
+  /**
+   * Green channel, an integer in the range [0, 255].
+   */
+  g: number
+  /**
+   * Blue channel, an integer in the range [0, 255].
+   */
+  b: number
+  /**
+   * Alpha channel, a float in the range [0, 1].
+   */
+  a: number
+}
+
 export const BASE_RGBA: IRGBA = [0, 0, 0, 1]
 
 export function rgb2float(rgba: IRGBA): IRGBA {

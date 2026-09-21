@@ -3,7 +3,6 @@ import type { IDim } from '@/interfaces/dim'
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_BLACK } from '@/lib/color/color'
 
-import { ICellGaps } from '@/components/plot/heatmap/cell-gaps'
 import {
   ColorBarPos,
   DEFAULT_BOLD_FONT_PROPS,
@@ -23,6 +22,7 @@ import { ICmap } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { ICellGaps } from './svg/cell-gaps'
 
 const SETTINGS_KEY = `${config.appId}:heatmap-settings-v2`
 

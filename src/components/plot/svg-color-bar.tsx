@@ -94,7 +94,7 @@ export const SvgHColorBar = memo(function SvgHColorBar({
 export const SvgVColorBar = memo(function SvgVColorBar({
   ax,
   cmap = BWR_CMAP_V2,
-  steps,
+  steps = 15,
   pos = { ...ZERO_POS },
 }: ISvgColorBarProps) {
   const { settings } = useEdbSettings()
@@ -104,7 +104,7 @@ export const SvgVColorBar = memo(function SvgVColorBar({
   }
 
   if (!steps) {
-    steps = cmap.colors
+    steps = cmap.colorCount
   }
 
   if (!steps) {

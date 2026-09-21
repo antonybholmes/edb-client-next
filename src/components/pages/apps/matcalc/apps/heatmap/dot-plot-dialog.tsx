@@ -332,6 +332,7 @@ export function DotPlotDialog({
       {
         groupRows,
         props: displayOptions,
+        mode: 'dot',
       }
     )
 

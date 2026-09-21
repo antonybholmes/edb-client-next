@@ -1,3 +1,9 @@
+import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgPath } from '@/components/plot/svg-path'
+import { IMarginProps } from '@/components/plot/svg-props'
+import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { ICell } from '@/interfaces/cell'
 import { IDim } from '@/interfaces/dim'
@@ -12,13 +18,7 @@ import { formatNumber } from '@/lib/text/text'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { memo, ReactNode } from 'react'
-import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
-import { SvgCircle } from '../svg-circle'
-import { SvgG } from '../svg-g'
-import { SvgPath } from '../svg-path'
-import { IMarginProps } from '../svg-props'
-import { SvgRect } from '../svg-rect'
-import { SvgText } from '../svg-text'
+import { IHeatMapSettings } from '../heatmap-settings-store'
 import { CellGaps } from './cell-gaps'
 
 // we want circles slightly smaller than box to allow for borders
@@ -265,8 +265,6 @@ export const DotsSvg = memo(function DotsSvg({
   const cmap = getColorMapFromCmap(props.cmap)
 
   const w = Math.min(blockSize.w, blockSize.h)
-
-  console.log('dfSize', dfSize.get(1, 0))
 
   const isSquare = df.shape[0] === df.shape[1]
 

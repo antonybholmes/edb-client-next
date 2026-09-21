@@ -2984,6 +2984,10 @@
         {
           "msg": "heatmaps now use memo and have rendering tweaks",
           "date": "2026-09-20T22:17:54.502Z"
+        },
+        {
+          "msg": "Dot plot now correctly shows dots. Right legend placement adjust on heatmaps",
+          "date": "2026-09-21T21:29:38.775Z"
         }
       ]
     },

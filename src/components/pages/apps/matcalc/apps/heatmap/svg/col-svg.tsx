@@ -7,9 +7,10 @@ import { COLOR_WHITE } from '@/lib/color/color'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { range } from '@/lib/math/range'
 import { memo, ReactElement } from 'react'
-import type { IHeatMapSettings } from '../../pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
-import { SvgG } from '../svg-g'
-import { SvgText } from '../svg-text'
+
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgText } from '@/components/plot/svg-text'
+import { IHeatMapSettings } from '../heatmap-settings-store'
 import { CellGaps } from './cell-gaps'
 
 export interface ITreeSvgProps {
