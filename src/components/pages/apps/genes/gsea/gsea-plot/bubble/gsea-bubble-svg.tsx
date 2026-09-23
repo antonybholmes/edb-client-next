@@ -22,6 +22,7 @@ import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
+import { useZoom } from '@/providers/zoom-provider'
 import { IDisplayAxis } from '../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../gsea-store'
 import { IBubblePoint, useGseaBubbleContext } from './gsea-bubble-provider'
@@ -296,7 +297,7 @@ export function GseaBubblePlotSvg() {
   const { ref: svgRef } = useSVG()
 
   const { settings } = useGseaBubbleSettings()
-  const { settings: edbSettings } = useEdbSettings()
+  const { zoom } = useZoom()
 
   const { showTooltip, hideTooltip } = useTooltip()
 
@@ -419,7 +420,7 @@ export function GseaBubblePlotSvg() {
   }
 
   return (
-    <SvgBase width={width} height={height} scale={edbSettings.plots.scale}>
+    <SvgBase width={width} height={height} scale={zoom}>
       {svg}
     </SvgBase>
   )

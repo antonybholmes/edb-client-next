@@ -3000,6 +3000,10 @@
         {
           "msg": "bottom bar now shows full filename in tooltip",
           "date": "2026-09-23T16:34:10.471Z"
+        },
+        {
+          "msg": "New network dialog for picking cols",
+          "date": "2026-09-23T18:14:55.909Z"
         }
       ]
     },

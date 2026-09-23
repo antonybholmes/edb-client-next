@@ -8,10 +8,10 @@ import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 import { MarginIcon } from '@/components/icons/margin-icon'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
-import { useGseaBubbleSettings } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-settings-store'
+import { useNetworkSettings } from './network-settings-store'
 
 export function MarginPopover() {
-  const { settings, updateSettings } = useGseaBubbleSettings()
+  const { settings, updateSettings } = useNetworkSettings()
 
   //const title = `Top:${settings.plot.margin.top}, Left:${settings.plot.margin.left}, Bottom:${settings.plot.margin.bottom}, Right:${settings.plot.margin.right}`
 
@@ -34,7 +34,7 @@ export function MarginPopover() {
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.margin.top = v
+                draft.plot.margin.top = v
               })
             )
           }
@@ -46,7 +46,7 @@ export function MarginPopover() {
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.margin.left = v
+                draft.plot.margin.left = v
               })
             )
           }
@@ -58,7 +58,7 @@ export function MarginPopover() {
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.margin.bottom = v
+                draft.plot.margin.bottom = v
               })
             )
           }
@@ -70,7 +70,7 @@ export function MarginPopover() {
           onNumChanged={(v) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.margin.right = v
+                draft.plot.margin.right = v
               })
             )
           }

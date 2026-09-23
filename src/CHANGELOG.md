@@ -1,5 +1,12 @@
 # Changelog
 
+## 91.0.0 (Sep, 2026)
+
+### Changed
+
+- Added support for groups with color to network.
+
+
 ## 89.8.0 (Sep, 2026)
 
 ### Changed

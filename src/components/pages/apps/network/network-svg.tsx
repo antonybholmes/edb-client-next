@@ -5,16 +5,21 @@ import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { SvgG } from '@/components/plot/svg-g'
+import { COLOR_BLACK } from '@/lib/color/color'
 import { useTooltip } from '@/providers/tooltip-provider'
+import { useZoom } from '@/providers/zoom-provider'
 import { useNetworkSettings } from './network-settings-store'
-
-const TOOLTIP_OFFSET = 10
+import { IGroup, useNetwork } from './network-store'
 
 export function NetworkSvg() {
+  const { zoom } = useZoom()
+
   const { hideTooltip } = useTooltip()
 
   const { settings } = useNetworkSettings()
   const { settings: edbSettings } = useEdbSettings()
+  const { network, groups, coordinates, size } = useNetwork()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -50,30 +55,74 @@ export function NetworkSvg() {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     // inner height is determined by the size of the largest bubble plot
-    const innerPlotHeight = settings.plot.size.h
-
-    const innerPlotWidth = settings.plot.size.w
-
-    const plotWidth =
-      innerPlotWidth + settings.plot.margin.left + settings.plot.margin.right
-    const plotHeight =
-      innerPlotHeight + settings.plot.margin.top + settings.plot.margin.bottom
-
-    const innerWidth = plotWidth
-    const innerHeight = plotHeight
 
     const width =
-      innerWidth + settings.plot.margin.left + settings.plot.margin.right
+      size.w + settings.plot.margin.left + settings.plot.margin.right
     const height =
-      innerHeight + settings.plot.margin.top + settings.plot.margin.bottom
+      size.h + settings.plot.margin.top + settings.plot.margin.bottom
 
-    const svg = <SvgMargin margin={settings.plot.margin}></SvgMargin>
+    const groupMap: Record<string, IGroup> = Object.fromEntries(
+      groups
+        .map((group) => [
+          [group.id, group],
+          [group.name.toLowerCase(), group],
+        ])
+        .flat()
+    )
+
+    console.log(groupMap)
+
+    const svg = (
+      <SvgMargin margin={settings.plot.margin}>
+        {network.edges.map((edge, idx) => {
+          const sourcePos = coordinates[edge.source] || { x: 0, y: 0 }
+          const targetPos = coordinates[edge.target] || { x: 0, y: 0 }
+          return (
+            <line
+              key={idx}
+              x1={sourcePos.x}
+              y1={sourcePos.y}
+              x2={targetPos.x}
+              y2={targetPos.y}
+              stroke="#cbd5e1"
+              strokeWidth={edge.score * settings.plot.edges.scale}
+            />
+          )
+        })}
+
+        {network.nodes.map((node) => {
+          const pos = coordinates[node.id] || { x: 0, y: 0 }
+
+          let color = COLOR_BLACK
+
+          switch (settings.plot.nodes.color.mode) {
+            case 'group':
+              console.log(node.group, groupMap[node.group.toLowerCase()])
+              color = groupMap[node.group.toLowerCase()]?.color ?? COLOR_BLACK
+              break
+
+            default:
+              color = COLOR_BLACK
+              break
+          }
+
+          return (
+            <SvgG key={node.id} pos={pos}>
+              <circle r={node.size * settings.plot.nodes.scale} fill={color} />
+              <text textAnchor="middle" dy=".3em" fill="#fff" fontSize={11}>
+                {node.label}
+              </text>
+            </SvgG>
+          )
+        })}
+      </SvgMargin>
+    )
 
     return { svg, width, height }
-  }, [settings])
+  }, [settings, size, network, coordinates])
 
   return (
-    <SvgBase width={width} height={height} scale={edbSettings.plots.scale}>
+    <SvgBase width={width} height={height} scale={zoom}>
       {svg}
     </SvgBase>
   )

@@ -49,7 +49,7 @@ import { textToLines } from '@/lib/text/lines'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
-import { NetworkDisplayPropsPanel } from './network-display-props-panel'
+import { NetworkPropsPanel } from './network-props-panel'
 import { useNetwork } from './network-store'
 import { NetworkSvg } from './network-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
@@ -262,7 +262,7 @@ export function NetworkPage() {
             </ResizablePanel>
           </ResizablePanelGroup>
 
-          <NetworkDisplayPropsPanel />
+          <NetworkPropsPanel />
         </ResizableSidebar>
 
         <FooterPortal className="justify-between">

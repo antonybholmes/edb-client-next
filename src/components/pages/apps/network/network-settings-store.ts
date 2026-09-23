@@ -1,6 +1,5 @@
 import { IMarginProps } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { IDim } from '@/interfaces/dim'
 import { useCallback } from 'react'
 
 import { create } from 'zustand'
@@ -15,16 +14,37 @@ const PLOT_MARGIN = { top: 20, right: 10, bottom: 100, left: 400 }
 export interface INetworkSettings {
   chargeStrength: number
   linkDistance: number
-  plot: { size: IDim; margin: IMarginProps }
+  sim: { run: boolean }
+  plot: {
+    margin: IMarginProps
+    nodes: {
+      scale: number
+      color: {
+        mode: 'group'
+      }
+    }
+    edges: {
+      scale: number
+    }
+  }
 }
 
 const DEFAULT_SETTINGS: INetworkSettings = {
   chargeStrength: -30,
   linkDistance: 100,
   plot: {
-    size: { w: 800, h: 600 },
     margin: { ...PLOT_MARGIN },
+    nodes: {
+      scale: 0.2,
+      color: {
+        mode: 'group',
+      },
+    },
+    edges: {
+      scale: 1,
+    },
   },
+  sim: { run: true },
 }
 
 export interface INetworkSettingsStore extends INetworkSettings {

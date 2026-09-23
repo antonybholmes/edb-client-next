@@ -1,13 +1,17 @@
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/v2/select'
+import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
-import { dataframesToNetwork } from './network-store'
+import { useNetworkSettings } from './network-settings-store'
+import { dataframesToNetwork, useNetwork, useNetworkSim } from './network-store'
 
 const MAX_COLS = 10
 
@@ -27,6 +31,22 @@ function findLabelCol(df: BaseDataFrame) {
 
   if (cols.length === 0) {
     return 'Label'
+  }
+
+  return cols[0]
+}
+
+function findNameCol(df: BaseDataFrame) {
+  if (!df) {
+    return 'Name'
+  }
+
+  const cols = df.columns.filter((c) =>
+    c.toLowerCase().match(/.*(gene_set|name).*/)
+  )
+
+  if (cols.length === 0) {
+    return 'Name'
   }
 
   return cols[0]
@@ -119,9 +139,11 @@ export interface IProps extends IModalProps<HistoryPlot> {
 
 export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const { sheets } = useCurrentSheets()
+  const { settings, updateSettings } = useNetworkSettings()
+  const { setNetwork } = useNetwork()
 
-  //const branch = findBranch(branchAddr, history)[0]
-  //const step = currentStep(branch)[0]
+  const { run: runSim } = useNetworkSim()
+  const [message, setMessage] = useState<string | null>(null)
 
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
   const [dfEdge, setDfEdge] = useState<BaseDataFrame | null>(null)
@@ -131,6 +153,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   //   const groupCol = findCol(dfNodes, 'collection')
 
   const [labelCol, setLabelCol] = useState<string>('')
+  const [nameCol, setNameCol] = useState<string>('')
   const [groupCol, setGroupCol] = useState<string>('')
   const [sizeCol, setSizeCol] = useState<string>('')
 
@@ -156,6 +179,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
   useEffect(() => {
     setLabelCol(findLabelCol(dfNode))
+    setNameCol(findNameCol(dfNode))
     setGroupCol(findGroupCol(dfNode))
     setSizeCol(findSizeCol(dfNode))
   }, [dfNode])
@@ -171,6 +195,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       !dfNode ||
       !dfEdge ||
       !labelCol ||
+      !nameCol ||
       !sizeCol ||
       !groupCol ||
       !sourceCol ||
@@ -181,10 +206,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    const network = dataframesToNetwork(
+    const { network, groups } = dataframesToNetwork(
       dfNode,
       dfEdge,
       labelCol,
+      nameCol,
       sizeCol,
       groupCol,
       sourceCol,
@@ -192,9 +218,17 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       scoreCol
     )
 
-    console.log(network)
+    setNetwork(network, groups)
 
-    close()
+    if (settings.sim.run) {
+      setMessage('Running simulation...')
+      runSim(network, () => {
+        setMessage(null)
+        close()
+      })
+    } else {
+      close()
+    }
   }
 
   return (
@@ -207,10 +241,39 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
           close()
         }
       }}
+      leftFooterChildren={
+        <RunningIndicator message={message}>
+          <Checkbox
+            checked={settings.sim.run}
+            onCheckedChange={(checked) =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.sim.run = checked
+                })
+              )
+            }
+          >
+            Run Simulation
+          </Checkbox>
+        </RunningIndicator>
+      }
     >
       <strong>Nodes</strong>
       <ActionDialogRow title="Label">
         <SelectList onValueChange={setLabelCol} value={labelCol} w="lg">
+          {dfNode?.columns
+            .filter((name) => name !== '')
+            .slice(0, MAX_COLS)
+            .map((name, ni) => (
+              <SelectItem value={name} key={ni}>
+                {name}
+              </SelectItem>
+            ))}
+        </SelectList>
+      </ActionDialogRow>
+
+      <ActionDialogRow title="Name">
+        <SelectList onValueChange={setNameCol} value={nameCol} w="lg">
           {dfNode?.columns
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
