@@ -57,7 +57,7 @@ function findSizeCol(df: BaseDataFrame | null) {
     return 'Size'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase().includes('size'))
+  const cols = df.columns.filter((c) => c.toLowerCase() === 'size')
 
   if (cols.length === 0) {
     return 'Size'

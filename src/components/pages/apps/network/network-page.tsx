@@ -49,9 +49,9 @@ import { textToLines } from '@/lib/text/lines'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
-import { NetworkPropsPanel } from './network-props-panel'
 import { useNetwork } from './network-store'
 import { NetworkSvg } from './network-svg'
+import { NetworkPropsPanel } from './props/network-props-panel'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function NetworkPage() {

@@ -106,13 +106,21 @@ export function dataframesToNetwork(
   const sizes = dfNodes.col(sizeCol).nums
   const groups = dfNodes.col(groupCol).strs
 
-  const nodes: INode[] = labels.map((label, i) => ({
-    id: makeUuid(),
-    label,
-    name: names[i].trim(),
-    size: sizes[i],
-    group: groups[i].trim(),
-  }))
+  console.log(sizeCol)
+
+  const nodes: INode[] = labels.map((label, i) => {
+    if (label === 'BLOOD_MODULE-3.4_UNDETERMINED') {
+      console.log('found node label:', label, i, sizes[i])
+    }
+
+    return {
+      id: makeUuid(),
+      label,
+      name: names[i].trim(),
+      size: sizes[i],
+      group: groups[i].trim(),
+    }
+  })
 
   const nodeMap = {}
 
@@ -174,7 +182,6 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
   coordinateMap: {},
   size: { w: 0, h: 0 },
   setNetwork: (network: INetwork, groups: IGroup[]) => {
-    console.log('setting network', network)
     set({
       network,
       nodeMap: Object.fromEntries(network.nodes.map((node) => [node.id, node])),
@@ -290,7 +297,7 @@ export function useNetworkSim(): {
 
           updateCoordinates(coordinates, { w: finalWidth, h: finalHeight })
 
-          console.log({ minX, maxX, minY, maxY })
+          console.log('dim,', { minX, maxX, minY, maxY, finalWidth })
         }
 
         onFinished?.()

@@ -44,6 +44,8 @@ function _ExtScrollCard({
   function _setSize(size: IDim) {
     setSize(size)
 
+    console.log('ext size', size)
+
     if (containerRef.current) {
       const { clientWidth, clientHeight } = containerRef.current
       _setScrollableArea({ w: clientWidth, h: clientHeight }, size)
@@ -55,6 +57,14 @@ function _ExtScrollCard({
   }
 
   function _setScrollableArea(clientSize: IDim, contentSize: IDim) {
+    console.log(
+      'clientSize',
+      clientSize,
+      'contentSize',
+      contentSize,
+      Math.max(contentSize.w - clientSize.w, 0),
+      Math.max(contentSize.h - clientSize.h, 0)
+    )
     setScrollableArea({
       w: Math.max(contentSize.w - clientSize.w, 0),
       h: Math.max(contentSize.h - clientSize.h, 0),

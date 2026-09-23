@@ -1,5 +1,12 @@
-import { IMarginProps } from '@/components/plot/svg-props'
+import {
+  DEFAULT_STROKE_PROPS,
+  DEFAULT_TEXT_PROPS,
+  IMarginProps,
+  IStrokeProps,
+  ITextProps,
+} from '@/components/plot/svg-props'
 import { config } from '@/config'
+import { COLOR_BLACK, COLOR_LIGHTGRAY } from '@/lib/color/color'
 import { useCallback } from 'react'
 
 import { create } from 'zustand'
@@ -7,9 +14,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 const SETTINGS_KEY = `${config.appId}:app:network:v2`
 
-const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
-
-const PLOT_MARGIN = { top: 20, right: 10, bottom: 100, left: 400 }
+const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
 export interface INetworkSettings {
   chargeStrength: number
@@ -21,10 +26,26 @@ export interface INetworkSettings {
       scale: number
       color: {
         mode: 'group'
+        opacity: number
+      }
+      labels: {
+        text: ITextProps
+        color: {
+          on: boolean
+          default: string
+        }
+        position: 'left' | 'center' | 'right' | 'below' | 'above'
+        offset: { x: number; y: number }
       }
     }
     edges: {
       scale: number
+      line: IStrokeProps
+    }
+    legend: {
+      dot: {
+        radius: number
+      }
     }
   }
 }
@@ -35,13 +56,26 @@ const DEFAULT_SETTINGS: INetworkSettings = {
   plot: {
     margin: { ...PLOT_MARGIN },
     nodes: {
-      scale: 0.2,
+      scale: 0.1,
       color: {
         mode: 'group',
+        opacity: 0.5,
+      },
+      labels: {
+        text: { ...DEFAULT_TEXT_PROPS },
+        color: { on: false, default: COLOR_BLACK },
+        position: 'center',
+        offset: { x: 10, y: 10 },
       },
     },
     edges: {
       scale: 1,
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY },
+    },
+    legend: {
+      dot: {
+        radius: 8,
+      },
     },
   },
   sim: { run: true },

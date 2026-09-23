@@ -6,7 +6,7 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { useEffect } from 'react'
 
-import { GroupingPropsPanel } from '../matcalc/data/grouping-props-panel'
+import { GroupPropsPanel } from './group-props-panel'
 import { NetworkDisplayPropsPanel } from './network-display-props-panel'
 
 const ID = 'network-props-panel'
@@ -41,7 +41,7 @@ export function NetworkPropsPanel() {
         className="grow"
       >
         <TabsContent value="groups">
-          <GroupingPropsPanel />
+          <GroupPropsPanel />
         </TabsContent>
         <TabsContent value="view">
           <NetworkDisplayPropsPanel />
