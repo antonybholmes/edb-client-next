@@ -30,7 +30,7 @@ export function where<T>(
 
 /**
  * A specific form of where for string matching
- * the start of strings.
+ * the within strings.
  *
  * @param data                   A list of strings to search.
  * @param search                 A search prefix to look for.
@@ -68,4 +68,22 @@ export function whereStartsWith(
   return where(data, (x) =>
     caseInsensitive ? x.toLowerCase().startsWith(s) : x.startsWith(s)
   )
+}
+
+export function whereStrExact(
+  data: string[],
+  search: string,
+  caseInsensitive: boolean = true
+): number[] {
+  const s = caseInsensitive ? search.toLowerCase() : search
+
+  return where(data, (x) => (caseInsensitive ? x.toLowerCase() === s : x === s))
+}
+
+export function whereMatches(
+  data: string[],
+  regex: RegExp,
+  caseInsensitive: boolean = true
+): number[] {
+  return where(data, (x) => regex.test(caseInsensitive ? x.toLowerCase() : x))
 }

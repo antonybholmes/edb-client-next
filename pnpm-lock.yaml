@@ -149,6 +149,9 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      d3-force:
+        specifier: ^3.0.0
+        version: 3.0.0
       d3-sankey:
         specifier: ^0.12.3
         version: 0.12.3

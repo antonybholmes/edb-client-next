@@ -4,6 +4,7 @@
 
 ### Changed
 
+- New network dialog for picking cols.
 - bottom bar now shows full filename in tooltip.
 - Started new network app.
 - tooltip renderer simplified and moved out of client layout since it seems to double render.

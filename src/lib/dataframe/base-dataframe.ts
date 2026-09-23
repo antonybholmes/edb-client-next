@@ -7,7 +7,7 @@ import type { Index, IndexFromType, Shape } from '.'
 import { cellStr } from './cell'
 
 import { makeUuid } from '../id'
-import { whereStartsWith } from '../math/where'
+import { whereMatches, whereStartsWith, whereStrExact } from '../math/where'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
 
@@ -366,14 +366,22 @@ export function findRows(
 
 export function findCols(
   df: BaseDataFrame,
-  col: IndexId,
-  lc: boolean = true
+  col: IndexId | RegExp,
+  options: { caseInsensitive?: boolean; exact?: boolean } = {}
 ): number[] {
+  const { caseInsensitive = true, exact = false } = options
+
   if (typeof col === 'number') {
     return col > -1 && col < df.shape[1] ? [col] : []
   }
 
-  return whereStartsWith(df.columns, col.toString(), lc)
+  if (col instanceof RegExp) {
+    return whereMatches(df.columns, col, caseInsensitive)
+  }
+
+  return exact
+    ? whereStrExact(df.columns, col.toString(), caseInsensitive)
+    : whereStartsWith(df.columns, col.toString(), caseInsensitive)
 }
 
 /**
@@ -439,12 +447,20 @@ export function findRow(
   return idx.length > 0 ? idx[0]! : -1
 }
 
+/**
+ * Find the index of a column in a DataFrame by its name or index.
+ * Returns the first matching index or -1 if not found.
+ * @param df
+ * @param col
+ * @param caseInsensitive
+ * @returns
+ */
 export function findCol(
   df: BaseDataFrame,
-  col: IndexId,
-  caseInsensitive: boolean = true
+  col: IndexId | RegExp,
+  options: { caseInsensitive?: boolean; exact?: boolean } = {}
 ): number {
-  const idx = findCols(df, col, caseInsensitive)
+  const idx = findCols(df, col, options)
 
   return idx.length > 0 ? idx[0]! : -1
 }

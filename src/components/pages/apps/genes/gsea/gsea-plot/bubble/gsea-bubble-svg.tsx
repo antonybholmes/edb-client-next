@@ -296,6 +296,7 @@ export function GseaBubblePlotSvg() {
   const { ref: svgRef } = useSVG()
 
   const { settings } = useGseaBubbleSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const { showTooltip, hideTooltip } = useTooltip()
 
@@ -418,7 +419,7 @@ export function GseaBubblePlotSvg() {
   }
 
   return (
-    <SvgBase width={width} height={height} scale={settings.page.scale}>
+    <SvgBase width={width} height={height} scale={edbSettings.plots.scale}>
       {svg}
     </SvgBase>
   )

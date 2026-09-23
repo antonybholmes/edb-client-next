@@ -1,9 +1,7 @@
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
-import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
-import { useMatcalcDialogs } from '@/components/pages/apps/matcalc/matcalc-dialogs'
 import {
   onTextFileChange,
   openFilesDialog,
@@ -26,19 +24,19 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import {
   SortBy,
   useGseaBubbleSettings,
 } from '../../genes/gsea/gsea-plot/bubble/gsea-bubble-settings-store'
-import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
+import { NetworkDialog, SORT_BY_ITEMS } from '../network-dialog'
 
 export function HomeToolbar() {
-  const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { settings, updateSettings } = useGseaBubbleSettings()
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
 
-  const { addPlots } = useHistory()
+  const { openCustom: openCustomDialog } = useDialogs()
 
   return (
     <>
@@ -73,16 +71,7 @@ export function HomeToolbar() {
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}
           onClick={() => {
-            openMatcalcDialog({
-              type: 'gsea-bubble-plot',
-              payload: {
-                callback: (plot) => {
-                  console.log('GSEA Bubble dialog returned plot', plot)
-
-                  addPlots([plot])
-                },
-              },
-            })
+            openCustomDialog(NetworkDialog, {})
           }}
         >
           <PlayIcon variant="app-theme" />

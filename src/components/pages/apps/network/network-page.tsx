@@ -13,20 +13,14 @@ import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import {
-  TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
-  TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
-  TEXT_SAVE_AS,
-  TEXT_SAVE_TABLE,
 } from '@/consts'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileIcon } from '@/icons/file-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import {
@@ -37,15 +31,10 @@ import {
 
 import APP_INFO from './manifest.json'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/download-icon'
-import { BaseCol } from '@/components/layout/base-col'
-import { BaseRow } from '@/components/layout/base-row'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { useSVG } from '@/providers/svg-provider'
@@ -57,43 +46,20 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { produce } from 'immer'
-import { GseaBubbleDisplayPropsPanel } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-display-props-panel'
-import {
-  GseaBubbleProvider,
-  IGseaBubblePlot,
-  useGseaBubbleContext,
-} from '../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
-import { useGseaBubbleSettings } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-settings-store'
-import { GseaBubblePlotSvg } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-svg'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
-import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
-import { useSave } from '../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
+import { NetworkDisplayPropsPanel } from './network-display-props-panel'
+import { useNetwork } from './network-store'
+import { NetworkSvg } from './network-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
-export function GseaBubblePage() {
+export function NetworkPage() {
   const { setAppInfo } = useAppInfo()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const { open: openDialog } = useDialogs()
-
-  const { setZoom } = useZoom({
-    onChange: ({ zoom }) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
-    },
-  })
-
   const { settings: edbSettings } = useEdbSettings()
-
-  const { plots } = useGseaBubbleContext()
-  const { settings, updateSettings } = useGseaBubbleSettings()
 
   const { openFile } = useHistory()
 
@@ -101,7 +67,7 @@ export function GseaBubblePage() {
 
   const { autoSave } = useSVG()
 
-  const { save } = useSave()
+  const { network } = useNetwork()
   const { addDFSize } = useFooter()
 
   useEffect(() => {
@@ -151,11 +117,6 @@ export function GseaBubblePage() {
   //   )
   // }, [debouncedQ])
 
-  // load saved zoom from settings
-  useEffect(() => {
-    setZoom(settings.page.scale)
-  }, [settings.page.scale])
-
   // useEffect(() => {
   //   if (!plot || settings.scale === zoom) {
   //     return
@@ -169,30 +130,30 @@ export function GseaBubblePage() {
   // }, [plot, zoom])
 
   const fileMenuTabs: ITab[] = [
-    {
-      id: TEXT_SAVE_AS,
-      render: (
-        <>
-          <DropdownMenuItem
-            aria-label="Download as TXT"
-            onClick={() => {
-              save('gsea-bubble.txt', 'txt')
-            }}
-          >
-            <FileIcon stroke="" />
-            <span>{TEXT_DOWNLOAD_AS_TXT}</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            aria-label="Download as CSV"
-            onClick={() => {
-              save('gsea-bubble.csv', 'csv')
-            }}
-          >
-            <span>{TEXT_DOWNLOAD_AS_CSV}</span>
-          </DropdownMenuItem>
-        </>
-      ),
-    },
+    // {
+    //   id: TEXT_SAVE_AS,
+    //   render: (
+    //     <>
+    //       <DropdownMenuItem
+    //         aria-label="Download as TXT"
+    //         onClick={() => {
+    //           save('network.txt', 'txt')
+    //         }}
+    //       >
+    //         <FileIcon stroke="" />
+    //         <span>{TEXT_DOWNLOAD_AS_TXT}</span>
+    //       </DropdownMenuItem>
+    //       <DropdownMenuItem
+    //         aria-label="Download as CSV"
+    //         onClick={() => {
+    //           save('network.csv', 'csv')
+    //         }}
+    //       >
+    //         <span>{TEXT_DOWNLOAD_AS_CSV}</span>
+    //       </DropdownMenuItem>
+    //     </>
+    //   ),
+    // },
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
@@ -201,7 +162,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              autoSave(`gsea-bubble.png`)
+              autoSave(`network.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -210,7 +171,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              autoSave(`gsea-bubble.svg`)
+              autoSave(`network.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -221,14 +182,20 @@ export function GseaBubblePage() {
   ]
 
   async function loadTestData() {
-    const res = await httpFetch.getText('/data/test/gsea/gsea-report.txt')
+    let res = await httpFetch.getText(
+      '/data/test/network/enrichment_map_nodes.tsv'
+    )
 
-    const lines = textToLines(res)
+    const table1 = new DataFrameReader().read(textToLines(res))
 
-    const table = new DataFrameReader().indexCols(1).read(lines)
+    res = await httpFetch.getText('/data/test/network/enrichment_map_edges.tsv')
+    const table2 = new DataFrameReader().read(textToLines(res))
 
-    openFile(`GSEA Bubble Test`, {
-      sheets: [table.setName('GSEA Bubble Test') as AnnotationDataFrame],
+    openFile(`Network Test`, {
+      sheets: [
+        table1.setName('Nodes') as AnnotationDataFrame,
+        table2.setName('Edges') as AnnotationDataFrame,
+      ],
       mode: 'set',
     })
   }
@@ -281,9 +248,7 @@ export function GseaBubblePage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <ExtScrollCard>
-                {plots.length > 0 && <GseaBubblePlotSvg />}
-              </ExtScrollCard>
+              <ExtScrollCard>{network && <NetworkSvg />}</ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel
@@ -293,31 +258,11 @@ export function GseaBubblePage() {
               minSize="0%"
               collapsible={true}
             >
-              <BaseRow className="gap-x-2 grow h-full">
-                <BaseCol className="shrink-0">
-                  <IconButton
-                    title={TEXT_SAVE_TABLE}
-                    onClick={() => {
-                      openDialog({
-                        type: 'save',
-                        payload: {
-                          name: 'gsea-bubble',
-                          callback: (data) => {
-                            save(data.name, data.format.ext)
-                          },
-                        },
-                      })
-                    }}
-                  >
-                    <DownloadIcon />
-                  </IconButton>
-                </BaseCol>
-                <TabbedDataFrames className="relative grow overflow-hidden" />
-              </BaseRow>
+              <TabbedDataFrames className="relative grow overflow-hidden" />
             </ResizablePanel>
           </ResizablePanelGroup>
 
-          <GseaBubbleDisplayPropsPanel />
+          <NetworkDisplayPropsPanel />
         </ResizableSidebar>
 
         <FooterPortal className="justify-between">
@@ -330,22 +275,10 @@ export function GseaBubblePage() {
   )
 }
 
-export function NetworkPlotPage() {
-  const allPlots = useAllPlots()
-
-  return (
-    <GseaBubbleProvider
-      plots={allPlots.length > 0 ? [allPlots[0] as IGseaBubblePlot] : []}
-    >
-      <GseaBubblePage />
-    </GseaBubbleProvider>
-  )
-}
-
 export function NetworkQueryPage() {
   return (
     <ClientLayout>
-      <NetworkPlotPage />
+      <NetworkPage />
     </ClientLayout>
   )
 }
