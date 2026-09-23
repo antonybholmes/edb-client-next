@@ -2,6 +2,8 @@ import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  reactStrictMode: false,
+
   /* config options here */
   //output: 'export',
   async redirects() {

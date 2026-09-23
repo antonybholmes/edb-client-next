@@ -4,7 +4,6 @@ import { ThemeProvider } from '@/components/edb/theme'
 import { BaseCol } from '@/components/layout/base-col'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { CoreProviders } from '@/providers/core-providers'
-import { TooltipProvider } from '@/providers/tooltip-provider'
 
 // client-only wrapper so the root layout can stay a server component
 export function ClientLayout({ children }: IChildrenProps) {
@@ -15,7 +14,7 @@ export function ClientLayout({ children }: IChildrenProps) {
           <BaseCol className="root isolate grow">{children}</BaseCol>
         </CoreProviders>
       </ThemeProvider>
-      <TooltipProvider />
+      {/* <TooltipProvider /> */}
     </>
   )
 }

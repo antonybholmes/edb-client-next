@@ -2,6 +2,14 @@ import { formatAsPercent } from '@/lib/text/format-string'
 import { useCallback, type ComponentProps } from 'react'
 import { NumSlider } from './num-slider'
 
+/**
+ * Parses a string representation of a percentage into a numeric value. This function removes
+ * any commas and percentage signs from the input string, converts it to a float, and then
+ * divides by 100 to get the numeric value.
+ *
+ * @param v The string representation of a percentage (e.g., "50%").
+ * @returns The numeric value of the percentage (e.g., 0.5).
+ */
 function parsePercent(v: string): number {
   v = v.trim().replaceAll(',', '').replaceAll('%', '')
 
@@ -10,8 +18,6 @@ function parsePercent(v: string): number {
   if (isNaN(num)) {
     return NaN
   }
-
-  console.log('aha', num)
 
   return num / 100
 }

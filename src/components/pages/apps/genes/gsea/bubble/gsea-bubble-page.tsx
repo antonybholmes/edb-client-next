@@ -64,6 +64,7 @@ import { textToLines } from '@/lib/text/lines'
 
 import { GseaBubbleProvider } from '../gsea-plot/bubble/gsea-bubble-provider'
 
+import { TooltipProvider } from '@/providers/tooltip-provider'
 import { produce } from 'immer'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { useAllPlots } from '../../../matcalc/history/history-provider/history-hooks'
@@ -347,7 +348,9 @@ export function GseaBubblePlotPage() {
 export function GseaBubbleQueryPage() {
   return (
     <ClientLayout>
-      <GseaBubblePlotPage />
+      <TooltipProvider>
+        <GseaBubblePlotPage />
+      </TooltipProvider>
     </ClientLayout>
   )
 }
