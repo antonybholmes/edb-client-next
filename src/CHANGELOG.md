@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Started new network app.
 - tooltip renderer simplified and moved out of client layout since it seems to double render.
 - Dot plot now correctly shows dots. Right legend placement adjust on heatmaps.
 - heatmaps now use memo and have rendering tweaks.

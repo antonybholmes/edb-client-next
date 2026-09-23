@@ -1,10 +1,6 @@
 'use client'
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
-import {
-  IGseaBubblePlot,
-  useGseaBubbleContext,
-} from '../gsea-plot/bubble/gsea-bubble-provider'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -61,18 +57,20 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-
-import { GseaBubbleProvider } from '../gsea-plot/bubble/gsea-bubble-provider'
-
 import { produce } from 'immer'
-import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
-import { useAllPlots } from '../../../matcalc/history/history-provider/history-hooks'
-import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
-import { useSave } from '../../../matcalc/hooks/save'
-import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
-import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
-import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
-import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
+import { GseaBubbleDisplayPropsPanel } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-display-props-panel'
+import {
+  GseaBubbleProvider,
+  IGseaBubblePlot,
+  useGseaBubbleContext,
+} from '../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
+import { useGseaBubbleSettings } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-settings-store'
+import { GseaBubblePlotSvg } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-svg'
+import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
+import { useAllPlots } from '../matcalc/history/history-provider/history-hooks'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
+import { useSave } from '../matcalc/hooks/save'
+import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function GseaBubblePage() {
