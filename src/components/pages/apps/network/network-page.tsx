@@ -330,7 +330,7 @@ export function GseaBubblePage() {
   )
 }
 
-export function GseaBubblePlotPage() {
+export function NetworkPlotPage() {
   const allPlots = useAllPlots()
 
   return (
@@ -342,10 +342,10 @@ export function GseaBubblePlotPage() {
   )
 }
 
-export function GseaBubbleQueryPage() {
+export function NetworkQueryPage() {
   return (
     <ClientLayout>
-      <GseaBubblePlotPage />
+      <NetworkPlotPage />
     </ClientLayout>
   )
 }

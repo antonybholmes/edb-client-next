@@ -85,6 +85,8 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
   //   transition,
   // }
 
+  console.log(props.tooltip)
+
   const Component = as ?? 'li'
 
   return (

@@ -121,13 +121,14 @@ function SheetItem({
       key={sheet.id}
       id={sheet.id}
       orientation="horizontal"
+      title={name}
     >
       <TabsTrigger
         ref={ref}
         id={sheet.id}
         value={sheet.id}
         key={sheet.id}
-        aria-label={name}
+
         className={tabButtonVariants({
           variant,
           className: 'flex flex-row items-center relative pr-4',
