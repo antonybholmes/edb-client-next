@@ -6,6 +6,7 @@ import {
   ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
+import { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK, COLOR_LIGHTGRAY } from '@/lib/color/color'
 import { useCallback } from 'react'
 
@@ -31,6 +32,7 @@ export interface INetworkSettings {
   linkDistance: number
   sim: { run: boolean }
   plot: {
+    size: IDim
     margin: IMarginProps
     nodes: {
       scale: number
@@ -61,6 +63,9 @@ export interface INetworkSettings {
       dot: {
         radius: number
       }
+      size: {
+        ticks: number[]
+      }
     }
   }
   labels: string[]
@@ -70,9 +75,10 @@ const DEFAULT_SETTINGS: INetworkSettings = {
   chargeStrength: -30,
   linkDistance: 100,
   plot: {
+    size: { w: 3000, h: 3000 },
     margin: { ...PLOT_MARGIN },
     nodes: {
-      scale: 0.1,
+      scale: 0.2,
       color: {
         mode: 'group',
         opacity: 0.5,
@@ -96,6 +102,9 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     legend: {
       dot: {
         radius: 8,
+      },
+      size: {
+        ticks: [100, 200, 300, 400],
       },
     },
   },

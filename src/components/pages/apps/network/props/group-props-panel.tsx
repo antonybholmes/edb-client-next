@@ -16,6 +16,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { StretchRow } from '@/layout/stretch-row'
@@ -55,6 +56,19 @@ function GroupItem({
       accept="group"
       className="group"
     >
+      <Checkbox
+        checked={group.show}
+        onCheckedChange={(checked) => {
+          setGroups(
+            produce(groups, (draft) => {
+              const g = draft.find((x) => x.id === group.id)
+              if (g) {
+                g.show = checked
+              }
+            })
+          )
+        }}
+      />
       <FillButton
         colors={[
           {

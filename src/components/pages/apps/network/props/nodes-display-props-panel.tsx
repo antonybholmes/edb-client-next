@@ -3,8 +3,10 @@ import { PropsPanel } from '@/components/props-panel'
 import { produce } from 'immer'
 import { useNetworkSettings } from '../network-settings-store'
 
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
-import { useDebounce } from '@/hooks/debounce'
+import { Button } from '@/components/shadcn/ui/themed/v2/button'
+import { TEXT_APPLY } from '@/consts'
 import { useEffect, useState } from 'react'
 
 export function NodesDisplayPropsPanel() {
@@ -16,21 +18,21 @@ export function NodesDisplayPropsPanel() {
     setText(settings.labels.join('\n'))
   }, [settings.labels])
 
-  const debounceText = useDebounce(text)
+  // const debounceText = useDebounce(text)
 
-  useEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.labels = debounceText
-          .split('\n')
-          .map((x) => x.trim())
-          .filter((x) => x.length > 0)
-      })
-    )
-  }, [debounceText])
+  // useEffect(() => {
+  //   updateSettings(
+  //     produce(settings, (draft) => {
+  //       draft.labels = debounceText
+  //         .split('\n')
+  //         .map((x) => x.trim())
+  //         .filter((x) => x.length > 0)
+  //     })
+  //   )
+  // }, [debounceText])
 
   return (
-    <PropsPanel>
+    <PropsPanel className="gap-y-2">
       <CheckPropRow
         title="All Labels"
         className="ml-0.5 mt-1"
@@ -47,10 +49,25 @@ export function NodesDisplayPropsPanel() {
       <Textarea
         title="Node Label"
         value={text}
-        onTextChange={(value) => {
-          setText(value)
-        }}
+        onTextChange={(value) => setText(value)}
       />
+      <VCenterRow>
+        <Button
+          variant="app-theme"
+          onClick={() =>
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.labels = text
+                  .split('\n')
+                  .map((x) => x.trim())
+                  .filter((x) => x.length > 0)
+              })
+            )
+          }
+        >
+          {TEXT_APPLY}
+        </Button>
+      </VCenterRow>
     </PropsPanel>
   )
 }

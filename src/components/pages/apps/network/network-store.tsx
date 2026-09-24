@@ -6,16 +6,20 @@ import { IDim } from '@/interfaces/dim'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
-import { produce } from 'immer'
 import { useCallback } from 'react'
 import { create } from 'zustand'
 import { INetworkSettings, useNetworkSettings } from './network-settings-store'
 
 export interface IGroup extends IDBEntity {
   color: string
+  show: boolean
 }
 
 export interface INode extends IDBEntity {
+  /**
+   * Secondary id e.g. group::name
+   */
+  id2: string
   /**
    * The label of the node, used for display purposes.
    */
@@ -37,6 +41,8 @@ interface INetwork {
   nodes: INode[]
   edges: IEdge[]
 }
+
+const FRAME_SKIP = 5
 
 // export function dataframesToNetwork(dfs: BaseDataFrame[]): INetwork {
 //   const dfNodes = dfs.filter((df) => df.name.toLowerCase().includes('node'))[0]
@@ -108,15 +114,10 @@ export function dataframesToNetwork(
   const sizes = dfNodes.col(sizeCol).nums
   const groups = dfNodes.col(groupCol).strs
 
-  console.log(sizeCol)
-
   const nodes: INode[] = labels.map((label, i) => {
-    if (label === 'BLOOD_MODULE-3.4_UNDETERMINED') {
-      console.log('found node label:', label, i, sizes[i])
-    }
-
     return {
       id: makeUuid(),
+      id2: groups[i].trim() + '::' + names[i].trim(),
       label,
       name: names[i].trim(),
       size: sizes[i],
@@ -160,6 +161,7 @@ export function dataframesToNetwork(
   const uniqueGroups = [...groupSet].sort().map((g, index) => ({
     id: makeUuid(),
     name: g,
+    show: true,
     color:
       settings.plot.groups.colors[g.toLowerCase()] ??
       TAB10_PALETTE[index % TAB10_PALETTE.length],
@@ -171,27 +173,27 @@ export function dataframesToNetwork(
 export interface INetworkStore {
   network: INetwork | undefined
   groups: IGroup[]
-  nodeMap: Record<string, INode>
-  coordinateMap: Record<string, IPos>
+  nodeMap: Map<string, INode>
+  coordinateMap: Map<string, IPos>
   size: IDim
   setNetwork: (settings: INetwork, groups: IGroup[]) => void
   setGroups: (groups: IGroup[]) => void
-  updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => void
+  updateCoordinates: (coordinateMap: Map<string, IPos>, size: IDim) => void
 }
 
 export const useNetworkStore = create<INetworkStore>()((set) => ({
   network: undefined,
   groups: [],
-  nodeMap: {},
-  coordinateMap: {},
+  nodeMap: new Map(),
+  coordinateMap: new Map(),
   size: { w: 0, h: 0 },
   setNetwork: (network: INetwork, groups: IGroup[]) => {
     set({
       network,
-      nodeMap: Object.fromEntries(network.nodes.map((node) => [node.id, node])),
-      coordinateMap: Object.fromEntries(
-        network.nodes.map((node) => [node.id, { x: 0, y: 0 }])
-      ),
+      nodeMap: new Map(network.nodes.map((node) => [node.id, node])),
+      // coordinateMap: Object.fromEntries(
+      //   network.nodes.map((node) => [node.id, { x: 0, y: 0 }])
+      // ),
       groups,
     })
   },
@@ -200,7 +202,7 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       groups,
     })
   },
-  updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => {
+  updateCoordinates: (coordinateMap: Map<string, IPos>, size: IDim) => {
     set({
       coordinateMap,
       size,
@@ -211,35 +213,19 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
 export function useNetwork(): {
   network: INetwork | undefined
   groups: IGroup[]
-  coordinates: Record<string, IPos>
+  coordinates: Map<string, IPos>
   size: IDim
   setNetwork: (network: INetwork, groups: IGroup[]) => void
   setGroups: (groups: IGroup[]) => void
 } {
-  const { settings, updateSettings } = useNetworkSettings()
-
   const network = useNetworkStore((state) => state.network)
   const groups = useNetworkStore((state) => state.groups)
 
   const coordinates = useNetworkStore((state) => state.coordinateMap)
+
   const size = useNetworkStore((state) => state.size)
   const setNetwork = useNetworkStore((state) => state.setNetwork)
   const setGroups = useNetworkStore((state) => state.setGroups)
-
-  const _setGroups = useCallback(
-    (groups: IGroup[]) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.plot.groups.colors = Object.fromEntries(
-            groups.map((g) => [g.name.toLowerCase(), g.color])
-          )
-        })
-      )
-
-      setGroups(groups)
-    },
-    [setGroups]
-  )
 
   return {
     network,
@@ -247,9 +233,102 @@ export function useNetwork(): {
     coordinates,
     size,
     setNetwork,
-    setGroups: _setGroups,
+    setGroups,
   }
 }
+
+// export function useNetworkSim(): {
+//   run: (network: INetwork, onFinished?: () => void) => void
+// } {
+//   const { settings } = useNetworkSettings()
+//   const updateCoordinates = useNetworkStore((state) => state.updateCoordinates)
+
+//   const run = useCallback(
+//     (network: INetwork, onFinished?: () => void) => {
+//       const size = settings.plot.size
+
+//       // 2. Clone the structure out into D3-friendly array mutations
+//       const nodes = network.nodes.map((node) => ({
+//         ...node,
+//         x: size.w / 2,
+//         y: size.h / 2,
+//       }))
+//       const edges = network.edges.map((edge) => ({ ...edge }))
+
+//       let frame = 0
+
+//       // 3. Initialize the D3 Force Engine
+//       const simulation = forceSimulation(nodes)
+//         .force('charge', forceManyBody().strength(settings.chargeStrength))
+//         // .force(
+//         //   'center',
+//         //   forceCenter(settings.plot.size.w / 2, settings.plot.size.h / 2)
+//         // )
+//         .force(
+//           'link',
+//           forceLink(edges)
+//             .id((d: any) => d.id)
+//             .distance(settings.linkDistance)
+//         )
+
+//         // 3. The Custom Canvas Walls Box Constraint
+//         .force('canvas-walls', () => {
+//           for (let node of nodes as any[]) {
+//             // Keep X coordinates within bounds (0 + radius to width - radius)
+//             if (node.x < 0) {
+//               node.x = 0
+//             }
+
+//             if (node.x > size.w) {
+//               node.x = size.w
+//             }
+
+//             // Keep Y coordinates within bounds (0 + radius to height - radius)
+//             if (node.y < 0) {
+//               node.y = 0
+//             }
+
+//             if (node.y > size.h) {
+//               node.y = size.h
+//             }
+//           }
+//         })
+
+//       // 4. Stream layout coordinates straight back into the store on every frame tick
+//       simulation.on('tick', () => {
+//         frame++
+
+//         if (frame % FRAME_SKIP !== 0) {
+//           return
+//         }
+
+//         const nextNodeMap: Record<string, IPos> = {}
+
+//         nodes.forEach((node) => {
+//           nextNodeMap[node.id] = { x: node.x ?? 0, y: node.y ?? 0 }
+//         })
+
+//         // Atomically batch update the store
+//         updateCoordinates(nextNodeMap, { w: size.w, h: size.h })
+//       })
+
+//       simulation.on('end', () => {
+
+//         onFinished?.()
+//       })
+
+//       // 5. Hard lifecycle boundary: If the hook unmounts or options change, kill the simulation loop immediately
+//       return () => {
+//         simulation.stop()
+//       }
+//     },
+//     [settings, updateCoordinates]
+//   )
+
+//   return {
+//     run,
+//   }
+// }
 
 export function useNetworkSim(): {
   run: (network: INetwork, onFinished?: () => void) => void
@@ -260,8 +339,26 @@ export function useNetworkSim(): {
   const run = useCallback(
     (network: INetwork, onFinished?: () => void) => {
       // 2. Clone the structure out into D3-friendly array mutations
-      const nodes = network.nodes.map((node) => ({ ...node }))
+      // const nodes = network.nodes.map((node, ni) => {
+      //   const angle = ni * 0.5 // Spread out the placements linearly
+      //   const distance = SCATTER_RADIUS * Math.sqrt(ni + 1) // Expand outwards proportionally
+
+      //   return {
+      //     ...node,
+      //     x: size.w / 2 + distance * Math.cos(angle),
+      //     y: size.h / 2 + distance * Math.sin(angle),
+      //   }
+      // })
+
+      const size = settings.plot.size
+
+      const nodes = network.nodes.map((node) => ({
+        ...node,
+      }))
+
       const edges = network.edges.map((edge) => ({ ...edge }))
+
+      let frame = 0
 
       // 3. Initialize the D3 Force Engine
       const simulation = forceSimulation(nodes)
@@ -279,14 +376,20 @@ export function useNetworkSim(): {
 
       // 4. Stream layout coordinates straight back into the store on every frame tick
       // simulation.on('tick', () => {
-      //   const nextNodeMap: Record<string, IPos> = {}
+      //   frame++
+
+      //   if (frame % FRAME_SKIP !== 0) {
+      //     return
+      //   }
+
+      //   const nextNodeMap = new Map<string, IPos>()
 
       //   nodes.forEach((node) => {
-      //     nextNodeMap[node.id] = { x: node.x ?? 0, y: node.y ?? 0 }
+      //     nextNodeMap.set(node.id, { x: node.x ?? 0, y: node.y ?? 0 })
       //   })
 
       //   // Atomically batch update the store
-      //   updateCoordinates(nextNodeMap)
+      //   updateCoordinates(nextNodeMap, { w: size.w, h: size.h })
       // })
 
       simulation.on('end', () => {
@@ -301,24 +404,26 @@ export function useNetworkSim(): {
           const maxX = Math.max(...xVals)
           const minY = Math.min(...yVals)
           const maxY = Math.max(...yVals)
+          const width = maxX - minX
+          const height = maxY - minY
 
-          const coordinates = Object.fromEntries(
+          // keep coordinates centered around 0,
+          // the plotter will move them to center of canvas
+          const coordinates = new Map(
             nodes.map((node) => [
               node.id,
-              { x: (node.x ?? 0) - minX, y: (node.y ?? 0) - minY },
+              {
+                x: node.x, // - minX   -width / 2,
+                y: node.y, // - minY  -height/ 2,
+              },
             ])
           )
 
-          const finalWidth = Math.max(
-            ...Object.values(coordinates).map((c) => c.x)
-          )
-          const finalHeight = Math.max(
-            ...Object.values(coordinates).map((c) => c.y)
-          )
+          //
 
-          updateCoordinates(coordinates, { w: finalWidth, h: finalHeight })
+          updateCoordinates(coordinates, { w: width, h: height })
 
-          console.log('dim,', { minX, maxX, minY, maxY, finalWidth })
+          console.log('dim,', { minX, maxX, minY, maxY, width, height })
         }
 
         onFinished?.()

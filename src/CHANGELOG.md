@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Lots of ui fixes to network. Enhanced legend, turn groups on and off.
 - Lots of UI fixes to network.
 - More props for network rendering.
 - Added support for groups with color to network.

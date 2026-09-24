@@ -6,8 +6,9 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { useEffect } from 'react'
 
+import { GroupPropsPanel } from './group-props-panel'
 import { NetworkDisplayPropsPanel } from './network-display-props-panel'
-import { NodePropsPanel } from './node-display-panel'
+import { NodesDisplayPropsPanel } from './nodes-display-props-panel'
 
 const ID = 'network-props-panel'
 
@@ -19,6 +20,10 @@ export function NetworkPropsPanel() {
       {
         id: 'nodes',
         name: 'Nodes',
+      },
+      {
+        id: 'groups',
+        name: 'Groups',
       },
       {
         id: 'view',
@@ -41,7 +46,10 @@ export function NetworkPropsPanel() {
         className="grow"
       >
         <TabsContent value="nodes">
-          <NodePropsPanel />
+          <NodesDisplayPropsPanel />
+        </TabsContent>
+        <TabsContent value="groups">
+          <GroupPropsPanel />
         </TabsContent>
         <TabsContent value="view">
           <NetworkDisplayPropsPanel />

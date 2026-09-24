@@ -50,8 +50,8 @@ import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
 import { useNetwork } from './network-store'
-import { NetworkSvg } from './network-svg'
 import { NetworkPropsPanel } from './props/network-props-panel'
+import { NetworkSvg } from './svg/network-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function NetworkPage() {

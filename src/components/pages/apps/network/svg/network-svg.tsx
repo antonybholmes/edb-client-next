@@ -4,31 +4,29 @@ import { SvgBase } from '@/components/plot/svg-base'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
-import { useEdbSettings } from '@/components/edb/edb-settings'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
+import { IS_DEV_MODE } from '@/consts'
 import { IPos, ZERO_POS } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
-import { INetworkSettings, useNetworkSettings } from './network-settings-store'
-import { IGroup, INode, useNetwork } from './network-store'
+import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
+import { IGroup, INode, useNetwork } from '../network-store'
+import { LegendSvg } from './legend-svg'
 
 export function NetworkSvgContent() {
   const { zoom } = useZoom()
 
-  const { hideTooltip } = useTooltip()
-
   const { settings } = useNetworkSettings()
-  const { settings: edbSettings } = useEdbSettings()
-  const { network, groups, coordinates, size } = useNetwork()
+
+  const { network, groups, coordinates } = useNetwork()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -57,36 +55,46 @@ export function NetworkSvgContent() {
   // )
 
   const { svg, width, height } = useMemo(() => {
-    if (
-      !network ||
-      Object.keys(coordinates).length === 0 ||
-      !size.w ||
-      !size.h
-    ) {
+    if (!network || coordinates.size === 0) {
       return { svg: null, width: 0, height: 0 }
     }
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     // inner height is determined by the size of the largest bubble plot
+    const size = settings.plot.size
 
     const width =
-      size.w + settings.plot.margin.left + settings.plot.margin.right
+      settings.plot.size.w +
+      settings.plot.margin.left +
+      settings.plot.margin.right
     const height =
-      size.h + settings.plot.margin.top + settings.plot.margin.bottom
+      settings.plot.size.h +
+      settings.plot.margin.top +
+      settings.plot.margin.bottom
 
-    const groupMap: Record<string, IGroup> = Object.fromEntries(
-      groups
-        .map((group) => [
-          [group.id, group],
-          [group.name.toLowerCase(), group],
-        ])
-        .flat()
+    const groupMap = new Map<string, IGroup>(
+      groups.map((group) => [group.name.trim().toLowerCase(), group])
+    )
+
+    const nodeMap = new Map<string, INode>(
+      network.nodes.map((node) => [node.id, node])
     )
 
     const labelSet = new Set(
       settings.labels
         .map((label) => label.toLowerCase())
         .filter((x) => x.length > 0)
+    )
+
+    // map relative coordinates to absolute coordinates within the SVG canvas
+    const realCoordinates = new Map<string, IPos>(
+      coordinates.entries().map(([id, pos]) => [
+        id,
+        {
+          x: pos.x + size.w / 2,
+          y: pos.y + size.h / 2,
+        },
+      ])
     )
 
     const svg = (
@@ -102,106 +110,67 @@ export function NetworkSvgContent() {
           /> */}
 
           {settings.plot.edges.line.show &&
-            network.edges.map((edge, idx) => {
-              const sourcePos = coordinates[edge.source] || { x: 0, y: 0 }
-              const targetPos = coordinates[edge.target] || { x: 0, y: 0 }
-              return (
-                <SvgLine
-                  key={idx}
-                  x1={sourcePos.x}
-                  y1={sourcePos.y}
-                  x2={targetPos.x}
-                  y2={targetPos.y}
-                  s={settings.plot.edges.line}
+            network.edges
+              .filter((edge) => {
+                const sourceNode = nodeMap.get(edge.source)
+                const targetNode = nodeMap.get(edge.target)
 
-                  strokeWidth={edge.score * settings.plot.edges.scale}
+                return (
+                  groupMap.get(sourceNode?.group.toLowerCase() ?? '')?.show &&
+                  groupMap.get(targetNode?.group.toLowerCase() ?? '')?.show
+                )
+              })
+              .map((edge, idx) => {
+                const sourcePos = realCoordinates.get(edge.source) || ZERO_POS
+                const targetPos = realCoordinates.get(edge.target) || ZERO_POS
+
+                return (
+                  <SvgLine
+                    key={idx}
+                    x1={sourcePos.x}
+                    y1={sourcePos.y}
+                    x2={targetPos.x}
+                    y2={targetPos.y}
+                    s={settings.plot.edges.line}
+
+                    strokeWidth={edge.score * settings.plot.edges.scale}
+                  />
+                )
+              })}
+
+          {network.nodes
+            .filter((node) => groupMap.get(node.group.toLowerCase())?.show)
+            .map((node) => {
+              let fillColor = COLOR_BLACK
+
+              switch (settings.plot.nodes.color.mode) {
+                case 'group':
+                  fillColor =
+                    groupMap.get(node.group.toLowerCase())?.color ?? COLOR_BLACK
+                  break
+
+                default:
+                  fillColor = COLOR_BLACK
+                  break
+              }
+
+              return (
+                <NodeCircle
+                  key={node.id}
+                  node={node}
+                  groupMap={groupMap}
+                  labelSet={labelSet}
+                  coordinates={realCoordinates}
                 />
               )
             })}
-
-          {network.nodes.map((node) => {
-            let fillColor = COLOR_BLACK
-
-            switch (settings.plot.nodes.color.mode) {
-              case 'group':
-                fillColor =
-                  groupMap[node.group.toLowerCase()]?.color ?? COLOR_BLACK
-                break
-
-              default:
-                fillColor = COLOR_BLACK
-                break
-            }
-
-            return (
-              <NodeCircle
-                key={node.id}
-                node={node}
-                groupMap={groupMap}
-                labelSet={labelSet}
-              />
-            )
-          })}
         </SvgMargin>
-        <SvgG
-          pos={{
-            x: settings.plot.margin.left + size.w + 20,
-            y: settings.plot.margin.top,
-          }}
-        >
-          <SvgG id="group-legend">
-            <SvgText
-              textAnchor="start"
-              font={settings.plot.nodes.labels.text}
-              fill={COLOR_BLACK}
-              fontWeight="bold"
-            >
-              Groups
-            </SvgText>
-            <SvgG
-              pos={{ x: settings.plot.legend.dot.radius, y: 10 }}
-              id="groups"
-            >
-              {groups.map((group, gi) => (
-                <SvgG
-                  key={group.id}
-                  pos={{
-                    x: 0,
-                    y: 10 + gi * (settings.plot.legend.dot.radius * 2 + 5),
-                  }}
-                >
-                  <SvgCircle
-                    r={settings.plot.legend.dot.radius}
-                    fill={group.color}
-                    fillOpacity={settings.plot.nodes.color.opacity}
-
-                    stroke={
-                      settings.plot.nodes.line.autoColor &&
-                      settings.plot.nodes.line.show
-                        ? group.color
-                        : undefined
-                    }
-                    sp={settings.plot.nodes.line}
-                  />
-                  <SvgG pos={{ x: settings.plot.legend.dot.radius + 5, y: 0 }}>
-                    <SvgText
-                      textAnchor="start"
-                      font={settings.plot.nodes.labels.text}
-                      fill={COLOR_BLACK}
-                    >
-                      {group.name}
-                    </SvgText>
-                  </SvgG>
-                </SvgG>
-              ))}
-            </SvgG>
-          </SvgG>
-        </SvgG>
+        <LegendSvg />
       </>
     )
 
     return { svg, width, height }
-  }, [settings, size, network, coordinates, groups])
+  }, [settings, network, coordinates, groups])
 
   if (!svg) {
     return null
@@ -226,17 +195,19 @@ function NodeCircle({
   node,
   groupMap,
   labelSet,
+  coordinates,
 }: {
   node: INode
-  groupMap: Record<string, IGroup>
+  groupMap: Map<string, IGroup>
   labelSet: Set<string>
+  coordinates: Map<string, IPos>
 }) {
   const { settings, updateSettings } = useNetworkSettings()
-  const { coordinates } = useNetwork()
+  //  const { coordinates } = useNetwork()
   const { showCrosshair, hideCrosshair } = useCrosshair()
-  const radius = node.size * settings.plot.nodes.scale
+  const radius = node.size * 0.5 * settings.plot.nodes.scale
   const { textAnchor, baseline, offset } = getTextAnchor(settings, radius)
-  const pos = coordinates[node.id] || ZERO_POS
+  const pos = coordinates.get(node.id) || ZERO_POS
   const { ref } = useSVG()
 
   const [hover, setHover] = useState(false)
@@ -244,7 +215,7 @@ function NodeCircle({
   let fillColor = useMemo(() => {
     switch (settings.plot.nodes.color.mode) {
       case 'group':
-        return groupMap[node.group.toLowerCase()]?.color ?? COLOR_BLACK
+        return groupMap.get(node.group.toLowerCase())?.color ?? COLOR_BLACK
       default:
         return COLOR_BLACK
     }
@@ -252,7 +223,10 @@ function NodeCircle({
 
   const showLabel =
     settings.plot.nodes.labels.showAll ||
-    labelSet.has(node.label.toLowerCase()) ||
+    inLabelSet(node.label, labelSet) ||
+    inLabelSet(node.name, labelSet) ||
+    inLabelSet(node.group, labelSet) ||
+    labelSet.has(node.id2.toLowerCase()) ||
     labelSet.has(node.id)
 
   const circleRef = useRef<SVGCircleElement>(null)
@@ -300,7 +274,10 @@ function NodeCircle({
         content: (
           <>
             <strong>{node.label}</strong>
-            <span>{node.id}</span>
+            <span> {node.name}</span>
+            <span>{node.group}</span>
+            <span>Size: {node.size}</span>
+            {IS_DEV_MODE && <span>{node.id}</span>}
           </>
         ),
       })
@@ -330,16 +307,18 @@ function NodeCircle({
         onMouseLeave={hide}
         // double click
         onDoubleClick={(e) => {
-          if (settings.labels.includes(node.id)) {
+          if (settings.labels.includes(node.id2)) {
             updateSettings(
               produce(settings, (draft) => {
-                draft.labels = draft.labels.filter((label) => label !== node.id)
+                draft.labels = draft.labels.filter(
+                  (label) => label !== node.id2
+                )
               })
             )
           } else {
             updateSettings(
               produce(settings, (draft) => {
-                draft.labels.push(node.id)
+                draft.labels.push(node.id2)
               })
             )
           }
@@ -362,6 +341,17 @@ function NodeCircle({
       )}
     </SvgG>
   )
+}
+
+function inLabelSet(text: string, labels: Set<string>) {
+  text = text.toLowerCase().trim()
+  // check if anything in label set is within the text
+  for (const label of labels) {
+    if (text.includes(label)) {
+      return true
+    }
+  }
+  return false
 }
 
 function getTextAnchor(settings: INetworkSettings, radius: number) {
