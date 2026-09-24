@@ -29,6 +29,7 @@ export interface INode extends IDBEntity {
    */
   label: string
   size: number
+  size2?: number
   group: string
   x?: number
   y?: number
@@ -105,8 +106,9 @@ export function dataframesToNetwork(
   dfEdges: BaseDataFrame,
   labelCol: string,
   nameCol: string,
-  sizeCol: string,
   groupCol: string,
+  sizeCol: string,
+  colorCol: string,
   sourceCol: string,
   targetCol: string,
   scoreCol: string,
@@ -120,6 +122,7 @@ export function dataframesToNetwork(
   const labels = dfNodes.col(labelCol).strs
   const names = dfNodes.col(nameCol).strs
   const sizes = dfNodes.col(sizeCol).nums
+  const sizes2 = dfNodes.col(colorCol).nums
   const groups = dfNodes.col(groupCol).strs
 
   const minNonZeroP = min(sizes.filter((p) => p > 0))
@@ -127,20 +130,28 @@ export function dataframesToNetwork(
   // 2. Set a floor slightly smaller than that (e.g., one order of magnitude lower)
   const pFloor = minNonZeroP * 0.1
 
+  const minNonZeroP2 = min(sizes2.filter((p) => p > 0))
+  const pFloor2 = minNonZeroP2 * 0.1
+
   const nodes: INode[] = labels.map((label, i) => {
     // 3. Apply the transformation safely
-    const size = settings.applyMinusLog10ToSize
+    const size = settings.data.applyMinusLog10ToSize
       ? -Math.log10(sizes[i] === 0 ? pFloor : sizes[i])
       : sizes[i]
 
-    console.log('size', sizes[i], size, settings.applyMinusLog10ToSize)
+    const size2 = settings.data.applyMinusLog10ToSize2
+      ? -Math.log10(sizes2[i] === 0 ? pFloor2 : sizes2[i])
+      : sizes2[i]
+
+    console.log('size', sizes[i], size, settings.data.applyMinusLog10ToSize)
 
     return {
       id: makeUuid(),
       id2: groups[i].trim() + '::' + names[i].trim(),
       label,
       name: names[i].trim(),
-      size: size,
+      size,
+      size2,
       group: groups[i].trim(),
     }
   })
@@ -196,8 +207,6 @@ export function dataframesToNetwork(
       edges,
     },
     groups: uniqueGroups,
-    scoreName: scoreCol,
-    sizeName: sizeCol,
   }
 }
 
@@ -206,10 +215,12 @@ export interface INetworkStore {
   nodes: {
     sizeLim: ILimit
     stepSize: number
+    sizeLim2: ILimit
   }
   headings: {
     score: string
     size: string
+    size2: string
   }
   groups: IGroup[]
 
@@ -220,7 +231,8 @@ export interface INetworkStore {
     settings: INetwork,
     groups: IGroup[],
     scoreName: string,
-    sizeName: string
+    sizeName: string,
+    size2Name: string
   ) => void
   setGroups: (groups: IGroup[]) => void
   updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => void
@@ -231,10 +243,12 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
   nodes: {
     sizeLim: { min: 0, max: 0 },
     stepSize: 0,
+    sizeLim2: { min: 0, max: 0 },
   },
   headings: {
     score: 'Score',
     size: 'Size',
+    size2: 'Size2',
   },
   groups: [],
 
@@ -245,7 +259,8 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     network: INetwork,
     groups: IGroup[],
     scoreName: string,
-    sizeName: string
+    sizeName: string,
+    size2Name: string
   ) => {
     const sizeLim: ILimit = {
       min: Math.min(...network.nodes.map((node) => node.size)),
@@ -255,21 +270,24 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     // get step size using log10 to find a suitable magnitude for the step
     const stepSize = Math.pow(10, Math.floor(Math.log10(sizeLim.max)))
 
-    console.log(sizeLim, 'size limits for nodes')
+    const sizeLim2: ILimit = {
+      min: Math.min(...network.nodes.map((node) => node.size2)),
+      max: Math.max(...network.nodes.map((node) => node.size2)),
+    }
 
     set({
       network,
       nodes: {
         sizeLim,
         stepSize,
+        sizeLim2,
       },
       headings: {
         score: scoreName,
         size: sizeName,
+        size2: size2Name,
       },
-      // coordinateMap: Object.fromEntries(
-      //   network.nodes.map((node) => [node.id, { x: 0, y: 0 }])
-      // ),
+      coordinateMap: {},
       groups,
     })
   },
@@ -289,6 +307,7 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
 export function useNetwork() {
   const network = useNetworkStore(useShallow((state) => state.network))
   const sizeLim = useNetworkStore(useShallow((state) => state.nodes.sizeLim))
+  const sizeLim2 = useNetworkStore(useShallow((state) => state.nodes.sizeLim2))
   const stepSize = useNetworkStore((state) => state.nodes.stepSize)
   const groups = useNetworkStore(useShallow((state) => state.groups))
   const headings = useNetworkStore(useShallow((state) => state.headings))
@@ -304,6 +323,7 @@ export function useNetwork() {
     network,
     sizeLim,
     stepSize,
+    sizeLim2,
     groups,
     coordinates,
     size,

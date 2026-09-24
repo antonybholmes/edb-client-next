@@ -1,5 +1,6 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -10,6 +11,7 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { TEXT_APPLY } from '@/consts'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
   AccordionItem,
@@ -18,6 +20,7 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import {
   LABEL_TYPES,
   POSITIONS,
@@ -34,10 +37,18 @@ export function NetworkDisplayPropsPanel() {
   return (
     <PropsPanel>
       <ScrollAccordion
-        value={['plot', 'nodes', 'edges', 'statistics', 'bubbles', 'size']}
+        value={[
+          'layout',
+          'plot',
+          'nodes',
+          'edges',
+          'statistics',
+          'bubbles',
+          'size',
+        ]}
       >
-        <AccordionItem value="plot">
-          <AccordionTrigger>Plot</AccordionTrigger>
+        <AccordionItem value="layout">
+          <AccordionTrigger>Layout</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Distance">
               <NumSlider
@@ -81,6 +92,36 @@ export function NetworkDisplayPropsPanel() {
               </Button>
               <RunningIndicator message={message} />
             </VCenterRow>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="plot">
+          <AccordionTrigger>Plot</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Size">
+              <DoubleNumericalInput
+                h="sm"
+                w="xs"
+                v1={settings.plot.size.w}
+                placeholder="Width"
+                limit={[1, 5000]}
+                dp={0}
+                onNumChanged1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.size.w = v
+                    })
+                  )
+                }}
+                v2={settings.plot.size.h}
+                onNumChanged2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.size.h = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
 
             <CheckPropRow
               title="Auto Scale"
@@ -186,6 +227,19 @@ export function NetworkDisplayPropsPanel() {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.color.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Colormap">
+              <ColorMapMenu
+                cmap={getColorMap(settings.plot.nodes.cmap)}
+
+                onChange={(cmap) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.cmap = getCmapFromColorMap(cmap)
                     })
                   )
                 }

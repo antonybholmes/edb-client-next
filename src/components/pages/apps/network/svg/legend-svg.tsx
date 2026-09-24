@@ -1,15 +1,18 @@
+import { DEFAULT_CBAR_AXIS } from '@/components/plot/axes/axis'
 import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { getColorMap } from '@/lib/color/colormap'
 import { max } from '@/lib/math/math'
 import { sum } from '@/lib/math/sum'
 import { capitalCase } from '@/lib/text/capital-case'
 import { range } from 'd3'
 import { ReactElement } from 'react'
-import { useNetworkSettings } from '../network-settings-store'
+import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { useNetwork } from '../network-store'
 
 export function LegendSvg() {
@@ -25,6 +28,8 @@ export function LegendSvg() {
     35 +
     2 * sum(steps.map((t) => (t / sizeLim.max) * settings.plot.nodes.radius)) +
     5 * steps.length
+
+  const edgesHeight = 35 + settings.plot.legend.edges.ticks.length * 20
 
   return (
     <SvgG
@@ -48,6 +53,33 @@ export function LegendSvg() {
           y: groupsHeight + sizeHeight,
         }}
       />
+
+      {settings.plot.nodes.color.mode === 'auto' && (
+        <Size2Svg pos={{ x: 0, y: groupsHeight + sizeHeight + edgesHeight }} />
+      )}
+    </SvgG>
+  )
+}
+
+export function Size2Svg({ pos }: { pos: IPos }) {
+  const { settings } = useNetworkSettings()
+  const { headings } = useNetwork()
+
+  const cmap = getColorMap(settings.plot.nodes.cmap)
+
+  return (
+    <SvgG id="size2-legend" pos={pos}>
+      <SvgText
+        textAnchor="start"
+        font={settings.plot.nodes.labels.text}
+
+        fontWeight="bold"
+      >
+        {capitalCase(headings.size2)}
+      </SvgText>
+      <SvgG pos={{ x: 0, y: 15 }}>
+        <SvgVColorBar ax={DEFAULT_CBAR_AXIS} cmap={cmap} />
+      </SvgG>
     </SvgG>
   )
 }
@@ -89,7 +121,7 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
       <SvgText
         textAnchor="start"
         font={settings.plot.nodes.labels.text}
-        fill={COLOR_BLACK}
+
         fontWeight="bold"
       >
         {capitalCase(headings.score)}
@@ -142,10 +174,6 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
     }
   }
 
-  const label = settings.applyMinusLog10ToSize
-    ? `-log10(${capitalCase(headings.size)})`
-    : capitalCase(headings.size)
-
   return (
     <SvgG id="size-legend" pos={pos}>
       <SvgText
@@ -154,7 +182,7 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
         fill={COLOR_BLACK}
         fontWeight="bold"
       >
-        {label}
+        {getSizeLabel(headings, settings)}
       </SvgText>
       <SvgG pos={{ x: maxRadius, y: 20 }}>{elems}</SvgG>
     </SvgG>
@@ -212,4 +240,20 @@ export function GroupsSvg() {
       </SvgG>
     </SvgG>
   )
+}
+
+/**
+ * Returns the size label correctly formatted to show if log scaling is applied.
+ *
+ * @param headings The headings object containing the size label.
+ * @param settings The network settings object.
+ * @returns The formatted size label based on the settings.
+ */
+export function getSizeLabel(
+  headings: { size: string },
+  settings: INetworkSettings
+): string {
+  return settings.data.applyMinusLog10ToSize
+    ? `-log10(${capitalCase(headings.size)})`
+    : capitalCase(headings.size)
 }

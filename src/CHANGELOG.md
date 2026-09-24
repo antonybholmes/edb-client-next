@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Support for secondary size metric in network to color nodes.
 - Lots of ui fixes to network. Enhanced legend, turn groups on and off.
 - Lots of UI fixes to network.
 - More props for network rendering.

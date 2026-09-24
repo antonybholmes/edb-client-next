@@ -3025,6 +3025,10 @@
         {
           "msg": "Lots of UI fixes to network",
           "date": "2026-09-24T03:17:25.039Z"
+        },
+        {
+          "msg": "Lots of ui fixes to network. Enhanced legend, turn groups on and off",
+          "date": "2026-09-24T15:52:04.451Z"
         }
       ]
     },

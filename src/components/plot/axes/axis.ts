@@ -547,3 +547,11 @@ export function autoLim(lim: ILim, interval?: number): ILim {
     Math.ceil(lim[1] / interval) * interval,
   ]
 }
+
+export const DEFAULT_CBAR_AXIS = createAxis({
+  id: 'cbar',
+  domain: [0, 1],
+
+  ticks: [0, 0.5, 1],
+  minorTicks: [0.25, 0.75],
+})

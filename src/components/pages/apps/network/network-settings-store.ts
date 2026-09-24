@@ -8,12 +8,13 @@ import {
 import { config } from '@/config'
 import { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK, COLOR_LIGHTGRAY } from '@/lib/color/color'
+import { ICmap } from '@/lib/color/colormap'
 import { useCallback } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v6`
+const SETTINGS_KEY = `${config.appId}:app:network:v8`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -45,7 +46,11 @@ export const LABEL_TYPES: {
 export interface INetworkSettings {
   chargeStrength: number
   linkDistance: number
-  applyMinusLog10ToSize: boolean
+
+  data: {
+    applyMinusLog10ToSize: boolean
+    applyMinusLog10ToSize2: boolean
+  }
   plot: {
     size: IDim
     margin: IMarginProps
@@ -57,8 +62,9 @@ export interface INetworkSettings {
       radius: number
       line: IStrokeProps & { autoColor: boolean }
       color: {
-        mode: 'group'
+        mode: 'group' | 'auto'
         opacity: number
+        cmap: ICmap
       }
       labels: {
         showAll: boolean
@@ -96,7 +102,7 @@ export interface INetworkSettings {
 const DEFAULT_SETTINGS: INetworkSettings = {
   chargeStrength: -30,
   linkDistance: 100,
-  applyMinusLog10ToSize: false,
+  data: { applyMinusLog10ToSize: false, applyMinusLog10ToSize2: false },
   plot: {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
@@ -109,6 +115,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       color: {
         mode: 'group',
         opacity: 0.5,
+        cmap: { name: 'bwr-v2', reversed: false },
       },
       line: { ...DEFAULT_STROKE_PROPS, show: false, autoColor: true },
       labels: {

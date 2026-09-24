@@ -2,9 +2,9 @@
   "name": "GSEA Plot",
   "description": "Format GSEA plots.",
   "color": "#ffb366",
-  "version": "23.6.4",
+  "version": "23.6.6",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-09-23T21:43:06.186Z",
-  "hash": "eba4f81aaa6f4dea75045c9f0beb59a01a3ec553a109fbd15a1d1682f0fd85ee",
-  "build": 998
+  "modified": "2026-09-24T22:22:58.341Z",
+  "hash": "766fecbad7c70f5b1b155dbcc983515a02339ae8d989cc0b9819f196710ee2a0",
+  "build": 1000
 }

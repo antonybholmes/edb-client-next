@@ -1,6 +1,7 @@
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
@@ -158,6 +159,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const [nameCol, setNameCol] = useState<string>('')
   const [groupCol, setGroupCol] = useState<string>('')
   const [sizeCol, setSizeCol] = useState<string>('')
+  const [size2Col, setSize2Col] = useState<string>('')
 
   const [sourceCol, setSourceCol] = useState<string>('')
   const [targetCol, setTargetCol] = useState<string>('')
@@ -184,6 +186,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
     setNameCol(findNameCol(dfNode))
     setGroupCol(findGroupCol(dfNode))
     setSizeCol(findSizeCol(dfNode))
+    setSize2Col(findSizeCol(dfNode))
   }, [dfNode])
 
   useEffect(() => {
@@ -208,13 +211,14 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    const { network, groups, scoreName, sizeName } = dataframesToNetwork(
+    const { network, groups } = dataframesToNetwork(
       dfNode,
       dfEdge,
       labelCol,
       nameCol,
-      sizeCol,
       groupCol,
+      sizeCol,
+      size2Col,
       sourceCol,
       targetCol,
       scoreCol,
@@ -222,7 +226,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       userData
     )
 
-    setNetwork(network, groups, scoreName, sizeName)
+    setNetwork(network, groups, scoreCol, sizeCol, size2Col)
 
     setMessage('Creating network graph...')
     runSim(network, () => {
@@ -299,11 +303,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       </ActionDialogRow>
       <ActionDialogRow>
         <Checkbox
-          checked={settings.applyMinusLog10ToSize}
+          checked={settings.data.applyMinusLog10ToSize}
           onCheckedChange={(checked) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.applyMinusLog10ToSize = checked
+                draft.data.applyMinusLog10ToSize = checked
               })
             )
           }
@@ -311,7 +315,52 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
           Apply -log10
         </Checkbox>
       </ActionDialogRow>
-      <strong>Edges</strong>
+
+      <LineSeparator />
+
+      <ActionDialogRow
+        title={
+          <Checkbox
+            checked={settings.plot.nodes.color.mode === 'auto'}
+            onCheckedChange={(checked) =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plot.nodes.color.mode = checked ? 'auto' : 'group'
+                })
+              )
+            }
+          >
+            Color
+          </Checkbox>
+        }
+      >
+        <SelectList onValueChange={setSize2Col} value={size2Col} w="lg">
+          {dfNode?.columns
+            .filter((name) => name !== '')
+            .slice(0, MAX_COLS)
+            .map((name, ni) => (
+              <SelectItem value={name} key={ni}>
+                {name}
+              </SelectItem>
+            ))}
+        </SelectList>
+      </ActionDialogRow>
+      <ActionDialogRow>
+        <Checkbox
+          checked={settings.data.applyMinusLog10ToSize2}
+          onCheckedChange={(checked) =>
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.data.applyMinusLog10ToSize2 = checked
+              })
+            )
+          }
+        >
+          Apply -log10
+        </Checkbox>
+      </ActionDialogRow>
+
+      <strong className="mt-2">Edges</strong>
       <ActionDialogRow title="Source">
         <SelectList onValueChange={setSourceCol} value={sourceCol} w="lg">
           {dfEdge?.columns

@@ -13,6 +13,7 @@ import { IS_DEV_MODE } from '@/consts'
 import { IDim } from '@/interfaces/dim'
 import { IPos, ZERO_POS } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
@@ -22,7 +23,7 @@ import { produce } from 'immer'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { IGroup, INode, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
-import { LegendSvg } from './legend-svg'
+import { getSizeLabel, LegendSvg } from './legend-svg'
 
 export function NetworkSvgContent() {
   const { zoom } = useZoom()
@@ -30,7 +31,14 @@ export function NetworkSvgContent() {
   const { settings } = useNetworkSettings()
   const { settings: userData } = useUserData()
 
-  const { network, groups, coordinates, size: d3Size, sizeLim } = useNetwork()
+  const {
+    network,
+    groups,
+    coordinates,
+    size: d3Size,
+    sizeLim,
+    sizeLim2,
+  } = useNetwork()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -95,6 +103,13 @@ export function NetworkSvgContent() {
       ])
     )
 
+    const sizeMap2 = new Map<string, number>(
+      network.nodes.map((node) => [
+        node.id,
+        (node.size2 ?? 0) / (sizeLim2?.max ?? 1),
+      ])
+    )
+
     // map relative coordinates to absolute coordinates within the SVG canvas
     const realCoordinates = realCoordinate(
       coordinates,
@@ -102,6 +117,8 @@ export function NetworkSvgContent() {
       radiusMap,
       settings
     )
+
+    const colorMap = getColorMap(settings.plot.nodes.cmap)
 
     const svg = (
       <>
@@ -166,6 +183,8 @@ export function NetworkSvgContent() {
                   key={node.id}
                   node={node}
                   radius={radiusMap.get(node.id) ?? 0}
+                  size2={sizeMap2.get(node.id) ?? 0}
+                  colorMap={colorMap}
                   groupMap={groupMap}
                   labelSet={labelSet}
                   coordinates={realCoordinates}
@@ -204,15 +223,20 @@ function NodeCircle({
   groupMap,
   labelSet,
   radius,
+  size2,
   coordinates,
+  colorMap,
 }: {
   node: INode
   groupMap: Map<string, IGroup>
   labelSet: Set<string>
   radius: number
+  size2: number
   coordinates: Map<string, IPos>
+  colorMap: ColorMap
 }) {
-  const { settings, updateSettings } = useNetworkSettings()
+  const { settings } = useNetworkSettings()
+  const { headings } = useNetwork()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
@@ -227,9 +251,9 @@ function NodeCircle({
       case 'group':
         return groupMap.get(node.group.toLowerCase())?.color ?? COLOR_BLACK
       default:
-        return COLOR_BLACK
+        return colorMap.getHexColor(size2) ?? COLOR_BLACK
     }
-  }, [settings.plot.nodes.color.mode, groupMap, node.group])
+  }, [settings.plot.nodes.color.mode, groupMap, node.group, colorMap, size2])
 
   const showLabel =
     settings.plot.nodes.labels.showAll ||
@@ -262,16 +286,6 @@ function NodeCircle({
 
       setHover(true)
 
-      // const svgP = screenToSvgPoint(ref.current, {
-      //   x: e.clientX,
-      //   y: e.clientY,
-      // })
-
-      // const plotP = {
-      //   x: svgP.x - pos.x - settings.plot.margin.left,
-      //   y: svgP.y - pos.y - settings.plot.margin.top,
-      // }
-
       const barP = {
         x: settings.plot.margin.left + pos.x,
         y: settings.plot.margin.top + pos.y,
@@ -284,9 +298,11 @@ function NodeCircle({
         content: (
           <>
             <strong>{node.label}</strong>
-            <span> {node.name}</span>
-            <span>{node.group}</span>
-            <span>Size: {node.size}</span>
+            <span>Name: {node.name}</span>
+            <span>Group: {node.group}</span>
+            <span>
+              {getSizeLabel(headings, settings)}: {node.size}
+            </span>
             {IS_DEV_MODE && <span>{node.id}</span>}
           </>
         ),
