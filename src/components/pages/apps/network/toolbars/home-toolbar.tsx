@@ -36,7 +36,7 @@ export function HomeToolbar() {
                   if (!success) {
                     return
                   }
-                  openDataFrames(files, { indexCols: 1 })
+                  openDataFrames(files, { indexCols: 0 })
                 })
               },
             })

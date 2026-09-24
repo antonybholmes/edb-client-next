@@ -37,6 +37,7 @@ export function NodePropsPanel() {
         id: 'nodes',
         name: 'Nodes',
       },
+
       { id: 'groups', name: 'Groups' },
     ])
   }, [setTabs])

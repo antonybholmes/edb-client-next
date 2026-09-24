@@ -206,7 +206,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    const { network, groups } = dataframesToNetwork(
+    const { network, groups, scoreName } = dataframesToNetwork(
       dfNode,
       dfEdge,
       labelCol,
@@ -219,7 +219,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       settings
     )
 
-    setNetwork(network, groups)
+    setNetwork(network, groups, scoreName)
 
     if (settings.sim.run) {
       setMessage('Running simulation...')

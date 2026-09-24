@@ -104,7 +104,7 @@ export function dataframesToNetwork(
   targetCol: string,
   scoreCol: string,
   settings: INetworkSettings
-): { network: INetwork; groups: IGroup[] } {
+): { network: INetwork; groups: IGroup[]; scoreName: string } {
   //const labelCol = findCol(dfNodes, 'label')
   //const sizeCol = findCol(dfNodes, 'size', { exact: true })
   //const groupCol = findCol(dfNodes, 'collection')
@@ -167,7 +167,11 @@ export function dataframesToNetwork(
       TAB10_PALETTE[index % TAB10_PALETTE.length],
   }))
 
-  return { network: { nodes, edges }, groups: uniqueGroups }
+  return {
+    network: { nodes, edges },
+    groups: uniqueGroups,
+    scoreName: scoreCol,
+  }
 }
 
 export interface INetworkStore {
@@ -176,7 +180,8 @@ export interface INetworkStore {
   nodeMap: Map<string, INode>
   coordinateMap: Map<string, IPos>
   size: IDim
-  setNetwork: (settings: INetwork, groups: IGroup[]) => void
+  scoreName: string
+  setNetwork: (settings: INetwork, groups: IGroup[], scoreName: string) => void
   setGroups: (groups: IGroup[]) => void
   updateCoordinates: (coordinateMap: Map<string, IPos>, size: IDim) => void
 }
@@ -187,7 +192,8 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
   nodeMap: new Map(),
   coordinateMap: new Map(),
   size: { w: 0, h: 0 },
-  setNetwork: (network: INetwork, groups: IGroup[]) => {
+  scoreName: '',
+  setNetwork: (network: INetwork, groups: IGroup[], scoreName: string) => {
     set({
       network,
       nodeMap: new Map(network.nodes.map((node) => [node.id, node])),
@@ -195,6 +201,7 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       //   network.nodes.map((node) => [node.id, { x: 0, y: 0 }])
       // ),
       groups,
+      scoreName,
     })
   },
   setGroups: (groups: IGroup[]) => {
@@ -215,12 +222,13 @@ export function useNetwork(): {
   groups: IGroup[]
   coordinates: Map<string, IPos>
   size: IDim
-  setNetwork: (network: INetwork, groups: IGroup[]) => void
+  scoreName: string
+  setNetwork: (network: INetwork, groups: IGroup[], scoreName: string) => void
   setGroups: (groups: IGroup[]) => void
 } {
   const network = useNetworkStore((state) => state.network)
   const groups = useNetworkStore((state) => state.groups)
-
+  const scoreName = useNetworkStore((state) => state.scoreName)
   const coordinates = useNetworkStore((state) => state.coordinateMap)
 
   const size = useNetworkStore((state) => state.size)
@@ -232,6 +240,7 @@ export function useNetwork(): {
     groups,
     coordinates,
     size,
+    scoreName,
     setNetwork,
     setGroups,
   }

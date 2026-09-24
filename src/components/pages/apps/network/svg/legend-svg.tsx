@@ -1,5 +1,6 @@
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
+import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -12,11 +13,15 @@ export function LegendSvg() {
   const { settings } = useNetworkSettings()
   const { groups } = useNetwork()
 
-  const sizeHeight = sum(
-    settings.plot.legend.size.ticks.map(
-      (t) => t * 0.5 * settings.plot.nodes.scale
-    )
-  )
+  const groupsHeight =
+    30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
+
+  const sizeHeight =
+    30 +
+    sum(
+      settings.plot.legend.sizes.ticks.map((t) => t * settings.plot.nodes.scale)
+    ) +
+    5 * settings.plot.legend.sizes.ticks.length
 
   return (
     <SvgG
@@ -30,9 +35,62 @@ export function LegendSvg() {
       <SizesSvg
         pos={{
           x: 0,
-          y: 30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5),
+          y: groupsHeight,
         }}
       />
+      <EdgesSvg
+        pos={{
+          x: 0,
+          y: groupsHeight + sizeHeight,
+        }}
+      />
+    </SvgG>
+  )
+}
+
+export function EdgesSvg({ pos }: { pos: IPos }) {
+  const { settings } = useNetworkSettings()
+  const { scoreName } = useNetwork()
+
+  const elems: ReactElement[] = []
+
+  let y = 0
+
+  for (const [ti, tick] of settings.plot.legend.edges.ticks.entries()) {
+    const strokeWidth = tick * settings.plot.edges.scale
+
+    elems.push(
+      <SvgG key={ti} pos={{ x: 0, y }}>
+        <SvgLine
+          x1={0}
+          y1={0}
+          x2={settings.plot.legend.edges.size}
+          y2={0}
+          s={settings.plot.edges.line}
+          strokeWidth={strokeWidth}
+        />
+        <SvgG pos={{ x: settings.plot.legend.edges.size + 5, y: 0 }}>
+          <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
+            {tick}
+          </SvgText>
+        </SvgG>
+      </SvgG>
+    )
+
+    y += 20
+  }
+
+  return (
+    <SvgG id="edge-legend" pos={pos}>
+      <SvgText
+        textAnchor="start"
+        font={settings.plot.nodes.labels.text}
+        fill={COLOR_BLACK}
+        fontWeight="bold"
+      >
+        {scoreName}
+      </SvgText>
+      <SvgG pos={{ x: 0, y: 20 }}>{elems}</SvgG>
     </SvgG>
   )
 }
@@ -41,7 +99,7 @@ export function SizesSvg({ pos }: { pos: IPos }) {
   const { settings } = useNetworkSettings()
 
   const maxRadius =
-    Math.max(...settings.plot.legend.size.ticks) *
+    Math.max(...settings.plot.legend.sizes.ticks) *
     0.5 *
     settings.plot.nodes.scale
 
@@ -49,7 +107,7 @@ export function SizesSvg({ pos }: { pos: IPos }) {
 
   let y = 0
 
-  for (const [ti, tick] of settings.plot.legend.size.ticks.entries()) {
+  for (const [ti, tick] of settings.plot.legend.sizes.ticks.entries()) {
     const radius = tick * 0.5 * settings.plot.nodes.scale
 
     elems.push(
@@ -66,11 +124,7 @@ export function SizesSvg({ pos }: { pos: IPos }) {
           sp={settings.plot.nodes.line}
         />
         <SvgG pos={{ x: maxRadius + 5, y: 0 }}>
-          <SvgText
-            textAnchor="start"
-            font={settings.plot.nodes.labels.text}
-            fill={COLOR_BLACK}
-          >
+          <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
             {tick}
           </SvgText>
         </SvgG>
@@ -79,10 +133,10 @@ export function SizesSvg({ pos }: { pos: IPos }) {
 
     // add our radius plus radius of next element to get
     // nice spacing
-    if (ti < settings.plot.legend.size.ticks.length - 1) {
+    if (ti < settings.plot.legend.sizes.ticks.length - 1) {
       y +=
         radius +
-        settings.plot.legend.size.ticks[ti + 1] *
+        settings.plot.legend.sizes.ticks[ti + 1] *
           0.5 *
           settings.plot.nodes.scale +
         5

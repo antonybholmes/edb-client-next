@@ -63,7 +63,11 @@ export interface INetworkSettings {
       dot: {
         radius: number
       }
-      size: {
+      sizes: {
+        ticks: number[]
+      }
+      edges: {
+        size: number
         ticks: number[]
       }
     }
@@ -78,7 +82,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     size: { w: 3000, h: 3000 },
     margin: { ...PLOT_MARGIN },
     nodes: {
-      scale: 0.2,
+      scale: 0.1,
       color: {
         mode: 'group',
         opacity: 0.5,
@@ -103,8 +107,12 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       dot: {
         radius: 8,
       },
-      size: {
+      sizes: {
         ticks: [100, 200, 300, 400],
+      },
+      edges: {
+        size: 15,
+        ticks: [0.2, 0.4, 0.6, 0.8, 1],
       },
     },
   },
