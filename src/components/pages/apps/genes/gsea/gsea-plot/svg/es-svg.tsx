@@ -217,6 +217,10 @@ export const EsSvg = memo(function EsSvg({
     [settings, edbSettings]
   )
 
+  if (!xax || !yax) {
+    return null
+  }
+
   return (
     <>
       <EsCurveSvg hits={hits} xax={xax} yax={yax} />

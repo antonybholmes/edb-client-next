@@ -83,10 +83,6 @@ const GseaPlot = memo(function GseaPlot({
     })
   }, [result, maxRank, settings.phenotypes.mode])
 
-  if (!xax || !yax || !result) {
-    return null
-  }
-
   let plotY = 0
 
   const esSvg = useMemo(() => {
@@ -267,7 +263,7 @@ function GseaSvgContent() {
         const pos = { x: col * plotSize.w, y: row * plotSize.h }
 
         return (
-          <SvgG pos={pos} id={`plot-${index + 1}`}>
+          <SvgG pos={pos} key={`plot-${index + 1}`}>
             <GseaPlot
               key={pathway.id}
               pathway={pathway}
