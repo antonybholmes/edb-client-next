@@ -27,7 +27,7 @@ export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Above', value: 'above' },
 ]
 
-type LabelType = 'label' | 'name' | 'group' | 'size' | 'id' | 'id2' | 'none'
+type LabelType = 'label' | 'name' | 'group' | 'size' | 'id' | 'id2'
 
 export const LABEL_TYPES: {
   label: string
@@ -39,7 +39,7 @@ export const LABEL_TYPES: {
   { label: 'Size', value: 'size' },
   { label: 'ID', value: 'id' },
   { label: 'ID 2', value: 'id2' },
-  { label: 'None', value: 'none' },
+  // { label: 'None', value: 'none' },
 ]
 
 export interface INetworkSettings {
