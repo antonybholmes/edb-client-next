@@ -3037,6 +3037,10 @@
         {
           "msg": "UI fixes to allow for secondary size use in network plot",
           "date": "2026-09-24T22:37:29.242Z"
+        },
+        {
+          "msg": "Renamed size props to metric1 and metric2 in network to make it more obvious what they are",
+          "date": "2026-09-24T22:43:10.179Z"
         }
       ]
     },

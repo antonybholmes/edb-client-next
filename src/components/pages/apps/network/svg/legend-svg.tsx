@@ -17,16 +17,17 @@ import { useNetwork } from '../network-store'
 
 export function LegendSvg() {
   const { settings } = useNetworkSettings()
-  const { groups, stepSize, sizeLim } = useNetwork()
+  const { groups, stepSize, metricLim1 } = useNetwork()
 
   const groupsHeight =
     30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
 
-  const steps = range(stepSize, sizeLim.max, stepSize)
+  const steps = range(stepSize, metricLim1.max, stepSize)
 
   const sizeHeight =
     35 +
-    2 * sum(steps.map((t) => (t / sizeLim.max) * settings.plot.nodes.radius)) +
+    2 *
+      sum(steps.map((t) => (t / metricLim1.max) * settings.plot.nodes.radius)) +
     5 * steps.length
 
   const edgesHeight = 35 + settings.plot.legend.edges.ticks.length * 20
@@ -63,7 +64,7 @@ export function LegendSvg() {
 
 export function Size2Svg({ pos }: { pos: IPos }) {
   const { settings } = useNetworkSettings()
-  const { headings, sizeLim2 } = useNetwork()
+  const { headings, metricLim2 } = useNetwork()
 
   const cmap = getColorMap(settings.plot.nodes.color.cmap)
 
@@ -78,11 +79,11 @@ export function Size2Svg({ pos }: { pos: IPos }) {
       },
       {
         v: 0.5,
-        label: (sizeLim2.max / 2).toString(),
+        label: (metricLim2.max / 2).toString(),
       },
       {
         v: 1,
-        label: sizeLim2.max.toString(),
+        label: metricLim2.max.toString(),
       },
     ],
     minorTicks: [0.25, 0.75],
@@ -153,18 +154,18 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
 }
 
 export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
-  const { sizeLim } = useNetwork()
+  const { metricLim1 } = useNetwork()
   const { settings } = useNetworkSettings()
   const { headings } = useNetwork()
 
-  const maxRadius = (max(steps) / sizeLim.max) * settings.plot.nodes.radius
+  const maxRadius = (max(steps) / metricLim1.max) * settings.plot.nodes.radius
 
   const elems: ReactElement[] = []
 
   let y = 0
 
   for (const [si, step] of steps.entries()) {
-    const radius = (step / sizeLim.max) * settings.plot.nodes.radius
+    const radius = (step / metricLim1.max) * settings.plot.nodes.radius
 
     elems.push(
       <SvgG key={si} pos={{ x: 0, y }}>
@@ -191,7 +192,9 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
     // nice spacing
     if (si < steps.length - 1) {
       y +=
-        radius + (steps[si + 1] / sizeLim.max) * settings.plot.nodes.radius + 5
+        radius +
+        (steps[si + 1] / metricLim1.max) * settings.plot.nodes.radius +
+        5
     }
   }
 
@@ -271,19 +274,19 @@ export function GroupsSvg() {
  * @returns The formatted size label based on the settings.
  */
 export function getSizeLabel(
-  headings: { size: string },
+  headings: { metric1: string },
   settings: INetworkSettings
 ): string {
   return settings.data.applyMinusLog10ToSize
-    ? `-log10(${capitalCase(headings.size)})`
-    : capitalCase(headings.size)
+    ? `-log10(${capitalCase(headings.metric1)})`
+    : capitalCase(headings.metric1)
 }
 
 export function getSize2Label(
-  headings: { size2: string },
+  headings: { metric2: string },
   settings: INetworkSettings
 ): string {
   return settings.data.applyMinusLog10ToSize2
-    ? `-log10(${capitalCase(headings.size2)})`
-    : capitalCase(headings.size2)
+    ? `-log10(${capitalCase(headings.metric2)})`
+    : capitalCase(headings.metric2)
 }

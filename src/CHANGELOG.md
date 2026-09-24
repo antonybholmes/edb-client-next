@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Renamed size props to metric1 and metric2 in network to make it more obvious what they are.
 - UI fixes to allow for secondary size use in network plot.
 - Support for secondary size metric in network to color nodes.
 - Lots of ui fixes to network. Enhanced legend, turn groups on and off.

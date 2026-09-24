@@ -213,14 +213,20 @@ export function dataframesToNetwork(
 export interface INetworkStore {
   network: INetwork | undefined
   nodes: {
-    sizeLim: ILimit
+    /**
+     * The limit for the primary metric (size) of the nodes.
+     */
+    metricLim1: ILimit
     stepSize: number
-    sizeLim2: ILimit
+    /**
+     * The limit for the secondary metric (size2) of the nodes.
+     */
+    metricLim2: ILimit
   }
   headings: {
     score: string
-    size: string
-    size2: string
+    metric1: string
+    metric2: string
   }
   groups: IGroup[]
 
@@ -241,14 +247,14 @@ export interface INetworkStore {
 export const useNetworkStore = create<INetworkStore>()((set) => ({
   network: undefined,
   nodes: {
-    sizeLim: { min: 0, max: 0 },
+    metricLim1: { min: 0, max: 0 },
     stepSize: 0,
-    sizeLim2: { min: 0, max: 0 },
+    metricLim2: { min: 0, max: 0 },
   },
   headings: {
     score: 'Score',
-    size: 'Size',
-    size2: 'Size2',
+    metric1: 'Size',
+    metric2: 'Size2',
   },
   groups: [],
 
@@ -288,14 +294,14 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     set({
       network,
       nodes: {
-        sizeLim,
+        metricLim1: sizeLim,
         stepSize,
-        sizeLim2,
+        metricLim2: sizeLim2,
       },
       headings: {
         score: scoreName,
-        size: sizeName,
-        size2: size2Name,
+        metric1: sizeName,
+        metric2: size2Name,
       },
       coordinateMap: {},
       groups,
@@ -316,8 +322,12 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
 
 export function useNetwork() {
   const network = useNetworkStore(useShallow((state) => state.network))
-  const sizeLim = useNetworkStore(useShallow((state) => state.nodes.sizeLim))
-  const sizeLim2 = useNetworkStore(useShallow((state) => state.nodes.sizeLim2))
+  const metricLim1 = useNetworkStore(
+    useShallow((state) => state.nodes.metricLim1)
+  )
+  const metricLim2 = useNetworkStore(
+    useShallow((state) => state.nodes.metricLim2)
+  )
   const stepSize = useNetworkStore((state) => state.nodes.stepSize)
   const groups = useNetworkStore(useShallow((state) => state.groups))
   const headings = useNetworkStore(useShallow((state) => state.headings))
@@ -331,9 +341,9 @@ export function useNetwork() {
 
   return {
     network,
-    sizeLim,
+    metricLim1,
     stepSize,
-    sizeLim2,
+    metricLim2,
     groups,
     coordinates,
     size,
