@@ -204,7 +204,7 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Label Type">
+            <PropRow title="Display Text">
               <SelectList
                 items={LABEL_TYPES}
                 value={settings.plot.nodes.labels.type}
