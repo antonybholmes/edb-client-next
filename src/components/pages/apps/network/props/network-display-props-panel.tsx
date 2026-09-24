@@ -175,6 +175,7 @@ export function NetworkDisplayPropsPanel() {
           <AccordionContent>
             <CheckPropRow
               title="Keep Within Bounds"
+              tooltip="Force nodes to stay within the plot bounds. Nodes at the edges will be constrained."
               checked={settings.plot.nodes.keepWithinBounds}
               onCheckedChange={(checked) =>
                 updateSettings(
