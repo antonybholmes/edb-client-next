@@ -18,7 +18,11 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { POSITIONS, useNetworkSettings } from '../network-settings-store'
+import {
+  LABEL_TYPES,
+  POSITIONS,
+  useNetworkSettings,
+} from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
 
 export function NetworkDisplayPropsPanel() {
@@ -198,6 +202,29 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
+            </PropRow>
+
+            <PropRow title="Label Type">
+              <SelectList
+                items={LABEL_TYPES}
+                value={settings.plot.nodes.labels.type}
+                onValueChange={(value) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.labels.type = value as
+                        'label' | 'name' | 'group'
+                    })
+                  )
+                }}
+                w="xs"
+                variant="toolbar"
+              >
+                {LABEL_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
             </PropRow>
           </AccordionContent>
         </AccordionItem>
