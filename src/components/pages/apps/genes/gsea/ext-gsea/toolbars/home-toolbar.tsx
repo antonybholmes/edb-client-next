@@ -18,7 +18,7 @@ import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-m
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
-import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
@@ -77,14 +77,14 @@ export function HomeToolbar() {
         <ToolbarRow title="Width">
           <NumericalInput
             h="md"
-            value={gseaSettings.axes.x.length}
+            value={gseaSettings.es.axes.x.length}
             placeholder="Width"
             limit={[1, 1000]}
             dp={0}
             onNumChange={(v) => {
               updateGseaSettings(
                 produce(gseaSettings, (draft) => {
-                  draft.axes.x.length = v
+                  draft.es.axes.x.length = v
                 })
               )
             }}
@@ -130,11 +130,16 @@ export function HomeToolbar() {
             </ToolbarButton>
             <ColorMapToolbarMenu
               cmap={getColorMap(edbSettings.plots.cmap)}
-              onChange={(cmap, reversed) => {
+              onChange={(cmap) => {
                 updateEdbSettings(
                   produce(edbSettings, (draft) => {
-                    draft.plots.cmap.name = cmap.id as ColorMapName
-                    draft.plots.cmap.reversed = reversed
+                    console.log('pp', getCmapFromColorMap(cmap))
+                    draft.plots.cmap = getCmapFromColorMap(cmap)
+                  })
+                )
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.genes.color.gradient.mode = 'cmap'
                   })
                 )
               }}

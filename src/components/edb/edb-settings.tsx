@@ -7,7 +7,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
 import type { IAppInfo } from '../../lib/app-info'
 
-import { ICMAP } from '@/lib/color/colormap'
+import { ICmap } from '@/lib/color/colormap'
 import {
   DEFAULT_AXIS_CONFIG,
   IXYAxisDisplayProps,
@@ -61,7 +61,7 @@ export interface IEdbSettings {
     colors: {
       custom: { id: string; color: string; opacity: number }[]
     }
-    cmap: ICMAP
+    cmap: ICmap
     colorbar: IColorBarProps
     axes: IXYAxisDisplayProps
     scale: number

@@ -13,6 +13,7 @@ import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'
+import { IPos } from '@/interfaces/pos'
 import { range } from '@/lib/math/range'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useZoom } from '@/providers/zoom-provider'
@@ -26,26 +27,20 @@ import { crossingIndex, RankingSvg } from './ranking-svg'
 const GseaPlot = memo(function GseaPlot({
   pathway,
   index,
-  row,
-  col,
-  plotSize,
+  pos,
   innerPlotSize,
 }: {
   pathway: IGseaTableResult
   index: number
-  row: number
-  col: number
-  plotSize: IDim
+  // row: number
+  // col: number
+  // plotSize: IDim
+  pos: IPos
   innerPlotSize: IDim
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
   const { phenotypes, scores, result } = useGseaData(pathway.name)
-
-  const pos = useMemo(
-    () => ({ x: col * plotSize.w, y: row * plotSize.h }),
-    [row, col, plotSize]
-  )
 
   const { axis: xax } = useAxis({
     plotId: pathway.id,
@@ -94,16 +89,22 @@ const GseaPlot = memo(function GseaPlot({
 
   let plotY = 0
 
-  const esSvg = settings.es.show ? (
-    <EsSvg
-      pathway={pathway}
-      hits={hits}
-      numGenes={scores.length}
-      xax={xax}
-      yax={yax}
-      phenotypes={phenotypes}
-    />
-  ) : null
+  const esSvg = useMemo(() => {
+    if (!settings.es.show) {
+      return null
+    }
+
+    return (
+      <EsSvg
+        pathway={pathway}
+        hits={hits}
+        numGenes={scores.length}
+        xax={xax}
+        yax={yax}
+        phenotypes={phenotypes}
+      />
+    )
+  }, [settings.es.show, pathway, hits, scores.length, xax, yax, phenotypes])
 
   if (settings.es.show) {
     plotY += settings.es.axes.y.length + 1.5 * settings.plot.gap.y
@@ -111,38 +112,64 @@ const GseaPlot = memo(function GseaPlot({
 
   const crossing = crossingIndex(sortedScores, xaf)
 
-  const genesSvg = settings.genes.show ? (
-    <GenesSvg
-      pathway={pathway}
-      xax={xax}
-      yaf={yaf}
-      //points={points}
-      scores={sortedScores}
-      hits={hits}
-      crossing={crossing}
-      pos={{ x: 0, y: plotY }}
-      innerPlotSize={innerPlotSize}
-    />
-  ) : null
+  const genesSvg = useMemo(() => {
+    if (!settings.genes.show) {
+      return null
+    }
+
+    return (
+      <SvgG pos={{ x: 0, y: plotY }}>
+        <GenesSvg
+          pathway={pathway}
+          xax={xax}
+          yaf={yaf}
+          //points={points}
+          scores={sortedScores}
+          hits={hits}
+          crossing={crossing}
+          pos={{ x: pos.x, y: pos.y + plotY }}
+
+          innerPlotSize={innerPlotSize}
+        />
+      </SvgG>
+    )
+  }, [
+    settings.genes.show,
+    pathway,
+    xax,
+    yax,
+    sortedScores,
+    hits,
+    crossing,
+    pos,
+    innerPlotSize,
+  ])
 
   if (settings.genes.show) {
     plotY += settings.genes.height + settings.plot.gap.y
   }
 
-  const rankingSvg = settings.ranking.show ? (
-    <RankingSvg
-      plotId={pathway.id}
-      xaf={xaf}
-      es={sortedScores}
-      crossing={crossing}
-      pos={{ x: 0, y: plotY }}
-    />
-  ) : null
+  const rankingSvg = useMemo(() => {
+    if (!settings.ranking.show) {
+      return null
+    }
 
-  const titleX = settings.plot.margin.left + settings.axes.x.length / 2
+    return (
+      <SvgG pos={{ x: 0, y: plotY }}>
+        <RankingSvg
+          plotId={pathway.id}
+          xaf={xaf}
+          es={sortedScores}
+          crossing={crossing}
+        />
+      </SvgG>
+    )
+  }, [settings.ranking.show, plotY, pathway.id, xaf, sortedScores, crossing])
+
+  const titleX = settings.plot.margin.left + settings.es.axes.x.length / 2
 
   return (
-    <SvgG pos={pos} id={`plot-${index + 1}`}>
+    <>
       {edbSettings.plots.axes.x.style.title.show && (
         <SvgText
           id={`title-${index + 1}`}
@@ -162,7 +189,7 @@ const GseaPlot = memo(function GseaPlot({
         {genesSvg}
         {rankingSvg}
       </SvgMargin>
-    </SvgG>
+    </>
   )
 })
 
@@ -183,7 +210,7 @@ function GseaSvgContent() {
   // fresh object literals on every GseaSvgContent render
   const innerPlotSize = useMemo(
     () => ({
-      w: settings.axes.x.length,
+      w: settings.es.axes.x.length,
       h:
         settings.es.axes.y.length +
         (settings.genes.show
@@ -194,7 +221,7 @@ function GseaSvgContent() {
           : 0),
     }),
     [
-      settings.axes.x.length,
+      settings.es.axes.x.length,
       settings.es.axes.y.length,
       settings.genes.show,
       settings.genes.height,
@@ -231,21 +258,28 @@ function GseaSvgContent() {
   const rows = Math.ceil(pathways.length / settings.page.columns)
   const pageSize = [plotSize.w * settings.page.columns, plotSize.h * rows]
 
-  const svgPlots = pathways.map((pathway, index) => {
-    const row = Math.floor(index / settings.page.columns)
-    const col = index % settings.page.columns
-    return (
-      <GseaPlot
-        key={pathway.id}
-        pathway={pathway}
-        index={index}
-        row={row}
-        col={col}
-        plotSize={plotSize}
-        innerPlotSize={innerPlotSize}
-      />
-    )
-  })
+  const svgPlots = useMemo(
+    () =>
+      pathways.map((pathway, index) => {
+        const row = Math.floor(index / settings.page.columns)
+        const col = index % settings.page.columns
+
+        const pos = { x: col * plotSize.w, y: row * plotSize.h }
+
+        return (
+          <SvgG pos={pos} id={`plot-${index + 1}`}>
+            <GseaPlot
+              key={pathway.id}
+              pathway={pathway}
+              index={index}
+              pos={pos}
+              innerPlotSize={innerPlotSize}
+            />
+          </SvgG>
+        )
+      }),
+    [pathways, settings.page.columns, plotSize, innerPlotSize]
+  )
 
   return (
     <SvgBase

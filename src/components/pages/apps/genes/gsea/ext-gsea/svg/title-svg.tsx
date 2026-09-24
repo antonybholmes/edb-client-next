@@ -1,13 +1,17 @@
 import { axisLength, IAxis } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
-import { useExtGseaContext } from '../ext-gsea-provider'
-import { IExtGseaSettings } from '../ext-gsea-settings'
+import { memo } from 'react'
+import { useGseaSettings } from '../../gsea-web/gsea-settings-store'
 
-export function ExtGseaTitleSvg({ name, xax }: { name: string; xax: IAxis }) {
-  const { plot } = useExtGseaContext()
-
-  const displayProps: IExtGseaSettings = plot.props
+export const ExtGseaTitleSvg = memo(function ExtGseaTitleSvg({
+  name,
+  xax,
+}: {
+  name: string
+  xax: IAxis
+}) {
+  const { settings } = useGseaSettings()
 
   const xlen = axisLength(xax)
 
@@ -15,12 +19,12 @@ export function ExtGseaTitleSvg({ name, xax }: { name: string; xax: IAxis }) {
     <SvgG
       pos={{
         x: xlen / 2,
-        y: -displayProps.title.offset,
+        y: -settings.title.offset,
       }}
     >
-      <SvgText font={displayProps.title} textAnchor="middle">
+      <SvgText font={settings.title} textAnchor="middle">
         {name}
       </SvgText>
     </SvgG>
   )
-}
+})

@@ -4,6 +4,7 @@ import {
   LEGEND_BLOCK_SIZE,
   type IHeatMapSettings,
 } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { memo } from 'react'
 
 export interface IProps {
   actions: string[]
@@ -18,7 +19,7 @@ export interface IProps {
  * @param param0
  * @returns
  */
-export function ActionListSvg({
+export const ActionListSvg = memo(function ActionListSvg({
   actions,
 
   pos,
@@ -42,4 +43,4 @@ export function ActionListSvg({
       })}
     </g>
   )
-}
+})

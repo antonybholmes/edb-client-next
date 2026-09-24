@@ -1,11 +1,14 @@
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
 import { LEGEND_BLOCK_SIZE } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgG } from '@/components/plot/svg-g'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IClusterGroupRow } from '@/lib/cluster-group'
 import { COLOR_BLACK } from '@/lib/color/color'
-import type { ReactElement, ReactNode } from 'react'
+import { memo, type ReactElement, type ReactNode } from 'react'
 import { useHeatmapContext } from './heatmap-provider'
 
 export interface ILegendSvgProps {
@@ -20,7 +23,6 @@ export function LegendRightSvg({
   const { plot } = useHeatmapContext()
   const props = plot.props
 
-  //const legendBlockSize = LEGEND_BLOCK_SIZE.h
   const cx = 0.5 * props.legend.icon.size
 
   const items: ReactElement[] = []
@@ -36,7 +38,7 @@ export function LegendRightSvg({
       switch (props.legend.icon.shape) {
         case 'c':
           shape = (
-            <circle
+            <SvgCircle
               cx={props.legend.icon.size / 2}
               cy={props.legend.icon.size / 2}
               r={props.legend.icon.size / 2}
@@ -52,9 +54,7 @@ export function LegendRightSvg({
           break
         default:
           shape = (
-            <rect
-              x={0}
-              y={0}
+            <SvgRect
               width={props.legend.icon.size}
               height={props.legend.icon.size}
               fill={g.color}
@@ -70,7 +70,7 @@ export function LegendRightSvg({
       }
 
       items.push(
-        <g key={`group:${gri}:${gi}`} transform={`translate(0, ${y})`}>
+        <SvgG key={`group:${gri}:${gi}`} pos={{ x: 0, y }}>
           {shape}
 
           <SvgText
@@ -82,25 +82,26 @@ export function LegendRightSvg({
           >
             {g.name}
           </SvgText>
-        </g>
+        </SvgG>
       )
+
       y += props.legend.icon.size + props.padding / 2
     }
   }
 
   return (
-    <g transform={`translate(${pos.x}, ${pos.y})`}>
+    <SvgG pos={pos}>
       {props.legend.title.show && (
         <SvgText font={props.legend.title} fontWeight="bold" y={-cx}>
           {props.legend.title.text}
         </SvgText>
       )}
       {items}
-    </g>
+    </SvgG>
   )
 }
 
-export function LegendBottomSvg({
+export const LegendBottomSvg = memo(function LegendBottomSvg({
   groupRows,
 
   pos = { ...ZERO_POS },
@@ -125,7 +126,7 @@ export function LegendBottomSvg({
       switch (props.legend.icon.shape) {
         case 'c':
           shape = (
-            <circle
+            <SvgCircle
               cx={props.legend.icon.size / 2}
               cy={props.legend.icon.size / 2}
               r={props.legend.icon.size / 2}
@@ -141,9 +142,7 @@ export function LegendBottomSvg({
           break
         default:
           shape = (
-            <rect
-              x={0}
-              y={0}
+            <SvgRect
               width={props.legend.icon.size}
               height={props.legend.icon.size}
               fill={g.color}
@@ -159,7 +158,7 @@ export function LegendBottomSvg({
       }
 
       items.push(
-        <g key={`group:${gi}`} transform={`translate(${x}, 0)`}>
+        <SvgG key={`group:${gi}`} pos={{ x, y: 0 }}>
           {shape}
 
           <SvgText
@@ -171,16 +170,18 @@ export function LegendBottomSvg({
           >
             {g.name}
           </SvgText>
-        </g>
+        </SvgG>
       )
       x += legendBlockSize + props.legend.width * 0.4 + props.padding
     }
   }
 
-  return <g transform={`translate(${pos.x}, ${pos.y})`}>{items}</g>
-}
+  return <SvgG pos={pos}>{items}</SvgG>
+})
 
-export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
+export const DotLegend = memo(function DotLegend({
+  pos = { ...ZERO_POS },
+}: ILegendSvgProps) {
   const { plot } = useHeatmapContext()
 
   const props = plot.props
@@ -191,35 +192,34 @@ export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
   const cx = 0.5 * legendBlockSize
 
   return (
-    <g transform={`translate(${pos.x}, ${pos.y})`}>
+    <SvgG pos={pos}>
       {props.dot.legend.title.show && (
         <SvgText font={props.legend.title} y={-cx}>
           {props.dot.legend.title.text}
         </SvgText>
       )}
-      <g>
-        {props.dot.sizes.map((ds, dsi) => {
-          const y = (legendBlockSize + props.padding * 0.5) * dsi
-          const r = halfW * ds.size * props.dot.scale // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
 
-          return (
-            <g key={`dot:${dsi}`} transform={`translate(0, ${y})`}>
-              <circle cx={cx} cy={cx} r={r} fill="gray" />
+      {props.dot.sizes.map((ds, dsi) => {
+        const y = (legendBlockSize + props.padding * 0.5) * dsi
+        const r = halfW * ds.size * props.dot.scale // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
 
-              <SvgText
-                x={legendBlockSize + props.padding}
-                y={cx}
-                dominantBaseline="central"
-                font={props.legend}
-              >
-                {/* {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`} */}
-                {/* {`${ds.value}${suffix ? suffix : ''}`} */}
-                {ds.value}
-              </SvgText>
-            </g>
-          )
-        })}
-      </g>
-    </g>
+        return (
+          <SvgG key={`dot:${dsi}`} pos={{ x: 0, y }}>
+            <SvgCircle cx={cx} cy={cx} r={r} fill="gray" />
+
+            <SvgText
+              x={legendBlockSize + props.padding}
+              y={cx}
+              dominantBaseline="central"
+              font={props.legend}
+            >
+              {/* {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`} */}
+              {/* {`${ds.value}${suffix ? suffix : ''}`} */}
+              {ds.value}
+            </SvgText>
+          </SvgG>
+        )
+      })}
+    </SvgG>
   )
-}
+})

@@ -25,7 +25,7 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
-import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { GeneProps } from '../gsea-plot/display-props/gene-props'
@@ -90,14 +90,14 @@ export function ExtGseaDisplayPropsPanel() {
             <PropRow title="Width">
               <NumericalInput
                 id="width"
-                value={settings.axes.x.length}
+                value={settings.es.axes.x.length}
                 limit={[1, 1000]}
                 placeholder="Width..."
                 w="xxs"
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.axes.x.length = v
+                      draft.es.axes.x.length = v
                     })
                   )
                 }}
@@ -109,12 +109,12 @@ export function ExtGseaDisplayPropsPanel() {
                 fonts={[
                   {
                     title: 'Font',
-                    textProps: displayOptions.title,
+                    textProps: settings.title,
                     update: (textProps) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.title = Object.assign(
-                            { ...draft.props.title },
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.title = Object.assign(
+                            { ...draft.title },
                             textProps
                           )
                         })
@@ -123,11 +123,11 @@ export function ExtGseaDisplayPropsPanel() {
                       <NumericalPropRow
                         title="Offset"
 
-                        value={displayOptions.title.offset}
+                        value={settings.title.offset}
                         onNumChanged={(state) =>
-                          updatePlot(
-                            produce(plot, (draft) => {
-                              draft.props.title.offset = state
+                          updateSettings(
+                            produce(settings, (draft) => {
+                              draft.title.offset = state
                             })
                           )
                         }
@@ -227,11 +227,10 @@ export function ExtGseaDisplayPropsPanel() {
             <PropRow title="Color">
               <ColorMapMenu
                 cmap={getColorMap(edbSettings.plots.cmap)}
-                onChange={(cmap, reversed) => {
+                onChange={(colormap) => {
                   updateEdbSettings(
                     produce(edbSettings, (draft) => {
-                      draft.plots.cmap.name = cmap.id as ColorMapName
-                      draft.plots.cmap.reversed = reversed
+                      draft.plots.cmap = getCmapFromColorMap(colormap)
                     })
                   )
                 }}
@@ -256,11 +255,11 @@ export function ExtGseaDisplayPropsPanel() {
           <AccordionTrigger
             rightChildren={
               <Switch
-                checked={displayOptions.genes.line.show}
+                checked={settings.genes.stroke.show}
                 onCheckedChange={(v) =>
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.genes.line.show = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.stroke.show = v
                     })
                   )
                 }
@@ -369,11 +368,11 @@ export function ExtGseaDisplayPropsPanel() {
           <AccordionTrigger
             rightChildren={
               <Switch
-                checked={displayOptions.ranking.show}
+                checked={settings.ranking.show}
                 onCheckedChange={(v) =>
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.ranking.show = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.ranking.show = v
                     })
                   )
                 }
@@ -404,9 +403,9 @@ export function ExtGseaDisplayPropsPanel() {
               <StrokeButton
                 colors={[
                   {
-                    color: displayOptions.ranking.zeroCross.value,
-                    opacity: displayOptions.ranking.zeroCross.opacity,
-                    show: displayOptions.ranking.zeroCross.show,
+                    color: settings.ranking.zeroCross.value,
+                    opacity: settings.ranking.zeroCross.opacity,
+                    show: settings.ranking.zeroCross.show,
                     onColorChange: ({
                       color,
                       opacity,
@@ -414,17 +413,17 @@ export function ExtGseaDisplayPropsPanel() {
                       dasharray,
                       show,
                     }) => {
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.ranking.zeroCross.show =
-                            show ?? draft.props.ranking.zeroCross.show
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.ranking.zeroCross.show =
+                            show ?? draft.ranking.zeroCross.show
 
-                          draft.props.ranking.zeroCross.value = color
-                          draft.props.ranking.zeroCross.opacity = opacity ?? 1
-                          draft.props.ranking.zeroCross.width =
-                            width ?? draft.props.ranking.zeroCross.width
-                          draft.props.ranking.zeroCross.dasharray =
-                            dasharray ?? draft.props.ranking.zeroCross.dasharray
+                          draft.ranking.zeroCross.value = color
+                          draft.ranking.zeroCross.opacity = opacity ?? 1
+                          draft.ranking.zeroCross.width =
+                            width ?? draft.ranking.zeroCross.width
+                          draft.ranking.zeroCross.dasharray =
+                            dasharray ?? draft.ranking.zeroCross.dasharray
                         })
                       )
                     },
@@ -436,19 +435,19 @@ export function ExtGseaDisplayPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: displayOptions.ranking.fill.value,
-                    opacity: displayOptions.ranking.fill.opacity,
+                    color: settings.ranking.fill.value,
+                    opacity: settings.ranking.fill.opacity,
                     allowNoColor: false,
                     onColorChange: ({ color, opacity }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.ranking.fill.value = color
-                          draft.props.ranking.fill.opacity = opacity
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.ranking.fill.value = color
+                          draft.ranking.fill.opacity = opacity
                         })
                       ),
                   },
                 ]}
-                disabled={!displayOptions.ranking.show}
+                disabled={!settings.ranking.show}
                 title="Ranking Fill"
               />
 

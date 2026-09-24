@@ -1,14 +1,17 @@
 import { BaseCol } from '@/components/layout/base-col'
+import { IChildrenProps } from '@/interfaces/children-props'
 import { IPos } from '@/interfaces/pos'
+import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
-import { ReactNode, useEffect } from 'react'
-
+import { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+
 import { create } from 'zustand'
 
 export const TOOLTIP_CLEAR_MS = 300
 
 export interface ITooltipState {
+  id: string
   pos: IPos
   className?: string
   content: ReactNode
@@ -16,7 +19,7 @@ export interface ITooltipState {
 
 interface ITooltipStore {
   tooltip: ITooltipState | null
-  showTooltip: (tooltip: ITooltipState) => void
+  showTooltip: (tooltip: Omit<ITooltipState, 'id'>) => void
   hideTooltip: () => void
   dispose: () => void
 }
@@ -39,58 +42,37 @@ export const useTooltipStore = create<ITooltipStore>()((set, get) => {
     pendingTooltip = null
   }
 
+  const clearPendingTimeout = () => {
+    if (clearTimeoutId !== null) {
+      clearTimeout(clearTimeoutId)
+      clearTimeoutId = null
+    }
+  }
+
   return {
     tooltip: null,
     showTooltip: (t) => {
-      const current = get().tooltip
+      const tooltip = { id: makeUuid(), ...t }
+      // Cancel any pending tooltip frame before showing a new tooltip
+      cancelPendingFrame()
 
-      if (samePosition(current?.pos ?? null, t.pos)) {
-        cancelPendingFrame()
-        return
-      }
+      // Stop any existing tooltip clear timeout
+      clearPendingTimeout()
 
-      if (
-        tooltipFrame !== null &&
-        pendingTooltip !== null &&
-        samePosition(pendingTooltip.pos, t.pos)
-      ) {
-        return
-      }
-
-      pendingTooltip = t
-
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-        clearTimeoutId = null
-      }
-
-      if (tooltipFrame !== null) {
-        return
-      }
+      pendingTooltip = tooltip
 
       tooltipFrame = requestAnimationFrame(() => {
         tooltipFrame = null
 
-        const tooltip = pendingTooltip
+        set({ tooltip: pendingTooltip })
+
         pendingTooltip = null
-
-        if (!tooltip) {
-          return
-        }
-
-        const current = get().tooltip
-
-        if (!samePosition(current?.pos ?? null, tooltip.pos)) {
-          set({ tooltip })
-        }
       })
     },
     hideTooltip: () => {
       cancelPendingFrame()
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-      }
+      clearPendingTimeout()
 
       // wait before removing. if we re-enter quickly, the tooltip won't flicker
       // as this timeout will be cancelled so the tooltip won't disappear
@@ -103,10 +85,7 @@ export const useTooltipStore = create<ITooltipStore>()((set, get) => {
     dispose: () => {
       cancelPendingFrame()
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-        clearTimeoutId = null
-      }
+      clearPendingTimeout()
 
       set({ tooltip: null })
     },
@@ -121,29 +100,39 @@ export function useTooltip() {
 }
 
 // renders the active tooltip into a portal; doesn't need to wrap children
-export function TooltipProvider() {
+export function TooltipProvider({ children }: IChildrenProps) {
   const tooltip = useTooltipStore((s) => s.tooltip)
-  const dispose = useTooltipStore((s) => s.dispose)
 
-  useEffect(() => dispose, [dispose])
+  //console.log('RENDER', tooltip)
 
-  if (!tooltip) {
-    return null
-  }
+  // useEffect(() => {
+  //   //console.log('EFFECT MOUNT')
 
-  return createPortal(
-    <BaseCol
-      className={cn(
-        'fixed z-(--z-tooltip) rounded-lg bg-black/50 shadow-lg px-4 py-3 text-xs text-white pointer-events-none',
-        tooltip.className
-      )}
-      style={{
-        left: tooltip.pos.x,
-        top: tooltip.pos.y,
-      }}
-    >
-      {tooltip.content}
-    </BaseCol>,
-    document.body
+  //   return () => {
+  //     console.log('EFFECT CLEANUP')
+  //   }
+  // }, [])
+
+  return (
+    <>
+      {children && children}
+
+      {tooltip &&
+        createPortal(
+          <BaseCol
+            className={cn(
+              'fixed z-(--z-tooltip) rounded-lg bg-black/60 shadow-lg px-4 py-3 text-xs text-white pointer-events-none',
+              tooltip.className
+            )}
+            style={{
+              left: tooltip.pos.x,
+              top: tooltip.pos.y,
+            }}
+          >
+            {tooltip.content}
+          </BaseCol>,
+          document.body
+        )}
+    </>
   )
 }

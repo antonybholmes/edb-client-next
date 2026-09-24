@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type ReactNode } from 'react'
+import { memo, ReactElement, useCallback, useMemo } from 'react'
 
 import {
   axisDomainToRangeFunc,
@@ -12,10 +12,8 @@ import {
   IRankedGene,
   type IGeneSet,
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { gsea } from '@/components/pages/apps/genes/gsea/gsea-plot/gsea'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgLine } from '@/components/plot/svg-line'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
@@ -27,10 +25,9 @@ import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
-import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
-import { IExtGseaSettings } from '../ext-gsea-settings'
+import { IExtGseaPlotResult } from '../ext-gsea-provider'
 
-export function ExtGseaHitsSvg({
+export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
   xax,
   gs,
   esHits,
@@ -42,13 +39,11 @@ export function ExtGseaHitsSvg({
   xax: IAxis
   gs: IGeneSet
   esHits: IRankedGene[]
-  //scores: IRankedGene[]
   maxAbsScore: number
   maxRank: number
   gsMode: 'gs1' | 'gs2'
   pos: IPos
 }) {
-  const { displayProps } = useExtGseaContext()
   const { ref } = useSVG()
   const { showCrosshair, hideCrosshair } = useCrosshair()
   const { settings } = useGseaSettings()
@@ -56,27 +51,20 @@ export function ExtGseaHitsSvg({
 
   const w = useMemo(() => axisLength(xax), [xax])
 
-  const cmap = getColorMapFromSettings(settings, edbSettings)
+  const cmap = useMemo(
+    () => getColorMapFromSettings(settings, edbSettings),
+    [settings, edbSettings]
+  )
 
-  const points = useMemo(() => {
+  const xp = useMemo(() => {
     if (!xax) {
       return []
     }
 
     const xaf = axisDomainToRangeFunc(xax)
 
-    const points = esHits.map((e) => ({
-      x: xaf(e.rank),
-      y: 0,
-    }))
-
-    return points
+    return esHits.map((e) => xaf(e.rank))
   }, [esHits, xax])
-
-  //   const _hideTooltip = useCallback(() => {
-  //     hideCrosshair()
-  //     hideTooltip()
-  //   }, [hideCrosshair, hideTooltip])
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -90,35 +78,30 @@ export function ExtGseaHitsSvg({
       })
 
       const plotP = {
-        x: svgP.x - pos.x - displayProps.plot.margin.left,
-        y: svgP.y - pos.y - displayProps.plot.margin.top,
+        x: svgP.x - pos.x - settings.plot.margin.left,
+        y: svgP.y - pos.y - settings.plot.margin.top,
       }
 
       if (
         plotP.x < 0 ||
         plotP.x > w ||
         plotP.y < 0 ||
-        plotP.y > displayProps.genes.height
+        plotP.y > settings.genes.height
       ) {
         hideCrosshair()
         return
       }
 
-      const { value: nearest, index: index } = findNearest(
-        plotP.x,
-        points.map((p) => p.x)
-      )
+      const { value: nearest, index: index } = findNearest(plotP.x, xp)
 
       if (Math.abs(plotP.x - nearest) > 5) {
         hideCrosshair()
         return
       }
 
-      //const rank = esHits[index].rank
-
       const barP = {
-        x: nearest + displayProps.plot.margin.left + pos.x,
-        y: displayProps.plot.margin.top + pos.y + displayProps.genes.height / 2,
+        x: nearest + settings.plot.margin.left + pos.x,
+        y: settings.plot.margin.top + pos.y + settings.genes.height / 2,
       }
 
       const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
@@ -136,149 +119,118 @@ export function ExtGseaHitsSvg({
         ),
       })
     },
-    [pos, ref, displayProps, esHits, gs, points, showCrosshair, hideCrosshair]
+    [pos, ref, settings, esHits, gs, xp, showCrosshair, hideCrosshair]
   )
 
-  const genesSvg = useMemo(() => {
-    let genesSvg: ReactNode | undefined = undefined
+  const svgHits = useMemo(() => {
+    const pointsByColor = new Map<string, number[]>()
 
-    if (!points || points.length === 0) {
-      return null
+    for (const [hiti, hit] of esHits.entries()) {
+      const x = xp[hiti]
+
+      let pc = 0
+
+      if (settings.genes.color.mode === 'score') {
+        pc =
+          gsMode === 'gs1'
+            ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+            : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
+      } else {
+        pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
+      }
+
+      if (gsMode === 'gs1') {
+        pc *= settings.genes.color.gradient.weight
+      } else {
+        pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+      }
+
+      const color = cmap.getHexColor(pc)
+
+      if (!pointsByColor.has(color)) {
+        pointsByColor.set(color, [])
+      }
+      pointsByColor.get(color)!.push(x)
     }
 
-    if (displayProps.genes.line.show) {
-      return (
-        <>
-          <SvgG id="hits">
-            {esHits.map((hit, hiti) => {
-              const x = points[hiti].x // ?? xaf(gsea.esHits[hiti].rank)
+    const elems: ReactElement[] = []
 
-              let pc = 0
+    for (const [color, xs] of pointsByColor.entries()) {
+      // You can now use `color` and `xs` to render points or perform other operations
 
-              if (settings.genes.color.mode === 'score') {
-                pc =
-                  gsMode === 'gs1'
-                    ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
-                    : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
-              } else {
-                pc = (hit.rank / maxRank) * 0.5 + (gsMode === 'gs1' ? 0 : 0.5)
-              }
-
-              if (gsMode === 'gs1') {
-                pc *= settings.genes.color.gradient.weight
-              } else {
-                pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
-              }
-
-              //pc += gsMode === 'gs1' ? 0 : 0.5
-
-              // pc =
-              //   (1 - settings.genes.color.gradient.weight) *
-              //     (gsMode === 'gs1' ? 0 : 1) +
-              //   settings.genes.color.gradient.weight * pc
-
-              const color = cmap.getHexColor(pc)
-
-              return (
-                <SvgLine
-                  key={hiti}
-                  x1={x}
-                  x2={x}
-                  y1={0}
-                  y2={settings.genes.height}
-                  s={settings.genes.stroke}
-                  stroke={color} //gs.color ?? displayProps.es[gsMode].curve.value}
-                  strokeOpacity={settings.genes.color.gradient.opacity}
-                />
-              )
-            })}
-          </SvgG>
-
-          {settings.genes.labels.show && (
-            <SvgG
-              pos={{
-                x: settings.axes.x.length + displayProps.plot!.gap.x / 2,
-                y: settings.genes.height * 0.5,
-              }}
-            >
-              <SvgText
-                fill={
-                  settings.genes.labels.color.on
-                    ? cmap.getHexColor(gsMode === 'gs1' ? 0 : 1)
-                    : COLOR_BLACK
-                }
-                font={displayProps.genes.labels.font}
-              >
-                {gs.name}
-              </SvgText>
-            </SvgG>
-          )}
-
-          <SvgRect
-            id="mouse-rect"
-            data-interaction-only="true"
-            width={w}
-            height={displayProps.genes.height}
-            fill="transparent"
-            pointerEvents="all"
-            onMouseMove={onMouseMove}
-            onMouseLeave={hideCrosshair}
-          />
-        </>
+      elems.push(
+        <path
+          key={color}
+          d={xs.map((x) => `M${x},0 L${x},${settings.genes.height}`).join(' ')}
+          stroke={color}
+          strokeWidth={settings.genes.stroke.width}
+          strokeOpacity={settings.genes.color.gradient.opacity}
+          fill="none"
+        />
       )
     }
 
-    return genesSvg
-  }, [
-    gs,
-    gsMode,
-    gsea,
-    xax,
-    points,
-    maxAbsScore,
-    displayProps,
-    pos,
-    onMouseMove,
-    hideCrosshair,
-  ])
+    return elems
+  }, [esHits, xp, settings, gsMode, maxAbsScore, maxRank, cmap])
 
-  return genesSvg
-}
-
-function normHit(
-  hit: IRankedGene,
-  maxScore: number,
-  maxRank: number,
-  mode: 'score' | 'rank'
-) {
-  let pc = 0
-
-  if (mode === 'score') {
-    pc = (1 - Math.abs(hit.score) / maxScore) * 0.5
-  } else {
-    pc = (hit.rank / maxRank) * 0.5
+  if (!xp || xp.length === 0) {
+    return null
   }
 
-  return pc
-}
+  if (settings.genes.stroke.show) {
+    return (
+      <>
+        <SvgG id="hits">{svgHits}</SvgG>
 
-export function ExtGseaGenesSvgPlot({
+        {settings.genes.labels.show && (
+          <SvgG
+            pos={{
+              x: settings.es.axes.x.length + settings.plot.gap.x / 2,
+              y: settings.genes.height * 0.5,
+            }}
+          >
+            <SvgText
+              fill={
+                settings.genes.labels.color.on
+                  ? cmap.getHexColor(gsMode === 'gs1' ? 0 : 1)
+                  : COLOR_BLACK
+              }
+              font={settings.genes.labels}
+            >
+              {gs.name}
+            </SvgText>
+          </SvgG>
+        )}
+
+        <SvgRect
+          id="mouse-rect"
+          data-interaction-only="true"
+          width={w}
+          height={settings.genes.height}
+          fill="transparent"
+          pointerEvents="all"
+          onMouseMove={onMouseMove}
+          onMouseLeave={hideCrosshair}
+        />
+      </>
+    )
+  }
+})
+
+export const ExtGseaGenesSvgPlot = memo(function ExtGseaGenesSvgPlot({
   result,
   pos,
 }: {
   result: IExtGseaPlotResult
   pos: IPos
 }) {
-  const { plot } = useExtGseaContext()
-  const { settings } = useGseaSettings()
+  const { settings: gseaSettings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
     plotId: result.id,
     groupId: 'es',
     axisId: 'x',
   })
-
-  const displayProps: IExtGseaSettings = plot.props
 
   const maxRank = result.scores.length - 1
 
@@ -301,60 +253,54 @@ export function ExtGseaGenesSvgPlot({
     return { gs1, gs2, esHits1, esHits2, scores1, scores2 }
   }, [result])
 
-  const genesSvg = useMemo(() => {
-    let genesSvg: ReactNode | undefined = undefined
+  // scale colors to score, for generic ext gsea
+  // score is always 1 so no effect, for viper
+  // we can scale by strength of interaction with
+  // target
+  const maxAbsScore = useMemo(
+    () => max([...scores1.map((g) => g.score), ...scores2.map((g) => g.score)]),
+    [scores1, scores2]
+  )
 
-    if (displayProps.genes.line.show) {
-      // scale colors to score, for generic ext gsea
-      // score is always 1 so no effect, for viper
-      // we can scale by strength of interaction with
-      // target
-      let maxAbsScore = max([
-        ...scores1.map((g) => g.score),
-        ...scores2.map((g) => g.score),
-      ])
+  if (!gseaSettings.genes.stroke.show) {
+    return null
+  }
 
-      const yOffset = settings.genes.height + 0.25 * displayProps.plot.gap.y
+  const yOffset = gseaSettings.genes.height + 0.25 * gseaSettings.plot.gap.y
 
-      return (
-        <>
-          <ExtGseaHitsSvg
-            xax={xax}
-            gs={gs1}
-            esHits={esHits1}
-            //scores={scores1}
-            maxAbsScore={maxAbsScore}
-            maxRank={maxRank}
-            gsMode="gs1"
-            pos={pos}
-          />
+  return (
+    <>
+      <ExtGseaHitsSvg
+        xax={xax}
+        gs={gs1}
+        esHits={esHits1}
+        //scores={scores1}
+        maxAbsScore={maxAbsScore}
+        maxRank={maxRank}
+        gsMode="gs1"
+        pos={pos}
+      />
 
-          <SvgG
-            pos={{
-              x: 0,
-              y: yOffset,
-            }}
-          >
-            <ExtGseaHitsSvg
-              xax={xax}
-              gs={gs2}
-              esHits={esHits2}
-              //scores={scores2}
-              maxAbsScore={maxAbsScore}
-              maxRank={maxRank}
-              gsMode="gs2"
-              pos={{
-                x: pos.x,
-                y: pos.y + yOffset,
-              }}
-            />
-          </SvgG>
-        </>
-      )
-    }
-
-    return genesSvg
-  }, [result, pos, gs1, gs2, esHits1, esHits2, displayProps])
-
-  return genesSvg
-}
+      <SvgG
+        pos={{
+          x: 0,
+          y: yOffset,
+        }}
+      >
+        <ExtGseaHitsSvg
+          xax={xax}
+          gs={gs2}
+          esHits={esHits2}
+          //scores={scores2}
+          maxAbsScore={maxAbsScore}
+          maxRank={maxRank}
+          gsMode="gs2"
+          pos={{
+            x: pos.x,
+            y: pos.y + yOffset,
+          }}
+        />
+      </SvgG>
+    </>
+  )
+})

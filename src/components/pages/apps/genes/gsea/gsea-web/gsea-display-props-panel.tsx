@@ -114,7 +114,7 @@ export function GseaDisplayPropsPanel() {
             Page
           </AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Axes">
+            {/* <PropRow title="Axes">
               <FontPopover
                 fonts={[
                   {
@@ -133,13 +133,13 @@ export function GseaDisplayPropsPanel() {
                     update: (f) =>
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.axes.ticks = f
+                          draft.es.axes.ticks = f
                         })
                       ),
                   },
                 ]}
               />
-            </PropRow>
+            </PropRow> */}
           </AccordionContent>
         </AccordionItem>
 

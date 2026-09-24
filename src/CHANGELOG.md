@@ -1,9 +1,28 @@
 # Changelog
 
+## 91.0.0 (Sep, 2026)
+
+### Changed
+
+- Lots of ui fixes to network. Enhanced legend, turn groups on and off.
+- Lots of UI fixes to network.
+- More props for network rendering.
+- Added support for groups with color to network.
+
+
 ## 89.8.0 (Sep, 2026)
 
 ### Changed
 
+- New network dialog for picking cols.
+- bottom bar now shows full filename in tooltip.
+- Started new network app.
+- tooltip renderer simplified and moved out of client layout since it seems to double render.
+- Dot plot now correctly shows dots. Right legend placement adjust on heatmaps.
+- heatmaps now use memo and have rendering tweaks.
+- Preference for moving elements using <g> rather than with component itself.
+- Cross hairs now work on gsea plots with multiple rows and cols.
+- Colormaps now default to 32 color quantization. GSEA hits now render as paths grouped by quantized colors.
 - ExtGSEA uses more gsea props for consistency. Sliders have manual input.
 - New message system for showing when something is running.
 - ExtGSEA modified to use weights for genes that do not affect inGeneset so misses are correctly calculated.

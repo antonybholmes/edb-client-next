@@ -3,9 +3,10 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v54`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v58`
 
 import {
+  DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_COLOR_PROPS,
   DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN_SMALL,
@@ -35,20 +36,33 @@ interface IFilters {
 }
 
 export interface IGseaDisplayProps {
+  title: ITextProps & {
+    offset: number
+  }
+
   phenotypes: {
     mode: 'normal' | 'inverted'
   }
-  axes: {
-    //show: boolean
-    //labels: ITextProps
-    //ticks: ITextProps
-    x: {
-      length: number
-      // labels: {
-      //   rotate: boolean
-      //   truncate: number
-      // }
+  es: {
+    labels: ITextProps
+    phenotypes: ITextProps
+    show: boolean
+    line: IStrokeProps
+    leadingEdge: {
+      show: boolean
+      fill: IPaintProps
+      line: IStrokeProps
     }
+    axes: {
+      x: {
+        showTicks: boolean
+        length: number
+      }
+      y: {
+        length: number
+      }
+    }
+    step: number
   }
   genes: {
     show: boolean
@@ -71,26 +85,7 @@ export interface IGseaDisplayProps {
     height: number
     //line: IStrokeProps
   }
-  es: {
-    labels: ITextProps
-    phenotypes: ITextProps
-    show: boolean
-    line: IStrokeProps
-    leadingEdge: {
-      show: boolean
-      fill: IPaintProps
-      line: IStrokeProps
-    }
-    axes: {
-      x: {
-        showTicks: boolean
-      }
-      y: {
-        length: number
-      }
-    }
-    step: number
-  }
+
   //title: ITextProps & { offset: number }
   page: {
     //scale: number
@@ -105,7 +100,7 @@ export interface IGseaDisplayProps {
   }
 
   ranking: {
-    zeroCross: { show: boolean; line: IStrokeProps }
+    zeroCross: IStrokeProps
     show: boolean
     axes: {
       y: {
@@ -123,6 +118,10 @@ export interface IGseaDisplayProps {
 }
 
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
+  title: {
+    ...DEFAULT_BOLD_TEXT_PROPS,
+    offset: 10,
+  },
   page: {
     columns: 3,
     //scale: 1,
@@ -147,24 +146,14 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       x: 20,
     },
   },
-  axes: {
-    //show: true,
-    //labels: { ...DEFAULT_BOLD_TEXT_PROPS },
-    //ticks: { ...DEFAULT_TEXT_PROPS },
-    x: {
-      // labels: {
-      //   rotate: false,
-      //   truncate: -2,
-      // },
-      length: 220,
-    },
-  },
+
   es: {
     axes: {
       y: {
         length: 100,
       },
       x: {
+        length: 220,
         showTicks: false,
       },
     },
@@ -186,7 +175,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   },
   genes: {
     height: 15,
-    labels: { ...DEFAULT_TEXT_PROPS, color: { on: true } },
+    labels: { ...DEFAULT_BOLD_TEXT_PROPS, color: { on: true } },
     color: {
       on: true,
       mode: 'rank',
@@ -215,10 +204,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
       },
     },
     fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_GRAY, opacity: 0.3 },
-    zeroCross: {
-      show: true,
-      line: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
-    },
+    zeroCross: { ...DEFAULT_STROKE_PROPS, width: 1, dasharray: '8' },
   },
   genesets: {
     filters: {

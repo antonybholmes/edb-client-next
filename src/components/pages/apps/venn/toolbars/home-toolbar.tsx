@@ -16,7 +16,7 @@ import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
-import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
@@ -141,18 +141,13 @@ export function HomeToolbar() {
         <ToolbarCol>
           <ToolbarRow>
             <ColorMapMenu
-              align="end"
               cmap={getColorMap(edbSettings.plots.cmap.name)}
-              reversed={edbSettings.plots.cmap.reversed}
-              onChange={(cmap, reversed) => {
+
+              onChange={(cmap) => {
                 // store the cmap the user likes
                 updateEdbSettings(
                   produce(edbSettings, (draft) => {
-                    draft.plots.cmap = {
-                      name: cmap.id as ColorMapName,
-
-                      reversed,
-                    }
+                    draft.plots.cmap = getCmapFromColorMap(cmap)
                   })
                 )
               }}

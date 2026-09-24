@@ -199,7 +199,6 @@ export function GseaBubbleDisplayPropsPanel() {
 
             <PropRow title="Colormap">
               <ColorMapMenu
-                align="end"
                 cmap={getColorMap(settings.scale.cmap)}
                 onChange={(cmap) => {
                   // store the cmap the user likes

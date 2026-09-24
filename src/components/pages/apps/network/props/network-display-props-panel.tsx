@@ -1,0 +1,247 @@
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { PropRow } from '@/components/dialogs/prop-row'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { FontPopover } from '@/components/plot/font/font-popover'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { PropsPanel } from '@/components/props-panel'
+import { Button } from '@/components/shadcn/ui/themed/v2/button'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { RunningIndicator } from '@/components/toolbar/running-indicator'
+import { TEXT_APPLY } from '@/consts'
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
+} from '@/themed/v2/accordion'
+import { produce } from 'immer'
+import { useState } from 'react'
+import { POSITIONS, useNetworkSettings } from '../network-settings-store'
+import { useNetwork, useNetworkSim } from '../network-store'
+
+export function NetworkDisplayPropsPanel() {
+  const { settings, updateSettings } = useNetworkSettings()
+  const { network } = useNetwork()
+  const { run } = useNetworkSim()
+  const [message, setMessage] = useState('')
+
+  return (
+    <PropsPanel>
+      <ScrollAccordion
+        value={['plot', 'nodes', 'edges', 'statistics', 'bubbles', 'size']}
+      >
+        <AccordionItem value="plot">
+          <AccordionTrigger>Plot</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Distance">
+              <NumSlider
+                min={0}
+                max={200}
+
+                value={settings.linkDistance}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.linkDistance = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Charge">
+              <NumSlider
+                min={-100}
+                max={100}
+
+                value={settings.chargeStrength}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.chargeStrength = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <VCenterRow className="gap-x-2">
+              <Button
+                variant="app-theme"
+                onClick={() => {
+                  setMessage('Running...')
+                  run(network, () => setMessage(''))
+                }}
+              >
+                {TEXT_APPLY}
+              </Button>
+              <RunningIndicator message={message} />
+            </VCenterRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="nodes">
+          <AccordionTrigger>Nodes</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Scale">
+              <NumSlider
+                min={0}
+                max={1}
+                step={0.01}
+                dp={2}
+                value={settings.plot.nodes.scale}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.scale = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Opacity">
+              <NumSlider
+                min={0}
+                max={1}
+                step={0.01}
+                dp={2}
+                value={settings.plot.nodes.color.opacity}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.color.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Line">
+              <Checkbox
+                checked={settings.plot.nodes.line.autoColor}
+                onCheckedChange={(checked) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.line.autoColor = checked
+                    })
+                  )
+                }
+              >
+                Auto Color
+              </Checkbox>
+              <StrokeButton
+                colors={[
+                  {
+                    color: settings.plot.nodes.line.value,
+                    show: settings.plot.nodes.line.show,
+                    onColorChange: ({ color, show }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.plot.nodes.line.value = color
+                          draft.plot.nodes.line.show = show
+                        })
+                      ),
+                  },
+                ]}
+              />
+            </PropRow>
+            <PropRow title="Labels">
+              <SelectList
+                items={POSITIONS}
+                value={settings.plot.nodes.labels.position}
+                onValueChange={(value) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.labels.position = value as
+                        'left' | 'center' | 'right' | 'below' | 'above'
+                    })
+                  )
+                }}
+                w="xs"
+                variant="toolbar"
+              >
+                {POSITIONS.map((position) => (
+                  <SelectItem key={position.value} value={position.value}>
+                    {position.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
+
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Font',
+                    textProps: settings.plot.nodes.labels.text,
+                    update: (textProps) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.plot.nodes.labels.text = Object.assign(
+                            { ...settings.plot.nodes.labels.text },
+                            textProps
+                          )
+                        })
+                      ),
+                    ext: (
+                      <CheckPropRow
+                        title="Use colors"
+                        className="ml-0.5 mt-1"
+
+                        checked={settings.plot.nodes.labels.color.on}
+                        onCheckedChange={(state) =>
+                          updateSettings(
+                            produce(settings, (draft) => {
+                              draft.plot.nodes.labels.color.on = state
+                            })
+                          )
+                        }
+                      />
+                    ),
+                  },
+                ]}
+              />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="edges">
+          <AccordionTrigger>Edges</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Scale">
+              <NumSlider
+                min={0}
+                max={20}
+                step={0.01}
+                dp={2}
+                value={settings.plot.edges.scale}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.edges.scale = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+
+            <PropRow title="Line">
+              <StrokeButton
+                colors={[
+                  {
+                    color: settings.plot.edges.line.value,
+                    show: settings.plot.edges.line.show,
+                    onColorChange: ({ color, show }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.plot.edges.line.value = color
+                          draft.plot.edges.line.show = show
+                        })
+                      ),
+                  },
+                ]}
+              />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+      </ScrollAccordion>
+    </PropsPanel>
+  )
+}

@@ -155,7 +155,7 @@ export function ExtGseaProvider({
       const gseaRes1: IGseaResult = result.gsea1
       const gseaRes2: IGseaResult = result.gsea2
 
-      let y = gseaRes1.es //self._ranked_scores
+      let y = gseaRes1.es
       const x = range(y.length)
 
       const xmax = max(x)
@@ -166,16 +166,14 @@ export function ExtGseaProvider({
         ])
       )
 
-      let xax = createAxis({
+      const xax = createAxis({
         id: 'x',
         title: 'Genes',
         domain: [0, xmax],
-        length: settings.axes.x.length,
+        length: settings.es.axes.x.length,
         style: { title: { show: false } },
         tickParams: { which: 'both', show: false },
       })
-
-      console.log('y', settings.es.axes.y.length)
 
       const yaxEs = createAxis({
         id: 'y',
@@ -185,6 +183,8 @@ export function ExtGseaProvider({
         length: settings.es.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })
+
+      const xaxGenes = { ...xax }
 
       const yMax = max(abs(scores.map((e) => e.score)))
 

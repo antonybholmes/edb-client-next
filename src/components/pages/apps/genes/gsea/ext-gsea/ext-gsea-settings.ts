@@ -1,12 +1,8 @@
 import {
-  DEFAULT_BOLD_TEXT_PROPS,
-  DEFAULT_DASH_PROPS,
   DEFAULT_FILL_PROPS,
-  DEFAULT_MARGIN_MEDIUM,
   DEFAULT_STROKE_PROPS,
   type IPaintProps,
   type IStrokeProps,
-  type ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
@@ -16,18 +12,6 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v24`
 
 export interface IExtGseaSettings {
-  // axes: {
-  //   x: {
-  //     length: number
-  //     font: ITextProps
-
-  //     labels: {
-  //       rotate: boolean
-  //       truncate: number
-  //       font: ITextProps
-  //     }
-  //   }
-  // }
   phenotypes: {
     p1: {
       name: string
@@ -52,83 +36,15 @@ export interface IExtGseaSettings {
       }
       y: {
         title: string
-        //length: number
       }
     }
     stats: {
       show: boolean
     }
   }
-  genes: {
-    line: IStrokeProps
-    height: number
-
-    labels: {
-      font: ITextProps
-      isColored: boolean
-    }
-    geneScoreWeight: number
-  }
-  title: ITextProps & {
-    offset: number
-  }
-  page: {
-    columns: number
-  }
-  plot: {
-    margin: {
-      top: number
-      left: number
-      bottom: number
-      right: number
-    }
-    gap: { x: number; y: number }
-  }
-
-  ranking: {
-    zeroCross: IStrokeProps
-    show: boolean
-    axes: {
-      y: {
-        length: number
-      }
-    }
-    fill: IPaintProps
-  }
-
-  // viper: {
-  //   reverse: boolean
-  // }
 }
 
 export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
-  page: {
-    columns: 3,
-    //scale: 1,
-  },
-
-  title: {
-    ...DEFAULT_BOLD_TEXT_PROPS,
-    offset: 10,
-  },
-  plot: {
-    margin: { ...DEFAULT_MARGIN_MEDIUM },
-    gap: {
-      x: 20,
-      y: 20,
-    },
-  },
-  // axes: {
-  //   x: {
-  //     font: { ...DEFAULT_TEXT_PROPS },
-  //     labels: {
-  //       rotate: false,
-  //       truncate: -2,
-  //       font: { ...DEFAULT_BOLD_TEXT_PROPS },
-  //     },
-  //     length: 220,
-  //   },
-  // },
   phenotypes: {
     p1: {
       name: '',
@@ -141,7 +57,6 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
     useGeneScoreForES: true,
     axes: {
       y: {
-        //length: 150,
         title: 'ES',
       },
       x: {
@@ -166,29 +81,29 @@ export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
       show: true,
     },
   },
-  genes: {
-    height: 15,
-    line: { ...DEFAULT_STROKE_PROPS },
-    labels: {
-      font: { ...DEFAULT_BOLD_TEXT_PROPS },
-      isColored: true,
-    },
-    geneScoreWeight: 1,
-  },
-  ranking: {
-    show: true,
-    axes: {
-      y: {
-        length: 100,
-      },
-    },
-    fill: {
-      value: 'gray',
-      opacity: 0.2,
-      show: true,
-    },
-    zeroCross: { ...DEFAULT_DASH_PROPS },
-  },
+  // genes: {
+  //   height: 15,
+  //   line: { ...DEFAULT_STROKE_PROPS },
+  //   labels: {
+  //     font: { ...DEFAULT_BOLD_TEXT_PROPS },
+  //     isColored: true,
+  //   },
+  //   geneScoreWeight: 1,
+  // },
+  // ranking: {
+  //   show: true,
+  //   axes: {
+  //     y: {
+  //       length: 100,
+  //     },
+  //   },
+  //   fill: {
+  //     value: 'gray',
+  //     opacity: 0.2,
+  //     show: true,
+  //   },
+  //   zeroCross: { ...DEFAULT_DASH_PROPS },
+  // },
   // viper: {
   //   reverse: true,
   // },

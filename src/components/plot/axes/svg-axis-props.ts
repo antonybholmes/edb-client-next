@@ -65,7 +65,6 @@ export interface IMajorMinorTicks {
 
 export interface IAxisConfig {
   title: string
-
   clip?: boolean
   domain: ILim
   range: ILim

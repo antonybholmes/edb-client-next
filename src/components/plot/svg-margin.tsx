@@ -1,5 +1,6 @@
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { SVGProps } from 'react'
+import { SvgG } from './svg-g'
 
 export interface ISvgGroupProps extends SVGProps<SVGGElement> {}
 
@@ -15,8 +16,8 @@ export interface IProps extends ISvgGroupProps {
  */
 export function SvgMargin({ margin, children, ...props }: IProps) {
   return (
-    <g transform={`translate(${margin.left}, ${margin.top})`} {...props}>
+    <SvgG pos={{ x: margin.left, y: margin.top }} {...props}>
       {children}
-    </g>
+    </SvgG>
   )
 }

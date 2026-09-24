@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { memo, ReactElement, useCallback, useMemo } from 'react'
 
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
@@ -7,7 +7,6 @@ import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { IEdbSettings, useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
-import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
@@ -37,13 +36,14 @@ export function getColorMapFromSettings(
   ])
 }
 
-export function GenesSvg({
+export const GenesSvg = memo(function GenesSvg({
   pathway,
   innerPlotSize,
   scores,
   hits,
   crossing,
   pos,
+
   xax,
   yaf,
 }: {
@@ -79,7 +79,10 @@ export function GenesSvg({
   // we reverse the colormap because in a gsea plot,
   // red/up appears on the left and blue/down appears on the right
 
-  const cmap = getColorMapFromSettings(settings, edbSettings)
+  const cmap = useMemo(
+    () => getColorMapFromSettings(settings, edbSettings),
+    [settings, edbSettings]
+  )
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
@@ -95,6 +98,111 @@ export function GenesSvg({
     () => max(abs(scores.map((e) => e.score))),
     [scores]
   )
+
+  const svgHits = useMemo(() => {
+    const pointsByColor = new Map<string, number[]>()
+
+    for (const [hi, hit] of hits.entries()) {
+      const x = xp[hi]
+
+      let pc = 0
+
+      const isLeft = hit.rank <= crossing.index
+
+      if (settings.genes.color.mode === 'score') {
+        pc = isLeft
+          ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+          : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
+      } else {
+        pc = (hit.rank / maxRank) * 0.5 + (isLeft ? 0 : 0.5)
+      }
+
+      if (isLeft) {
+        pc *= settings.genes.color.gradient.weight
+      } else {
+        pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+      }
+
+      const color = settings.genes.color.on ? cmap.getHexColor(pc) : COLOR_BLACK
+
+      if (!pointsByColor.has(color)) {
+        pointsByColor.set(color, [])
+      }
+      pointsByColor.get(color)!.push(x)
+    }
+
+    const elems: ReactElement[] = []
+
+    for (const [color, xs] of pointsByColor.entries()) {
+      elems.push(
+        <path
+          key={color}
+          d={xs.map((x) => `M${x},0 L${x},${settings.genes.height}`).join(' ')}
+          stroke={color}
+          strokeWidth={settings.genes.stroke.width}
+          strokeOpacity={settings.genes.color.gradient.opacity}
+          fill="none"
+        />
+      )
+    }
+
+    return elems
+
+    // return hits.map((hit, hi) => {
+    //     const x = xp[hi]
+
+    //     // scale from -1 to 1 and then normalize to 0-1 range
+
+    //     let pc = 0
+
+    //     const isLeft = hit.rank <= crossing.index
+
+    //     if (settings.genes.color.mode === 'score') {
+    //       pc = isLeft
+    //         ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
+    //         : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
+    //     } else {
+    //       pc = (hit.rank / maxRank) * 0.5 + (isLeft ? 0 : 0.5)
+    //     }
+
+    //     if (isLeft) {
+    //       pc *= settings.genes.color.gradient.weight
+    //     } else {
+    //       pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
+    //     }
+
+    //     // if (settings.genes.color.mode === 'score') {
+    //     //   pc = (1 - hit.score / maxAbsScore) * 0.5
+    //     // } else {
+    //     //   pc = isLeft
+    //     //     ? 0.5 * (hit.rank / crossing.index)
+    //     //     : 0.5 +
+    //     //       0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
+    //     // }
+
+    //     // pc =
+    //     //   (1 - settings.genes.color.gradient.weight) * (isLeft ? 0 : 1) +
+    //     //   settings.genes.color.gradient.weight * pc
+
+    //     const color = settings.genes.color.on
+    //       ? cmap.getHexColor(pc)
+    //       : COLOR_BLACK
+
+    //     return (
+    //       <line
+    //         key={hi}
+    //         x1={x}
+    //         x2={x}
+    //         y1={0}
+    //         y2={settings.genes.height}
+    //         strokeWidth={settings.genes.stroke.width}
+    //         stroke={color}
+    //         strokeOpacity={settings.genes.color.gradient.opacity}
+    //       />
+    //     )
+    //   })
+    // }
+  }, [hits, xp, settings, crossing.index, maxAbsScore, maxRank, cmap])
 
   // for a given point, use its rank to find the corresponding gene in sortedRankedGenes,
   // then use its score to determine the color of the point. This is because we base
@@ -170,60 +278,8 @@ export function GenesSvg({
   )
 
   return (
-    <SvgG pos={pos}>
-      {hits.map((hit, hi) => {
-        const x = xp[hi]
-
-        // scale from -1 to 1 and then normalize to 0-1 range
-
-        let pc = 0
-
-        const isLeft = hit.rank <= crossing.index
-
-        if (settings.genes.color.mode === 'score') {
-          pc = isLeft
-            ? (1 - Math.abs(hit.score) / maxAbsScore) * 0.5
-            : (Math.abs(hit.score) / maxAbsScore) * 0.5 + 0.5
-        } else {
-          pc = (hit.rank / maxRank) * 0.5 + (isLeft ? 0 : 0.5)
-        }
-
-        if (isLeft) {
-          pc *= settings.genes.color.gradient.weight
-        } else {
-          pc = 1 - settings.genes.color.gradient.weight * (1 - pc)
-        }
-
-        // if (settings.genes.color.mode === 'score') {
-        //   pc = (1 - hit.score / maxAbsScore) * 0.5
-        // } else {
-        //   pc = isLeft
-        //     ? 0.5 * (hit.rank / crossing.index)
-        //     : 0.5 +
-        //       0.5 * ((hit.rank - crossing.index) / (maxRank - crossing.index))
-        // }
-
-        // pc =
-        //   (1 - settings.genes.color.gradient.weight) * (isLeft ? 0 : 1) +
-        //   settings.genes.color.gradient.weight * pc
-
-        const color = settings.genes.color.on
-          ? cmap.getHexColor(pc)
-          : COLOR_BLACK
-
-        return (
-          <line
-            key={hi}
-            x1={x}
-            x2={x}
-            y1={0}
-            y2={settings.genes.height}
-            strokeWidth={settings.genes.stroke.width}
-            stroke={color}
-            strokeOpacity={settings.genes.color.gradient.opacity}
-          />
-        )
-      })}
+    <>
+      {svgHits}
 
       <SvgRect
         id="mouse-rect"
@@ -235,6 +291,6 @@ export function GenesSvg({
         onMouseMove={onMouseMove}
         onMouseLeave={hideCrosshair}
       />
-    </SvgG>
+    </>
   )
-}
+})

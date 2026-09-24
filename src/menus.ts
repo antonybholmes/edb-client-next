@@ -12,6 +12,7 @@ import REV_COMP_APP from './components/pages/apps/genomic/rev-comp/manifest.json
 import SEQBROWSER_APP from './components/pages/apps/genomic/seq-browser/manifest.json'
 import HUBS_APP from './components/pages/apps/hubs/manifest.json'
 import MATCALC_APP from './components/pages/apps/matcalc/manifest.json'
+import NETWORK_APP from './components/pages/apps/network/manifest.json'
 import SINGLE_CELL_APP from './components/pages/apps/ngs/single-cell/manifest.json'
 import SANKEY_APP from './components/pages/apps/sankey/manifest.json'
 import VENN_APP from './components/pages/apps/venn/manifest.json'
@@ -72,6 +73,11 @@ export const HEADER_LINKS: IHeaderLink[] = [
       {
         ...SANKEY_APP,
         slug: '/apps/sankey',
+        mode: 'prod',
+      },
+      {
+        ...NETWORK_APP,
+        slug: '/apps/network',
         mode: 'prod',
       },
     ],

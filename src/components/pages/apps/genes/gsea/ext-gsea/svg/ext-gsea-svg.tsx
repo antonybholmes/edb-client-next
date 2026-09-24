@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from 'react'
+import { memo, ReactElement, useMemo } from 'react'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
@@ -16,15 +16,13 @@ import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
 import { ExtGseaGenesSvgPlot } from './ext-gsea-hits'
 import { ExtGseaTitleSvg } from './title-svg'
 
-function ExtGseaSvgPlot({
+const ExtGseaSvgPlot = memo(function ExtGseaSvgPlot({
   result,
   pos,
 }: {
   result: IExtGseaPlotResult
   pos: IPos
 }) {
-  const { displayProps } = useExtGseaContext()
-
   const { settings: gseaSettings } = useGseaSettings()
 
   const { axis: xax } = useAxis({
@@ -41,7 +39,7 @@ function ExtGseaSvgPlot({
 
   const ylen = axisLength(yax)
 
-  const yOffset = ylen + 1.5 * displayProps.plot!.gap.y
+  const yOffset = ylen + 1.5 * gseaSettings.plot!.gap.y
 
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
 
@@ -51,7 +49,7 @@ function ExtGseaSvgPlot({
 
   return (
     <>
-      {displayProps.title.show && (
+      {gseaSettings.title.show && (
         <ExtGseaTitleSvg name={result.name} xax={xax} />
       )}
 
@@ -72,7 +70,7 @@ function ExtGseaSvgPlot({
         />
       </SvgG>
 
-      {displayProps.ranking.show && (
+      {gseaSettings.ranking.show && (
         <SvgG
           pos={{
             x: 0,
@@ -94,46 +92,46 @@ function ExtGseaSvgPlot({
       )}
     </>
   )
-}
+})
 
 export function ExtGseaSvgContent() {
-  const { results, displayProps } = useExtGseaContext()
-  const { settings } = useGseaSettings()
+  const { results } = useExtGseaContext()
+  const { settings: gseaSettings } = useGseaSettings()
   const { zoom } = useZoom()
 
   const innerPlotSize: IDim = useMemo(() => {
     return {
-      w: settings.axes.x.length,
+      w: gseaSettings.es.axes.x.length,
       h:
-        settings.es.axes.y.length +
-        (displayProps.genes.line.show
-          ? 2 * (displayProps.plot.gap.y + displayProps.genes.height)
+        gseaSettings.es.axes.y.length +
+        (gseaSettings.genes.stroke.show
+          ? 2 * (gseaSettings.plot.gap.y + gseaSettings.genes.height)
           : 0) +
-        (displayProps.ranking.show
-          ? displayProps.plot.gap.y + displayProps.ranking.axes.y.length
+        (gseaSettings.ranking.show
+          ? gseaSettings.plot.gap.y + gseaSettings.ranking.axes.y.length
           : 0),
     }
-  }, [displayProps])
+  }, [gseaSettings])
 
   const plotSize: IDim = useMemo(() => {
     return {
       w:
         innerPlotSize.w +
-        displayProps.plot.margin.left +
-        displayProps.plot.margin.right,
+        gseaSettings.plot.margin.left +
+        gseaSettings.plot.margin.right,
       h:
         innerPlotSize.h +
-        displayProps.plot.margin.top +
-        displayProps.plot.margin.bottom,
+        gseaSettings.plot.margin.top +
+        gseaSettings.plot.margin.bottom,
     }
-  }, [innerPlotSize, displayProps])
+  }, [innerPlotSize, gseaSettings])
 
   const pageSize: IDim = useMemo(() => {
     return {
-      w: plotSize.w * displayProps.page.columns,
-      h: plotSize.h * Math.ceil(results.length / displayProps.page.columns),
+      w: plotSize.w * gseaSettings.page.columns,
+      h: plotSize.h * Math.ceil(results.length / gseaSettings.page.columns),
     }
-  }, [plotSize, displayProps.page.columns, results.length])
+  }, [plotSize, gseaSettings.page.columns, results.length])
 
   const svg = useMemo(() => {
     const elems: ReactElement[] = []
@@ -152,14 +150,14 @@ export function ExtGseaSvgContent() {
 
       x += plotSize.w
 
-      if (ri % displayProps.page.columns === displayProps.page.columns - 1) {
+      if (ri % gseaSettings.page.columns === gseaSettings.page.columns - 1) {
         x = 0
         y += plotSize.h
       }
     }
 
-    return <SvgMargin margin={displayProps.plot.margin}>{elems}</SvgMargin>
-  }, [results, plotSize, displayProps.page.columns, displayProps.plot.margin])
+    return <SvgMargin margin={gseaSettings.plot.margin}>{elems}</SvgMargin>
+  }, [results, plotSize, gseaSettings.page.columns, gseaSettings.plot.margin])
 
   return (
     <SvgBase width={pageSize.w} height={pageSize.h} scale={zoom}>

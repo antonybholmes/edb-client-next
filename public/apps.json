@@ -43,11 +43,11 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.2.8",
+    "version": "2.4.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-17T22:00:58.490Z",
-    "hash": "b42ab0741b2d9feeeb0e69d9659ce38294969951d29b50704e52e5d5171e8a5d",
-    "build": 1026
+    "modified": "2026-09-20T22:17:52.074Z",
+    "hash": "20e602876fca834f05cc97605ba4a5a6f7d3088713b5d0d41e5b1b466c019a0e",
+    "build": 1034
   },
   {
     "name": "Get DNA",
@@ -62,21 +62,21 @@
     "name": "GSEA Bubble",
     "description": "GSEA bubble plots.",
     "color": "#4169E1",
-    "version": "1.2.2",
+    "version": "1.2.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-14T14:30:40.557Z",
-    "hash": "5df93ab5e93264ef8f4ca8db88b1b5a04b2e035abca676063e86fedc382ca16f",
-    "build": 66
+    "modified": "2026-09-23T18:14:55.014Z",
+    "hash": "15d8740fb92eb43950ec4c092451fbfb4181d1fb0de5907bbb204266692fd805",
+    "build": 72
   },
   {
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "23.6.2",
+    "version": "23.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-17T22:00:58.491Z",
-    "hash": "f36551d56cea7c9fb8a41e64c82318617df41038445882b84c07068363b8911a",
-    "build": 982
+    "modified": "2026-09-23T21:43:06.186Z",
+    "hash": "eba4f81aaa6f4dea75045c9f0beb59a01a3ec553a109fbd15a1d1682f0fd85ee",
+    "build": 998
   },
   {
     "name": "GSEA Web",
@@ -84,9 +84,9 @@
     "color": "#4169E1",
     "version": "3.6.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-14T14:30:40.559Z",
-    "hash": "2a9e65ca59dfd504dee835fb51e02304a4557d40039c12cac27ce1f0a1f4b213",
-    "build": 126
+    "modified": "2026-09-20T22:17:52.078Z",
+    "hash": "00201bdfbefd7e4a204d187a9551b8c740f041ce94bb88ed6c7f1a5cd4688ec4",
+    "build": 128
   },
   {
     "name": "History Viewer",
@@ -122,19 +122,19 @@
     "color": "#DA70D6",
     "version": "27.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-16T03:35:22.843Z",
-    "hash": "e83c8f493ff932e1ddcd8f3aa5018570250004b6197843eb47e5b43b833aaf48",
-    "build": 1126
+    "modified": "2026-09-23T21:43:06.191Z",
+    "hash": "4d59c80321e8577dec3f9b62d8bdb3dd85e8ce43abb018f4ea2abfe26d8cf9ae",
+    "build": 1128
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.4.8",
+    "version": "50.6.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-16T22:23:44.151Z",
-    "hash": "efce3e592f562f9fc99e254e0f18332eaecbacbbb525681c1586087b4d3e82f0",
-    "build": 2076
+    "modified": "2026-09-23T16:34:09.351Z",
+    "hash": "b8add16d1af4cd8a23209fd709f1536f5d38894148ede960c32d1bd7d2135242",
+    "build": 2084
   },
   {
     "name": "Motifs",
@@ -145,6 +145,16 @@
     "modified": "2026-09-08T21:59:49.593Z",
     "hash": "0b9629bf490ecb0daf0f7497f5ccf442412879ff69bc6c6877d5fe36ea92537e",
     "build": 1016
+  },
+  {
+    "name": "Network",
+    "description": "Network graphs.",
+    "color": "#4169E1",
+    "version": "1.0.2",
+    "copyright": "© 2026 Antony Holmes",
+    "modified": "2026-09-24T15:52:03.473Z",
+    "hash": "105819879b30b6118351aaa08f455f4a631a4655e650f94f317d3e3da45e79e8",
+    "build": 16
   },
   {
     "name": "Oncoplot",
@@ -212,9 +222,9 @@
     "color": "#9966ff",
     "version": "26.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-12T04:34:15.850Z",
-    "hash": "94dddcf47b2ffc8f3e8d6e0278d2ff3439b71ffca26bf348152d8e2e26098dfb",
-    "build": 872
+    "modified": "2026-09-18T15:48:02.131Z",
+    "hash": "8d1d882e5748fef2db8f90ae509c1b3dfdade1e54cd7141b316f16dc8e972c86",
+    "build": 874
   },
   {
     "name": "Table Viewer",
@@ -261,8 +271,8 @@
     "color": "#00008B",
     "version": "26.6.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-16T20:03:46.419Z",
-    "hash": "084cf2cc615a80f00ec858b829f7541e6cd935557e2ba1c8b4d8408d5380359d",
-    "build": 942
+    "modified": "2026-09-21T21:29:37.755Z",
+    "hash": "16e9821ca27e8151ea30a9aa7599a657f032e98a382298d7f3fd63134bd56917",
+    "build": 946
   }
 ]

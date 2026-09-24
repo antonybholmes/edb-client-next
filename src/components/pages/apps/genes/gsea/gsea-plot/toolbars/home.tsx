@@ -16,7 +16,7 @@ import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
-import { ColorMapName, getColorMap } from '@/lib/color/colormap'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { useGseaSettings } from '../gsea-settings-store'
@@ -62,14 +62,14 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="Plot Size">
         <DoubleNumericalInput
           h="sm"
-          v1={settings.axes.x.length}
+          v1={settings.es.axes.x.length}
           placeholder="Width"
           limit={[1, 1000]}
           dp={0}
           onNumChange1={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.axes.x.length = v
+                draft.es.axes.x.length = v
               })
             )
           }}
@@ -124,7 +124,12 @@ export function HomeToolbar() {
               onChange={(cmap) => {
                 updateEdbSettings(
                   produce(edbSettings, (draft) => {
-                    draft.plots.cmap.name = cmap.id as ColorMapName
+                    draft.plots.cmap = getCmapFromColorMap(cmap)
+                  })
+                )
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.color.gradient.mode = 'cmap'
                   })
                 )
               }}

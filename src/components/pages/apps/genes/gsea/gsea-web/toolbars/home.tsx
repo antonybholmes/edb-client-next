@@ -51,14 +51,14 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="Plot Size">
         <DoubleNumericalInput
           h="md"
-          v1={settings.axes.x.length}
+          v1={settings.es.axes.x.length}
           placeholder="Width"
           limit={[1, 1000]}
           dp={0}
           onNumChange1={(v) => {
             updateSettings(
               produce(settings, (draft) => {
-                draft.axes.x.length = v
+                draft.es.axes.x.length = v
               })
             )
           }}

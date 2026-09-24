@@ -2,11 +2,9 @@
 
 import { THEME_KEY } from '@/components/edb/theme'
 //import { Auth0Provider } from '@auth0/nextjs-auth0/client'
-import { GlassSvg } from '@/components/shadcn/ui/themed/glass'
 import { cn } from '@/lib/shadcn-utils'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
-import { ClientLayout } from './client-layout'
 import './globals.css'
 
 const primaryFont = Geist({
@@ -97,9 +95,11 @@ export default function Layout({
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}
 
-        <ClientLayout>{children}</ClientLayout>
+        {/* <ClientLayout>{children}</ClientLayout> */}
 
-        <GlassSvg />
+        {children}
+
+        {/* <GlassSvg /> */}
       </body>
     </html>
   )

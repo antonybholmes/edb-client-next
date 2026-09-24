@@ -154,9 +154,9 @@ export function GseaBubblePage() {
   // }, [debouncedQ])
 
   // load saved zoom from settings
-  useEffect(() => {
-    setZoom(settings.page.scale)
-  }, [settings.page.scale])
+  // useEffect(() => {
+  //   setZoom(settings.page.scale)
+  // }, [settings.page.scale])
 
   // useEffect(() => {
   //   if (!plot || settings.scale === zoom) {

@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react'
+import { memo, useMemo, type ReactNode } from 'react'
 
 import type { IGseaResult } from '@/components/pages/apps/genes/gsea/ext-gsea/ext-gsea'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
@@ -15,7 +15,7 @@ import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
-export function ExtGseaEsCurveSvg({
+export const ExtGseaEsCurveSvg = memo(function ExtGseaEsCurveSvg({
   result,
   gsea,
   gsMode,
@@ -40,15 +40,14 @@ export function ExtGseaEsCurveSvg({
     axisId: 'y',
   })
 
-  if (gsea.leadingEdge.length === 0) {
-    return null
-  }
-
-  const yaf = axisDomainToRangeFunc(yaxEs)
+  const yaf = useMemo(() => axisDomainToRangeFunc(yaxEs), [yaxEs])
 
   const { leadingEdge, es, esHits } = gsea
 
-  const cmap = getColorMapFromSettings(settings, edbSettings)
+  const cmap = useMemo(
+    () => getColorMapFromSettings(settings, edbSettings),
+    [settings, edbSettings]
+  )
 
   let leadingEdgeEs = useMemo(() => {
     let les = leadingEdge.map((g) => es[g.rank])
@@ -60,6 +59,10 @@ export function ExtGseaEsCurveSvg({
 
     return les
   }, [leadingEdge, es])
+
+  if (gsea.leadingEdge.length === 0) {
+    return null
+  }
 
   let leadingEdge1Svg: ReactNode | undefined = undefined
 
@@ -95,10 +98,13 @@ export function ExtGseaEsCurveSvg({
       {line1Svg && line1Svg}
     </>
   )
-}
+})
 
-export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
-  const { displayProps } = useExtGseaContext()
+export const ExtGseaEsSvgPlot = memo(function ExtGseaEsSvgPlot({
+  result,
+}: {
+  result: IExtGseaPlotResult
+}) {
   const { settings } = useExtGseaSettings()
   const { settings: gseaSettings } = useGseaSettings()
 
@@ -114,7 +120,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
     axisId: 'y',
   })
 
-  const { scores, gs1, gs2, extGsea, gsea1, gsea2 } = result
+  const { scores, extGsea, gsea1, gsea2 } = result
 
   if (!gsea1 || !gsea2) {
     return null
@@ -142,10 +148,10 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
           y: yaf(0),
         }}
       >
-        <AxisBottomSvg ax={xax} showTicks={displayProps.es.axes.x.showTicks} />
+        <AxisBottomSvg ax={xax} showTicks={gseaSettings.es.axes.x.showTicks} />
         <SvgG
           pos={{
-            x: gseaSettings.axes.x.length + displayProps.plot!.gap.x / 2,
+            x: gseaSettings.es.axes.x.length + gseaSettings.plot!.gap.x / 2,
             y: 0,
           }}
         >
@@ -158,7 +164,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       <SvgG
         pos={{
           x: 0,
-          y: ylen + displayProps.plot!.gap.y / 2,
+          y: ylen + gseaSettings.plot!.gap.y / 2,
         }}
       >
         <SvgG>
@@ -187,7 +193,7 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
         </SvgG>
       </SvgG>
 
-      {displayProps.es.stats.show && (
+      {settings.es.stats.show && (
         <SvgG
           id="stats"
           pos={{
@@ -213,4 +219,4 @@ export function ExtGseaEsSvgPlot({ result }: { result: IExtGseaPlotResult }) {
       )}
     </SvgG>
   )
-}
+})

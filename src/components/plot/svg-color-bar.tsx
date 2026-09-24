@@ -11,6 +11,7 @@ import {
   setAxisDirection,
 } from './axes/axis'
 
+import { memo } from 'react'
 import { AxisBottomSvg, AxisRightSvg } from './axes/svg-axis'
 import { SvgG } from './svg-g'
 import { SvgRect } from './svg-rect'
@@ -22,7 +23,7 @@ interface ISvgColorBarProps {
   pos?: IPos
 }
 
-export function SvgHColorBar({
+export const SvgHColorBar = memo(function SvgHColorBar({
   ax,
   cmap = BWR_CMAP_V2,
   steps,
@@ -88,12 +89,12 @@ export function SvgHColorBar({
       </SvgG>
     </SvgG>
   )
-}
+})
 
-export function SvgVColorBar({
+export const SvgVColorBar = memo(function SvgVColorBar({
   ax,
   cmap = BWR_CMAP_V2,
-  steps,
+  steps = 15,
   pos = { ...ZERO_POS },
 }: ISvgColorBarProps) {
   const { settings } = useEdbSettings()
@@ -103,7 +104,7 @@ export function SvgVColorBar({
   }
 
   if (!steps) {
-    steps = cmap.colors
+    steps = cmap.colorCount
   }
 
   if (!steps) {
@@ -160,4 +161,4 @@ export function SvgVColorBar({
       </SvgG>
     </SvgG>
   )
-}
+})

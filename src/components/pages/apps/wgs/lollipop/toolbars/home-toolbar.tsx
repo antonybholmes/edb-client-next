@@ -3,7 +3,6 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { useSVG } from '@/providers/svg-provider'
@@ -15,7 +14,6 @@ import { LollipopStackIcon } from '../lollipop-stack-icon'
 import { useOpen } from '../use-open'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { open } = useOpen()
   const { saveAs } = useSVG()
   const {

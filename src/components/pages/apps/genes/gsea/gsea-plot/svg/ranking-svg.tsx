@@ -1,28 +1,26 @@
 import { AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgPolygon } from '@/components/plot/svg-polygon'
-import { IPos } from '@/interfaces/pos'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
+import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
+import { memo, useMemo } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'
 
-export function RankingSvg({
+export const RankingSvg = memo(function RankingSvg({
   plotId,
   xaf,
   es,
   crossing,
-  pos,
 }: {
   plotId: string
   xaf: (domainValue: number) => number
   es: IRankedGene[]
   crossing: { index: number; x: number }
-  pos?: IPos
 }) {
   const { settings } = useGseaSettings()
   const { settings: edbSettings } = useEdbSettings()
@@ -33,29 +31,29 @@ export function RankingSvg({
     axisId: 'y',
   })
 
-  const yaf = axisDomainToRangeFunc(yax)
+  const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
   const y0 = yaf(0)
 
-  const ylen = axisLength(yax)
+  const displayPoints = useMemo(() => {
+    const points = es.map((e) => ({
+      x: xaf(e.rank),
+      y: yaf(e.score),
+    }))
 
-  const points = es.map((e) => ({
-    x: xaf(e.rank),
-    y: yaf(e.score),
-  }))
-
-  // fix starts and end
-  const displayPoints = [
-    { x: xaf(0), y: y0 },
-    ...points,
-    {
-      x: xaf(es.length - 1),
-      y: y0,
-    },
-  ]
+    // fix starts and end
+    return [
+      { x: xaf(0), y: y0 },
+      ...points,
+      {
+        x: xaf(es.length - 1),
+        y: y0,
+      },
+    ]
+  }, [es, xaf, yaf, y0])
 
   return (
-    <SvgG pos={pos}>
+    <>
       {settings.ranking.fill.show && (
         <SvgPolygon
           points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
@@ -63,11 +61,11 @@ export function RankingSvg({
         />
       )}
 
-      {settings.ranking.zeroCross.line.show && (
+      {settings.ranking.zeroCross.show && (
         <SvgG pos={{ x: crossing.x, y: 0 }}>
           <SvgLine
             y2={settings.ranking.axes.y.length}
-            s={settings.ranking.zeroCross.line}
+            s={settings.ranking.zeroCross}
           />
           <SvgG
             pos={{
@@ -85,9 +83,9 @@ export function RankingSvg({
         </SvgG>
       )}
       <AxisLeftSvg ax={yax} />
-    </SvgG>
+    </>
   )
-}
+})
 
 export function crossingIndex(
   scores: IRankedGene[],

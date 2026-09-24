@@ -1,5 +1,6 @@
 import { clamp } from '../math/clamp'
 import { lerp } from '../math/lerp'
+import { DEFAULT_LIMIT } from '../math/limit'
 import { hexToRgba, rgba2hex, type IRGBA } from './color'
 
 // based on https://github.com/bpostlethwaite/colormap/
@@ -47,12 +48,36 @@ import { hexToRgba, rgba2hex, type IRGBA } from './color'
 // }
 
 export class ColorMap {
-  private _cmap: IRGBA[]
-  private _maxIndex: number
-  private _name: string
+  /**
+   * A unique identifier for the colormap.
+   */
   private _id: string
 
-  constructor(id: string, name: string, cmap: (string | IRGBA)[]) {
+  /**
+   * The array of RGBA colors that make up the colormap.
+   */
+  private _cmap: IRGBA[]
+  /**
+   * The maximum index in the colormap array.
+   */
+  private _maxIndex: number
+  private _name: string
+
+  /**
+   * Indicates whether the colormap has been reversed.
+   */
+  private _isReversed: boolean
+  private _colorCount: number | undefined
+
+  constructor(
+    id: string,
+    name: string,
+    cmap: (string | IRGBA)[],
+    opts: { colorCount?: number } = {}
+  ) {
+    // default to quantizing the colormap into 31 colors if not specified
+    const { colorCount = 31 } = opts
+
     this._id = id
     this._name = name
     this._cmap = cmap.map((c) => {
@@ -64,6 +89,13 @@ export class ColorMap {
     })
 
     this._maxIndex = this._cmap.length - 1
+    this._isReversed = false
+
+    if (colorCount !== undefined) {
+      this._colorCount = validateColorCount(colorCount) - 1
+    } else {
+      this._colorCount = undefined
+    }
   }
 
   get id(): string {
@@ -78,17 +110,37 @@ export class ColorMap {
     return this._cmap.length
   }
 
+  /**
+   * The number of discrete colors used in the colormap, if specified.
+   */
+  get colorCount(): number | undefined {
+    return this._colorCount !== undefined ? this._colorCount + 1 : undefined
+  }
+
+  get isReversed(): boolean {
+    return this._isReversed
+  }
+
   private _interpolateColor(c1: IRGBA, c2: IRGBA, t: number): IRGBA {
     return [
       Math.round(lerp(c1[0], c2[0], t)),
       Math.round(lerp(c1[1], c2[1], t)),
       Math.round(lerp(c1[2], c2[2], t)),
-      clamp(lerp(c1[3], c2[3], t), { min: 0, max: 1 }),
+      clamp(lerp(c1[3], c2[3], t), DEFAULT_LIMIT),
     ]
   }
 
   getRGBAColor(v: number): IRGBA {
-    const t = Math.max(0, Math.min(1, v))
+    let t = clamp(v, DEFAULT_LIMIT) // Math.max(0, Math.min(1, v))
+
+    // quantize the value if a color count is specified
+    if (this._colorCount !== undefined) {
+      if (this._colorCount === 0) {
+        t = 0
+      } else {
+        t = Math.round(t * this._colorCount) / this._colorCount
+      }
+    }
 
     const idx = t * this._maxIndex
     const lower = Math.floor(idx)
@@ -116,7 +168,29 @@ export class ColorMap {
 
   reverse(): ColorMap {
     const reversedColors = [...this._cmap].reverse()
-    return new ColorMap(this._id, this._name + ' (Reversed)', reversedColors)
+    const reversedMap = new ColorMap(
+      this.id,
+      this.name + (!this.isReversed ? ' (Reversed)' : ''),
+      reversedColors,
+      { colorCount: this.colorCount }
+    )
+    reversedMap._isReversed = !this.isReversed
+    return reversedMap
+  }
+
+  /**
+   * Sets the color count for the colormap and returns a new ColorMap instance.
+   *
+   * @param colorCount The number of discrete colors to use.
+   *
+   * @returns A new ColorMap instance with the specified color count.
+   */
+  setColorCount(colorCount: number) {
+    colorCount = validateColorCount(colorCount) - 1
+
+    const ret = new ColorMap(this.id, this.name, this._cmap, { colorCount })
+
+    return ret
   }
 
   /**
@@ -129,6 +203,16 @@ export class ColorMap {
   //   // clip offunknown alpha component
   //   return this.getHexColor(v).slice(0, 7)
   // }
+}
+
+function validateColorCount(colorCount: number) {
+  colorCount = Math.floor(colorCount)
+
+  if (!Number.isFinite(colorCount) || colorCount < 1) {
+    throw new Error('colorCount must be at least 1')
+  }
+
+  return colorCount
 }
 
 // interface IProps {
@@ -723,21 +807,40 @@ export type ColorMapName =
   | 'plasma'
   | 'magma'
 
-export function getColorMap(name: string | ICMAP): ColorMap {
+export function getColorMap(name: string | ICmap): ColorMap {
   if (typeof name === 'string') {
     return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
   } else {
-    return getColorMapFromICMAP(name)
+    return getColorMapFromCmap(name)
   }
 }
 
-export interface ICMAP {
+export interface ICmap {
   name: ColorMapName
-  //opacity: number
   reversed: boolean
 }
 
-export function getColorMapFromICMAP(icmap: ICMAP): ColorMap {
-  const cmap = COLOR_MAPS[icmap.name]!
-  return icmap.reversed ? cmap.reverse() : cmap
+/**
+ * Converts an ICmap object to a ColorMap object.
+ *
+ * @param cmap The ICmap object to convert.
+ * @returns The corresponding ColorMap object.
+ */
+export function getColorMapFromCmap(cmap: ICmap): ColorMap {
+  const colormap = COLOR_MAPS[cmap.name]!
+  return cmap.reversed ? colormap.reverse() : colormap
+}
+
+/**
+ * Converts a ColorMap object to an ICmap object suitable for
+ * serializing into stored settings etc.
+ *
+ * @param colormap The ColorMap object to convert.
+ * @returns The corresponding ICmap object.
+ */
+export function getCmapFromColorMap(colormap: ColorMap): ICmap {
+  return {
+    name: colormap.id as ColorMapName,
+    reversed: colormap.isReversed,
+  }
 }
