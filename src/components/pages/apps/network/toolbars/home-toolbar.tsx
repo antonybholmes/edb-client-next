@@ -69,6 +69,7 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="Plot Size">
         <DoubleNumericalInput
           h="sm"
+          w="xs"
           v1={settings.plot.size.w}
           placeholder="Width"
           limit={[1, 5000]}
