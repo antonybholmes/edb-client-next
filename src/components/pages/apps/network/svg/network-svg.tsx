@@ -118,7 +118,7 @@ export function NetworkSvgContent() {
       settings
     )
 
-    const colorMap = getColorMap(settings.plot.nodes.cmap)
+    const colorMap = getColorMap(settings.plot.nodes.color.cmap)
 
     const svg = (
       <>

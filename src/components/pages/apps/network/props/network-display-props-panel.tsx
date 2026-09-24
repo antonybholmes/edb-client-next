@@ -234,12 +234,12 @@ export function NetworkDisplayPropsPanel() {
             </PropRow>
             <PropRow title="Colormap">
               <ColorMapMenu
-                cmap={getColorMap(settings.plot.nodes.cmap)}
+                cmap={getColorMap(settings.plot.nodes.color.cmap)}
 
                 onChange={(cmap) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.plot.nodes.cmap = getCmapFromColorMap(cmap)
+                      draft.plot.nodes.color.cmap = getCmapFromColorMap(cmap)
                     })
                   )
                 }

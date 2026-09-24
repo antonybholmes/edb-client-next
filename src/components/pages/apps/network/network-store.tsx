@@ -270,10 +270,20 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     // get step size using log10 to find a suitable magnitude for the step
     const stepSize = Math.pow(10, Math.floor(Math.log10(sizeLim.max)))
 
+    // max must be a multiple of step size for size
+    sizeLim.min = Math.floor(sizeLim.min / stepSize) * stepSize
+    sizeLim.max = Math.ceil(sizeLim.max / stepSize) * stepSize
+
     const sizeLim2: ILimit = {
       min: Math.min(...network.nodes.map((node) => node.size2)),
       max: Math.max(...network.nodes.map((node) => node.size2)),
     }
+
+    const stepSize2 = Math.pow(10, Math.floor(Math.log10(sizeLim2.max)))
+
+    // max must be a multiple of step size
+    sizeLim2.min = Math.floor(sizeLim2.min / stepSize2) * stepSize2
+    sizeLim2.max = Math.ceil(sizeLim2.max / stepSize2) * stepSize2
 
     set({
       network,

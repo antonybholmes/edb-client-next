@@ -2,9 +2,9 @@
   "name": "Network",
   "description": "Create beautiful network graphs.",
   "color": "#4169E1",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-09-24T22:22:58.347Z",
-  "hash": "296cf92d1becf109b8e69f51f5e3abd451038a9343720e840b7fc2731fcc5d25",
-  "build": 18
+  "modified": "2026-09-24T22:37:28.313Z",
+  "hash": "6ce66a41621787d481c386da9191fa8364aa97a698d094a017809e581bc1d3c8",
+  "build": 20
 }

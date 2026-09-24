@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI fixes to allow for secondary size use in network plot.
 - Support for secondary size metric in network to color nodes.
 - Lots of ui fixes to network. Enhanced legend, turn groups on and off.
 - Lots of UI fixes to network.

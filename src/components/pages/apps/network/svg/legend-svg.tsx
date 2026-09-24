@@ -1,4 +1,4 @@
-import { DEFAULT_CBAR_AXIS } from '@/components/plot/axes/axis'
+import { createAxis } from '@/components/plot/axes/axis'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { SvgG } from '@/components/plot/svg-g'
@@ -63,9 +63,30 @@ export function LegendSvg() {
 
 export function Size2Svg({ pos }: { pos: IPos }) {
   const { settings } = useNetworkSettings()
-  const { headings } = useNetwork()
+  const { headings, sizeLim2 } = useNetwork()
 
-  const cmap = getColorMap(settings.plot.nodes.cmap)
+  const cmap = getColorMap(settings.plot.nodes.color.cmap)
+
+  const cax = createAxis({
+    id: 'cbar',
+    domain: [0, 1],
+
+    ticks: [
+      {
+        v: 0,
+        label: '0',
+      },
+      {
+        v: 0.5,
+        label: (sizeLim2.max / 2).toString(),
+      },
+      {
+        v: 1,
+        label: sizeLim2.max.toString(),
+      },
+    ],
+    minorTicks: [0.25, 0.75],
+  })
 
   return (
     <SvgG id="size2-legend" pos={pos}>
@@ -75,10 +96,10 @@ export function Size2Svg({ pos }: { pos: IPos }) {
 
         fontWeight="bold"
       >
-        {capitalCase(headings.size2)}
+        {getSize2Label(headings, settings)}
       </SvgText>
       <SvgG pos={{ x: 0, y: 15 }}>
-        <SvgVColorBar ax={DEFAULT_CBAR_AXIS} cmap={cmap} />
+        <SvgVColorBar ax={cax} cmap={cmap} />
       </SvgG>
     </SvgG>
   )
@@ -256,4 +277,13 @@ export function getSizeLabel(
   return settings.data.applyMinusLog10ToSize
     ? `-log10(${capitalCase(headings.size)})`
     : capitalCase(headings.size)
+}
+
+export function getSize2Label(
+  headings: { size2: string },
+  settings: INetworkSettings
+): string {
+  return settings.data.applyMinusLog10ToSize2
+    ? `-log10(${capitalCase(headings.size2)})`
+    : capitalCase(headings.size2)
 }

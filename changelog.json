@@ -3033,6 +3033,10 @@
         {
           "msg": "Support for secondary size metric in network to color nodes",
           "date": "2026-09-24T22:22:59.414Z"
+        },
+        {
+          "msg": "UI fixes to allow for secondary size use in network plot",
+          "date": "2026-09-24T22:37:29.242Z"
         }
       ]
     },
