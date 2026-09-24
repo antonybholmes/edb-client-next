@@ -248,7 +248,7 @@ export function NetworkPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <ExtScrollCard>{network && <NetworkSvg />}</ExtScrollCard>
+              <ExtScrollCard>{<NetworkSvg />}</ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel

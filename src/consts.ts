@@ -74,7 +74,7 @@ export const TEXT_EMAIL = 'Email'
 export const TEXT_FONT = 'Font'
 export const TEXT_SORT = 'Sort'
 export const TEXT_DEFAULT = 'Default'
-
+export const TEXT_APPLY = 'Apply'
 export const TEXT_SIGN_IN = 'Sign In'
 export const TEXT_SIGNED_IN = 'Signed In'
 export const TEXT_WELCOME = 'Welcome'

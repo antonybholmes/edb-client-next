@@ -215,7 +215,8 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       groupCol,
       sourceCol,
       targetCol,
-      scoreCol
+      scoreCol,
+      settings
     )
 
     setNetwork(network, groups)

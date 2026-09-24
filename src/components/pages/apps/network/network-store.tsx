@@ -6,15 +6,16 @@ import { IDim } from '@/interfaces/dim'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
+import { produce } from 'immer'
 import { useCallback } from 'react'
 import { create } from 'zustand'
-import { useNetworkSettings } from './network-settings-store'
+import { INetworkSettings, useNetworkSettings } from './network-settings-store'
 
 export interface IGroup extends IDBEntity {
   color: string
 }
 
-interface INode extends IDBEntity {
+export interface INode extends IDBEntity {
   /**
    * The label of the node, used for display purposes.
    */
@@ -95,7 +96,8 @@ export function dataframesToNetwork(
   groupCol: string,
   sourceCol: string,
   targetCol: string,
-  scoreCol: string
+  scoreCol: string,
+  settings: INetworkSettings
 ): { network: INetwork; groups: IGroup[] } {
   //const labelCol = findCol(dfNodes, 'label')
   //const sizeCol = findCol(dfNodes, 'size', { exact: true })
@@ -158,7 +160,9 @@ export function dataframesToNetwork(
   const uniqueGroups = [...groupSet].sort().map((g, index) => ({
     id: makeUuid(),
     name: g,
-    color: TAB10_PALETTE[index % TAB10_PALETTE.length],
+    color:
+      settings.plot.groups.colors[g.toLowerCase()] ??
+      TAB10_PALETTE[index % TAB10_PALETTE.length],
   }))
 
   return { network: { nodes, edges }, groups: uniqueGroups }
@@ -212,6 +216,8 @@ export function useNetwork(): {
   setNetwork: (network: INetwork, groups: IGroup[]) => void
   setGroups: (groups: IGroup[]) => void
 } {
+  const { settings, updateSettings } = useNetworkSettings()
+
   const network = useNetworkStore((state) => state.network)
   const groups = useNetworkStore((state) => state.groups)
 
@@ -220,13 +226,28 @@ export function useNetwork(): {
   const setNetwork = useNetworkStore((state) => state.setNetwork)
   const setGroups = useNetworkStore((state) => state.setGroups)
 
+  const _setGroups = useCallback(
+    (groups: IGroup[]) => {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.plot.groups.colors = Object.fromEntries(
+            groups.map((g) => [g.name.toLowerCase(), g.color])
+          )
+        })
+      )
+
+      setGroups(groups)
+    },
+    [setGroups]
+  )
+
   return {
     network,
     groups,
     coordinates,
     size,
     setNetwork,
-    setGroups,
+    setGroups: _setGroups,
   }
 }
 

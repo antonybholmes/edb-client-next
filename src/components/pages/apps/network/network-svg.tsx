@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { SvgBase } from '@/components/plot/svg-base'
 
@@ -9,13 +9,19 @@ import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
+import { IPos, ZERO_POS } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { svgPointToScreen } from '@/lib/graphics/svg'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
+import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import { useNetworkSettings } from './network-settings-store'
-import { IGroup, useNetwork } from './network-store'
+import { gsap } from 'gsap'
+import { produce } from 'immer'
+import { INetworkSettings, useNetworkSettings } from './network-settings-store'
+import { IGroup, INode, useNetwork } from './network-store'
 
-export function NetworkSvg() {
+export function NetworkSvgContent() {
   const { zoom } = useZoom()
 
   const { hideTooltip } = useTooltip()
@@ -50,11 +56,15 @@ export function NetworkSvg() {
   //   [svgRef, showTooltip, hideTooltip]
   // )
 
-  const handleVariantLeave = useCallback(() => {
-    hideTooltip()
-  }, [hideTooltip])
-
   const { svg, width, height } = useMemo(() => {
+    if (
+      !network ||
+      Object.keys(coordinates).length === 0 ||
+      !size.w ||
+      !size.h
+    ) {
+      return { svg: null, width: 0, height: 0 }
+    }
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     // inner height is determined by the size of the largest bubble plot
@@ -73,19 +83,24 @@ export function NetworkSvg() {
         .flat()
     )
 
-    console.log(groupMap, settings.plot.margin)
+    const labelSet = new Set(
+      settings.labels
+        .map((label) => label.toLowerCase())
+        .filter((x) => x.length > 0)
+    )
 
     const svg = (
       <>
         <SvgMargin margin={settings.plot.margin}>
-          <rect
+          {/* <rect
             x={0}
             y={0}
             width={size.w}
             height={size.h}
             fill="none"
             stroke="black"
-          />
+          /> */}
+
           {settings.plot.edges.line.show &&
             network.edges.map((edge, idx) => {
               const sourcePos = coordinates[edge.source] || { x: 0, y: 0 }
@@ -105,8 +120,6 @@ export function NetworkSvg() {
             })}
 
           {network.nodes.map((node) => {
-            const pos = coordinates[node.id] || { x: 0, y: 0 }
-
             let fillColor = COLOR_BLACK
 
             switch (settings.plot.nodes.color.mode) {
@@ -120,51 +133,13 @@ export function NetworkSvg() {
                 break
             }
 
-            if (node.label === 'BLOOD MODULE-1.4 UNDETERMINED') {
-              console.log('found node:', node, pos)
-            }
-
-            let textAnchor: 'start' | 'middle' | 'end' = 'middle'
-
-            switch (settings.plot.nodes.labels.position) {
-              case 'left':
-                textAnchor = 'start'
-                break
-              case 'center':
-                textAnchor = 'middle'
-                break
-              case 'right':
-                textAnchor = 'end'
-                break
-              case 'below':
-              case 'above':
-                textAnchor = 'middle'
-                break
-              default:
-                textAnchor = 'middle'
-                break
-            }
-
             return (
-              <SvgG key={node.id} pos={pos}>
-                <circle
-                  r={node.size * settings.plot.nodes.scale}
-                  fill={fillColor}
-                  fillOpacity={settings.plot.nodes.color.opacity}
-                />
-                <SvgText
-                  textAnchor={textAnchor}
-                  //dy=".3em"
-                  font={settings.plot.nodes.labels.text}
-                  fill={
-                    settings.plot.nodes.labels.color.on
-                      ? fillColor
-                      : settings.plot.nodes.labels.color.default
-                  }
-                >
-                  {node.label}
-                </SvgText>
-              </SvgG>
+              <NodeCircle
+                key={node.id}
+                node={node}
+                groupMap={groupMap}
+                labelSet={labelSet}
+              />
             )
           })}
         </SvgMargin>
@@ -198,7 +173,15 @@ export function NetworkSvg() {
                   <SvgCircle
                     r={settings.plot.legend.dot.radius}
                     fill={group.color}
-                    stroke={COLOR_BLACK}
+                    fillOpacity={settings.plot.nodes.color.opacity}
+
+                    stroke={
+                      settings.plot.nodes.line.autoColor &&
+                      settings.plot.nodes.line.show
+                        ? group.color
+                        : undefined
+                    }
+                    sp={settings.plot.nodes.line}
                   />
                   <SvgG pos={{ x: settings.plot.legend.dot.radius + 5, y: 0 }}>
                     <SvgText
@@ -218,13 +201,197 @@ export function NetworkSvg() {
     )
 
     return { svg, width, height }
-  }, [settings, size, network, coordinates])
+  }, [settings, size, network, coordinates, groups])
 
-  console.log('bee  ', width, height)
+  if (!svg) {
+    return null
+  }
 
   return (
     <SvgBase width={width} height={height} scale={zoom}>
       {svg}
     </SvgBase>
   )
+}
+
+export function NetworkSvg() {
+  return (
+    <CrosshairProvider>
+      <NetworkSvgContent />
+    </CrosshairProvider>
+  )
+}
+
+function NodeCircle({
+  node,
+  groupMap,
+  labelSet,
+}: {
+  node: INode
+  groupMap: Record<string, IGroup>
+  labelSet: Set<string>
+}) {
+  const { settings, updateSettings } = useNetworkSettings()
+  const { coordinates } = useNetwork()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+  const radius = node.size * settings.plot.nodes.scale
+  const { textAnchor, baseline, offset } = getTextAnchor(settings, radius)
+  const pos = coordinates[node.id] || ZERO_POS
+  const { ref } = useSVG()
+
+  const [hover, setHover] = useState(false)
+
+  let fillColor = useMemo(() => {
+    switch (settings.plot.nodes.color.mode) {
+      case 'group':
+        return groupMap[node.group.toLowerCase()]?.color ?? COLOR_BLACK
+      default:
+        return COLOR_BLACK
+    }
+  }, [settings.plot.nodes.color.mode, groupMap, node.group])
+
+  const showLabel =
+    settings.plot.nodes.labels.showAll ||
+    labelSet.has(node.label.toLowerCase()) ||
+    labelSet.has(node.id)
+
+  const circleRef = useRef<SVGCircleElement>(null)
+
+  useEffect(() => {
+    if (!circleRef.current) {
+      return
+    }
+
+    gsap.to(circleRef.current, {
+      scale: hover ? 1.2 : 1,
+      transformOrigin: 'center',
+      duration: 0.3,
+      ease: 'power2.out',
+    })
+  }, [hover])
+
+  const onMouseEnter = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) {
+        return
+      }
+
+      setHover(true)
+
+      // const svgP = screenToSvgPoint(ref.current, {
+      //   x: e.clientX,
+      //   y: e.clientY,
+      // })
+
+      // const plotP = {
+      //   x: svgP.x - pos.x - settings.plot.margin.left,
+      //   y: svgP.y - pos.y - settings.plot.margin.top,
+      // }
+
+      const barP = {
+        x: settings.plot.margin.left + pos.x,
+        y: settings.plot.margin.top + pos.y,
+      }
+
+      const { relativeP: barScreenP } = svgPointToScreen(ref.current, barP)
+
+      showCrosshair({
+        pos: barScreenP,
+        content: (
+          <>
+            <strong>{node.label}</strong>
+            <span>{node.id}</span>
+          </>
+        ),
+      })
+    },
+    [pos, ref, settings, setHover, showCrosshair, hideCrosshair]
+  )
+
+  const hide = useCallback(() => {
+    setHover(false)
+    hideCrosshair()
+  }, [hideCrosshair, setHover])
+
+  return (
+    <SvgG pos={pos}>
+      <SvgCircle
+        ref={circleRef}
+        r={radius}
+        fill={fillColor}
+        fillOpacity={settings.plot.nodes.color.opacity}
+        stroke={
+          settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
+            ? fillColor
+            : undefined
+        }
+        sp={settings.plot.nodes.line}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={hide}
+        // double click
+        onDoubleClick={(e) => {
+          if (settings.labels.includes(node.id)) {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.labels = draft.labels.filter((label) => label !== node.id)
+              })
+            )
+          } else {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.labels.push(node.id)
+              })
+            )
+          }
+
+          e.stopPropagation()
+          // handle double click event here
+        }}
+      />
+      {showLabel && (
+        <SvgG pos={offset}>
+          <SvgText
+            textAnchor={textAnchor}
+            dominantBaseline={baseline}
+            font={settings.plot.nodes.labels.text}
+            className="pointer-events-none"
+          >
+            {node.label}
+          </SvgText>
+        </SvgG>
+      )}
+    </SvgG>
+  )
+}
+
+function getTextAnchor(settings: INetworkSettings, radius: number) {
+  let textAnchor: 'start' | 'middle' | 'end' = 'middle'
+  let baseline: 'auto' | 'middle' | 'hanging' = 'middle'
+
+  let offset: IPos = { x: 0, y: 0 }
+
+  switch (settings.plot.nodes.labels.position) {
+    case 'left':
+      textAnchor = 'end'
+      offset = { x: -radius - settings.plot.nodes.labels.offset, y: 0 }
+      break
+    case 'right':
+      textAnchor = 'start'
+      offset = { x: radius + settings.plot.nodes.labels.offset, y: 0 }
+      break
+    case 'below':
+      textAnchor = 'middle'
+      baseline = 'hanging'
+      offset = { x: 0, y: radius + settings.plot.nodes.labels.offset }
+      break
+    case 'above':
+      textAnchor = 'middle'
+      baseline = 'auto'
+      offset = { x: 0, y: -radius - settings.plot.nodes.labels.offset }
+      break
+    default:
+      textAnchor = 'middle'
+      break
+  }
+  return { textAnchor, baseline, offset }
 }

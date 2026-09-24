@@ -20,6 +20,7 @@ import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { StretchRow } from '@/layout/stretch-row'
 import { cn } from '@/lib/shadcn-utils'
+import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import { IGroup, useNetwork } from '../network-store'
@@ -135,36 +136,11 @@ export function GroupPropsPanel() {
 
         <VScrollPanel className="grow">
           <DragDropProvider
-          // onDragOver={(event) => {
-          //   const { source } = event.operation
+            onDragEnd={(event) => {
+              const newOrder = move(groups, event)
 
-          //   if (source?.type !== 'group') {
-          //     return
-          //   }
-
-          //   const items = Object.fromEntries(
-          //     groupRows.map((row) => [row.id, row.groups])
-          //   )
-          //   const nextItems = move(items, event)
-          //   const nextRows = groupRows.map((row) => ({
-          //     ...row,
-          //     groups: nextItems[row.id] ?? row.groups,
-          //   }))
-
-          //   addGroups(nextRows)
-          // }}
-
-          // onDragEnd={(event) => {
-          //   const { source } = event.operation
-
-          //   if (event.canceled || source.type !== 'group-row') {
-          //     return
-          //   }
-
-          //   const newOrder = move(groupRows, event)
-
-          //   addGroups(newOrder)
-          // }}
+              setGroups(newOrder)
+            }}
           >
             <ul className="flex flex-col gap-y-1">
               {groups.map((gr, gri) => {

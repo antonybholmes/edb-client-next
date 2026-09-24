@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Lots of UI fixes to network.
 - More props for network rendering.
 - Added support for groups with color to network.
 

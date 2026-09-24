@@ -16,6 +16,16 @@ const SETTINGS_KEY = `${config.appId}:app:network:v2`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
+type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
+
+export const POSITIONS: { label: string; value: LabelPosition }[] = [
+  { label: 'Center', value: 'center' },
+  { label: 'Left', value: 'left' },
+  { label: 'Right', value: 'right' },
+  { label: 'Below', value: 'below' },
+  { label: 'Above', value: 'above' },
+]
+
 export interface INetworkSettings {
   chargeStrength: number
   linkDistance: number
@@ -24,19 +34,24 @@ export interface INetworkSettings {
     margin: IMarginProps
     nodes: {
       scale: number
+      line: IStrokeProps & { autoColor: boolean }
       color: {
         mode: 'group'
         opacity: number
       }
       labels: {
+        showAll: boolean
         text: ITextProps
         color: {
           on: boolean
           default: string
         }
         position: 'left' | 'center' | 'right' | 'below' | 'above'
-        offset: { x: number; y: number }
+        offset: number
       }
+    }
+    groups: {
+      colors: Record<string, string>
     }
     edges: {
       scale: number
@@ -48,6 +63,7 @@ export interface INetworkSettings {
       }
     }
   }
+  labels: string[]
 }
 
 const DEFAULT_SETTINGS: INetworkSettings = {
@@ -61,12 +77,17 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         mode: 'group',
         opacity: 0.5,
       },
+      line: { ...DEFAULT_STROKE_PROPS, show: false, autoColor: true },
       labels: {
+        showAll: true,
         text: { ...DEFAULT_TEXT_PROPS },
         color: { on: false, default: COLOR_BLACK },
         position: 'center',
-        offset: { x: 10, y: 10 },
+        offset: 5,
       },
+    },
+    groups: {
+      colors: {},
     },
     edges: {
       scale: 1,
@@ -79,6 +100,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     },
   },
   sim: { run: true },
+  labels: [],
 }
 
 export interface INetworkSettingsStore extends INetworkSettings {
