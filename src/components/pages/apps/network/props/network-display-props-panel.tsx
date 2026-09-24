@@ -81,13 +81,85 @@ export function NetworkDisplayPropsPanel() {
               </Button>
               <RunningIndicator message={message} />
             </VCenterRow>
+
+            <CheckPropRow
+              title="Auto Scale"
+              checked={settings.plot.scaleToFit}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.scaleToFit = checked
+                  })
+                )
+              }
+            >
+              <NumSlider
+                min={0}
+                max={2}
+                step={0.01}
+                dp={2}
+                value={settings.plot.scale}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.scale = value
+                    })
+                  )
+                }
+              />
+            </CheckPropRow>
+
+            <PropRow title="Border">
+              <StrokeButton
+                colors={[
+                  {
+                    color: settings.plot.border.value,
+                    show: settings.plot.border.show,
+                    onColorChange: ({ color, show }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.plot.border.value = color
+                          draft.plot.border.show = show
+                        })
+                      ),
+                  },
+                ]}
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="nodes">
           <AccordionTrigger>Nodes</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Scale">
+            <CheckPropRow
+              title="Keep Within Bounds"
+              checked={settings.plot.nodes.keepWithinBounds}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.keepWithinBounds = checked
+                  })
+                )
+              }
+            />
+            <PropRow title="Radius">
+              <NumSlider
+                min={0}
+                max={200}
+                //step={0.1}
+                //dp={1}
+                value={settings.plot.nodes.radius}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.radius = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            {/* <PropRow title="Scale">
               <NumSlider
                 min={0}
                 max={1}
@@ -102,7 +174,7 @@ export function NetworkDisplayPropsPanel() {
                   )
                 }
               />
-            </PropRow>
+            </PropRow> */}
             <PropRow title="Opacity">
               <NumSlider
                 min={0}
@@ -149,27 +221,6 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Labels">
-              <SelectList
-                items={POSITIONS}
-                value={settings.plot.nodes.labels.position}
-                onValueChange={(value) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.labels.position = value as
-                        'left' | 'center' | 'right' | 'below' | 'above'
-                    })
-                  )
-                }}
-                w="xs"
-                variant="toolbar"
-              >
-                {POSITIONS.map((position) => (
-                  <SelectItem key={position.value} value={position.value}>
-                    {position.label}
-                  </SelectItem>
-                ))}
-              </SelectList>
-
               <FontPopover
                 fonts={[
                   {
@@ -202,6 +253,27 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
+
+              <SelectList
+                items={POSITIONS}
+                value={settings.plot.nodes.labels.position}
+                onValueChange={(value) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.labels.position = value as
+                        'left' | 'center' | 'right' | 'below' | 'above'
+                    })
+                  )
+                }}
+                w="xs"
+                variant="toolbar"
+              >
+                {POSITIONS.map((position) => (
+                  <SelectItem key={position.value} value={position.value}>
+                    {position.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
             </PropRow>
 
             <PropRow title="Display Text">

@@ -73,7 +73,7 @@ export function HomeToolbar() {
           placeholder="Width"
           limit={[1, 5000]}
           dp={0}
-          onNumChange1={(v) => {
+          onNumChanged1={(v) => {
             updateSettings(
               produce(settings, (draft) => {
                 draft.plot.size.w = v
@@ -81,7 +81,7 @@ export function HomeToolbar() {
             )
           }}
           v2={settings.plot.size.h}
-          onNumChange2={(v) => {
+          onNumChanged2={(v) => {
             updateSettings(
               produce(settings, (draft) => {
                 draft.plot.size.h = v

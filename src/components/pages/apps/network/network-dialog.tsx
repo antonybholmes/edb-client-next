@@ -12,6 +12,7 @@ import { useCurrentSheets } from '../matcalc/history/history-provider/history-co
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
 import { useNetworkSettings } from './network-settings-store'
 import { dataframesToNetwork, useNetwork, useNetworkSim } from './network-store'
+import { useUserData } from './network-user-data-store'
 
 const MAX_COLS = 10
 
@@ -141,6 +142,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const { sheets } = useCurrentSheets()
   const { settings, updateSettings } = useNetworkSettings()
   const { setNetwork } = useNetwork()
+  const { settings: userData } = useUserData()
 
   const { run: runSim } = useNetworkSim()
   const [message, setMessage] = useState<string | null>(null)
@@ -206,7 +208,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    const { network, groups, scoreName } = dataframesToNetwork(
+    const { network, groups, scoreName, sizeName } = dataframesToNetwork(
       dfNode,
       dfEdge,
       labelCol,
@@ -216,20 +218,17 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       sourceCol,
       targetCol,
       scoreCol,
-      settings
+      settings,
+      userData
     )
 
-    setNetwork(network, groups, scoreName)
+    setNetwork(network, groups, scoreName, sizeName)
 
-    if (settings.sim.run) {
-      setMessage('Running simulation...')
-      runSim(network, () => {
-        setMessage(null)
-        close()
-      })
-    } else {
+    setMessage('Creating network graph...')
+    runSim(network, () => {
+      setMessage(null)
       close()
-    }
+    })
   }
 
   return (
@@ -243,20 +242,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
         }
       }}
       leftFooterChildren={
-        <RunningIndicator message={message}>
-          <Checkbox
-            checked={settings.sim.run}
-            onCheckedChange={(checked) =>
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.sim.run = checked
-                })
-              )
-            }
-          >
-            Run Simulation
-          </Checkbox>
-        </RunningIndicator>
+        <RunningIndicator message={message}></RunningIndicator>
       }
     >
       <strong>Nodes</strong>
@@ -310,6 +296,20 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
               </SelectItem>
             ))}
         </SelectList>
+      </ActionDialogRow>
+      <ActionDialogRow>
+        <Checkbox
+          checked={settings.applyMinusLog10ToSize}
+          onCheckedChange={(checked) =>
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.applyMinusLog10ToSize = checked
+              })
+            )
+          }
+        >
+          Apply -log10
+        </Checkbox>
       </ActionDialogRow>
       <strong>Edges</strong>
       <ActionDialogRow title="Source">

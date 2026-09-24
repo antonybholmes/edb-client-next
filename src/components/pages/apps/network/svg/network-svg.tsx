@@ -7,8 +7,10 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IS_DEV_MODE } from '@/consts'
+import { IDim } from '@/interfaces/dim'
 import { IPos, ZERO_POS } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { svgPointToScreen } from '@/lib/graphics/svg'
@@ -19,14 +21,16 @@ import { gsap } from 'gsap'
 import { produce } from 'immer'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { IGroup, INode, useNetwork } from '../network-store'
+import { useUserData } from '../network-user-data-store'
 import { LegendSvg } from './legend-svg'
 
 export function NetworkSvgContent() {
   const { zoom } = useZoom()
 
   const { settings } = useNetworkSettings()
+  const { settings: userData } = useUserData()
 
-  const { network, groups, coordinates } = useNetwork()
+  const { network, groups, coordinates, size: d3Size, sizeLim } = useNetwork()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -55,13 +59,12 @@ export function NetworkSvgContent() {
   // )
 
   const { svg, width, height } = useMemo(() => {
-    if (!network || coordinates.size === 0) {
+    if (!network || Object.keys(coordinates).length === 0) {
       return { svg: null, width: 0, height: 0 }
     }
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     // inner height is determined by the size of the largest bubble plot
-    const size = settings.plot.size
 
     const width =
       settings.plot.size.w +
@@ -77,44 +80,47 @@ export function NetworkSvgContent() {
       groups.map((group) => [group.name.trim().toLowerCase(), group])
     )
 
-    const nodeMap = new Map<string, INode>(
-      network.nodes.map((node) => [node.id, node])
-    )
+    const nodeMap = network.nodeMap
 
     const labelSet = new Set(
-      settings.labels
+      userData.labels.ids
         .map((label) => label.toLowerCase())
         .filter((x) => x.length > 0)
     )
 
-    // map relative coordinates to absolute coordinates within the SVG canvas
-    const realCoordinates = new Map<string, IPos>(
-      coordinates.entries().map(([id, pos]) => [
-        id,
-        {
-          x: pos.x + size.w / 2,
-          y: pos.y + size.h / 2,
-        },
+    const radiusMap = new Map<string, number>(
+      network.nodes.map((node) => [
+        node.id,
+        ((node.size ?? 0) / sizeLim.max) * settings.plot.nodes.radius,
       ])
+    )
+
+    // map relative coordinates to absolute coordinates within the SVG canvas
+    const realCoordinates = realCoordinate(
+      coordinates,
+      d3Size,
+      radiusMap,
+      settings
     )
 
     const svg = (
       <>
         <SvgMargin margin={settings.plot.margin}>
-          {/* <rect
-            x={0}
-            y={0}
-            width={size.w}
-            height={size.h}
-            fill="none"
-            stroke="black"
-          /> */}
+          {settings.plot.border.show && (
+            <SvgRect
+              x={0}
+              y={0}
+              width={settings.plot.size.w}
+              height={settings.plot.size.h}
+              sp={settings.plot.border}
+            />
+          )}
 
           {settings.plot.edges.line.show &&
             network.edges
               .filter((edge) => {
-                const sourceNode = nodeMap.get(edge.source)
-                const targetNode = nodeMap.get(edge.target)
+                const sourceNode = nodeMap[edge.source]
+                const targetNode = nodeMap[edge.target]
 
                 return (
                   groupMap.get(sourceNode?.group.toLowerCase() ?? '')?.show &&
@@ -159,6 +165,7 @@ export function NetworkSvgContent() {
                 <NodeCircle
                   key={node.id}
                   node={node}
+                  radius={radiusMap.get(node.id) ?? 0}
                   groupMap={groupMap}
                   labelSet={labelSet}
                   coordinates={realCoordinates}
@@ -171,7 +178,7 @@ export function NetworkSvgContent() {
     )
 
     return { svg, width, height }
-  }, [settings, network, coordinates, groups])
+  }, [settings, network?.id, coordinates, groups, userData])
 
   if (!svg) {
     return null
@@ -196,17 +203,19 @@ function NodeCircle({
   node,
   groupMap,
   labelSet,
+  radius,
   coordinates,
 }: {
   node: INode
   groupMap: Map<string, IGroup>
   labelSet: Set<string>
+  radius: number
   coordinates: Map<string, IPos>
 }) {
   const { settings, updateSettings } = useNetworkSettings()
-  //  const { coordinates } = useNetwork()
+  const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { showCrosshair, hideCrosshair } = useCrosshair()
-  const radius = node.size * 0.5 * settings.plot.nodes.scale
+
   const { textAnchor, baseline, offset } = getTextAnchor(settings, radius)
   const pos = coordinates.get(node.id) || ZERO_POS
   const { ref } = useSVG()
@@ -308,18 +317,18 @@ function NodeCircle({
         onMouseLeave={hide}
         // double click
         onDoubleClick={(e) => {
-          if (settings.labels.includes(node.id2)) {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.labels = draft.labels.filter(
+          if (userData.labels.ids.includes(node.id2)) {
+            updateUserData(
+              produce(userData, (draft) => {
+                draft.labels.ids = draft.labels.ids.filter(
                   (label) => label !== node.id2
                 )
               })
             )
           } else {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.labels.push(node.id2)
+            updateUserData(
+              produce(userData, (draft) => {
+                draft.labels.ids.push(node.id2)
               })
             )
           }
@@ -341,6 +350,57 @@ function NodeCircle({
         </SvgG>
       )}
     </SvgG>
+  )
+}
+
+function realCoordinate(
+  coordinates: Record<string, IPos>,
+  d3Size: IDim,
+  radiusMap: Map<string, number>,
+  settings: INetworkSettings
+): Map<string, IPos> {
+  const plotScale = {
+    x: settings.plot.size.w / d3Size.w,
+    y: settings.plot.size.h / d3Size.h,
+  }
+
+  const mid = {
+    x: settings.plot.size.w / 2,
+    y: settings.plot.size.h / 2,
+  }
+
+  return new Map<string, IPos>(
+    Object.entries(coordinates).map(([id, pos]) => {
+      let x = pos.x
+      let y = pos.y
+
+      if (settings.plot.scaleToFit) {
+        x *= plotScale.x
+        y *= plotScale.y
+      }
+
+      // user supplied scale factor
+      x *= settings.plot.scale
+      y *= settings.plot.scale
+
+      x += mid.x
+      y += mid.y
+
+      const radius = radiusMap.get(id) ?? 0
+
+      if (settings.plot.nodes.keepWithinBounds) {
+        x = Math.max(radius, Math.min(settings.plot.size.w - radius, x))
+        y = Math.max(radius, Math.min(settings.plot.size.h - radius, y))
+      }
+
+      return [
+        id,
+        {
+          x,
+          y,
+        },
+      ]
+    })
   )
 }
 
