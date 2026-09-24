@@ -13,7 +13,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v2`
+const SETTINGS_KEY = `${config.appId}:app:network:v4`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -25,6 +25,21 @@ export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Right', value: 'right' },
   { label: 'Below', value: 'below' },
   { label: 'Above', value: 'above' },
+]
+
+type LabelType = 'label' | 'name' | 'group' | 'size' | 'id' | 'id2' | 'none'
+
+export const LABEL_TYPES: {
+  label: string
+  value: LabelType
+}[] = [
+  { label: 'Label', value: 'label' },
+  { label: 'Name', value: 'name' },
+  { label: 'Group', value: 'group' },
+  { label: 'Size', value: 'size' },
+  { label: 'ID', value: 'id' },
+  { label: 'ID 2', value: 'id2' },
+  { label: 'None', value: 'none' },
 ]
 
 export interface INetworkSettings {
@@ -50,6 +65,7 @@ export interface INetworkSettings {
         }
         position: 'left' | 'center' | 'right' | 'below' | 'above'
         offset: number
+        type: LabelType
       }
     }
     groups: {
@@ -94,6 +110,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         color: { on: false, default: COLOR_BLACK },
         position: 'center',
         offset: 5,
+        type: 'label',
       },
     },
     groups: {

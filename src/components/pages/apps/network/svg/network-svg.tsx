@@ -67,6 +67,7 @@ export function NetworkSvgContent() {
       settings.plot.size.w +
       settings.plot.margin.left +
       settings.plot.margin.right
+
     const height =
       settings.plot.size.h +
       settings.plot.margin.top +
@@ -335,7 +336,7 @@ function NodeCircle({
             font={settings.plot.nodes.labels.text}
             className="pointer-events-none"
           >
-            {node.label}
+            {getNodeText(node, settings)}
           </SvgText>
         </SvgG>
       )}
@@ -352,6 +353,25 @@ function inLabelSet(text: string, labels: Set<string>) {
     }
   }
   return false
+}
+
+function getNodeText(node: INode, settings: INetworkSettings): string {
+  switch (settings.plot.nodes.labels.type) {
+    case 'label':
+      return node.label
+    case 'name':
+      return node.name
+    case 'group':
+      return node.group
+    case 'size':
+      return node.size.toString()
+    case 'id':
+      return node.id
+    case 'id2':
+      return node.id2
+    default:
+      return ''
+  }
 }
 
 function getTextAnchor(settings: INetworkSettings, radius: number) {
