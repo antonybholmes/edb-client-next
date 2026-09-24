@@ -32,7 +32,7 @@ export function NodesDisplayPropsPanel() {
   // }, [debounceText])
 
   return (
-    <PropsPanel className="gap-y-2">
+    <PropsPanel className="gap-y-2 pb-2">
       <CheckPropRow
         title="All Labels"
         className="ml-0.5 mt-1"
