@@ -6,9 +6,13 @@ import { IDim } from '@/interfaces/dim'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
+import { ILimit } from '@/lib/math/limit'
+import { min } from '@/lib/math/math'
 import { useCallback } from 'react'
 import { create } from 'zustand'
+import { useShallow } from 'zustand/react/shallow'
 import { INetworkSettings, useNetworkSettings } from './network-settings-store'
+import { IUserDataSettings } from './network-user-data-store'
 
 export interface IGroup extends IDBEntity {
   color: string
@@ -28,6 +32,8 @@ export interface INode extends IDBEntity {
   group: string
   x?: number
   y?: number
+  vx?: number
+  vy?: number
 }
 
 interface IEdge {
@@ -37,8 +43,9 @@ interface IEdge {
   target: string
 }
 
-interface INetwork {
+interface INetwork extends IDBEntity {
   nodes: INode[]
+  nodeMap: Record<string, INode>
   edges: IEdge[]
 }
 
@@ -103,8 +110,9 @@ export function dataframesToNetwork(
   sourceCol: string,
   targetCol: string,
   scoreCol: string,
-  settings: INetworkSettings
-): { network: INetwork; groups: IGroup[]; scoreName: string } {
+  settings: INetworkSettings,
+  userData: IUserDataSettings
+) {
   //const labelCol = findCol(dfNodes, 'label')
   //const sizeCol = findCol(dfNodes, 'size', { exact: true })
   //const groupCol = findCol(dfNodes, 'collection')
@@ -114,27 +122,37 @@ export function dataframesToNetwork(
   const sizes = dfNodes.col(sizeCol).nums
   const groups = dfNodes.col(groupCol).strs
 
+  const minNonZeroP = min(sizes.filter((p) => p > 0))
+
+  // 2. Set a floor slightly smaller than that (e.g., one order of magnitude lower)
+  const pFloor = minNonZeroP * 0.1
+
   const nodes: INode[] = labels.map((label, i) => {
+    // 3. Apply the transformation safely
+    const size = settings.applyMinusLog10ToSize
+      ? -Math.log10(sizes[i] === 0 ? pFloor : sizes[i])
+      : sizes[i]
+
+    console.log('size', sizes[i], size, settings.applyMinusLog10ToSize)
+
     return {
       id: makeUuid(),
       id2: groups[i].trim() + '::' + names[i].trim(),
       label,
       name: names[i].trim(),
-      size: sizes[i],
+      size: size,
       group: groups[i].trim(),
     }
   })
 
-  const nodeMap = {}
+  const nodeMap = new Map<string, INode>()
 
   const used = new Set<string>()
 
   for (const node of nodes) {
-    //nodeMap[node.id] = node
-
     const id2 = fixName(node.group + '::' + node.name)
 
-    nodeMap[id2] = node
+    nodeMap.set(id2, node)
     used.add(id2)
   }
 
@@ -150,8 +168,8 @@ export function dataframesToNetwork(
     //console.log(source, targets[si], scores[si])
     return {
       id: makeUuid(),
-      source: nodeMap[fixName(source)]?.id ?? '',
-      target: nodeMap[fixName(targets[si])]?.id ?? '',
+      source: nodeMap.get(fixName(source))?.id ?? '',
+      target: nodeMap.get(fixName(targets[si]))?.id ?? '',
       score: scores[si] ?? 0,
     }
   })
@@ -163,45 +181,96 @@ export function dataframesToNetwork(
     name: g,
     show: true,
     color:
-      settings.plot.groups.colors[g.toLowerCase()] ??
+      userData.groups.colors[g.toLowerCase()] ??
       TAB10_PALETTE[index % TAB10_PALETTE.length],
   }))
 
+  const idNodeMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
+
   return {
-    network: { nodes, edges },
+    network: {
+      id: makeUuid(),
+      name: 'Network',
+      nodes,
+      nodeMap: idNodeMap,
+      edges,
+    },
     groups: uniqueGroups,
     scoreName: scoreCol,
+    sizeName: sizeCol,
   }
 }
 
 export interface INetworkStore {
   network: INetwork | undefined
+  nodes: {
+    sizeLim: ILimit
+    stepSize: number
+  }
+  headings: {
+    score: string
+    size: string
+  }
   groups: IGroup[]
-  nodeMap: Map<string, INode>
-  coordinateMap: Map<string, IPos>
+
+  coordinateMap: Record<string, IPos>
   size: IDim
-  scoreName: string
-  setNetwork: (settings: INetwork, groups: IGroup[], scoreName: string) => void
+
+  setNetwork: (
+    settings: INetwork,
+    groups: IGroup[],
+    scoreName: string,
+    sizeName: string
+  ) => void
   setGroups: (groups: IGroup[]) => void
-  updateCoordinates: (coordinateMap: Map<string, IPos>, size: IDim) => void
+  updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => void
 }
 
 export const useNetworkStore = create<INetworkStore>()((set) => ({
   network: undefined,
+  nodes: {
+    sizeLim: { min: 0, max: 0 },
+    stepSize: 0,
+  },
+  headings: {
+    score: 'Score',
+    size: 'Size',
+  },
   groups: [],
-  nodeMap: new Map(),
-  coordinateMap: new Map(),
+
+  coordinateMap: {},
   size: { w: 0, h: 0 },
-  scoreName: '',
-  setNetwork: (network: INetwork, groups: IGroup[], scoreName: string) => {
+
+  setNetwork: (
+    network: INetwork,
+    groups: IGroup[],
+    scoreName: string,
+    sizeName: string
+  ) => {
+    const sizeLim: ILimit = {
+      min: Math.min(...network.nodes.map((node) => node.size)),
+      max: Math.max(...network.nodes.map((node) => node.size)),
+    }
+
+    // get step size using log10 to find a suitable magnitude for the step
+    const stepSize = Math.pow(10, Math.floor(Math.log10(sizeLim.max)))
+
+    console.log(sizeLim, 'size limits for nodes')
+
     set({
       network,
-      nodeMap: new Map(network.nodes.map((node) => [node.id, node])),
+      nodes: {
+        sizeLim,
+        stepSize,
+      },
+      headings: {
+        score: scoreName,
+        size: sizeName,
+      },
       // coordinateMap: Object.fromEntries(
       //   network.nodes.map((node) => [node.id, { x: 0, y: 0 }])
       // ),
       groups,
-      scoreName,
     })
   },
   setGroups: (groups: IGroup[]) => {
@@ -209,7 +278,7 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       groups,
     })
   },
-  updateCoordinates: (coordinateMap: Map<string, IPos>, size: IDim) => {
+  updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => {
     set({
       coordinateMap,
       size,
@@ -217,19 +286,15 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
   },
 }))
 
-export function useNetwork(): {
-  network: INetwork | undefined
-  groups: IGroup[]
-  coordinates: Map<string, IPos>
-  size: IDim
-  scoreName: string
-  setNetwork: (network: INetwork, groups: IGroup[], scoreName: string) => void
-  setGroups: (groups: IGroup[]) => void
-} {
-  const network = useNetworkStore((state) => state.network)
-  const groups = useNetworkStore((state) => state.groups)
-  const scoreName = useNetworkStore((state) => state.scoreName)
-  const coordinates = useNetworkStore((state) => state.coordinateMap)
+export function useNetwork() {
+  const network = useNetworkStore(useShallow((state) => state.network))
+  const sizeLim = useNetworkStore(useShallow((state) => state.nodes.sizeLim))
+  const stepSize = useNetworkStore((state) => state.nodes.stepSize)
+  const groups = useNetworkStore(useShallow((state) => state.groups))
+  const headings = useNetworkStore(useShallow((state) => state.headings))
+  const coordinates = useNetworkStore(
+    useShallow((state) => state.coordinateMap)
+  )
 
   const size = useNetworkStore((state) => state.size)
   const setNetwork = useNetworkStore((state) => state.setNetwork)
@@ -237,10 +302,12 @@ export function useNetwork(): {
 
   return {
     network,
+    sizeLim,
+    stepSize,
     groups,
     coordinates,
     size,
-    scoreName,
+    headings,
     setNetwork,
     setGroups,
   }
@@ -367,7 +434,12 @@ export function useNetworkSim(): {
 
       const edges = network.edges.map((edge) => ({ ...edge }))
 
-      let frame = 0
+      // let frame = 0
+
+      // const leftWall = -size.w / 2
+      // const rightWall = size.w / 2
+      // const topWall = -size.h / 2
+      // const bottomWall = size.h / 2
 
       // 3. Initialize the D3 Force Engine
       const simulation = forceSimulation(nodes)
@@ -379,9 +451,29 @@ export function useNetworkSim(): {
         .force(
           'link',
           forceLink(edges)
-            .id((d: any) => d.id)
+            .id((d: { id: string }) => d.id)
             .distance(settings.linkDistance)
         )
+      // .force('boundary-elastic', () => {
+      //   const strength = 0.2
+
+      //   for (let node of nodes) {
+      //     // Apply boundary elastic force logic here
+
+      //     if (node.x < leftWall) {
+      //       node.vx += strength * (leftWall - node.x)
+      //     }
+      //     if (node.x > rightWall) {
+      //       node.vx -= strength * (rightWall - node.x)
+      //     }
+      //     if (node.y < topWall) {
+      //       node.vy += strength * (topWall - node.y)
+      //     }
+      //     if (node.y > bottomWall) {
+      //       node.vy -= strength * (bottomWall - node.y)
+      //     }
+      //   }
+      // })
 
       // 4. Stream layout coordinates straight back into the store on every frame tick
       // simulation.on('tick', () => {
@@ -418,12 +510,12 @@ export function useNetworkSim(): {
 
           // keep coordinates centered around 0,
           // the plotter will move them to center of canvas
-          const coordinates = new Map(
+          const coordinates: Record<string, IPos> = Object.fromEntries(
             nodes.map((node) => [
               node.id,
               {
-                x: node.x, // - minX   -width / 2,
-                y: node.y, // - minY  -height/ 2,
+                x: node.x,
+                y: node.y,
               },
             ])
           )

@@ -8,15 +8,17 @@ import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { TEXT_APPLY } from '@/consts'
 import { useEffect, useState } from 'react'
+import { useUserData } from '../network-user-data-store'
 
 export function NodesDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
+  const { settings: userData, updateSettings: updateUserData } = useUserData()
 
   const [text, setText] = useState('')
 
   useEffect(() => {
-    setText(settings.labels.join('\n'))
-  }, [settings.labels])
+    setText(userData.labels.ids.join('\n'))
+  }, [userData.labels])
 
   // const debounceText = useDebounce(text)
 
@@ -55,9 +57,9 @@ export function NodesDisplayPropsPanel() {
         <Button
           variant="app-theme"
           onClick={() =>
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.labels = text
+            updateUserData(
+              produce(userData, (draft) => {
+                draft.labels.ids = text
                   .split('\n')
                   .map((x) => x.trim())
                   .filter((x) => x.length > 0)

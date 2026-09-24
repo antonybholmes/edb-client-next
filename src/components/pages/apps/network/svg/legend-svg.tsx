@@ -4,24 +4,27 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { max } from '@/lib/math/math'
 import { sum } from '@/lib/math/sum'
+import { capitalCase } from '@/lib/text/capital-case'
+import { range } from 'd3'
 import { ReactElement } from 'react'
 import { useNetworkSettings } from '../network-settings-store'
 import { useNetwork } from '../network-store'
 
 export function LegendSvg() {
   const { settings } = useNetworkSettings()
-  const { groups } = useNetwork()
+  const { groups, stepSize, sizeLim } = useNetwork()
 
   const groupsHeight =
     30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
 
+  const steps = range(stepSize, sizeLim.max, stepSize)
+
   const sizeHeight =
-    30 +
-    sum(
-      settings.plot.legend.sizes.ticks.map((t) => t * settings.plot.nodes.scale)
-    ) +
-    5 * settings.plot.legend.sizes.ticks.length
+    35 +
+    2 * sum(steps.map((t) => (t / sizeLim.max) * settings.plot.nodes.radius)) +
+    5 * steps.length
 
   return (
     <SvgG
@@ -37,6 +40,7 @@ export function LegendSvg() {
           x: 0,
           y: groupsHeight,
         }}
+        steps={steps}
       />
       <EdgesSvg
         pos={{
@@ -50,7 +54,7 @@ export function LegendSvg() {
 
 export function EdgesSvg({ pos }: { pos: IPos }) {
   const { settings } = useNetworkSettings()
-  const { scoreName } = useNetwork()
+  const { headings } = useNetwork()
 
   const elems: ReactElement[] = []
 
@@ -88,30 +92,29 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
         fill={COLOR_BLACK}
         fontWeight="bold"
       >
-        {scoreName}
+        {capitalCase(headings.score)}
       </SvgText>
       <SvgG pos={{ x: 0, y: 20 }}>{elems}</SvgG>
     </SvgG>
   )
 }
 
-export function SizesSvg({ pos }: { pos: IPos }) {
+export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
+  const { sizeLim } = useNetwork()
   const { settings } = useNetworkSettings()
+  const { headings } = useNetwork()
 
-  const maxRadius =
-    Math.max(...settings.plot.legend.sizes.ticks) *
-    0.5 *
-    settings.plot.nodes.scale
+  const maxRadius = (max(steps) / sizeLim.max) * settings.plot.nodes.radius
 
   const elems: ReactElement[] = []
 
   let y = 0
 
-  for (const [ti, tick] of settings.plot.legend.sizes.ticks.entries()) {
-    const radius = tick * 0.5 * settings.plot.nodes.scale
+  for (const [si, step] of steps.entries()) {
+    const radius = (step / sizeLim.max) * settings.plot.nodes.radius
 
     elems.push(
-      <SvgG key={ti} pos={{ x: 0, y }}>
+      <SvgG key={si} pos={{ x: 0, y }}>
         <SvgCircle
           r={radius}
           fill={COLOR_BLACK}
@@ -125,7 +128,7 @@ export function SizesSvg({ pos }: { pos: IPos }) {
         />
         <SvgG pos={{ x: maxRadius + 5, y: 0 }}>
           <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
-            {tick}
+            {step}
           </SvgText>
         </SvgG>
       </SvgG>
@@ -133,15 +136,15 @@ export function SizesSvg({ pos }: { pos: IPos }) {
 
     // add our radius plus radius of next element to get
     // nice spacing
-    if (ti < settings.plot.legend.sizes.ticks.length - 1) {
+    if (si < steps.length - 1) {
       y +=
-        radius +
-        settings.plot.legend.sizes.ticks[ti + 1] *
-          0.5 *
-          settings.plot.nodes.scale +
-        5
+        radius + (steps[si + 1] / sizeLim.max) * settings.plot.nodes.radius + 5
     }
   }
+
+  const label = settings.applyMinusLog10ToSize
+    ? `-log10(${capitalCase(headings.size)})`
+    : capitalCase(headings.size)
 
   return (
     <SvgG id="size-legend" pos={pos}>
@@ -151,7 +154,7 @@ export function SizesSvg({ pos }: { pos: IPos }) {
         fill={COLOR_BLACK}
         fontWeight="bold"
       >
-        Sizes
+        {label}
       </SvgText>
       <SvgG pos={{ x: maxRadius, y: 20 }}>{elems}</SvgG>
     </SvgG>

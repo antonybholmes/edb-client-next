@@ -13,7 +13,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v4`
+const SETTINGS_KEY = `${config.appId}:app:network:v6`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -45,12 +45,16 @@ export const LABEL_TYPES: {
 export interface INetworkSettings {
   chargeStrength: number
   linkDistance: number
-  sim: { run: boolean }
+  applyMinusLog10ToSize: boolean
   plot: {
     size: IDim
     margin: IMarginProps
+    scaleToFit: boolean
+    scale: number
+    border: IStrokeProps
     nodes: {
-      scale: number
+      //scale: number
+      radius: number
       line: IStrokeProps & { autoColor: boolean }
       color: {
         mode: 'group'
@@ -67,10 +71,9 @@ export interface INetworkSettings {
         offset: number
         type: LabelType
       }
+      keepWithinBounds: boolean
     }
-    groups: {
-      colors: Record<string, string>
-    }
+
     edges: {
       scale: number
       line: IStrokeProps
@@ -79,26 +82,30 @@ export interface INetworkSettings {
       dot: {
         radius: number
       }
-      sizes: {
-        ticks: number[]
-      }
+      // sizes: {
+      //   ticks: number[]
+      // }
       edges: {
         size: number
         ticks: number[]
       }
     }
   }
-  labels: string[]
 }
 
 const DEFAULT_SETTINGS: INetworkSettings = {
   chargeStrength: -30,
   linkDistance: 100,
+  applyMinusLog10ToSize: false,
   plot: {
-    size: { w: 3000, h: 3000 },
+    size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
+    scaleToFit: true,
+    scale: 1,
+    border: { ...DEFAULT_STROKE_PROPS, show: false },
     nodes: {
-      scale: 0.1,
+      //scale: 0.1,
+      radius: 25,
       color: {
         mode: 'group',
         opacity: 0.5,
@@ -112,10 +119,9 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         offset: 5,
         type: 'label',
       },
+      keepWithinBounds: true,
     },
-    groups: {
-      colors: {},
-    },
+
     edges: {
       scale: 1,
       line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY },
@@ -124,17 +130,15 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       dot: {
         radius: 8,
       },
-      sizes: {
-        ticks: [100, 200, 300, 400],
-      },
+      // sizes: {
+      //   ticks: [100, 200, 300, 400],
+      // },
       edges: {
         size: 15,
         ticks: [0.2, 0.4, 0.6, 0.8, 1],
       },
     },
   },
-  sim: { run: true },
-  labels: [],
 }
 
 export interface INetworkSettingsStore extends INetworkSettings {
