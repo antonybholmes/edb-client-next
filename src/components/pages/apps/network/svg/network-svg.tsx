@@ -31,14 +31,7 @@ export function NetworkSvgContent() {
   const { settings } = useNetworkSettings()
   const { settings: userData } = useUserData()
 
-  const {
-    network,
-    groups,
-    coordinates,
-    size: d3Size,
-    metricLim1,
-    metricLim2,
-  } = useNetwork()
+  const { network, groups, coordinates, size: d3Size, nodes } = useNetwork()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -99,14 +92,14 @@ export function NetworkSvgContent() {
     const radiusMap = new Map<string, number>(
       network.nodes.map((node) => [
         node.id,
-        ((node.size ?? 0) / metricLim1.max) * settings.plot.nodes.radius,
+        ((node.size ?? 0) / nodes.metricLim1.max) * settings.plot.nodes.radius,
       ])
     )
 
     const sizeMap2 = new Map<string, number>(
       network.nodes.map((node) => [
         node.id,
-        (node.size2 ?? 0) / (metricLim2?.max ?? 1),
+        (node.size2 ?? 0) / (nodes.metricLim2?.max ?? 1),
       ])
     )
 

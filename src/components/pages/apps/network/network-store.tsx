@@ -322,13 +322,8 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
 
 export function useNetwork() {
   const network = useNetworkStore(useShallow((state) => state.network))
-  const metricLim1 = useNetworkStore(
-    useShallow((state) => state.nodes.metricLim1)
-  )
-  const metricLim2 = useNetworkStore(
-    useShallow((state) => state.nodes.metricLim2)
-  )
-  const stepSize = useNetworkStore((state) => state.nodes.stepSize)
+  const nodes = useNetworkStore(useShallow((state) => state.nodes))
+
   const groups = useNetworkStore(useShallow((state) => state.groups))
   const headings = useNetworkStore(useShallow((state) => state.headings))
   const coordinates = useNetworkStore(
@@ -341,9 +336,7 @@ export function useNetwork() {
 
   return {
     network,
-    metricLim1,
-    stepSize,
-    metricLim2,
+    nodes,
     groups,
     coordinates,
     size,
