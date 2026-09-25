@@ -2,12 +2,13 @@ import { IDBEntity } from '@/interfaces/db-entity'
 import { IPos } from '@/interfaces/pos'
 import { forceLink, forceManyBody, forceSimulation } from 'd3-force'
 
+import { autoTickInterval } from '@/components/plot/axes/axis'
 import { IDim } from '@/interfaces/dim'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
-import { ILimit } from '@/lib/math/limit'
-import { max, min } from '@/lib/math/math'
+import { ILimit, ZERO_LIMIT } from '@/lib/math/limit'
+import { min } from '@/lib/math/math'
 import { useCallback } from 'react'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
@@ -155,8 +156,6 @@ export function dataframesToNetwork(
       : size
   )
 
-  console.log('sss', sizes2)
-
   // const sizeLim2: ILimit = {
   //   min: min(sizes2),
   //   max: max(sizes2),
@@ -189,15 +188,7 @@ export function dataframesToNetwork(
 
   const sources = dfEdges.col(sourceCol).strs
   const targets = dfEdges.col(targetCol).strs
-  let strengths = dfEdges.col(strengthCol).nums
-
-  const strengthLim: ILimit = {
-    min: min(strengths),
-    max: max(strengths),
-  }
-
-  // 4. Normalize the scores by dividing by the maximum score
-  strengths = strengths.map((score) => score / strengthLim.max)
+  const strengths = dfEdges.col(strengthCol).nums
 
   const edges: IEdge[] = sources.map((source, si) => {
     return {
@@ -246,6 +237,10 @@ export interface INetworkStore {
      */
     metricLim2: ILimit
   }
+  edges: {
+    strengthLim: ILimit
+    stepSize: number
+  }
   headings: {
     score: string
     metric1: string
@@ -270,9 +265,13 @@ export interface INetworkStore {
 export const useNetworkStore = create<INetworkStore>()((set) => ({
   network: undefined,
   nodes: {
-    metricLim1: { min: 0, max: 0 },
+    metricLim1: { ...ZERO_LIMIT },
     stepSize: 0,
-    metricLim2: { min: 0, max: 0 },
+    metricLim2: { ...ZERO_LIMIT },
+  },
+  edges: {
+    strengthLim: { ...ZERO_LIMIT },
+    stepSize: 0,
   },
   headings: {
     score: 'Score',
@@ -300,7 +299,12 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     }
 
     // get step size using log10 to find a suitable magnitude for the step
-    const stepSize = Math.pow(10, Math.floor(Math.log10(metricLim1.max)))
+    const { interval: stepSize } = autoTickInterval({
+      min: 0,
+      max: metricLim1.max,
+    })
+
+    console.log(stepSize, 'stepSize')
 
     // max must be a multiple of step size for size
     metricLim1.min = Math.floor(metricLim1.min / stepSize) * stepSize
@@ -312,18 +316,42 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       max: Math.max(1, ...network.nodes.map((node) => node.size2)),
     }
 
-    const stepSize2 = Math.pow(10, Math.floor(Math.log10(metricLim2.max)))
+    const { interval: stepSize2 } = autoTickInterval({
+      min: 0,
+      max: metricLim2.max,
+    })
 
     // max must be a multiple of step size
     metricLim2.min = Math.floor(metricLim2.min / stepSize2) * stepSize2
     metricLim2.max = Math.ceil(metricLim2.max / stepSize2) * stepSize2
 
+    const strengthLim: ILimit = {
+      min: Math.min(...network.edges.map((edge) => edge.strength)),
+      max: Math.max(1, ...network.edges.map((edge) => edge.strength)),
+    }
+
+    const { interval: stepSizeStrength } = autoTickInterval({
+      min: 0,
+      max: strengthLim.max,
+    })
+
+    console.log(stepSizeStrength, 'stepSizeStrength')
+
+    strengthLim.min =
+      Math.floor(strengthLim.min / stepSizeStrength) * stepSizeStrength
+    strengthLim.max =
+      Math.ceil(strengthLim.max / stepSizeStrength) * stepSizeStrength
+
     set({
       network,
       nodes: {
         metricLim1,
-        stepSize,
         metricLim2,
+        stepSize,
+      },
+      edges: {
+        strengthLim,
+        stepSize: stepSizeStrength,
       },
       headings: {
         score: scoreName,
@@ -350,6 +378,7 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
 export function useNetwork() {
   const network = useNetworkStore(useShallow((state) => state.network))
   const nodes = useNetworkStore(useShallow((state) => state.nodes))
+  const edges = useNetworkStore(useShallow((state) => state.edges))
 
   const groups = useNetworkStore(useShallow((state) => state.groups))
   const headings = useNetworkStore(useShallow((state) => state.headings))
@@ -364,6 +393,7 @@ export function useNetwork() {
   return {
     network,
     nodes,
+    edges,
     groups,
     coordinates,
     size,

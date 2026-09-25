@@ -72,7 +72,7 @@ import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
 import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
 import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
-import { GseaBubblePlotSvg } from '../gsea-plot/bubble/gsea-bubble-svg'
+import { GseaBubblePlotsSvg } from '../gsea-plot/bubble/svg/gsea-bubble-plots-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function GseaBubblePage() {
@@ -284,7 +284,7 @@ export function GseaBubblePage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                {plots.length > 0 && <GseaBubblePlotSvg />}
+                {plots.length > 0 && <GseaBubblePlotsSvg />}
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />

@@ -10,28 +10,45 @@ import { getColorMap } from '@/lib/color/colormap'
 import { sum } from '@/lib/math/sum'
 import { capitalCase } from '@/lib/text/capital-case'
 import * as d3 from 'd3'
-import { range } from 'd3'
+
+import { range } from '@/lib/math/range'
 import { ReactElement } from 'react'
+import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { useNetwork } from '../network-store'
 
 export function LegendSvg() {
   const { settings } = useNetworkSettings()
-  const { groups, nodes } = useNetwork()
+  const { groups, nodes, edges } = useNetwork()
 
-  const nodeRadiusScale = nodeRadiusFunc(settings)
+  const nodeRadiusScale = nodeRadiusFunc(
+    settings.plot.nodes.radius,
+    settings.plot.nodes.scale.mode
+  )
 
   const groupsHeight =
     30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
 
-  const steps = range(nodes.stepSize, nodes.metricLim1.max, nodes.stepSize)
+  const metricSteps = range(
+    nodes.stepSize,
+    nodes.metricLim1.max,
+    nodes.stepSize
+  )
 
   const sizeHeight =
     35 +
-    2 * sum(steps.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
-    5 * steps.length
+    2 * sum(metricSteps.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
+    5 * metricSteps.length
 
-  const edgesHeight = 35 + settings.plot.legend.edges.ticks.length * 20
+  const strengthSteps = range(
+    edges.stepSize,
+    edges.strengthLim.max,
+    edges.stepSize
+  )
+
+  const edgesHeight = 35 + strengthSteps.length * 20
+
+  console.log(strengthSteps, 'strengthSteps')
 
   return (
     <SvgG
@@ -47,9 +64,10 @@ export function LegendSvg() {
           x: 0,
           y: groupsHeight,
         }}
-        steps={steps}
+        steps={metricSteps}
       />
       <EdgesSvg
+        steps={strengthSteps}
         pos={{
           x: 0,
           y: groupsHeight + sizeHeight,
@@ -107,15 +125,17 @@ export function Size2Svg({ pos }: { pos: IPos }) {
   )
 }
 
-export function EdgesSvg({ pos }: { pos: IPos }) {
+export function EdgesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
   const { settings } = useNetworkSettings()
-  const { headings } = useNetwork()
+  const { headings, edges } = useNetwork()
 
   const elems: ReactElement[] = []
 
   let y = 0
 
-  for (const [ti, tick] of settings.plot.legend.edges.ticks.entries()) {
+  const format = d3.tickFormat(0, edges.strengthLim.max, steps.length)
+
+  for (const [ti, tick] of steps.entries()) {
     const strokeWidth = tick * settings.plot.edges.scale
 
     elems.push(
@@ -130,7 +150,7 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
         />
         <SvgG pos={{ x: settings.plot.legend.edges.size + 5, y: 0 }}>
           <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
-            {tick}
+            {format(tick)}
           </SvgText>
         </SvgG>
       </SvgG>
@@ -155,15 +175,19 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
 }
 
 export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
-  const { nodes } = useNetwork()
   const { settings } = useNetworkSettings()
-  const { headings } = useNetwork()
+  const { headings, nodes } = useNetwork()
 
-  const nodeRadiusScale = nodeRadiusFunc(settings)
+  const nodeRadiusScale = nodeRadiusFunc(
+    settings.plot.nodes.radius,
+    settings.plot.nodes.scale.mode
+  )
 
   const maxRadius = nodeRadiusScale(1)
 
   const elems: ReactElement[] = []
+
+  const format = d3.tickFormat(0, nodes.metricLim1.max, steps.length)
 
   let y = 0
 
@@ -185,7 +209,7 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
         />
         <SvgG pos={{ x: maxRadius + 5, y: 0 }}>
           <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
-            {step}
+            {format(step)}
           </SvgText>
         </SvgG>
       </SvgG>
@@ -266,16 +290,18 @@ export function GroupsSvg() {
   )
 }
 
-export function nodeRadiusFunc(settings: INetworkSettings) {
-  const nodeRadiusScale = (
-    settings.plot.nodes.scale.mode === 'sqrt'
-      ? d3.scaleSqrt()
-      : d3.scaleLinear()
-  )
-    .domain([0, 1]) // Your 0 to 1 score
-    .range([1, settings.plot.nodes.radius])
-  return nodeRadiusScale
-}
+// export function nodeRadiusFunc(
+//   settings: INetworkSettings
+// ): (v: number) => number {
+//   const nodeRadiusScale = (
+//     settings.plot.nodes.scale.mode === 'sqrt'
+//       ? d3.scaleSqrt()
+//       : d3.scaleLinear()
+//   )
+//     .domain([0, 1]) // Your 0 to 1 score
+//     .range([1, settings.plot.nodes.radius])
+//   return nodeRadiusScale
+// }
 
 /**
  * Returns the size label correctly formatted to show if log scaling is applied.

@@ -20,10 +20,11 @@ import { useSVG } from '@/providers/svg-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
+import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { IGroup, INode, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
-import { getSizeLabel, LegendSvg, nodeRadiusFunc } from './legend-svg'
+import { getSizeLabel, LegendSvg } from './legend-svg'
 
 export function NetworkSvgContent() {
   const { zoom } = useZoom()
@@ -89,12 +90,14 @@ export function NetworkSvgContent() {
         .filter((x) => x.length > 0)
     )
 
-    const nodeRadiusScale = nodeRadiusFunc(settings)
+    const nodeRadiusScale = nodeRadiusFunc(
+      settings.plot.nodes.radius,
+      settings.plot.nodes.scale.mode
+    )
 
     const radiusMap = new Map<string, number>(
       network.nodes.map((node) => [
         node.id,
-
         nodeRadiusScale((node.size ?? 0) / nodes.metricLim1.max),
       ])
     )

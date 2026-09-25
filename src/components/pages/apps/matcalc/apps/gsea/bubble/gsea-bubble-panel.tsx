@@ -18,7 +18,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { GseaBubbleDisplayPropsPanel } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-display-props-panel'
 import { useGseaBubbleSettings } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-settings-store'
-import { GseaBubblePlotSvg } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-svg'
+import { GseaBubblePlotsSvg } from '../../../../genes/gsea/gsea-plot/bubble/svg/gsea-bubble-plots-svg'
 
 export function GseaBubblePanel() {
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
@@ -61,7 +61,7 @@ export function GseaBubblePanel() {
     <>
       <ResizableSidebar side="right">
         <ExtScrollCard className="pb-2">
-          <GseaBubblePlotSvg />
+          <GseaBubblePlotsSvg />
         </ExtScrollCard>
         <GseaBubbleDisplayPropsPanel />
       </ResizableSidebar>

@@ -8,6 +8,11 @@ export const DEFAULT_LIMIT: ILimit = {
   max: 1,
 }
 
+export const ZERO_LIMIT: ILimit = {
+  min: 0,
+  max: 0,
+}
+
 export interface IRange {
   start: number
   end: number

@@ -15,6 +15,7 @@ import { ILim } from '@/lib/math/math'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { nodeRadiusFunc } from '@/components/pages/apps/matcalc/apps/heatmap/svg/cell-svg'
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
 import { IGseaBubble } from '../gsea-store'
@@ -150,6 +151,11 @@ export function GseaBubbleProvider({
     [xlims]
   )
 
+  const radiusScale = nodeRadiusFunc(
+    settings.bubbles.size,
+    settings.bubbles.scale.mode
+  )
+
   const points: IBubblePoint[][] = useMemo(() => {
     if (_plots.length === 0) {
       return []
@@ -192,7 +198,7 @@ export function GseaBubbleProvider({
 
       return nes.map((score, i) => {
         const size = sizes[i]!
-        const sizeF = Math.min(size / settings.size.maxSize, 1)
+        const normSize = Math.min(size / settings.size.maxSize, 1)
         const p = log10pvalues[i]!
         const color =
           settings.scale.mode === 'p'
@@ -205,8 +211,8 @@ export function GseaBubbleProvider({
           nes: score,
           p,
           color,
-          size: sizeF,
-          r: sizeF * settings.bubbles.size,
+          size: normSize,
+          r: radiusScale(normSize), //normSize * settings.bubbles.size,
           label: names[i]!,
         }
       })

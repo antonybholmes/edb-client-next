@@ -13,6 +13,7 @@ import { useCallback } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
 const SETTINGS_KEY = `${config.appId}:app:network:v8`
 
@@ -43,8 +44,6 @@ export const LABEL_TYPES: {
   // { label: 'None', value: 'none' },
 ]
 
-export type ScaleMode = 'linear' | 'sqrt'
-
 export interface INetworkSettings {
   layout: {
     chargeStrength: number
@@ -65,7 +64,7 @@ export interface INetworkSettings {
       //scale: number
       radius: number
       scale: {
-        mode: ScaleMode
+        mode: RadiusScaleMode
       }
       line: IStrokeProps & { autoColor: boolean }
       color: {
@@ -100,7 +99,7 @@ export interface INetworkSettings {
       // }
       edges: {
         size: number
-        ticks: number[]
+        //ticks: number[]
       }
     }
   }
@@ -155,7 +154,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       // },
       edges: {
         size: 15,
-        ticks: [0.2, 0.4, 0.6, 0.8, 1],
+        //ticks: [0.2, 0.4, 0.6, 0.8, 1],
       },
     },
   },

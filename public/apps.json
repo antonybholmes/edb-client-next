@@ -64,9 +64,9 @@
     "color": "#4169E1",
     "version": "1.2.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-23T18:14:55.014Z",
-    "hash": "15d8740fb92eb43950ec4c092451fbfb4181d1fb0de5907bbb204266692fd805",
-    "build": 72
+    "modified": "2026-09-25T14:48:42.597Z",
+    "hash": "7a02e6baac438f0b8d4db41251c6c8a7a3a1714cee23c3e41cbfe2b2a1be74f3",
+    "build": 74
   },
   {
     "name": "GSEA Plot",
@@ -74,9 +74,9 @@
     "color": "#ffb366",
     "version": "23.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-24T22:22:58.341Z",
-    "hash": "766fecbad7c70f5b1b155dbcc983515a02339ae8d989cc0b9819f196710ee2a0",
-    "build": 1000
+    "modified": "2026-09-25T14:48:42.598Z",
+    "hash": "8d162d1183fe2444129ea93fd2b34226219fb16c904d2685ea4527cdb6547d8e",
+    "build": 1002
   },
   {
     "name": "GSEA Web",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.6.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-23T16:34:09.351Z",
-    "hash": "b8add16d1af4cd8a23209fd709f1536f5d38894148ede960c32d1bd7d2135242",
-    "build": 2084
+    "modified": "2026-09-25T14:48:42.601Z",
+    "hash": "4734d38f7acae2bf8e30330f4691a3b80949fe4b1b5607293a6622ae79f235a5",
+    "build": 2086
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.0.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-25T03:36:59.707Z",
-    "hash": "7e7b9f0c60f45b1d5c5d978194252eb7d88a884cb7f2f99d18f64c75bd116440",
-    "build": 30
+    "modified": "2026-09-25T14:48:42.602Z",
+    "hash": "94e06ea1ad82b73f03034d4f8a59e7e8c7c59d4086b104a2c970dcbffdc2aed6",
+    "build": 32
   },
   {
     "name": "Oncoplot",

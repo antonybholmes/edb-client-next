@@ -20,11 +20,11 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
+import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import {
   LABEL_TYPES,
   POSITIONS,
-  ScaleMode,
   useNetworkSettings,
 } from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
@@ -81,7 +81,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <CheckPropRow
+            {/* <CheckPropRow
               title="Use Edge Strength"
               checked={settings.layout.useStrength}
               onCheckedChange={(checked) =>
@@ -91,7 +91,7 @@ export function NetworkDisplayPropsPanel() {
                   })
                 )
               }
-            />
+            /> */}
 
             <VCenterRow className="gap-x-2">
               <Button
@@ -215,23 +215,16 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Scale Mode">
-              <SelectList
-                items={[
-                  { label: 'Linear', value: 'linear' },
-                  { label: 'Area', value: 'sqrt' },
-                ]}
+              <RadiusScaleModeSelectList
                 value={settings.plot.nodes.scale.mode}
                 onValueChange={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.plot.nodes.scale.mode = value as ScaleMode
+                      draft.plot.nodes.scale.mode = value
                     })
                   )
                 }
-              >
-                <SelectItem value="linear">Linear</SelectItem>
-                <SelectItem value="sqrt">Area</SelectItem>
-              </SelectList>
+              />
             </PropRow>
             {/* <PropRow title="Scale">
               <NumSlider

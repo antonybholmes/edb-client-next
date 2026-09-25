@@ -17,6 +17,7 @@ import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
+import * as d3 from 'd3'
 import { memo, ReactNode } from 'react'
 import { IHeatMapSettings } from '../heatmap-settings-store'
 import { CellGaps } from './cell-gaps'
@@ -466,3 +467,23 @@ export const GridSvg = memo(function GridSvg({
     </g>
   )
 })
+
+export type RadiusScaleMode = 'linear' | 'area'
+
+/**
+ * Given a normalized value (between 0 and 1),
+ * returns a scaled radius function based on the mode.
+ * @param max The maximum radius value.
+ * @param mode The scaling mode, either 'linear' or 'area'.
+ * @returns A function that takes a normalized value (0 to 1) and returns the scaled radius.
+ */
+export function nodeRadiusFunc(
+  max: number,
+  mode: RadiusScaleMode
+): (v: number) => number {
+  const nodeRadiusScale = (mode === 'area' ? d3.scaleSqrt() : d3.scaleLinear())
+    .domain([0, 1]) // Your 0 to 1 score
+    .range([1, max])
+
+  return nodeRadiusScale
+}

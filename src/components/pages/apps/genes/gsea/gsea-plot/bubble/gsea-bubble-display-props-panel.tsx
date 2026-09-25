@@ -11,6 +11,7 @@ import {
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
+import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -317,6 +318,18 @@ export function GseaBubbleDisplayPropsPanel() {
                     })
                   )
                 }}
+              />
+            </PropRow>
+            <PropRow title="Scale Mode">
+              <RadiusScaleModeSelectList
+                value={settings.bubbles.scale.mode}
+                onValueChange={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.bubbles.scale.mode = value
+                    })
+                  )
+                }
               />
             </PropRow>
             <PropRow title="Opacity">

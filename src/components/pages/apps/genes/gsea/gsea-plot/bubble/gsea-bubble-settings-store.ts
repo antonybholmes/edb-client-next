@@ -1,3 +1,4 @@
+import { RadiusScaleMode } from '@/components/pages/apps/matcalc/apps/heatmap/svg/cell-svg'
 import { IDisplayAxis } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import {
   ColorBarPos,
@@ -15,7 +16,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v24`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v28`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
@@ -44,6 +45,9 @@ export interface IGseaBubbleSettings {
     merge: boolean
   }
   bubbles: {
+    scale: {
+      mode: RadiusScaleMode
+    }
     size: number
     fill: IPaintProps
     stroke: IStrokeProps
@@ -113,6 +117,9 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     maxSize: 100,
   },
   bubbles: {
+    scale: {
+      mode: 'linear',
+    },
     size: 10,
     fill: { ...DEFAULT_COLOR_PROPS },
     stroke: { ...DEFAULT_STROKE_PROPS, show: false },
