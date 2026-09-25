@@ -20,11 +20,6 @@ export interface IGroup extends IDBEntity {
   show: boolean
 }
 
-interface INodeData {
-  name: string
-  value: string | number
-}
-
 export interface INode {
   id: string
   /**
@@ -48,14 +43,14 @@ export interface INode {
   data?: Record<string, string | number>
 }
 
-interface IEdge {
+export interface IEdge {
   id: string
   strength: number
   source: string
   target: string
 }
 
-interface INetwork extends IDBEntity {
+export interface INetwork extends IDBEntity {
   nodes: INode[]
   nodeMap: Record<string, INode>
   edges: IEdge[]

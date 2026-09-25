@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network hidden nodes can now be shown as translucent with adjustable opacity.
 - Network has ability to hide nodes.
 - Network legend now uses autotickinterval to create a nice legend.
 - Gsea bubble now uses crosshairs and has some bubble animations.

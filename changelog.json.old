@@ -3073,6 +3073,10 @@
         {
           "msg": "Network legend now uses autotickinterval to create a nice legend",
           "date": "2026-09-25T19:42:34.924Z"
+        },
+        {
+          "msg": "Network has ability to hide nodes",
+          "date": "2026-09-25T22:07:39.106Z"
         }
       ]
     },

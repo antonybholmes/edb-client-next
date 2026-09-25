@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { IEdge } from '../network-store'
 
 import { SvgBase } from '@/components/plot/svg-base'
 
@@ -26,8 +27,14 @@ import { IGroup, INode, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
 import { LegendSvg } from './legend-svg'
 
+type NodeView = 'default' | 'hidden' | 'translucent'
 interface IRenderNode extends INode {
   group: IGroup
+  view: NodeView
+}
+
+interface IRenderEdge extends IEdge {
+  view: NodeView
 }
 
 export function NetworkSvgContent() {
@@ -86,8 +93,6 @@ export function NetworkSvgContent() {
       groups.map((group) => [group.id, group])
     )
 
-    const nodeMap = network.nodeMap
-
     const labelSet = new Set(
       userData.labels.ids
         .map((label) => label.toLowerCase())
@@ -124,8 +129,11 @@ export function NetworkSvgContent() {
     const colorMap = getColorMap(settings.plot.nodes.color.cmap)
 
     const renderNodes: IRenderNode[] = network.nodes
-      .map((node) => ({ ...node, group: groupMap.get(node.groupId) }))
-      .filter((node) => {
+      .map((node) => {
+        let view: NodeView = groupMap.get(node.groupId)?.show
+          ? 'default'
+          : 'hidden'
+
         if (
           settings.plot.nodes.view.mode === 'labelled' &&
           !showNodeLabel(
@@ -135,25 +143,44 @@ export function NetworkSvgContent() {
             userData.labels.mode
           )
         ) {
-          return false
+          view = settings.plot.nodes.view.hidden.show ? 'translucent' : 'hidden'
         }
 
-        return groupMap.get(node.groupId)?.show
+        return {
+          ...node,
+          group: groupMap.get(node.groupId),
+          view,
+        }
+      })
+      .filter((node) => {
+        return node.view !== 'hidden'
       })
 
     const renderNodesMap = new Map(renderNodes.map((node) => [node.id, node]))
 
-    const renderEdges = network.edges.filter((edge) => {
-      //const sourceNode = nodeMap[edge.source]
-      //const targetNode = nodeMap[edge.target]
+    const renderEdges: IRenderEdge[] = network.edges
+      .filter((edge) => {
+        //const sourceNode = nodeMap[edge.source]
+        //const targetNode = nodeMap[edge.target]
 
-      return renderNodesMap.has(edge.source) && renderNodesMap.has(edge.target)
+        return (
+          renderNodesMap.has(edge.source) && renderNodesMap.has(edge.target)
+        )
 
-      // return (
-      //   groupMap.get(sourceNode.groupId)?.show &&
-      //   groupMap.get(targetNode.groupId)?.show
-      // )
-    })
+        // return (
+        //   groupMap.get(sourceNode.groupId)?.show &&
+        //   groupMap.get(targetNode.groupId)?.show
+        // )
+      })
+      .map((edge) => {
+        const view =
+          renderNodesMap.get(edge.source)?.view === 'translucent' ||
+          renderNodesMap.get(edge.target)?.view === 'translucent'
+            ? 'translucent'
+            : 'hidden'
+
+        return { ...edge, view }
+      })
 
     const svg = (
       <>
@@ -173,6 +200,11 @@ export function NetworkSvgContent() {
               const sourcePos = realCoordinates.get(edge.source) || ZERO_POS
               const targetPos = realCoordinates.get(edge.target) || ZERO_POS
 
+              const opacity =
+                edge.view === 'translucent'
+                  ? settings.plot.nodes.view.hidden.opacity
+                  : 1
+
               return (
                 <SvgLine
                   key={idx}
@@ -183,6 +215,7 @@ export function NetworkSvgContent() {
                   s={settings.plot.edges.line}
 
                   strokeWidth={edge.strength * settings.plot.edges.scale}
+                  opacity={opacity}
                 />
               )
             })}
@@ -265,12 +298,14 @@ function NodeCircle({
     }
   }, [settings.plot.nodes.color.mode, node.group, colorMap, size2])
 
-  const showLabel = showNodeLabel(
-    node,
-    labelSet,
-    settings.plot.nodes.labels.showAll,
-    userData.labels.mode
-  )
+  const showLabel =
+    node.view === 'default' &&
+    showNodeLabel(
+      node,
+      labelSet,
+      settings.plot.nodes.labels.showAll,
+      userData.labels.mode
+    )
 
   const circleRef = useRef<SVGCircleElement>(null)
 
@@ -333,13 +368,18 @@ function NodeCircle({
     hideCrosshair()
   }, [hideCrosshair, setHover])
 
+  const fillOpacity =
+    node.view === 'translucent'
+      ? settings.plot.nodes.view.hidden.opacity
+      : settings.plot.nodes.color.opacity
+
   return (
     <SvgG pos={pos}>
       <SvgCircle
         ref={circleRef}
         r={radius}
         fill={fillColor}
-        fillOpacity={settings.plot.nodes.color.opacity}
+        fillOpacity={fillOpacity}
         stroke={
           settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
             ? fillColor
@@ -438,7 +478,7 @@ function realCoordinate(
 }
 
 function showNodeLabel(
-  node: IRenderNode,
+  node: INode,
   labelSet: Set<string>,
   showAll: boolean,
   mode: 'partial' | 'exact'
@@ -453,7 +493,7 @@ function showNodeLabel(
 }
 
 function inNodeData(
-  node: IRenderNode,
+  node: INode,
   labelSet: Set<string>,
   mode: 'partial' | 'exact'
 ) {

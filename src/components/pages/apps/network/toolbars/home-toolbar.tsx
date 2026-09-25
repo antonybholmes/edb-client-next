@@ -14,6 +14,7 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
@@ -187,6 +188,20 @@ export function HomeToolbar() {
                 </SelectItem>
               ))}
             </SelectList>
+          </ToolbarRow>
+          <ToolbarRow>
+            <Checkbox
+              checked={settings.plot.nodes.view.hidden.show}
+              onCheckedChange={(checked) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.view.hidden.show = checked
+                  })
+                )
+              }}
+            >
+              Show Hidden
+            </Checkbox>
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>

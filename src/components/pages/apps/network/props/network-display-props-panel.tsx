@@ -8,6 +8,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { TEXT_APPLY } from '@/consts'
@@ -239,16 +240,32 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow> */}
             <PropRow title="Opacity">
-              <NumSlider
+              <PercentSlider
                 min={0}
                 max={1}
                 step={0.01}
-                dp={2}
+                //dp={2}
                 value={settings.plot.nodes.color.opacity}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.color.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Hidden Opacity">
+              <PercentSlider
+                min={0}
+                max={1}
+                step={0.01}
+                //dp={2}
+                value={settings.plot.nodes.view.hidden.opacity}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.view.hidden.opacity = value
                     })
                   )
                 }
