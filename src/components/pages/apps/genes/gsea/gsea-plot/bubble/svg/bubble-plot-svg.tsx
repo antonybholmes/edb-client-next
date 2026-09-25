@@ -12,10 +12,16 @@ import { axisDomainToRange } from '@/components/plot/axes/axis'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
+import { svgPointToScreen } from '@/lib/graphics/svg'
+import { useSVG } from '@/providers/svg-provider'
+import { useTooltip } from '@/providers/tooltip-provider'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { SvgG } from '@/components/plot/svg-g'
+import { useCrosshair } from '@/providers/crosshair-provider'
+import gsap from 'gsap'
 import { IGseaBubble } from '../../gsea-store'
 import { IBubblePoint } from '../gsea-bubble-provider'
-
-const TOOLTIP_OFFSET = 10
 
 export interface IPlotInfo {
   plot: IGseaBubble
@@ -25,24 +31,21 @@ export interface IPlotInfo {
 }
 
 export function BubblePlotSvg({
-  info,
+  plotInfo,
   innerPlotWidth,
   innerPlotHeight,
-  handleVariantEnter,
-  handleVariantLeave,
+  pos,
 }: {
-  info: IPlotInfo
-
+  plotInfo: IPlotInfo
   innerPlotWidth: number
   innerPlotHeight: number
-  handleVariantEnter: (plot: IGseaBubble, row: number, p: IPos) => void
-  handleVariantLeave: () => void
+  pos: IPos
 }) {
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
   const { axis: xax } = useAxis({
-    plotId: info.plot.id,
+    plotId: plotInfo.plot.id,
     groupId: 'nes',
     axisId: 'x',
   })
@@ -53,51 +56,38 @@ export function BubblePlotSvg({
 
   const xPoints = axisDomainToRange(
     xax,
-    info.points.map((p) => p.x)
+    plotInfo.points.map((p) => p.x)
   )
 
   return (
-    <>
-      <SvgMargin margin={settings.plot.margin}>
-        {info.points.map((point, xi) => {
-          const x1 = xPoints[xi]
-          const y1 = point.y * settings.axes.y.rowHeight
+    <SvgMargin margin={settings.plot.margin}>
+      {plotInfo.points.map((point, xi) => {
+        const x1 = xPoints[xi]
+        const y1 = point.y * settings.axes.y.rowHeight
 
-          return (
-            <SvgCircle
-              cx={x1}
-              cy={y1}
-              r={point.r}
-              fill={point.color}
-              fp={settings.bubbles.fill}
-              sp={settings.bubbles.stroke}
-              key={xi}
-              onMouseLeave={handleVariantLeave}
-              onMouseEnter={() => {
-                handleVariantEnter(info.plot, xi, {
-                  x:
-                    x1 +
-                    settings.margin.left +
-                    settings.plot.margin.left +
-                    info.pos.x +
-                    TOOLTIP_OFFSET,
-                  y:
-                    y1 +
-                    settings.margin.top +
-                    settings.plot.margin.top +
-                    info.pos.y +
-                    TOOLTIP_OFFSET,
-                })
-              }}
-            />
-          )
-        })}
-      </SvgMargin>
+        return (
+          <Node
+            x1={x1}
+            y1={y1}
+            point={point}
+            xi={xi}
+            plotInfo={plotInfo}
+            key={xi}
+            plotPos={{
+              x: pos.x + settings.plot.margin.left,
+              y: pos.y + settings.plot.margin.top,
+            }}
+          />
+        )
+      })}
 
-      <g
-        transform={`translate(${settings.plot.margin.left - settings.padding}, ${settings.plot.margin.top})`}
+      <SvgG
+        pos={{
+          x: -settings.padding,
+          y: 0,
+        }}
       >
-        {info.points.map((p, xi) => {
+        {plotInfo.points.map((p, xi) => {
           const y1 = p.y * settings.axes.y.rowHeight
 
           return (
@@ -111,29 +101,30 @@ export function BubblePlotSvg({
             </SvgText>
           )
         })}
-      </g>
+      </SvgG>
 
       {settings.border.show && (
-        <SvgMargin margin={settings.plot.margin}>
-          <SvgRect
-            shapeRendering={SVG_CRISP_EDGES}
-            width={innerPlotWidth}
-            height={innerPlotHeight}
-            stroke={settings.border.value}
-            strokeWidth={settings.border.width}
-            fill="none"
-          />
-        </SvgMargin>
+        <SvgRect
+          shapeRendering={SVG_CRISP_EDGES}
+          width={innerPlotWidth}
+          height={innerPlotHeight}
+          stroke={settings.border.value}
+          strokeWidth={settings.border.width}
+          fill="none"
+        />
       )}
 
-      {settings.title.show && info.plot.name && (
-        <g
-          transform={`translate(${settings.plot.margin.left + innerPlotWidth / 2}, ${settings.plot.margin.top - settings.padding * 1.5})`}
+      {settings.title.show && plotInfo.plot.name && (
+        <SvgG
+          pos={{
+            x: innerPlotWidth / 2,
+            y: -settings.padding * 1.5,
+          }}
         >
           <SvgText textAnchor="middle" fontWeight="bold">
-            {info.plot.name}
+            {plotInfo.plot.name}
           </SvgText>
-        </g>
+        </SvgG>
       )}
 
       {edbSettings.plots.axes.x.style.show && (
@@ -141,13 +132,111 @@ export function BubblePlotSvg({
           ax={xax}
 
           pos={{
-            x: settings.plot.margin.left,
-            y: settings.plot.margin.top + innerPlotHeight,
+            x: 0,
+            y: innerPlotHeight,
           }}
 
           //title={info.plot.nes.label}
         />
       )}
-    </>
+    </SvgMargin>
+  )
+}
+
+function Node({
+  x1,
+  y1,
+  point,
+  xi,
+  plotInfo,
+  plotPos,
+}: {
+  x1: number
+  y1: number
+  point: IBubblePoint
+  xi: number
+  plotInfo: IPlotInfo
+  plotPos: IPos
+}) {
+  const ref = useRef<SVGCircleElement>(null)
+  const { ref: svgRef } = useSVG()
+
+  const { settings } = useGseaBubbleSettings()
+
+  const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+
+  const [hover, setHover] = useState(false)
+
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
+
+    gsap.timeline().to(ref.current, {
+      scale: hover ? 1.2 : 1,
+      transformOrigin: 'center',
+      duration: 0.3,
+      ease: 'power2.out',
+    })
+  }, [hover])
+
+  const handleVariantEnter = useCallback(
+    (plot: IGseaBubble, row: number, p: IPos) => {
+      const { relativeP } = svgPointToScreen(svgRef.current, p)
+
+      showCrosshair({
+        pos: relativeP,
+        content: (
+          <>
+            <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
+            <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
+            <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
+            <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+          </>
+        ),
+      })
+
+      //   showTooltip({
+      //     pos: newP,
+      //     content: (
+      //       <>
+      //         <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
+      //         <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
+      //         <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
+      //         <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+      //       </>
+      //     ),
+      //   })
+    },
+    [svgRef, showCrosshair, hideCrosshair]
+  )
+
+  const handleVariantLeave = useCallback(() => {
+    hideCrosshair()
+  }, [hideCrosshair])
+
+  return (
+    <SvgCircle
+      ref={ref}
+      cx={x1}
+      cy={y1}
+      r={point.r}
+      fill={point.color}
+      fp={settings.bubbles.fill}
+      sp={settings.bubbles.stroke}
+      key={xi}
+      onMouseLeave={() => {
+        setHover(false)
+        handleVariantLeave()
+      }}
+      onMouseEnter={() => {
+        setHover(true)
+        handleVariantEnter(plotInfo.plot, xi, {
+          x: x1 + plotPos.x,
+          y: y1 + plotPos.y,
+        })
+      }}
+    />
   )
 }

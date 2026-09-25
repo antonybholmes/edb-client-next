@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Gsea bubble now uses crosshairs and has some bubble animations.
 - Added test page for experiments that might be put into components.
 - heatmap now has support for area scaling of dots.
 - Gsea bubble now uses slider for radius.

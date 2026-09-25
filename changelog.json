@@ -3065,6 +3065,10 @@
         {
           "msg": "Added test page for experiments that might be put into components",
           "date": "2026-09-25T18:03:13.857Z"
+        },
+        {
+          "msg": "Gsea bubble now uses crosshairs and has some bubble animations",
+          "date": "2026-09-25T19:33:19.525Z"
         }
       ]
     },

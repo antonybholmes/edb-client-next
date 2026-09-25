@@ -1,16 +1,16 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
 
 import { SvgBase } from '@/components/plot/svg-base'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
+import { SvgG } from '@/components/plot/svg-g'
 import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { IPos } from '@/interfaces/pos'
-import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
+import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { IDisplayAxis } from '../../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../../gsea-store'
@@ -38,42 +38,42 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
   },
 }
 
-export function GseaBubblePlotsSvg() {
+export function GseaBubblePlotsContent() {
   const { plots, points, xlims } = useGseaBubbleContext()
   const { ref: svgRef } = useSVG()
 
   const { settings } = useGseaBubbleSettings()
   const { zoom } = useZoom()
 
-  const { showTooltip, hideTooltip } = useTooltip()
+  // const { showTooltip, hideTooltip } = useTooltip()
 
-  const handleVariantEnter = useCallback(
-    (plot: IGseaBubble, row: number, p: IPos) => {
-      const { screenP } = svgPointToScreen(svgRef.current, p)
+  // const handleVariantEnter = useCallback(
+  //   (plot: IGseaBubble, row: number, p: IPos) => {
+  //     const { screenP } = svgPointToScreen(svgRef.current, p)
 
-      const newP = {
-        x: screenP.x,
-        y: screenP.y,
-      }
+  //     const newP = {
+  //       x: screenP.x,
+  //       y: screenP.y,
+  //     }
 
-      showTooltip({
-        pos: newP,
-        content: (
-          <>
-            <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
-            <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
-            <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
-            <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
-          </>
-        ),
-      })
-    },
-    [svgRef, showTooltip, hideTooltip]
-  )
+  //     showTooltip({
+  //       pos: newP,
+  //       content: (
+  //         <>
+  //           <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
+  //           <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
+  //           <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
+  //           <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+  //         </>
+  //       ),
+  //     })
+  //   },
+  //   [svgRef, showTooltip, hideTooltip]
+  // )
 
-  const handleVariantLeave = useCallback(() => {
-    hideTooltip()
-  }, [hideTooltip])
+  // const handleVariantLeave = useCallback(() => {
+  //   hideTooltip()
+  // }, [hideTooltip])
 
   const { svg, width, height } = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
@@ -135,26 +135,31 @@ export function GseaBubblePlotsSvg() {
     const svg = (
       <SvgMargin margin={settings.margin}>
         {plotGrid.map((row, ri) => (
-          <g key={ri} transform={`translate(0, ${row[0]!.pos.y})`}>
+          <SvgG key={ri} pos={{ x: 0, y: row[0]!.pos.y }}>
             {row.map((p, ci) => (
-              <g key={ci} transform={`translate(${p.pos.x}, 0)`}>
+              <SvgG key={ci} pos={{ x: p.pos.x, y: 0 }}>
                 <BubblePlotSvg
-                  info={p}
+                  plotInfo={p}
                   innerPlotWidth={innerPlotWidth}
                   innerPlotHeight={innerPlotHeight}
-                  handleVariantEnter={handleVariantEnter}
-                  handleVariantLeave={handleVariantLeave}
+                  pos={{
+                    x: p.pos.x + settings.margin.left,
+                    y: row[0]!.pos.y + settings.margin.top,
+                  }}
                 />
-              </g>
+              </SvgG>
             ))}
-          </g>
+          </SvgG>
         ))}
 
-        <g
-          transform={`translate(${settings.margin.left + innerWidth + settings.padding * 3.5}, ${settings.margin.top + settings.padding})`}
+        <SvgG
+          pos={{
+            x: settings.margin.left + innerWidth + settings.padding * 3.5,
+            y: settings.margin.top + settings.padding,
+          }}
         >
           <GseaBubbleLegendSvg />
-        </g>
+        </SvgG>
       </SvgMargin>
     )
 
@@ -169,5 +174,13 @@ export function GseaBubblePlotsSvg() {
     <SvgBase width={width} height={height} scale={zoom}>
       {svg}
     </SvgBase>
+  )
+}
+
+export function GseaBubblePlotsSvg() {
+  return (
+    <CrosshairProvider>
+      <GseaBubblePlotsContent />
+    </CrosshairProvider>
   )
 }

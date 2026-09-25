@@ -269,7 +269,7 @@ function NodeCircle({
       return
     }
 
-    gsap.to(circleRef.current, {
+    gsap.timeline().to(circleRef.current, {
       scale: hover ? 1.2 : 1,
       transformOrigin: 'center',
       duration: 0.3,

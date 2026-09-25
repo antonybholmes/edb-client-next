@@ -3061,6 +3061,10 @@
         {
           "msg": "heatmap now has support for area scaling of dots",
           "date": "2026-09-25T17:42:10.320Z"
+        },
+        {
+          "msg": "Added test page for experiments that might be put into components",
+          "date": "2026-09-25T18:03:13.857Z"
         }
       ]
     },
