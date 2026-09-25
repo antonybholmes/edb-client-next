@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network legend has better reflow for larger fonts with variable spacing as font size increases.
 - Network hidden nodes can now be shown as translucent with adjustable opacity.
 - Network has ability to hide nodes.
 - Network legend now uses autotickinterval to create a nice legend.
