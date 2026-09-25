@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added test page for experiments that might be put into components.
 - heatmap now has support for area scaling of dots.
 - Gsea bubble now uses slider for radius.
 - Integrated node radius size into heatmap, bubble and network so they all behave in the same way.

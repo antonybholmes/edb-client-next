@@ -541,27 +541,25 @@ input[type='search']::-webkit-search-results-decoration {
 
 /* The main container holds all the layers 
 */
-.glass-container {
+/* .glass-container {
   @apply relative overflow-hidden;
 }
 
-/* Layer 4: The Distortion Filter */
+ 
 .glass-filter {
   @apply absolute inset-0 isolate z-0 backdrop-blur-[0px];
 
-  /* This is the key! We set blur(0px) to enable backdrop-filter,
-    but use our custom SVG filter for the *actual* effect.
-  */
+ 
 
-  filter: url(#lg-dist); /* This points to our SVG filter's ID */
+  filter: url(#lg-dist); 
 }
 
-/* Layer 3: The Semi-Transparent Background */
+ 
 .glass-overlay {
   @apply absolute inset-0 z-1 bg-white/75;
 }
 
-/* Layer 2: The "Light" Highlight */
+ 
 .glass-specular {
   @apply absolute inset-0 z-2 overflow-hidden rounded-[inherit];
 
@@ -570,10 +568,10 @@ input[type='search']::-webkit-search-results-decoration {
     inset 0 0 5px rgba(255, 255, 255, 0.75);
 }
 
-/* Layer 1: Your Content */
+ 
 .glass-content {
-  @apply relative z-3 p-4; /* Sits normally on top and gives some space */
-}
+  @apply relative z-3 p-4;  
+} */
 
 .app-icon {
   /* Creates a gradient from 100% opacity to 20% opacity of the prop color */
@@ -582,4 +580,46 @@ input[type='search']::-webkit-search-results-decoration {
     var(--base-color) 0%,
     color-mix(in srgb, var(--base-color), transparent 60%) 100%
   );
+}
+
+/* Navigation Container */
+.tabs-nav {
+  display: flex;
+  gap: 2rem;
+  position: relative;
+  padding: 1rem;
+  background: #f5f5f5;
+  font-family: sans-serif;
+}
+
+/* Individual Tabs */
+.tab-item {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+/* Dynamic anchor assigned via JS on hover */
+.tab-item:hover {
+  anchor-name: --active-tab;
+}
+
+/* The Moving Underline */
+.tabs-nav::after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  background: #0076ff;
+  border-radius: 2px;
+
+  /* Anchor Positioning Properties */
+  position-anchor: --active-tab;
+  left: anchor(left);
+  right: anchor(right);
+  bottom: anchor(bottom);
+
+  /* Smooth movement transitions */
+  transition: inset 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }

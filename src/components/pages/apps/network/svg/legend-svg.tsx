@@ -48,7 +48,7 @@ export function LegendSvg() {
 
   const edgesHeight = 35 + strengthSteps.length * 20
 
-  console.log(strengthSteps, 'strengthSteps')
+  console.log(strengthSteps, 'strengthSteps', edges.strengthLim)
 
   return (
     <SvgG

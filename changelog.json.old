@@ -3057,6 +3057,10 @@
         {
           "msg": "Gsea bubble now uses slider for radius",
           "date": "2026-09-25T15:01:15.326Z"
+        },
+        {
+          "msg": "heatmap now has support for area scaling of dots",
+          "date": "2026-09-25T17:42:10.320Z"
         }
       ]
     },
