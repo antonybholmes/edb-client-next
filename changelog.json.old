@@ -3045,6 +3045,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-09-24T22:45:56.253Z"
+        },
+        {
+          "msg": "Added network support for using edge strength and showing node size from area rather than linear",
+          "date": "2026-09-25T03:28:26.522Z"
         }
       ]
     },
