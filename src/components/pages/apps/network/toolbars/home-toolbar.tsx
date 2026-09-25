@@ -23,6 +23,17 @@ import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { NetworkDialog } from '../network-dialog'
 import { useNetworkSettings } from '../network-settings-store'
 
+const NODE_VIEW_MODES = [
+  {
+    value: 'all',
+    label: 'All',
+  },
+  {
+    value: 'labelled',
+    label: 'Labelled',
+  },
+]
+
 export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
@@ -96,7 +107,7 @@ export function HomeToolbar() {
           }}
         />
       </ToolbarTabGroup>
-      <ToolbarTabGroup title="Options">
+      <ToolbarTabGroup title="Color">
         <ToolbarCol>
           <ToolbarRow>
             <span>Color Mode</span>
@@ -150,6 +161,33 @@ export function HomeToolbar() {
               )
             }}
           />
+        </ToolbarCol>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Nodes">
+        <ToolbarCol>
+          <ToolbarRow>
+            <span>Nodes</span>
+            <SelectList
+              items={NODE_VIEW_MODES}
+              value={settings.plot.nodes.view.mode}
+              onValueChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.view.mode = value as 'all' | 'labelled'
+                  })
+                )
+              }}
+              w="xs"
+              variant="toolbar"
+            >
+              {NODE_VIEW_MODES.map((position) => (
+                <SelectItem key={position.value} value={position.value}>
+                  {position.label}
+                </SelectItem>
+              ))}
+            </SelectList>
+          </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>
     </>

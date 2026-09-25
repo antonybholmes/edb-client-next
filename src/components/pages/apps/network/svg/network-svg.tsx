@@ -125,7 +125,35 @@ export function NetworkSvgContent() {
 
     const renderNodes: IRenderNode[] = network.nodes
       .map((node) => ({ ...node, group: groupMap.get(node.groupId) }))
-      .filter((node) => groupMap.get(node.groupId)?.show)
+      .filter((node) => {
+        if (
+          settings.plot.nodes.view.mode === 'labelled' &&
+          !showNodeLabel(
+            node,
+            labelSet,
+            settings.plot.nodes.labels.showAll,
+            userData.labels.mode
+          )
+        ) {
+          return false
+        }
+
+        return groupMap.get(node.groupId)?.show
+      })
+
+    const renderNodesMap = new Map(renderNodes.map((node) => [node.id, node]))
+
+    const renderEdges = network.edges.filter((edge) => {
+      //const sourceNode = nodeMap[edge.source]
+      //const targetNode = nodeMap[edge.target]
+
+      return renderNodesMap.has(edge.source) && renderNodesMap.has(edge.target)
+
+      // return (
+      //   groupMap.get(sourceNode.groupId)?.show &&
+      //   groupMap.get(targetNode.groupId)?.show
+      // )
+    })
 
     const svg = (
       <>
@@ -141,33 +169,23 @@ export function NetworkSvgContent() {
           )}
 
           {settings.plot.edges.line.show &&
-            network.edges
-              .filter((edge) => {
-                const sourceNode = nodeMap[edge.source]
-                const targetNode = nodeMap[edge.target]
+            renderEdges.map((edge, idx) => {
+              const sourcePos = realCoordinates.get(edge.source) || ZERO_POS
+              const targetPos = realCoordinates.get(edge.target) || ZERO_POS
 
-                return (
-                  groupMap.get(sourceNode.groupId)?.show &&
-                  groupMap.get(targetNode.groupId)?.show
-                )
-              })
-              .map((edge, idx) => {
-                const sourcePos = realCoordinates.get(edge.source) || ZERO_POS
-                const targetPos = realCoordinates.get(edge.target) || ZERO_POS
+              return (
+                <SvgLine
+                  key={idx}
+                  x1={sourcePos.x}
+                  y1={sourcePos.y}
+                  x2={targetPos.x}
+                  y2={targetPos.y}
+                  s={settings.plot.edges.line}
 
-                return (
-                  <SvgLine
-                    key={idx}
-                    x1={sourcePos.x}
-                    y1={sourcePos.y}
-                    x2={targetPos.x}
-                    y2={targetPos.y}
-                    s={settings.plot.edges.line}
-
-                    strokeWidth={edge.strength * settings.plot.edges.scale}
-                  />
-                )
-              })}
+                  strokeWidth={edge.strength * settings.plot.edges.scale}
+                />
+              )
+            })}
 
           {renderNodes.map((node) => {
             return (
@@ -247,11 +265,12 @@ function NodeCircle({
     }
   }, [settings.plot.nodes.color.mode, node.group, colorMap, size2])
 
-  const showLabel =
-    settings.plot.nodes.labels.showAll ||
-    inNodeData(node, labelSet) ||
-    labelSet.has(node.id2.toLowerCase()) ||
-    labelSet.has(node.id)
+  const showLabel = showNodeLabel(
+    node,
+    labelSet,
+    settings.plot.nodes.labels.showAll,
+    userData.labels.mode
+  )
 
   const circleRef = useRef<SVGCircleElement>(null)
 
@@ -418,20 +437,49 @@ function realCoordinate(
   )
 }
 
-function inNodeData(node: IRenderNode, labels: Set<string>) {
-  return Object.values(node.data)
-    .filter((d) => typeof d === 'string')
-    .some((d) => inLabelSet(d.toString(), labels))
+function showNodeLabel(
+  node: IRenderNode,
+  labelSet: Set<string>,
+  showAll: boolean,
+  mode: 'partial' | 'exact'
+) {
+  const showLabel =
+    showAll ||
+    inNodeData(node, labelSet, mode) ||
+    labelSet.has(node.id2.toLowerCase()) ||
+    labelSet.has(node.id)
+
+  return showLabel
 }
 
-function inLabelSet(text: string, labels: Set<string>): boolean {
+function inNodeData(
+  node: IRenderNode,
+  labelSet: Set<string>,
+  mode: 'partial' | 'exact'
+) {
+  return Object.values(node.data)
+    .filter((d) => typeof d === 'string')
+    .some((d) => inLabelSet(d.toString(), labelSet, mode))
+}
+
+function inLabelSet(
+  text: string,
+  labelSet: Set<string>,
+  mode: 'partial' | 'exact'
+): boolean {
   text = text.toLowerCase().trim()
+
+  if (mode === 'exact') {
+    return labelSet.has(text)
+  }
+
   // check if anything in label set is within the text
-  for (const label of labels) {
+  for (const label of labelSet) {
     if (text.includes(label)) {
       return true
     }
   }
+
   return false
 }
 

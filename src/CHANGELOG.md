@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network has ability to hide nodes.
 - Network legend now uses autotickinterval to create a nice legend.
 - Gsea bubble now uses crosshairs and has some bubble animations.
 - Added test page for experiments that might be put into components.

@@ -6,6 +6,7 @@ import { useNetworkSettings } from '../network-settings-store'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { TEXT_APPLY } from '@/consts'
 import { useEffect, useState } from 'react'
 import { useUserData } from '../network-user-data-store'
@@ -68,6 +69,20 @@ export function NodesDisplayPropsPanel() {
           }
         >
           {TEXT_APPLY}
+        </Button>
+        <ToolbarSeparator />
+        <Button
+          checked={userData.labels.mode === 'exact'}
+          onClick={() =>
+            updateUserData(
+              produce(userData, (draft) => {
+                draft.labels.mode =
+                  userData.labels.mode === 'exact' ? 'partial' : 'exact'
+              })
+            )
+          }
+        >
+          Exact Match
         </Button>
       </VCenterRow>
     </PropsPanel>

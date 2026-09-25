@@ -15,7 +15,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v8`
+const SETTINGS_KEY = `${config.appId}:app:network:v10`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -83,6 +83,13 @@ export interface INetworkSettings {
         offset: number
         //type: LabelType
       }
+      view: {
+        mode: 'all' | 'labelled'
+        hidden: {
+          show: boolean
+          opacity: number
+        }
+      }
       keepWithinBounds: boolean
     }
 
@@ -122,7 +129,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       //scale: 0.1,
       radius: 25,
       scale: {
-        mode: 'linear',
+        mode: 'area',
       },
       color: {
         mode: 'group',
@@ -137,6 +144,13 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         position: 'center',
         offset: 5,
         //type: 'label',
+      },
+      view: {
+        mode: 'all',
+        hidden: {
+          show: true,
+          opacity: 0.1,
+        },
       },
       keepWithinBounds: true,
     },

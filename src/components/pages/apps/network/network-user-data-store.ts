@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:network:user-data:v2`
+const SETTINGS_KEY = `${config.appId}:app:network:user-data:v4`
 
 interface IUserDataGroups {
   colors: Record<string, string>
@@ -11,6 +11,7 @@ interface IUserDataGroups {
 
 interface IUserDataLabels {
   ids: string[]
+  mode: 'partial' | 'exact'
 }
 
 export interface IUserDataSettings {
@@ -22,7 +23,7 @@ const DEFAULT_SETTINGS: IUserDataSettings = {
   groups: {
     colors: {},
   },
-  labels: { ids: [] },
+  labels: { ids: [], mode: 'partial' },
 }
 
 export interface IUserDataStore extends IUserDataSettings {

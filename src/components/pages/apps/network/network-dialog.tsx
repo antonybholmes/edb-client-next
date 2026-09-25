@@ -211,8 +211,6 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    console.log('dfnode', dfNode.columns)
-
     const { network, groups, nodeDataTypes } = dataframesToNetwork(
       dfNode,
       dfEdge,
