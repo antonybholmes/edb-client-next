@@ -208,7 +208,7 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
       >
         {getSizeLabel(headings, settings)}
       </SvgText>
-      <SvgG pos={{ x: maxRadius, y: 20 }}>{elems}</SvgG>
+      <SvgG pos={{ x: maxRadius, y: 25 }}>{elems}</SvgG>
     </SvgG>
   )
 }
