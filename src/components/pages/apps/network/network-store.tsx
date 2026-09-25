@@ -7,7 +7,7 @@ import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { ILimit } from '@/lib/math/limit'
-import { min } from '@/lib/math/math'
+import { max, min } from '@/lib/math/math'
 import { useCallback } from 'react'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
@@ -39,7 +39,7 @@ export interface INode extends IDBEntity {
 
 interface IEdge {
   id: string
-  score: number
+  strength: number
   source: string
   target: string
 }
@@ -111,18 +111,21 @@ export function dataframesToNetwork(
   colorCol: string,
   sourceCol: string,
   targetCol: string,
-  scoreCol: string,
+  strengthCol: string,
   settings: INetworkSettings,
   userData: IUserDataSettings
 ) {
-  //const labelCol = findCol(dfNodes, 'label')
-  //const sizeCol = findCol(dfNodes, 'size', { exact: true })
-  //const groupCol = findCol(dfNodes, 'collection')
-
   const labels = dfNodes.col(labelCol).strs
   const names = dfNodes.col(nameCol).strs
-  const sizes = dfNodes.col(sizeCol).nums
-  const sizes2 = dfNodes.col(colorCol).nums
+  let sizes = dfNodes.col(sizeCol).nums
+  let sizes2 = []
+
+  try {
+    sizes2 = dfNodes.col(colorCol).nums
+  } catch (error) {
+    //console.error('Error reading color column:', error)
+  }
+
   const groups = dfNodes.col(groupCol).strs
 
   const minNonZeroP = min(sizes.filter((p) => p > 0))
@@ -130,28 +133,45 @@ export function dataframesToNetwork(
   // 2. Set a floor slightly smaller than that (e.g., one order of magnitude lower)
   const pFloor = minNonZeroP * 0.1
 
+  sizes = sizes.map((size) =>
+    settings.data.applyMinusLog10ToMetric1
+      ? -Math.log10(size === 0 ? pFloor : size)
+      : size
+  )
+
+  // const sizeLim: ILimit = {
+  //   min: min(sizes),
+  //   max: max(sizes),
+  // }
+
+  //  sizes = sizes.map((size) => size / sizeLim.max)
+
   const minNonZeroP2 = min(sizes2.filter((p) => p > 0))
   const pFloor2 = minNonZeroP2 * 0.1
 
+  sizes2 = sizes2.map((size) =>
+    settings.data.applyMinusLog10ToMetric2
+      ? -Math.log10(size === 0 ? pFloor2 : size)
+      : size
+  )
+
+  console.log('sss', sizes2)
+
+  // const sizeLim2: ILimit = {
+  //   min: min(sizes2),
+  //   max: max(sizes2),
+  // }
+
+  //sizes2 = sizes2.map((size) => size / sizeLim2.max)
+
   const nodes: INode[] = labels.map((label, i) => {
-    // 3. Apply the transformation safely
-    const size = settings.data.applyMinusLog10ToSize
-      ? -Math.log10(sizes[i] === 0 ? pFloor : sizes[i])
-      : sizes[i]
-
-    const size2 = settings.data.applyMinusLog10ToSize2
-      ? -Math.log10(sizes2[i] === 0 ? pFloor2 : sizes2[i])
-      : sizes2[i]
-
-    console.log('size', sizes[i], size, settings.data.applyMinusLog10ToSize)
-
     return {
       id: makeUuid(),
       id2: groups[i].trim() + '::' + names[i].trim(),
       label,
       name: names[i].trim(),
-      size,
-      size2,
+      size: sizes[i],
+      size2: sizes2?.[i] ?? 0,
       group: groups[i].trim(),
     }
   })
@@ -167,21 +187,24 @@ export function dataframesToNetwork(
     used.add(id2)
   }
 
-  //const sourceCol = findCol(dfEdges, /(source|from)/i)
-  //const targetCol = findCol(dfEdges, /(target|to)/i)
-  //const scoreCol = findCol(dfEdges, 'similarity', { exact: true })
-
   const sources = dfEdges.col(sourceCol).strs
   const targets = dfEdges.col(targetCol).strs
-  const scores = dfEdges.col(scoreCol).nums
+  let strengths = dfEdges.col(strengthCol).nums
+
+  const strengthLim: ILimit = {
+    min: min(strengths),
+    max: max(strengths),
+  }
+
+  // 4. Normalize the scores by dividing by the maximum score
+  strengths = strengths.map((score) => score / strengthLim.max)
 
   const edges: IEdge[] = sources.map((source, si) => {
-    //console.log(source, targets[si], scores[si])
     return {
       id: makeUuid(),
       source: nodeMap.get(fixName(source))?.id ?? '',
       target: nodeMap.get(fixName(targets[si]))?.id ?? '',
-      score: scores[si] ?? 0,
+      strength: strengths[si] ?? 0,
     }
   })
 
@@ -268,35 +291,39 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     sizeName: string,
     size2Name: string
   ) => {
-    const sizeLim: ILimit = {
+    // set metric limits for the primary metric (size) of the nodes
+    // set max to a min of 1 so that we dont get divide by zero errors
+    // for the primary metric (size) of the nodes
+    const metricLim1: ILimit = {
       min: Math.min(...network.nodes.map((node) => node.size)),
-      max: Math.max(...network.nodes.map((node) => node.size)),
+      max: Math.max(1, ...network.nodes.map((node) => node.size)),
     }
 
     // get step size using log10 to find a suitable magnitude for the step
-    const stepSize = Math.pow(10, Math.floor(Math.log10(sizeLim.max)))
+    const stepSize = Math.pow(10, Math.floor(Math.log10(metricLim1.max)))
 
     // max must be a multiple of step size for size
-    sizeLim.min = Math.floor(sizeLim.min / stepSize) * stepSize
-    sizeLim.max = Math.ceil(sizeLim.max / stepSize) * stepSize
+    metricLim1.min = Math.floor(metricLim1.min / stepSize) * stepSize
+    metricLim1.max = Math.ceil(metricLim1.max / stepSize) * stepSize
 
-    const sizeLim2: ILimit = {
+    // set max to a min of 1 so that we dont get divide by zero errors
+    const metricLim2: ILimit = {
       min: Math.min(...network.nodes.map((node) => node.size2)),
-      max: Math.max(...network.nodes.map((node) => node.size2)),
+      max: Math.max(1, ...network.nodes.map((node) => node.size2)),
     }
 
-    const stepSize2 = Math.pow(10, Math.floor(Math.log10(sizeLim2.max)))
+    const stepSize2 = Math.pow(10, Math.floor(Math.log10(metricLim2.max)))
 
     // max must be a multiple of step size
-    sizeLim2.min = Math.floor(sizeLim2.min / stepSize2) * stepSize2
-    sizeLim2.max = Math.ceil(sizeLim2.max / stepSize2) * stepSize2
+    metricLim2.min = Math.floor(metricLim2.min / stepSize2) * stepSize2
+    metricLim2.max = Math.ceil(metricLim2.max / stepSize2) * stepSize2
 
     set({
       network,
       nodes: {
-        metricLim1: sizeLim,
+        metricLim1,
         stepSize,
-        metricLim2: sizeLim2,
+        metricLim2,
       },
       headings: {
         score: scoreName,
@@ -459,8 +486,6 @@ export function useNetworkSim(): {
       //   }
       // })
 
-      const size = settings.plot.size
-
       const nodes = network.nodes.map((node) => ({
         ...node,
       }))
@@ -474,19 +499,27 @@ export function useNetworkSim(): {
       // const topWall = -size.h / 2
       // const bottomWall = size.h / 2
 
+      // 1. Initialize the Link Force first so we can conditionally configure it
+      const linkForce = forceLink<INode, IEdge>(edges)
+        .id((d: INode) => d.id)
+        .distance(settings.layout.linkDistance)
+
+      // Conditionally apply custom strength or let D3 use its default internal formula
+      if (settings.layout.useStrength) {
+        linkForce.strength((d: IEdge) => d.strength)
+      }
+
       // 3. Initialize the D3 Force Engine
       const simulation = forceSimulation(nodes)
-        .force('charge', forceManyBody().strength(settings.chargeStrength))
+        .force(
+          'charge',
+          forceManyBody().strength(settings.layout.chargeStrength)
+        )
         // .force(
         //   'center',
         //   forceCenter(settings.plot.size.w / 2, settings.plot.size.h / 2)
         // )
-        .force(
-          'link',
-          forceLink(edges)
-            .id((d: { id: string }) => d.id)
-            .distance(settings.linkDistance)
-        )
+        .force('link', linkForce)
       // .force('boundary-elastic', () => {
       //   const strength = 0.2
 

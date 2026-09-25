@@ -23,7 +23,7 @@ import { produce } from 'immer'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { IGroup, INode, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
-import { getSizeLabel, LegendSvg } from './legend-svg'
+import { getSizeLabel, LegendSvg, nodeRadiusFunc } from './legend-svg'
 
 export function NetworkSvgContent() {
   const { zoom } = useZoom()
@@ -89,17 +89,20 @@ export function NetworkSvgContent() {
         .filter((x) => x.length > 0)
     )
 
+    const nodeRadiusScale = nodeRadiusFunc(settings)
+
     const radiusMap = new Map<string, number>(
       network.nodes.map((node) => [
         node.id,
-        ((node.size ?? 0) / nodes.metricLim1.max) * settings.plot.nodes.radius,
+
+        nodeRadiusScale((node.size ?? 0) / nodes.metricLim1.max),
       ])
     )
 
     const sizeMap2 = new Map<string, number>(
       network.nodes.map((node) => [
         node.id,
-        (node.size2 ?? 0) / (nodes.metricLim2?.max ?? 1),
+        (node.size2 ?? 0) / nodes.metricLim2.max,
       ])
     )
 
@@ -150,7 +153,7 @@ export function NetworkSvgContent() {
                     y2={targetPos.y}
                     s={settings.plot.edges.line}
 
-                    strokeWidth={edge.score * settings.plot.edges.scale}
+                    strokeWidth={edge.strength * settings.plot.edges.scale}
                   />
                 )
               })}

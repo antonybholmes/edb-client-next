@@ -43,13 +43,17 @@ export const LABEL_TYPES: {
   // { label: 'None', value: 'none' },
 ]
 
-export interface INetworkSettings {
-  chargeStrength: number
-  linkDistance: number
+export type ScaleMode = 'linear' | 'sqrt'
 
+export interface INetworkSettings {
+  layout: {
+    chargeStrength: number
+    linkDistance: number
+    useStrength: boolean
+  }
   data: {
-    applyMinusLog10ToSize: boolean
-    applyMinusLog10ToSize2: boolean
+    applyMinusLog10ToMetric1: boolean
+    applyMinusLog10ToMetric2: boolean
   }
   plot: {
     size: IDim
@@ -60,6 +64,9 @@ export interface INetworkSettings {
     nodes: {
       //scale: number
       radius: number
+      scale: {
+        mode: ScaleMode
+      }
       line: IStrokeProps & { autoColor: boolean }
       color: {
         mode: 'group' | 'auto'
@@ -100,9 +107,12 @@ export interface INetworkSettings {
 }
 
 const DEFAULT_SETTINGS: INetworkSettings = {
-  chargeStrength: -30,
-  linkDistance: 100,
-  data: { applyMinusLog10ToSize: false, applyMinusLog10ToSize2: false },
+  layout: {
+    chargeStrength: -30,
+    linkDistance: 100,
+    useStrength: false,
+  },
+  data: { applyMinusLog10ToMetric1: false, applyMinusLog10ToMetric2: false },
   plot: {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
@@ -112,6 +122,9 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     nodes: {
       //scale: 0.1,
       radius: 25,
+      scale: {
+        mode: 'linear',
+      },
       color: {
         mode: 'group',
         opacity: 0.5,

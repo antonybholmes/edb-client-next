@@ -116,7 +116,7 @@ function findTargetCol(df: BaseDataFrame | null) {
   return cols[0]
 }
 
-function findScoreCol(df: BaseDataFrame | null) {
+function findStrengthCol(df: BaseDataFrame | null) {
   if (!df) {
     return ''
   }
@@ -159,11 +159,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const [nameCol, setNameCol] = useState<string>('')
   const [groupCol, setGroupCol] = useState<string>('')
   const [sizeCol, setSizeCol] = useState<string>('')
-  const [size2Col, setSize2Col] = useState<string>('')
+  const [metric2Col, setMetric2Col] = useState<string>('<none>')
 
   const [sourceCol, setSourceCol] = useState<string>('')
   const [targetCol, setTargetCol] = useState<string>('')
-  const [scoreCol, setScoreCol] = useState<string>('')
+  const [strengthCol, setStrengthCol] = useState<string>('')
 
   useEffect(() => {
     const nodeSheets = sheets.filter((sheet) =>
@@ -186,13 +186,13 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
     setNameCol(findNameCol(dfNode))
     setGroupCol(findGroupCol(dfNode))
     setSizeCol(findSizeCol(dfNode))
-    setSize2Col(findSizeCol(dfNode))
+    //setMetric2Col(findSizeCol(dfNode))
   }, [dfNode])
 
   useEffect(() => {
     setSourceCol(findSourceCol(dfEdge))
     setTargetCol(findTargetCol(dfEdge))
-    setScoreCol(findScoreCol(dfEdge))
+    setStrengthCol(findStrengthCol(dfEdge))
   }, [dfEdge])
 
   async function submit() {
@@ -205,7 +205,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       !groupCol ||
       !sourceCol ||
       !targetCol ||
-      !scoreCol
+      !strengthCol
     ) {
       close()
       return
@@ -218,15 +218,21 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       nameCol,
       groupCol,
       sizeCol,
-      size2Col,
+      metric2Col,
       sourceCol,
       targetCol,
-      scoreCol,
+      strengthCol,
       settings,
       userData
     )
 
-    setNetwork(network, groups, scoreCol, sizeCol, size2Col)
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.plot.nodes.color.mode = metric2Col !== '<none>' ? 'auto' : 'group'
+      })
+    )
+
+    setNetwork(network, groups, strengthCol, sizeCol, metric2Col)
 
     setMessage('Creating network graph...')
     runSim(network, () => {
@@ -234,6 +240,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       close()
     })
   }
+
+  const colorCols = [
+    '<none>',
+    ...(dfNode?.columns.filter((name) => name !== '').slice(0, MAX_COLS) ?? []),
+  ]
 
   return (
     <OKCancelDialog
@@ -288,7 +299,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
             ))}
         </SelectList>
       </ActionDialogRow>
-
+      <LineSeparator />
       <ActionDialogRow title="Size">
         <SelectList onValueChange={setSizeCol} value={sizeCol} w="lg">
           {dfNode?.columns
@@ -303,11 +314,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       </ActionDialogRow>
       <ActionDialogRow>
         <Checkbox
-          checked={settings.data.applyMinusLog10ToSize}
+          checked={settings.data.applyMinusLog10ToMetric1}
           onCheckedChange={(checked) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.data.applyMinusLog10ToSize = checked
+                draft.data.applyMinusLog10ToMetric1 = checked
               })
             )
           }
@@ -319,39 +330,37 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       <LineSeparator />
 
       <ActionDialogRow
-        title={
-          <Checkbox
-            checked={settings.plot.nodes.color.mode === 'auto'}
-            onCheckedChange={(checked) =>
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.plot.nodes.color.mode = checked ? 'auto' : 'group'
-                })
-              )
-            }
-          >
-            Color
-          </Checkbox>
-        }
+        // title={
+        //   <Checkbox
+        //     checked={settings.plot.nodes.color.mode === 'auto'}
+        //     onCheckedChange={(checked) =>
+        //       updateSettings(
+        //         produce(settings, (draft) => {
+        //           draft.plot.nodes.color.mode = checked ? 'auto' : 'group'
+        //         })
+        //       )
+        //     }
+        //   >
+        //     Color
+        //   </Checkbox>
+        // }
+        title="Color"
       >
-        <SelectList onValueChange={setSize2Col} value={size2Col} w="lg">
-          {dfNode?.columns
-            .filter((name) => name !== '')
-            .slice(0, MAX_COLS)
-            .map((name, ni) => (
-              <SelectItem value={name} key={ni}>
-                {name}
-              </SelectItem>
-            ))}
+        <SelectList onValueChange={setMetric2Col} value={metric2Col} w="lg">
+          {colorCols.map((name, ni) => (
+            <SelectItem value={name} key={ni}>
+              {name}
+            </SelectItem>
+          ))}
         </SelectList>
       </ActionDialogRow>
       <ActionDialogRow>
         <Checkbox
-          checked={settings.data.applyMinusLog10ToSize2}
+          checked={settings.data.applyMinusLog10ToMetric2}
           onCheckedChange={(checked) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.data.applyMinusLog10ToSize2 = checked
+                draft.data.applyMinusLog10ToMetric2 = checked
               })
             )
           }
@@ -387,8 +396,8 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
         </SelectList>
       </ActionDialogRow>
 
-      <ActionDialogRow title="Score">
-        <SelectList onValueChange={setScoreCol} value={scoreCol} w="lg">
+      <ActionDialogRow title="Strength">
+        <SelectList onValueChange={setStrengthCol} value={strengthCol} w="lg">
           {dfEdge?.columns
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)

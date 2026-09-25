@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added network support for using edge strength and showing node size from area rather than linear.
 - Bug fixes and updates.
 - Renamed size props to metric1 and metric2 in network to make it more obvious what they are.
 - UI fixes to allow for secondary size use in network plot.

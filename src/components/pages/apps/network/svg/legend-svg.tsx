@@ -7,9 +7,9 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { getColorMap } from '@/lib/color/colormap'
-import { max } from '@/lib/math/math'
 import { sum } from '@/lib/math/sum'
 import { capitalCase } from '@/lib/text/capital-case'
+import * as d3 from 'd3'
 import { range } from 'd3'
 import { ReactElement } from 'react'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
@@ -19,6 +19,8 @@ export function LegendSvg() {
   const { settings } = useNetworkSettings()
   const { groups, nodes } = useNetwork()
 
+  const nodeRadiusScale = nodeRadiusFunc(settings)
+
   const groupsHeight =
     30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
 
@@ -26,12 +28,7 @@ export function LegendSvg() {
 
   const sizeHeight =
     35 +
-    2 *
-      sum(
-        steps.map(
-          (t) => (t / nodes.metricLim1.max) * settings.plot.nodes.radius
-        )
-      ) +
+    2 * sum(steps.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
     5 * steps.length
 
   const edgesHeight = 35 + settings.plot.legend.edges.ticks.length * 20
@@ -162,15 +159,16 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
   const { settings } = useNetworkSettings()
   const { headings } = useNetwork()
 
-  const maxRadius =
-    (max(steps) / nodes.metricLim1.max) * settings.plot.nodes.radius
+  const nodeRadiusScale = nodeRadiusFunc(settings)
+
+  const maxRadius = nodeRadiusScale(1)
 
   const elems: ReactElement[] = []
 
   let y = 0
 
   for (const [si, step] of steps.entries()) {
-    const radius = (step / nodes.metricLim1.max) * settings.plot.nodes.radius
+    const radius = nodeRadiusScale(step / nodes.metricLim1.max)
 
     elems.push(
       <SvgG key={si} pos={{ x: 0, y }}>
@@ -196,10 +194,7 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
     // add our radius plus radius of next element to get
     // nice spacing
     if (si < steps.length - 1) {
-      y +=
-        radius +
-        (steps[si + 1] / nodes.metricLim1.max) * settings.plot.nodes.radius +
-        5
+      y += radius + nodeRadiusScale(steps[si + 1] / nodes.metricLim1.max) + 5
     }
   }
 
@@ -271,6 +266,17 @@ export function GroupsSvg() {
   )
 }
 
+export function nodeRadiusFunc(settings: INetworkSettings) {
+  const nodeRadiusScale = (
+    settings.plot.nodes.scale.mode === 'sqrt'
+      ? d3.scaleSqrt()
+      : d3.scaleLinear()
+  )
+    .domain([0, 1]) // Your 0 to 1 score
+    .range([1, settings.plot.nodes.radius])
+  return nodeRadiusScale
+}
+
 /**
  * Returns the size label correctly formatted to show if log scaling is applied.
  *
@@ -282,7 +288,7 @@ export function getSizeLabel(
   headings: { metric1: string },
   settings: INetworkSettings
 ): string {
-  return settings.data.applyMinusLog10ToSize
+  return settings.data.applyMinusLog10ToMetric1
     ? `-log10(${capitalCase(headings.metric1)})`
     : capitalCase(headings.metric1)
 }
@@ -291,7 +297,7 @@ export function getSize2Label(
   headings: { metric2: string },
   settings: INetworkSettings
 ): string {
-  return settings.data.applyMinusLog10ToSize2
+  return settings.data.applyMinusLog10ToMetric2
     ? `-log10(${capitalCase(headings.metric2)})`
     : capitalCase(headings.metric2)
 }

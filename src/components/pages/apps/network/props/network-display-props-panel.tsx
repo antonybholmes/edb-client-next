@@ -24,6 +24,7 @@ import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import {
   LABEL_TYPES,
   POSITIONS,
+  ScaleMode,
   useNetworkSettings,
 } from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
@@ -55,11 +56,11 @@ export function NetworkDisplayPropsPanel() {
                 min={0}
                 max={200}
 
-                value={settings.linkDistance}
+                value={settings.layout.linkDistance}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.linkDistance = value
+                      draft.layout.linkDistance = value
                     })
                   )
                 }
@@ -70,16 +71,28 @@ export function NetworkDisplayPropsPanel() {
                 min={-100}
                 max={100}
 
-                value={settings.chargeStrength}
+                value={settings.layout.chargeStrength}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.chargeStrength = value
+                      draft.layout.chargeStrength = value
                     })
                   )
                 }
               />
             </PropRow>
+            <CheckPropRow
+              title="Use Edge Strength"
+              checked={settings.layout.useStrength}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.layout.useStrength = checked
+                  })
+                )
+              }
+            />
+
             <VCenterRow className="gap-x-2">
               <Button
                 variant="app-theme"
@@ -200,6 +213,25 @@ export function NetworkDisplayPropsPanel() {
                   )
                 }
               />
+            </PropRow>
+            <PropRow title="Scale Mode">
+              <SelectList
+                items={[
+                  { label: 'Linear', value: 'linear' },
+                  { label: 'Area', value: 'sqrt' },
+                ]}
+                value={settings.plot.nodes.scale.mode}
+                onValueChange={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.scale.mode = value as ScaleMode
+                    })
+                  )
+                }
+              >
+                <SelectItem value="linear">Linear</SelectItem>
+                <SelectItem value="sqrt">Area</SelectItem>
+              </SelectList>
             </PropRow>
             {/* <PropRow title="Scale">
               <NumSlider
