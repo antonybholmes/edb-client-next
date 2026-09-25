@@ -211,7 +211,9 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    const { network, groups } = dataframesToNetwork(
+    console.log('dfnode', dfNode.columns)
+
+    const { network, groups, nodeDataTypes } = dataframesToNetwork(
       dfNode,
       dfEdge,
       labelCol,
@@ -232,7 +234,15 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       })
     )
 
-    setNetwork(network, groups, strengthCol, sizeCol, metric2Col)
+    setNetwork(
+      network,
+      groups,
+      nodeDataTypes,
+      labelCol,
+      strengthCol,
+      sizeCol,
+      metric2Col
+    )
 
     setMessage('Creating network graph...')
     runSim(network, () => {

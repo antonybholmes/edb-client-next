@@ -22,16 +22,12 @@ import { produce } from 'immer'
 import { useState } from 'react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import {
-  LABEL_TYPES,
-  POSITIONS,
-  useNetworkSettings,
-} from '../network-settings-store'
+import { POSITIONS, useNetworkSettings } from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
-  const { network } = useNetwork()
+  const { network, nodes, setNodeLabelField } = useNetwork()
   const { run } = useNetworkSim()
   const [message, setMessage] = useState('')
 
@@ -358,24 +354,25 @@ export function NetworkDisplayPropsPanel() {
 
             <PropRow title="Display Text">
               <SelectList
-                items={LABEL_TYPES}
-                value={settings.plot.nodes.labels.type}
+                //items={LABEL_TYPES}
+                value={nodes.label.field}
                 onValueChange={(value) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.labels.type = value as
-                        'label' | 'name' | 'group'
-                    })
-                  )
+                  setNodeLabelField(value as string)
                 }}
-                w="xs"
+                w="md"
                 variant="toolbar"
               >
-                {LABEL_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
+                {nodes.label.fields.map((field) => (
+                  <SelectItem key={field} value={field}>
+                    {field}
                   </SelectItem>
                 ))}
+                <SelectItem key="id" value="id">
+                  id
+                </SelectItem>
+                <SelectItem key="id2" value="id2">
+                  id2
+                </SelectItem>
               </SelectList>
             </PropRow>
           </AccordionContent>

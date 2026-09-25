@@ -161,7 +161,7 @@ export function CrosshairProvider({ children }: { children?: ReactNode }) {
           {crosshair?.content && (
             <BaseCol
               className={cn(
-                'absolute z-(--z-tooltip) rounded-lg bg-black/50 shadow-lg px-4 py-3 text-xs text-white pointer-events-none'
+                'absolute z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none'
               )}
               style={{
                 left: crosshair.pos.x + crosshair.offset.x,

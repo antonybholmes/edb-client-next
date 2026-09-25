@@ -60,8 +60,6 @@ export function LegendSvg() {
 
   const edgesHeight = 35 + strengthTicks.length * 20
 
-  console.log(strengthTicks, 'strengthTicks', edges.strengthLim)
-
   return (
     <SvgG
       id="legend"

@@ -20,22 +20,32 @@ export interface IGroup extends IDBEntity {
   show: boolean
 }
 
-export interface INode extends IDBEntity {
+interface INodeData {
+  name: string
+  value: string | number
+}
+
+export interface INode {
+  id: string
   /**
    * Secondary id e.g. group::name
    */
   id2: string
+
+  groupId: string
+
   /**
    * The label of the node, used for display purposes.
    */
-  label: string
+  //label: string
   size: number
   size2?: number
-  group: string
+  //group: string
   x?: number
   y?: number
   vx?: number
   vy?: number
+  data?: Record<string, string | number>
 }
 
 interface IEdge {
@@ -163,16 +173,26 @@ export function dataframesToNetwork(
 
   //sizes2 = sizes2.map((size) => size / sizeLim2.max)
 
+  const colNames = dfNodes.columns
+
   const nodes: INode[] = labels.map((label, i) => {
-    return {
+    const node = {
       id: makeUuid(),
       id2: groups[i].trim() + '::' + names[i].trim(),
       label,
       name: names[i].trim(),
       size: sizes[i],
       size2: sizes2?.[i] ?? 0,
-      group: groups[i].trim(),
+      groupId: '',
+      data: {},
     }
+
+    for (const colName of colNames) {
+      const value = dfNodes.get(i, colName)
+      node.data[colName] = value as string | number
+    }
+
+    return node
   })
 
   const nodeMap = new Map<string, INode>()
@@ -180,7 +200,7 @@ export function dataframesToNetwork(
   const used = new Set<string>()
 
   for (const node of nodes) {
-    const id2 = fixName(node.group + '::' + node.name)
+    const id2 = fixName(node.id2) //.group + '::' + node.name)
 
     nodeMap.set(id2, node)
     used.add(id2)
@@ -199,9 +219,7 @@ export function dataframesToNetwork(
     }
   })
 
-  const groupSet = new Set(nodes.map((node) => node.group))
-
-  const uniqueGroups = [...groupSet].sort().map((g, index) => ({
+  const uniqueGroups = [...new Set(groups)].sort().map((g, index) => ({
     id: makeUuid(),
     name: g,
     show: true,
@@ -209,6 +227,14 @@ export function dataframesToNetwork(
       userData.groups.colors[g.toLowerCase()] ??
       TAB10_PALETTE[index % TAB10_PALETTE.length],
   }))
+
+  const groupToIdMap = new Map(
+    uniqueGroups.map((g) => [g.name.toLowerCase(), g.id])
+  )
+
+  for (let [ni, node] of nodes.entries()) {
+    node.groupId = groupToIdMap.get(groups[ni].toLowerCase()) ?? ''
+  }
 
   const idNodeMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
 
@@ -220,6 +246,7 @@ export function dataframesToNetwork(
       nodeMap: idNodeMap,
       edges,
     },
+    nodeDataTypes: colNames,
     groups: uniqueGroups,
   }
 }
@@ -236,6 +263,11 @@ export interface INetworkStore {
      * The limit for the secondary metric (size2) of the nodes.
      */
     metricLim2: ILimit
+
+    label: {
+      field: string
+      fields: string[]
+    }
   }
   edges: {
     strengthLim: ILimit
@@ -254,20 +286,27 @@ export interface INetworkStore {
   setNetwork: (
     settings: INetwork,
     groups: IGroup[],
+    nodeDataTypes: string[],
+    labelField: string,
     scoreName: string,
     sizeName: string,
     size2Name: string
   ) => void
+  setNodeLabelField: (field: string) => void
   setGroups: (groups: IGroup[]) => void
   updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => void
 }
 
-export const useNetworkStore = create<INetworkStore>()((set) => ({
+export const useNetworkStore = create<INetworkStore>()((set, get) => ({
   network: undefined,
   nodes: {
     metricLim1: { ...ZERO_LIMIT },
     stepSize: 0,
     metricLim2: { ...ZERO_LIMIT },
+    label: {
+      fields: [],
+      field: '',
+    },
   },
   edges: {
     strengthLim: { ...ZERO_LIMIT },
@@ -286,6 +325,8 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
   setNetwork: (
     network: INetwork,
     groups: IGroup[],
+    nodeLabelFields: string[],
+    labelField: string,
     scoreName: string,
     sizeName: string,
     size2Name: string
@@ -293,6 +334,7 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
     // set metric limits for the primary metric (size) of the nodes
     // set max to a min of 1 so that we dont get divide by zero errors
     // for the primary metric (size) of the nodes
+
     const metricLim1: ILimit = {
       min: Math.min(...network.nodes.map((node) => node.size)),
       max: Math.max(1, ...network.nodes.map((node) => node.size)),
@@ -303,8 +345,6 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       min: 0,
       max: metricLim1.max,
     })
-
-    console.log(stepSize, 'stepSize')
 
     // max must be a multiple of step size for size
     metricLim1.min = Math.floor(metricLim1.min / stepSize) * stepSize
@@ -335,8 +375,6 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       max: strengthLim.max,
     })
 
-    console.log(stepSizeStrength, 'stepSizeStrength')
-
     strengthLim.min =
       Math.floor(strengthLim.min / stepSizeStrength) * stepSizeStrength
     strengthLim.max =
@@ -348,6 +386,10 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
         metricLim1,
         metricLim2,
         stepSize,
+        label: {
+          field: labelField,
+          fields: [...new Set(nodeLabelFields)].sort(),
+        },
       },
       edges: {
         strengthLim,
@@ -360,6 +402,17 @@ export const useNetworkStore = create<INetworkStore>()((set) => ({
       },
       coordinateMap: {},
       groups,
+    })
+  },
+  setNodeLabelField: (field: string) => {
+    set({
+      nodes: {
+        ...get().nodes,
+        label: {
+          ...get().nodes.label,
+          field,
+        },
+      },
     })
   },
   setGroups: (groups: IGroup[]) => {
@@ -387,6 +440,8 @@ export function useNetwork() {
   )
 
   const size = useNetworkStore((state) => state.size)
+
+  const setNodeLabelField = useNetworkStore((state) => state.setNodeLabelField)
   const setNetwork = useNetworkStore((state) => state.setNetwork)
   const setGroups = useNetworkStore((state) => state.setGroups)
 
@@ -400,6 +455,7 @@ export function useNetwork() {
     headings,
     setNetwork,
     setGroups,
+    setNodeLabelField,
   }
 }
 
@@ -619,8 +675,6 @@ export function useNetworkSim(): {
           //
 
           updateCoordinates(coordinates, { w: width, h: height })
-
-          console.log('dim,', { minX, maxX, minY, maxY, width, height })
         }
 
         onFinished?.()

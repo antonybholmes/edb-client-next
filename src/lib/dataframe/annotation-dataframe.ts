@@ -122,7 +122,19 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }
 
   override get(row: IndexId, col: IndexId): SeriesData {
-    return this._data.get(row, col)
+    const colIdx = findCol(this, col)
+
+    if (colIdx === -1) {
+      throw new Error(`${col} is an invalid column`)
+    }
+
+    const rowIdx = findRow(this, row)
+
+    if (rowIdx === -1) {
+      throw new Error(`${row} is an invalid row`)
+    }
+
+    return this._data.get(rowIdx, colIdx)
   }
 
   override row(row: IndexId): BaseSeries {
