@@ -23,6 +23,7 @@ import type { ILim } from '@/lib/math/math'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { ICellGaps } from './svg/cell-gaps'
+import { RadiusScaleMode } from './svg/cell-svg'
 
 const SETTINGS_KEY = `${config.appId}:heatmap-settings-v2`
 
@@ -140,7 +141,10 @@ export interface IHeatMapSettings {
   }
   dot: {
     sizes: IDot[]
-    scale: number
+    scale: {
+      mode: RadiusScaleMode
+      factor: number
+    }
     mode: DotPlotMode
     useOriginalValuesForSizes: boolean
     legend: {
@@ -240,7 +244,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
       { size: 0.75, value: '75%' },
       { size: 1, value: '100%' },
     ],
-    scale: 1,
+    scale: { factor: 1, mode: 'linear' },
     mode: 'groups',
     legend: {
       show: true,

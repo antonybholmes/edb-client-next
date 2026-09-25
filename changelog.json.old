@@ -3049,6 +3049,10 @@
         {
           "msg": "Added network support for using edge strength and showing node size from area rather than linear",
           "date": "2026-09-25T03:28:26.522Z"
+        },
+        {
+          "msg": "Integrated node radius size into heatmap, bubble and network so they all behave in the same way",
+          "date": "2026-09-25T14:48:43.551Z"
         }
       ]
     },

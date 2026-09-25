@@ -9,10 +9,11 @@ import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v72`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v74`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -124,7 +125,10 @@ export interface IVennSettings {
     }
     dot: {
       sizes: number[]
-      scale: number
+      scale: {
+        factor: number
+        mode: RadiusScaleMode
+      }
     }
     showDiagonal: boolean
     upperTriangular: boolean
@@ -166,7 +170,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
     },
     dot: {
       sizes: [25, 50, 75, 100],
-      scale: 1,
+      scale: { factor: 1, mode: 'linear' },
     },
     showDiagonal: false,
     upperTriangular: false,

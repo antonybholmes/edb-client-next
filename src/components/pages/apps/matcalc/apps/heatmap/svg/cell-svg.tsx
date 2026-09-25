@@ -269,6 +269,8 @@ export const DotsSvg = memo(function DotsSvg({
 
   const isSquare = df.shape[0] === df.shape[1]
 
+  const nodeScale = nodeRadiusFunc(w, props.dot.scale.mode)
+
   return (
     <SvgG
       pos={pos}
@@ -301,7 +303,7 @@ export const DotsSvg = memo(function DotsSvg({
 
           const v = df.get(row, col) as number
 
-          const radius =
+          const dotSize =
             props.mode === 'dot' && dfSize
               ? (dfSize.get(row, col) as number)
               : 1
@@ -329,10 +331,10 @@ export const DotsSvg = memo(function DotsSvg({
 
           const cx = 0.5 * blockSize.w
           const cy = 0.5 * blockSize.h
-          const r = 0.5 * w * radius * props.dot.scale
+          const r = 0.5 * w * dotSize * props.dot.scale.factor
 
           const textColor =
-            props.cells.values.autoColor.on && radius > 0.4
+            props.cells.values.autoColor.on && dotSize > 0.4
               ? getTextColorForBackground(
                   fill,
                   props.cells.values.autoColor.threshold

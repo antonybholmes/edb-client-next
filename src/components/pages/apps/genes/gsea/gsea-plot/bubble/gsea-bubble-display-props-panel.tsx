@@ -15,6 +15,7 @@ import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { TEXT_SORT } from '@/consts'
@@ -305,7 +306,24 @@ export function GseaBubbleDisplayPropsPanel() {
               </SelectList>
             </PropRow>
             <PropRow title="Radius">
-              <NumericalInput
+              <NumSlider
+                value={settings.bubbles.size}
+
+                min={1}
+                max={100}
+                step={1}
+
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.bubbles.size = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+              {/* <NumericalInput
                 id="size"
                 value={settings.bubbles.size}
                 placeholder="Size..."
@@ -318,7 +336,7 @@ export function GseaBubbleDisplayPropsPanel() {
                     })
                   )
                 }}
-              />
+              /> */}
             </PropRow>
             <PropRow title="Scale Mode">
               <RadiusScaleModeSelectList
