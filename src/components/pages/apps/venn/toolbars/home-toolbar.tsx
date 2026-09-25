@@ -124,14 +124,14 @@ export function HomeToolbar() {
           <ToolbarRow>
             Scale
             <NumericalInput
-              value={settings.heatmap.dot.scale}
+              value={settings.heatmap.dot.scale.factor}
               limit={[0.01, 10]}
               step={0.01}
               dp={2}
               onNumChange={(value) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.heatmap.dot.scale = value
+                    draft.heatmap.dot.scale.factor = value
                   })
                 )
               }}

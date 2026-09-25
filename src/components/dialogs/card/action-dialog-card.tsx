@@ -21,7 +21,7 @@ export function ActionDialogRow({
   className,
   children,
   ...props
-}: IDivProps & {
+}: Omit<IDivProps, 'title'> & {
   title?: ReactNode
   items?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'between'

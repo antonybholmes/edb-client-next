@@ -64,19 +64,19 @@
     "color": "#4169E1",
     "version": "1.2.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-23T18:14:55.014Z",
-    "hash": "15d8740fb92eb43950ec4c092451fbfb4181d1fb0de5907bbb204266692fd805",
-    "build": 72
+    "modified": "2026-09-25T14:48:42.597Z",
+    "hash": "7a02e6baac438f0b8d4db41251c6c8a7a3a1714cee23c3e41cbfe2b2a1be74f3",
+    "build": 74
   },
   {
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "23.6.4",
+    "version": "23.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-23T21:43:06.186Z",
-    "hash": "eba4f81aaa6f4dea75045c9f0beb59a01a3ec553a109fbd15a1d1682f0fd85ee",
-    "build": 998
+    "modified": "2026-09-25T19:33:18.499Z",
+    "hash": "ee1ac28c9997cb8b162dea9307ae44e436869dcc3260c7f44ecdfc6ea7eddb3c",
+    "build": 1006
   },
   {
     "name": "GSEA Web",
@@ -130,11 +130,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.6.0",
+    "version": "50.6.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-23T16:34:09.351Z",
-    "hash": "b8add16d1af4cd8a23209fd709f1536f5d38894148ede960c32d1bd7d2135242",
-    "build": 2084
+    "modified": "2026-09-25T17:42:09.257Z",
+    "hash": "a067a96efecbc3dc736396eec210212b34ba18b0f5219b3226300ec712dedf62",
+    "build": 2090
   },
   {
     "name": "Motifs",
@@ -148,13 +148,13 @@
   },
   {
     "name": "Network",
-    "description": "Network graphs.",
+    "description": "Create beautiful network graphs.",
     "color": "#4169E1",
-    "version": "1.0.2",
+    "version": "1.0.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-24T15:52:03.473Z",
-    "hash": "105819879b30b6118351aaa08f455f4a631a4655e650f94f317d3e3da45e79e8",
-    "build": 16
+    "modified": "2026-09-25T19:42:33.928Z",
+    "hash": "4e34bc6e2414e6e30e3dcefdbc2a7b9476a6a35c3c837d3d9ed49edc3f78f571",
+    "build": 38
   },
   {
     "name": "Oncoplot",
@@ -269,10 +269,10 @@
     "name": "Venn",
     "description": "Make Venn diagrams.",
     "color": "#00008B",
-    "version": "26.6.4",
+    "version": "26.6.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-21T21:29:37.755Z",
-    "hash": "16e9821ca27e8151ea30a9aa7599a657f032e98a382298d7f3fd63134bd56917",
-    "build": 946
+    "modified": "2026-09-25T17:42:09.258Z",
+    "hash": "f81fbc13ad2b4a3f6424abd4a74aeb270de86906325ab94212696708f5d4c4b4",
+    "build": 950
   }
 ]

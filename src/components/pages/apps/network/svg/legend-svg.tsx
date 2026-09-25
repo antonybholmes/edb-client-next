@@ -1,30 +1,64 @@
+import { autoTickInterval, createAxis } from '@/components/plot/axes/axis'
 import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { max } from '@/lib/math/math'
+import { getColorMap } from '@/lib/color/colormap'
 import { sum } from '@/lib/math/sum'
 import { capitalCase } from '@/lib/text/capital-case'
-import { range } from 'd3'
+
 import { ReactElement } from 'react'
-import { useNetworkSettings } from '../network-settings-store'
+import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
+import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { useNetwork } from '../network-store'
 
 export function LegendSvg() {
   const { settings } = useNetworkSettings()
-  const { groups, stepSize, sizeLim } = useNetwork()
+  const { groups, nodes, edges } = useNetwork()
+
+  const nodeRadiusScale = nodeRadiusFunc(
+    settings.plot.nodes.radius,
+    settings.plot.nodes.scale.mode
+  )
 
   const groupsHeight =
     30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
 
-  const steps = range(stepSize, sizeLim.max, stepSize)
+  let {
+    ticks: sizeTicks,
+    interval: sizeInterval,
+    format: sizeFormat,
+  } = autoTickInterval({
+    min: 0,
+    max: nodes.metricLim1.max,
+  })
+
+  if (sizeTicks[0] < sizeInterval) {
+    sizeTicks = sizeTicks.slice(1)
+  }
 
   const sizeHeight =
     35 +
-    2 * sum(steps.map((t) => (t / sizeLim.max) * settings.plot.nodes.radius)) +
-    5 * steps.length
+    2 * sum(sizeTicks.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
+    5 * sizeTicks.length
+
+  let {
+    ticks: strengthTicks,
+    interval: strengthInterval,
+    format: strengthFormat,
+  } = autoTickInterval({
+    min: 0,
+    max: edges.strengthLim.max,
+  })
+
+  if (strengthTicks[0] < strengthInterval) {
+    strengthTicks = strengthTicks.slice(1)
+  }
+
+  const edgesHeight = 35 + strengthTicks.length * 20
 
   return (
     <SvgG
@@ -40,19 +74,78 @@ export function LegendSvg() {
           x: 0,
           y: groupsHeight,
         }}
-        steps={steps}
+        ticks={sizeTicks}
+        format={sizeFormat}
       />
       <EdgesSvg
+        ticks={strengthTicks}
+        format={strengthFormat}
         pos={{
           x: 0,
           y: groupsHeight + sizeHeight,
         }}
       />
+
+      {settings.plot.nodes.color.mode === 'auto' && (
+        <Size2Svg pos={{ x: 0, y: groupsHeight + sizeHeight + edgesHeight }} />
+      )}
     </SvgG>
   )
 }
 
-export function EdgesSvg({ pos }: { pos: IPos }) {
+export function Size2Svg({ pos }: { pos: IPos }) {
+  const { settings } = useNetworkSettings()
+  const { headings, nodes } = useNetwork()
+
+  const cmap = getColorMap(settings.plot.nodes.color.cmap)
+
+  const cax = createAxis({
+    id: 'cbar',
+    domain: [0, 1],
+
+    ticks: [
+      {
+        v: 0,
+        label: '0',
+      },
+      {
+        v: 0.5,
+        label: (nodes.metricLim2.max / 2).toString(),
+      },
+      {
+        v: 1,
+        label: nodes.metricLim2.max.toString(),
+      },
+    ],
+    minorTicks: [0.25, 0.75],
+  })
+
+  return (
+    <SvgG id="size2-legend" pos={pos}>
+      <SvgText
+        textAnchor="start"
+        font={settings.plot.nodes.labels.text}
+
+        fontWeight="bold"
+      >
+        {getSize2Label(headings, settings)}
+      </SvgText>
+      <SvgG pos={{ x: 0, y: 15 }}>
+        <SvgVColorBar ax={cax} cmap={cmap} />
+      </SvgG>
+    </SvgG>
+  )
+}
+
+export function EdgesSvg({
+  pos,
+  ticks,
+  format,
+}: {
+  pos: IPos
+  ticks: number[]
+  format: (n: number) => string
+}) {
   const { settings } = useNetworkSettings()
   const { headings } = useNetwork()
 
@@ -60,7 +153,7 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
 
   let y = 0
 
-  for (const [ti, tick] of settings.plot.legend.edges.ticks.entries()) {
+  for (const [ti, tick] of ticks.entries()) {
     const strokeWidth = tick * settings.plot.edges.scale
 
     elems.push(
@@ -75,7 +168,7 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
         />
         <SvgG pos={{ x: settings.plot.legend.edges.size + 5, y: 0 }}>
           <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
-            {tick}
+            {format(tick)}
           </SvgText>
         </SvgG>
       </SvgG>
@@ -89,7 +182,7 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
       <SvgText
         textAnchor="start"
         font={settings.plot.nodes.labels.text}
-        fill={COLOR_BLACK}
+
         fontWeight="bold"
       >
         {capitalCase(headings.score)}
@@ -99,19 +192,31 @@ export function EdgesSvg({ pos }: { pos: IPos }) {
   )
 }
 
-export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
-  const { sizeLim } = useNetwork()
+export function SizesSvg({
+  pos,
+  ticks,
+  format,
+}: {
+  pos: IPos
+  ticks: number[]
+  format: (n: number) => string
+}) {
   const { settings } = useNetworkSettings()
-  const { headings } = useNetwork()
+  const { headings, nodes } = useNetwork()
 
-  const maxRadius = (max(steps) / sizeLim.max) * settings.plot.nodes.radius
+  const nodeRadiusScale = nodeRadiusFunc(
+    settings.plot.nodes.radius,
+    settings.plot.nodes.scale.mode
+  )
+
+  const maxRadius = nodeRadiusScale(1)
 
   const elems: ReactElement[] = []
 
   let y = 0
 
-  for (const [si, step] of steps.entries()) {
-    const radius = (step / sizeLim.max) * settings.plot.nodes.radius
+  for (const [si, step] of ticks.entries()) {
+    const radius = nodeRadiusScale(step / nodes.metricLim1.max)
 
     elems.push(
       <SvgG key={si} pos={{ x: 0, y }}>
@@ -128,7 +233,7 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
         />
         <SvgG pos={{ x: maxRadius + 5, y: 0 }}>
           <SvgText textAnchor="start" font={settings.plot.nodes.labels.text}>
-            {step}
+            {format(step)}
           </SvgText>
         </SvgG>
       </SvgG>
@@ -136,15 +241,10 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
 
     // add our radius plus radius of next element to get
     // nice spacing
-    if (si < steps.length - 1) {
-      y +=
-        radius + (steps[si + 1] / sizeLim.max) * settings.plot.nodes.radius + 5
+    if (si < ticks.length - 1) {
+      y += radius + nodeRadiusScale(ticks[si + 1] / nodes.metricLim1.max) + 5
     }
   }
-
-  const label = settings.applyMinusLog10ToSize
-    ? `-log10(${capitalCase(headings.size)})`
-    : capitalCase(headings.size)
 
   return (
     <SvgG id="size-legend" pos={pos}>
@@ -154,9 +254,9 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
         fill={COLOR_BLACK}
         fontWeight="bold"
       >
-        {label}
+        {getSizeLabel(headings, settings)}
       </SvgText>
-      <SvgG pos={{ x: maxRadius, y: 20 }}>{elems}</SvgG>
+      <SvgG pos={{ x: maxRadius, y: 25 }}>{elems}</SvgG>
     </SvgG>
   )
 }
@@ -212,4 +312,42 @@ export function GroupsSvg() {
       </SvgG>
     </SvgG>
   )
+}
+
+// export function nodeRadiusFunc(
+//   settings: INetworkSettings
+// ): (v: number) => number {
+//   const nodeRadiusScale = (
+//     settings.plot.nodes.scale.mode === 'sqrt'
+//       ? d3.scaleSqrt()
+//       : d3.scaleLinear()
+//   )
+//     .domain([0, 1]) // Your 0 to 1 score
+//     .range([1, settings.plot.nodes.radius])
+//   return nodeRadiusScale
+// }
+
+/**
+ * Returns the size label correctly formatted to show if log scaling is applied.
+ *
+ * @param headings The headings object containing the size label.
+ * @param settings The network settings object.
+ * @returns The formatted size label based on the settings.
+ */
+export function getSizeLabel(
+  headings: { metric1: string },
+  settings: INetworkSettings
+): string {
+  return settings.data.applyMinusLog10ToMetric1
+    ? `-log10(${capitalCase(headings.metric1)})`
+    : capitalCase(headings.metric1)
+}
+
+export function getSize2Label(
+  headings: { metric2: string },
+  settings: INetworkSettings
+): string {
+  return settings.data.applyMinusLog10ToMetric2
+    ? `-log10(${capitalCase(headings.metric2)})`
+    : capitalCase(headings.metric2)
 }

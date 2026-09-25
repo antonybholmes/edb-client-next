@@ -156,6 +156,7 @@ export class ColorMap {
   }
 
   getHexColor(v: number, keepAlpha: boolean = true): string {
+    //console.log('v', v)
     let ret = rgba2hex(this.getRGBAColor(v))
 
     if (!keepAlpha) {

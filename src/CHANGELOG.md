@@ -4,6 +4,17 @@
 
 ### Changed
 
+- Network legend now uses autotickinterval to create a nice legend.
+- Gsea bubble now uses crosshairs and has some bubble animations.
+- Added test page for experiments that might be put into components.
+- heatmap now has support for area scaling of dots.
+- Gsea bubble now uses slider for radius.
+- Integrated node radius size into heatmap, bubble and network so they all behave in the same way.
+- Added network support for using edge strength and showing node size from area rather than linear.
+- Bug fixes and updates.
+- Renamed size props to metric1 and metric2 in network to make it more obvious what they are.
+- UI fixes to allow for secondary size use in network plot.
+- Support for secondary size metric in network to color nodes.
 - Lots of ui fixes to network. Enhanced legend, turn groups on and off.
 - Lots of UI fixes to network.
 - More props for network rendering.

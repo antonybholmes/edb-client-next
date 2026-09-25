@@ -3025,6 +3025,50 @@
         {
           "msg": "Lots of UI fixes to network",
           "date": "2026-09-24T03:17:25.039Z"
+        },
+        {
+          "msg": "Lots of ui fixes to network. Enhanced legend, turn groups on and off",
+          "date": "2026-09-24T15:52:04.451Z"
+        },
+        {
+          "msg": "Support for secondary size metric in network to color nodes",
+          "date": "2026-09-24T22:22:59.414Z"
+        },
+        {
+          "msg": "UI fixes to allow for secondary size use in network plot",
+          "date": "2026-09-24T22:37:29.242Z"
+        },
+        {
+          "msg": "Renamed size props to metric1 and metric2 in network to make it more obvious what they are",
+          "date": "2026-09-24T22:43:10.179Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-24T22:45:56.253Z"
+        },
+        {
+          "msg": "Added network support for using edge strength and showing node size from area rather than linear",
+          "date": "2026-09-25T03:28:26.522Z"
+        },
+        {
+          "msg": "Integrated node radius size into heatmap, bubble and network so they all behave in the same way",
+          "date": "2026-09-25T14:48:43.551Z"
+        },
+        {
+          "msg": "Gsea bubble now uses slider for radius",
+          "date": "2026-09-25T15:01:15.326Z"
+        },
+        {
+          "msg": "heatmap now has support for area scaling of dots",
+          "date": "2026-09-25T17:42:10.320Z"
+        },
+        {
+          "msg": "Added test page for experiments that might be put into components",
+          "date": "2026-09-25T18:03:13.857Z"
+        },
+        {
+          "msg": "Gsea bubble now uses crosshairs and has some bubble animations",
+          "date": "2026-09-25T19:33:19.525Z"
         }
       ]
     },

@@ -14,7 +14,12 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { NetworkDialog } from '../network-dialog'
 import { useNetworkSettings } from '../network-settings-store'
 
@@ -90,6 +95,62 @@ export function HomeToolbar() {
             )
           }}
         />
+      </ToolbarTabGroup>
+      <ToolbarTabGroup title="Options">
+        <ToolbarCol>
+          <ToolbarRow>
+            <span>Color Mode</span>
+            <SelectList
+              items={[
+                {
+                  value: 'auto',
+                  label: 'Auto',
+                },
+                {
+                  value: 'group',
+                  label: 'Group',
+                },
+              ]}
+              value={settings.plot.nodes.color.mode}
+              onValueChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.color.mode = value as 'auto' | 'group'
+                  })
+                )
+              }}
+              w="xs"
+              variant="toolbar"
+            >
+              {[
+                {
+                  value: 'auto',
+                  label: 'Auto',
+                },
+                {
+                  value: 'group',
+                  label: 'Group',
+                },
+              ].map((position) => (
+                <SelectItem key={position.value} value={position.value}>
+                  {position.label}
+                </SelectItem>
+              ))}
+            </SelectList>
+          </ToolbarRow>
+          <ColorMapMenu
+            cmap={getColorMap(settings.plot.nodes.color.cmap)}
+            onChange={(cmap) => {
+              // store the cmap the user likes
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plot.nodes.color.cmap.name = cmap.id as ColorMapName
+                  draft.plot.nodes.color.cmap.reversed = cmap.isReversed
+                })
+              )
+            }}
+          />
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

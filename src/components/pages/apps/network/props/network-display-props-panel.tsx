@@ -1,5 +1,6 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -10,6 +11,7 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { TEXT_APPLY } from '@/consts'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
   AccordionItem,
@@ -18,37 +20,43 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
-import {
-  LABEL_TYPES,
-  POSITIONS,
-  useNetworkSettings,
-} from '../network-settings-store'
+import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
+import { POSITIONS, useNetworkSettings } from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
-  const { network } = useNetwork()
+  const { network, nodes, setNodeLabelField } = useNetwork()
   const { run } = useNetworkSim()
   const [message, setMessage] = useState('')
 
   return (
     <PropsPanel>
       <ScrollAccordion
-        value={['plot', 'nodes', 'edges', 'statistics', 'bubbles', 'size']}
+        value={[
+          'layout',
+          'plot',
+          'nodes',
+          'edges',
+          'statistics',
+          'bubbles',
+          'size',
+        ]}
       >
-        <AccordionItem value="plot">
-          <AccordionTrigger>Plot</AccordionTrigger>
+        <AccordionItem value="layout">
+          <AccordionTrigger>Layout</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Distance">
               <NumSlider
                 min={0}
                 max={200}
 
-                value={settings.linkDistance}
+                value={settings.layout.linkDistance}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.linkDistance = value
+                      draft.layout.linkDistance = value
                     })
                   )
                 }
@@ -59,16 +67,28 @@ export function NetworkDisplayPropsPanel() {
                 min={-100}
                 max={100}
 
-                value={settings.chargeStrength}
+                value={settings.layout.chargeStrength}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.chargeStrength = value
+                      draft.layout.chargeStrength = value
                     })
                   )
                 }
               />
             </PropRow>
+            {/* <CheckPropRow
+              title="Use Edge Strength"
+              checked={settings.layout.useStrength}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.layout.useStrength = checked
+                  })
+                )
+              }
+            /> */}
+
             <VCenterRow className="gap-x-2">
               <Button
                 variant="app-theme"
@@ -81,6 +101,36 @@ export function NetworkDisplayPropsPanel() {
               </Button>
               <RunningIndicator message={message} />
             </VCenterRow>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="plot">
+          <AccordionTrigger>Plot</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Size">
+              <DoubleNumericalInput
+                h="sm"
+                w="xs"
+                v1={settings.plot.size.w}
+                placeholder="Width"
+                limit={[1, 5000]}
+                dp={0}
+                onNumChanged1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.size.w = v
+                    })
+                  )
+                }}
+                v2={settings.plot.size.h}
+                onNumChanged2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.size.h = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
 
             <CheckPropRow
               title="Auto Scale"
@@ -134,6 +184,7 @@ export function NetworkDisplayPropsPanel() {
           <AccordionContent>
             <CheckPropRow
               title="Keep Within Bounds"
+              tooltip="Force nodes to stay within the plot bounds. Nodes at the edges will be constrained."
               checked={settings.plot.nodes.keepWithinBounds}
               onCheckedChange={(checked) =>
                 updateSettings(
@@ -154,6 +205,18 @@ export function NetworkDisplayPropsPanel() {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.radius = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Scale Mode">
+              <RadiusScaleModeSelectList
+                value={settings.plot.nodes.scale.mode}
+                onValueChange={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.scale.mode = value
                     })
                   )
                 }
@@ -186,6 +249,19 @@ export function NetworkDisplayPropsPanel() {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.color.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Colormap">
+              <ColorMapMenu
+                cmap={getColorMap(settings.plot.nodes.color.cmap)}
+
+                onChange={(cmap) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.color.cmap = getCmapFromColorMap(cmap)
                     })
                   )
                 }
@@ -278,24 +354,25 @@ export function NetworkDisplayPropsPanel() {
 
             <PropRow title="Display Text">
               <SelectList
-                items={LABEL_TYPES}
-                value={settings.plot.nodes.labels.type}
+                //items={LABEL_TYPES}
+                value={nodes.label.field}
                 onValueChange={(value) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.labels.type = value as
-                        'label' | 'name' | 'group'
-                    })
-                  )
+                  setNodeLabelField(value as string)
                 }}
-                w="xs"
+                w="md"
                 variant="toolbar"
               >
-                {LABEL_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
+                {nodes.label.fields.map((field) => (
+                  <SelectItem key={field} value={field}>
+                    {field}
                   </SelectItem>
                 ))}
+                <SelectItem key="id" value="id">
+                  id
+                </SelectItem>
+                <SelectItem key="id2" value="id2">
+                  id2
+                </SelectItem>
               </SelectList>
             </PropRow>
           </AccordionContent>

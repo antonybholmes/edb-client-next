@@ -13,16 +13,22 @@ import { IS_DEV_MODE } from '@/consts'
 import { IDim } from '@/interfaces/dim'
 import { IPos, ZERO_POS } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
+import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
+import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { IGroup, INode, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
 import { LegendSvg } from './legend-svg'
+
+interface IRenderNode extends INode {
+  group: IGroup
+}
 
 export function NetworkSvgContent() {
   const { zoom } = useZoom()
@@ -30,7 +36,7 @@ export function NetworkSvgContent() {
   const { settings } = useNetworkSettings()
   const { settings: userData } = useUserData()
 
-  const { network, groups, coordinates, size: d3Size, sizeLim } = useNetwork()
+  const { network, groups, coordinates, size: d3Size, nodes } = useNetwork()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -77,7 +83,7 @@ export function NetworkSvgContent() {
       settings.plot.margin.bottom
 
     const groupMap = new Map<string, IGroup>(
-      groups.map((group) => [group.name.trim().toLowerCase(), group])
+      groups.map((group) => [group.id, group])
     )
 
     const nodeMap = network.nodeMap
@@ -88,10 +94,22 @@ export function NetworkSvgContent() {
         .filter((x) => x.length > 0)
     )
 
+    const nodeRadiusScale = nodeRadiusFunc(
+      settings.plot.nodes.radius,
+      settings.plot.nodes.scale.mode
+    )
+
     const radiusMap = new Map<string, number>(
       network.nodes.map((node) => [
         node.id,
-        ((node.size ?? 0) / sizeLim.max) * settings.plot.nodes.radius,
+        nodeRadiusScale((node.size ?? 0) / nodes.metricLim1.max),
+      ])
+    )
+
+    const sizeMap2 = new Map<string, number>(
+      network.nodes.map((node) => [
+        node.id,
+        (node.size2 ?? 0) / nodes.metricLim2.max,
       ])
     )
 
@@ -102,6 +120,12 @@ export function NetworkSvgContent() {
       radiusMap,
       settings
     )
+
+    const colorMap = getColorMap(settings.plot.nodes.color.cmap)
+
+    const renderNodes: IRenderNode[] = network.nodes
+      .map((node) => ({ ...node, group: groupMap.get(node.groupId) }))
+      .filter((node) => groupMap.get(node.groupId)?.show)
 
     const svg = (
       <>
@@ -123,8 +147,8 @@ export function NetworkSvgContent() {
                 const targetNode = nodeMap[edge.target]
 
                 return (
-                  groupMap.get(sourceNode?.group.toLowerCase() ?? '')?.show &&
-                  groupMap.get(targetNode?.group.toLowerCase() ?? '')?.show
+                  groupMap.get(sourceNode.groupId)?.show &&
+                  groupMap.get(targetNode.groupId)?.show
                 )
               })
               .map((edge, idx) => {
@@ -140,38 +164,25 @@ export function NetworkSvgContent() {
                     y2={targetPos.y}
                     s={settings.plot.edges.line}
 
-                    strokeWidth={edge.score * settings.plot.edges.scale}
+                    strokeWidth={edge.strength * settings.plot.edges.scale}
                   />
                 )
               })}
 
-          {network.nodes
-            .filter((node) => groupMap.get(node.group.toLowerCase())?.show)
-            .map((node) => {
-              let fillColor = COLOR_BLACK
+          {renderNodes.map((node) => {
+            return (
+              <NodeCircle
+                key={node.id}
+                node={node}
+                radius={radiusMap.get(node.id) ?? 0}
+                size2={sizeMap2.get(node.id) ?? 0}
+                colorMap={colorMap}
 
-              switch (settings.plot.nodes.color.mode) {
-                case 'group':
-                  fillColor =
-                    groupMap.get(node.group.toLowerCase())?.color ?? COLOR_BLACK
-                  break
-
-                default:
-                  fillColor = COLOR_BLACK
-                  break
-              }
-
-              return (
-                <NodeCircle
-                  key={node.id}
-                  node={node}
-                  radius={radiusMap.get(node.id) ?? 0}
-                  groupMap={groupMap}
-                  labelSet={labelSet}
-                  coordinates={realCoordinates}
-                />
-              )
-            })}
+                labelSet={labelSet}
+                coordinates={realCoordinates}
+              />
+            )
+          })}
         </SvgMargin>
         <LegendSvg />
       </>
@@ -201,18 +212,23 @@ export function NetworkSvg() {
 
 function NodeCircle({
   node,
-  groupMap,
+
   labelSet,
   radius,
+  size2,
   coordinates,
+  colorMap,
 }: {
-  node: INode
-  groupMap: Map<string, IGroup>
+  node: IRenderNode
+
   labelSet: Set<string>
   radius: number
+  size2: number
   coordinates: Map<string, IPos>
+  colorMap: ColorMap
 }) {
-  const { settings, updateSettings } = useNetworkSettings()
+  const { settings } = useNetworkSettings()
+  const { nodes } = useNetwork()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
@@ -225,17 +241,15 @@ function NodeCircle({
   let fillColor = useMemo(() => {
     switch (settings.plot.nodes.color.mode) {
       case 'group':
-        return groupMap.get(node.group.toLowerCase())?.color ?? COLOR_BLACK
+        return node.group?.color ?? COLOR_BLACK
       default:
-        return COLOR_BLACK
+        return colorMap.getHexColor(size2) ?? COLOR_BLACK
     }
-  }, [settings.plot.nodes.color.mode, groupMap, node.group])
+  }, [settings.plot.nodes.color.mode, node.group, colorMap, size2])
 
   const showLabel =
     settings.plot.nodes.labels.showAll ||
-    inLabelSet(node.label, labelSet) ||
-    inLabelSet(node.name, labelSet) ||
-    inLabelSet(node.group, labelSet) ||
+    inNodeData(node, labelSet) ||
     labelSet.has(node.id2.toLowerCase()) ||
     labelSet.has(node.id)
 
@@ -246,7 +260,7 @@ function NodeCircle({
       return
     }
 
-    gsap.to(circleRef.current, {
+    gsap.timeline().to(circleRef.current, {
       scale: hover ? 1.2 : 1,
       transformOrigin: 'center',
       duration: 0.3,
@@ -262,16 +276,6 @@ function NodeCircle({
 
       setHover(true)
 
-      // const svgP = screenToSvgPoint(ref.current, {
-      //   x: e.clientX,
-      //   y: e.clientY,
-      // })
-
-      // const plotP = {
-      //   x: svgP.x - pos.x - settings.plot.margin.left,
-      //   y: svgP.y - pos.y - settings.plot.margin.top,
-      // }
-
       const barP = {
         x: settings.plot.margin.left + pos.x,
         y: settings.plot.margin.top + pos.y,
@@ -283,10 +287,20 @@ function NodeCircle({
         pos: barScreenP,
         content: (
           <>
-            <strong>{node.label}</strong>
-            <span> {node.name}</span>
-            <span>{node.group}</span>
-            <span>Size: {node.size}</span>
+            {/* <strong>{node.label}</strong> */}
+            {/* <span>Name: {node.name}</span> */}
+            {/* <span>Group: {node.group}</span> */}
+            {/* <span>
+              {getSizeLabel(headings, settings)}: {node.size}
+            </span> */}
+
+            {Object.entries(node.data)
+              .sort(([key1], [key2]) => key1.localeCompare(key2))
+              .map(([key, value], i) => (
+                <span key={i}>
+                  {key}: {value}
+                </span>
+              ))}
             {IS_DEV_MODE && <span>{node.id}</span>}
           </>
         ),
@@ -345,7 +359,7 @@ function NodeCircle({
             font={settings.plot.nodes.labels.text}
             className="pointer-events-none"
           >
-            {getNodeText(node, settings)}
+            {getNodeText(node, nodes.label.field)}
           </SvgText>
         </SvgG>
       )}
@@ -404,7 +418,13 @@ function realCoordinate(
   )
 }
 
-function inLabelSet(text: string, labels: Set<string>) {
+function inNodeData(node: IRenderNode, labels: Set<string>) {
+  return Object.values(node.data)
+    .filter((d) => typeof d === 'string')
+    .some((d) => inLabelSet(d.toString(), labels))
+}
+
+function inLabelSet(text: string, labels: Set<string>): boolean {
   text = text.toLowerCase().trim()
   // check if anything in label set is within the text
   for (const label of labels) {
@@ -415,24 +435,41 @@ function inLabelSet(text: string, labels: Set<string>) {
   return false
 }
 
-function getNodeText(node: INode, settings: INetworkSettings): string {
-  switch (settings.plot.nodes.labels.type) {
-    case 'label':
-      return node.label
-    case 'name':
-      return node.name
-    case 'group':
-      return node.group
-    case 'size':
-      return node.size.toString()
+function getNodeText(node: INode, field: string): string {
+  switch (field) {
     case 'id':
       return node.id
     case 'id2':
       return node.id2
     default:
-      return ''
+      let value = node.data[field]
+
+      if (typeof value === 'number') {
+        value = value.toString()
+      }
+
+      return value ?? ''
   }
 }
+
+// function getNodeText(node: INode, settings: INetworkSettings): string {
+//   switch (settings.plot.nodes.labels.type) {
+//     case 'label':
+//       return node.label
+//     case 'name':
+//       return node.name
+//     case 'group':
+//       return node.group
+//     case 'size':
+//       return node.size.toString()
+//     case 'id':
+//       return node.id
+//     case 'id2':
+//       return node.id2
+//     default:
+//       return ''
+//   }
+// }
 
 function getTextAnchor(settings: INetworkSettings, radius: number) {
   let textAnchor: 'start' | 'middle' | 'end' = 'middle'

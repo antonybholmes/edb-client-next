@@ -1,4 +1,5 @@
 import { makeUuid } from '@/lib/id'
+import { ILimit } from '@/lib/math/limit'
 import type { ILim } from '@/lib/math/math'
 import { range as numRange } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
@@ -506,26 +507,69 @@ function makeTicks(
  * @param lim
  * @returns
  */
-export function autoTickInterval(lim: ILim): number {
-  const range = Math.abs(lim[1] - lim[0])
+// export function autoTickInterval(lim: ILim): number {
+//   const range = Math.abs(lim[1] - lim[0])
 
-  const x = Math.pow(10, Math.floor(Math.log10(range)))
+//   const x = Math.pow(10, Math.floor(Math.log10(range)))
 
-  let ret = 0
+//   let ret = 0
 
-  if (range / x >= 5) {
-    ret = x
-  } else if (range / (0.5 * x) >= 5) {
-    ret = 0.5 * x
-  } else {
-    ret = x * 0.2
+//   if (range / x >= 5) {
+//     ret = x
+//   } else if (range / (0.5 * x) >= 5) {
+//     ret = 0.5 * x
+//   } else {
+//     ret = x * 0.2
+//   }
+
+//   if (lim[0] > lim[1]) {
+//     ret = -ret
+//   }
+
+//   return ret
+// }
+
+/**
+ * Calculates a reasonable tick interval for a data axis.
+ *
+ * https://stackoverflow.com/questions/237220/tickmark-algorithm-for-a-graph-axis
+ *
+ * @param lim
+ * @returns
+ */
+export function autoTickInterval(
+  lim: ILim | ILimit,
+  tickCount = 5
+): { ticks: number[]; interval: number; format: (n: number) => string } {
+  if (Array.isArray(lim)) {
+    lim = { min: lim[0], max: lim[1] }
   }
 
-  if (lim[0] > lim[1]) {
-    ret = -ret
-  }
+  const ticks = d3.ticks(lim.min, lim.max, tickCount)
 
-  return ret
+  const format = d3.tickFormat(lim.min, lim.max, tickCount)
+
+  return { ticks, interval: ticks.length > 1 ? ticks[1] - ticks[0] : 0, format }
+
+  // const range = Math.abs(lim.max - lim.min)
+
+  // // Determine the order of magnitude of the range to calculate a suitable tick interval.
+  // // e.g. if the range is 123, the magnitude would be 100.
+  // const magnitude = 10 ** Math.floor(Math.log10(range))
+
+  // console.log('range', range, magnitude)
+
+  // let step: number
+
+  // if (range / magnitude >= 5) {
+  //   step = magnitude
+  // } else if (range / magnitude >= 2.5) {
+  //   step = magnitude * 0.5
+  // } else {
+  //   step = magnitude * 0.2
+  // }
+
+  // return lim[0] > lim[1] ? -step : step
 }
 
 /**
@@ -539,7 +583,7 @@ export function autoTickInterval(lim: ILim): number {
  */
 export function autoLim(lim: ILim, interval?: number): ILim {
   if (!interval) {
-    interval = autoTickInterval(lim)
+    interval = autoTickInterval(lim).interval
   }
 
   return [
@@ -547,3 +591,11 @@ export function autoLim(lim: ILim, interval?: number): ILim {
     Math.ceil(lim[1] / interval) * interval,
   ]
 }
+
+export const DEFAULT_CBAR_AXIS = createAxis({
+  id: 'cbar',
+  domain: [0, 1],
+
+  ticks: [0, 0.5, 1],
+  minorTicks: [0.25, 0.75],
+})

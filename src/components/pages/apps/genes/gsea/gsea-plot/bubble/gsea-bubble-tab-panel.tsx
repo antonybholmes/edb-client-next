@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { IGseaBubble, useGsea } from '../gsea-store'
 import { useGseaBubbleContext } from './gsea-bubble-provider'
 import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
-import { GseaBubblePlotSvg } from './gsea-bubble-svg'
+import { GseaBubblePlotsSvg } from './svg/gsea-bubble-plots-svg'
 
 export function GseaBubbleTabPanel() {
   const { inUseReports, inUsePhenotypes } = useGsea()
@@ -43,5 +43,5 @@ export function GseaBubbleTabPanel() {
     setPlots(plots)
   }, [inUseReports, inUsePhenotypes, settings.phenotypes.merge])
 
-  return <GseaBubblePlotSvg />
+  return <GseaBubblePlotsSvg />
 }

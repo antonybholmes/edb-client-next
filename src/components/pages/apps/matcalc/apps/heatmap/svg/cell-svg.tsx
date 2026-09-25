@@ -17,6 +17,7 @@ import { normalize } from '@/lib/math/normalize'
 import { formatNumber } from '@/lib/text/text'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
+import * as d3 from 'd3'
 import { memo, ReactNode } from 'react'
 import { IHeatMapSettings } from '../heatmap-settings-store'
 import { CellGaps } from './cell-gaps'
@@ -268,6 +269,8 @@ export const DotsSvg = memo(function DotsSvg({
 
   const isSquare = df.shape[0] === df.shape[1]
 
+  const radiusScale = nodeRadiusFunc(w, props.dot.scale.mode)
+
   return (
     <SvgG
       pos={pos}
@@ -300,7 +303,7 @@ export const DotsSvg = memo(function DotsSvg({
 
           const v = df.get(row, col) as number
 
-          const radius =
+          const dotSize =
             props.mode === 'dot' && dfSize
               ? (dfSize.get(row, col) as number)
               : 1
@@ -328,10 +331,11 @@ export const DotsSvg = memo(function DotsSvg({
 
           const cx = 0.5 * blockSize.w
           const cy = 0.5 * blockSize.h
-          const r = 0.5 * w * radius * props.dot.scale
+          //const r = 0.5 * w * dotSize * props.dot.scale.factor
+          const r = 0.5 * radiusScale(dotSize) * props.dot.scale.factor
 
           const textColor =
-            props.cells.values.autoColor.on && radius > 0.4
+            props.cells.values.autoColor.on && dotSize > 0.4
               ? getTextColorForBackground(
                   fill,
                   props.cells.values.autoColor.threshold
@@ -466,3 +470,23 @@ export const GridSvg = memo(function GridSvg({
     </g>
   )
 })
+
+export type RadiusScaleMode = 'linear' | 'area'
+
+/**
+ * Given a normalized value (between 0 and 1),
+ * returns a scaled radius function based on the mode.
+ * @param max The maximum radius value.
+ * @param mode The scaling mode, either 'linear' or 'area'.
+ * @returns A function that takes a normalized value (0 to 1) and returns the scaled radius.
+ */
+export function nodeRadiusFunc(
+  max: number,
+  mode: RadiusScaleMode
+): (v: number) => number {
+  const nodeRadiusScale = (mode === 'area' ? d3.scaleSqrt() : d3.scaleLinear())
+    .domain([0, 1]) // Your 0 to 1 score
+    .range([1, max])
+
+  return nodeRadiusScale
+}

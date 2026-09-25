@@ -8,12 +8,14 @@ import {
 import { config } from '@/config'
 import { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK, COLOR_LIGHTGRAY } from '@/lib/color/color'
+import { ICmap } from '@/lib/color/colormap'
 import { useCallback } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v6`
+const SETTINGS_KEY = `${config.appId}:app:network:v8`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -27,25 +29,31 @@ export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Above', value: 'above' },
 ]
 
-type LabelType = 'label' | 'name' | 'group' | 'size' | 'id' | 'id2'
+//type LabelType = 'label' | 'name' | 'group' | 'size' | 'id' | 'id2'
 
-export const LABEL_TYPES: {
-  label: string
-  value: LabelType
-}[] = [
-  { label: 'Label', value: 'label' },
-  { label: 'Name', value: 'name' },
-  { label: 'Group', value: 'group' },
-  { label: 'Size', value: 'size' },
-  { label: 'ID', value: 'id' },
-  { label: 'ID 2', value: 'id2' },
-  // { label: 'None', value: 'none' },
-]
+// export const LABEL_TYPES: {
+//   label: string
+//   value: LabelType
+// }[] = [
+//   { label: 'Label', value: 'label' },
+//   { label: 'Name', value: 'name' },
+//   { label: 'Group', value: 'group' },
+//   { label: 'Size', value: 'size' },
+//   { label: 'ID', value: 'id' },
+//   { label: 'ID 2', value: 'id2' },
+//   // { label: 'None', value: 'none' },
+// ]
 
 export interface INetworkSettings {
-  chargeStrength: number
-  linkDistance: number
-  applyMinusLog10ToSize: boolean
+  layout: {
+    chargeStrength: number
+    linkDistance: number
+    useStrength: boolean
+  }
+  data: {
+    applyMinusLog10ToMetric1: boolean
+    applyMinusLog10ToMetric2: boolean
+  }
   plot: {
     size: IDim
     margin: IMarginProps
@@ -55,10 +63,14 @@ export interface INetworkSettings {
     nodes: {
       //scale: number
       radius: number
+      scale: {
+        mode: RadiusScaleMode
+      }
       line: IStrokeProps & { autoColor: boolean }
       color: {
-        mode: 'group'
+        mode: 'group' | 'auto'
         opacity: number
+        cmap: ICmap
       }
       labels: {
         showAll: boolean
@@ -69,7 +81,7 @@ export interface INetworkSettings {
         }
         position: 'left' | 'center' | 'right' | 'below' | 'above'
         offset: number
-        type: LabelType
+        //type: LabelType
       }
       keepWithinBounds: boolean
     }
@@ -87,16 +99,19 @@ export interface INetworkSettings {
       // }
       edges: {
         size: number
-        ticks: number[]
+        //ticks: number[]
       }
     }
   }
 }
 
 const DEFAULT_SETTINGS: INetworkSettings = {
-  chargeStrength: -30,
-  linkDistance: 100,
-  applyMinusLog10ToSize: false,
+  layout: {
+    chargeStrength: -30,
+    linkDistance: 100,
+    useStrength: false,
+  },
+  data: { applyMinusLog10ToMetric1: false, applyMinusLog10ToMetric2: false },
   plot: {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
@@ -106,9 +121,13 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     nodes: {
       //scale: 0.1,
       radius: 25,
+      scale: {
+        mode: 'linear',
+      },
       color: {
         mode: 'group',
         opacity: 0.5,
+        cmap: { name: 'bwr-v2', reversed: false },
       },
       line: { ...DEFAULT_STROKE_PROPS, show: false, autoColor: true },
       labels: {
@@ -117,7 +136,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         color: { on: false, default: COLOR_BLACK },
         position: 'center',
         offset: 5,
-        type: 'label',
+        //type: 'label',
       },
       keepWithinBounds: true,
     },
@@ -135,7 +154,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       // },
       edges: {
         size: 15,
-        ticks: [0.2, 0.4, 0.6, 0.8, 1],
+        //ticks: [0.2, 0.4, 0.6, 0.8, 1],
       },
     },
   },

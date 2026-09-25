@@ -326,6 +326,8 @@ export function DotPlotDialog({
       },
     }
 
+    console.log('displayOptions:', displayOptions.dot.sizes)
+
     const plot: HistoryPlot = newHeatMapPlot(
       'Dot Plot',
       { main: cf, raw: df, size: sizeDf },

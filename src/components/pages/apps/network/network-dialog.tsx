@@ -1,6 +1,7 @@
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
@@ -115,7 +116,7 @@ function findTargetCol(df: BaseDataFrame | null) {
   return cols[0]
 }
 
-function findScoreCol(df: BaseDataFrame | null) {
+function findStrengthCol(df: BaseDataFrame | null) {
   if (!df) {
     return ''
   }
@@ -158,10 +159,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const [nameCol, setNameCol] = useState<string>('')
   const [groupCol, setGroupCol] = useState<string>('')
   const [sizeCol, setSizeCol] = useState<string>('')
+  const [metric2Col, setMetric2Col] = useState<string>('<none>')
 
   const [sourceCol, setSourceCol] = useState<string>('')
   const [targetCol, setTargetCol] = useState<string>('')
-  const [scoreCol, setScoreCol] = useState<string>('')
+  const [strengthCol, setStrengthCol] = useState<string>('')
 
   useEffect(() => {
     const nodeSheets = sheets.filter((sheet) =>
@@ -184,12 +186,13 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
     setNameCol(findNameCol(dfNode))
     setGroupCol(findGroupCol(dfNode))
     setSizeCol(findSizeCol(dfNode))
+    //setMetric2Col(findSizeCol(dfNode))
   }, [dfNode])
 
   useEffect(() => {
     setSourceCol(findSourceCol(dfEdge))
     setTargetCol(findTargetCol(dfEdge))
-    setScoreCol(findScoreCol(dfEdge))
+    setStrengthCol(findStrengthCol(dfEdge))
   }, [dfEdge])
 
   async function submit() {
@@ -202,27 +205,44 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       !groupCol ||
       !sourceCol ||
       !targetCol ||
-      !scoreCol
+      !strengthCol
     ) {
       close()
       return
     }
 
-    const { network, groups, scoreName, sizeName } = dataframesToNetwork(
+    console.log('dfnode', dfNode.columns)
+
+    const { network, groups, nodeDataTypes } = dataframesToNetwork(
       dfNode,
       dfEdge,
       labelCol,
       nameCol,
-      sizeCol,
       groupCol,
+      sizeCol,
+      metric2Col,
       sourceCol,
       targetCol,
-      scoreCol,
+      strengthCol,
       settings,
       userData
     )
 
-    setNetwork(network, groups, scoreName, sizeName)
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.plot.nodes.color.mode = metric2Col !== '<none>' ? 'auto' : 'group'
+      })
+    )
+
+    setNetwork(
+      network,
+      groups,
+      nodeDataTypes,
+      labelCol,
+      strengthCol,
+      sizeCol,
+      metric2Col
+    )
 
     setMessage('Creating network graph...')
     runSim(network, () => {
@@ -230,6 +250,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       close()
     })
   }
+
+  const colorCols = [
+    '<none>',
+    ...(dfNode?.columns.filter((name) => name !== '').slice(0, MAX_COLS) ?? []),
+  ]
 
   return (
     <OKCancelDialog
@@ -284,7 +309,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
             ))}
         </SelectList>
       </ActionDialogRow>
-
+      <LineSeparator />
       <ActionDialogRow title="Size">
         <SelectList onValueChange={setSizeCol} value={sizeCol} w="lg">
           {dfNode?.columns
@@ -299,11 +324,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       </ActionDialogRow>
       <ActionDialogRow>
         <Checkbox
-          checked={settings.applyMinusLog10ToSize}
+          checked={settings.data.applyMinusLog10ToMetric1}
           onCheckedChange={(checked) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.applyMinusLog10ToSize = checked
+                draft.data.applyMinusLog10ToMetric1 = checked
               })
             )
           }
@@ -311,7 +336,50 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
           Apply -log10
         </Checkbox>
       </ActionDialogRow>
-      <strong>Edges</strong>
+
+      <LineSeparator />
+
+      <ActionDialogRow
+        // title={
+        //   <Checkbox
+        //     checked={settings.plot.nodes.color.mode === 'auto'}
+        //     onCheckedChange={(checked) =>
+        //       updateSettings(
+        //         produce(settings, (draft) => {
+        //           draft.plot.nodes.color.mode = checked ? 'auto' : 'group'
+        //         })
+        //       )
+        //     }
+        //   >
+        //     Color
+        //   </Checkbox>
+        // }
+        title="Color"
+      >
+        <SelectList onValueChange={setMetric2Col} value={metric2Col} w="lg">
+          {colorCols.map((name, ni) => (
+            <SelectItem value={name} key={ni}>
+              {name}
+            </SelectItem>
+          ))}
+        </SelectList>
+      </ActionDialogRow>
+      <ActionDialogRow>
+        <Checkbox
+          checked={settings.data.applyMinusLog10ToMetric2}
+          onCheckedChange={(checked) =>
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.data.applyMinusLog10ToMetric2 = checked
+              })
+            )
+          }
+        >
+          Apply -log10
+        </Checkbox>
+      </ActionDialogRow>
+
+      <strong className="mt-2">Edges</strong>
       <ActionDialogRow title="Source">
         <SelectList onValueChange={setSourceCol} value={sourceCol} w="lg">
           {dfEdge?.columns
@@ -338,8 +406,8 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
         </SelectList>
       </ActionDialogRow>
 
-      <ActionDialogRow title="Score">
-        <SelectList onValueChange={setScoreCol} value={scoreCol} w="lg">
+      <ActionDialogRow title="Strength">
+        <SelectList onValueChange={setStrengthCol} value={strengthCol} w="lg">
           {dfEdge?.columns
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
