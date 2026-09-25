@@ -3081,6 +3081,10 @@
         {
           "msg": "Network hidden nodes can now be shown as translucent with adjustable opacity",
           "date": "2026-09-25T22:39:12.949Z"
+        },
+        {
+          "msg": "Network legend has better reflow for larger fonts with variable spacing as font size increases",
+          "date": "2026-09-25T22:57:28.563Z"
         }
       ]
     },
