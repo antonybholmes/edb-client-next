@@ -540,14 +540,16 @@ function makeTicks(
 export function autoTickInterval(
   lim: ILim | ILimit,
   tickCount = 5
-): { ticks: number[]; interval: number } {
+): { ticks: number[]; interval: number; format: (n: number) => string } {
   if (Array.isArray(lim)) {
     lim = { min: lim[0], max: lim[1] }
   }
 
   const ticks = d3.ticks(lim.min, lim.max, tickCount)
 
-  return { ticks, interval: ticks.length > 1 ? ticks[1] - ticks[0] : 0 }
+  const format = d3.tickFormat(lim.min, lim.max, tickCount)
+
+  return { ticks, interval: ticks.length > 1 ? ticks[1] - ticks[0] : 0, format }
 
   // const range = Math.abs(lim.max - lim.min)
 

@@ -1,4 +1,4 @@
-import { createAxis } from '@/components/plot/axes/axis'
+import { autoTickInterval, createAxis } from '@/components/plot/axes/axis'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { SvgG } from '@/components/plot/svg-g'
@@ -9,9 +9,7 @@ import { COLOR_BLACK } from '@/lib/color/color'
 import { getColorMap } from '@/lib/color/colormap'
 import { sum } from '@/lib/math/sum'
 import { capitalCase } from '@/lib/text/capital-case'
-import * as d3 from 'd3'
 
-import { range } from '@/lib/math/range'
 import { ReactElement } from 'react'
 import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
@@ -29,26 +27,40 @@ export function LegendSvg() {
   const groupsHeight =
     30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
 
-  const metricSteps = range(
-    nodes.stepSize,
-    nodes.metricLim1.max,
-    nodes.stepSize
-  )
+  let {
+    ticks: sizeTicks,
+    interval: sizeInterval,
+    format: sizeFormat,
+  } = autoTickInterval({
+    min: 0,
+    max: nodes.metricLim1.max,
+  })
+
+  if (sizeTicks[0] < sizeInterval) {
+    sizeTicks = sizeTicks.slice(1)
+  }
 
   const sizeHeight =
     35 +
-    2 * sum(metricSteps.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
-    5 * metricSteps.length
+    2 * sum(sizeTicks.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
+    5 * sizeTicks.length
 
-  const strengthSteps = range(
-    edges.stepSize,
-    edges.strengthLim.max,
-    edges.stepSize
-  )
+  let {
+    ticks: strengthTicks,
+    interval: strengthInterval,
+    format: strengthFormat,
+  } = autoTickInterval({
+    min: 0,
+    max: edges.strengthLim.max,
+  })
 
-  const edgesHeight = 35 + strengthSteps.length * 20
+  if (strengthTicks[0] < strengthInterval) {
+    strengthTicks = strengthTicks.slice(1)
+  }
 
-  console.log(strengthSteps, 'strengthSteps', edges.strengthLim)
+  const edgesHeight = 35 + strengthTicks.length * 20
+
+  console.log(strengthTicks, 'strengthTicks', edges.strengthLim)
 
   return (
     <SvgG
@@ -64,10 +76,12 @@ export function LegendSvg() {
           x: 0,
           y: groupsHeight,
         }}
-        steps={metricSteps}
+        ticks={sizeTicks}
+        format={sizeFormat}
       />
       <EdgesSvg
-        steps={strengthSteps}
+        ticks={strengthTicks}
+        format={strengthFormat}
         pos={{
           x: 0,
           y: groupsHeight + sizeHeight,
@@ -125,17 +139,23 @@ export function Size2Svg({ pos }: { pos: IPos }) {
   )
 }
 
-export function EdgesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
+export function EdgesSvg({
+  pos,
+  ticks,
+  format,
+}: {
+  pos: IPos
+  ticks: number[]
+  format: (n: number) => string
+}) {
   const { settings } = useNetworkSettings()
-  const { headings, edges } = useNetwork()
+  const { headings } = useNetwork()
 
   const elems: ReactElement[] = []
 
   let y = 0
 
-  const format = d3.tickFormat(0, edges.strengthLim.max, steps.length)
-
-  for (const [ti, tick] of steps.entries()) {
+  for (const [ti, tick] of ticks.entries()) {
     const strokeWidth = tick * settings.plot.edges.scale
 
     elems.push(
@@ -174,7 +194,15 @@ export function EdgesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
   )
 }
 
-export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
+export function SizesSvg({
+  pos,
+  ticks,
+  format,
+}: {
+  pos: IPos
+  ticks: number[]
+  format: (n: number) => string
+}) {
   const { settings } = useNetworkSettings()
   const { headings, nodes } = useNetwork()
 
@@ -187,11 +215,9 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
 
   const elems: ReactElement[] = []
 
-  const format = d3.tickFormat(0, nodes.metricLim1.max, steps.length)
-
   let y = 0
 
-  for (const [si, step] of steps.entries()) {
+  for (const [si, step] of ticks.entries()) {
     const radius = nodeRadiusScale(step / nodes.metricLim1.max)
 
     elems.push(
@@ -217,8 +243,8 @@ export function SizesSvg({ pos, steps }: { pos: IPos; steps: number[] }) {
 
     // add our radius plus radius of next element to get
     // nice spacing
-    if (si < steps.length - 1) {
-      y += radius + nodeRadiusScale(steps[si + 1] / nodes.metricLim1.max) + 5
+    if (si < ticks.length - 1) {
+      y += radius + nodeRadiusScale(ticks[si + 1] / nodes.metricLim1.max) + 5
     }
   }
 
