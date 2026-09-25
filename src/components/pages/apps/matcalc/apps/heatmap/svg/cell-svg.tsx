@@ -269,7 +269,7 @@ export const DotsSvg = memo(function DotsSvg({
 
   const isSquare = df.shape[0] === df.shape[1]
 
-  const nodeScale = nodeRadiusFunc(w, props.dot.scale.mode)
+  const radiusScale = nodeRadiusFunc(w, props.dot.scale.mode)
 
   return (
     <SvgG
@@ -331,7 +331,8 @@ export const DotsSvg = memo(function DotsSvg({
 
           const cx = 0.5 * blockSize.w
           const cy = 0.5 * blockSize.h
-          const r = 0.5 * w * dotSize * props.dot.scale.factor
+          //const r = 0.5 * w * dotSize * props.dot.scale.factor
+          const r = 0.5 * radiusScale(dotSize) * props.dot.scale.factor
 
           const textColor =
             props.cells.values.autoColor.on && dotSize > 0.4

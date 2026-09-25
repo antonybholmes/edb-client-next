@@ -130,11 +130,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.6.0",
+    "version": "50.6.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-25T15:01:14.379Z",
-    "hash": "6bc06c13991d7c7acb099659b1302e74488f13d9d9a1b526b40224312cd4759d",
-    "build": 2088
+    "modified": "2026-09-25T17:42:09.257Z",
+    "hash": "a067a96efecbc3dc736396eec210212b34ba18b0f5219b3226300ec712dedf62",
+    "build": 2090
   },
   {
     "name": "Motifs",
@@ -269,10 +269,10 @@
     "name": "Venn",
     "description": "Make Venn diagrams.",
     "color": "#00008B",
-    "version": "26.6.4",
+    "version": "26.6.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-25T15:01:14.381Z",
-    "hash": "51c4df61b32d17b02f2cd5330d09f57f5546b7526e594171eadf698da0ac868b",
-    "build": 948
+    "modified": "2026-09-25T17:42:09.258Z",
+    "hash": "f81fbc13ad2b4a3f6424abd4a74aeb270de86906325ab94212696708f5d4c4b4",
+    "build": 950
   }
 ]

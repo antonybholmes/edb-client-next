@@ -10,6 +10,7 @@ import type { IClusterGroupRow } from '@/lib/cluster-group'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { memo, type ReactElement, type ReactNode } from 'react'
 import { useHeatmapContext } from './heatmap-provider'
+import { nodeRadiusFunc } from './svg/cell-svg'
 
 export interface ILegendSvgProps {
   groupRows: IClusterGroupRow[]
@@ -191,6 +192,42 @@ export const DotLegend = memo(function DotLegend({
   //const suffix = props.dot.mode === 'groups' ? '%' : ''
   const cx = 0.5 * legendBlockSize
 
+  const radiusScale = nodeRadiusFunc(halfW, props.dot.scale.mode)
+
+  const elems: ReactElement[] = []
+
+  let y = 0
+  for (const [dsi, ds] of props.dot.sizes.entries()) {
+    //const r = halfW * ds.size * props.dot.scale.factor // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
+    const r = radiusScale(ds.size) * props.dot.scale.factor
+
+    elems.push(
+      <SvgG key={`dot:${dsi}`} pos={{ x: 0, y }}>
+        <SvgCircle cx={cx} cy={cx} r={r} fill="gray" />
+
+        <SvgText
+          x={legendBlockSize + props.padding}
+          y={cx}
+          dominantBaseline="central"
+          font={props.legend}
+        >
+          {/* {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`} */}
+          {/* {`${ds.value}${suffix ? suffix : ''}`} */}
+          {ds.value}
+        </SvgText>
+      </SvgG>
+    )
+
+    // add our radius plus radius of next element to get
+    // nice spacing
+    if (dsi < props.dot.sizes.length - 1) {
+      y +=
+        r +
+        radiusScale(props.dot.sizes[dsi + 1].size) * props.dot.scale.factor +
+        props.padding
+    }
+  }
+
   return (
     <SvgG pos={pos}>
       {props.dot.legend.title.show && (
@@ -199,27 +236,7 @@ export const DotLegend = memo(function DotLegend({
         </SvgText>
       )}
 
-      {props.dot.sizes.map((ds, dsi) => {
-        const y = (legendBlockSize + props.padding * 0.5) * dsi
-        const r = halfW * ds.size * props.dot.scale // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
-
-        return (
-          <SvgG key={`dot:${dsi}`} pos={{ x: 0, y }}>
-            <SvgCircle cx={cx} cy={cx} r={r} fill="gray" />
-
-            <SvgText
-              x={legendBlockSize + props.padding}
-              y={cx}
-              dominantBaseline="central"
-              font={props.legend}
-            >
-              {/* {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`} */}
-              {/* {`${ds.value}${suffix ? suffix : ''}`} */}
-              {ds.value}
-            </SvgText>
-          </SvgG>
-        )
-      })}
+      {elems}
     </SvgG>
   )
 })
