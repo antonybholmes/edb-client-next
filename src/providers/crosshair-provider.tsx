@@ -1,16 +1,35 @@
 import { BaseCol } from '@/components/layout/base-col'
+import { IChildrenProps } from '@/interfaces/children-props'
 import { IPos } from '@/interfaces/pos'
 import { cn } from '@/lib/shadcn-utils'
 import { ReactNode, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { create } from 'zustand'
-import { samePosition, TOOLTIP_CLEAR_MS } from './tooltip-provider'
+import { TOOLTIP_CLEAR_MS } from './tooltip-provider'
 
 const CROSSHAIR_CLS =
-  'absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 h-0.5 top-0 left-0'
+  'absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-px h-px top-0 left-0'
 
 interface ICrosshair {
+  /**
+   * The position of the crosshair relative to the SVG or plotting area.
+   */
   pos: IPos
+
+  /**
+   * The client position of the crosshair, typically the mouse position relative to the viewport.
+   * If this is set, the tooltip will float on the window rather than being in the bounds of the svg.
+   */
+  clientPos?: IPos
+
+  /**
+   * Tooltip content
+   */
   content?: ReactNode
+
+  /**
+   * Offset for the tooltip relative to the crosshair position.
+   */
   offset?: IPos
 }
 
@@ -37,50 +56,37 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     pendingCrosshair = null
   }
 
+  const clearPendingTimeout = () => {
+    if (clearTimeoutId !== null) {
+      clearTimeout(clearTimeoutId)
+      clearTimeoutId = null
+    }
+  }
+
   return {
     crosshair: null,
 
     showCrosshair: (crosshair) => {
-      const { pos, content, offset = DEFAULT_OFFSET } = crosshair
+      const { pos, clientPos, content, offset = DEFAULT_OFFSET } = crosshair
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-        clearTimeoutId = null
-      }
+      cancelPendingFrame()
 
-      // if (samePosition(get().crosshair, pos)) {
-      //   cancelPendingFrame()
-      //   return
-      // }
+      clearPendingTimeout()
 
-      if (crosshairFrame !== null && samePosition(pendingCrosshair.pos, pos)) {
-        return
-      }
-
-      pendingCrosshair = { pos, content, offset }
-
-      if (crosshairFrame !== null) {
-        return
-      }
+      pendingCrosshair = { pos, clientPos, content, offset }
 
       crosshairFrame = requestAnimationFrame(() => {
         crosshairFrame = null
 
-        const nextCrosshair = pendingCrosshair
+        set({ crosshair: pendingCrosshair })
         pendingCrosshair = null
-
-        if (!samePosition(get().crosshair?.pos, pos)) {
-          set({ crosshair: nextCrosshair })
-        }
       })
     },
 
     hideCrosshair: () => {
       cancelPendingFrame()
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-      }
+      clearPendingTimeout()
 
       clearTimeoutId = setTimeout(() => {
         clearTimeoutId = null
@@ -90,11 +96,7 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
 
     dispose: () => {
       cancelPendingFrame()
-
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-        clearTimeoutId = null
-      }
+      clearPendingTimeout()
 
       set({ crosshair: null })
     },
@@ -110,7 +112,7 @@ export function useCrosshair() {
 
 // isolates the fast-changing crosshair position so mousemove only
 // re-renders this small overlay, not every GseaPlot in the grid
-export function CrosshairProvider({ children }: { children?: ReactNode }) {
+export function CrosshairProvider({ children }: IChildrenProps) {
   const crosshair = useCrosshairStore((state) => state.crosshair)
   const dispose = useCrosshairStore((state) => state.dispose)
 
@@ -122,14 +124,13 @@ export function CrosshairProvider({ children }: { children?: ReactNode }) {
     <>
       {children && children}
 
-      {crosshair?.pos && (
+      {crosshair && (
         <>
-          <span
+          {/* <span
             className={CROSSHAIR_CLS}
             style={{ left: crosshair.pos.x - 1, height: crosshair.pos.y - 4 }}
           />
-
-          {/* Center dot */}
+ 
           <span
             className={CROSSHAIR_CLS}
             style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y - 1 }}
@@ -156,20 +157,48 @@ export function CrosshairProvider({ children }: { children?: ReactNode }) {
               top: crosshair.pos.y + 4,
               height: '100%',
             }}
+          /> */}
+
+          <span
+            className={CROSSHAIR_CLS}
+            style={{ left: crosshair.pos.x, height: '100%' }}
+          />
+
+          <span
+            className={CROSSHAIR_CLS}
+            style={{ top: crosshair.pos.y, width: '100%' }}
           />
 
           {crosshair?.content && (
-            <BaseCol
-              className={cn(
-                'absolute z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none'
+            <>
+              {!crosshair.clientPos ? (
+                <BaseCol
+                  className={cn(
+                    'absolute z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none'
+                  )}
+                  style={{
+                    left: crosshair.pos.x + crosshair.offset.x,
+                    top: crosshair.pos.y + crosshair.offset.y,
+                  }}
+                >
+                  {crosshair.content}
+                </BaseCol>
+              ) : (
+                createPortal(
+                  <BaseCol
+                    className="fixed z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none"
+
+                    style={{
+                      left: crosshair.clientPos.x + crosshair.offset.x,
+                      top: crosshair.clientPos.y + crosshair.offset.y,
+                    }}
+                  >
+                    {crosshair.content}
+                  </BaseCol>,
+                  document.body
+                )
               )}
-              style={{
-                left: crosshair.pos.x + crosshair.offset.x,
-                top: crosshair.pos.y + crosshair.offset.y,
-              }}
-            >
-              {crosshair.content}
-            </BaseCol>
+            </>
           )}
         </>
       )}

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network centralized most mouse events to reduce need for listeners on every node.
 - Bug fixes and updates.
 - Network now allows node labels to be turned on and off in either all label or no label mode so user can easily label a new few nodes or turn off a few if all nodes are shown.
 - Netwok has view toolbar.

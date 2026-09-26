@@ -55,9 +55,15 @@ export function svgPointToScreen(svg: SVGSVGElement, p: IPos) {
  * @returns The corresponding SVG coordinates as an object with x and y properties.
  */
 export function screenToSvgPoint(svg: SVGSVGElement, p: IPos): IPos {
+  const ctm = svg.getScreenCTM()
+
+  if (!ctm) {
+    throw new Error('SVG is not connected to the document')
+  }
+
   const pt = svg.createSVGPoint()
   pt.x = p.x
   pt.y = p.y
 
-  return pt.matrixTransform(svg.getScreenCTM()!.inverse())
+  return pt.matrixTransform(ctm.inverse())
 }

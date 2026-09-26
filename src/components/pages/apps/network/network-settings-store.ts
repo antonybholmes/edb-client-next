@@ -110,6 +110,12 @@ export interface INetworkSettings {
         ticks: number
       }
     }
+    crosshair: {
+      show: boolean
+      search: {
+        radius: number
+      }
+    }
   }
 }
 
@@ -171,6 +177,12 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       edges: {
         size: 15,
         ticks: 5,
+      },
+    },
+    crosshair: {
+      show: true,
+      search: {
+        radius: 20,
       },
     },
   },

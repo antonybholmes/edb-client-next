@@ -73,7 +73,7 @@ function AppTile({ module, view }: { module: IAppHeaderLink; view: string }) {
 
         <AppIcon appInfo={module} size={3} className="text-lg z-10" />
       </CenterCol>
-      <span className="text-sm text-center">{module.name}</span>
+      <span className="text-xs text-center">{module.name}</span>
     </BaseLink>
   )
 }
