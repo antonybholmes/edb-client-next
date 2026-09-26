@@ -1,45 +1,46 @@
-import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
-import { cn } from '@/lib/shadcn-utils'
+'use client'
 
-export function AppIcon({ size = 1.5, className }: IIconProps) {
-  const s = `${size}rem`
+import type { IDivProps } from '@/interfaces/div-props'
+import type { IAppInfo } from '@/lib/app-info'
+import { cn } from '@/lib/shadcn-utils'
+import { capitalCase } from '@/lib/text/capital-case'
+import type { IAppHeaderLink } from '@/menus'
+import { CSSProperties } from 'react'
+import { CenterRow } from '../layout/center-row'
+
+export const APP_ICON_CLS = `app-icon rounded-full aspect-square shrink-0 grow-0`
+
+export function AppIcon({
+  appInfo,
+  size = 2,
+  className,
+}: IDivProps & { size?: number; appInfo: IAppInfo | IAppHeaderLink }) {
+  let abbr = ''
+
+  if (appInfo.abbr) {
+    abbr = capitalCase(appInfo.abbr)
+  } else {
+    const words = appInfo.name.split(' ')
+
+    abbr = `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
+  }
+
   return (
-    <svg
-      version="1.1"
-      viewBox="0 0 14.5 14.5"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, className)}
-      style={{ width: s, height: s }}
+    <CenterRow
+      className={cn(APP_ICON_CLS, className)}
+      // style={{
+      //   backgroundColor: appInfo.color ?? 'lightslategray',
+      // }}
+      style={
+        {
+          '--base-color': appInfo.color ?? 'lightslategray',
+          width: `${size}rem`,
+          height: `${size}rem`,
+        } as CSSProperties
+      }
     >
-      <g transform="translate(-33.407 -100.86)" id="g12">
-        <g transform="translate(0,5)" id="g10">
-          <g transform="rotate(45 35.968 104.08)" id="g8">
-            <circle
-              cx="44.375"
-              cy="100.27"
-              r="2.5"
-              id="circle2"
-              fillOpacity="1"
-              className="fill-blue-600 dark:fill-white/90"
-            />
-            <circle
-              cx="36.986"
-              cy="93.771"
-              r="1.5"
-              className="fill-blue-600 dark:fill-white"
-              fillOpacity="0.8"
-              id="circle4"
-            />
-            <circle
-              cx="36.876"
-              cy="100.27"
-              r="5"
-              className="fill-blue-600 dark:fill-white"
-              fillOpacity="0.5"
-            />
-          </g>
-        </g>
-      </g>
-    </svg>
+      <span className="font-bold text-white">{abbr[0]!.toUpperCase()}</span>
+      <span className="font-light text-white">{abbr.slice(1)}</span>
+    </CenterRow>
   )
 }

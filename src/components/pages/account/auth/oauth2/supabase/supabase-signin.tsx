@@ -3,7 +3,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
 import { APP_ACCOUNT_OAUTH2_SUPABASE_SIGNIN_CALLBACK_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { AppIcon } from '@/components/icons/app-icon'
+import { AppIcon } from '@/components/icons/edb-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
 import { HCenterCol } from '@/components/layout/h-center-col'

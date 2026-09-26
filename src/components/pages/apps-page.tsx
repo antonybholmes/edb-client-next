@@ -1,5 +1,6 @@
 'use client'
 
+import { ClientLayout } from '@/app/client-layout'
 import { BaseLink } from '@/components/link/base-link'
 import { useDebouncedComponentSize } from '@/hooks/component-size'
 import type { IRect } from '@/interfaces/rect'
@@ -7,38 +8,24 @@ import { CenterLayout } from '@/layouts/center-layout'
 import { addAlphaToHex } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import { HEADER_LINKS, type IAppHeaderLink } from '@/menus'
-import { ClientLayout } from '@/app/client-layout'
 import { FOCUS_RING_CLS } from '@/theme'
-import { LayoutGrid, LayoutList } from 'lucide-react'
+import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react'
-import { HeaderSlotPortal } from '../header/header-portal'
-import { CompactLayoutIcon } from '../icons/compact-layout-icon'
-import { BaseCol } from '../layout/base-col'
-import { VCenterRow } from '../layout/v-center-row'
-import { GroupToggle, ToggleGroup } from '../shadcn/ui/themed/v2/toggle-group'
+import { AppIcon } from '../icons/app-icon'
+import { CenterCol } from '../layout/center-col'
 import { VScrollPanel } from '../v-scroll-panel'
 
-const BASE_CLS = cn(
-  FOCUS_RING_CLS,
-
-  'relative group'
-)
-
 const APP_CLS = cn(
-  BASE_CLS,
-  'flex flex-col shrink-0 w-full h-full justify-start grow p-2 gap-y-1',
-  'data-[view=grid]:items-center data-[view=grid]:text-center',
-  'data-[view=grid]:aspect-10/9 data-[view=grid]:py-5'
+  FOCUS_RING_CLS,
+  'flex flex-col shrink-0 w-full h-full justify-start grow p-2 gap-y-2'
 )
 
 const APP_BG_CLS = cn(
-  'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all',
-  'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  'data-[hover=true]:scale-101 data-[view=grid]:data-[hover=true]:scale-105'
-  //'data-[hover=true]:shadow-lg'
+  'absolute rounded-3xl w-full aspect-square shrink-0 grow-0',
+  'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 )
 
-function AppIcon({
+function AppTile({
   module,
   view,
   size,
@@ -47,7 +34,24 @@ function AppIcon({
   view: string
   size: IRect
 }) {
+  const ref = useRef<HTMLSpanElement>(null)
   const [hover, setHover] = useState(false)
+
+  useEffect(() => {
+    if (!ref) {
+      return
+    }
+    gsap.timeline().to(ref.current, {
+      backgroundColor: addAlphaToHex(
+        module.color ?? '#c0c0c0',
+        hover ? 0.2 : 0.08
+      ),
+      scale: hover ? 1.05 : 1,
+      duration: 0.3,
+      ease: 'power1.out',
+    }) // Placeholder for GSAP animation
+  }, [hover])
+
   let abbr = ''
 
   if (module.abbr) {
@@ -69,46 +73,14 @@ function AppIcon({
         setHover(false)
       }}
     >
-      <span
-        data-view={view}
-        data-hover={hover}
-        className={APP_BG_CLS}
-        style={{
-          backgroundColor: addAlphaToHex(
-            module.color ?? '#c0c0c0',
-            hover ? 0.2 : 0.1
-          ),
-        }}
-      />
-      <div
-        data-view={view}
-        className="flex items-center data-[view=grid]:flex-col gap-2"
-      >
-        <VCenterRow
-          className="w-11 h-11 aspect-square shrink-0 rounded-[1.25rem] justify-center text-xl opacity-90"
-          style={{
-            backgroundColor: module.color ?? 'lightslategray',
-          }}
-        >
-          <span className="font-bold text-white">{abbr[0]!.toUpperCase()}</span>
-          <span className="font-thin text-white">{abbr[1]!.toLowerCase()}</span>
-        </VCenterRow>
+      <CenterCol className="relative w-full aspect-square">
+        <span ref={ref} className={APP_BG_CLS} />
 
-        <BaseCol
-          data-view={view}
-          className="items-start gap-y-1 data-[view=grid]:items-center"
-        >
-          <span className="font-semibold text-xs text-center group-hover:text-foreground">
-            {module.name}
-          </span>
-
-          {size.w > 150 && (
-            <span className="text-xs text-center opacity-50">
-              {module.description}
-            </span>
-          )}
-        </BaseCol>
-      </div>
+        <AppIcon appInfo={module} size={3} className="text-lg" />
+      </CenterCol>
+      <span className="text-xs text-center group-hover:text-foreground">
+        {module.name}
+      </span>
     </BaseLink>
   )
 }
@@ -119,29 +91,32 @@ function GridView({ view }: { view: string }) {
   const [colsClass, setColsClass] = useState('grid-cols-1')
 
   useEffect(() => {
-    switch (view) {
-      case 'compact':
-        setColsClass('grid-cols-2 gap-x-4 gap-y-2')
-        break
-      case 'list':
-        setColsClass('grid-cols-1 gap-2')
-        break
-      default:
-        if (size.w > 1000) {
-          setColsClass('grid-cols-6 gap-5')
-        } else if (size.w > 800) {
-          setColsClass('grid-cols-5 gap-5')
-        } else if (size.w > 650) {
-          setColsClass('grid-cols-4 gap-5')
-        } else if (size.w > 400) {
-          setColsClass('grid-cols-3 gap-5')
-        } else if (size.w > 250) {
-          setColsClass('grid-cols-2 gap-5')
-        } else {
-          setColsClass('grid-cols-1 gap-5')
-        }
+    // switch (view) {
+    //   case 'compact':
+    //     setColsClass('grid-cols-2 gap-x-4 gap-y-2')
+    //     break
+    //   case 'list':
+    //     setColsClass('grid-cols-1 gap-2')
+    //     break
+    //   default:
+    if (size.w > 700) {
+      setColsClass('grid-cols-7 gap-2')
+    } else if (size.w > 600) {
+      setColsClass('grid-cols-6 gap-2')
+    } else if (size.w > 500) {
+      setColsClass('grid-cols-5 gap-2')
+    } else if (size.w > 400) {
+      setColsClass('grid-cols-4 gap-2')
+    } else if (size.w > 300) {
+      setColsClass('grid-cols-3 gap-2')
+    } else if (size.w > 200) {
+      setColsClass('grid-cols-2 gap-2')
+    } else {
+      setColsClass('grid-cols-1 gap-2')
     }
-  }, [size, view])
+    // }
+    //}
+  }, [size.w])
 
   return (
     <VScrollPanel className="grow w-7/10 xl:w-4/5 2xl:w-3/5 my-16 p-2">
@@ -157,7 +132,7 @@ function GridView({ view }: { view: string }) {
           .map((module, moduleIndex) => {
             return (
               <li key={moduleIndex}>
-                <AppIcon module={module} view={view} size={size} />
+                <AppTile module={module} view={view} size={size} />
               </li>
             )
           })}
@@ -167,11 +142,11 @@ function GridView({ view }: { view: string }) {
 }
 
 export function AppsPage({ title = 'Index' }: { title?: string }) {
-  const [tab, setTab] = useState('grid')
+  const [tab] = useState('grid')
 
   return (
     <CenterLayout signinRequired={false} title={title}>
-      <HeaderSlotPortal slot="header-right">
+      {/* <HeaderSlotPortal slot="header-right">
         <ToggleGroup
           value={[tab]}
           onValueChange={(v) => {
@@ -200,23 +175,9 @@ export function AppsPage({ title = 'Index' }: { title?: string }) {
             <CompactLayoutIcon />
           </GroupToggle>
         </ToggleGroup>
-      </HeaderSlotPortal>
-
-      {/* <Apps view={view} />
-       */}
+      </HeaderSlotPortal> */}
 
       <GridView view={tab} />
-
-      {/* <Tabs
-        value={tab?.id ?? 'grid'}
-        onValueChange={() => {}}
-        className="w-9/10 xl:w-4/5 2xl:w-3/5"
-      >
-        <GridView />
-        <ListView />
-
-        <CompactView />
-      </Tabs> */}
     </CenterLayout>
   )
 }

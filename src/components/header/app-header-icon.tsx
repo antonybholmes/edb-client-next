@@ -8,10 +8,10 @@ import {
 import { cn } from '@/lib/shadcn-utils'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
+import { AppIcon } from '../icons/app-icon'
 import { HomeIcon } from '../icons/home-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { BaseLink } from '../link/base-link'
-import { AppIcon } from './app-icon'
 
 export function AppHeaderIcon() {
   const { appInfo } = useAppInfo()
