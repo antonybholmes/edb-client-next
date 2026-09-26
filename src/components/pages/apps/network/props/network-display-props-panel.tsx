@@ -1,10 +1,9 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
@@ -110,25 +109,34 @@ export function NetworkDisplayPropsPanel() {
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Size">
-              <DoubleNumericalInput
+              <span>W</span>
+              <NumericalInput
                 h="sm"
-                w="xs"
-                v1={settings.plot.size.w}
+                w="xxs"
+                value={settings.plot.size.w}
                 placeholder="Width"
                 limit={[1, 5000]}
                 dp={0}
-                onNumChanged1={(v) => {
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.size.w = v
                     })
                   )
                 }}
-                v2={settings.plot.size.h}
-                onNumChanged2={(v) => {
+              />
+              <span>H</span>
+              <NumericalInput
+                h="sm"
+                w="xxs"
+                value={settings.plot.size.h}
+                placeholder="Height"
+                limit={[1, 5000]}
+                dp={0}
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.plot.size.h = v
+                      draft.plot.size.w = v
                     })
                   )
                 }}
@@ -341,9 +349,11 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Line">
-              <Checkbox
-                checked={settings.plot.nodes.line.autoColor}
-                onCheckedChange={(checked) =>
+              <Toggle
+                size="sm"
+                pad="md"
+                pressed={settings.plot.nodes.line.autoColor}
+                onPressedChange={(checked) =>
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.line.autoColor = checked
@@ -352,7 +362,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               >
                 Auto Color
-              </Checkbox>
+              </Toggle>
               <StrokeButton
                 colors={[
                   {
@@ -370,6 +380,8 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Labels">
+              <FieldSelectList />
+              <PositionDropdown />
               <FontPopover
                 fonts={[
                   {
@@ -423,11 +435,6 @@ export function NetworkDisplayPropsPanel() {
                   </SelectItem>
                 ))}
               </SelectList> */}
-              <PositionDropdown />
-            </PropRow>
-
-            <PropRow title="Field">
-              <FieldSelectList />
             </PropRow>
           </AccordionContent>
         </AccordionItem>

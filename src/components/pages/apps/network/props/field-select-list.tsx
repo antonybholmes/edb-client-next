@@ -15,7 +15,7 @@ export function FieldSelectList({
       onValueChange={(value) => {
         setNodeLabelField(value as string)
       }}
-      w="md"
+      w="sm"
       variant={variant}
     >
       {nodes.label.fields.map((field) => (

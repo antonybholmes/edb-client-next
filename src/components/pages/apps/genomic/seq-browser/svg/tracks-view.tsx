@@ -6,7 +6,7 @@ import {
   setAxisDomain,
   setAxisTicks,
 } from '@/components/plot/axes/axis'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { TEXT_ZOOM } from '@/consts'
 import { type IPos } from '@/interfaces/pos'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -543,10 +543,9 @@ export function TracksView({ className, style }: ISVGProps) {
   )
 
   const svg = (
-    <SvgBase
+    <SvgCanvas
       scale={settings.scale}
-      width={width}
-      height={height}
+      size={{ w: width, h: height }}
       style={style}
       // onMouseMove={(e) => {
       //   const rect = e.currentTarget.getBoundingClientRect()
@@ -657,7 +656,7 @@ export function TracksView({ className, style }: ISVGProps) {
           />
         </g>
       </g>
-    </SvgBase>
+    </SvgCanvas>
   )
 
   return svg

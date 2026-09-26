@@ -1,4 +1,4 @@
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { useVennSettings } from '../venn-settings-store'
 import { useVenn } from '../venn-store'
@@ -17,13 +17,13 @@ export function SvgVenn({ scale }: { scale: number }) {
     settings.w + settings.page.margin.top + settings.page.margin.bottom
 
   return (
-    <SvgBase scale={scale} width={width} height={height}>
+    <SvgCanvas scale={scale} size={{ w: width, h: height }}>
       <SvgMargin margin={settings.page.margin}>
         {vennListsInUse.length < 2 && <SVGOneWayVenn />}
         {vennListsInUse.length === 2 && <SVGTwoWayVenn />}
         {vennListsInUse.length === 3 && <SVGThreeWayVenn />}
         {vennListsInUse.length > 3 && <SVGFourWayVenn />}
       </SvgMargin>
-    </SvgBase>
+    </SvgCanvas>
   )
 }

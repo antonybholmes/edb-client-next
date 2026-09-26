@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_WHITE } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
@@ -526,9 +526,8 @@ export function LollipopSingleSvg() {
 
   const svg = (
     <>
-      <SvgBase
-        width={width}
-        height={height}
+      <SvgCanvas
+        size={{ w: width, h: height }}
         scale={displayProps.scale}
         //shapeRendering={SVG_CRISP_EDGES}
         //onMouseMove={onMouseMove}
@@ -644,7 +643,7 @@ export function LollipopSingleSvg() {
               <g>{legendSvg(datasets, blockSize, displayProps)}</g>
             </g>
           )}
-      </SvgBase>
+      </SvgCanvas>
 
       <Tooltip
         ref={tooltipRef}

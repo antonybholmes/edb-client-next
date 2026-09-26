@@ -3134,6 +3134,10 @@
         {
           "msg": "Network label positions now in dropdown menu to save UI space",
           "date": "2026-09-26T20:12:45.997Z"
+        },
+        {
+          "msg": "Fixed selectlist to use truncating span and then made it work with items and a custom formatter",
+          "date": "2026-09-26T23:32:57.066Z"
         }
       ]
     },

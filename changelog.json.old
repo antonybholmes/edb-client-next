@@ -3130,6 +3130,10 @@
         {
           "msg": "Reduced size of sidebar props. Switched network to use running system to create running indicators",
           "date": "2026-09-26T19:46:37.601Z"
+        },
+        {
+          "msg": "Network label positions now in dropdown menu to save UI space",
+          "date": "2026-09-26T20:12:45.997Z"
         }
       ]
     },

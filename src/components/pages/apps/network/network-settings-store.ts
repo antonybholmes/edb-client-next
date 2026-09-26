@@ -127,7 +127,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
   },
   data: { applyMinusLog10ToMetric1: false, applyMinusLog10ToMetric2: false },
   plot: {
-    size: { w: 2000, h: 2000 },
+    size: { w: 1600, h: 1600 },
     margin: { ...PLOT_MARGIN },
     autoFit: true,
     scale: 1,

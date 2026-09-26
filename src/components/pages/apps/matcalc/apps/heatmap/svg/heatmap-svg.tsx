@@ -19,7 +19,7 @@ import { RowLabelsSvg, RowTreeSvg } from './row-svg'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisLength } from '@/components/plot/axes/axis'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromCmap } from '@/lib/color/colormap'
@@ -522,8 +522,8 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
   }, [cf, displayOptions, groupRows, cax])
 
   return (
-    <SvgBase scale={scale} width={width} height={height}>
+    <SvgCanvas scale={scale} size={{ w: width, h: height }}>
       {svg}
-    </SvgBase>
+    </SvgCanvas>
   )
 }

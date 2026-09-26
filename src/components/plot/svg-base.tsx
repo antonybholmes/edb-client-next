@@ -1,6 +1,7 @@
+import { IDim } from '@/interfaces/dim'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { useSVG } from '@/providers/svg-provider'
-import { useCallback, useId } from 'react'
+import { ComponentProps, useCallback, useId } from 'react'
 
 export const ARIAL_FONT_FAMILY = 'Arial, Helvetica, sans-serif'
 
@@ -37,17 +38,7 @@ export function getFontFamilies(fontFamily: string) {
  * @param param0
  * @returns
  */
-export function SvgBase({
-  width = 100,
-  height = 100,
-  scale = 1,
-  style,
-  ...props
-}: Omit<ISVGProps, 'width' | 'height' | 'ref'> & {
-  width?: number
-  height?: number
-  scale?: number
-}) {
+export function SvgCanvas({ ...props }: ComponentProps<typeof SvgBase>) {
   const id = useId()
   const { registerSVG } = useSVG()
 
@@ -61,13 +52,34 @@ export function SvgBase({
   )
 
   return (
-    <svg
+    <SvgBase
       ref={setSVG}
+
+      {...props}
+    />
+  )
+}
+
+export function SvgBase({
+  size = { w: 100, h: 100 },
+  scale = 1,
+  style,
+  ...props
+}: Omit<ISVGProps, 'width' | 'height'> & {
+  size?: IDim | number
+  scale?: number
+}) {
+  if (typeof size === 'number') {
+    size = { w: size, h: size }
+  }
+
+  return (
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox={`0 0 ${width} ${height}`}
-      width={typeof width === 'number' ? width * scale : width}
-      height={typeof height === 'number' ? height * scale : height}
+      viewBox={`0 0 ${size.w} ${size.h}`}
+      width={typeof size.w === 'number' ? size.w * scale : size.w}
+      height={typeof size.h === 'number' ? size.h * scale : size.h}
       style={{ ...style, fontFamily: ARIAL_FONT_FAMILY }}
       fontFamily={ARIAL_FONT_FAMILY}
       {...props}

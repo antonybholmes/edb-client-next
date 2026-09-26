@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react'
 
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
@@ -252,7 +252,10 @@ function GseaSvgContent() {
   }
 
   const rows = Math.ceil(pathways.length / settings.page.columns)
-  const pageSize = [plotSize.w * settings.page.columns, plotSize.h * rows]
+  const pageSize: IDim = {
+    w: plotSize.w * settings.page.columns,
+    h: plotSize.h * rows,
+  }
 
   const svgPlots = useMemo(
     () =>
@@ -278,15 +281,14 @@ function GseaSvgContent() {
   )
 
   return (
-    <SvgBase
+    <SvgCanvas
       scale={zoom}
-      width={pageSize[0]!}
-      height={pageSize[1]!}
+      size={pageSize}
       //shapeRendering={SVG_CRISP_EDGES}
       //className="absolute"
     >
       {svgPlots}
-    </SvgBase>
+    </SvgCanvas>
   )
 }
 

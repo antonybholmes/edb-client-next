@@ -9,7 +9,7 @@ import { type IPos } from '@/interfaces/pos'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -943,9 +943,8 @@ function OncoplotSvgContent() {
   }
 
   const svgElem = (
-    <SvgBase
-      width={width}
-      height={height}
+    <SvgCanvas
+      size={{ w: width, h: height }}
       scale={displayProps.scale}
       //shapeRendering={SVG_CRISP_EDGES}
       onMouseMove={onMouseMove}
@@ -1002,7 +1001,7 @@ function OncoplotSvgContent() {
       {/* legend */}
 
       {legendMemo}
-    </SvgBase>
+    </SvgCanvas>
   )
 
   return svgElem

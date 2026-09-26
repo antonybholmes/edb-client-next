@@ -7,7 +7,7 @@ import { median } from '@/lib/math/median'
 
 import { SwarmPlotSvg } from '@/components/plot/box-whisker/swarm-plot-svg'
 import { ViolinPlotSvg } from '@/components/plot/box-whisker/violin-plot-svg'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -441,13 +441,12 @@ export function BoxPlotSvg() {
   }, [displayProps, plot])
 
   return (
-    <SvgBase
+    <SvgCanvas
       scale={displayProps.page.scale}
-      width={width}
-      height={height}
+      size={{ w: width, h: height }}
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {svg}
-    </SvgBase>
+    </SvgCanvas>
   )
 }

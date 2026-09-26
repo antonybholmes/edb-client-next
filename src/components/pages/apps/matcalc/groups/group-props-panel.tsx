@@ -373,18 +373,16 @@ function GroupItem({
         title="Set Group Color"
       />
 
-      <VCenterCol className="overflow-hidden grow gap-y-1">
-        <VCenterRow className="gap-x-1 h-4">
-          <TruncateSpan
-            className="grow h-full font-semibold text-xs"
-            style={{ color: group.color }}
-          >
-            {`${group.name} (${cols.length} col${cols.length !== 1 ? 's' : ''})`}
-          </TruncateSpan>
-        </VCenterRow>
+      <VCenterCol className="overflow-hidden grow gap-y-1 ">
+        <TruncateSpan
+          className="grow h-5 font-semibold text-xs"
+          style={{ color: group.color }}
+        >
+          {`${group.name} (${cols.length} col${cols.length !== 1 ? 's' : ''})`}
+        </TruncateSpan>
 
         {cols.length > 0 && (
-          <TruncateSpan className="grow h-4 text-xs opacity-75">
+          <TruncateSpan className="grow h-5 text-xs opacity-75">
             {cols.join(', ')}
           </TruncateSpan>
         )}

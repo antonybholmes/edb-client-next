@@ -13,7 +13,7 @@ import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
@@ -72,29 +72,45 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size">
-        <DoubleNumericalInput
-          h="sm"
-          w="xs"
-          v1={settings.plot.size.w}
-          placeholder="Width"
-          limit={[1, 5000]}
-          dp={0}
-          onNumChanged1={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.plot.size.w = v
-              })
-            )
-          }}
-          v2={settings.plot.size.h}
-          onNumChanged2={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.plot.size.h = v
-              })
-            )
-          }}
-        />
+        <ToolbarCol>
+          <ToolbarRow>
+            <span>W</span>
+            <NumericalInput
+              h="sm"
+              w="xxs"
+              value={settings.plot.size.w}
+              placeholder="Width"
+              limit={[1, 5000]}
+              dp={0}
+              onNumChanged={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.size.w = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow>
+            <span>H</span>
+            <NumericalInput
+              h="sm"
+              w="xxs"
+              value={settings.plot.size.h}
+              placeholder="Height"
+              limit={[1, 5000]}
+              dp={0}
+
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.size.h = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
       <ToolbarTabGroup title="Color">
         <ToolbarCol>

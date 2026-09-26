@@ -2,7 +2,7 @@ import { memo, ReactElement, useMemo } from 'react'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { IDim } from '@/interfaces/dim'
@@ -160,9 +160,9 @@ export function ExtGseaSvgContent() {
   }, [results, plotSize, gseaSettings.page.columns, gseaSettings.plot.margin])
 
   return (
-    <SvgBase width={pageSize.w} height={pageSize.h} scale={zoom}>
+    <SvgCanvas size={pageSize} scale={zoom}>
       {svg}
-    </SvgBase>
+    </SvgCanvas>
   )
 }
 

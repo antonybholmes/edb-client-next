@@ -5,7 +5,7 @@ import { cellStr } from '@/lib/dataframe/cell'
 
 import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axes/svg-axis'
 
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import {
   DEFAULT_STROKE_PROPS,
   type IStrokeProps,
@@ -632,13 +632,12 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   // }, [dataFile, search])
 
   return (
-    <SvgBase
-      width={width}
-      height={height}
+    <SvgCanvas
+      size={{ w: width, h: height }}
       scale={settings.scale}
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {svg}
-    </SvgBase>
+    </SvgCanvas>
   )
 }

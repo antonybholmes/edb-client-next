@@ -17,7 +17,7 @@ import { vfill } from '@/lib/fill'
 import type { ILim } from '@/lib/math/math'
 import { ones } from '@/lib/math/ones'
 import { TickLabel } from './axes/svg-axis-props'
-import { SvgBase } from './svg-base'
+import { SvgCanvas } from './svg-base'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 200 }
 
@@ -353,13 +353,12 @@ export function VertBarPlotSvg({
   // }, [dataFile, search])
 
   return (
-    <SvgBase
-      width={width}
-      height={height}
+    <SvgCanvas
+      size={{ w: width, h: height }}
       scale={_displayProps.scale}
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {svg}
-    </SvgBase>
+    </SvgCanvas>
   )
 }

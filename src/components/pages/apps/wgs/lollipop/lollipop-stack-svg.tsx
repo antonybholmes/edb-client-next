@@ -12,7 +12,7 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
 import { COLOR_WHITE } from '@/lib/color/color'
@@ -810,9 +810,8 @@ export function LollipopStackSvg() {
 
   return (
     <>
-      <SvgBase
-        width={width}
-        height={height}
+      <SvgCanvas
+        size={{ w: width, h: height }}
         scale={displayProps.scale}
         //shapeRendering={SVG_CRISP_EDGES}
         //onMouseMove={onMouseMove}
@@ -931,7 +930,7 @@ export function LollipopStackSvg() {
               <g>{vLegendSvg(datasets, blockSize, displayProps)}</g>
             </g>
           )}
-      </SvgBase>
+      </SvgCanvas>
 
       <Tooltip
         ref={tooltipRef}

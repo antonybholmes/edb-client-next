@@ -8,7 +8,7 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, type IAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
@@ -253,10 +253,9 @@ export function MotifsSvg() {
   const yScaleFactor = settings.plot.height / H
 
   const svg = (
-    <SvgBase
+    <SvgCanvas
       scale={edbSettings.plots.scale}
-      width={width}
-      height={height}
+      size={{ w: width, h: height }}
       shapeRendering={SVG_CRISP_EDGES}
     >
       <SvgMargin
@@ -280,7 +279,7 @@ export function MotifsSvg() {
           )
         })}
       </SvgMargin>
-    </SvgBase>
+    </SvgCanvas>
   )
 
   return svg

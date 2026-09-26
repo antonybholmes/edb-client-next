@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
 
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgCanvas } from '@/components/plot/svg-base'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
@@ -171,9 +171,9 @@ export function GseaBubblePlotsContent() {
   }
 
   return (
-    <SvgBase width={width} height={height} scale={zoom}>
+    <SvgCanvas size={{ w: width, h: height }} scale={zoom}>
       {svg}
-    </SvgBase>
+    </SvgCanvas>
   )
 }
 
