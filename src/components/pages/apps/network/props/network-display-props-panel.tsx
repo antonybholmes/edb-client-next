@@ -7,7 +7,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { useRunning } from '@/components/toolbar/running-indicator'
 import { TEXT_APPLY } from '@/consts'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
@@ -21,9 +21,10 @@ import { produce } from 'immer'
 import { RotateCw } from 'lucide-react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import { POSITIONS, useNetworkSettings } from '../network-settings-store'
+import { useNetworkSettings } from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
 import { FieldSelectList } from './field-select-list'
+import { PositionDropdown } from './position-dropdown'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
@@ -151,30 +152,70 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            <CheckPropRow
-              title="Clamp"
-              tooltip="Nodes will be clamped within the plot boundaries."
-              checked={settings.plot.nodes.clamp}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.clamp = checked
-                  })
-                )
-              }
-            />
-            <CheckPropRow
-              title="Clip"
-              tooltip="Clip nodes at the plot boundaries."
-              checked={settings.plot.nodes.clip}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.clip = checked
-                  })
-                )
-              }
-            />
+            <PropRow title="Edges">
+              <Toggle
+                //variant="app-theme"
+                pad="md"
+                size="sm"
+                pressed={settings.plot.nodes.clamp}
+                onPressedChange={(pressed) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clamp = pressed
+                    })
+                  )
+                }
+              >
+                Clamp
+              </Toggle>
+
+              <Toggle
+                //variant="app-theme"
+                pad="md"
+                size="sm"
+                pressed={settings.plot.nodes.clip}
+                onPressedChange={(pressed) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clip = pressed
+                    })
+                  )
+                }
+              >
+                Clip
+              </Toggle>
+
+              {/* <Checkbox
+                title="Clamp"
+                tooltip="Nodes will be clamped within the plot boundaries."
+                checked={settings.plot.nodes.clamp}
+                onCheckedChange={(checked) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clamp = checked
+                    })
+                  )
+                }
+              >
+                Clamp
+              </Checkbox> */}
+
+              {/* <Checkbox
+                title="Clip"
+                tooltip="Clip nodes at the plot boundaries."
+                checked={settings.plot.nodes.clip}
+                onCheckedChange={(checked) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clip = checked
+                    })
+                  )
+                }
+              >
+                Clip
+              </Checkbox> */}
+            </PropRow>
+
             <CheckPropRow
               title="Auto Fit"
               checked={settings.plot.autoFit}
@@ -362,7 +403,7 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
 
-              <SelectList
+              {/* <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}
                 onValueChange={(value) => {
@@ -381,7 +422,8 @@ export function NetworkDisplayPropsPanel() {
                     {position.label}
                   </SelectItem>
                 ))}
-              </SelectList>
+              </SelectList> */}
+              <PositionDropdown />
             </PropRow>
 
             <PropRow title="Field">

@@ -19,7 +19,7 @@ const SETTINGS_KEY = `${config.appId}:app:network:v10`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
-type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
+export type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
 
 export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Center', value: 'center' },
@@ -79,7 +79,7 @@ export interface INetworkSettings {
           on: boolean
           default: string
         }
-        position: 'left' | 'center' | 'right' | 'below' | 'above'
+        position: LabelPosition
         offset: number
         //type: LabelType
       }

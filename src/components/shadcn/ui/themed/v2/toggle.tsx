@@ -18,7 +18,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     variant: {
       default: cn(
         CENTERED_ROW_CLS,
-        'hover:bg-muted/50 data-pressed:bg-muted/50 '
+        'hover:bg-muted/50 data-pressed:bg-muted/70'
       ),
       outline:
         'border-2 border-transparent text-xs data-pressed:bg-app-theme/5 data-pressed:border-app-theme/50 hover:border-app-theme/25 rounded-theme items-center justify-center flex gap-2 aspect-square',

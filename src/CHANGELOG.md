@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network label positions now in dropdown menu to save UI space.
 - Reduced size of sidebar props. Switched network to use running system to create running indicators.
 - Network groups now save color preferences.
 - Standardized svg mouse interaction rect.
