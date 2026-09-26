@@ -21,10 +21,10 @@ export function NetworkPropsPanel() {
         id: 'nodes',
         name: 'Nodes',
       },
-      {
+      /* {
         id: 'groups',
         name: 'Groups',
-      },
+      }, */
       {
         id: 'view',
         name: 'View',

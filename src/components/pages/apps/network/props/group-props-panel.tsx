@@ -34,7 +34,7 @@ export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
   group-hover:bg-muted group-data-[focus=true]:bg-muted`
 
-function GroupItem({
+export function GroupItem({
   index,
 
   group,

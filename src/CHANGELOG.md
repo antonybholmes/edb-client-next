@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Combined nodes and columns into one prop panel in network to reduce tab switching.
 - App page icons ui overhaul.
 - Network legend has better reflow for larger fonts with variable spacing as font size increases.
 - Network hidden nodes can now be shown as translucent with adjustable opacity.
