@@ -25,6 +25,7 @@ import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-pane
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { POSITIONS, useNetworkSettings } from '../network-settings-store'
 import { useNetwork, useNetworkSim } from '../network-store'
+import { FieldSelectList } from './field-select-list'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
@@ -146,9 +147,10 @@ export function NetworkDisplayPropsPanel() {
             >
               <NumSlider
                 min={0}
-                max={2}
-                step={0.01}
-                dp={2}
+                max={5}
+                step={0.1}
+                dp={1}
+
                 value={settings.plot.scale}
                 onNumChanged={(value) =>
                   updateSettings(
@@ -369,28 +371,8 @@ export function NetworkDisplayPropsPanel() {
               </SelectList>
             </PropRow>
 
-            <PropRow title="Display Text">
-              <SelectList
-                //items={LABEL_TYPES}
-                value={nodes.label.field}
-                onValueChange={(value) => {
-                  setNodeLabelField(value as string)
-                }}
-                w="md"
-                variant="toolbar"
-              >
-                {nodes.label.fields.map((field) => (
-                  <SelectItem key={field} value={field}>
-                    {field}
-                  </SelectItem>
-                ))}
-                <SelectItem key="id" value="id">
-                  id
-                </SelectItem>
-                <SelectItem key="id2" value="id2">
-                  id2
-                </SelectItem>
-              </SelectList>
+            <PropRow title="Field">
+              <FieldSelectList />
             </PropRow>
           </AccordionContent>
         </AccordionItem>

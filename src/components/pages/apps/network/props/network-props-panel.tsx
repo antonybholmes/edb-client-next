@@ -18,8 +18,8 @@ export function NetworkPropsPanel() {
   useEffect(() => {
     setTabs([
       {
-        id: 'nodes',
-        name: 'Nodes',
+        id: 'labels',
+        name: 'Labels',
       },
       /* {
         id: 'groups',
@@ -45,7 +45,7 @@ export function NetworkPropsPanel() {
         onValueChange={() => {}}
         className="grow"
       >
-        <TabsContent value="nodes">
+        <TabsContent value="labels">
           <NodesDisplayPropsPanel />
         </TabsContent>
         <TabsContent value="groups">

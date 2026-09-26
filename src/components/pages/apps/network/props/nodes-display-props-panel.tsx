@@ -14,7 +14,6 @@ import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { TEXT_APPLY } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { useEffect, useState } from 'react'
@@ -57,7 +56,7 @@ export function NodesDisplayPropsPanel() {
           minSize="0%"
           collapsible={true}
         >
-          <PropRow title="Groups"></PropRow>
+          <PropRow title="Groups" className="text-sm"></PropRow>
           <VScrollPanel className="grow">
             <DragDropProvider
               onDragEnd={(event) => {
@@ -91,9 +90,9 @@ export function NodesDisplayPropsPanel() {
           className="flex flex-col gap-y-1.5"
           collapsible={true}
         >
-          <PropRow title="Rows">
+          <PropRow title="Nodes" className="text-sm">
             <Checkbox
-              className="ml-0.5 mt-1"
+              className="text-xs"
               checked={settings.plot.nodes.labels.showAll}
               onCheckedChange={(v) =>
                 updateSettings(
@@ -103,7 +102,7 @@ export function NodesDisplayPropsPanel() {
                 )
               }
             >
-              All Labels
+              Show All Labels
             </Checkbox>
           </PropRow>
           <Textarea
@@ -138,7 +137,7 @@ export function NodesDisplayPropsPanel() {
                 )
               }
             >
-              {TEXT_APPLY}
+              Add Labels
             </Button>
           </VCenterRow>
         </ResizablePanel>

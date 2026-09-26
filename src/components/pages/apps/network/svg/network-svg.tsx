@@ -347,7 +347,7 @@ function NodeCircle({
             {/* <span>
               {getSizeLabel(headings, settings)}: {node.size}
             </span> */}
-
+            {IS_DEV_MODE && <strong>{node.id}</strong>}
             {Object.entries(node.data)
               .sort(([key1], [key2]) => key1.localeCompare(key2))
               .map(([key, value], i) => (
@@ -355,7 +355,6 @@ function NodeCircle({
                   {key}: {value}
                 </span>
               ))}
-            {IS_DEV_MODE && <span>{node.id}</span>}
           </>
         ),
       })

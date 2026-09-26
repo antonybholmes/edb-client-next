@@ -3089,6 +3089,10 @@
         {
           "msg": "App page icons ui overhaul",
           "date": "2026-09-26T01:43:10.078Z"
+        },
+        {
+          "msg": "Combined nodes and columns into one prop panel in network to reduce tab switching",
+          "date": "2026-09-26T01:55:40.190Z"
         }
       ]
     },

@@ -105,7 +105,7 @@ export function NumSlider({
           }
         }}
         inputCls={cn('text-right', labelCls)}
-        w="xs"
+        w="xxs"
         h="sm"
         variant="flat"
       />

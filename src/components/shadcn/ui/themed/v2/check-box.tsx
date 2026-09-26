@@ -47,7 +47,7 @@ export function Checkbox({
       checked={checked}
       data-hover={present(hover)}
       onCheckedChange={onCheckedChange}
-      className={cn(CHECK_CLS, className)}
+      className={CHECK_CLS}
       disabled={disabled}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -62,7 +62,7 @@ export function Checkbox({
 
   if (children) {
     ret = (
-      <Field.Root>
+      <Field.Root className={className}>
         <Field.Label className="flex flex-row items-center gap-x-1.5">
           {ret}
           {children}

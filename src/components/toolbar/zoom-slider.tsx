@@ -20,10 +20,7 @@ import { ChevronDown, Minus, Plus } from 'lucide-react'
 import { VCenterRow } from '../layout/v-center-row'
 import { Input } from '../shadcn/ui/themed/v2/input'
 import { ToolbarFooterButton } from './toolbar-footer-button'
-
-function formatZoom(scale: number): string {
-  return `${(scale * 100).toFixed(0)}%`
-}
+import { formatZoom } from './zoom-select-list'
 
 interface IZoomSliderProps extends IDivProps {
   channel?: string

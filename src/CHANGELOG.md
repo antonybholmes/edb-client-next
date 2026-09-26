@@ -1,5 +1,12 @@
 # Changelog
 
+## 91.2.0 (Sep, 2026)
+
+### Changed
+
+- Netwok has view toolbar.
+
+
 ## 91.0.0 (Sep, 2026)
 
 ### Changed

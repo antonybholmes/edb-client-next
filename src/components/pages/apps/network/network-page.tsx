@@ -49,10 +49,11 @@ import { textToLines } from '@/lib/text/lines'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
-import { useNetwork } from './network-store'
 import { NetworkPropsPanel } from './props/network-props-panel'
 import { NetworkSvg } from './svg/network-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
+import { NodesToolbar } from './toolbars/nodes-toolbar'
+import { ViewToolbar } from './toolbars/view-toolbar'
 
 export function NetworkPage() {
   const { setAppInfo } = useAppInfo()
@@ -67,7 +68,6 @@ export function NetworkPage() {
 
   const { autoSave } = useSVG()
 
-  const { network } = useNetwork()
   const { addDFSize } = useFooter()
 
   useEffect(() => {
@@ -99,6 +99,14 @@ export function NetworkPage() {
       {
         id: 'Home',
         component: HomeToolbar,
+      },
+      {
+        id: 'Nodes',
+        component: NodesToolbar,
+      },
+      {
+        id: 'View',
+        component: ViewToolbar,
       },
     ])
   }, [setToolbarTabs])

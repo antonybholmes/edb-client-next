@@ -9,7 +9,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useShallow } from 'zustand/react/shallow'
 
-export const DEFAULT_ZOOM_LEVELS = [0.25, 0.5, 0.75, 1, 2, 3, 4]
+export const DEFAULT_ZOOM_LEVELS = [0.1, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
 interface IZoomContext {
   index: number
@@ -30,14 +30,14 @@ interface IZoomChannel {
   levels: number[]
 }
 
-const STORAGE_KEY = 'zoom-channels:v10'
+const STORAGE_KEY = 'zoom-channels:v12'
 
 export const DEFAULT_ZOOM_CHANNEL_NAME = 'default'
 
 export const DEFAULT_ZOOM_CHANNEL: IZoomChannel = {
   id: DEFAULT_ZOOM_CHANNEL_NAME,
   //zoom: 1,
-  index: 3, // corresponds to 1x zoom in DEFAULT_ZOOM_SCALES
+  index: 4, // corresponds to 1x zoom in DEFAULT_ZOOM_SCALES
   levels: DEFAULT_ZOOM_LEVELS,
 }
 
