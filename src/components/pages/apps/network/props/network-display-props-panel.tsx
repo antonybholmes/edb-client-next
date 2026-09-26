@@ -1,16 +1,14 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { RunningIndicator } from '@/components/toolbar/running-indicator'
+import { useRunning } from '@/components/toolbar/running-indicator'
 import { TEXT_APPLY } from '@/consts'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
@@ -20,7 +18,7 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
-import { useState } from 'react'
+import { RotateCw } from 'lucide-react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { POSITIONS, useNetworkSettings } from '../network-settings-store'
@@ -31,7 +29,7 @@ export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
   const { network } = useNetwork()
   const { run } = useNetworkSim()
-  const [message, setMessage] = useState('')
+  const { setMessage, clearMessage } = useRunning('network')
 
   return (
     <PropsPanel>
@@ -47,7 +45,22 @@ export function NetworkDisplayPropsPanel() {
         ]}
       >
         <AccordionItem value="layout">
-          <AccordionTrigger>Layout</AccordionTrigger>
+          <AccordionTrigger
+            rightChildren={
+              <button
+                onClick={() => {
+                  setMessage('Creating graph...')
+                  run(network, () => clearMessage())
+                }}
+                aria-label={TEXT_APPLY}
+                title={TEXT_APPLY}
+              >
+                <RotateCw size={16} />
+              </button>
+            }
+          >
+            Layout
+          </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Distance">
               <NumSlider
@@ -90,19 +103,6 @@ export function NetworkDisplayPropsPanel() {
                 )
               }
             /> */}
-
-            <VCenterRow className="gap-x-2">
-              <Button
-                variant="app-theme"
-                onClick={() => {
-                  setMessage('Creating graph...')
-                  run(network, () => setMessage(''))
-                }}
-              >
-                {TEXT_APPLY}
-              </Button>
-              <RunningIndicator message={message} />
-            </VCenterRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="plot">

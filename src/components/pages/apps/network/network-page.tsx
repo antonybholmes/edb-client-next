@@ -41,6 +41,7 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
+import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
@@ -256,7 +257,15 @@ export function NetworkPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <ExtScrollCard>{<NetworkSvg />}</ExtScrollCard>
+              <ExtScrollCard>
+                <RunningIndicator
+                  id="network"
+                  //message="Running Extended GSEA..."
+                  className="w-full p-4"
+                >
+                  <NetworkSvg />
+                </RunningIndicator>
+              </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel

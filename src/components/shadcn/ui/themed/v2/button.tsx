@@ -191,7 +191,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       none: '',
       theme: 'rounded-theme',
       xs: 'rounded-xs',
-      sm: 'rounded-xs',
+      sm: 'rounded-sm',
       md: 'rounded-md',
       lg: 'rounded-lg',
       xl: 'rounded-xl',
@@ -391,19 +391,6 @@ export function Button({
 
   return (
     <ButtonPrimitive
-      // className={buttonVariants({
-      //   variant,
-      //   size,
-      //   rounded,
-      //   ring,
-      //   font,
-      //   pad,
-      //   gap,
-      //   justify,
-      //   items,
-      //   animation,
-      //   className: cn("relative", className),
-      // })}
       className={buttonVariants({
         variant,
         size,

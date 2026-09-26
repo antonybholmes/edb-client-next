@@ -28,22 +28,7 @@ import { IGroup, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
 import { GroupDialog } from './group-dialog'
 
-export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
-hover:opacity-100 trans-opacity hover:bg-muted/50 data-[focus=true]:bg-muted/50`
-
-export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
-  w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
-  group-hover:bg-muted group-data-[focus=true]:bg-muted`
-
-export function GroupItem({
-  index,
-
-  group,
-}: {
-  index: number
-
-  group: IGroup
-}) {
+export function GroupItem({ index, group }: { index: number; group: IGroup }) {
   const { setGroups, groups } = useNetwork()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { openCustom: openCustomDialog } = useDialogs()

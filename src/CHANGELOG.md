@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Reduced size of sidebar props. Switched network to use running system to create running indicators.
 - Network groups now save color preferences.
 - Standardized svg mouse interaction rect.
 - Network centralized most mouse events to reduce need for listeners on every node.

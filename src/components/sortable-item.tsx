@@ -154,7 +154,7 @@ export function SortableItem<T extends ElementType = 'li'>({
       data-group={group}
       ref={ref}
       className={cn(
-        'flex flex-row items-center gap-x-1.5 grow min-w-0  ',
+        'flex flex-row items-center gap-x-1.5 grow min-w-0',
         className
       )}
     >

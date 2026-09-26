@@ -2,7 +2,10 @@ import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { RunningIndicator } from '@/components/toolbar/running-indicator'
+import {
+  RunningIndicator,
+  useRunning,
+} from '@/components/toolbar/running-indicator'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -146,7 +149,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const { settings: userData } = useUserData()
 
   const { run: runSim } = useNetworkSim()
-  const [message, setMessage] = useState<string | null>(null)
+  const { setMessage, clearMessage } = useRunning('network')
 
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
   const [dfEdge, setDfEdge] = useState<BaseDataFrame | null>(null)
@@ -264,9 +267,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
           close()
         }
       }}
-      leftFooterChildren={
-        <RunningIndicator message={message}></RunningIndicator>
-      }
+      leftFooterChildren={<RunningIndicator id="network"></RunningIndicator>}
     >
       <strong>Nodes</strong>
       <ActionDialogRow title="Label">

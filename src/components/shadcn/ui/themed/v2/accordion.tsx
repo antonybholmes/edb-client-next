@@ -29,7 +29,7 @@ export const accordionVariants = cva('flex flex-col w-full', {
     },
   },
   defaultVariants: {
-    variant: 'default',
+    variant: 'sidebar',
   },
 })
 
@@ -174,7 +174,7 @@ export const accordionHeaderVariants = cva(
         settings:
           'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
         sidebar:
-          'h-7 rounded-theme overflow-hidden hover:bg-muted/50 text-xs trans-color pr-1.5',
+          'h-6 rounded-theme overflow-hidden hover:bg-muted/50 text-xs trans-color pr-1.5',
         none: '',
       },
     },
@@ -223,7 +223,7 @@ export function AccordionTrigger({
     arrowStyle?: CSSProperties
   }) {
   const showBorder = props['data-show-border']
-  const [hover, setHover] = useState(false)
+  //const [hover, setHover] = useState(false)
 
   return (
     <AccordionPrimitive.Header
@@ -242,13 +242,13 @@ export function AccordionTrigger({
         className={accordionTriggerVariants({ variant })}
         //data-hover={hover}
 
-        onMouseOver={() => setHover(true)}
-        onMouseOut={() => setHover(false)}
+        //onMouseOver={() => setHover(true)}
+        //onMouseOut={() => setHover(false)}
         {...props}
       >
         {side === 'right' && children}
         <ChevronRight
-          className="trans-transform group-data-open:rotate-90"
+          className="trans-transform group-data-open:rotate-90 shrink-0"
           style={arrowStyle}
           size={16}
         />
@@ -266,7 +266,7 @@ export const accordionContentVariants = cva('flex flex-col', {
     variant: {
       default: 'py-1 gap-y-1',
       settings: 'gap-y-2 pb-2',
-      sidebar: 'gap-y-1 p-1 pl-2.5 px-1.5',
+      sidebar: 'gap-y-0.5 p-1 pl-2.5 px-1.5',
     },
   },
   defaultVariants: {
