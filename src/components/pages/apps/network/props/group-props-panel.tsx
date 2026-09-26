@@ -25,6 +25,7 @@ import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import { IGroup, useNetwork } from '../network-store'
+import { useUserData } from '../network-user-data-store'
 import { GroupDialog } from './group-dialog'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
@@ -44,6 +45,7 @@ export function GroupItem({
   group: IGroup
 }) {
   const { setGroups, groups } = useNetwork()
+  const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { openCustom: openCustomDialog } = useDialogs()
 
   return (
@@ -73,7 +75,6 @@ export function GroupItem({
         colors={[
           {
             color: group.color,
-
             allowAlpha: false,
             allowNoColor: false,
             onColorChange: ({ color }) => {
@@ -82,6 +83,17 @@ export function GroupItem({
                   const g = draft.find((x) => x.id === group.id)
                   if (g) {
                     g.color = color
+                  }
+                })
+              )
+
+              // save colors user likes for groups so it will
+              // default to this color next time the group is created
+              updateUserData(
+                produce(userData, (draft) => {
+                  draft.groups.colors = {
+                    ...draft.groups.colors,
+                    [group.name.toLowerCase()]: color,
                   }
                 })
               )
@@ -95,7 +107,7 @@ export function GroupItem({
       <VCenterCol className="overflow-hidden grow gap-y-1">
         <VCenterRow className="gap-x-1 h-4">
           <TruncateSpan
-            className="grow h-full font-semibold text-xs"
+            className="grow h-full text-xs"
             style={{ color: group.color }}
           >
             {group.name}

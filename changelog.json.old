@@ -3118,6 +3118,10 @@
         {
           "msg": "Network centralized most mouse events to reduce need for listeners on every node",
           "date": "2026-09-26T17:02:02.465Z"
+        },
+        {
+          "msg": "Standardized svg mouse interaction rect",
+          "date": "2026-09-26T17:17:27.898Z"
         }
       ]
     },

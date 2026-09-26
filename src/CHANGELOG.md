@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network groups now save color preferences.
 - Standardized svg mouse interaction rect.
 - Network centralized most mouse events to reduce need for listeners on every node.
 - Bug fixes and updates.

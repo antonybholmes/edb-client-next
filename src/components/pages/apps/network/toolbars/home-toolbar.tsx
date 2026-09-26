@@ -5,7 +5,7 @@ import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
-import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
@@ -59,7 +59,7 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Network">
-        <ToolbarColButton
+        <ToolbarColSmallButton
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}
           onClick={() => {
@@ -68,7 +68,7 @@ export function HomeToolbar() {
         >
           <PlayIcon variant="app-theme" />
           {TEXT_PLOT}
-        </ToolbarColButton>
+        </ToolbarColSmallButton>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size">

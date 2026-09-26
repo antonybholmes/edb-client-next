@@ -1,7 +1,7 @@
 import { TEXT_OPEN } from '@/consts'
 import { ComponentProps } from 'react'
 import { UploadIcon } from '../icons/upload-icon'
-import { ToolbarColButton } from './toolbar-col-button'
+import { ToolbarColSmallButton } from './toolbar-col-button'
 
 // interface IProps extends IDivProps {
 //   onOpen?: () => void
@@ -14,9 +14,9 @@ export function ToolbarOpenFile({
   ...props
 }: ComponentProps<'button'>) {
   return (
-    <ToolbarColButton icon={<UploadIcon />} title={title} {...props}>
+    <ToolbarColSmallButton icon={<UploadIcon />} title={title} {...props}>
       <UploadIcon size={24} strokeWidth={1} />
       {TEXT_OPEN}
-    </ToolbarColButton>
+    </ToolbarColSmallButton>
   )
 }
