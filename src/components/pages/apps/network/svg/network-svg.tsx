@@ -8,7 +8,7 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgLine } from '@/components/plot/svg-line'
-import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IS_DEV_MODE } from '@/consts'
 import { IDim } from '@/interfaces/dim'
@@ -416,13 +416,10 @@ export function NetworkSvgContent() {
             )
           })}
 
-          <SvgRect
-            id="mouse-rect"
-            data-interaction-only="true"
+          <SvgMouseRect
             width={settings.plot.size.w}
             height={settings.plot.size.h}
-            fill="transparent"
-            pointerEvents="all"
+
             onMouseMove={onMouseMove}
             onDoubleClick={onMouseDoubleClick}
             //onMouseLeave={hideCrosshair}

@@ -1,5 +1,5 @@
 import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
-import type { SVGProps } from 'react'
+import type { ComponentProps, SVGProps } from 'react'
 
 interface IProps extends SVGProps<SVGRectElement> {
   sp?: IStrokeProps | undefined
@@ -32,6 +32,25 @@ export function SvgRect({
       strokeDasharray={strokeDasharray ?? sp?.dasharray}
       fill={fill ?? fp?.value ?? 'none'}
       fillOpacity={fillOpacity ?? fp?.opacity}
+      {...props}
+    />
+  )
+}
+
+/**
+ * Svg rect for capturing mouse interactions. It is marked for interaction only so
+ * it be removed when svg is saved or finalized.
+ *
+ * @param param0 Props to be passed to the SvgRect component.
+ * @returns
+ */
+export function SvgMouseRect({ ...props }: ComponentProps<typeof SvgRect>) {
+  return (
+    <SvgRect
+      id="mouse-rect"
+      data-interaction-only="true"
+      fill="transparent"
+      pointerEvents="all"
       {...props}
     />
   )

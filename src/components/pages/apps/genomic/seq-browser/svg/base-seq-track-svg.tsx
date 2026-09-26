@@ -9,7 +9,7 @@ import {
 } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -236,12 +236,9 @@ function BaseSeqTrackSvgContent({
         )}
 
         <SvgG id="plot" onMouseMove={onMouseMove} onMouseLeave={_hideTooltip}>
-          <SvgRect
-            id="mouse-rect"
+          <SvgMouseRect
             width={xl}
             height={tracks[0]!.track.displayOptions.height}
-            fill="transparent"
-            stroke="blue"
           />
 
           {tracks.map((t, ti) => {

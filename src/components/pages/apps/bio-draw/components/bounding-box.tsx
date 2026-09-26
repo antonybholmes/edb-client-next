@@ -1,3 +1,4 @@
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import type { IBox } from '@/interfaces/pos'
 
 const HANDLE_DEFS = [
@@ -19,20 +20,6 @@ interface IProps {
 export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
   return (
     <>
-      <rect
-        x={bbox.x}
-        y={bbox.y}
-        width={bbox.width}
-        height={bbox.height}
-        fill="transparent"
-        stroke="cornflowerblue"
-        //pointerEvents="all"
-        //strokeDasharray="4"
-        onMouseDown={e => {
-          handleMouseDown(e, 'move')
-        }}
-      />
-
       {HANDLE_DEFS.map(({ x, y, dir }, i) => {
         switch (dir) {
           case 'n':
@@ -48,7 +35,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
                 fill="white"
                 stroke="cornflowerblue"
                 strokeWidth={1}
-                onMouseDown={e => {
+                onMouseDown={(e) => {
                   e.stopPropagation()
                   handleMouseDown(e, dir)
                 }}
@@ -68,7 +55,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
                 fill="white"
                 stroke="cornflowerblue"
                 strokeWidth={1}
-                onMouseDown={e => {
+                onMouseDown={(e) => {
                   e.stopPropagation()
                   handleMouseDown(e, dir)
                 }}
@@ -85,7 +72,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
                 fill="cornflowerblue"
                 stroke="white"
                 strokeWidth={1}
-                onMouseDown={e => {
+                onMouseDown={(e) => {
                   e.stopPropagation()
                   handleMouseDown(e, dir)
                 }}
@@ -94,6 +81,16 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
             )
         }
       })}
+
+      <SvgMouseRect
+        x={bbox.x}
+        y={bbox.y}
+        width={bbox.width}
+        height={bbox.height}
+        onMouseDown={(e) => {
+          handleMouseDown(e, 'move')
+        }}
+      />
     </>
   )
 }

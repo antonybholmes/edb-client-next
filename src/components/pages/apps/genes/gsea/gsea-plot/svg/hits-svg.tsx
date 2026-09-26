@@ -7,7 +7,7 @@ import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { IEdbSettings, useEdbSettings } from '@/components/edb/edb-settings'
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
-import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { makeUuid } from '@/lib/id'
@@ -281,13 +281,10 @@ export const GenesSvg = memo(function GenesSvg({
     <>
       {svgHits}
 
-      <SvgRect
-        id="mouse-rect"
-        data-interaction-only="true"
+      <SvgMouseRect
         width={innerPlotSize.w}
         height={settings.genes.height}
-        fill="transparent"
-        pointerEvents="all"
+
         onMouseMove={onMouseMove}
         onMouseLeave={hideCrosshair}
       />

@@ -2,7 +2,7 @@ import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgPath } from '@/components/plot/svg-path'
 import { IMarginProps } from '@/components/plot/svg-props'
-import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { ICell } from '@/interfaces/cell'
@@ -169,13 +169,10 @@ export const CellsSvg = memo(function CellsSvg({
           })
         })}
 
-        <SvgRect
-          id="mouse-rect"
-          data-interaction-only="true"
+        <SvgMouseRect
           width={plotSize.w}
           height={plotSize.h}
-          fill="transparent"
-          pointerEvents="all"
+
           onMouseMove={handleMouseMove}
           onMouseLeave={hideCrosshair}
         />
@@ -278,12 +275,7 @@ export const DotsSvg = memo(function DotsSvg({
       onMouseLeave={hideCrosshair}
       //shapeRendering={SVG_CRISP_EDGES}
     >
-      <SvgRect
-        id="mouse-rect"
-        width={plotSize.w}
-        height={plotSize.h}
-        fill="transparent"
-      />
+      <SvgMouseRect width={plotSize.w} height={plotSize.h} />
 
       {rowLeaves.map((row, ri) => {
         const y = ygaps.position(ri)
@@ -346,11 +338,7 @@ export const DotsSvg = memo(function DotsSvg({
             <SvgG key={`${ri}:${ci}`} pos={{ x: x, y: y }}>
               {/* Handle mouse events on transparent rect on top of circles to avoid 
               issues with small circles not triggering mouse events */}
-              <rect
-                width={blockSize.w}
-                height={blockSize.h}
-                fill="transparent"
-              />
+
               <SvgCircle
                 id={`${ri}:${ci}`}
                 key={`${ri}:${ci}`}
@@ -377,6 +365,8 @@ export const DotsSvg = memo(function DotsSvg({
                   {formatNumber(cellValue, { dp: props.cells.values.dp })}
                 </SvgText>
               )}
+
+              <SvgMouseRect width={blockSize.w} height={blockSize.h} />
             </SvgG>
           )
         })

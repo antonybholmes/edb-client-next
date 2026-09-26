@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.8.0",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-09-09T03:36:01.262Z",
-    "hash": "27a2af1507f1e91994aab0a96bca18f5ae5b80b60d05c8a92e1df60cfcd58ac3",
-    "build": 554
+    "modified": "2026-09-26T17:17:25.864Z",
+    "hash": "6cd460b1e091a7fcc97409b0893c368e1ca4b0ab6776cbf56ef113422d41a499",
+    "build": 556
   },
   {
     "name": "Convert",
@@ -45,9 +45,9 @@
     "color": "#006666",
     "version": "2.4.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-20T22:17:52.074Z",
-    "hash": "20e602876fca834f05cc97605ba4a5a6f7d3088713b5d0d41e5b1b466c019a0e",
-    "build": 1034
+    "modified": "2026-09-26T17:17:25.866Z",
+    "hash": "bb3b86f4e18dc87c68334a08a7b862adb5a702a251e1afc5e7f35486c7d4bbd4",
+    "build": 1036
   },
   {
     "name": "Get DNA",
@@ -74,9 +74,9 @@
     "color": "#ffb366",
     "version": "23.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-25T19:33:18.499Z",
-    "hash": "ee1ac28c9997cb8b162dea9307ae44e436869dcc3260c7f44ecdfc6ea7eddb3c",
-    "build": 1006
+    "modified": "2026-09-26T17:17:25.868Z",
+    "hash": "2f088d3ba3d6fff4e04c98dd931450197af2514f098edeaaa57dae8cdb1422af",
+    "build": 1008
   },
   {
     "name": "GSEA Web",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.6.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-25T17:42:09.257Z",
-    "hash": "a067a96efecbc3dc736396eec210212b34ba18b0f5219b3226300ec712dedf62",
-    "build": 2090
+    "modified": "2026-09-26T17:17:25.880Z",
+    "hash": "cc5c925853561196bde148f0c658e930c1cf03b334ba648b4d315a0bc69aa878",
+    "build": 2092
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.2.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-26T17:02:00.119Z",
-    "hash": "5272eb42d8c353360e443bc3227efba42b0309185364b52e435f8105543f1a4d",
-    "build": 54
+    "modified": "2026-09-26T17:17:25.881Z",
+    "hash": "f397550366264bb56cc21ffbd7af6c99772d4b00cd7a732f144ac11cee73c9bd",
+    "build": 56
   },
   {
     "name": "Oncoplot",
@@ -212,9 +212,9 @@
     "color": "#FF0000",
     "version": "32.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-16T03:35:22.833Z",
-    "hash": "3b9933e27bd1944c82a6cf7ec2d7fc3f78ee2164b5faac639effda976bfb541d",
-    "build": 1164
+    "modified": "2026-09-26T17:17:25.875Z",
+    "hash": "2d652ad0744be90600baa4272db70aa5505f929590855d5ec4f83bc15e307d5b",
+    "build": 1166
   },
   {
     "name": "Single Cell",
@@ -261,9 +261,9 @@
     "color": "#FA8072",
     "version": "26.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-16T03:35:22.845Z",
-    "hash": "40742e90fb5a7609b4e32d45207123eab234fa023e3e157f6a1519b377155168",
-    "build": 1042
+    "modified": "2026-09-26T17:17:25.887Z",
+    "hash": "cf5a0a02b1b9473b28e9f0fe0abb67c5d42cc9ea12e2dfcd709a214f01d58d15",
+    "build": 1044
   },
   {
     "name": "Venn",
@@ -271,8 +271,8 @@
     "color": "#00008B",
     "version": "26.6.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-25T17:42:09.258Z",
-    "hash": "f81fbc13ad2b4a3f6424abd4a74aeb270de86906325ab94212696708f5d4c4b4",
-    "build": 950
+    "modified": "2026-09-26T17:17:25.883Z",
+    "hash": "b127bc0589bb90f46bd12ed148206a11395f3124e9ca02a61c5da3ee792347f0",
+    "build": 952
   }
 ]

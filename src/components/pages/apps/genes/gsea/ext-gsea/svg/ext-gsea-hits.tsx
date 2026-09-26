@@ -14,7 +14,7 @@ import {
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -202,13 +202,10 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
           </SvgG>
         )}
 
-        <SvgRect
-          id="mouse-rect"
-          data-interaction-only="true"
+        <SvgMouseRect
           width={w}
           height={settings.genes.height}
-          fill="transparent"
-          pointerEvents="all"
+
           onMouseMove={onMouseMove}
           onMouseLeave={hideCrosshair}
         />

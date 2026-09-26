@@ -1,5 +1,6 @@
 import { createAxis } from '@/components/plot/axes/axis'
 import { SvgBase } from '@/components/plot/svg-base'
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
 import { formatChr } from '@/lib/genomic/dna'
@@ -222,18 +223,7 @@ export function PileupPlotSvg() {
                   return (
                     <Fragment key={vi}>
                       {/* invisible rect to capture mouse events for tooltip */}
-                      <rect
-                        x={-HALF_BASE_W}
-                        y={h - HALF_BASE_H}
-                        width={BASE_W}
-                        height={BASE_H}
-                        fill="transparent"
-                        className="cursor-pointer"
-                        onMouseEnter={() => {
-                          handleVariantEnter(v, x, h)
-                        }}
-                        onMouseLeave={hideTooltip}
-                      />
+
                       <SvgText
                         x={v.type.includes('INS') ? HALF_BASE_W : 0}
                         y={h + (v.type.includes('INS') ? 0 : 0)}
@@ -247,6 +237,18 @@ export function PileupPlotSvg() {
                       >
                         {v.type.includes('INS') ? '^' : v.tum[0]}
                       </SvgText>
+
+                      <SvgMouseRect
+                        x={-HALF_BASE_W}
+                        y={h - HALF_BASE_H}
+                        width={BASE_W}
+                        height={BASE_H}
+
+                        onMouseEnter={() => {
+                          handleVariantEnter(v, x, h)
+                        }}
+                        onMouseLeave={hideTooltip}
+                      />
                     </Fragment>
                   )
                 })}
