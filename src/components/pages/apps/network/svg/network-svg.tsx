@@ -95,8 +95,8 @@ export function NetworkSvgContent() {
 
     const labelSet = new Set(
       userData.labels.ids
-        .map((label) => label.toLowerCase())
         .filter((x) => x.length > 0)
+        .map((x) => x.toLowerCase())
     )
 
     const nodeRadiusScale = nodeRadiusFunc(
@@ -153,7 +153,25 @@ export function NetworkSvgContent() {
         }
       })
       .filter((node) => {
-        return node.view !== 'hidden'
+        if (node.view === 'hidden') {
+          return false
+        }
+
+        if (settings.plot.nodes.clip) {
+          const nodePos = realCoordinates.get(node.id)!
+          const radius = radiusMap.get(node.id)!
+
+          if (
+            nodePos.x - radius < 0 ||
+            nodePos.x + radius > settings.plot.size.w ||
+            nodePos.y - radius < 0 ||
+            nodePos.y + radius > settings.plot.size.h
+          ) {
+            return false
+          }
+        }
+
+        return true
       })
 
     const renderNodesMap = new Map(renderNodes.map((node) => [node.id, node]))
@@ -389,18 +407,19 @@ function NodeCircle({
         onMouseLeave={hide}
         // double click
         onDoubleClick={(e) => {
-          if (userData.labels.ids.includes(node.id2)) {
+          if (labelsInNodeIds(node, labelSet)) {
             updateUserData(
               produce(userData, (draft) => {
-                draft.labels.ids = draft.labels.ids.filter(
-                  (label) => label !== node.id2
+                draft.labels.ids = userData.labels.ids.filter(
+                  (id) => id !== node.id2
                 )
               })
             )
           } else {
+            console.log('Adding node to user data labels:', node.id2)
             updateUserData(
               produce(userData, (draft) => {
-                draft.labels.ids.push(node.id2)
+                draft.labels.ids = [...userData.labels.ids, node.id2]
               })
             )
           }
@@ -446,7 +465,7 @@ function realCoordinate(
       let x = pos.x
       let y = pos.y
 
-      if (settings.plot.scaleToFit) {
+      if (settings.plot.autoFit) {
         x *= plotScale.x
         y *= plotScale.y
       }
@@ -460,7 +479,7 @@ function realCoordinate(
 
       const radius = radiusMap.get(id) ?? 0
 
-      if (settings.plot.nodes.keepWithinBounds) {
+      if (settings.plot.nodes.clamp) {
         x = Math.max(radius, Math.min(settings.plot.size.w - radius, x))
         y = Math.max(radius, Math.min(settings.plot.size.h - radius, y))
       }
@@ -482,13 +501,22 @@ function showNodeLabel(
   showAll: boolean,
   mode: 'partial' | 'exact'
 ) {
-  const showLabel =
-    showAll ||
-    inNodeData(node, labelSet, mode) ||
-    labelSet.has(node.id2.toLowerCase()) ||
-    labelSet.has(node.id)
+  const found =
+    inNodeData(node, labelSet, mode) || labelsInNodeIds(node, labelSet)
+
+  // if showAll is true, we show the label only if it is not found in the node data or node ids
+  // if showAll is false, we show the label only if it is found in the node data or node ids
+  // therefore we just check if showAll is different from found because that captures both cases correctly
+  const showLabel = showAll !== found
 
   return showLabel
+}
+
+function labelsInNodeIds(node: INode, labelSet: Set<string>): boolean {
+  return (
+    inLabelSet(node.id, labelSet, 'exact') ||
+    inLabelSet(node.id2, labelSet, 'exact')
+  )
 }
 
 function inNodeData(

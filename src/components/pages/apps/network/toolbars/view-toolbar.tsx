@@ -33,17 +33,16 @@ export function ViewToolbar() {
         <ToolbarCol>
           <ToolbarRow>
             <ToolbarButton
-              title="Auto Scale"
-              checked={settings.plot.scaleToFit}
+              checked={settings.plot.autoFit}
               onClick={() =>
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.scaleToFit = !settings.plot.scaleToFit
+                    draft.plot.autoFit = !settings.plot.autoFit
                   })
                 )
               }
             >
-              Auto Scale
+              Auto Fit
             </ToolbarButton>
           </ToolbarRow>
         </ToolbarCol>

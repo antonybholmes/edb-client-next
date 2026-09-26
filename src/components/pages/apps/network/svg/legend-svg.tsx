@@ -41,21 +41,26 @@ export function LegendSvg() {
     settings.plot.legend.dot.radius * 2 + 5
   )
 
-  console.log('blockHeight:', blockHeight)
-
   const groupsHeight = (groups.length + 2) * blockHeight
 
   let {
     ticks: sizeTicks,
     interval: sizeInterval,
     format: sizeFormat,
-  } = autoTickInterval({
-    min: 0,
-    max: nodes.metricLim1.max,
-  })
+  } = autoTickInterval(
+    {
+      min: 0,
+      max: nodes.metricLim1.max,
+    },
+    settings.plot.legend.sizes.ticks
+  )
 
   if (sizeTicks[0] < sizeInterval) {
     sizeTicks = sizeTicks.slice(1)
+  }
+
+  if (sizeTicks.length > settings.plot.legend.sizes.ticks) {
+    sizeTicks = sizeTicks.slice(0, settings.plot.legend.sizes.ticks)
   }
 
   const sizeHeight =
@@ -67,16 +72,23 @@ export function LegendSvg() {
     ticks: strengthTicks,
     interval: strengthInterval,
     format: strengthFormat,
-  } = autoTickInterval({
-    min: 0,
-    max: edges.strengthLim.max,
-  })
+  } = autoTickInterval(
+    {
+      min: 0,
+      max: edges.strengthLim.max,
+    },
+    settings.plot.legend.edges.ticks
+  )
 
   if (strengthTicks[0] < strengthInterval) {
     strengthTicks = strengthTicks.slice(1)
   }
 
-  const edgesHeight = 40 + strengthTicks.length * blockHeight
+  if (strengthTicks.length > settings.plot.legend.edges.ticks) {
+    strengthTicks = strengthTicks.slice(0, settings.plot.legend.edges.ticks)
+  }
+
+  const edgesHeight = 2 * blockHeight + strengthTicks.length * blockHeight
 
   return (
     <SvgG
@@ -106,13 +118,22 @@ export function LegendSvg() {
       />
 
       {settings.plot.nodes.color.mode === 'auto' && (
-        <Size2Svg pos={{ x: 0, y: groupsHeight + sizeHeight + edgesHeight }} />
+        <Size2Svg
+          pos={{ x: 0, y: groupsHeight + sizeHeight + edgesHeight }}
+          blockHeight={blockHeight}
+        />
       )}
     </SvgG>
   )
 }
 
-export function Size2Svg({ pos }: { pos: IPos }) {
+export function Size2Svg({
+  pos,
+  blockHeight,
+}: {
+  pos: IPos
+  blockHeight: number
+}) {
   const { settings } = useNetworkSettings()
   const { headings, nodes } = useNetwork()
 
@@ -149,7 +170,7 @@ export function Size2Svg({ pos }: { pos: IPos }) {
       >
         {getSize2Label(headings, settings)}
       </SvgText>
-      <SvgG pos={{ x: 0, y: 15 }}>
+      <SvgG pos={{ x: 0, y: blockHeight }}>
         <SvgVColorBar ax={cax} cmap={cmap} />
       </SvgG>
     </SvgG>

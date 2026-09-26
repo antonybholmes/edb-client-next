@@ -242,7 +242,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       metric2Col
     )
 
-    setMessage('Creating network graph...')
+    setMessage('Creating graph...')
     runSim(network, () => {
       setMessage(null)
       close()

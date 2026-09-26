@@ -1,7 +1,7 @@
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { produce } from 'immer'
@@ -49,18 +49,19 @@ export function NodesToolbar() {
             </SelectList>
           </ToolbarRow>
           <ToolbarRow>
-            <Checkbox
+            <ToolbarButton
               checked={settings.plot.nodes.view.hidden.show}
-              onCheckedChange={(checked) => {
+              onClick={() => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.nodes.view.hidden.show = checked
+                    draft.plot.nodes.view.hidden.show =
+                      !settings.plot.nodes.view.hidden.show
                   })
                 )
               }}
             >
               Show Hidden
-            </Checkbox>
+            </ToolbarButton>
           </ToolbarRow>
         </ToolbarCol>
         <ToolbarCol>

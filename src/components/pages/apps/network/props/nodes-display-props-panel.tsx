@@ -2,7 +2,6 @@ import { PropsPanel } from '@/components/props-panel'
 import { produce } from 'immer'
 import { useNetworkSettings } from '../network-settings-store'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import {
@@ -12,8 +11,9 @@ import {
 } from '@/components/shadcn/ui/themed/resizable'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { TEXT_UPDATE } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { useEffect, useState } from 'react'
@@ -25,12 +25,18 @@ export function NodesDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { setGroups, groups } = useNetwork()
-  const { openCustom: openCustomDialog } = useDialogs()
 
   const [text, setText] = useState('')
 
   useEffect(() => {
-    setText(userData.labels.ids.join('\n'))
+    if (userData.labels.ids.length > 0) {
+      setText(
+        [...userData.labels.ids]
+          .sort((a, b) => a.localeCompare(b))
+          .map((id) => id)
+          .join('\n')
+      )
+    }
   }, [userData.labels])
 
   // const debounceText = useDebounce(text)
@@ -91,53 +97,58 @@ export function NodesDisplayPropsPanel() {
           collapsible={true}
         >
           <PropRow title="Nodes" className="text-sm">
-            <Checkbox
-              className="text-xs"
+            <ToolbarButton
+              className="text-xs font-normal"
               checked={settings.plot.nodes.labels.showAll}
-              onCheckedChange={(v) =>
+              onClick={() =>
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.nodes.labels.showAll = v
+                    draft.plot.nodes.labels.showAll =
+                      !settings.plot.nodes.labels.showAll
                   })
                 )
               }
             >
-              Show All Labels
-            </Checkbox>
+              All Labels
+            </ToolbarButton>
           </PropRow>
           <Textarea
             title="Node Label"
             value={text}
             onTextChange={(value) => setText(value)}
           />
-          <VCenterRow className="gap-x-2 justify-between">
-            <Checkbox
-              checked={userData.labels.mode === 'exact'}
-              onCheckedChange={(v) =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.mode = v ? 'partial' : 'exact'
-                  })
-                )
-              }
-            >
-              Exact Match
-            </Checkbox>
-
+          <VCenterRow className="gap-x-1">
             <Button
               variant="app-theme"
               onClick={() =>
                 updateUserData(
                   produce(userData, (draft) => {
-                    draft.labels.ids = text
-                      .split('\n')
-                      .map((x) => x.trim())
-                      .filter((x) => x.length > 0)
+                    draft.labels.ids = [
+                      ...new Set(
+                        text
+                          .split('\n')
+                          .map((x) => x.trim())
+                          .filter((x) => x.length > 0)
+                      ),
+                    ].sort()
                   })
                 )
               }
             >
-              Add Labels
+              {TEXT_UPDATE}
+            </Button>
+            <Button
+              checked={userData.labels.mode === 'exact'}
+              onClick={() =>
+                updateUserData(
+                  produce(userData, (draft) => {
+                    draft.labels.mode =
+                      userData.labels.mode === 'exact' ? 'partial' : 'exact'
+                  })
+                )
+              }
+            >
+              Exact Match
             </Button>
           </VCenterRow>
         </ResizablePanel>

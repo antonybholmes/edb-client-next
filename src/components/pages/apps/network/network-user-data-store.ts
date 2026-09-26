@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:network:user-data:v4`
+const SETTINGS_KEY = `${config.appId}:app:network:user-data:v6`
 
 interface IUserDataGroups {
   colors: Record<string, string>

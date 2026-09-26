@@ -8,7 +8,7 @@ import type { IAppHeaderLink } from '@/menus'
 import { CSSProperties } from 'react'
 import { CenterRow } from '../layout/center-row'
 
-export const APP_ICON_CLS = `app-icon rounded-full aspect-square shrink-0 grow-0`
+export const APP_ICON_CLS = `relative app-icon rounded-full aspect-square shrink-0 grow-0`
 
 export function AppIcon({
   appInfo,

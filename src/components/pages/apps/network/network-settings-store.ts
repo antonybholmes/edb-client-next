@@ -57,7 +57,7 @@ export interface INetworkSettings {
   plot: {
     size: IDim
     margin: IMarginProps
-    scaleToFit: boolean
+    autoFit: boolean
     scale: number
     border: IStrokeProps
     nodes: {
@@ -90,7 +90,8 @@ export interface INetworkSettings {
           opacity: number
         }
       }
-      keepWithinBounds: boolean
+      clamp: boolean
+      clip: boolean
     }
 
     edges: {
@@ -101,12 +102,12 @@ export interface INetworkSettings {
       dot: {
         radius: number
       }
-      // sizes: {
-      //   ticks: number[]
-      // }
+      sizes: {
+        ticks: number
+      }
       edges: {
         size: number
-        //ticks: number[]
+        ticks: number
       }
     }
   }
@@ -122,7 +123,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
   plot: {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
-    scaleToFit: true,
+    autoFit: true,
     scale: 1,
     border: { ...DEFAULT_STROKE_PROPS, show: false },
     nodes: {
@@ -152,7 +153,8 @@ const DEFAULT_SETTINGS: INetworkSettings = {
           opacity: 0.1,
         },
       },
-      keepWithinBounds: true,
+      clamp: true,
+      clip: true,
     },
 
     edges: {
@@ -163,12 +165,12 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       dot: {
         radius: 8,
       },
-      // sizes: {
-      //   ticks: [100, 200, 300, 400],
-      // },
+      sizes: {
+        ticks: 4,
+      },
       edges: {
         size: 15,
-        //ticks: [0.2, 0.4, 0.6, 0.8, 1],
+        ticks: 5,
       },
     },
   },

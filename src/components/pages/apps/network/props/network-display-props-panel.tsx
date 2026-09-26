@@ -29,7 +29,7 @@ import { FieldSelectList } from './field-select-list'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
-  const { network, nodes, setNodeLabelField } = useNetwork()
+  const { network } = useNetwork()
   const { run } = useNetworkSim()
   const [message, setMessage] = useState('')
 
@@ -95,7 +95,7 @@ export function NetworkDisplayPropsPanel() {
               <Button
                 variant="app-theme"
                 onClick={() => {
-                  setMessage('Running...')
+                  setMessage('Creating graph...')
                   run(network, () => setMessage(''))
                 }}
               >
@@ -134,34 +134,6 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
 
-            <CheckPropRow
-              title="Auto Scale"
-              checked={settings.plot.scaleToFit}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.scaleToFit = checked
-                  })
-                )
-              }
-            >
-              <NumSlider
-                min={0}
-                max={5}
-                step={0.1}
-                dp={1}
-
-                value={settings.plot.scale}
-                onNumChanged={(value) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.scale = value
-                    })
-                  )
-                }
-              />
-            </CheckPropRow>
-
             <PropRow title="Border">
               <StrokeButton
                 colors={[
@@ -179,24 +151,65 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
+            <CheckPropRow
+              title="Clamp"
+              tooltip="Nodes will be clamped within the plot boundaries."
+              checked={settings.plot.nodes.clamp}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.clamp = checked
+                  })
+                )
+              }
+            />
+            <CheckPropRow
+              title="Clip"
+              tooltip="Clip nodes at the plot boundaries."
+              checked={settings.plot.nodes.clip}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.clip = checked
+                  })
+                )
+              }
+            />
+            <CheckPropRow
+              title="Auto Fit"
+              checked={settings.plot.autoFit}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.autoFit = checked
+                  })
+                )
+              }
+            ></CheckPropRow>
+
+            <PropRow title="Scale">
+              <NumSlider
+                min={0}
+                max={5}
+                step={0.1}
+                dp={1}
+
+                value={settings.plot.scale}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.scale = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="nodes">
           <AccordionTrigger>Nodes</AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Keep Within Bounds"
-              tooltip="Force nodes to stay within the plot bounds. Nodes at the edges will be constrained."
-              checked={settings.plot.nodes.keepWithinBounds}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.keepWithinBounds = checked
-                  })
-                )
-              }
-            />
             <PropRow title="Radius">
               <NumSlider
                 min={0}
