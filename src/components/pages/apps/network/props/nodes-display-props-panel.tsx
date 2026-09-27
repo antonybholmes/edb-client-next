@@ -11,7 +11,7 @@ import {
 } from '@/components/shadcn/ui/themed/resizable'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_UPDATE } from '@/consts'
 import { move } from '@dnd-kit/helpers'
@@ -97,20 +97,20 @@ export function NodesDisplayPropsPanel() {
           collapsible={true}
         >
           <PropRow title="Nodes" className="text-sm">
-            <ToolbarButton
+            <Switch
+              side="right"
               className="text-xs font-normal"
               checked={settings.plot.nodes.labels.showAll}
-              onClick={() =>
+              onCheckedChange={(v) =>
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.nodes.labels.showAll =
-                      !settings.plot.nodes.labels.showAll
+                    draft.plot.nodes.labels.showAll = v
                   })
                 )
               }
             >
               All Labels
-            </ToolbarButton>
+            </Switch>
           </PropRow>
           <Textarea
             title="Node Label"

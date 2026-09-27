@@ -1,6 +1,5 @@
 'use client'
 
-import { BaseCol } from '@/layout/base-col'
 import { ClientLayout } from '@/app/client-layout'
 
 import { CenterLayout } from '@/layouts/center-layout'
@@ -19,19 +18,21 @@ export function AppsInfoPage() {
 
   return (
     <CenterLayout signinRequired={false} title="Apps Info">
-      <ul className="flex flex-col gap-y-4">
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 w-9/10 lg:w-2/3">
         {data?.map((app) => (
-          <li key={app.name} className="text-sm border-b border-border pb-4">
-            <BaseCol className="gap-y-1">
-              <h1 className="text-xl font-semibold">{app.name}</h1>
-              <p>{app.description}</p>
-              <p>
-                Build {app.version}.{app.build}
-              </p>
-              <p>Hash {app.hash}</p>
-              <p>Updated {format(new Date(app.modified), 'MMM dd, yyyy')}</p>
-              <p>{app.copyright}</p>
-            </BaseCol>
+          <li
+            key={app.name}
+            className="flex flex-col text-xs hover:border-border border-l-2 border-transparent pl-2 trans-color"
+          >
+            <h1 className="text-base font-semibold">{app.name}</h1>
+            <span>{app.description}</span>
+            <span>
+              Build {app.version}.{app.build} ({app.hash.slice(0, 12)})
+            </span>
+            <span>
+              Updated {format(new Date(app.modified), 'MMM dd, yyyy')}
+            </span>
+            <span>{app.copyright}</span>
           </li>
         ))}
       </ul>

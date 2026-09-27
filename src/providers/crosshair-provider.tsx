@@ -16,9 +16,11 @@ const TOOLTIP_CLS =
 
 const CROSS_CLS = 'absolute pointer-events-none aspect-square top-0 left-0'
 
-const CROSS_GAP = 12
-const CROSS_SIZE = 11
+const CROSS_SIZE = 9
+const CROSS_GAP = CROSS_SIZE
 const CROSS_MID = Math.floor(CROSS_SIZE / 2)
+const ANIMATION_DURATION_MS = 0.1
+const EASE = 'power1.out'
 
 interface ICrosshair {
   /**
@@ -42,6 +44,9 @@ interface ICrosshair {
    */
   offset?: IPos
 
+  /**
+   * The color of the crosshair lines.
+   */
   color?: string
 }
 
@@ -176,8 +181,8 @@ export function CrosshairProvider({ children }: IChildrenProps) {
         {
           x: crosshair.pos.x,
           height: crosshair.pos.y - CROSS_GAP,
-          duration: 0.2,
-          ease: 'power2.out',
+          duration: ANIMATION_DURATION_MS,
+          ease: EASE,
         },
         0
       )
@@ -186,8 +191,8 @@ export function CrosshairProvider({ children }: IChildrenProps) {
         {
           x: crosshair.pos.x,
           y: crosshair.pos.y + CROSS_GAP,
-          duration: 0.2,
-          ease: 'power2.out',
+          duration: ANIMATION_DURATION_MS,
+          ease: EASE,
         },
         0
       )
@@ -196,8 +201,8 @@ export function CrosshairProvider({ children }: IChildrenProps) {
         {
           y: crosshair.pos.y,
           width: crosshair.pos.x - CROSS_GAP,
-          duration: 0.2,
-          ease: 'power2.out',
+          duration: ANIMATION_DURATION_MS,
+          ease: EASE,
         },
         0
       )
@@ -206,18 +211,18 @@ export function CrosshairProvider({ children }: IChildrenProps) {
         {
           y: crosshair.pos.y,
           x: crosshair.pos.x + CROSS_GAP,
-          duration: 0.2,
-          ease: 'power2.out',
+          duration: ANIMATION_DURATION_MS,
+          ease: EASE,
         },
         0
       )
       .to(
         crossRef.current,
         {
-          x: crosshair.pos.x - 5,
-          y: crosshair.pos.y - 5,
-          duration: 0.2,
-          ease: 'power2.out',
+          x: crosshair.pos.x - CROSS_MID,
+          y: crosshair.pos.y - CROSS_MID,
+          duration: ANIMATION_DURATION_MS,
+          ease: EASE,
         },
         0
       )
