@@ -2,13 +2,23 @@ import { BaseCol } from '@/components/layout/base-col'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { IPos } from '@/interfaces/pos'
 import { cn } from '@/lib/shadcn-utils'
-import { ReactNode, useEffect } from 'react'
+import gsap from 'gsap'
+import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { create } from 'zustand'
 import { TOOLTIP_CLEAR_MS } from './tooltip-provider'
 
 const CROSSHAIR_CLS =
-  'absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-px h-px top-0 left-0'
+  'absolute z-(--z-modal) pointer-events-none w-px h-px top-0 left-0 opacity-20 mix-blend-multiply'
+
+const TOOLTIP_CLS =
+  'z-(--z-tooltip) rounded-xl bg-black/50 backdrop-blur-xs p-4 flex flex-col text-xs text-white pointer-events-none'
+
+const CROSS_CLS = 'absolute pointer-events-none aspect-square top-0 left-0'
+
+const CROSS_GAP = 12
+const CROSS_SIZE = 11
+const CROSS_MID = Math.floor(CROSS_SIZE / 2)
 
 interface ICrosshair {
   /**
@@ -31,6 +41,8 @@ interface ICrosshair {
    * Offset for the tooltip relative to the crosshair position.
    */
   offset?: IPos
+
+  color?: string
 }
 
 const DEFAULT_OFFSET: IPos = { x: 10, y: 10 }
@@ -67,13 +79,19 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     crosshair: null,
 
     showCrosshair: (crosshair) => {
-      const { pos, clientPos, content, offset = DEFAULT_OFFSET } = crosshair
+      const {
+        pos,
+        clientPos,
+        content,
+        offset = DEFAULT_OFFSET,
+        color = 'var(--color-foreground)',
+      } = crosshair
 
       cancelPendingFrame()
 
       clearPendingTimeout()
 
-      pendingCrosshair = { pos, clientPos, content, offset }
+      pendingCrosshair = { pos, clientPos, content, offset, color }
 
       crosshairFrame = requestAnimationFrame(() => {
         crosshairFrame = null
@@ -115,10 +133,95 @@ export function useCrosshair() {
 export function CrosshairProvider({ children }: IChildrenProps) {
   const crosshair = useCrosshairStore((state) => state.crosshair)
   const dispose = useCrosshairStore((state) => state.dispose)
+  const vTopRef = useRef<HTMLSpanElement>(null)
+  const vBottomRef = useRef<HTMLSpanElement>(null)
+  const hLeftRef = useRef<HTMLSpanElement>(null)
+  const hRightRef = useRef<HTMLSpanElement>(null)
+  const crossRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     return dispose
   }, [dispose])
+
+  const { tooltip, usePortal } = useMemo(() => {
+    if (!crosshair) {
+      return { tooltip: null, usePortal: false }
+    }
+
+    const usePortal = !!crosshair.clientPos
+    const pos = usePortal ? crosshair.clientPos : crosshair.pos
+    const tooltip = (
+      <BaseCol
+        className={cn(usePortal ? 'fixed' : 'absolute', TOOLTIP_CLS)}
+        style={{
+          left: pos.x + crosshair.offset.x,
+          top: pos.y + crosshair.offset.y,
+        }}
+      >
+        {crosshair.content}
+      </BaseCol>
+    )
+
+    return { tooltip, usePortal }
+  }, [crosshair])
+
+  useEffect(() => {
+    if (!crossRef.current) {
+      return
+    }
+    gsap
+      .timeline()
+      .to(
+        vTopRef.current,
+        {
+          x: crosshair.pos.x,
+          height: crosshair.pos.y - CROSS_GAP,
+          duration: 0.2,
+          ease: 'power2.out',
+        },
+        0
+      )
+      .to(
+        vBottomRef.current,
+        {
+          x: crosshair.pos.x,
+          y: crosshair.pos.y + CROSS_GAP,
+          duration: 0.2,
+          ease: 'power2.out',
+        },
+        0
+      )
+      .to(
+        hLeftRef.current,
+        {
+          y: crosshair.pos.y,
+          width: crosshair.pos.x - CROSS_GAP,
+          duration: 0.2,
+          ease: 'power2.out',
+        },
+        0
+      )
+      .to(
+        hRightRef.current,
+        {
+          y: crosshair.pos.y,
+          x: crosshair.pos.x + CROSS_GAP,
+          duration: 0.2,
+          ease: 'power2.out',
+        },
+        0
+      )
+      .to(
+        crossRef.current,
+        {
+          x: crosshair.pos.x - 5,
+          y: crosshair.pos.y - 5,
+          duration: 0.2,
+          ease: 'power2.out',
+        },
+        0
+      )
+  }, [crosshair])
 
   return (
     <>
@@ -160,45 +263,46 @@ export function CrosshairProvider({ children }: IChildrenProps) {
           /> */}
 
           <span
+            ref={vTopRef}
             className={CROSSHAIR_CLS}
-            style={{ left: crosshair.pos.x, height: '100%' }}
+            style={{ backgroundColor: crosshair.color }}
           />
 
           <span
+            ref={vBottomRef}
             className={CROSSHAIR_CLS}
-            style={{ top: crosshair.pos.y, width: '100%' }}
+            style={{ height: '100%', backgroundColor: crosshair.color }}
           />
 
-          {crosshair?.content && (
-            <>
-              {!crosshair.clientPos ? (
-                <BaseCol
-                  className={cn(
-                    'absolute z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none'
-                  )}
-                  style={{
-                    left: crosshair.pos.x + crosshair.offset.x,
-                    top: crosshair.pos.y + crosshair.offset.y,
-                  }}
-                >
-                  {crosshair.content}
-                </BaseCol>
-              ) : (
-                createPortal(
-                  <BaseCol
-                    className="fixed z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none"
+          <span
+            ref={hLeftRef}
+            className={CROSSHAIR_CLS}
+            style={{ backgroundColor: crosshair.color }}
+          />
+          <span
+            ref={hRightRef}
+            className={CROSSHAIR_CLS}
+            style={{ width: '100%', backgroundColor: crosshair.color }}
+          />
 
-                    style={{
-                      left: crosshair.clientPos.x + crosshair.offset.x,
-                      top: crosshair.clientPos.y + crosshair.offset.y,
-                    }}
-                  >
-                    {crosshair.content}
-                  </BaseCol>,
-                  document.body
-                )
-              )}
-            </>
+          <div
+            ref={crossRef}
+            id="cross"
+            className={CROSS_CLS}
+            style={{ width: CROSS_SIZE, height: CROSS_SIZE }}
+          >
+            <span
+              className="w-full absolute h-px bg-current"
+              style={{ top: CROSS_MID, backgroundColor: crosshair.color }}
+            />
+            <span
+              className="h-full absolute w-px bg-current"
+              style={{ left: CROSS_MID, backgroundColor: crosshair.color }}
+            />
+          </div>
+
+          {tooltip && (
+            <>{usePortal ? createPortal(tooltip, document.body) : tooltip}</>
           )}
         </>
       )}

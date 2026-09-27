@@ -3138,6 +3138,10 @@
         {
           "msg": "Fixed selectlist to use truncating span and then made it work with items and a custom formatter",
           "date": "2026-09-26T23:32:57.066Z"
+        },
+        {
+          "msg": "Crosshair redesigned to look more elegant and move with animation effects",
+          "date": "2026-09-27T03:04:39.464Z"
         }
       ]
     },

@@ -109,9 +109,8 @@ export function NetworkDisplayPropsPanel() {
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Size">
-              <span>W</span>
+              <span className="w-3 text-center">W</span>
               <NumericalInput
-                h="sm"
                 w="xxs"
                 value={settings.plot.size.w}
                 placeholder="Width"
@@ -125,9 +124,8 @@ export function NetworkDisplayPropsPanel() {
                   )
                 }}
               />
-              <span>H</span>
+              <span className="w-3 text-center">H</span>
               <NumericalInput
-                h="sm"
                 w="xxs"
                 value={settings.plot.size.h}
                 placeholder="Height"
@@ -380,8 +378,6 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
             <PropRow title="Labels">
-              <FieldSelectList />
-              <PositionDropdown />
               <FontPopover
                 fonts={[
                   {
@@ -414,7 +410,8 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
-
+              <PositionDropdown />
+              <FieldSelectList />
               {/* <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}

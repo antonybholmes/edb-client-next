@@ -74,9 +74,8 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="Plot Size">
         <ToolbarCol>
           <ToolbarRow>
-            <span>W</span>
+            <span className="w-3 text-center">W</span>
             <NumericalInput
-              h="sm"
               w="xxs"
               value={settings.plot.size.w}
               placeholder="Width"
@@ -92,9 +91,8 @@ export function HomeToolbar() {
             />
           </ToolbarRow>
           <ToolbarRow>
-            <span>H</span>
+            <span className="w-3 text-center">H</span>
             <NumericalInput
-              h="sm"
               w="xxs"
               value={settings.plot.size.h}
               placeholder="Height"

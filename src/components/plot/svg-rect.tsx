@@ -1,7 +1,9 @@
 import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
+import { IDim } from '@/interfaces/dim'
 import type { ComponentProps, SVGProps } from 'react'
 
 interface IProps extends SVGProps<SVGRectElement> {
+  size?: IDim
   sp?: IStrokeProps | undefined
   fp?: IPaintProps | undefined
 }
@@ -14,6 +16,9 @@ interface IProps extends SVGProps<SVGRectElement> {
  * @returns
  */
 export function SvgRect({
+  size,
+  width,
+  height,
   fill,
   fillOpacity,
   stroke,
@@ -24,8 +29,12 @@ export function SvgRect({
   fp,
   ...props
 }: IProps) {
+  width = size?.w ?? width
+  height = size?.h ?? height
   return (
     <rect
+      width={width}
+      height={height}
       stroke={stroke ?? sp?.value ?? 'none'}
       strokeWidth={strokeWidth ?? sp?.width}
       strokeOpacity={strokeOpacity ?? sp?.opacity}

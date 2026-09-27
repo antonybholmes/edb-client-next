@@ -23,7 +23,7 @@ export const CONTAINER_CLS = cn(
 export const inputVariants = cva(CONTAINER_CLS, {
   variants: {
     variant: {
-      default: 'bg-background border border-border/60 hover:border-border px-2',
+      default: 'bg-background border border-border/60 hover:border-border px-1',
       flat: 'hover:bg-background border border-transparent hover:border-border/50 px-2 focus-within:bg-background focus-within:border-border/50',
       dialog: cn(
         'bg-background border border-border hover:border-ring shadow-sm px-3',
@@ -55,7 +55,7 @@ export const inputVariants = cva(CONTAINER_CLS, {
     },
     w: {
       none: '',
-      xxs: 'w-12',
+      xxs: 'w-11',
       xs: 'w-14',
       sm: 'w-20',
       md: 'w-30',

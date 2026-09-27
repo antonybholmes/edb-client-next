@@ -9,11 +9,11 @@ import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Input, type IInputProps } from './v2/input'
 
-const BUTTON_CLS = `w-4.5 flex h-2.5 min-h-0 overflow-hidden shrink-0 
+const BUTTON_CLS = `flex w-4.5 h-3 min-h-0 overflow-hidden shrink-0 
   flex-row justify-center items-center
   disabled:text-foreground/50
   enabled:focus-visible:text-app-theme
-  bg-muted/60 enabled:hover:bg-muted/90
+  bg-muted/50 enabled:hover:bg-muted
   outline-none trans-color`
 
 const UP_BUTTON_CLS = cn(BUTTON_CLS, 'rounded-t-sm')
@@ -28,10 +28,13 @@ export function SmallChevronIcon({ direction }: { direction: 'up' | 'down' }) {
     <SvgBase size={{ w: 24, h: 24 }}>
       <SvgPath
         d={
-          direction === 'up' ? 'M8 14, L12 10, L16 14' : 'M8 10, L12 14, L16 10'
+          direction === 'up'
+            ? 'M7.5 14, L12 10, L16.5 14'
+            : 'M7.5 10, L12 14, L16.5 10'
         }
-        strokeWidth={2}
+        strokeWidth={1.5}
         className="stroke-foreground"
+        strokeLinecap="round"
       />
     </SvgBase>
   )
@@ -248,7 +251,7 @@ export function NumericalInput({
   }
 
   return (
-    <VCenterRow className="gap-x-1" data-disabled={disabled}>
+    <VCenterRow className="gap-x-0.5" data-disabled={disabled}>
       <Input
         id={id}
         name={name}
@@ -275,7 +278,7 @@ export function NumericalInput({
         aria-label={ariaLabel}
         title={title}
       />
-      <VCenterCol>
+      <VCenterCol className="gap-y-px">
         <button
           disabled={disabled}
 

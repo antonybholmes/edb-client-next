@@ -113,13 +113,14 @@ export const CellsSvg = memo(function CellsSvg({
     //return
     //}
 
-    const { relativeP } = svgPointToScreen(ref.current, {
+    const { relativeP, screenP } = svgPointToScreen(ref.current, {
       x: cell.col.x + blockSize.w / 2 + margin.left,
       y: cell.row.x + blockSize.h / 2 + margin.top,
     })
 
     showCrosshair({
       pos: relativeP,
+      clientPos: screenP,
       content: (
         <>
           <span className="font-semibold">{`${df.rowName(
@@ -219,7 +220,7 @@ export const DotsSvg = memo(function DotsSvg({
     //   y: cell.row.x + blockSize.h + margin.top,
     // })
 
-    const { relativeP } = svgPointToScreen(ref.current, {
+    const { relativeP, screenP } = svgPointToScreen(ref.current, {
       x: cell.col.x + blockSize.w / 2 + margin.left,
       y: cell.row.x + blockSize.h / 2 + margin.top,
     })
@@ -239,6 +240,7 @@ export const DotsSvg = memo(function DotsSvg({
 
     showCrosshair({
       pos: relativeP,
+      clientPos: screenP,
       content: (
         <>
           <span className="font-semibold">{`${df.rowName(

@@ -16,6 +16,7 @@ import { IPos, ZERO_POS } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
+import { truncate } from '@/lib/text/text'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useZoom } from '@/providers/zoom-provider'
@@ -267,7 +268,8 @@ export function NetworkSvgContent() {
               .sort(([key1], [key2]) => key1.localeCompare(key2))
               .map(([key, value], i) => (
                 <span key={i}>
-                  {key}: {value}
+                  {key}:{' '}
+                  <strong>{truncate(value.toString(), { length: 32 })}</strong>
                 </span>
               ))}
           </>
@@ -417,12 +419,10 @@ export function NetworkSvgContent() {
           })}
 
           <SvgMouseRect
-            width={settings.plot.size.w}
-            height={settings.plot.size.h}
-
+            size={settings.plot.size}
             onMouseMove={onMouseMove}
+            onMouseLeave={hideCrosshair}
             onDoubleClick={onMouseDoubleClick}
-            //onMouseLeave={hideCrosshair}
           />
         </SvgMargin>
         <LegendSvg />
@@ -579,6 +579,7 @@ function NodeCircle({
         fillOpacity={fillOpacity}
         stroke={stroke}
         sp={settings.plot.nodes.line}
+        className="mix-blend-multiply"
         //onMouseEnter={onMouseEnter}
         //onMouseLeave={hide}
         // double click
