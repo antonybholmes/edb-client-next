@@ -3150,6 +3150,10 @@
         {
           "msg": "UI tweaks",
           "date": "2026-09-27T03:50:14.039Z"
+        },
+        {
+          "msg": "Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements",
+          "date": "2026-09-27T18:46:06.857Z"
         }
       ]
     },

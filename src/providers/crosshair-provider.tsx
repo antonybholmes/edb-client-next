@@ -2,25 +2,25 @@ import { BaseCol } from '@/components/layout/base-col'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { IPos } from '@/interfaces/pos'
 import { cn } from '@/lib/shadcn-utils'
-import gsap from 'gsap'
 import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { create } from 'zustand'
 import { TOOLTIP_CLEAR_MS } from './tooltip-provider'
 
-const CROSSHAIR_CLS =
-  'absolute z-(--z-modal) pointer-events-none w-px h-px top-0 left-0 opacity-20 mix-blend-multiply'
+const CROSS_LINE_CLS =
+  'absolute z-(--z-modal) pointer-events-none w-px h-px top-0 left-0 opacity-30'
 
 const TOOLTIP_CLS =
   'z-(--z-tooltip) rounded-xl bg-black/50 backdrop-blur-xs p-4 flex flex-col text-xs text-white pointer-events-none'
 
-const CROSS_CLS = 'absolute pointer-events-none aspect-square top-0 left-0'
+const CROSSHAIR_CLS = 'absolute pointer-events-none aspect-square top-0 left-0'
 
-const CROSS_SIZE = 9
-const CROSS_GAP = CROSS_SIZE
-const CROSS_MID = Math.floor(CROSS_SIZE / 2)
-const ANIMATION_DURATION_MS = 0.1
-const EASE = 'power1.out'
+const CROSSHAIR_SIZE = 9
+//const CROSS_SIZE = CROSSHAIR_SIZE - 2
+const CROSS_GAP = CROSSHAIR_SIZE
+const CROSS_MID = Math.floor(CROSSHAIR_SIZE / 2)
+//const ANIMATION_DURATION_MS = 0.1
+//const EASE = 'power1.out'
 
 interface ICrosshair {
   /**
@@ -144,7 +144,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
   const hRightRef = useRef<HTMLSpanElement>(null)
   const crossRef = useRef<HTMLDivElement>(null)
 
-  const tlRef = useRef<gsap.core.Timeline | null>(null)
+  //const tlRef = useRef<gsap.core.Timeline | null>(null)
 
   useEffect(() => {
     return dispose
@@ -192,62 +192,74 @@ export function CrosshairProvider({ children }: IChildrenProps) {
       return
     }
 
-    if (!tlRef.current) {
-      tlRef.current = gsap.timeline()
-    }
+    // if (!tlRef.current) {
+    //   tlRef.current = gsap.timeline()
+    // }
 
-    const tl = tlRef.current
+    // const tl = tlRef.current
 
-    tl.to(
-      vTopRef.current,
-      {
-        x: crosshair.pos.x,
-        height: crosshair.pos.y - CROSS_GAP,
-        duration: ANIMATION_DURATION_MS,
-        ease: EASE,
-      },
-      0
-    )
-      .to(
-        vBottomRef.current,
-        {
-          x: crosshair.pos.x,
-          y: crosshair.pos.y + CROSS_GAP,
-          duration: ANIMATION_DURATION_MS,
-          ease: EASE,
-        },
-        0
-      )
-      .to(
-        hLeftRef.current,
-        {
-          y: crosshair.pos.y,
-          width: crosshair.pos.x - CROSS_GAP,
-          duration: ANIMATION_DURATION_MS,
-          ease: EASE,
-        },
-        0
-      )
-      .to(
-        hRightRef.current,
-        {
-          y: crosshair.pos.y,
-          x: crosshair.pos.x + CROSS_GAP,
-          duration: ANIMATION_DURATION_MS,
-          ease: EASE,
-        },
-        0
-      )
-      .to(
-        crossRef.current,
-        {
-          x: crosshair.pos.x - CROSS_MID,
-          y: crosshair.pos.y - CROSS_MID,
-          duration: ANIMATION_DURATION_MS,
-          ease: EASE,
-        },
-        0
-      )
+    // tl.to(
+    //   vTopRef.current,
+    //   {
+    //     x: crosshair.pos.x,
+    //     height: crosshair.pos.y - CROSS_GAP,
+    //     duration: ANIMATION_DURATION_MS,
+    //     ease: EASE,
+    //   },
+    //   0
+    // )
+    //   .to(
+    //     vBottomRef.current,
+    //     {
+    //       x: crosshair.pos.x,
+    //       y: crosshair.pos.y + CROSS_GAP,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+    //   .to(
+    //     hLeftRef.current,
+    //     {
+    //       y: crosshair.pos.y,
+    //       width: crosshair.pos.x - CROSS_GAP,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+    //   .to(
+    //     hRightRef.current,
+    //     {
+    //       y: crosshair.pos.y,
+    //       x: crosshair.pos.x + CROSS_GAP,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+    //   .to(
+    //     crossRef.current,
+    //     {
+    //       x: crosshair.pos.x - CROSS_MID,
+    //       y: crosshair.pos.y - CROSS_MID,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+
+    vTopRef.current.style.transform = `translate(${crosshair.pos.x}px, 0px)`
+    vTopRef.current.style.height = `${crosshair.pos.y - CROSS_GAP}px`
+
+    vBottomRef.current.style.transform = `translate(${crosshair.pos.x}px, ${crosshair.pos.y + CROSS_GAP + 1}px)`
+
+    hLeftRef.current.style.transform = `translate(0px, ${crosshair.pos.y}px)`
+    hLeftRef.current.style.width = `${crosshair.pos.x - CROSS_GAP}px`
+
+    hRightRef.current.style.transform = `translate(${crosshair.pos.x + CROSS_GAP + 1}px, ${crosshair.pos.y}px)`
+
+    crossRef.current.style.transform = `translate(${crosshair.pos.x - CROSS_MID}px, ${crosshair.pos.y - CROSS_MID}px)`
   }, [crosshair?.pos])
 
   return (
@@ -256,7 +268,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
 
       <span
         ref={vTopRef}
-        className={CROSSHAIR_CLS}
+        className={CROSS_LINE_CLS}
         style={{
           backgroundColor: crosshair?.color,
           visibility: crosshair ? 'visible' : 'hidden',
@@ -265,7 +277,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
 
       <span
         ref={vBottomRef}
-        className={CROSSHAIR_CLS}
+        className={CROSS_LINE_CLS}
         style={{
           height: '100%',
           backgroundColor: crosshair?.color,
@@ -275,7 +287,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
 
       <span
         ref={hLeftRef}
-        className={CROSSHAIR_CLS}
+        className={CROSS_LINE_CLS}
         style={{
           backgroundColor: crosshair?.color,
           visibility: crosshair ? 'visible' : 'hidden',
@@ -283,7 +295,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
       />
       <span
         ref={hRightRef}
-        className={CROSSHAIR_CLS}
+        className={CROSS_LINE_CLS}
         style={{
           width: '100%',
           backgroundColor: crosshair?.color,
@@ -293,27 +305,30 @@ export function CrosshairProvider({ children }: IChildrenProps) {
 
       <div
         ref={crossRef}
-        id="cross"
-        className={CROSS_CLS}
+        id="crosshair"
+        className={CROSSHAIR_CLS}
         style={{
-          width: CROSS_SIZE,
-          height: CROSS_SIZE,
+          width: CROSSHAIR_SIZE,
+          height: CROSSHAIR_SIZE,
           visibility: crosshair ? 'visible' : 'hidden',
         }}
       >
+        {/* <span
+          className="w-full h-full rounded-full absolute border"
+          style={{ borderColor: crosshair?.color }}
+        /> */}
+
         <span
-          className="w-full absolute h-px bg-current"
+          className="absolute w-full h-px bg-current"
           style={{ top: CROSS_MID, backgroundColor: crosshair?.color }}
         />
         <span
-          className="h-full absolute w-px bg-current"
+          className="absolute h-full w-px bg-current"
           style={{ left: CROSS_MID, backgroundColor: crosshair?.color }}
         />
       </div>
 
-      {tooltip && (
-        <>{useFixed ? createPortal(tooltip, document.body) : tooltip}</>
-      )}
+      {tooltip && (useFixed ? createPortal(tooltip, document.body) : tooltip)}
 
       {/* <BaseCol
             className={cn(
