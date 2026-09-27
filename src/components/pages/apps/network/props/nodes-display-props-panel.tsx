@@ -11,6 +11,7 @@ import {
 } from '@/components/shadcn/ui/themed/resizable'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_UPDATE } from '@/consts'
@@ -117,7 +118,7 @@ export function NodesDisplayPropsPanel() {
             value={text}
             onTextChange={(value) => setText(value)}
           />
-          <VCenterRow className="gap-x-1">
+          <VCenterRow className="gap-x-3">
             <Button
               variant="app-theme"
               onClick={() =>
@@ -137,19 +138,18 @@ export function NodesDisplayPropsPanel() {
             >
               {TEXT_UPDATE}
             </Button>
-            <Button
+            <Checkbox
               checked={userData.labels.mode === 'exact'}
-              onClick={() =>
+              onCheckedChange={(v) =>
                 updateUserData(
                   produce(userData, (draft) => {
-                    draft.labels.mode =
-                      userData.labels.mode === 'exact' ? 'partial' : 'exact'
+                    draft.labels.mode = v ? 'exact' : 'partial'
                   })
                 )
               }
             >
               Exact Match
-            </Button>
+            </Checkbox>
           </VCenterRow>
         </ResizablePanel>
       </ResizablePanelGroup>

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI tweaks.
 - Updated app info page.
 - Crosshair redesigned to look more elegant and move with animation effects.
 - Fixed selectlist to use truncating span and then made it work with items and a custom formatter.

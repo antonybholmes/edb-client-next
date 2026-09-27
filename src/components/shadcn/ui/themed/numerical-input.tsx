@@ -9,7 +9,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Input, type IInputProps } from './v2/input'
 
-const BUTTON_CLS = `flex w-4.5 h-3 min-h-0 overflow-hidden shrink-0 
+const BUTTON_CLS = `flex w-4 h-3 min-h-0 overflow-hidden shrink-0 
   flex-row justify-center items-center
   disabled:text-foreground/50
   enabled:focus-visible:text-app-theme
@@ -251,7 +251,7 @@ export function NumericalInput({
   }
 
   return (
-    <VCenterRow className="gap-x-0.5" data-disabled={disabled}>
+    <VCenterRow className="gap-x-0.75" data-disabled={disabled}>
       <Input
         id={id}
         name={name}

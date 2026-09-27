@@ -8,7 +8,6 @@ import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { useRunning } from '@/components/toolbar/running-indicator'
-import { TEXT_APPLY } from '@/consts'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
@@ -52,8 +51,8 @@ export function NetworkDisplayPropsPanel() {
                   setMessage('Creating graph...')
                   run(network, () => clearMessage())
                 }}
-                aria-label={TEXT_APPLY}
-                title={TEXT_APPLY}
+                aria-label="Recalculate network layout"
+                title="Recalculate network layout"
               >
                 <RotateCw size={16} />
               </button>
@@ -112,6 +111,7 @@ export function NetworkDisplayPropsPanel() {
               <span className="w-3 text-center">W</span>
               <NumericalInput
                 w="xxs"
+                h="sm"
                 value={settings.plot.size.w}
                 placeholder="Width"
                 limit={[1, 5000]}
@@ -127,6 +127,7 @@ export function NetworkDisplayPropsPanel() {
               <span className="w-3 text-center">H</span>
               <NumericalInput
                 w="xxs"
+                h="sm"
                 value={settings.plot.size.h}
                 placeholder="Height"
                 limit={[1, 5000]}

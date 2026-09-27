@@ -19,6 +19,7 @@ export function RadiusScaleModeSelectList({
       value={value}
       onValueChange={onValueChange}
       w="xs"
+      variant="toolbar"
     >
       <SelectItem value="linear">Linear</SelectItem>
       <SelectItem value="area">Area</SelectItem>

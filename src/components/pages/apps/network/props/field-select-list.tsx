@@ -10,7 +10,7 @@ export function FieldSelectList({
   return (
     <SelectList
       {...props}
-      //items={LABEL_TYPES}
+
       value={nodes.label.field}
       onValueChange={(value) => {
         setNodeLabelField(value as string)
