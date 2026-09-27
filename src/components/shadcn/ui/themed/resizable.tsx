@@ -4,14 +4,44 @@ import { cn } from '@/lib/shadcn-utils'
 import type { ComponentProps } from 'react'
 import * as ResizablePrimitive from 'react-resizable-panels'
 
-// const LINE_V_RESIZE_HANDLE_CLS =
-//   'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden group'
+const THIN_LINE_HANDLE_CLS = cn(
+  'trans-color bg-border/50 group-data-auto-hide:bg-transparent z-0',
+  'group-data-[separator=hover]:bg-transparent',
+  'group-data-[separator=active]:bg-transparent',
+  'pointer-events-none'
+)
 
-const THIN_H_RESIZE_HANDLE_CLS =
-  'group w-3 flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center outline-hidden relative'
+const THIN_LINE_HANDLE2_CLS = cn(
+  'absolute z-10',
+  'trans-color rounded-full bg-transparent',
+  'group-data-[separator=hover]:bg-app-theme/40',
+  'group-data-[separator=active]:bg-app-theme/40',
+  'pointer-events-none'
+)
 
-const THIN_V_RESIZE_HANDLE_CLS =
-  'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden h-3 group relative cursor-ns-resize'
+const THIN_H_RESIZE_HANDLE_CLS = cn(
+  'group flex shrink-0 grow-0 cursor-ew-resize flex-row',
+  'items-center justify-center outline-hidden relative'
+)
+
+const THIN_H_LINE_HANDLE_CLS = cn(THIN_LINE_HANDLE_CLS, 'h-full w-px')
+
+const THIN_H_LINE_HANDLE2_CLS = cn(
+  THIN_LINE_HANDLE2_CLS,
+  'top-0 left-1/2 -translate-x-1/2 h-full w-[4px]'
+)
+
+const THIN_V_RESIZE_HANDLE_CLS = cn(
+  'group flex shrink-0 grow-0 flex-row items-center',
+  'justify-center outline-hidden group relative cursor-ns-resize'
+)
+
+const THIN_V_LINE_HANDLE_CLS = cn(THIN_LINE_HANDLE_CLS, 'w-full h-px')
+
+const THIN_V_LINE_HANDLE2_CLS = cn(
+  THIN_LINE_HANDLE2_CLS,
+  'left-0 top-1/2 -translate-y-1/2 w-full h-[4px]'
+)
 
 export const INNER_HANDLE_CLS = cn(
   'grow items-center justify-center rounded-full bg-ring trans-opacity pointer-events-none',
@@ -41,49 +71,44 @@ export const ResizablePanel = ResizablePrimitive.Panel
 interface IResizeHandleProps extends ComponentProps<
   typeof ResizablePrimitive.Separator
 > {
+  w?: number
   autoHide?: boolean
 }
 
-const THIN_H_LINE_HANDLE_CLS = cn(
-  'h-full trans-color bg-transparent w-[2px] group-hover:bg-app-theme/40',
-  'group-data-[separator=hover]:bg-app-theme/40 group-data-[separator=active]:bg-app-theme/40'
-)
-
 export function ThinHResizeHandle({
   id,
+  w = 1,
   autoHide = true,
   ...props
 }: IResizeHandleProps) {
-  //const _id = id ?? useStableId('thin-h-resize-handle')
-
   return (
     <ResizablePrimitive.Separator
-      data-auto-hide={autoHide}
+      data-auto-hide={autoHide ? true : undefined}
       className={THIN_H_RESIZE_HANDLE_CLS}
+      style={{ width: `${w}rem` }}
       {...props}
     >
       <span className={THIN_H_LINE_HANDLE_CLS} />
+      <span className={THIN_H_LINE_HANDLE2_CLS} />
     </ResizablePrimitive.Separator>
   )
 }
 
-const THIN_V_LINE_HANDLE_CLS = cn(
-  'trans-color  w-full h-[2px] bg-transparent group-hover:bg-app-theme/40',
-  'group-data-[separator=hover]:bg-app-theme/40 group-data-[separator=active]:bg-app-theme/40'
-)
-
 export function ThinVResizeHandle({
   id,
   autoHide = true,
+  w = 1,
   ...props
 }: IResizeHandleProps) {
   return (
     <ResizablePrimitive.Separator
-      data-auto-hide={autoHide}
+      data-auto-hide={autoHide ? true : undefined}
       className={THIN_V_RESIZE_HANDLE_CLS}
+      style={{ height: `${w}rem` }}
       {...props}
     >
       <span className={THIN_V_LINE_HANDLE_CLS} />
+      <span className={THIN_V_LINE_HANDLE2_CLS} />
     </ResizablePrimitive.Separator>
   )
 }

@@ -1,9 +1,5 @@
 import { IClusterGroupRow, type IClusterGroup } from '@/lib/cluster-group'
 
-import { VCenterRow } from '@/layout/v-center-row'
-
-import { VCenterCol } from '@/layout/v-center-col'
-
 import { DragDropProvider } from '@dnd-kit/react'
 
 import {
@@ -16,7 +12,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { SmallCheckbox } from '@/components/shadcn/ui/themed/v2/small-check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { StretchRow } from '@/layout/stretch-row'
@@ -41,9 +37,9 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
 
       type="group"
       accept="group"
-      className="group"
+      className="group h-10"
     >
-      <Checkbox
+      <SmallCheckbox
         checked={group.show}
         onCheckedChange={(checked) => {
           setGroups(
@@ -55,7 +51,17 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
             })
           )
         }}
+        style={{ color: group.color }}
+        title={group.show ? 'Hide group' : 'Show group'}
       />
+
+      <TruncateSpan
+        className="grow h-6 text-xs"
+        style={{ color: group.color, opacity: group.show ? 1 : 0.3 }}
+      >
+        {group.name}
+      </TruncateSpan>
+
       <FillButton
         colors={[
           {
@@ -89,26 +95,19 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
         title="Set Group Color"
       />
 
-      <VCenterCol className="overflow-hidden grow gap-y-1">
-        <VCenterRow className="gap-x-1 h-4">
-          <TruncateSpan
-            className="grow h-full text-xs"
-            style={{ color: group.color }}
-          >
-            {group.name}
-          </TruncateSpan>
-        </VCenterRow>
-      </VCenterCol>
       <BaseCol
         className={cn(DRAG_HANDLE_APPEAR_CLS, 'gap-x-1 items-center shrink-0')}
       >
         <button
-          title={`Edit ${group.name} group`}
+          title="Edit group"
           //className="text-foreground/50 focus-visible:text-foreground hover:text-foreground trans-color"
           onClick={() => openCustomDialog(GroupDialog, { group })}
         >
           {/* <SettingsIcon style={{ stroke: group.color }} /> */}
-          <Settings2 className={cn('w-4', DRAG_ICON_ANIM_CLS)} />
+          <Settings2
+            className={cn('w-4', DRAG_ICON_ANIM_CLS)}
+            style={{ color: group.color }}
+          />
         </button>
       </BaseCol>
     </SortableItem>

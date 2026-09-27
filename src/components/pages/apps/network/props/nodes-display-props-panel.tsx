@@ -3,7 +3,6 @@ import { produce } from 'immer'
 import { useNetworkSettings } from '../network-settings-store'
 
 import { PropRow } from '@/components/dialogs/prop-row'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -11,12 +10,11 @@ import {
 } from '@/components/shadcn/ui/themed/resizable'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { TEXT_UPDATE } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
+import { RotateCw, SearchCheck, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
@@ -54,8 +52,141 @@ export function NodesDisplayPropsPanel() {
   // }, [debounceText])
 
   return (
-    <PropsPanel className="gap-y-2 pb-2 text-xs">
+    <PropsPanel className="gap-y-2 mb-2 mr-1 text-xs">
       <ResizablePanelGroup orientation="vertical">
+        <ResizablePanel
+          id="network-nodes"
+          defaultSize="50%"
+          minSize="0%"
+          className="flex flex-col gap-y-1.5"
+          collapsible={true}
+        >
+          <PropRow title="Nodes" className="text-sm">
+            {/* <Switch
+              side="right"
+              className="text-xs font-normal"
+              checked={settings.plot.nodes.labels.showAll}
+              onCheckedChange={(v) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.labels.showAll = v
+                  })
+                )
+              }
+            >
+              All Labels
+            </Switch> */}
+
+            <Button
+              size="xs"
+              aspect="icon"
+              pad="none"
+              onClick={() =>
+                updateUserData(
+                  produce(userData, (draft) => {
+                    draft.labels.ids = [
+                      ...new Set(
+                        text
+                          .split('\n')
+                          .map((x) => x.trim())
+                          .filter((x) => x.length > 0)
+                      ),
+                    ].sort()
+                  })
+                )
+              }
+              title="Update graph"
+            >
+              <RotateCw size={16} />
+            </Button>
+
+            <Toggle
+              aspect="icon"
+              size="xs"
+              pressed={userData.labels.mode === 'exact'}
+              onPressedChange={(v) =>
+                updateUserData(
+                  produce(userData, (draft) => {
+                    draft.labels.mode = v ? 'exact' : 'partial'
+                  })
+                )
+              }
+              title="Exact Match"
+            >
+              <SearchCheck size={16} />
+            </Toggle>
+
+            <Toggle
+              aspect="icon"
+              size="xs"
+              pressed={settings.plot.nodes.labels.showAll}
+              onPressedChange={(v) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.labels.showAll = v
+                  })
+                )
+              }
+              title="Show All Labels"
+            >
+              <Tags size={16} />
+            </Toggle>
+          </PropRow>
+          {/* <SwitchPropRow
+            title="Show All Labels"
+
+            className="text-xs font-normal"
+            checked={settings.plot.nodes.labels.showAll}
+            onCheckedChange={(v) =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.plot.nodes.labels.showAll = v
+                })
+              )
+            }
+          /> */}
+          <Textarea
+            title="Node Label"
+            value={text}
+            onTextChange={(value) => setText(value)}
+          />
+          {/* <VCenterRow className="gap-x-3">
+            <ToolbarButton
+              variant="app-theme"
+              onClick={() =>
+                updateUserData(
+                  produce(userData, (draft) => {
+                    draft.labels.ids = [
+                      ...new Set(
+                        text
+                          .split('\n')
+                          .map((x) => x.trim())
+                          .filter((x) => x.length > 0)
+                      ),
+                    ].sort()
+                  })
+                )
+              }
+            >
+              {TEXT_UPDATE}
+            </ToolbarButton>
+            <Checkbox
+              checked={userData.labels.mode === 'exact'}
+              onCheckedChange={(v) =>
+                updateUserData(
+                  produce(userData, (draft) => {
+                    draft.labels.mode = v ? 'exact' : 'partial'
+                  })
+                )
+              }
+            >
+              Exact Match
+            </Checkbox>
+          </VCenterRow> */}
+        </ResizablePanel>
+
+        <ThinVResizeHandle autoHide={false} />
+
         <ResizablePanel
           className="flex flex-col"
           id="network-groups"
@@ -88,69 +219,6 @@ export function NodesDisplayPropsPanel() {
             </DragOverlay> */}
             </DragDropProvider>
           </VScrollPanel>
-        </ResizablePanel>
-        <ThinVResizeHandle />
-        <ResizablePanel
-          id="network-nodes"
-          defaultSize="50%"
-          minSize="0%"
-          className="flex flex-col gap-y-1.5"
-          collapsible={true}
-        >
-          <PropRow title="Nodes" className="text-sm">
-            <Switch
-              side="right"
-              className="text-xs font-normal"
-              checked={settings.plot.nodes.labels.showAll}
-              onCheckedChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.labels.showAll = v
-                  })
-                )
-              }
-            >
-              All Labels
-            </Switch>
-          </PropRow>
-          <Textarea
-            title="Node Label"
-            value={text}
-            onTextChange={(value) => setText(value)}
-          />
-          <VCenterRow className="gap-x-3">
-            <Button
-              variant="app-theme"
-              onClick={() =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.ids = [
-                      ...new Set(
-                        text
-                          .split('\n')
-                          .map((x) => x.trim())
-                          .filter((x) => x.length > 0)
-                      ),
-                    ].sort()
-                  })
-                )
-              }
-            >
-              {TEXT_UPDATE}
-            </Button>
-            <Checkbox
-              checked={userData.labels.mode === 'exact'}
-              onCheckedChange={(v) =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.mode = v ? 'exact' : 'partial'
-                  })
-                )
-              }
-            >
-              Exact Match
-            </Checkbox>
-          </VCenterRow>
         </ResizablePanel>
       </ResizablePanelGroup>
     </PropsPanel>

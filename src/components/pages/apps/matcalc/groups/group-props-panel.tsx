@@ -46,8 +46,8 @@ import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { SmallCheckbox } from '@/components/shadcn/ui/themed/v2/small-check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -157,16 +157,6 @@ function GroupRowItem({
           })
         )
 
-        // if (groupRows.some((gr) => gr.groups.some((g) => g.id === group.id))) {
-        //   // we modified and existing group so clone list, but replace existing
-        //   // group with new group when they have the same id
-
-        //   updateGroup(group)
-        // } else {
-        //   // append new group
-        //   addGroups([group])
-        // }
-
         setOpenGroupDialog(undefined)
       },
     })
@@ -188,16 +178,6 @@ function GroupRowItem({
         />
       )}
 
-      {/* <BaseSortableItem
-        as="li"
-        id={groupRow.id}
-        index={index}
-        group="group-rows"
-        type="group-row"
-        accept="group-row"
-        className={'flex flex-col gap-y-1 p-2 rounded-lg bg-muted/20'}
-        style={{ minWidth: 0 }}
-      > */}
       <li
         id={groupRow.id}
         data-type="group-row"
@@ -268,10 +248,7 @@ function GroupRowItem({
         </VCenterRow>
 
         {groupRow.groups.length > 0 && (
-          <ul
-            //data-is-dragging={present(isDragging)}
-            className="flex flex-col data-is-dragging:pointer-events-none ml-3 pb-2"
-          >
+          <ul className="flex flex-col data-is-dragging:pointer-events-none ml-3 pb-2">
             {groupRow.groups.map((group, gi) => {
               return (
                 <GroupItem
@@ -349,28 +326,12 @@ function GroupItem({
         </button>
       }
     >
-      <Checkbox
+      <SmallCheckbox
         checked={group.show}
         onCheckedChange={(v) => {
-          console.log('Checkbox changed:', v)
           updateGroup({ ...group, show: v })
         }}
-      />
-
-      <FillButton
-        colors={[
-          {
-            color: group.color,
-
-            allowAlpha: false,
-            allowNoColor: false,
-            onColorChange: ({ color }) => {
-              updateGroup({ ...group, color })
-            },
-          },
-        ]}
-
-        title="Set Group Color"
+        style={{ color: group.color }}
       />
 
       <VCenterCol className="overflow-hidden grow gap-y-1 ">
@@ -387,6 +348,22 @@ function GroupItem({
           </TruncateSpan>
         )}
       </VCenterCol>
+
+      <FillButton
+        colors={[
+          {
+            color: group.color,
+
+            allowAlpha: false,
+            allowNoColor: false,
+            onColorChange: ({ color }) => {
+              updateGroup({ ...group, color })
+            },
+          },
+        ]}
+
+        title="Set Group Color"
+      />
       <BaseCol
         className={cn(DRAG_HANDLE_APPEAR_CLS, 'gap-x-1 items-center shrink-0')}
       >
@@ -396,7 +373,10 @@ function GroupItem({
           onClick={() => editGroup(groupRow, group)}
         >
           {/* <SettingsIcon style={{ stroke: group.color }} /> */}
-          <Settings2 className={cn('w-4', DRAG_ICON_ANIM_CLS)} />
+          <Settings2
+            className={cn('w-4', DRAG_ICON_ANIM_CLS)}
+            style={{ stroke: group.color }}
+          />
         </button>
       </BaseCol>
     </SortableItem>

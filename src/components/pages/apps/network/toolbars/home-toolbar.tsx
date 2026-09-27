@@ -14,7 +14,10 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
@@ -115,8 +118,37 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="Color">
         <ToolbarCol>
           <ToolbarRow>
-            <span>Color Mode</span>
-            <SelectList
+            {/* <span>Mode</span> */}
+
+            <ToggleGroup
+              value={[settings.plot.nodes.color.mode]}
+              onValueChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.nodes.color.mode = v[0]! as 'auto' | 'group'
+                  })
+                )
+              }}
+              size="toolbar"
+              //direction="toolbar"
+            >
+              <GroupToggle
+                value="group"
+                className="w-12"
+                title="Color nodes by group"
+              >
+                Group
+              </GroupToggle>
+              <GroupToggle
+                value="auto"
+                className="w-12"
+                title="Color nodes by metric"
+              >
+                Auto
+              </GroupToggle>
+            </ToggleGroup>
+
+            {/* <SelectList
               items={[
                 {
                   value: 'auto',
@@ -152,7 +184,7 @@ export function HomeToolbar() {
                   {position.label}
                 </SelectItem>
               ))}
-            </SelectList>
+            </SelectList> */}
           </ToolbarRow>
           <ColorMapMenu
             cmap={getColorMap(settings.plot.nodes.color.cmap)}

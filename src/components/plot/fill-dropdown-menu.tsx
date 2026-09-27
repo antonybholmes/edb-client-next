@@ -36,7 +36,7 @@ export function FillButton({
   align = 'start',
   className = '',
   title,
-  button = 'flat',
+  button = 'simple',
   'aria-label': ariaLabel,
   children,
   ...props
@@ -84,12 +84,12 @@ export function FillButton({
 
 export function FillIcon({ cp }: { cp: IColorPickerProps }) {
   return (
-    <CenterRow className="flex flex-row items-center justify-center  relative h-6  w-5 grow-0 shrink-0">
+    <CenterRow className="flex flex-row items-center justify-center  relative h-5.5 w-5 grow-0 shrink-0">
       <PaintBucket size={16} strokeWidth={1.5} className="z-10" />
 
       {(cp.show === undefined || cp.show) && (
         <span
-          className="absolute bottom-0 h-1.5 w-full z-0 rounded-xs"
+          className="absolute bottom-0 h-1 w-9/10 z-0 rounded-xs"
           style={{ backgroundColor: cp.color, opacity: cp.opacity }}
         />
       )}

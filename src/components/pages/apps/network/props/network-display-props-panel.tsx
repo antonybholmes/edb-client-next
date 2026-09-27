@@ -31,7 +31,7 @@ export function NetworkDisplayPropsPanel() {
   const { setMessage, clearMessage } = useRunning('network')
 
   return (
-    <PropsPanel>
+    <PropsPanel className="mr-1">
       <ScrollAccordion
         value={[
           'layout',
@@ -159,11 +159,12 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            <PropRow title="Edges">
+            <PropRow title="Bounds">
               <Toggle
                 //variant="app-theme"
                 pad="md"
                 size="sm"
+                rounded="full"
                 pressed={settings.plot.nodes.clamp}
                 onPressedChange={(pressed) =>
                   updateSettings(
@@ -180,6 +181,7 @@ export function NetworkDisplayPropsPanel() {
                 //variant="app-theme"
                 pad="md"
                 size="sm"
+                rounded="full"
                 pressed={settings.plot.nodes.clip}
                 onPressedChange={(pressed) =>
                   updateSettings(
@@ -351,6 +353,7 @@ export function NetworkDisplayPropsPanel() {
               <Toggle
                 size="sm"
                 pad="md"
+                rounded="full"
                 pressed={settings.plot.nodes.line.autoColor}
                 onPressedChange={(checked) =>
                   updateSettings(
