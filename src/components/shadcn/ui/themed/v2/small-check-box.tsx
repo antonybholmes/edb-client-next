@@ -20,7 +20,7 @@ export interface ICheckboxProps extends ComponentProps<
 export const CHECK_CLS = cn(
   FOCUS_RING_CLS,
   'flex flex-row items-center justify-center shrink-0 cursor-pointer',
-  'group aspect-square shrink-0'
+  'group aspect-square shrink-0 border border-border/80 w-4 h-4 rounded-xs'
 )
 
 export function SmallCheckbox({
@@ -58,11 +58,9 @@ export function SmallCheckbox({
       aria-label={ariaLabel}
       {...props}
     >
-      <Check
-        className="opacity-30 group-data-checked:opacity-70 group-data-checked:group-hover:opacity-100 mt-0.5"
-        size={14}
-        strokeWidth={3}
-      />
+      <CheckboxPrimitive.Indicator>
+        <Check className="mt-0.5" size={14} strokeWidth={3} />
+      </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
 

@@ -55,10 +55,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
         title={group.show ? 'Hide group' : 'Show group'}
       />
 
-      <TruncateSpan
-        className="grow h-6 text-xs"
-        style={{ color: group.color, opacity: group.show ? 1 : 0.3 }}
-      >
+      <TruncateSpan className="grow h-6 text-xs" style={{ color: group.color }}>
         {group.name}
       </TruncateSpan>
 

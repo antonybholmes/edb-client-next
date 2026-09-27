@@ -54,7 +54,7 @@ export function Checkbox({
       id={id}
       {...props}
     >
-      <CheckboxPrimitive.Indicator className="data-unchecked:hidden">
+      <CheckboxPrimitive.Indicator>
         <Check className="stroke-white" size={14} strokeWidth={3} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

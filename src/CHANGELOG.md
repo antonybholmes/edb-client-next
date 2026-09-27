@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements.
 - UI tweaks.
 - Updated app info page.
 - Crosshair redesigned to look more elegant and move with animation effects.
