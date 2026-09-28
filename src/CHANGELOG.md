@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Create d3 version of network renderer.
 - Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements.
 - UI tweaks.
 - Updated app info page.
