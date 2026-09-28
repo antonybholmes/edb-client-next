@@ -3158,6 +3158,10 @@
         {
           "msg": "Create d3 version of network renderer",
           "date": "2026-09-28T17:19:52.595Z"
+        },
+        {
+          "msg": "network now has smooth animation using d3",
+          "date": "2026-09-28T23:05:06.769Z"
         }
       ]
     },

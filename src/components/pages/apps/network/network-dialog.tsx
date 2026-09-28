@@ -245,11 +245,13 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       metric2Col
     )
 
-    setMessage('Creating graph...')
-    runSim(network, () => {
-      setMessage(null)
-      close()
-    })
+    // setMessage('Creating graph...')
+    // runSim(network, () => {
+    //   setMessage(null)
+    //   close()
+    // })
+
+    close()
   }
 
   const colorCols = [

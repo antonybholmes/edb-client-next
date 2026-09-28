@@ -4,6 +4,7 @@
 
 ### Changed
 
+- network now has smooth animation using d3.
 - Create d3 version of network renderer.
 - Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements.
 - UI tweaks.

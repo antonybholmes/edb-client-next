@@ -1,44 +1,47 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { IEdge } from '../network-store'
 
 import { SvgCanvas } from '@/components/plot/svg-base'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
-import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgLine } from '@/components/plot/svg-line'
-import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
-import { SvgText } from '@/components/plot/svg-text'
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { IS_DEV_MODE } from '@/consts'
-import { IDim } from '@/interfaces/dim'
-import { IPos, ZERO_POS } from '@/interfaces/pos'
+import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { ColorMap, getColorMap } from '@/lib/color/colormap'
+import { getColorMap } from '@/lib/color/colormap'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { truncate } from '@/lib/text/text'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import * as d3 from 'd3'
-import { forceLink, forceManyBody, forceSimulation } from 'd3-force'
-import { quadtree } from 'd3-quadtree'
+import {
+  forceCenter,
+  forceLink,
+  forceManyBody,
+  forceSimulation,
+} from 'd3-force'
+import { Quadtree, quadtree } from 'd3-quadtree'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
 import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
 import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
 import { IGroup, INode, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
-import { LegendSvg } from './legend-svg'
 
 type NodeView = 'default' | 'hidden' | 'translucent'
+
 interface IRenderNode extends INode {
-  group: IGroup
+  //group: IGroup
   view: NodeView
 }
 
-interface IRenderEdge extends IEdge {
+interface IRenderEdge extends Omit<IEdge, 'source' | 'target'> {
   view: NodeView
+  source: string | INode
+  target: string | INode
 }
 
 export function NetworkD3SvgContent() {
@@ -48,42 +51,18 @@ export function NetworkD3SvgContent() {
   const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
-  const { network, groups, coordinates, size: d3Size, nodes } = useNetwork()
+  const { network, groups, nodes } = useNetwork()
+
+  const [tree, setTree] = useState<Quadtree<IRenderNode> | null>(null)
 
   const currentNode = useRef<INode | null>(null)
-
-  // const { showTooltip, hideTooltip } = useTooltip()
-
-  // const handleVariantEnter = useCallback(
-  //   (plot: IGseaBubble, row: number, p: IPos) => {
-  //     const { screenP } = svgPointToScreen(svgRef.current, p)
-
-  //     const newP = {
-  //       x: screenP.x,
-  //       y: screenP.y,
-  //     }
-
-  //     showTooltip({
-  //       pos: newP,
-  //       content: (
-  //         <>
-  //           <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
-  //           <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
-  //           <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
-  //           <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
-  //         </>
-  //       ),
-  //     })
-  //   },
-  //   [svgRef, showTooltip, hideTooltip]
-  // )
 
   const groupMap = useMemo(
     () => new Map<string, IGroup>(groups.map((group) => [group.id, group])),
     [groups]
   )
 
-  const labelSet = useMemo(
+  const userLabelSet = useMemo(
     () =>
       new Set(
         userData.labels.ids
@@ -92,6 +71,83 @@ export function NetworkD3SvgContent() {
       ),
     [userData.labels.ids]
   )
+
+  // how to label each node
+  const nodeLabelMap = useMemo(() => {
+    if (!network) {
+      return new Map()
+    }
+    return new Map<string, string>(
+      network.nodes.map((node) => [
+        node.id,
+        getNodeText(node, nodes.label.field),
+      ])
+    )
+  }, [network?.nodes, nodes.label.field])
+
+  const renderNodes: IRenderNode[] = useMemo(() => {
+    if (!network) {
+      return []
+    }
+
+    return network.nodes.map((node) => {
+      let view: NodeView = groupMap.get(node.groupId)?.show
+        ? 'default'
+        : 'hidden'
+
+      if (
+        settings.plot.nodes.view.mode === 'labelled' &&
+        !showNodeLabel(
+          node,
+          userLabelSet,
+          settings.plot.nodes.labels.showAll,
+          userData.labels.mode
+        )
+      ) {
+        view = settings.plot.nodes.view.hidden.show ? 'translucent' : 'hidden'
+      }
+
+      return {
+        ...node,
+        group: groupMap.get(node.groupId),
+        view,
+      }
+    })
+  }, [network?.nodes, groupMap, userLabelSet, settings, userData])
+
+  const renderNodeMap = useMemo(() => {
+    const map = new Map<string, IRenderNode>()
+    for (const node of renderNodes) {
+      map.set(node.id, node)
+    }
+    return map
+  }, [renderNodes])
+
+  const renderEdges: IRenderEdge[] = useMemo(() => {
+    if (!network) {
+      return []
+    }
+
+    return network.edges.map((edge) => {
+      let view = 'default'
+
+      if (
+        renderNodeMap.get(edge.source)?.view === 'translucent' ||
+        renderNodeMap.get(edge.target)?.view === 'translucent'
+      ) {
+        view = 'translucent'
+      } else if (
+        renderNodeMap.get(edge.source)?.view === 'hidden' ||
+        renderNodeMap.get(edge.target)?.view === 'hidden'
+      ) {
+        view = 'hidden'
+      } else {
+        view = 'default'
+      }
+
+      return { ...edge, view } as IRenderEdge
+    })
+  }, [network?.edges, renderNodeMap])
 
   const radiusMap = useMemo(() => {
     if (!network?.nodes || network.nodes.length === 0) {
@@ -116,15 +172,48 @@ export function NetworkD3SvgContent() {
     nodes.metricLim1.max,
   ])
 
-  const canvasCoordinates = useMemo(
-    () => d3ToCanvasSpace(coordinates, d3Size, radiusMap, settings),
-    [coordinates, d3Size, radiusMap, settings]
-  )
+  const nodeColorMap = useMemo(() => {
+    if (!network?.nodes || network.nodes.length === 0) {
+      return new Map<string, string>()
+    }
+
+    switch (settings.plot.nodes.color.mode) {
+      case 'group':
+        return new Map(
+          network.nodes.map((node) => [
+            node.id,
+            groupMap.get(node.groupId)?.color ?? COLOR_BLACK,
+          ])
+        )
+
+      default:
+        const colorMap = getColorMap(settings.plot.nodes.color.cmap)
+
+        return new Map(
+          network.nodes.map((node) => [
+            node.id,
+            colorMap.getHexColor(node.size2 ?? 0) ?? COLOR_BLACK,
+          ])
+        )
+    }
+  }, [
+    settings.plot.nodes.color.mode,
+    groupMap,
+    settings.plot.nodes.color.cmap,
+    network?.nodes,
+  ])
+
+  // const canvasCoordinates = useMemo(
+  //   () => d3ToCanvasSpace(coordinates, d3Size, radiusMap, settings),
+  //   [coordinates, d3Size, radiusMap, settings]
+  // )
 
   useEffect(() => {
-    if (!ref.current) {
+    if (!ref.current || !network) {
       return
     }
+
+    console.log(network)
 
     // 2. Clone the structure out into D3-friendly array mutations
     // const nodes = network.nodes.map((node, ni) => {
@@ -138,11 +227,11 @@ export function NetworkD3SvgContent() {
     //   }
     // })
 
-    const nodes = network.nodes.map((node) => ({
+    const nodes = renderNodes.map((node) => ({
       ...node,
     }))
 
-    const edges = network.edges.map((edge) => ({ ...edge }))
+    const edges = renderEdges.map((edge) => ({ ...edge }))
 
     // let frame = 0
 
@@ -152,65 +241,113 @@ export function NetworkD3SvgContent() {
     // const bottomWall = size.h / 2
 
     // 1. Initialize the Link Force first so we can conditionally configure it
-    const linkForce = forceLink<INode, IEdge>(edges)
-      .id((d: INode) => d.id)
-      .distance(settings.layout.linkDistance)
-
-    // Conditionally apply custom strength or let D3 use its default internal formula
-    if (settings.layout.useStrength) {
-      linkForce.strength((d: IEdge) => d.strength)
-    }
 
     const svg = d3.select(ref.current)
-    svg.selectAll('*').remove()
+
+    // get the main container for network nodes
+    const g = svg.select('#network-nodes')
+
+    g.selectAll('*').remove()
 
     // Main container
-    const g = svg.append('g')
+    // const g = svg.append('g')
 
     // Zoom
-    const zoom = d3
-      .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.1, 5])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform)
-      })
+    // const zoom = d3
+    //   .zoom<SVGSVGElement, unknown>()
+    //   .scaleExtent([0.1, 5])
+    //   .on('zoom', (event) => {
+    //     g.attr('transform', event.transform)
+    //   })
 
-    svg.call(zoom)
+    // svg.call(zoom)
 
     // Edges
     const link = g
       .append('g')
       .attr('class', 'links')
-      .selectAll('line')
+      .selectAll<SVGLineElement, IRenderEdge>('line')
       .data(edges)
       .join('line')
-      .attr('stroke', '#999')
-      .attr('stroke-opacity', 0.6)
+      .attr('stroke', settings.plot.edges.line.value)
+      .attr('stroke-opacity', (d) =>
+        d.view === 'translucent' ? settings.plot.nodes.view.hidden.opacity : 1
+      )
+
+    console.log(edges)
 
     // Nodes
     const node = g
       .append('g')
       .attr('class', 'nodes')
-      .selectAll('g')
-      .data<INode>(nodes, (d) => d.id)
+      .selectAll<SVGGElement, IRenderNode>('g')
+      .data(nodes, (d) => d.id)
       .join('g')
 
-    node.append('circle').attr('r', 8).attr('fill', '#4f46e5')
+    node
+      .append('circle')
+      .attr('id', (d) => `node-${d.id}`)
+      .attr('r', (d) => radiusMap.get(d.id))
+      .attr('fill', (d) => nodeColorMap.get(d.id))
+      .attr('fill-opacity', (d) =>
+        d.view === 'translucent'
+          ? settings.plot.nodes.view.hidden.opacity
+          : settings.plot.nodes.color.opacity
+      )
+      .attr('stroke', (d) =>
+        settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
+          ? nodeColorMap.get(d.id)
+          : undefined
+      )
 
     node
       .append('text')
-      .text((d) => d.label ?? d.id)
-      .attr('x', 12)
-      .attr('y', 4)
-      .attr('font-size', 12)
+      .text((d) => nodeLabelMap.get(d.id))
+
+      .attr('transform', (d) => {
+        const { offset } = getTextAnchor(settings, radiusMap.get(d.id))
+
+        return `translate(${offset.x}, ${offset.y})`
+      })
+      .attr('dominant-baseline', (d) => {
+        const { baseline } = getTextAnchor(settings, radiusMap.get(d.id))
+        return baseline
+      })
+      .attr('text-anchor', (d) => {
+        const { textAnchor } = getTextAnchor(settings, radiusMap.get(d.id))
+        return textAnchor
+      })
+      .attr('font-size', settings.plot.nodes.labels.text.font.fontSize)
+      .attr('visibility', (d) =>
+        showNodeLabel(
+          d,
+          userLabelSet,
+          settings.plot.nodes.labels.showAll,
+          userData.labels.mode
+        )
+          ? 'visible'
+          : 'hidden'
+      )
+
+    const linkForce = forceLink<INode, IRenderEdge>(edges)
+      .id((d: INode) => d.id)
+      .distance(settings.layout.linkDistance)
+
+    // Conditionally apply custom strength or let D3 use its default internal formula
+    if (settings.layout.useStrength) {
+      linkForce.strength((d: IRenderEdge) => d.strength)
+    }
 
     // 3. Initialize the D3 Force Engine
     const simulation = forceSimulation(nodes)
       .force('charge', forceManyBody().strength(settings.layout.chargeStrength))
-      // .force(
-      //   'center',
-      //   forceCenter(settings.plot.size.w / 2, settings.plot.size.h / 2)
-      // )
+      .force(
+        'center',
+        forceCenter(
+          settings.plot.size.w / 2 + settings.plot.margin.left,
+          settings.plot.size.h / 2 + settings.plot.margin.top
+        )
+      )
       .force('link', linkForce)
     // .force('boundary-elastic', () => {
     //   const strength = 0.2
@@ -234,137 +371,104 @@ export function NetworkD3SvgContent() {
     // })
 
     // 4. Stream layout coordinates straight back into the store on every frame tick
-    // simulation.on('tick', () => {
-    //   frame++
+    simulation.on('tick', () => {
+      console.log('Simulation tick')
+      link
+        .attr('x1', (d) => {
+          //console.log(d.source)
+          return (d.source as INode).x!
+        })
+        .attr('y1', (d) => (d.source as INode).y!)
+        .attr('x2', (d) => (d.target as INode).x!)
+        .attr('y2', (d) => (d.target as INode).y!)
 
-    //   if (frame % FRAME_SKIP !== 0) {
-    //     return
-    //   }
-
-    //   const nextNodeMap = new Map<string, IPos>()
-
-    //   nodes.forEach((node) => {
-    //     nextNodeMap.set(node.id, { x: node.x ?? 0, y: node.y ?? 0 })
-    //   })
-
-    //   // Atomically batch update the store
-    //   updateCoordinates(nextNodeMap, { w: size.w, h: size.h })
-    // })
+      node.attr('transform', (d) => `translate(${d.x}, ${d.y})`)
+    })
 
     simulation.on('end', () => {
-      if (nodes.length > 0) {
-        if (nodes.length === 0) return
-
-        // Extract all final positions
-        const xVals = nodes.map((n: any) => n.x)
-        const yVals = nodes.map((n: any) => n.y)
-
-        const minX = Math.min(...xVals)
-        const maxX = Math.max(...xVals)
-        const minY = Math.min(...yVals)
-        const maxY = Math.max(...yVals)
-        const width = maxX - minX
-        const height = maxY - minY
-
-        // keep coordinates centered around 0,
-        // the plotter will move them to center of canvas
-        const coordinates: Record<string, IPos> = Object.fromEntries(
-          nodes.map((node) => [
-            node.id,
-            {
-              x: node.x,
-              y: node.y,
-            },
-          ])
+      if (settings.plot.nodes.clamp) {
+        node.attr(
+          'transform',
+          (d) =>
+            `translate(${Math.max(
+              settings.plot.margin.left,
+              Math.min(settings.plot.size.w + settings.plot.margin.left, d.x)
+            )}, ${Math.max(
+              settings.plot.margin.top,
+              Math.min(settings.plot.size.h + settings.plot.margin.top, d.y)
+            )})`
         )
 
-        //
-
-        updateCoordinates(coordinates, { w: width, h: height })
+        for (let node of nodes) {
+          node.x = Math.max(
+            settings.plot.margin.left,
+            Math.min(settings.plot.size.w + settings.plot.margin.left, node.x)
+          )
+          node.y = Math.max(
+            settings.plot.margin.top,
+            Math.min(settings.plot.size.h + settings.plot.margin.top, node.y)
+          )
+        }
       }
 
-      onFinished?.()
+      setTree(
+        quadtree<IRenderNode>(
+          nodes,
+          (c) => c.x,
+          (c) => c.y
+        )
+      )
+
+      // if (nodes.length > 0) {
+      //   if (nodes.length === 0) return
+      //   // Extract all final positions
+      //   const xVals = nodes.map((n: any) => n.x)
+      //   const yVals = nodes.map((n: any) => n.y)
+      //   const minX = Math.min(...xVals)
+      //   const maxX = Math.max(...xVals)
+      //   const minY = Math.min(...yVals)
+      //   const maxY = Math.max(...yVals)
+      //   const width = maxX - minX
+      //   const height = maxY - minY
+      //   // keep coordinates centered around 0,
+      //   // the plotter will move them to center of canvas
+      //   const coordinates: Record<string, IPos> = Object.fromEntries(
+      //     nodes.map((node) => [
+      //       node.id,
+      //       {
+      //         x: node.x,
+      //         y: node.y,
+      //       },
+      //     ])
+      //   )
+      //   //
+      //   updateCoordinates(coordinates, { w: width, h: height })
+      // }
+      //onFinished?.()
     })
 
     // 5. Hard lifecycle boundary: If the hook unmounts or options change, kill the simulation loop immediately
     return () => {
       simulation.stop()
     }
-  }, [network, coordinates, settings, radiusMap, canvasCoordinates])
-
-  const renderNodes: IRenderNode[] = useMemo(() => {
-    if (
-      !network?.nodes ||
-      network.nodes.length === 0 ||
-      Object.keys(coordinates).length === 0
-    ) {
-      return []
-    }
-
-    return network.nodes
-      .map((node) => {
-        let view: NodeView = groupMap.get(node.groupId)?.show
-          ? 'default'
-          : 'hidden'
-
-        if (
-          settings.plot.nodes.view.mode === 'labelled' &&
-          !showNodeLabel(
-            node,
-            labelSet,
-            settings.plot.nodes.labels.showAll,
-            userData.labels.mode
-          )
-        ) {
-          view = settings.plot.nodes.view.hidden.show ? 'translucent' : 'hidden'
-        }
-
-        return {
-          ...node,
-          group: groupMap.get(node.groupId),
-          view,
-        }
-      })
-      .filter((node) => {
-        if (node.view === 'hidden') {
-          return false
-        }
-
-        if (settings.plot.nodes.clip) {
-          const nodePos = canvasCoordinates.get(node.id)!
-          const radius = radiusMap.get(node.id)!
-
-          if (
-            nodePos.x - radius < 0 ||
-            nodePos.x + radius > settings.plot.size.w ||
-            nodePos.y - radius < 0 ||
-            nodePos.y + radius > settings.plot.size.h
-          ) {
-            return false
-          }
-        }
-
-        return true
-      })
   }, [
-    network?.nodes,
-    groupMap,
-    labelSet,
-    settings,
-    userData,
-    canvasCoordinates,
+    network,
     radiusMap,
+    settings.plot.margin,
+    settings.layout.chargeStrength,
+    settings.layout.linkDistance,
+    settings.plot.crosshair.search.radius,
   ])
 
-  const tree = useMemo(
-    () =>
-      quadtree<IRenderNode>(
-        renderNodes,
-        (c) => canvasCoordinates.get(c.id).x,
-        (c) => canvasCoordinates.get(c.id).y
-      ),
-    [renderNodes, canvasCoordinates]
-  )
+  // const tree = useMemo(
+  //   () =>
+  //     quadtree<IRenderNode>(
+  //       renderNodes,
+  //       (c) => c.x,
+  //       (c) => c.y
+  //     ),
+  //   [renderNodeMap]
+  // )
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -378,14 +482,16 @@ export function NetworkD3SvgContent() {
       })
 
       // must be relative to plot area within svg excluding margins
-      svgP.x -= settings.plot.margin.left
-      svgP.y -= settings.plot.margin.top
+      //svgP.x -= settings.plot.margin.left
+      //svgP.y -= settings.plot.margin.top
 
       const node = tree.find(
         svgP.x,
         svgP.y,
         settings.plot.crosshair.search.radius
       )
+
+      console.log('findr', node, svgP)
 
       if (!node) {
         // since we have lots of mouse events, only react when the current node changes
@@ -412,6 +518,8 @@ export function NetworkD3SvgContent() {
 
       currentNode.current = node
 
+      console.log('No node found under cursor', `#node-${node.id}`)
+
       gsap.timeline().to(`#node-${node.id}`, {
         scale: 1.2,
         transformOrigin: 'center',
@@ -419,11 +527,11 @@ export function NetworkD3SvgContent() {
         ease: 'power2.out',
       })
 
-      const plotNodePos = canvasCoordinates.get(node.id)!
+      const plotNodePos = { x: node.x, y: node.y }
 
       const canvasNodePos = {
-        x: plotNodePos.x + settings.plot.margin.left,
-        y: plotNodePos.y + settings.plot.margin.top,
+        x: plotNodePos.x,
+        y: plotNodePos.y,
       }
 
       const { relativeP, screenP } = svgPointToScreen(
@@ -449,7 +557,7 @@ export function NetworkD3SvgContent() {
         ),
       })
     },
-    [tree, canvasCoordinates]
+    [tree]
   )
 
   const onMouseDoubleClick = useCallback(
@@ -460,7 +568,7 @@ export function NetworkD3SvgContent() {
 
       const node = currentNode.current
 
-      if (labelsInNodeIds(node, labelSet)) {
+      if (labelsInNodeIds(node, userLabelSet)) {
         updateUserData(
           produce(userData, (draft) => {
             draft.labels.ids = userData.labels.ids.filter(
@@ -480,12 +588,83 @@ export function NetworkD3SvgContent() {
       e.stopPropagation()
       // handle double click event here
     },
-    [labelSet, updateUserData, userData]
+    [userLabelSet, updateUserData, userData]
   )
 
-  const { svg, width, height } = useMemo(() => {
-    if (!network || Object.keys(coordinates).length === 0) {
-      return { svg: null, width: 0, height: 0 }
+  //   const svg = (
+  //     <>
+  //       <SvgMargin margin={settings.plot.margin}>
+  //         {settings.plot.border.show && (
+  //           <SvgRect
+  //             x={0}
+  //             y={0}
+  //             width={settings.plot.size.w}
+  //             height={settings.plot.size.h}
+  //             sp={settings.plot.border}
+  //           />
+  //         )}
+
+  //         {settings.plot.edges.line.show &&
+  //           renderEdges.map((edge, idx) => {
+  //             const sourcePos = canvasCoordinates.get(edge.source) || ZERO_POS
+  //             const targetPos = canvasCoordinates.get(edge.target) || ZERO_POS
+
+  //             const opacity =
+  //               edge.view === 'translucent'
+  //                 ? settings.plot.nodes.view.hidden.opacity
+  //                 : 1
+
+  //             return (
+  //               <SvgLine
+  //                 key={idx}
+  //                 x1={sourcePos.x}
+  //                 y1={sourcePos.y}
+  //                 x2={targetPos.x}
+  //                 y2={targetPos.y}
+  //                 s={settings.plot.edges.line}
+
+  //                 strokeWidth={edge.strength * settings.plot.edges.scale}
+  //                 opacity={opacity}
+  //               />
+  //             )
+  //           })}
+
+  //         {renderNodeMap.map((node) => {
+  //           return (
+  //             <NodeCircle
+  //               key={node.id}
+  //               node={node}
+  //               radius={radiusMap.get(node.id) ?? 0}
+  //               size2={sizeMap2.get(node.id) ?? 0}
+  //               colorMap={colorMap}
+
+  //               labelSet={userLabelSet}
+  //               coordinates={canvasCoordinates}
+  //             />
+  //           )
+  //         })}
+
+  //         <SvgMouseRect
+  //           size={settings.plot.size}
+  //           onMouseMove={onMouseMove}
+  //           onMouseLeave={hideCrosshair}
+  //           onDoubleClick={onMouseDoubleClick}
+  //         />
+  //       </SvgMargin>
+  //       <LegendSvg />
+  //     </>
+  //   )
+
+  //   return { svg, width, height }
+  // }, [settings, network?.id, coordinates, groups, userData, renderNodeMap])
+
+  // if (!svg) {
+  //   return null
+  // }
+
+  const { width, height } = useMemo(() => {
+    if (!network) {
+      return { width: 0, height: 0 }
     }
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
@@ -501,117 +680,23 @@ export function NetworkD3SvgContent() {
       settings.plot.margin.top +
       settings.plot.margin.bottom
 
-    const sizeMap2 = new Map<string, number>(
-      renderNodes.map((node) => [
-        node.id,
-        (node.size2 ?? 0) / nodes.metricLim2.max,
-      ])
-    )
+    return { width, height }
+  }, [settings, network?.id])
 
-    // map relative coordinates to absolute coordinates within the SVG canvas
-
-    const colorMap = getColorMap(settings.plot.nodes.color.cmap)
-
-    const renderNodesMap = new Map(renderNodes.map((node) => [node.id, node]))
-
-    const renderEdges: IRenderEdge[] = network.edges
-      .filter((edge) => {
-        //const sourceNode = nodeMap[edge.source]
-        //const targetNode = nodeMap[edge.target]
-
-        return (
-          renderNodesMap.has(edge.source) && renderNodesMap.has(edge.target)
-        )
-
-        // return (
-        //   groupMap.get(sourceNode.groupId)?.show &&
-        //   groupMap.get(targetNode.groupId)?.show
-        // )
-      })
-      .map((edge) => {
-        const view =
-          renderNodesMap.get(edge.source)?.view === 'translucent' ||
-          renderNodesMap.get(edge.target)?.view === 'translucent'
-            ? 'translucent'
-            : 'hidden'
-
-        return { ...edge, view }
-      })
-
-    const svg = (
-      <>
-        <SvgMargin margin={settings.plot.margin}>
-          {settings.plot.border.show && (
-            <SvgRect
-              x={0}
-              y={0}
-              width={settings.plot.size.w}
-              height={settings.plot.size.h}
-              sp={settings.plot.border}
-            />
-          )}
-
-          {settings.plot.edges.line.show &&
-            renderEdges.map((edge, idx) => {
-              const sourcePos = canvasCoordinates.get(edge.source) || ZERO_POS
-              const targetPos = canvasCoordinates.get(edge.target) || ZERO_POS
-
-              const opacity =
-                edge.view === 'translucent'
-                  ? settings.plot.nodes.view.hidden.opacity
-                  : 1
-
-              return (
-                <SvgLine
-                  key={idx}
-                  x1={sourcePos.x}
-                  y1={sourcePos.y}
-                  x2={targetPos.x}
-                  y2={targetPos.y}
-                  s={settings.plot.edges.line}
-
-                  strokeWidth={edge.strength * settings.plot.edges.scale}
-                  opacity={opacity}
-                />
-              )
-            })}
-
-          {renderNodes.map((node) => {
-            return (
-              <NodeCircle
-                key={node.id}
-                node={node}
-                radius={radiusMap.get(node.id) ?? 0}
-                size2={sizeMap2.get(node.id) ?? 0}
-                colorMap={colorMap}
-
-                labelSet={labelSet}
-                coordinates={canvasCoordinates}
-              />
-            )
-          })}
-
-          <SvgMouseRect
-            size={settings.plot.size}
-            onMouseMove={onMouseMove}
-            onMouseLeave={hideCrosshair}
-            onDoubleClick={onMouseDoubleClick}
-          />
-        </SvgMargin>
-        <LegendSvg />
-      </>
-    )
-
-    return { svg, width, height }
-  }, [settings, network?.id, coordinates, groups, userData, renderNodes])
-
-  if (!svg) {
-    return null
-  }
+  console.log('what', settings.plot.size)
 
   return (
     <SvgCanvas size={{ w: width, h: height }} scale={zoom}>
-      {svg}
+      <SvgG id="network-nodes"></SvgG>
+      <SvgMargin margin={settings.plot.margin}>
+        <SvgMouseRect
+          size={settings.plot.size}
+          onMouseMove={onMouseMove}
+          onMouseLeave={hideCrosshair}
+          onDoubleClick={onMouseDoubleClick}
+          //fill="red"
+        />
+      </SvgMargin>
     </SvgCanvas>
   )
 }
@@ -621,234 +706,6 @@ export function NetworkD3Svg() {
     <CrosshairProvider>
       <NetworkD3SvgContent />
     </CrosshairProvider>
-  )
-}
-
-function NodeCircle({
-  node,
-  labelSet,
-  radius,
-  size2,
-  coordinates,
-  colorMap,
-}: {
-  node: IRenderNode
-  labelSet: Set<string>
-  radius: number
-  size2: number
-  coordinates: Map<string, IPos>
-  colorMap: ColorMap
-}) {
-  const { settings } = useNetworkSettings()
-  const { nodes } = useNetwork()
-  const { settings: userData } = useUserData()
-  //const { showCrosshair, hideCrosshair } = useCrosshair()
-
-  const { textAnchor, baseline, offset } = getTextAnchor(settings, radius)
-  const pos = coordinates.get(node.id) || ZERO_POS
-  //const { ref } = useSVG()
-
-  //const [hover, setHover] = useState(false)
-
-  let fillColor = useMemo(() => {
-    switch (settings.plot.nodes.color.mode) {
-      case 'group':
-        return node.group?.color ?? COLOR_BLACK
-      default:
-        return colorMap.getHexColor(size2) ?? COLOR_BLACK
-    }
-  }, [settings.plot.nodes.color.mode, node.group, colorMap, size2])
-
-  const showLabel = useMemo(() => {
-    return (
-      node.view === 'default' &&
-      showNodeLabel(
-        node,
-        labelSet,
-        settings.plot.nodes.labels.showAll,
-        userData.labels.mode
-      )
-    )
-  }, [node, labelSet, settings.plot.nodes.labels.showAll, userData.labels.mode])
-
-  //const circleRef = useRef<SVGCircleElement>(null)
-
-  // useEffect(() => {
-  //   if (!circleRef.current) {
-  //     return
-  //   }
-
-  //   gsap.timeline().to(circleRef.current, {
-  //     scale: hover ? 1.2 : 1,
-  //     transformOrigin: 'center',
-  //     duration: 0.3,
-  //     ease: 'power2.out',
-  //   })
-  // }, [hover])
-
-  // const onMouseEnter = useCallback(
-  //   (e: React.MouseEvent) => {
-  //     if (!ref.current) {
-  //       return
-  //     }
-
-  //     //setHover(true)
-
-  //     const barP = {
-  //       x: settings.plot.margin.left + pos.x,
-  //       y: settings.plot.margin.top + pos.y,
-  //     }
-
-  //     const { relativeP, screenP } = svgPointToScreen(ref.current, barP)
-
-  //     showCrosshair({
-  //       pos: relativeP,
-  //       clientPos: screenP,
-  //       content: (
-  //         <>
-  //           {/* <strong>{node.label}</strong> */}
-  //           {/* <span>Name: {node.name}</span> */}
-  //           {/* <span>Group: {node.group}</span> */}
-  //           {/* <span>
-  //             {getSizeLabel(headings, settings)}: {node.size}
-  //           </span> */}
-  //           {IS_DEV_MODE && <strong>{node.id}</strong>}
-  //           {Object.entries(node.data)
-  //             .sort(([key1], [key2]) => key1.localeCompare(key2))
-  //             .map(([key, value], i) => (
-  //               <span key={i}>
-  //                 {key}: {value}
-  //               </span>
-  //             ))}
-  //         </>
-  //       ),
-  //     })
-  //   },
-  //   [pos, ref, settings, setHover, showCrosshair, hideCrosshair]
-  // )
-
-  // const hide = useCallback(() => {
-  //   setHover(false)
-  //   hideCrosshair()
-  // }, [hideCrosshair, setHover])
-
-  const fillOpacity =
-    node.view === 'translucent'
-      ? settings.plot.nodes.view.hidden.opacity
-      : settings.plot.nodes.color.opacity
-
-  const stroke =
-    settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
-      ? fillColor
-      : undefined
-
-  return (
-    <SvgG pos={pos}>
-      <SvgCircle
-        id={`node-${node.id}`}
-        //ref={circleRef}
-        r={radius}
-        fill={fillColor}
-        fillOpacity={fillOpacity}
-        stroke={stroke}
-        sp={settings.plot.nodes.line}
-        className="mix-blend-multiply"
-        //onMouseEnter={onMouseEnter}
-        //onMouseLeave={hide}
-        // double click
-        // onDoubleClick={(e) => {
-        //   if (labelsInNodeIds(node, labelSet)) {
-        //     updateUserData(
-        //       produce(userData, (draft) => {
-        //         draft.labels.ids = userData.labels.ids.filter(
-        //           (id) => id !== node.id2
-        //         )
-        //       })
-        //     )
-        //   } else {
-        //     console.log('Adding node to user data labels:', node.id2)
-        //     updateUserData(
-        //       produce(userData, (draft) => {
-        //         draft.labels.ids = [...userData.labels.ids, node.id2]
-        //       })
-        //     )
-        //   }
-
-        //   e.stopPropagation()
-        // }}
-      />
-      {showLabel && (
-        <SvgG pos={offset}>
-          <SvgText
-            textAnchor={textAnchor}
-            dominantBaseline={baseline}
-            font={settings.plot.nodes.labels.text}
-            className="pointer-events-none"
-          >
-            {getNodeText(node, nodes.label.field)}
-          </SvgText>
-        </SvgG>
-      )}
-    </SvgG>
-  )
-}
-
-/**
- * Converts D3 coordinates to canvas space coordinates.
- * @param coordinates The coordinates of the nodes in the D3 space.
- * @param d3Size The size of the D3 plotting area.
- * @param radiusMap A map of node IDs to their respective radii.
- * @param settings The network plot settings.
- * @returns A map of node IDs to their positions in the canvas space.
- */
-function d3ToCanvasSpace(
-  coordinates: Record<string, IPos>,
-  d3Size: IDim,
-  radiusMap: Map<string, number>,
-  settings: INetworkSettings
-): Map<string, IPos> {
-  const plotScale = {
-    x: settings.plot.size.w / d3Size.w,
-    y: settings.plot.size.h / d3Size.h,
-  }
-
-  const mid = {
-    x: settings.plot.size.w / 2,
-    y: settings.plot.size.h / 2,
-  }
-
-  return new Map<string, IPos>(
-    Object.entries(coordinates).map(([id, pos]) => {
-      let x = pos.x
-      let y = pos.y
-
-      if (settings.plot.autoFit) {
-        x *= plotScale.x
-        y *= plotScale.y
-      }
-
-      // user supplied scale factor
-      x *= settings.plot.scale
-      y *= settings.plot.scale
-
-      x += mid.x
-      y += mid.y
-
-      const radius = radiusMap.get(id) ?? 0
-
-      if (settings.plot.nodes.clamp) {
-        x = Math.max(radius, Math.min(settings.plot.size.w - radius, x))
-        y = Math.max(radius, Math.min(settings.plot.size.h - radius, y))
-      }
-
-      return [
-        id,
-        {
-          x,
-          y,
-        },
-      ]
-    })
   )
 }
 
@@ -907,6 +764,13 @@ function inLabelSet(
   return false
 }
 
+/**
+ * Get the text for a specific field of a node.
+ *
+ * @param node The node object.
+ * @param field The field name to retrieve the text from.
+ * @returns The text value of the specified field.
+ */
 function getNodeText(node: INode, field: string): string {
   switch (field) {
     case 'id':

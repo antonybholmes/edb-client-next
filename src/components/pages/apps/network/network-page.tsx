@@ -41,7 +41,6 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
-import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
@@ -51,7 +50,7 @@ import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
 import { NetworkPropsPanel } from './props/network-props-panel'
-import { NetworkSvg } from './svg/network-svg'
+import { NetworkD3Svg } from './svg/network-d3-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { NodesToolbar } from './toolbars/nodes-toolbar'
 import { ViewToolbar } from './toolbars/view-toolbar'
@@ -258,13 +257,14 @@ export function NetworkPage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                <RunningIndicator
+                {/* <RunningIndicator
                   id="network"
-                  //message="Running Extended GSEA..."
                   className="w-full p-4"
                 >
                   <NetworkSvg />
-                </RunningIndicator>
+                </RunningIndicator> */}
+
+                <NetworkD3Svg />
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
