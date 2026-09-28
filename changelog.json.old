@@ -3154,6 +3154,10 @@
         {
           "msg": "Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements",
           "date": "2026-09-27T18:46:06.857Z"
+        },
+        {
+          "msg": "Create d3 version of network renderer",
+          "date": "2026-09-28T17:19:52.595Z"
         }
       ]
     },
