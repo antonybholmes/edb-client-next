@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added default clipping to axes.
 - Bug fixes and updates.
 
 

@@ -74,7 +74,7 @@ export function createAxis(
     id,
     title,
     direction = 'x',
-    clip,
+    clip = true,
     length,
     style,
     domain,
@@ -536,6 +536,14 @@ function makeTicks(
  *
  * @param lim
  * @returns
+ */
+
+/**
+ * Calculates a reasonable tick interval for a data axis.
+ *
+ * @param lim The data range for which to calculate tick intervals.
+ * @param tickCount The desired number of ticks.
+ * @returns An object containing the calculated ticks, the interval between ticks, and a formatting function.
  */
 export function autoTickInterval(
   lim: ILim | ILimit,
