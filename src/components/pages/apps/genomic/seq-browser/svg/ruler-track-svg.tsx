@@ -87,8 +87,10 @@ export function RulerTrackSvg({ track, xax }: IProps) {
     }
   }
 
+  const { interval } = autoTickInterval([location.start, location.end])
+
   let rulerBb: number = settings.tracks.ruler.autoSize
-    ? autoTickInterval([location.start, location.end])
+    ? interval
     : settings.tracks.ruler.bp
 
   if (Math.abs(_xax.domain[1] - _xax.domain[0]) / rulerBb > 4) {
