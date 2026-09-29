@@ -129,6 +129,7 @@ export function StrokeDropdownMenu({
 
   const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
   const opacity = color0.opacity ?? 1
+  console.log('color0', color0)
 
   return (
     <DropdownMenu>
@@ -344,6 +345,8 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
   const { open: openDialog } = useDialogs()
   const { addCustomColor } = useEdbSettings()
 
+  console.log('cp', cp)
+
   return (
     <DropdownMenuItem
       onClick={() => {
@@ -353,6 +356,7 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
             cp,
 
             callback: (color) => {
+              console.log('color', color)
               addCustomColor(color.color, color.opacity ?? 1)
               cp.onColorChange?.({
                 ...color,

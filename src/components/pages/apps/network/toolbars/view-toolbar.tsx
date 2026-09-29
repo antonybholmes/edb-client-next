@@ -63,14 +63,12 @@ export function ViewToolbar() {
 
         <ToolbarCol>
           <ToolbarRow>
-            <span>Field</span>
             <FieldSelectList />
           </ToolbarRow>
         </ToolbarCol>
 
         <ToolbarCol>
           <ToolbarRow>
-            <span>View</span>
             <SelectList
               items={NODE_VIEW_MODES}
               value={settings.plot.nodes.view.mode}
@@ -81,8 +79,9 @@ export function ViewToolbar() {
                   })
                 )
               }}
-              w="xs"
+              w="sm"
               variant="toolbar"
+              title="Which Nodes Should Be Shown"
             >
               {NODE_VIEW_MODES.map((position) => (
                 <SelectItem key={position.value} value={position.value}>
@@ -111,7 +110,6 @@ export function ViewToolbar() {
       <ToolbarTabGroup title="Edges">
         <ToolbarCol>
           <ToolbarRow>
-            <span title="Edge View">View</span>
             <SelectList
               items={NODE_VIEW_MODES}
               value={settings.plot.edges.mode}
@@ -122,8 +120,9 @@ export function ViewToolbar() {
                   })
                 )
               }}
-              w="xs"
+              w="sm"
               variant="toolbar"
+              title="Which Edges Should Be Shown"
             >
               {NODE_VIEW_MODES.map((position) => (
                 <SelectItem key={position.value} value={position.value}>

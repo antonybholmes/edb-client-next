@@ -238,14 +238,12 @@ export function useNetworkD3Sim() {
   // )
 
   useEffect(() => {
-    if (!ref.current || !network || currentNetworkId.current === network.id) {
+    if (!ref.current || !network) {
       return
     }
 
     setStatus('running')
     currentNetworkId.current = network.id
-
-    console.trace(network)
 
     // 2. Clone the structure out into D3-friendly array mutations
     // const nodes = network.nodes.map((node, ni) => {
@@ -442,11 +440,14 @@ export function useNetworkD3Sim() {
           y: (y - mid.y) * plotScale.y + plotMid.y,
         })
 
-        // scale from mid-point to fit within the plot area
-        node.attr('transform', (d) => {
-          const p = toPlot(d.x, d.y)
-          return `translate(${p.x}, ${p.y})`
-        })
+        node
+          .transition()
+          .duration(1000) // Time in milliseconds
+          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
+          .attr('transform', (d) => {
+            const p = toPlot(d.x, d.y)
+            return `translate(${p.x}, ${p.y})`
+          })
 
         link
           .attr(

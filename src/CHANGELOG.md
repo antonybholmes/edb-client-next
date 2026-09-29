@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added margin props to network. Auto fit now uses animation.
 - Network support for turning of edges of hidden or translucent nodes.
 - Network edge highlight, edge opacity varies when nodes are translucent.
 - Clamping now works.

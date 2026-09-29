@@ -56,6 +56,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     },
     pad: {
       none: '',
+      sm: 'px-1',
       md: 'px-2',
       lg: 'px-3',
     },

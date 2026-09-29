@@ -15,8 +15,9 @@ export function FieldSelectList({
       onValueChange={(value) => {
         setNodeLabelField(value as string)
       }}
-      w="sm"
+      w="md"
       variant={variant}
+      title="Text That Appears in Node Labels"
     >
       {nodes.label.fields.map((field) => (
         <SelectItem key={field} value={field}>

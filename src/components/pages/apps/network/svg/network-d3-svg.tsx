@@ -26,6 +26,7 @@ import {
   useNetworkD3Sim,
 } from '../network-store-d3-sim'
 import { useUserData } from '../network-user-data-store'
+import { LegendSvg } from './legend-svg'
 
 export function NetworkD3SvgContent() {
   const { zoom } = useZoom()
@@ -173,7 +174,8 @@ export function NetworkD3SvgContent() {
         )
       )
       .attr('visibility', (d) => {
-        return renderEdgeMap.get(d.id)?.view === 'hidden' ? 'hidden' : 'visible'
+        const hide = renderEdgeMap.get(d.id)?.view === 'hidden'
+        return hide ? 'hidden' : 'visible'
       })
 
     // .attr('stroke', (d) => {
@@ -437,6 +439,7 @@ export function NetworkD3SvgContent() {
           //fill="red"
         />
       </SvgMargin>
+      <LegendSvg />
     </SvgCanvas>
   )
 }

@@ -19,6 +19,7 @@ import { produce } from 'immer'
 import { RotateCw } from 'lucide-react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
+import { MarginPopover } from '../margin-popover'
 import { useNetworkSettings } from '../network-settings-store'
 import { useNetwork } from '../network-store'
 import { useNetworkSim } from '../network-store-sim'
@@ -143,6 +144,9 @@ export function NetworkDisplayPropsPanel() {
                 }}
               />
             </PropRow>
+            <PropRow title="Margin">
+              <MarginPopover />
+            </PropRow>
 
             <PropRow title="Border">
               <StrokeButton
@@ -167,6 +171,23 @@ export function NetworkDisplayPropsPanel() {
                 pad="md"
                 size="sm"
                 //rounded="full"
+                pressed={settings.plot.autoFit}
+                onPressedChange={(pressed) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.autoFit = pressed
+                    })
+                  )
+                }
+              >
+                Auto Fit
+              </Toggle>
+
+              <Toggle
+                //variant="app-theme"
+                pad="md"
+                size="sm"
+                //rounded="full"
                 pressed={settings.plot.nodes.clamp}
                 onPressedChange={(pressed) =>
                   updateSettings(
@@ -179,11 +200,9 @@ export function NetworkDisplayPropsPanel() {
                 Clamp
               </Toggle>
 
-              <Toggle
-                //variant="app-theme"
+              {/* <Toggle
                 pad="md"
                 size="sm"
-                //rounded="full"
                 pressed={settings.plot.nodes.clip}
                 onPressedChange={(pressed) =>
                   updateSettings(
@@ -194,7 +213,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               >
                 Clip
-              </Toggle>
+              </Toggle> */}
 
               {/* <Checkbox
                 title="Clamp"
@@ -227,7 +246,7 @@ export function NetworkDisplayPropsPanel() {
               </Checkbox> */}
             </PropRow>
 
-            <CheckPropRow
+            {/* <CheckPropRow
               title="Auto Fit"
               checked={settings.plot.autoFit}
               onCheckedChange={(checked) =>
@@ -237,7 +256,7 @@ export function NetworkDisplayPropsPanel() {
                   })
                 )
               }
-            ></CheckPropRow>
+            /> */}
 
             <PropRow title="Scale">
               <NumSlider
@@ -476,12 +495,14 @@ export function NetworkDisplayPropsPanel() {
                 colors={[
                   {
                     color: settings.plot.edges.line.value,
+                    opacity: settings.plot.edges.line.opacity,
                     show: settings.plot.edges.line.show,
-                    onColorChange: ({ color, show }) =>
+                    onColorChange: ({ color, opacity, show }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.plot.edges.line.value = color
                           draft.plot.edges.line.show = show
+                          draft.plot.edges.line.opacity = opacity
                         })
                       ),
                   },

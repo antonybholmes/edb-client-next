@@ -24,13 +24,6 @@ export function LegendSvg() {
   //estimate the space needed for node labels based on font size
   const nodeLabelHeight = nodeLabelFontSize // * 1.2 // approximate line height for labels
 
-  console.log(
-    'nodeLabelHeight:',
-    settings.plot.nodes.labels.text.font.fontSize,
-    nodeLabelHeight,
-    groups.length
-  )
-
   const nodeRadiusScale = nodeRadiusFunc(
     settings.plot.nodes.radius,
     settings.plot.nodes.scale.mode

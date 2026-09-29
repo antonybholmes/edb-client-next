@@ -7,7 +7,7 @@ import {
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { IDim } from '@/interfaces/dim'
-import { COLOR_BLACK, COLOR_LIGHTGRAY } from '@/lib/color/color'
+import { COLOR_BLACK, COLOR_GRAY } from '@/lib/color/color'
 import { ICmap } from '@/lib/color/colormap'
 import { useCallback } from 'react'
 
@@ -163,15 +163,15 @@ const DEFAULT_SETTINGS: INetworkSettings = {
           opacity: 0.1,
         },
       },
-      clamp: true,
-      clip: true,
+      clamp: false,
+      clip: false,
     },
 
     edges: {
       scale: 1,
       mode: 'all',
       minWidth: 1,
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY, opacity: 0.5 },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_GRAY, opacity: 0.5 },
     },
     legend: {
       dot: {
