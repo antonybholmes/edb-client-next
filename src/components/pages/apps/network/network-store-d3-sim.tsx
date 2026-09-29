@@ -114,12 +114,32 @@ export function useNetworkD3Sim() {
     return new Map(renderNodes.map((node) => [node.id, node]))
   }, [renderNodes])
 
+  const nodeEdgeMap = useMemo(() => {
+    if (!network?.edges || network.edges.length === 0) {
+      return new Map<string, Set<string>>()
+    }
+
+    const map = new Map<string, Set<string>>()
+
+    for (const edge of network.edges) {
+      if (!map.has(edge.source)) {
+        map.set(edge.source, new Set())
+      }
+      if (!map.has(edge.target)) {
+        map.set(edge.target, new Set())
+      }
+
+      map.get(edge.source)?.add(edge.id)
+      map.get(edge.target)?.add(edge.id)
+    }
+
+    return map
+  }, [network?.edges])
+
   const renderEdges: IRenderEdge[] = useMemo(() => {
     if (!network) {
       return []
     }
-
-    console.log('gmm')
 
     return network.edges.map((edge) => {
       let view = 'default'
@@ -138,13 +158,13 @@ export function useNetworkD3Sim() {
         view = 'default'
       }
 
-      if (view === 'default') {
-        console.log('default view for edge:', edge)
-      }
-
       return { ...edge, view } as IRenderEdge
     })
   }, [network?.edges, renderNodeMap])
+
+  const renderEdgeMap = useMemo(() => {
+    return new Map(renderEdges.map((edge) => [edge.id, edge]))
+  }, [renderEdges])
 
   const radiusMap = useMemo(() => {
     if (!network?.nodes || network.nodes.length === 0) {
@@ -272,12 +292,15 @@ export function useNetworkD3Sim() {
       .join('line')
 
     link
+      .attr('id', (d) => `edge-${d.id}`)
+      .attr('class', 'edge')
       .attr('stroke', settings.plot.edges.line.value)
       .attr('stroke-opacity', (d) =>
         d.view === 'translucent'
           ? settings.plot.nodes.view.hidden.opacity
           : settings.plot.edges.line.opacity
       )
+      .attr('stroke-width', (d) => d.strength * settings.plot.edges.scale)
 
     // Nodes
     const node = g
@@ -357,13 +380,10 @@ export function useNetworkD3Sim() {
 
     // 4. Stream layout coordinates straight back into the store on every frame tick
     simulation.on('tick', () => {
-      console.log('Simulation tick')
-
       node.attr('transform', (d) => `translate(${d.x}, ${d.y})`)
 
       link
         .attr('x1', (d) => {
-          //console.log(d.source)
           return (d.source as INode).x!
         })
         .attr('y1', (d) => (d.source as INode).y!)
@@ -546,8 +566,10 @@ export function useNetworkD3Sim() {
 
   return {
     renderNodes,
-    renderEdges,
     renderNodeMap,
+    renderEdges,
+    renderEdgeMap,
+    nodeEdgeMap,
     radiusMap,
     nodeLabelMap,
     nodeColorMap,

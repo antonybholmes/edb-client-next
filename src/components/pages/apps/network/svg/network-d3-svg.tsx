@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { SvgCanvas } from '@/components/plot/svg-base'
 
@@ -39,12 +39,19 @@ export function NetworkD3SvgContent() {
 
   const { network } = useNetwork()
 
-  const { nodeLabelMap, radiusMap, nodeColorMap, renderNodeMap, tree } =
-    useNetworkD3Sim()
+  const {
+    renderEdgeMap,
+    nodeEdgeMap,
+    nodeLabelMap,
+    radiusMap,
+    nodeColorMap,
+    renderNodeMap,
+    tree,
+  } = useNetworkD3Sim()
 
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
-  const currentNode = useRef<INode | null>(null)
+  const [currentNode, setCurrentNode] = useState<INode | null>(null)
 
   useEffect(() => {
     if (!ref.current || renderNodeMap.size === 0) {
@@ -54,81 +61,57 @@ export function NetworkD3SvgContent() {
     const svg = d3.select(ref.current)
 
     // get the main container for network nodes
-    let g = svg.select('#network').select('#nodes')
+    const g = svg.select('#network').select('#nodes')
 
-    if (!g.empty()) {
-      g.selectAll<SVGCircleElement, IRenderNode>('.node-circle')
-        .attr('fill', (d) => nodeColorMap.get(d.id))
-        .attr('fill-opacity', (d) => {
-          const node = renderNodeMap.get(d.id)
-
-          return node.view === 'translucent'
-            ? settings.plot.nodes.view.hidden.opacity
-            : settings.plot.nodes.color.opacity
-        })
-        .attr('stroke', (d) =>
-          settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
-            ? nodeColorMap.get(d.id)
-            : undefined
-        )
-
-      g.selectAll<SVGTextElement, IRenderNode>('.node-text')
-        .attr('fill', (d) =>
-          settings.plot.nodes.labels.color.on
-            ? nodeColorMap.get(d.id)
-            : settings.plot.nodes.labels.color.default
-        )
-        .attr('transform', (d) => {
-          const { offset } = getTextAnchor(settings, radiusMap.get(d.id))
-          return `translate(${offset.x}, ${offset.y})`
-        })
-        .attr('dominant-baseline', (d) => {
-          const { baseline } = getTextAnchor(settings, radiusMap.get(d.id))
-          return baseline
-        })
-        .attr('text-anchor', (d) => {
-          const { textAnchor } = getTextAnchor(settings, radiusMap.get(d.id))
-          return textAnchor
-        })
-        .attr('font-size', settings.plot.nodes.labels.text.font.fontSize)
-        .attr('visibility', (d) =>
-          showNodeLabel(
-            d,
-            userLabelSet,
-            settings.plot.nodes.labels.showAll,
-            userData.labels.mode
-          )
-            ? 'visible'
-            : 'hidden'
-        )
+    if (g.empty()) {
+      return
     }
 
-    g = svg.select('#network').select('#edges')
+    g.selectAll<SVGCircleElement, IRenderNode>('circle')
+      .attr('fill', (d) => nodeColorMap.get(d.id))
+      .attr('fill-opacity', (d) => {
+        const node = renderNodeMap.get(d.id)
 
-    if (!g.empty()) {
-      g.selectAll<SVGLineElement, IRenderEdge>('line')
+        return node.view === 'translucent'
+          ? settings.plot.nodes.view.hidden.opacity
+          : settings.plot.nodes.color.opacity
+      })
+      .attr('stroke', (d) =>
+        settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
+          ? nodeColorMap.get(d.id)
+          : undefined
+      )
 
-        .attr('stroke-opacity', (d) => {
-          //console.log(d)
-
-          if (d.view === 'default') {
-            console.log(
-              'default view for edge:',
-              d,
-              settings.plot.edges.line.opacity
-            )
-          }
-
-          return d.view === 'translucent'
-            ? settings.plot.nodes.view.hidden.opacity
-            : 1
-        })
-
-      // .attr('stroke', (d) => {
-      //   return 'red'
-      // })
-    }
-  }, [renderNodeMap, userLabelSet, nodeColorMap])
+    g.selectAll<SVGTextElement, IRenderNode>('text')
+      .attr('fill', (d) =>
+        settings.plot.nodes.labels.color.on
+          ? nodeColorMap.get(d.id)
+          : settings.plot.nodes.labels.color.default
+      )
+      .attr('transform', (d) => {
+        const { offset } = getTextAnchor(settings, radiusMap.get(d.id))
+        return `translate(${offset.x}, ${offset.y})`
+      })
+      .attr('dominant-baseline', (d) => {
+        const { baseline } = getTextAnchor(settings, radiusMap.get(d.id))
+        return baseline
+      })
+      .attr('text-anchor', (d) => {
+        const { textAnchor } = getTextAnchor(settings, radiusMap.get(d.id))
+        return textAnchor
+      })
+      .attr('font-size', settings.plot.nodes.labels.text.font.fontSize)
+      .attr('visibility', (d) =>
+        showNodeLabel(
+          d,
+          userLabelSet,
+          settings.plot.nodes.labels.showAll,
+          userData.labels.mode
+        )
+          ? 'visible'
+          : 'hidden'
+      )
+  }, [renderNodeMap, userLabelSet, nodeColorMap, settings])
 
   useEffect(() => {
     if (!ref.current || nodeLabelMap.size === 0) {
@@ -146,6 +129,70 @@ export function NetworkD3SvgContent() {
       (d) => nodeLabelMap.get(d.id) ?? ''
     )
   }, [nodeLabelMap])
+
+  useEffect(() => {
+    if (!ref.current || renderNodeMap.size === 0) {
+      return
+    }
+
+    const svg = d3.select(ref.current)
+
+    const g = svg.select('#network').select('#edges')
+
+    if (g.empty()) {
+      return
+    }
+
+    g.selectAll<SVGLineElement, IRenderEdge>('line').attr(
+      'stroke-opacity',
+      (d) => {
+        //console.log(d)
+
+        return renderEdgeMap.get(d.id)?.view === 'translucent'
+          ? settings.plot.nodes.view.hidden.opacity
+          : settings.plot.edges.line.opacity
+      }
+    )
+
+    // .attr('stroke', (d) => {
+    //   return 'red'
+    // })
+  }, [renderEdgeMap, settings])
+
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
+
+    const svg = d3.select(ref.current)
+
+    const g = svg.select('#network').select('#edges')
+
+    if (g.empty()) {
+      return
+    }
+
+    const highlightedEdges =
+      nodeEdgeMap.get(currentNode?.id) ?? new Set<string>()
+
+    g.selectAll<SVGLineElement, IRenderEdge>('line')
+      .attr('stroke', (d) => {
+        return highlightedEdges.has(d.id)
+          ? 'var(--color-app-theme)'
+          : settings.plot.edges.line.value
+      })
+      .attr(
+        'stroke-width',
+        (d) =>
+          d.strength *
+          settings.plot.edges.scale *
+          (highlightedEdges.has(d.id) ? 3 : 1)
+      )
+
+    // .attr('stroke', (d) => {
+    //   return 'red'
+    // })
+  }, [currentNode, settings])
 
   // const tree = useMemo(
   //   () =>
@@ -178,35 +225,45 @@ export function NetworkD3SvgContent() {
         settings.plot.crosshair.search.radius
       )
 
-      if (!node) {
-        // since we have lots of mouse events, only react when the current node changes
-        if (currentNode.current) {
-          gsap.timeline().to(`#node-circle-${currentNode.current.id}`, {
-            scale: 1,
-            transformOrigin: 'center',
-            duration: 0.3,
-            ease: 'power2.out',
-          })
+      //console.log(node, currentNode)
 
-          currentNode.current = null
-          hideCrosshair()
+      // since we have lots of mouse events, only react when the current node changes
+      if (!node) {
+        if (currentNode) {
+          gsap.timeline().to(
+            `#node-circle-${currentNode.id}`,
+            {
+              scale: 1,
+              transformOrigin: 'center',
+              duration: 0.3,
+              ease: 'power2.out',
+            },
+            0
+          )
+
+          setCurrentNode(null)
         }
 
+        hideCrosshair()
         return
       }
 
-      if (node.id === currentNode.current?.id) {
+      if (node.id === currentNode?.id) {
         return
       }
 
-      currentNode.current = node
+      setCurrentNode(node)
 
-      gsap.timeline().to(`#node-circle-${node.id}`, {
-        scale: 1.2,
-        transformOrigin: 'center',
-        duration: 0.3,
-        ease: 'power2.out',
-      })
+      gsap.timeline().to(
+        `#node-circle-${node.id}`,
+        {
+          scale: 1.2,
+          transformOrigin: 'center',
+          duration: 0.3,
+          ease: 'power2.out',
+        },
+        0
+      )
 
       const plotNodePos = { x: node.x, y: node.y }
 
@@ -238,37 +295,44 @@ export function NetworkD3SvgContent() {
         ),
       })
     },
-    [tree]
+    [
+      tree,
+      currentNode,
+      settings,
+      truncate,
+      showCrosshair,
+      hideCrosshair,
+      screenToSvgPoint,
+      svgPointToScreen,
+      setCurrentNode,
+    ]
   )
 
   const onMouseDoubleClick = useCallback(
     (e: React.MouseEvent) => {
-      if (!currentNode.current) {
+      if (!currentNode) {
         return
       }
 
-      const node = currentNode.current
-
-      if (labelsInNodeIds(node, userLabelSet)) {
+      if (labelsInNodeIds(currentNode, userLabelSet)) {
         updateUserData(
           produce(userData, (draft) => {
             draft.labels.ids = userData.labels.ids.filter(
-              (id) => id !== node.id2
+              (id) => id !== currentNode.id2
             )
           })
         )
       } else {
-        console.log('Adding node to user data labels:', node.id2)
         updateUserData(
           produce(userData, (draft) => {
-            draft.labels.ids = [...userData.labels.ids, node.id2]
+            draft.labels.ids = [...userData.labels.ids, currentNode.id2]
           })
         )
       }
 
       e.stopPropagation()
     },
-    [userLabelSet, updateUserData, userData]
+    [userLabelSet, updateUserData, userData, currentNode]
   )
 
   //   const svg = (

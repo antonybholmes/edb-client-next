@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network edge highlight, edge opacity varies when nodes are translucent.
 - Clamping now works.
 - Auto fit now works with d3 network.
 - network now has smooth animation using d3.
