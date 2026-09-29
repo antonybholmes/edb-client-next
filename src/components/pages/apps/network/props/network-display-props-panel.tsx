@@ -164,7 +164,7 @@ export function NetworkDisplayPropsPanel() {
                 //variant="app-theme"
                 pad="md"
                 size="sm"
-                rounded="full"
+                //rounded="full"
                 pressed={settings.plot.nodes.clamp}
                 onPressedChange={(pressed) =>
                   updateSettings(
@@ -181,7 +181,7 @@ export function NetworkDisplayPropsPanel() {
                 //variant="app-theme"
                 pad="md"
                 size="sm"
-                rounded="full"
+                //rounded="full"
                 pressed={settings.plot.nodes.clip}
                 onPressedChange={(pressed) =>
                   updateSettings(
@@ -353,7 +353,7 @@ export function NetworkDisplayPropsPanel() {
               <Toggle
                 size="sm"
                 pad="md"
-                rounded="full"
+                //rounded="full"
                 pressed={settings.plot.nodes.line.autoColor}
                 onPressedChange={(checked) =>
                   updateSettings(

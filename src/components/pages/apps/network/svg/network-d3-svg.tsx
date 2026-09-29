@@ -6,7 +6,7 @@ import { SvgCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgMouseRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
 import { IS_DEV_MODE } from '@/consts'
 import { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -245,7 +245,7 @@ export function NetworkD3SvgContent() {
     const svg = d3.select(ref.current)
 
     // get the main container for network nodes
-    const g = svg.select('#network-nodes')
+    const g = svg.select('#network')
 
     g.selectAll('*').remove()
 
@@ -274,19 +274,21 @@ export function NetworkD3SvgContent() {
         d.view === 'translucent' ? settings.plot.nodes.view.hidden.opacity : 1
       )
 
-    console.log(edges)
-
     // Nodes
     const node = g
       .append('g')
+      .attr('id', 'nodes')
       .attr('class', 'nodes')
       .selectAll<SVGGElement, IRenderNode>('g')
       .data(nodes, (d) => d.id)
       .join('g')
 
     node
-      .append('circle')
       .attr('id', (d) => `node-${d.id}`)
+      .attr('class', 'node')
+      .append('circle')
+      .attr('id', (d) => `node-circle-${d.id}`)
+      .attr('class', 'node-circle')
       .attr('r', (d) => radiusMap.get(d.id))
       .attr('fill', (d) => nodeColorMap.get(d.id))
       .attr('fill-opacity', (d) =>
@@ -302,32 +304,9 @@ export function NetworkD3SvgContent() {
 
     node
       .append('text')
+      .attr('id', (d) => `node-text-${d.id}`)
+      .attr('class', 'node-text')
       .text((d) => nodeLabelMap.get(d.id))
-
-      .attr('transform', (d) => {
-        const { offset } = getTextAnchor(settings, radiusMap.get(d.id))
-
-        return `translate(${offset.x}, ${offset.y})`
-      })
-      .attr('dominant-baseline', (d) => {
-        const { baseline } = getTextAnchor(settings, radiusMap.get(d.id))
-        return baseline
-      })
-      .attr('text-anchor', (d) => {
-        const { textAnchor } = getTextAnchor(settings, radiusMap.get(d.id))
-        return textAnchor
-      })
-      .attr('font-size', settings.plot.nodes.labels.text.font.fontSize)
-      .attr('visibility', (d) =>
-        showNodeLabel(
-          d,
-          userLabelSet,
-          settings.plot.nodes.labels.showAll,
-          userData.labels.mode
-        )
-          ? 'visible'
-          : 'hidden'
-      )
 
     const linkForce = forceLink<INode, IRenderEdge>(edges)
       .id((d: INode) => d.id)
@@ -340,6 +319,7 @@ export function NetworkD3SvgContent() {
 
     // 3. Initialize the D3 Force Engine
     const simulation = forceSimulation(nodes)
+      //.alphaDecay(0.05)
       .force('charge', forceManyBody().strength(settings.layout.chargeStrength))
       .force(
         'center',
@@ -386,28 +366,117 @@ export function NetworkD3SvgContent() {
     })
 
     simulation.on('end', () => {
-      if (settings.plot.nodes.clamp) {
-        node.attr(
-          'transform',
-          (d) =>
-            `translate(${Math.max(
-              settings.plot.margin.left,
-              Math.min(settings.plot.size.w + settings.plot.margin.left, d.x)
-            )}, ${Math.max(
-              settings.plot.margin.top,
-              Math.min(settings.plot.size.h + settings.plot.margin.top, d.y)
-            )})`
-        )
+      if (settings.plot.autoFit) {
+        const maxRadius = Math.max(...Array.from(radiusMap.values()))
 
-        for (let node of nodes) {
-          node.x = Math.max(
+        const d3XBounds = {
+          xMin: d3.min(nodes, (d) => d.x) - maxRadius,
+          xMax: d3.max(nodes, (d) => d.x) + maxRadius,
+        }
+
+        const d3YBounds = {
+          yMin: d3.min(nodes, (d) => d.y) - maxRadius,
+          yMax: d3.max(nodes, (d) => d.y) + maxRadius,
+        }
+
+        const d3Size = {
+          w: d3XBounds.xMax - d3XBounds.xMin,
+          h: d3YBounds.yMax - d3YBounds.yMin,
+        }
+
+        const plotScale = {
+          x: settings.plot.size.w / d3Size.w,
+          y: settings.plot.size.h / d3Size.h,
+        }
+
+        const mid = {
+          x: (d3XBounds.xMin + d3XBounds.xMax) / 2,
+          y: (d3YBounds.yMin + d3YBounds.yMax) / 2,
+        }
+
+        console.log('mid:', d3Size, plotScale)
+
+        const plotMid = {
+          x: settings.plot.size.w / 2 + settings.plot.margin.left,
+          y: settings.plot.size.h / 2 + settings.plot.margin.top,
+        }
+
+        const toPlot = (x: number, y: number) => ({
+          x: (x - mid.x) * plotScale.x + plotMid.x,
+          y: (y - mid.y) * plotScale.y + plotMid.y,
+        })
+
+        // scale from mid-point to fit within the plot area
+        node.attr('transform', (d) => {
+          const p = toPlot(d.x, d.y)
+          return `translate(${p.x}, ${p.y})`
+        })
+
+        link
+          .attr(
+            'x1',
+            (d) => toPlot((d.source as INode).x!, (d.source as INode).y!).x
+          )
+          .attr(
+            'y1',
+            (d) => toPlot((d.source as INode).x!, (d.source as INode).y!).y
+          )
+          .attr(
+            'x2',
+            (d) => toPlot((d.target as INode).x!, (d.target as INode).y!).x
+          )
+          .attr(
+            'y2',
+            (d) => toPlot((d.target as INode).x!, (d.target as INode).y!).y
+          )
+
+        for (let d of nodes) {
+          const p = toPlot(d.x, d.y)
+          d.x = p.x
+          d.y = p.y
+        }
+      }
+
+      if (settings.plot.nodes.clamp) {
+        const clampX = (x: number, y: number) => ({
+          x: Math.max(
             settings.plot.margin.left,
-            Math.min(settings.plot.size.w + settings.plot.margin.left, node.x)
-          )
-          node.y = Math.max(
+            Math.min(settings.plot.size.w + settings.plot.margin.left, x)
+          ),
+
+          y: Math.max(
             settings.plot.margin.top,
-            Math.min(settings.plot.size.h + settings.plot.margin.top, node.y)
+            Math.min(settings.plot.size.h + settings.plot.margin.top, y)
+          ),
+        })
+
+        node.attr('transform', (d) => {
+          const p = clampX(d.x, d.y)
+          return `translate(${p.x}, ${p.y})`
+        })
+
+        link
+          .attr(
+            'x1',
+            (d) => clampX((d.source as INode).x!, (d.source as INode).y!).x
           )
+          .attr(
+            'y1',
+            (d) => clampX((d.source as INode).x!, (d.source as INode).y!).y
+          )
+          .attr(
+            'x2',
+            (d) => clampX((d.target as INode).x!, (d.target as INode).y!).x
+          )
+          .attr(
+            'y2',
+            (d) => clampX((d.target as INode).x!, (d.target as INode).y!).y
+          )
+
+        for (let d of nodes) {
+          const p = clampX(d.x, d.y)
+          d.x = p.x
+          d.y = p.y
         }
       }
 
@@ -454,11 +523,69 @@ export function NetworkD3SvgContent() {
   }, [
     network,
     radiusMap,
+    settings.plot.autoFit,
+    settings.plot.nodes.clamp,
     settings.plot.margin,
     settings.layout.chargeStrength,
     settings.layout.linkDistance,
     settings.plot.crosshair.search.radius,
   ])
+
+  useEffect(() => {
+    if (!ref.current || !network) {
+      return
+    }
+
+    const svg = d3.select(ref.current)
+
+    // get the main container for network nodes
+    const g = svg.select('#network').select('#nodes')
+
+    g.selectAll<SVGCircleElement, IRenderNode>('.node-circle')
+      .attr('fill', (d) => nodeColorMap.get(d.id))
+      .attr('fill-opacity', (d) => {
+        const node = renderNodeMap.get(d.id)
+
+        return node.view === 'translucent'
+          ? settings.plot.nodes.view.hidden.opacity
+          : settings.plot.nodes.color.opacity
+      })
+      .attr('stroke', (d) =>
+        settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
+          ? nodeColorMap.get(d.id)
+          : undefined
+      )
+
+    g.selectAll<SVGTextElement, IRenderNode>('.node-text')
+      .attr('fill', (d) =>
+        settings.plot.nodes.labels.color.on
+          ? nodeColorMap.get(d.id)
+          : settings.plot.nodes.labels.color.default
+      )
+      .attr('transform', (d) => {
+        const { offset } = getTextAnchor(settings, radiusMap.get(d.id))
+        return `translate(${offset.x}, ${offset.y})`
+      })
+      .attr('dominant-baseline', (d) => {
+        const { baseline } = getTextAnchor(settings, radiusMap.get(d.id))
+        return baseline
+      })
+      .attr('text-anchor', (d) => {
+        const { textAnchor } = getTextAnchor(settings, radiusMap.get(d.id))
+        return textAnchor
+      })
+      .attr('font-size', settings.plot.nodes.labels.text.font.fontSize)
+      .attr('visibility', (d) =>
+        showNodeLabel(
+          d,
+          userLabelSet,
+          settings.plot.nodes.labels.showAll,
+          userData.labels.mode
+        )
+          ? 'visible'
+          : 'hidden'
+      )
+  }, [renderNodeMap, userLabelSet, nodeColorMap])
 
   // const tree = useMemo(
   //   () =>
@@ -472,7 +599,7 @@ export function NetworkD3SvgContent() {
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!ref.current || !settings.plot.crosshair.show) {
+      if (!ref.current || !settings.plot.crosshair.show || !tree) {
         return
       }
 
@@ -491,12 +618,10 @@ export function NetworkD3SvgContent() {
         settings.plot.crosshair.search.radius
       )
 
-      console.log('findr', node, svgP)
-
       if (!node) {
         // since we have lots of mouse events, only react when the current node changes
         if (currentNode.current) {
-          gsap.timeline().to(`#node-${currentNode.current.id}`, {
+          gsap.timeline().to(`#node-circle-${currentNode.current.id}`, {
             scale: 1,
             transformOrigin: 'center',
             duration: 0.3,
@@ -518,9 +643,7 @@ export function NetworkD3SvgContent() {
 
       currentNode.current = node
 
-      console.log('No node found under cursor', `#node-${node.id}`)
-
-      gsap.timeline().to(`#node-${node.id}`, {
+      gsap.timeline().to(`#node-circle-${node.id}`, {
         scale: 1.2,
         transformOrigin: 'center',
         duration: 0.3,
@@ -662,33 +785,42 @@ export function NetworkD3SvgContent() {
   //   return null
   // }
 
-  const { width, height } = useMemo(() => {
+  const { size } = useMemo(() => {
     if (!network) {
-      return { width: 0, height: 0 }
+      return { size: { w: 0, h: 0 } }
     }
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     // inner height is determined by the size of the largest bubble plot
 
-    const width =
-      settings.plot.size.w +
-      settings.plot.margin.left +
-      settings.plot.margin.right
+    const size = {
+      w:
+        settings.plot.size.w +
+        settings.plot.margin.left +
+        settings.plot.margin.right,
 
-    const height =
-      settings.plot.size.h +
-      settings.plot.margin.top +
-      settings.plot.margin.bottom
+      h:
+        settings.plot.size.h +
+        settings.plot.margin.top +
+        settings.plot.margin.bottom,
+    }
 
-    return { width, height }
+    return { size }
   }, [settings, network?.id])
 
-  console.log('what', settings.plot.size)
-
   return (
-    <SvgCanvas size={{ w: width, h: height }} scale={zoom}>
-      <SvgG id="network-nodes"></SvgG>
+    <SvgCanvas size={size} scale={zoom}>
+      <SvgG id="network" />
       <SvgMargin margin={settings.plot.margin}>
+        {settings.plot.border.show && (
+          <SvgRect
+            x={0}
+            y={0}
+            width={settings.plot.size.w}
+            height={settings.plot.size.h}
+            sp={settings.plot.border}
+          />
+        )}
         <SvgMouseRect
           size={settings.plot.size}
           onMouseMove={onMouseMove}
