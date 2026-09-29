@@ -1,4 +1,5 @@
 import { config } from '@/config'
+import { useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -63,6 +64,7 @@ export const useNetworkSettingsStore = create<IUserDataStore>()(
 export function useUserData(): {
   settings: IUserDataStore
   updateSettings: (settings: IUserDataSettings) => void
+  userLabelSet: Set<string>
 } {
   const settings = useNetworkSettingsStore((state) => state)
 
@@ -70,8 +72,19 @@ export function useUserData(): {
     (state) => state.updateSettings
   )
 
+  const userLabelSet = useMemo(
+    () =>
+      new Set(
+        settings.labels.ids
+          .filter((x) => x.length > 0)
+          .map((x) => x.toLowerCase())
+      ),
+    [settings.labels.ids]
+  )
+
   return {
     settings,
     updateSettings,
+    userLabelSet,
   }
 }

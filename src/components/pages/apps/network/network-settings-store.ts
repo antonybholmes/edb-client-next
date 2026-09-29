@@ -165,7 +165,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
 
     edges: {
       scale: 1,
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY },
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY, opacity: 1 },
     },
     legend: {
       dot: {

@@ -15,7 +15,8 @@ import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
 import { useNetworkSettings } from './network-settings-store'
-import { dataframesToNetwork, useNetwork, useNetworkSim } from './network-store'
+import { dataframesToNetwork, useNetwork } from './network-store'
+import { useNetworkD3Sim } from './network-store-d3-sim'
 import { useUserData } from './network-user-data-store'
 
 const MAX_COLS = 10
@@ -148,7 +149,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const { setNetwork } = useNetwork()
   const { settings: userData } = useUserData()
 
-  const { run: runSim } = useNetworkSim()
+  const { status } = useNetworkD3Sim()
   const { setMessage, clearMessage } = useRunning('network')
 
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
@@ -198,6 +199,13 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
     setStrengthCol(findStrengthCol(dfEdge))
   }, [dfEdge])
 
+  useEffect(() => {
+    if (status === 'finished') {
+      clearMessage()
+      close()
+    }
+  }, [status, clearMessage])
+
   async function submit() {
     if (
       !dfNode ||
@@ -245,13 +253,14 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       metric2Col
     )
 
-    // setMessage('Creating graph...')
-    // runSim(network, () => {
+    setMessage('Creating graph...')
+
+    // runSim(() => {
     //   setMessage(null)
     //   close()
     // })
 
-    close()
+    //close()
   }
 
   const colorCols = [
