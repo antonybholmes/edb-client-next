@@ -81,6 +81,11 @@ export function NetworkD3SvgContent() {
           ? nodeColorMap.get(d.id)
           : undefined
       )
+      .attr('visibility', (d) => {
+        const node = renderNodeMap.get(d.id)
+
+        return node.view === 'hidden' ? 'hidden' : 'visible'
+      })
 
     g.selectAll<SVGTextElement, IRenderNode>('text')
       .attr('fill', (d) =>
@@ -113,6 +118,7 @@ export function NetworkD3SvgContent() {
       )
   }, [renderNodeMap, userLabelSet, nodeColorMap, settings])
 
+  // update node labels
   useEffect(() => {
     if (!ref.current || nodeLabelMap.size === 0) {
       return
@@ -128,36 +134,7 @@ export function NetworkD3SvgContent() {
     g.selectAll<SVGTextElement, IRenderNode>('text').text(
       (d) => nodeLabelMap.get(d.id) ?? ''
     )
-  }, [nodeLabelMap])
-
-  useEffect(() => {
-    if (!ref.current || renderNodeMap.size === 0) {
-      return
-    }
-
-    const svg = d3.select(ref.current)
-
-    const g = svg.select('#network').select('#edges')
-
-    if (g.empty()) {
-      return
-    }
-
-    g.selectAll<SVGLineElement, IRenderEdge>('line').attr(
-      'stroke-opacity',
-      (d) => {
-        //console.log(d)
-
-        return renderEdgeMap.get(d.id)?.view === 'translucent'
-          ? settings.plot.nodes.view.hidden.opacity
-          : settings.plot.edges.line.opacity
-      }
-    )
-
-    // .attr('stroke', (d) => {
-    //   return 'red'
-    // })
-  }, [renderEdgeMap, settings])
+  }, [nodeLabelMap, settings])
 
   useEffect(() => {
     if (!ref.current) {
@@ -181,18 +158,28 @@ export function NetworkD3SvgContent() {
           ? 'var(--color-app-theme)'
           : settings.plot.edges.line.value
       })
-      .attr(
-        'stroke-width',
-        (d) =>
+      .attr('stroke-opacity', (d) => {
+        return renderEdgeMap.get(d.id)?.view === 'translucent' &&
+          !highlightedEdges.has(d.id)
+          ? settings.plot.nodes.view.hidden.opacity
+          : settings.plot.edges.line.opacity
+      })
+      .attr('stroke-width', (d) =>
+        Math.min(
+          settings.plot.edges.minWidth,
           d.strength *
-          settings.plot.edges.scale *
-          (highlightedEdges.has(d.id) ? 3 : 1)
+            settings.plot.edges.scale *
+            (highlightedEdges.has(d.id) ? 3 : 1)
+        )
       )
+      .attr('visibility', (d) => {
+        return renderEdgeMap.get(d.id)?.view === 'hidden' ? 'hidden' : 'visible'
+      })
 
     // .attr('stroke', (d) => {
     //   return 'red'
     // })
-  }, [currentNode, settings])
+  }, [currentNode, renderEdgeMap, nodeEdgeMap, settings])
 
   // const tree = useMemo(
   //   () =>

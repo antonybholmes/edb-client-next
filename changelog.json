@@ -3174,6 +3174,10 @@
         {
           "msg": "Network edge highlight, edge opacity varies when nodes are translucent",
           "date": "2026-09-29T17:50:50.319Z"
+        },
+        {
+          "msg": "Network support for turning of edges of hidden or translucent nodes",
+          "date": "2026-09-29T20:28:27.181Z"
         }
       ]
     },

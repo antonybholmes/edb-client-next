@@ -21,6 +21,8 @@ const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
 export type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
 
+export type ViewMode = 'all' | 'labelled'
+
 export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Center', value: 'center' },
   { label: 'Left', value: 'left' },
@@ -84,7 +86,7 @@ export interface INetworkSettings {
         //type: LabelType
       }
       view: {
-        mode: 'all' | 'labelled'
+        mode: ViewMode
         hidden: {
           show: boolean
           opacity: number
@@ -96,6 +98,8 @@ export interface INetworkSettings {
 
     edges: {
       scale: number
+      mode: ViewMode
+      minWidth: number
       line: IStrokeProps
     }
     legend: {
@@ -165,7 +169,9 @@ const DEFAULT_SETTINGS: INetworkSettings = {
 
     edges: {
       scale: 1,
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY, opacity: 1 },
+      mode: 'all',
+      minWidth: 1,
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY, opacity: 0.5 },
     },
     legend: {
       dot: {

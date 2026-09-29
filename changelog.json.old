@@ -3170,6 +3170,10 @@
         {
           "msg": "Clamping now works",
           "date": "2026-09-29T02:55:53.493Z"
+        },
+        {
+          "msg": "Network edge highlight, edge opacity varies when nodes are translucent",
+          "date": "2026-09-29T17:50:50.319Z"
         }
       ]
     },

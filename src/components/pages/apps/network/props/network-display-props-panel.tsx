@@ -38,6 +38,7 @@ export function NetworkDisplayPropsPanel() {
           'layout',
           'plot',
           'nodes',
+          'labels',
           'edges',
           'statistics',
           'bubbles',
@@ -350,7 +351,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Line">
+            <PropRow title="Outline">
               <Toggle
                 size="sm"
                 pad="md"
@@ -382,12 +383,19 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            <PropRow title="Labels">
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="labels">
+          <AccordionTrigger>Labels</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Position">
+              <PositionDropdown />
               <FontPopover
                 fonts={[
                   {
                     title: 'Font',
                     textProps: settings.plot.nodes.labels.text,
+                    showEnabled: false,
                     update: (textProps) =>
                       updateSettings(
                         produce(settings, (draft) => {
@@ -415,8 +423,7 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
-              <PositionDropdown />
-              <FieldSelectList />
+
               {/* <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}
@@ -437,6 +444,9 @@ export function NetworkDisplayPropsPanel() {
                   </SelectItem>
                 ))}
               </SelectList> */}
+            </PropRow>
+            <PropRow title="Field">
+              <FieldSelectList />
             </PropRow>
           </AccordionContent>
         </AccordionItem>

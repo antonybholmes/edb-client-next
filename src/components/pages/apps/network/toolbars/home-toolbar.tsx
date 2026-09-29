@@ -18,6 +18,7 @@ import {
   GroupToggle,
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
@@ -74,7 +75,7 @@ export function HomeToolbar() {
         </ToolbarColSmallButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Plot Size">
+      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
         <ToolbarCol>
           <ToolbarRow>
             <span className="w-3 text-center">W</span>
@@ -112,6 +113,22 @@ export function HomeToolbar() {
                 )
               }}
             />
+          </ToolbarRow>
+        </ToolbarCol>
+        <ToolbarCol>
+          <ToolbarRow>
+            <ToolbarButton
+              checked={settings.plot.autoFit}
+              onClick={() =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.autoFit = !settings.plot.autoFit
+                  })
+                )
+              }
+            >
+              Auto Fit
+            </ToolbarButton>
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>

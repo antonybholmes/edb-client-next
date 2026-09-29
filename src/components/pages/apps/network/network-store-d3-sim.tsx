@@ -107,6 +107,7 @@ export function useNetworkD3Sim() {
     userLabelSet,
     settings.plot.nodes.view.mode,
     settings.plot.nodes.labels.showAll,
+    settings.plot.nodes.view.hidden.show,
     userData.labels.mode,
   ])
 
@@ -144,15 +145,26 @@ export function useNetworkD3Sim() {
     return network.edges.map((edge) => {
       let view = 'default'
 
-      if (
-        renderNodeMap.get(edge.source)?.view === 'translucent' ||
-        renderNodeMap.get(edge.target)?.view === 'translucent'
+      const sourceNode = renderNodeMap.get(edge.source)
+      const targetNode = renderNodeMap.get(edge.target)
+
+      if (settings.plot.edges.mode === 'labelled') {
+        // to view an edge, both nodes must be in the 'default' view
+        if (sourceNode?.view !== 'default' || targetNode?.view !== 'default') {
+          view = 'hidden'
+        }
+      } else if (
+        sourceNode?.view === 'translucent' ||
+        targetNode?.view === 'translucent'
       ) {
+        // if all edges are on, if one of the connecting nodes
+        // is translucent, the edge should also be translucent
         view = 'translucent'
       } else if (
-        renderNodeMap.get(edge.source)?.view === 'hidden' ||
-        renderNodeMap.get(edge.target)?.view === 'hidden'
+        sourceNode?.view === 'hidden' ||
+        targetNode?.view === 'hidden'
       ) {
+        // if one of the connecting nodes is hidden, the edge should also be hidden
         view = 'hidden'
       } else {
         view = 'default'
@@ -160,7 +172,7 @@ export function useNetworkD3Sim() {
 
       return { ...edge, view } as IRenderEdge
     })
-  }, [network?.edges, renderNodeMap])
+  }, [network?.edges, renderNodeMap, settings.plot.edges.mode])
 
   const renderEdgeMap = useMemo(() => {
     return new Map(renderEdges.map((edge) => [edge.id, edge]))

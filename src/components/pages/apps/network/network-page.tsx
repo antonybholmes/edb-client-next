@@ -52,7 +52,6 @@ import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
 import { NetworkPropsPanel } from './props/network-props-panel'
 import { NetworkD3Svg } from './svg/network-d3-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
-import { NodesToolbar } from './toolbars/nodes-toolbar'
 import { ViewToolbar } from './toolbars/view-toolbar'
 
 export function NetworkPage() {
@@ -100,10 +99,7 @@ export function NetworkPage() {
         id: 'Home',
         component: HomeToolbar,
       },
-      {
-        id: 'Nodes',
-        component: NodesToolbar,
-      },
+
       {
         id: 'View',
         component: ViewToolbar,
