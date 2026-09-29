@@ -450,6 +450,9 @@ export function useNetworkD3Sim() {
           })
 
         link
+          .transition()
+          .duration(1000) // Time in milliseconds
+          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
           .attr(
             'x1',
             (d) => toPlot((d.source as INode).x!, (d.source as INode).y!).x
@@ -493,12 +496,19 @@ export function useNetworkD3Sim() {
           ),
         })
 
-        node.attr('transform', (d) => {
-          const p = clampX(d.x, d.y)
-          return `translate(${p.x}, ${p.y})`
-        })
+        node
+          .transition()
+          .duration(1000) // Time in milliseconds
+          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
+          .attr('transform', (d) => {
+            const p = clampX(d.x, d.y)
+            return `translate(${p.x}, ${p.y})`
+          })
 
         link
+          .transition()
+          .duration(1000) // Time in milliseconds
+          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
           .attr(
             'x1',
             (d) => clampX((d.source as INode).x!, (d.source as INode).y!).x
