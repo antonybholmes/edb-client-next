@@ -366,9 +366,9 @@ export function NetworkD3SvgContent() {
     })
 
     simulation.on('end', () => {
-      if (settings.plot.autoFit) {
-        const maxRadius = Math.max(...Array.from(radiusMap.values()))
+      const maxRadius = Math.max(...Array.from(radiusMap.values()))
 
+      if (settings.plot.autoFit) {
         const d3XBounds = {
           xMin: d3.min(nodes, (d) => d.x) - maxRadius,
           xMax: d3.max(nodes, (d) => d.x) + maxRadius,
@@ -393,8 +393,6 @@ export function NetworkD3SvgContent() {
           x: (d3XBounds.xMin + d3XBounds.xMax) / 2,
           y: (d3YBounds.yMin + d3YBounds.yMax) / 2,
         }
-
-        console.log('mid:', d3Size, plotScale)
 
         const plotMid = {
           x: settings.plot.size.w / 2 + settings.plot.margin.left,
@@ -440,13 +438,19 @@ export function NetworkD3SvgContent() {
       if (settings.plot.nodes.clamp) {
         const clampX = (x: number, y: number) => ({
           x: Math.max(
-            settings.plot.margin.left,
-            Math.min(settings.plot.size.w + settings.plot.margin.left, x)
+            settings.plot.margin.left + maxRadius,
+            Math.min(
+              settings.plot.size.w + settings.plot.margin.left - maxRadius,
+              x
+            )
           ),
 
           y: Math.max(
-            settings.plot.margin.top,
-            Math.min(settings.plot.size.h + settings.plot.margin.top, y)
+            settings.plot.margin.top + maxRadius,
+            Math.min(
+              settings.plot.size.h + settings.plot.margin.top - maxRadius,
+              y
+            )
           ),
         })
 

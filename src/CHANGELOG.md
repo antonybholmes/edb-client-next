@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Clamping now works.
 - Auto fit now works with d3 network.
 - network now has smooth animation using d3.
 - Create d3 version of network renderer.
