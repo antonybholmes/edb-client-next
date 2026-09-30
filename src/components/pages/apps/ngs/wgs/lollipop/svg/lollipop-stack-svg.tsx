@@ -8,21 +8,21 @@ import {
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
-import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
-import { BaseCol } from '@/components/layout/base-col'
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
-import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
 import { COLOR_WHITE } from '@/lib/color/color'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { SVG_CRISP_EDGES } from '@/consts'
+import { svgPointToScreen } from '@/lib/graphics/svg'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { gsap } from 'gsap'
 import { useLollipopSettings, type IAAColor } from '../lollipop-settings-store'
@@ -86,10 +86,6 @@ function ColGraphsSvg({
   flattenedPileups,
   blockSize,
   displayProps,
-  svgRef,
-  //circlesRef,
-  tooltipRef,
-  setTooltipText,
 }: {
   yax: IAxis
   flattenedPileups: {
@@ -99,23 +95,97 @@ function ColGraphsSvg({
   }[]
   blockSize: IBlock
   displayProps: ILollipopDisplayProps
-  svgRef: RefObject<SVGSVGElement | null>
-
-  tooltipRef: RefObject<HTMLDivElement | null>
-  setTooltipText: (text: string[]) => void
 }) {
+  const { ref: svgRef } = useSVG()
   const circlesRef = useRef<(SVGGElement | null)[]>([])
   const initial = useRef<boolean>(true)
+  const { showCrosshair, hideCrosshair } = useCrosshair()
+  const lollipopRef = useRef<SVGGElement | null>(null)
+  const h = axisLength(yax)
 
-  useEffect(() => {
-    const svg = svgRef.current
-    const tooltip = tooltipRef.current
-    if (!svg || !tooltip) {
-      return
-    }
+  // useEffect(() => {
+  //   //const tooltip = tooltipRef.current
 
-    const handlePointerEnter = (e: PointerEvent) => {
-      const group = (e.target as Element).closest('g[data-id]')
+  //   const handlePointerEnter = (e: PointerEvent) => {
+  //     const group = (e.target as Element).closest('g[data-id]')
+  //     if (group) {
+  //       const idx = Number(group.getAttribute('data-id'))
+
+  //       const entry = flattenedPileups[idx]
+  //       if (entry) {
+  //         const lines = entry.id?.split('|')
+
+  //         if (lines.length > 0) {
+  //           const { relativeP, screenP } = svgPointToScreen(
+  //             svgRef.current,
+  //             entry.pos
+  //           )
+
+  //           console.log(entry.pos)
+
+  //           showCrosshair({ pos: relativeP, clientPos: screenP })
+
+  //           //lines[lines.length - 1] = `Position: ${lines[lines.length - 1]}`
+
+  //           //setTooltipText([...lines, `x: ${entry.pos.x}, y: ${entry.pos.y}`])
+  //         }
+  //       }
+
+  //       gsap.to(group, {
+  //         scale: 1.5,
+  //         transformOrigin: 'center',
+  //         duration: 0.3,
+  //         ease: 'power2.out',
+  //       })
+  //     }
+  //   }
+
+  //   const handlePointerLeave = (e: PointerEvent) => {
+  //     const group = (e.target as Element).closest('g[data-id]')
+  //     if (group) {
+  //       gsap.to(group, {
+  //         scale: 1,
+  //         transformOrigin: 'center',
+  //         duration: 0.3,
+  //         ease: 'power2.out',
+  //       })
+  //     }
+
+  //     //tooltip.style.display = 'none'
+  //   }
+
+  //   const handlePointerMove = (e: PointerEvent) => {
+  //     const svg = svgRef.current
+
+  //     if (!svg) {
+  //       return
+  //     }
+
+  //     const rect = svg.getBoundingClientRect()
+
+  //     // Mouse position relative to the container's top-left corner
+  //     const x = e.clientX - rect.left
+  //     const y = e.clientY - rect.top
+
+  //     //tooltip.style.left = `${x + 10}px`
+  //     //tooltip.style.top = `${y + 10}px`
+  //   }
+
+  //   // svg.addEventListener('pointerover', handlePointerEnter)
+  //   // svg.addEventListener('pointerout', handlePointerLeave)
+  //   // svg.addEventListener('pointermove', handlePointerMove)
+
+  //   // return () => {
+  //   //   svg.removeEventListener('pointerover', handlePointerEnter)
+  //   //   svg.removeEventListener('pointerout', handlePointerLeave)
+  //   //   svg.removeEventListener('pointermove', handlePointerMove)
+  //   // }
+  // }, [flattenedPileups, svgRef])
+
+  const handleMouseMove = useCallback(
+    (e: React.PointerEvent<SVGRectElement>) => {
+      console.log(e)
+      const group = (lollipopRef.current as Element).closest('g[data-id]')
       if (group) {
         const idx = Number(group.getAttribute('data-id'))
 
@@ -124,65 +194,31 @@ function ColGraphsSvg({
           const lines = entry.id?.split('|')
 
           if (lines.length > 0) {
+            const { relativeP, screenP } = svgPointToScreen(
+              svgRef.current,
+              entry.pos
+            )
+
+            showCrosshair({ pos: relativeP, clientPos: screenP })
+
             //lines[lines.length - 1] = `Position: ${lines[lines.length - 1]}`
 
-            setTooltipText([...lines, `x: ${entry.pos.x}, y: ${entry.pos.y}`])
+            //setTooltipText([...lines, `x: ${entry.pos.x}, y: ${entry.pos.y}`])
           }
         }
 
         gsap.to(group, {
           scale: 1.5,
-          transformOrigin: '50% 50%',
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-
-        tooltip.style.display = 'block'
-      }
-    }
-
-    const handlePointerLeave = (e: PointerEvent) => {
-      const group = (e.target as Element).closest('g[data-id]')
-      if (group) {
-        gsap.to(group, {
-          scale: 1,
-          transformOrigin: '50% 50%',
+          transformOrigin: 'center',
           duration: 0.3,
           ease: 'power2.out',
         })
       }
+    },
+    [flattenedPileups, svgRef]
+  )
 
-      tooltip.style.display = 'none'
-    }
-
-    const handlePointerMove = (e: PointerEvent) => {
-      const svg = svgRef.current
-
-      if (!svg || !tooltip) {
-        return
-      }
-
-      const rect = svg.getBoundingClientRect()
-
-      // Mouse position relative to the container's top-left corner
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-
-      tooltip.style.left = `${x + 10}px`
-      tooltip.style.top = `${y + 10}px`
-    }
-
-    svg.addEventListener('pointerover', handlePointerEnter)
-    svg.addEventListener('pointerout', handlePointerLeave)
-    svg.addEventListener('pointermove', handlePointerMove)
-
-    return () => {
-      svg.removeEventListener('pointerover', handlePointerEnter)
-      svg.removeEventListener('pointerout', handlePointerLeave)
-      svg.removeEventListener('pointermove', handlePointerMove)
-    }
-  }, [flattenedPileups, svgRef, tooltipRef, setTooltipText])
-
+  // set height of each circle
   useEffect(() => {
     if (
       !circlesRef.current ||
@@ -209,33 +245,70 @@ function ColGraphsSvg({
 
   return (
     <>
-      {flattenedPileups.map((entry, ei) => {
-        const [mutType] = entry.id.split('|')
+      <SvgG id="lollipop" ref={lollipopRef}>
+        {flattenedPileups.map((entry, ei) => {
+          const [mutType] = entry.id.split('|')
 
-        return (
-          <g
-            ref={(el) => {
-              circlesRef.current[ei] = el
-            }}
-            key={entry.id}
-            data-id={ei}
-            transform={`translate(${entry.rect.x}, ${dy})`}
-          >
-            <SvgCircle
-              //cx={entry.rect.x} //pi * blockSize.w + 0.5 * blockSize.w}
-              //cy={y}
-              r={0.5 * blockSize.w}
-              fill={
-                displayProps.variants.colorMap[mutType!] ??
-                DEFAULT_MUTATION_COLOR
-              }
-              sp={displayProps.variants.plot.border}
+          return (
+            <SvgG
+              ref={(el) => {
+                circlesRef.current[ei] = el
+              }}
+              key={entry.id}
+              data-id={ei}
+              pos={{ x: entry.rect.x, y: dy }}
 
-              opacity={displayProps.variants.plot.opacity}
-            ></SvgCircle>
-          </g>
-        )
-      })}
+              onPointerEnter={(e) => {
+                gsap.to(circlesRef.current[ei], {
+                  scale: 1.5,
+                  transformOrigin: 'center',
+                  duration: 0.3,
+                  ease: 'power2.out',
+                })
+
+                const { relativeP, screenP } = svgPointToScreen(
+                  svgRef.current,
+                  entry.pos
+                )
+
+                //showCrosshair({ pos: relativeP, clientPos: screenP })
+              }}
+              onPointerLeave={() => {
+                gsap.to(circlesRef.current[ei], {
+                  scale: 1,
+                  transformOrigin: 'center',
+                  duration: 0.3,
+                  ease: 'power2.out',
+                })
+
+                hideCrosshair()
+              }}
+            >
+              <SvgCircle
+                //cx={entry.rect.x} //pi * blockSize.w + 0.5 * blockSize.w}
+                //cy={y}
+                r={0.5 * blockSize.w}
+                fill={
+                  displayProps.variants.colorMap[mutType!] ??
+                  DEFAULT_MUTATION_COLOR
+                }
+                sp={displayProps.variants.plot.border}
+
+                opacity={displayProps.variants.plot.opacity}
+              />
+            </SvgG>
+          )
+        })}
+      </SvgG>
+      {/* <SvgMouseRect
+        x={0}
+        y={-20}
+        width="100%"
+        height={h + 20}
+        //fill="red"
+        onPointerMove={handleMouseMove}
+        onPointerLeave={hideCrosshair}
+      /> */}
     </>
   )
 }
@@ -588,26 +661,7 @@ export function vLegendSvg(
   )
 }
 
-export function Tooltip({
-  title = '',
-  ref,
-  children,
-}: {
-  title?: string
-  ref: RefObject<HTMLDivElement | null>
-} & IChildrenProps) {
-  return (
-    <BaseCol
-      className="absolute text-sm z-10 min-w-56 p-3 bg-black/40 backdrop-blur-md pointer-events-none pre-line text-white rounded-theme shadow-lg left-0 top-0 hidden"
-      ref={ref}
-    >
-      {title && <Label className="font-bold">{title}</Label>}
-      {children}
-    </BaseCol>
-  )
-}
-
-export function LollipopStackSvg() {
+export function LollipopStackContent() {
   const {
     datasets,
     datasetsForUse,
@@ -616,8 +670,6 @@ export function LollipopStackSvg() {
     aaStats,
     labels,
   } = useLollipop()
-
-  const { ref: svgRef } = useSVG()
 
   const { axis: xax } = useAxis({
     plotId: 'lollipop',
@@ -630,8 +682,6 @@ export function LollipopStackSvg() {
     axisId: 'y',
   })
 
-  console.log(xax, yax)
-
   const xaf = useMemo(() => axisDomainToRangeFunc(xax), [xax])
   const yaf = useMemo(() => axisDomainToRangeFunc(yax), [yax])
 
@@ -639,9 +689,6 @@ export function LollipopStackSvg() {
     useLollipopSettings()
 
   const blockSize: IBlock = displayProps.grid.cell
-
-  const tooltipRef = useRef<HTMLDivElement>(null)
-  const [tooltipText, setTooltipText] = useState<string[]>([])
 
   // const scaledBlockSize = {
   //   w: blockSize.w * displayProps.scale,
@@ -671,17 +718,9 @@ export function LollipopStackSvg() {
     displayProps.margin.bottom + displayProps.legend.offset
   )
 
-  const n = Math.max(aaStats.length, protein?.sequence.length ?? 0)
-
   const gridWidth = displayProps.axes.x.width // n * blockSize.w
   //const gridHeight = 100 //df.shape[0] * (blockSize.h + spacing.y)
   const width = gridWidth + marginLeft + marginRight
-  // const height =
-  //   gridHeight +
-  //   top +
-  //   bottom +
-  //   displayProps.margin.top +
-  //   displayProps.margin.bottom
 
   // keep things simple and use ints for the graph limits
 
@@ -867,11 +906,9 @@ export function LollipopStackSvg() {
             <ColGraphsSvg
               yax={yax}
               flattenedPileups={flattenedPileups}
-              svgRef={svgRef}
+
               blockSize={blockSize}
               displayProps={displayProps}
-              tooltipRef={tooltipRef}
-              setTooltipText={setTooltipText}
             />
           </g>
         )}
@@ -931,15 +968,14 @@ export function LollipopStackSvg() {
             </g>
           )}
       </SvgZoomCanvas>
-
-      <Tooltip
-        ref={tooltipRef}
-        title={tooltipText.length > 0 ? tooltipText[0]! : ''}
-      >
-        {tooltipText.slice(1).map((line, idx) => (
-          <p key={idx}>{line}</p>
-        ))}
-      </Tooltip>
     </>
+  )
+}
+
+export function LollipopStackSvg() {
+  return (
+    <CrosshairProvider>
+      <LollipopStackContent />
+    </CrosshairProvider>
   )
 }

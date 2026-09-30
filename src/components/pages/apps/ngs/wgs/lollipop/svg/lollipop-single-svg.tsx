@@ -26,7 +26,6 @@ import {
   labelsSvg,
   legendSvg,
   seqSvg,
-  Tooltip,
   yTickLinesSvg,
 } from './lollipop-stack-svg'
 
@@ -644,15 +643,6 @@ export function LollipopSingleSvg() {
             </g>
           )}
       </SvgZoomCanvas>
-
-      <Tooltip
-        ref={tooltipRef}
-        title={tooltipText.length > 0 ? tooltipText[0]! : ''}
-      >
-        {tooltipText.slice(1).map((line, idx) => (
-          <p key={idx}>{line}</p>
-        ))}
-      </Tooltip>
     </>
   )
 

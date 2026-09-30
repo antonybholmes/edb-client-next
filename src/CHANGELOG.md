@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Redesigning lollipop tooltips.
 - App reorg with expanded ngs modules.
 - Motifs now calculates letter width correctly.
 - Heatmap now uses some d3 rendered cells.

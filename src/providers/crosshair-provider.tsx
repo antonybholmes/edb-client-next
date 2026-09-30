@@ -157,7 +157,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
 
     const useFixed = !!crosshair.clientPos
     const pos = useFixed ? crosshair.clientPos : crosshair.pos
-    const tooltip = (
+    const tooltip = crosshair.content ? (
       <BaseCol
         className={cn(useFixed ? 'fixed' : 'absolute', TOOLTIP_CLS)}
         style={{
@@ -167,7 +167,7 @@ export function CrosshairProvider({ children }: IChildrenProps) {
       >
         {crosshair.content}
       </BaseCol>
-    )
+    ) : null
 
     return { tooltip, useFixed }
   }, [crosshair])
