@@ -19,6 +19,7 @@ import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 
 import { SvgG } from '@/components/plot/svg-g'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { useCallback, useMemo, type ReactElement, type ReactNode } from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
@@ -41,143 +42,151 @@ export interface ITooltip {
   cell: ICell & IPos
 }
 
-function makeMatrix(
-  df: OncoplotFrame,
-  mutationsInUse: string[],
-  colorMap: Record<string, string>,
-  displayProps: IOncoplotDisplayProps,
-  blockSize: IBlock,
+function MakeMatrix({
+  df,
+  mutationsInUse,
+  colorMap,
+  displayProps,
+  blockSize,
+  spacing,
+}: {
+  df: OncoplotFrame
+  mutationsInUse: string[]
+  colorMap: Record<string, string>
+  displayProps: IOncoplotDisplayProps
+  blockSize: IBlock
   spacing: IPos
-): ReactNode {
+}) {
   const lcMutationsInUse = mutationsInUse.map((m) => m.toLowerCase())
-  return (
-    <>
-      {range(df.shape[0]).map((ri) => {
-        const y = ri * (blockSize.h + spacing.y)
 
-        return range(df.shape[1]).map((ci) => {
-          const x = ci * (blockSize.w + spacing.x)
+  let y = 0
+  let x = 0
 
-          const stats = df.data(ri, ci)
+  const elems: ReactNode[] = []
 
-          if (stats.events.length > 1 && displayProps.multi !== 'single') {
-            // deal with multi only if there are multiple events in a cell
-            // and user has specified a multi mode
+  range(df.shape[0]).map((ri) => {
+    x = 0
+    range(df.shape[1]).map((ci) => {
+      const stats = df.data(ri, ci)
 
-            if (displayProps.multi === 'equal-bars') {
-              const names = lcMutationsInUse.filter((name) =>
-                stats.countMap.has(name)
-              )
+      if (stats.events.length > 1 && displayProps.multi !== 'single') {
+        // deal with multi only if there are multiple events in a cell
+        // and user has specified a multi mode
 
-              //const events = [...stats.countMap.keys()].sort()
+        if (displayProps.multi === 'equal-bars') {
+          const names = lcMutationsInUse.filter((name) =>
+            stats.countMap.has(name)
+          )
 
-              const h = blockSize.h / names.length
+          //const events = [...stats.countMap.keys()].sort()
 
-              return names.map((id, idi) => {
-                const fill: string = colorMap[id] ?? colorMap[OTHER_MUTATION]!
+          const h = blockSize.h / names.length
 
-                return (
-                  <rect
-                    id={`${ri}:${ci}:${idi}`}
-                    key={`${ri}:${ci}:${idi}`}
-                    x={x}
-                    y={y + idi * h}
-                    width={blockSize.w}
-                    height={h}
-                    fill={fill}
-                    shapeRendering={SVG_CRISP_EDGES}
-                    pointerEvents="none"
-                  />
-                )
-              })
-            } else if (displayProps.multi === 'stacked-bars') {
-              // draw stacked bars within each cell if necessary
-              // this makes the svg larger
+          names.map((id, idi) => {
+            const fill: string = colorMap[id] ?? colorMap[OTHER_MUTATION]!
 
-              const dist = stats.normCountDist(lcMutationsInUse)
-
-              const yax: IAxis = createAxis({
-                direction: 'y',
-                domain: [0, 1],
-                length: blockSize.h,
-              })
-
-              const coords = [0]
-
-              dist.map((_, di) => {
-                coords.push(coords[coords.length - 1]! + dist[di]!.value)
-              })
-
-              const yaf = axisDomainToRangeFunc(yax)
-
-              return dist.map((d, di) => {
-                const h = yaf(coords[di]!) - yaf(coords[di + 1]!)
-
-                // only render if there was a count associated with the event
-                if (h > 0) {
-                  const color = colorMap[d.name] ?? NO_ALTERATION_COLOR
-
-                  return (
-                    <rect
-                      key={`${ri}:${ci}:${di}`}
-                      x={x}
-                      y={y + yaf(coords[di + 1]!)}
-                      width={blockSize.w}
-                      height={h}
-                      //stroke={color}
-                      fill={color}
-                      shapeRendering={SVG_CRISP_EDGES}
-                      pointerEvents="none"
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })
-            } else {
-              // multi mode draw black bars
-              const fill: string =
-                colorMap[MULTI_MUTATION] ?? colorMap[OTHER_MUTATION]!
-
-              return (
-                <rect
-                  id={`${ri}:${ci}`}
-                  key={`${ri}:${ci}`}
-                  x={x}
-                  y={y}
-                  width={blockSize.w}
-                  height={blockSize.h}
-                  fill={fill}
-                  shapeRendering={SVG_CRISP_EDGES}
-                  pointerEvents="none"
-                />
-              )
-            }
-          } else {
-            // single case draw one color
-            const id = stats.maxEvent.name
-            const fill: string =
-              id != ''
-                ? (colorMap[id] ?? NO_ALTERATION_COLOR)
-                : colorMap[OTHER_MUTATION]!
-            return (
-              <rect
-                id={`${ri}:${ci}`}
-                key={`${ri}:${ci}`}
+            elems.push(
+              <SvgRect
+                id={`${ri}:${ci}:${idi}`}
+                key={`${ri}:${ci}:${idi}`}
                 x={x}
-                y={y}
+                y={y + idi * h}
                 width={blockSize.w}
-                height={blockSize.h}
+                height={h}
                 fill={fill}
                 shapeRendering={SVG_CRISP_EDGES}
                 pointerEvents="none"
               />
             )
-          }
-        })
-      })}
-    </>
-  )
+          })
+        } else if (displayProps.multi === 'stacked-bars') {
+          // draw stacked bars within each cell if necessary
+          // this makes the svg larger
+
+          const dist = stats.normCountDist(lcMutationsInUse)
+
+          const yax: IAxis = createAxis({
+            direction: 'y',
+            domain: [0, 1],
+            length: blockSize.h,
+          })
+
+          const coords = [0]
+
+          dist.map((_, di) => {
+            coords.push(coords[coords.length - 1]! + dist[di]!.value)
+          })
+
+          const yaf = axisDomainToRangeFunc(yax)
+
+          return dist.map((d, di) => {
+            const h = yaf(coords[di]!) - yaf(coords[di + 1]!)
+
+            // only render if there was a count associated with the event
+            if (h > 0) {
+              const color = colorMap[d.name] ?? NO_ALTERATION_COLOR
+
+              elems.push(
+                <SvgRect
+                  key={`${ri}:${ci}:${di}`}
+                  x={x}
+                  y={y + yaf(coords[di + 1]!)}
+                  width={blockSize.w}
+                  height={h}
+                  //stroke={color}
+                  fill={color}
+                  shapeRendering={SVG_CRISP_EDGES}
+                  pointerEvents="none"
+                />
+              )
+            }
+          })
+        } else {
+          // multi mode draw black bars
+          const fill: string =
+            colorMap[MULTI_MUTATION] ?? colorMap[OTHER_MUTATION] ?? COLOR_BLACK
+
+          elems.push(
+            <SvgRect
+              id={`${ri}:${ci}`}
+              key={`${ri}:${ci}`}
+              x={x}
+              y={y}
+              size={blockSize}
+              fill={fill}
+              shapeRendering={SVG_CRISP_EDGES}
+              pointerEvents="none"
+            />
+          )
+        }
+      } else {
+        // single case draw one color
+        const id = stats.maxEvent.name
+        const fill: string =
+          id != ''
+            ? (colorMap[id] ?? NO_ALTERATION_COLOR)
+            : colorMap[OTHER_MUTATION]!
+        elems.push(
+          <SvgRect
+            id={`${ri}:${ci}`}
+            key={`${ri}:${ci}`}
+            x={x}
+            y={y}
+            size={blockSize}
+            fill={fill}
+            shapeRendering={SVG_CRISP_EDGES}
+            pointerEvents="none"
+          />
+        )
+      }
+
+      x += blockSize.w + spacing.x
+    })
+
+    y += blockSize.h + spacing.y
+  })
+
+  return elems
 }
 
 function makeGrid(
@@ -207,6 +216,7 @@ function makeGrid(
           />
         )
       })
+
       range(blockSize.w, gridWidth, blockSize.w).forEach((x) => {
         gridElem.push(
           <line
@@ -366,7 +376,7 @@ function rowGraphs(
   return (
     <>
       {displayProps.features.graphs.percentages.show && (
-        <g>
+        <SvgG>
           {df.geneStats.map((stats, ri) => {
             return (
               <SvgText
@@ -380,15 +390,16 @@ function rowGraphs(
               </SvgText>
             )
           })}
-        </g>
+        </SvgG>
       )}
 
-      <g
-        transform={`translate(${
-          displayProps.features.graphs.percentages.show
+      <SvgG
+        pos={{
+          x: displayProps.features.graphs.percentages.show
             ? displayProps.features.graphs.percentages.width
-            : 0
-        }, ${-displayProps.axisOffset})`}
+            : 0,
+          y: -displayProps.axisOffset,
+        }}
       >
         <AxisTopSvg
           ax={xax}
@@ -396,14 +407,15 @@ function rowGraphs(
           labelFont={displayProps.title}
           font={displayProps.text}
         />
-      </g>
+      </SvgG>
 
-      <g
-        transform={`translate(${
-          displayProps.features.graphs.percentages.show
+      <SvgG
+        pos={{
+          x: displayProps.features.graphs.percentages.show
             ? displayProps.features.graphs.percentages.width
-            : 0
-        }, 0)`}
+            : 0,
+          y: 0,
+        }}
       >
         {df.geneStats.map((stats, ri) => {
           const coords = [0]
@@ -422,7 +434,7 @@ function rowGraphs(
             const w = xaf(coords[li + 1]!) - xaf(coords[li]!)
 
             return (
-              <rect
+              <SvgRect
                 key={li}
                 y={ri * (blockSize.h + spacing.y)}
                 x={xaf(coords[li]!)}
@@ -442,7 +454,7 @@ function rowGraphs(
             )
           })
         })}
-      </g>
+      </SvgG>
     </>
   )
 }
@@ -537,18 +549,17 @@ function vLegendSvg(
         {displayProps.legend.variants.label}
       </SvgText>
 
-      <g transform={`translate(0, ${displayProps.legend.title.height})`}>
+      <SvgG pos={{ x: 0, y: displayProps.legend.title.height }}>
         {mutationsInUse.map((name, ni) => {
           const fill: string = colorMap[name] ?? colorMap[OTHER_MUTATION]!
 
           return (
-            <g
+            <SvgG
               key={ni}
-              transform={`translate(0, ${ni * (blockSize.h + displayProps.plotGap)})`}
+              pos={{ x: 0, y: ni * (blockSize.h + displayProps.plotGap) }}
             >
-              <rect
-                width={blockSize.w}
-                height={blockSize.h}
+              <SvgRect
+                size={blockSize}
                 fill={fill}
                 shapeRendering={SVG_CRISP_EDGES}
               />
@@ -564,17 +575,17 @@ function vLegendSvg(
               >
                 {name}
               </SvgText>
-            </g>
+            </SvgG>
           )
         })}
-        <g
-          transform={`translate(0, ${
-            mutationsInUse.length * (blockSize.h + displayProps.plotGap)
-          })`}
+        <SvgG
+          pos={{
+            x: 0,
+            y: mutationsInUse.length * (blockSize.h + displayProps.plotGap),
+          }}
         >
-          <rect
-            width={blockSize.w}
-            height={blockSize.h}
+          <SvgRect
+            size={blockSize}
             fill={NO_ALTERATION_COLOR}
             shapeRendering={SVG_CRISP_EDGES}
           />
@@ -588,8 +599,8 @@ function vLegendSvg(
           >
             {NO_ALTERATIONS_TEXT}
           </SvgText>
-        </g>
-      </g>
+        </SvgG>
+      </SvgG>
     </>
   )
 }
@@ -653,7 +664,7 @@ function OncoplotSvgContent() {
   //   [spacing.x, spacing.y, displayProps.scale]
   // )
 
-  const { showCrosshair, hideCrosshair } = useCrosshair()
+  const { showCrosshair, cancelCrosshair } = useCrosshair()
 
   //const highlightRef = useRef<HTMLSpanElement>(null)
 
@@ -724,10 +735,6 @@ function OncoplotSvgContent() {
   //   ? mf?.data(toolTipInfo.cell.row, toolTipInfo.cell.col)
   //   : null
 
-  const _hideTooltip = useCallback(() => {
-    hideCrosshair()
-  }, [hideCrosshair])
-
   const onPointerMove = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
       if (!ref.current) {
@@ -759,10 +766,8 @@ function OncoplotSvgContent() {
         col = -1
       }
 
-      //console.log('svgPoint', svgPoint, row, col, blockSize)
-
       if (row === -1 || col === -1) {
-        _hideTooltip()
+        cancelCrosshair()
 
         return
       }
@@ -808,7 +813,7 @@ function OncoplotSvgContent() {
       blockSize.h,
       spacing.x,
       spacing.y,
-      _hideTooltip,
+      cancelCrosshair,
 
       showCrosshair,
     ]
@@ -861,16 +866,16 @@ function OncoplotSvgContent() {
 
   const matrixMemo = useMemo(
     () =>
-      mf
-        ? makeMatrix(
-            mf,
-            mutationsInUse,
-            colorMap,
-            displayProps,
-            blockSize,
-            spacing
-          )
-        : null,
+      mf ? (
+        <MakeMatrix
+          df={mf}
+          mutationsInUse={mutationsInUse}
+          colorMap={colorMap}
+          displayProps={displayProps}
+          blockSize={blockSize}
+          spacing={spacing}
+        />
+      ) : null,
     [mf, mutationsInUse, colorMap, displayProps, blockSize, spacing]
   )
 

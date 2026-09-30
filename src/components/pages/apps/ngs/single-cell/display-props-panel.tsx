@@ -41,7 +41,7 @@ export function DisplayPropsPanel() {
   const [openTabs, setOpenTabs] = useState<string[]>(['plot'])
 
   return (
-    <PropsPanel className="gap-y-2 pr-1">
+    <PropsPanel className="gap-y-2">
       <VCenterRow className="justify-end pr-2">
         <LinkButton
           onClick={() => {

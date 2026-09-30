@@ -16,7 +16,6 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
-import { RotateCw } from 'lucide-react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { MarginPopover } from '../margin-popover'
@@ -33,7 +32,7 @@ export function NetworkDisplayPropsPanel() {
   const { setMessage, clearMessage } = useRunning('network')
 
   return (
-    <PropsPanel className="mr-1">
+    <PropsPanel>
       <ScrollAccordion
         value={[
           'layout',
@@ -48,18 +47,18 @@ export function NetworkDisplayPropsPanel() {
       >
         <AccordionItem value="layout">
           <AccordionTrigger
-            rightChildren={
-              <button
-                onClick={() => {
-                  setMessage('Creating graph...')
-                  run(network, () => clearMessage())
-                }}
-                aria-label="Recalculate network layout"
-                title="Recalculate network layout"
-              >
-                <RotateCw size={16} />
-              </button>
-            }
+          // rightChildren={
+          //   <button
+          //     onClick={() => {
+          //       setMessage('Creating graph...')
+          //       run(network, () => clearMessage())
+          //     }}
+          //     aria-label="Recalculate network layout"
+          //     title="Recalculate network layout"
+          //   >
+          //     <RotateCw size={16} />
+          //   </button>
+          // }
           >
             Layout
           </AccordionTrigger>

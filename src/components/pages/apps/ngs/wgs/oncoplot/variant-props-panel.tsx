@@ -123,7 +123,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
   return (
     <>
-      <PropsPanel ref={ref} className="gap-y-2 pr-1">
+      <PropsPanel ref={ref} className="gap-y-2">
         <VCenterRow className="justify-between gap-x-2">
           <VCenterRow>
             <IconButton

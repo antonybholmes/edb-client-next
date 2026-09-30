@@ -52,7 +52,7 @@ export function NodesDisplayPropsPanel() {
   // }, [debounceText])
 
   return (
-    <PropsPanel className="gap-y-2 mb-2 mr-1 text-xs">
+    <PropsPanel className="gap-y-2 text-xs">
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel
           id="network-nodes"
@@ -62,21 +62,6 @@ export function NodesDisplayPropsPanel() {
           collapsible={true}
         >
           <PropRow title="Nodes" className="text-sm">
-            {/* <Switch
-              side="right"
-              className="text-xs font-normal"
-              checked={settings.plot.nodes.labels.showAll}
-              onCheckedChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.labels.showAll = v
-                  })
-                )
-              }
-            >
-              All Labels
-            </Switch> */}
-
             <Button
               size="xs"
               aspect="icon"

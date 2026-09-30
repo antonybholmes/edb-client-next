@@ -129,7 +129,6 @@ export function StrokeDropdownMenu({
 
   const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
   const opacity = color0.opacity ?? 1
-  console.log('color0', color0)
 
   return (
     <DropdownMenu>

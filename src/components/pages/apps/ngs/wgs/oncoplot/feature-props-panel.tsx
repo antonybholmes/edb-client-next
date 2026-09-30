@@ -47,18 +47,6 @@ export function FeaturePropsPanel() {
         <TabsContent value="clinical">
           <ClinicalPropsPanel />
         </TabsContent>
-        {/* <TabsList className="py-1 gap-y-px">
-          <TabsTrigger value="genes" className="grow" variant="sidebar">
-            Genes
-          </TabsTrigger>
-          <TabsTrigger value="variants" className="grow" variant="sidebar">
-            Variants
-          </TabsTrigger>
-
-          <TabsTrigger value="clinical" className="grow" variant="sidebar">
-            Clinical
-          </TabsTrigger>
-        </TabsList> */}
       </Tabs>
       <OutlookTabs
         id="oncoplot-feature-props-panel"

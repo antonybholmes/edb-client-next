@@ -37,7 +37,7 @@ export function PileupPropsPanel({ ref }: IProps) {
   const { open: openDialog } = useDialogs()
 
   return (
-    <PropsPanel ref={ref} className="pr-2">
+    <PropsPanel ref={ref}>
       <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() => {

@@ -25,7 +25,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
   const [tabs, setTabs] = useState<string[]>(['grid', 'samples', 'features'])
 
   return (
-    <PropsPanel ref={ref} className="pr-1">
+    <PropsPanel ref={ref}>
       <ScrollAccordion
         value={tabs}
         onValueChange={(v) => setTabs(v as string[])}

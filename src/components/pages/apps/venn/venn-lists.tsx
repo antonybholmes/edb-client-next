@@ -21,7 +21,7 @@ export function VennLists() {
   const { vennLists, addList, removeList } = useVenn()
   const { open: openDialog } = useDialogs()
   return (
-    <PropsPanel className="mr-1">
+    <PropsPanel>
       <VCenterRow className="border-b border-border/50 mb-2 pb-1">
         <IconButton
           onClick={() => {

@@ -145,7 +145,7 @@ export function TracksPropsPanel() {
   }
 
   return (
-    <PropsPanel className="gap-y-2 pr-1">
+    <PropsPanel className="gap-y-2">
       <SelectAll
         className="pl-1"
         selectAll={false}

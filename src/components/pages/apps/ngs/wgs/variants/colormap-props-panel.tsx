@@ -119,7 +119,7 @@ export function ColormapPropsPanel() {
   }
 
   return (
-    <PropsPanel className="gap-y-2 pr-1">
+    <PropsPanel className="gap-y-2">
       <SideBarHeader className="justify-between gap-x-2">
         <VCenterRow>
           <IconButton

@@ -9,8 +9,6 @@ import {
 
 import { Checkbox } from '@/themed/v2/check-box'
 
-import { PropsPanel } from '@/components/props-panel'
-
 //import { toast } from '@/themed/use-toast'
 
 import { useEffect, useState } from 'react'
@@ -42,7 +40,7 @@ export function GeneSetsPropsPanel() {
   }, [datasetsFromDb])
 
   return (
-    <PropsPanel className="gap-y-2 pr-1 text-xs">
+    <>
       {/* <PropRow title="Genes">
         <NumericalInput
           value={genesInUniverse}
@@ -100,6 +98,6 @@ export function GeneSetsPropsPanel() {
           )
         })}
       </ScrollAccordion>
-    </PropsPanel>
+    </>
   )
 }

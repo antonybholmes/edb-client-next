@@ -14,7 +14,6 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { SvgG } from '@/components/plot/svg-g'
@@ -163,7 +162,6 @@ function Node({
 
   const { settings } = useGseaBubbleSettings()
 
-  const { showTooltip, hideTooltip } = useTooltip()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
   const [hover, setHover] = useState(false)
@@ -183,10 +181,11 @@ function Node({
 
   const handleVariantEnter = useCallback(
     (plot: IGseaBubble, row: number, p: IPos) => {
-      const { relativeP } = svgPointToScreen(svgRef.current, p)
+      const { relativeP, screenP } = svgPointToScreen(svgRef.current, p)
 
       showCrosshair({
         pos: relativeP,
+        screenPos: screenP,
         content: (
           <>
             <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>

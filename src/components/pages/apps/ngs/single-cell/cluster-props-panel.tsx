@@ -124,7 +124,7 @@ export function ClusterPropsPanel() {
   const { clusterInfo } = usePlotGrid()
 
   return (
-    <PropsPanel className="gap-y-2 pr-1">
+    <PropsPanel className="gap-y-2">
       <VCenterRow className="justify-end px-2">
         <LinkButton
           onClick={() => {

@@ -55,7 +55,16 @@ const DEFAULT_OFFSET: IPos = { x: 10, y: 10 }
 interface ICrosshairStore {
   crosshair: ICrosshair | null
   showCrosshair: (crosshair: ICrosshair) => void
+  /**
+   * Hides the crosshair after a short delay which is useful for avoiding flickering.
+   * @returns void
+   */
   hideCrosshair: () => void
+  /**
+   * Cancels the current crosshair display immediately without any delay.
+   * @returns void
+   */
+  cancelCrosshair: () => void
   dispose: () => void
 }
 
@@ -117,6 +126,14 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
       }, TOOLTIP_CLEAR_MS)
     },
 
+    cancelCrosshair: () => {
+      cancelPendingFrame()
+
+      clearPendingTimeout()
+
+      set({ crosshair: null })
+    },
+
     dispose: () => {
       cancelPendingFrame()
       clearPendingTimeout()
@@ -129,8 +146,9 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
 export function useCrosshair() {
   const showCrosshair = useCrosshairStore((state) => state.showCrosshair)
   const hideCrosshair = useCrosshairStore((state) => state.hideCrosshair)
+  const cancelCrosshair = useCrosshairStore((state) => state.cancelCrosshair)
 
-  return { showCrosshair, hideCrosshair }
+  return { showCrosshair, hideCrosshair, cancelCrosshair }
 }
 
 // isolates the fast-changing crosshair position so mousemove only

@@ -28,7 +28,7 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
   const { open: openOncoDialog } = useOncoplotDialogs()
 
   return (
-    <PropsPanel ref={ref} className="pr-1">
+    <PropsPanel ref={ref}>
       <BaseCol>
         <CheckPropRow
           title="Show"
@@ -112,7 +112,6 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
         >
           <ul>
             {clinicalTracks.map((track, ti) => {
-              //const track = clinicalTracks[name]!
               const trackProps =
                 displayProps.legend.clinical.tracks[track.name]!
 

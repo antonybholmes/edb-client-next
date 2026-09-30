@@ -77,7 +77,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
   }
 
   return (
-    <PropsPanel ref={ref} className="gap-y-2 pr-1">
+    <PropsPanel ref={ref} className="gap-y-2">
       {/* <h2 className="font-semibold text-lg">Labels</h2> */}
 
       <VCenterRow className="justify-between gap-x-2 items-stretch">

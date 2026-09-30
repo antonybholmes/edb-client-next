@@ -138,7 +138,7 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
   const [tabs, setTabs] = useState<string[]>(['plot'])
 
   return (
-    <PropsPanel ref={ref} className="pr-1">
+    <PropsPanel ref={ref}>
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel
           minSize="10%"
