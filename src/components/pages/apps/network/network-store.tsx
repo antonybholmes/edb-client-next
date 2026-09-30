@@ -6,7 +6,7 @@ import { IDim } from '@/interfaces/dim'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
-import { ILimit, ZERO_LIMIT } from '@/lib/math/limit'
+import { DEFAULT_LIMIT, ILimit } from '@/lib/math/limit'
 import { min } from '@/lib/math/math'
 import { useMemo } from 'react'
 import { create } from 'zustand'
@@ -296,16 +296,16 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
   network: undefined,
 
   nodes: {
-    metricLim1: { ...ZERO_LIMIT },
+    metricLim1: { ...DEFAULT_LIMIT },
     stepSize: 0,
-    metricLim2: { ...ZERO_LIMIT },
+    metricLim2: { ...DEFAULT_LIMIT },
     label: {
       fields: [],
       field: '',
     },
   },
   edges: {
-    strengthLim: { ...ZERO_LIMIT },
+    strengthLim: { ...DEFAULT_LIMIT },
     stepSize: 0,
   },
   headings: {

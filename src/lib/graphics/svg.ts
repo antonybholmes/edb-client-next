@@ -61,9 +61,11 @@ export function screenToSvgPoint(svg: SVGSVGElement, p: IPos): IPos {
     throw new Error('SVG is not connected to the document')
   }
 
+  //const rect = svg.getBoundingClientRect()
+
   const pt = svg.createSVGPoint()
-  pt.x = p.x
-  pt.y = p.y
+  pt.x = p.x // - rect.left
+  pt.y = p.y //- rect.top
 
   return pt.matrixTransform(ctm.inverse())
 }

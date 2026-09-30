@@ -207,6 +207,10 @@ export function NetworkD3SvgContent() {
       //svgP.x -= settings.plot.margin.left
       //svgP.y -= settings.plot.margin.top
 
+      // need to apply zoom
+      //svgP.x *= zoom
+      //svgP.y *= zoom
+
       const node = tree.find(
         svgP.x,
         svgP.y,
@@ -418,7 +422,7 @@ export function NetworkD3SvgContent() {
   }, [settings, network?.id])
 
   return (
-    <SvgD3Canvas size={size}>
+    <SvgD3Canvas size={size} scale={zoom}>
       <SvgG id="network" />
       <SvgMargin margin={settings.plot.margin}>
         {settings.plot.border.show && (

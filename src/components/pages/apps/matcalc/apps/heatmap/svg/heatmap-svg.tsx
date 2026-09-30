@@ -8,7 +8,7 @@ import {
   MIN_INNER_HEIGHT,
 } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
-import { CellsSvg, DotsSvg, GridSvg } from './cell-svg'
+import { DotsSvg, GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
 
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -19,7 +19,7 @@ import { RowLabelsSvg, RowTreeSvg } from './row-svg'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisLength } from '@/components/plot/axes/axis'
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgD3Canvas } from '@/components/plot/svg-d3-base'
 import { SvgG } from '@/components/plot/svg-g'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromCmap } from '@/lib/color/colormap'
@@ -29,6 +29,7 @@ import { SvgTitle } from '../../../../../../plot/svg-title'
 import { ActionListSvg } from '../action-list-svg'
 import { useHeatmapContext } from '../heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from '../legend-svg'
+import { CellsD3Svg } from './cell-d3-svg'
 import { CellGaps } from './cell-gaps'
 
 export const TOOLTIP_CLEAR_MS = 300
@@ -399,7 +400,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           </>
         ) : (
           <>
-            <CellsSvg
+            <CellsD3Svg
               df={dfMain}
               margin={margin}
               plotSize={{ w: innerWidth, h: innerHeight }}
@@ -522,8 +523,8 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
   }, [cf, displayOptions, groupRows, cax])
 
   return (
-    <SvgCanvas scale={scale} size={{ w: width, h: height }}>
+    <SvgD3Canvas scale={scale} size={{ w: width, h: height }}>
       {svg}
-    </SvgCanvas>
+    </SvgD3Canvas>
   )
 }

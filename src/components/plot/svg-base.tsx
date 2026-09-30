@@ -66,13 +66,9 @@ export function SvgBase({
   style,
   ...props
 }: Omit<ISVGProps, 'width' | 'height'> & {
-  size?: IDim | number
+  size?: IDim
   scale?: number
 }) {
-  if (typeof size === 'number') {
-    size = { w: size, h: size }
-  }
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -18,7 +18,7 @@ import { formatNumber } from '@/lib/text/text'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
-import { memo, ReactNode } from 'react'
+import { memo, ReactNode, useMemo } from 'react'
 import { IHeatMapSettings } from '../heatmap-settings-store'
 import { CellGaps } from './cell-gaps'
 
@@ -41,7 +41,7 @@ export interface ICellsSvgProps {
   pos?: IPos
 }
 
-function getUseRectId(color: string): string {
+export function getUseRectId(color: string): string {
   return `rect-${color.slice(1)}`
 }
 
@@ -65,31 +65,39 @@ export const CellsSvg = memo(function CellsSvg({
 
   const cmap = getColorMapFromCmap(props.cmap)
 
-  const colors = rowLeaves.map((row) => {
-    return colLeaves.map((col) => {
-      const v = df.get(row, col) as number
+  const colors = useMemo(
+    () =>
+      rowLeaves.map((row) => {
+        return colLeaves.map((col) => {
+          const v = df.get(row, col) as number
 
-      const fill: string = !isNaN(v)
-        ? cmap.getHexColor(normalize(v, props.range), false)
-        : COLOR_WHITE
-      return fill
-    })
-  })
+          const fill: string = !isNaN(v)
+            ? cmap.getHexColor(normalize(v, props.range), false)
+            : COLOR_WHITE
+          return fill
+        })
+      }),
+    [rowLeaves, colLeaves, df, cmap, props.range]
+  )
 
-  const uniqueColorRects = [...new Set(colors.flat())].sort().map((color) => {
-    const id = getUseRectId(color)
+  const uniqueColorRects = useMemo(
+    () =>
+      [...new Set(colors.flat())].sort().map((color) => {
+        const id = getUseRectId(color)
 
-    return (
-      <rect
-        id={id}
-        key={id}
-        width={blockSize.w}
-        height={blockSize.h}
-        fill={color}
-        //shapeRendering={SVG_CRISP_EDGES}
-      />
-    )
-  })
+        return (
+          <rect
+            id={id}
+            key={id}
+            width={blockSize.w}
+            height={blockSize.h}
+            fill={color}
+            //shapeRendering={SVG_CRISP_EDGES}
+          />
+        )
+      }),
+    [colors]
+  )
 
   // function _hideTooltip() {
   //   hideTooltip()
@@ -173,7 +181,6 @@ export const CellsSvg = memo(function CellsSvg({
         <SvgMouseRect
           width={plotSize.w}
           height={plotSize.h}
-
           onMouseMove={handleMouseMove}
           onMouseLeave={hideCrosshair}
         />
@@ -273,12 +280,9 @@ export const DotsSvg = memo(function DotsSvg({
   return (
     <SvgG
       pos={pos}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={hideCrosshair}
+
       //shapeRendering={SVG_CRISP_EDGES}
     >
-      <SvgMouseRect width={plotSize.w} height={plotSize.h} />
-
       {rowLeaves.map((row, ri) => {
         const y = ygaps.position(ri)
         return colLeaves.map((col, ci) => {
@@ -373,6 +377,13 @@ export const DotsSvg = memo(function DotsSvg({
           )
         })
       })}
+
+      <SvgMouseRect
+        width={plotSize.w}
+        height={plotSize.h}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={hideCrosshair}
+      />
     </SvgG>
   )
 })

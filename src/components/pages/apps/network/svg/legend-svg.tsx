@@ -56,6 +56,8 @@ export function LegendSvg() {
     sizeTicks = sizeTicks.slice(0, settings.plot.legend.sizes.ticks)
   }
 
+  console.log(nodes.metricLim1.max, sizeTicks)
+
   const sizeHeight =
     2 * blockHeight +
     2 * sum(sizeTicks.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
@@ -82,6 +84,15 @@ export function LegendSvg() {
   }
 
   const edgesHeight = 2 * blockHeight + strengthTicks.length * blockHeight
+
+  console.log(
+    'groupsHeight:',
+    groupsHeight,
+    'sizeHeight:',
+    sizeHeight,
+    'edgesHeight:',
+    edgesHeight
+  )
 
   return (
     <SvgG

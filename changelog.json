@@ -3203,6 +3203,10 @@
         {
           "msg": "Zoom is now value based and removes the bounding to levels",
           "date": "2026-09-30T14:39:37.499Z"
+        },
+        {
+          "msg": "Heatmap now uses some d3 rendered cells",
+          "date": "2026-09-30T16:37:18.454Z"
         }
       ]
     },
