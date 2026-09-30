@@ -57,7 +57,7 @@ export const GENE_DISPLAY_OPTIONS = [
 export interface ISeqBrowserSettings {
   plot: { width: number; gap: number }
 
-  scale: number
+  //scale: number
   reverse: boolean
   locations: IGenomicLocation[]
   tracks: {
@@ -149,7 +149,7 @@ export interface ISeqBrowserSettings {
 }
 
 export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
-  scale: 1,
+  //scale: 1,
   //gap: 20,
   margin: { top: 20, left: 250, bottom: 20, right: 250 },
   titles: {

@@ -1,6 +1,6 @@
 import { axisDomainToRangeFunc, createAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgPath } from '@/components/plot/svg-path'
 import { SvgText } from '@/components/plot/svg-text'
 import { useDNAQuery } from '@/lib/genomic/dna'
@@ -119,9 +119,9 @@ export function MAFPlotSVG() {
   }
 
   return (
-    <SvgCanvas
+    <SvgZoomCanvas
       size={{ w: width, h: height }}
-      scale={settings.scale}
+
       //shapeRendering={SVG_CRISP_EDGES}
     >
       <g
@@ -171,6 +171,6 @@ export function MAFPlotSVG() {
             MARGIN.top + plotHeight + (settings.dna.index.text.show ? 120 : 50),
         }}
       />
-    </SvgCanvas>
+    </SvgZoomCanvas>
   )
 }

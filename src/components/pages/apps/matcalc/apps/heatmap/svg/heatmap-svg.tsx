@@ -8,7 +8,7 @@ import {
   MIN_INNER_HEIGHT,
 } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
-import { DotsSvg, GridSvg } from './cell-svg'
+import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
 
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -29,7 +29,7 @@ import { SvgTitle } from '../../../../../../plot/svg-title'
 import { ActionListSvg } from '../action-list-svg'
 import { useHeatmapContext } from '../heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from '../legend-svg'
-import { CellsD3Svg } from './cell-d3-svg'
+import { CellsD3Svg, DotsD3Svg } from './cell-d3-svg'
 import { CellGaps } from './cell-gaps'
 
 export const TOOLTIP_CLEAR_MS = 300
@@ -382,7 +382,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               pos={{ x: margin.left, y: margin.top }}
             />
             {/* Draw cells after grid so the are not obscured */}
-            <DotsSvg
+            <DotsD3Svg
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}

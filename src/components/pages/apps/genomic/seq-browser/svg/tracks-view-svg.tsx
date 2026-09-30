@@ -6,7 +6,6 @@ import {
   setAxisDomain,
   setAxisTicks,
 } from '@/components/plot/axes/axis'
-import { SvgCanvas } from '@/components/plot/svg-base'
 import { TEXT_ZOOM } from '@/consts'
 import { type IPos } from '@/interfaces/pos'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -19,7 +18,12 @@ import { useTracks } from '../tracks-store'
 import { getBedTrackHeight } from './base-bed-track-svg'
 import { getGeneTrackHeight } from './genes-track-svg'
 
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
+import { SvgLine } from '@/components/plot/svg-line'
+import { SvgMargin } from '@/components/plot/svg-margin'
+import { SvgPath } from '@/components/plot/svg-path'
+import { SvgText } from '@/components/plot/svg-text'
 import { fill } from '@/lib/fill'
 import { locStr } from '@/lib/genomic/genomic'
 import { newGenomicLocation } from '@/lib/genomic/genomic-location'
@@ -33,7 +37,7 @@ const SELECTION_RECT_GAP = 3
 const SELECTION_RECT_W_OFFSET = SELECTION_RECT_GAP * 2
 const MIN_ZOOM_SIZE_BP = 1000
 
-export function TracksView({ className, style }: ISVGProps) {
+export function TracksViewSvg({ style }: ISVGProps) {
   const {
     groups,
     locations,
@@ -122,26 +126,19 @@ export function TracksView({ className, style }: ISVGProps) {
 
     if (isCtrlPressed.current && innerRef.current) {
       const startX =
-        (innerRef.current.getBoundingClientRect().left + settings.margin.left) *
-        settings.scale
+        innerRef.current.getBoundingClientRect().left + settings.margin.left
 
-      const col = Math.floor(
-        (e.clientX - startX) / settings.scale / columnWidth
-      )
+      const col = Math.floor((e.clientX - startX) / columnWidth)
       column.current = { x: col * columnWidth, col }
 
       //offset within a column
       const offset =
-        (column.current.x +
-          settings.margin.left +
-          innerRef.current.getBoundingClientRect().left) *
-        settings.scale
+        column.current.x +
+        settings.margin.left +
+        innerRef.current.getBoundingClientRect().left
 
       dragStartPositionRef.current = {
-        x: Math.max(
-          0,
-          Math.min(settings.plot.width, (e.clientX - offset) / settings.scale)
-        ),
+        x: Math.max(0, Math.min(settings.plot.width, e.clientX - offset)),
         y: 0,
       }
 
@@ -184,16 +181,12 @@ export function TracksView({ className, style }: ISVGProps) {
     }
 
     const offset =
-      (column.current.x +
-        settings.margin.left +
-        innerRef.current.getBoundingClientRect().left) *
-      settings.scale
+      column.current.x +
+      settings.margin.left +
+      innerRef.current.getBoundingClientRect().left
 
     dragPositionRef.current = {
-      x: Math.max(
-        0,
-        Math.min(settings.plot.width, (e.clientX - offset) / settings.scale)
-      ),
+      x: Math.max(0, Math.min(settings.plot.width, e.clientX - offset)),
       y: 0,
     }
 
@@ -543,8 +536,7 @@ export function TracksView({ className, style }: ISVGProps) {
   )
 
   const svg = (
-    <SvgCanvas
-      scale={settings.scale}
+    <SvgZoomCanvas
       size={{ w: width, h: height }}
       style={style}
       // onMouseMove={(e) => {
@@ -555,13 +547,11 @@ export function TracksView({ className, style }: ISVGProps) {
       //   setMousePos({ x, y })
       // }}
     >
-      <g
-        transform={`translate(${settings.margin.left}, ${settings.margin.top})`}
-      >
+      <SvgMargin margin={settings.margin}>
         {/* <MouseEventProvider value={mouseEventValue}>*/}
         {locationSvg}
         {/* </MouseEventProvider> */}
-      </g>
+      </SvgMargin>
 
       <g opacity="0" ref={selectionGroupRef}>
         <rect
@@ -574,13 +564,10 @@ export function TracksView({ className, style }: ISVGProps) {
           height={height - 12}
           fill="mediumslateblue"
           fillOpacity="0.1"
-          //stroke="mediumslateblue"
-          //strokeWidth="1"
-          //strokeDasharray="5,5"
         />
 
-        <g id="zoom-text">
-          <path
+        <SvgG id="zoom-text">
+          <SvgPath
             ref={zoomArrowRef1}
             d="M 6,-6 L 0,0 L 6,6"
             stroke="mediumslateblue"
@@ -591,20 +578,20 @@ export function TracksView({ className, style }: ISVGProps) {
             transform={`translate(8, ${12 + (height - 12) / 2})`}
             opacity={0}
           />
-          <text
+          <SvgText
             ref={zoomTextRef}
             x="0"
             y={12 + (height - 12) / 2}
             textAnchor="middle"
-            dominantBaseline="middle"
+            //dominantBaseline="middle"
             fill="mediumslateblue"
             opacity={0}
           >
             {TEXT_ZOOM}
-          </text>
+          </SvgText>
 
           <SvgG pos={{ x: 0, y: 12 + (height - 12) / 2 }}>
-            <path
+            <SvgPath
               ref={zoomArrowRef2}
               d="M -6,-6 L 0,0 L -6,6"
               stroke="mediumslateblue"
@@ -615,10 +602,10 @@ export function TracksView({ className, style }: ISVGProps) {
               opacity={0}
             />
           </SvgG>
-        </g>
+        </SvgG>
 
-        <g id="selection-line-1">
-          <path
+        <SvgG id="selection-line-1">
+          <SvgPath
             d="M -5,1 L 5,1 L 5,5 L 0,10 L -5,5 Z"
             stroke="mediumslateblue"
             fill="mediumslateblue"
@@ -627,7 +614,7 @@ export function TracksView({ className, style }: ISVGProps) {
             strokeLinejoin="round"
           />
 
-          <line
+          <SvgLine
             x1="0"
             y1="12"
             x2="0"
@@ -635,10 +622,10 @@ export function TracksView({ className, style }: ISVGProps) {
             stroke="mediumslateblue"
             strokeWidth="1"
           />
-        </g>
+        </SvgG>
 
-        <g id="selection-line-2" ref={selectionLineRef2}>
-          <path
+        <SvgG id="selection-line-2" ref={selectionLineRef2}>
+          <SvgPath
             d="M -5,1 L 5,1 L 5,5 L 0,10 L -5,5 Z"
             stroke="mediumslateblue"
             fill="mediumslateblue"
@@ -646,7 +633,7 @@ export function TracksView({ className, style }: ISVGProps) {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <line
+          <SvgLine
             x1="0"
             y1="12"
             x2="0"
@@ -654,9 +641,9 @@ export function TracksView({ className, style }: ISVGProps) {
             stroke="mediumslateblue"
             strokeWidth="1"
           />
-        </g>
+        </SvgG>
       </g>
-    </SvgCanvas>
+    </SvgZoomCanvas>
   )
 
   return svg

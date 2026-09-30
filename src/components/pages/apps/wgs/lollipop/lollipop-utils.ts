@@ -174,7 +174,7 @@ export interface ILollipopDisplayProps {
   }
   axisOffset: number
 
-  scale: number
+  //scale: number
   cmap: ColorMap
   plotGap: number
 
@@ -210,7 +210,7 @@ export const DEFAULT_DISPLAY_PROPS: ILollipopDisplayProps = {
     type: '%',
   },
 
-  scale: 1,
+  //scale: 1,
   cmap: BWR_CMAP_V2,
   axisOffset: 10,
   plotGap: 10,

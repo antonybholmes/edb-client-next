@@ -7,7 +7,7 @@ import {
 } from '@/components/plot/axes/axis'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
 
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
 import { normalize } from '@/lib/math/normalize'
 
@@ -358,9 +358,9 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
   }, [points, settings, plots, size, clusterInfo])
 
   return (
-    <SvgCanvas size={svgContent.dim} scale={settings.scale}>
+    <SvgZoomCanvas size={svgContent.dim}>
       {svgContent.svg && svgContent.svg}
-    </SvgCanvas>
+    </SvgZoomCanvas>
   )
 }
 

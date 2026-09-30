@@ -38,6 +38,8 @@ export function SvgD3Canvas({
         // Apply transform directly to the inner SVG group for smooth rendering
         //d3.select(containerRef.current).attr('transform', event.transform)
 
+        console.log('eh', size.w * event.transform.k)
+
         d3.select(svgRef.current)
           .attr('width', size.w * event.transform.k)
           .attr('height', size.h * event.transform.k)

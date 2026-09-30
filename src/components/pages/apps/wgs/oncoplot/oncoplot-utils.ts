@@ -319,7 +319,7 @@ export interface IOncoplotDisplayProps {
   }
   axisOffset: number
 
-  scale: number
+  //scale: number
   cmap: ColorMap
   plotGap: number
 
@@ -379,7 +379,7 @@ export const DEFAULT_DISPLAY_PROPS: IOncoplotDisplayProps = {
     offset: 20,
   },
 
-  scale: 1,
+  //scale: 1,
   cmap: BWR_CMAP_V2,
   axisOffset: 10,
   plotGap: 10,

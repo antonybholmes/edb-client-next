@@ -9,7 +9,7 @@ import { type IPos } from '@/interfaces/pos'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { useAxis } from '@/components/plot/axes/axes-store'
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -635,21 +635,22 @@ function OncoplotSvgContent() {
     () => ({ w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }),
     [blockSize.w, blockSize.h]
   )
-  const scaledBlockSize = useMemo(
-    () => ({
-      w: blockSize.w * displayProps.scale,
-      h: blockSize.h * displayProps.scale,
-    }),
-    [blockSize.w, blockSize.h, displayProps.scale]
-  )
 
-  const scaledPadding = useMemo(
-    () => ({
-      x: spacing.x * displayProps.scale,
-      y: spacing.y * displayProps.scale,
-    }),
-    [spacing.x, spacing.y, displayProps.scale]
-  )
+  // const scaledBlockSize = useMemo(
+  //   () => ({
+  //     w: blockSize.w * displayProps.scale,
+  //     h: blockSize.h * displayProps.scale,
+  //   }),
+  //   [blockSize.w, blockSize.h, displayProps.scale]
+  // )
+
+  // const scaledPadding = useMemo(
+  //   () => ({
+  //     x: spacing.x * displayProps.scale,
+  //     y: spacing.y * displayProps.scale,
+  //   }),
+  //   [spacing.x, spacing.y, displayProps.scale]
+  // )
 
   const { showTooltip, hideTooltip } = useTooltip()
   const { showCrosshair, hideCrosshair } = useCrosshair()
@@ -801,11 +802,7 @@ function OncoplotSvgContent() {
     [
       ref,
       marginLeft,
-      displayProps.scale,
-      scaledBlockSize.w,
-      scaledBlockSize.h,
-      scaledPadding.x,
-      scaledPadding.y,
+
       mf,
       top,
       blockSize.w,
@@ -943,9 +940,9 @@ function OncoplotSvgContent() {
   }
 
   const svgElem = (
-    <SvgCanvas
+    <SvgZoomCanvas
       size={{ w: width, h: height }}
-      scale={displayProps.scale}
+
       //shapeRendering={SVG_CRISP_EDGES}
       onMouseMove={onMouseMove}
     >
@@ -1001,7 +998,7 @@ function OncoplotSvgContent() {
       {/* legend */}
 
       {legendMemo}
-    </SvgCanvas>
+    </SvgZoomCanvas>
   )
 
   return svgElem

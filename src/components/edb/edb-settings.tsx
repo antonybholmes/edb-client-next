@@ -64,7 +64,7 @@ export interface IEdbSettings {
     cmap: ICmap
     colorbar: IColorBarProps
     axes: IXYAxisDisplayProps
-    scale: number
+    //scale: number
   }
 }
 
@@ -123,7 +123,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
       y: { ...DEFAULT_AXIS_CONFIG },
       colorbar: { ...DEFAULT_AXIS_CONFIG },
     },
-    scale: 1,
+    //scale: 1,
   },
 }
 

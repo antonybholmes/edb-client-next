@@ -113,8 +113,6 @@ export function TracksColumnSvg() {
     return { x, y }
   }, [mousePos.x, mousePos.y, pos.x, pos.y, xl, height])
 
-  const mouseEventValue = useMemo(() => ({ pos: colMousePos }), [colMousePos])
-
   const trackSvg = useMemo(
     () =>
       tracks.map((ts, ti) => {

@@ -1,4 +1,4 @@
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { screenToSvgPoint } from '@/lib/graphics/svg'
@@ -186,10 +186,9 @@ export function SankeySvg() {
   }
 
   return (
-    <SvgCanvas
+    <SvgZoomCanvas
       size={{ w, h }}
 
-      scale={settings.scale}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
@@ -203,7 +202,7 @@ export function SankeySvg() {
           return <SVGNode key={node.id} node={node} settings={settings} />
         })}
       </SvgMargin>
-    </SvgCanvas>
+    </SvgZoomCanvas>
   )
 }
 

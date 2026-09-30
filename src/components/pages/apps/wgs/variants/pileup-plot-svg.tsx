@@ -1,5 +1,5 @@
 import { createAxis } from '@/components/plot/axes/axis'
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
@@ -276,15 +276,15 @@ export function PileupPlotSvg() {
   // matching is case insensitive
 
   return (
-    <SvgCanvas
+    <SvgZoomCanvas
       size={{ w: width, h: height }}
-      scale={settings.scale}
+
       //shapeRendering={SVG_CRISP_EDGES}
 
       onMouseLeave={hideTooltip}
     >
       {svgContent}
-    </SvgCanvas>
+    </SvgZoomCanvas>
   )
 }
 

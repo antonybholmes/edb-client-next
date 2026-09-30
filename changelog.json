@@ -3207,6 +3207,10 @@
         {
           "msg": "Heatmap now uses some d3 rendered cells",
           "date": "2026-09-30T16:37:18.454Z"
+        },
+        {
+          "msg": "Motifs now calculates letter width correctly",
+          "date": "2026-09-30T17:09:56.342Z"
         }
       ]
     },

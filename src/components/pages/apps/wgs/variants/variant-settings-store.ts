@@ -135,7 +135,7 @@ export interface IPileupProps {
   chrPrefix: {
     show: boolean
   }
-  scale: number
+  //scale: number
   tooltips: {
     show: boolean
   }
@@ -321,7 +321,7 @@ export const DEFAULT_PILEUP_PROPS: IPileupProps = {
       fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_CORNFLOWER_BLUE },
     },
   },
-  scale: 1,
+  //scale: 1,
   tooltips: {
     show: true,
   },

@@ -3,7 +3,7 @@ import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
-import { getColorMapFromCmap } from '@/lib/color/colormap'
+import { getColorMap } from '@/lib/color/colormap'
 import { cellStr } from '@/lib/dataframe/cell'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { normalize } from '@/lib/math/normalize'
@@ -36,7 +36,7 @@ export const CellsD3Svg = memo(function CellsD3Svg({
 
   const { blockSize } = props
 
-  const cmap = getColorMapFromCmap(props.cmap)
+  const cmap = getColorMap(props.cmap)
 
   const colors = useMemo(
     () =>
@@ -191,7 +191,6 @@ export const DotsD3Svg = memo(function DotsD3Svg({
   ygaps,
   rowLeaves,
   colLeaves,
-
   props,
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
@@ -243,7 +242,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
     )
   }
 
-  const cmap = getColorMapFromCmap(props.cmap)
+  const cmap = getColorMap(props.cmap)
   const w = Math.min(blockSize.w, blockSize.h)
   const isSquare = df.shape[0] === df.shape[1]
   const radiusScale = nodeRadiusFunc(w, props.dot.scale.mode)
@@ -266,8 +265,10 @@ export const DotsD3Svg = memo(function DotsD3Svg({
         }
 
         const v = df.get(row, col) as number
+
         const dotSize =
           props.mode === 'dot' && dfSize ? (dfSize.get(row, col) as number) : 1
+
         const fill: string = !isNaN(v)
           ? cmap.getHexColor(bound(v), false)
           : COLOR_WHITE
@@ -364,7 +365,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
       .attr('r', (d) => d.r)
       .attr('fill', (d) => d.fill)
       .attr('pointer-events', 'none')
-      .attr('shape-rendering', 'crispEdges')
+    //.attr('shape-rendering', 'crispEdges')
 
     groups
       .selectAll<SVGTextElement, (typeof cellData)[number]>('text')

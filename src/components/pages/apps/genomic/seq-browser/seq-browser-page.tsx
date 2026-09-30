@@ -29,13 +29,12 @@ import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { useKeyUpListener } from '@/hooks/keyup-listener'
 import { VCenterRow } from '@/layout/v-center-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { useZoom } from '@/providers/zoom-provider'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSearch } from '@/hooks/search'
 import { ExportIcon } from '@/icons/export-icon'
-import { ClientLayout } from '@/app/client-layout'
 import { produce } from 'immer'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
@@ -58,7 +57,7 @@ import { LocationAutocomplete } from './location-autocomplete'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
 import { SeqBrowserPropsPanel } from './seq-browser-props-panel'
 import { useSeqBrowserSettings, type BinSize } from './seq-browser-settings'
-import { TracksView } from './svg/tracks-view'
+import { TracksViewSvg } from './svg/tracks-view-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useTracks } from './tracks-store'
 
@@ -67,16 +66,6 @@ function SeqBrowserPage() {
   const { settings: edbSettings } = useEdbSettings()
   const { setAppInfo } = useAppInfo()
   const { settings, updateSettings } = useSeqBrowserSettings()
-
-  useZoom({
-    onChange: ({ zoom }) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-  })
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
@@ -318,7 +307,7 @@ function SeqBrowserPage() {
               userSelect: isCtrlPressed ? 'none' : 'auto',
             }}
           >
-            <TracksView
+            <TracksViewSvg
               style={{
                 pointerEvents: isCtrlPressed ? 'none' : 'auto',
               }}

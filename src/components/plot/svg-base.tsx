@@ -1,6 +1,7 @@
 import { IDim } from '@/interfaces/dim'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { useSVG } from '@/providers/svg-provider'
+import { useZoom } from '@/providers/zoom-provider'
 import { ComponentProps, useCallback, useId } from 'react'
 
 export const ARIAL_FONT_FAMILY = 'Arial, Helvetica, sans-serif'
@@ -31,6 +32,20 @@ const FONT_MAP = Object.fromEntries(FONTS.map((f) => [f.label, f.value]))
  */
 export function getFontFamilies(fontFamily: string) {
   return FONT_MAP[fontFamily] ?? fontFamily
+}
+
+export function SvgZoomCanvas({
+  ...props
+}: Omit<ComponentProps<typeof SvgCanvas>, 'scale'>) {
+  const { zoom } = useZoom()
+
+  return (
+    <SvgCanvas
+      scale={zoom}
+
+      {...props}
+    />
+  )
 }
 
 /**

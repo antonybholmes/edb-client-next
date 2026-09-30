@@ -2,13 +2,12 @@ import { memo, ReactElement, useMemo } from 'react'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
-import { useZoom } from '@/providers/zoom-provider'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
@@ -97,7 +96,6 @@ const ExtGseaSvgPlot = memo(function ExtGseaSvgPlot({
 export function ExtGseaSvgContent() {
   const { results } = useExtGseaContext()
   const { settings: gseaSettings } = useGseaSettings()
-  const { zoom } = useZoom()
 
   const innerPlotSize: IDim = useMemo(() => {
     return {
@@ -159,11 +157,7 @@ export function ExtGseaSvgContent() {
     return <SvgMargin margin={gseaSettings.plot.margin}>{elems}</SvgMargin>
   }, [results, plotSize, gseaSettings.page.columns, gseaSettings.plot.margin])
 
-  return (
-    <SvgCanvas size={pageSize} scale={zoom}>
-      {svg}
-    </SvgCanvas>
-  )
+  return <SvgZoomCanvas size={pageSize}>{svg}</SvgZoomCanvas>
 }
 
 export function ExtGseaSvg() {

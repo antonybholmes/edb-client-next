@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react'
 import { IEdge } from '../network-store'
 
-import { SvgCanvas } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
@@ -19,7 +19,6 @@ import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { truncate } from '@/lib/text/text'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useZoom } from '@/providers/zoom-provider'
 import { quadtree } from 'd3-quadtree'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
@@ -40,7 +39,6 @@ interface IRenderEdge extends IEdge {
 }
 
 export function NetworkSvgContent() {
-  const { zoom } = useZoom()
   const { ref } = useSVG()
   const { settings } = useNetworkSettings()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
@@ -436,11 +434,7 @@ export function NetworkSvgContent() {
     return null
   }
 
-  return (
-    <SvgCanvas size={{ w: width, h: height }} scale={zoom}>
-      {svg}
-    </SvgCanvas>
-  )
+  return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }
 
 export function NetworkSvg() {
