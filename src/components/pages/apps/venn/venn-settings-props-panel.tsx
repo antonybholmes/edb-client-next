@@ -17,7 +17,8 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropRow } from '@/dialogs/prop-row'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
+
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { LinkButton } from '@/themed/link-button'
 import { produce } from 'immer'
@@ -67,7 +68,7 @@ export function VennSettingsPropsPanel() {
         <AccordionItem value="circles">
           <AccordionTrigger>Circles</AccordionTrigger>
           <AccordionContent>
-            <SwitchPropRow
+            <CheckPropRow
               title="Fill"
               checked={settings.isFilled}
               onCheckedChange={(state) => {
@@ -92,7 +93,7 @@ export function VennSettingsPropsPanel() {
               }}
             />
 
-            <SwitchPropRow
+            <CheckPropRow
               title="Outline"
               checked={settings.isOutlined}
               onCheckedChange={(state) =>
@@ -101,7 +102,7 @@ export function VennSettingsPropsPanel() {
                 })
               }
             />
-            {/* <SwitchPropRow
+            {/* <CheckPropRow
               title="Proportional"
               checked={settings.isProportional}
               onCheckedChange={(state) =>
@@ -110,7 +111,7 @@ export function VennSettingsPropsPanel() {
                 })
               }
             />
-            <SwitchPropRow
+            <CheckPropRow
               title="Normalize"
               checked={settings.normalize}
               onCheckedChange={(state) =>
@@ -125,7 +126,7 @@ export function VennSettingsPropsPanel() {
         <AccordionItem value="titles">
           <AccordionTrigger>Titles</AccordionTrigger>
           <AccordionContent>
-            <SwitchPropRow
+            <CheckPropRow
               title="Show"
               checked={settings.fonts.title.show}
               onCheckedChange={(state) =>
@@ -136,7 +137,7 @@ export function VennSettingsPropsPanel() {
                 )
               }
             />
-            <SwitchPropRow
+            <CheckPropRow
               title="Use colors"
               checked={settings.fonts.title.colored}
               onCheckedChange={(state) =>
@@ -147,7 +148,7 @@ export function VennSettingsPropsPanel() {
                 )
               }
             />
-            <SwitchPropRow
+            <CheckPropRow
               title="Counts"
               checked={settings.fonts.counts.show}
               disabled={!settings.fonts.title.show}
@@ -178,7 +179,7 @@ export function VennSettingsPropsPanel() {
         <AccordionItem value="counts">
           <AccordionTrigger>Counts</AccordionTrigger>
           <AccordionContent>
-            <SwitchPropRow
+            <CheckPropRow
               title="Auto-color"
               checked={settings.autoColorText}
               onCheckedChange={(state) =>
@@ -223,7 +224,7 @@ export function VennSettingsPropsPanel() {
         <AccordionItem value="percentages">
           <AccordionTrigger>Percentages</AccordionTrigger>
           <AccordionContent>
-            <SwitchPropRow
+            <CheckPropRow
               title="Show"
               checked={settings.fonts.percentages.show}
               onCheckedChange={(state) =>

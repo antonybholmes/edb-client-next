@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Oncoplot now uses crosshair.
 - UI fixes.
 - Replace mouse events with pointer events.
 - Lollipop now uses crosshair.

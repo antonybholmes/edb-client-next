@@ -122,9 +122,9 @@
     "color": "#DA70D6",
     "version": "27.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T19:50:12.137Z",
-    "hash": "37190fcc3643fd59a087019019be6b29e284abd805ccbaf85aca7b2d6b2a280f",
-    "build": 1142
+    "modified": "2026-09-30T19:59:42.571Z",
+    "hash": "f44b3af44f698deb8f564db7822fc9a63d13abdb3b2e94bcb904629bb670e676",
+    "build": 1144
   },
   {
     "name": "Matcalc",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.6.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-30T19:50:12.135Z",
-    "hash": "fc46bcbcdbe92c225cc09aae9510a4929c78018f9749501ad8ad61fa270691cc",
-    "build": 2110
+    "modified": "2026-09-30T19:59:42.569Z",
+    "hash": "59fc5f6b44f9505baa8ed39aa6299d8ed50401e8b5e488d8f91ba3ec67bdfb51",
+    "build": 2112
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.4.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-30T19:50:12.136Z",
-    "hash": "8b31e7bdf3f3be2b3aaff1e84305d0bca6ac3f372b960f930db0111c4eedccb6",
-    "build": 102
+    "modified": "2026-09-30T19:59:42.570Z",
+    "hash": "c2c40087b5010153579a9de7ebea20d1d81c772c5173fb1344fcbeb4828408be",
+    "build": 104
   },
   {
     "name": "Oncoplot",
@@ -162,9 +162,9 @@
     "color": "#ff99cc",
     "version": "30.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T19:36:57.934Z",
-    "hash": "08dfbb896087c341a8185d5a45e06c33fb8764ac483b8a4d9108b6c975e361ec",
-    "build": 1152
+    "modified": "2026-09-30T19:59:42.571Z",
+    "hash": "9be07d7e3e6ff6cff2e9a62ca025deb93fbb11958fed098196b545ef544d461f",
+    "build": 1154
   },
   {
     "name": "Overlap",
@@ -271,8 +271,8 @@
     "color": "#00008B",
     "version": "26.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-30T19:50:12.138Z",
-    "hash": "ec0f0001fd8cd4eae0423a25b5a5954944c20f64785e3612eb82c18ce6d3e929",
-    "build": 960
+    "modified": "2026-09-30T19:59:42.572Z",
+    "hash": "5ddce9af5fdcc35a5c6ad28fc5b3353a530f9558cb7c93cc230a98f80117b7ed",
+    "build": 962
   }
 ]

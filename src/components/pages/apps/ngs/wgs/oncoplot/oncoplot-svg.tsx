@@ -17,7 +17,8 @@ import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { range } from '@/lib/math/range'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
+
+import { SvgG } from '@/components/plot/svg-g'
 import { useCallback, useMemo, type ReactElement, type ReactNode } from 'react'
 import { clinicalLegendSvgs, clinicalTracksSvg } from './clinical-tracks-svg'
 import { useOncoplotSettings } from './oncoplot-settings-store'
@@ -652,7 +653,6 @@ function OncoplotSvgContent() {
   //   [spacing.x, spacing.y, displayProps.scale]
   // )
 
-  const { showTooltip, hideTooltip } = useTooltip()
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
   //const highlightRef = useRef<HTMLSpanElement>(null)
@@ -725,12 +725,11 @@ function OncoplotSvgContent() {
   //   : null
 
   const _hideTooltip = useCallback(() => {
-    hideTooltip()
     hideCrosshair()
-  }, [hideTooltip, hideCrosshair])
+  }, [hideCrosshair])
 
   const onPointerMove = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.PointerEvent<SVGSVGElement>) => {
       if (!ref.current) {
         return
       }
@@ -778,15 +777,15 @@ function OncoplotSvgContent() {
           displayProps.plotGap,
       }
 
-      const { screenP: absoluteBlockScreenXY, relativeP: blockScreenXY } =
-        svgPointToScreen(ref.current, blockXYMid)
-
-      showCrosshair({ pos: blockScreenXY })
-
+      const { screenP, relativeP: blockScreenXY } = svgPointToScreen(
+        ref.current,
+        blockXYMid
+      )
       const stats = mf?.data(row, col)
 
-      showTooltip({
-        pos: { x: absoluteBlockScreenXY.x + 5, y: absoluteBlockScreenXY.y + 5 },
+      showCrosshair({
+        pos: blockScreenXY,
+        screenPos: screenP,
         content: (
           <>
             <p className="font-semibold">{stats!.sample}</p>
@@ -812,7 +811,6 @@ function OncoplotSvgContent() {
       _hideTooltip,
 
       showCrosshair,
-      showTooltip,
     ]
   )
 
@@ -903,16 +901,20 @@ function OncoplotSvgContent() {
   const legendMemo = useMemo(
     () =>
       displayProps.legend.position === 'bottom' ? (
-        <g
+        <SvgG
           id="legend"
-          transform={`translate(${marginLeft}, ${
-            top + gridHeight + displayProps.legend.offset
-          })`}
+          pos={{
+            x: marginLeft,
+            y: top + gridHeight + displayProps.legend.offset,
+          }}
         >
           <g>{vLegendSvg(mutationsInUse, colorMap, blockSize, displayProps)}</g>
 
-          <g
-            transform={`translate(${displayProps.legend.width + displayProps.legend.gap}, 0)`}
+          <SvgG
+            pos={{
+              x: displayProps.legend.width + displayProps.legend.gap,
+              y: 0,
+            }}
           >
             {clinicalLegendSvgs(
               clinicalTracks,
@@ -920,8 +922,8 @@ function OncoplotSvgContent() {
               blockSize,
               displayProps
             )}
-          </g>
-        </g>
+          </SvgG>
+        </SvgG>
       ) : null,
     [
       displayProps,
@@ -948,52 +950,45 @@ function OncoplotSvgContent() {
     >
       {/* clinical tracks */}
       {displayProps.clinical.show && (
-        <g
-          transform={`translate(${marginLeft}, 10)`}
-          //className="pointer-events-none"
-          pointerEvents="none"
-        >
+        <SvgG pos={{ x: marginLeft, y: 10 }} pointerEvents="none">
           {clinicalTracksSvgMemo}
-        </g>
+        </SvgG>
       )}
 
       {/* col graph */}
       {displayProps.samples.graphs.show && (
-        <g
-          transform={`translate(${marginLeft}, ${
-            top - displayProps.plotGap - displayProps.samples.graphs.height
-          })`}
+        <SvgG
+          pos={{
+            x: marginLeft,
+            y: top - displayProps.plotGap - displayProps.samples.graphs.height,
+          }}
         >
           {colGraphsMemo}
-        </g>
+        </SvgG>
       )}
 
       {/* row graph */}
       {displayProps.features.graphs.show && (
-        <g
-          transform={`translate(${
-            marginLeft + gridWidth + displayProps.plotGap
-          }, ${top})`}
+        <SvgG
+          pos={{ x: marginLeft + gridWidth + displayProps.plotGap, y: top }}
         >
           {rowGraphsMemo}
-        </g>
+        </SvgG>
       )}
 
       {/* matrix */}
 
-      <g transform={`translate(${marginLeft}, ${top})`}>{matrixMemo}</g>
+      <SvgG pos={{ x: marginLeft, y: top }}>{matrixMemo}</SvgG>
 
       {/* grid */}
 
-      <g transform={`translate(${marginLeft}, ${top})`}>{gridMemo}</g>
+      <SvgG pos={{ x: marginLeft, y: top }}>{gridMemo}</SvgG>
 
       {/* row labels */}
 
-      <g
-        transform={`translate(${marginLeft - displayProps.axisOffset}, ${top})`}
-      >
+      <SvgG pos={{ x: marginLeft - displayProps.axisOffset, y: top }}>
         {rowLabelsMemo}
-      </g>
+      </SvgG>
 
       {/* legend */}
 

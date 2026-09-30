@@ -163,7 +163,7 @@ function ColGraphsSvg({
 
                 showCrosshair({
                   pos: relativeP,
-                  clientPos: screenP,
+                  screenPos: screenP,
                   content: (
                     <>
                       {lines.map((line, index) => (

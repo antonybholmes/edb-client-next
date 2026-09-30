@@ -32,7 +32,7 @@ interface ICrosshair {
    * The client position of the crosshair, typically the mouse position relative to the viewport.
    * If this is set, the tooltip will float on the window rather than being in the bounds of the svg.
    */
-  clientPos?: IPos
+  screenPos?: IPos
 
   /**
    * Tooltip content
@@ -86,7 +86,7 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     showCrosshair: (crosshair) => {
       const {
         pos,
-        clientPos,
+        screenPos: clientPos,
         content,
         offset = DEFAULT_OFFSET,
         color = 'var(--color-foreground)',
@@ -96,7 +96,7 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
 
       clearPendingTimeout()
 
-      pendingCrosshair = { pos, clientPos, content, offset, color }
+      pendingCrosshair = { pos, screenPos: clientPos, content, offset, color }
 
       crosshairFrame = requestAnimationFrame(() => {
         crosshairFrame = null
@@ -155,8 +155,8 @@ export function CrosshairProvider({ children }: IChildrenProps) {
       return { tooltip: null, usePortal: false }
     }
 
-    const useFixed = !!crosshair.clientPos
-    const pos = useFixed ? crosshair.clientPos : crosshair.pos
+    const useFixed = !!crosshair.screenPos
+    const pos = useFixed ? crosshair.screenPos : crosshair.pos
     const tooltip = crosshair.content ? (
       <BaseCol
         className={cn(useFixed ? 'fixed' : 'absolute', TOOLTIP_CLS)}

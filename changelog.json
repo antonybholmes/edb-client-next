@@ -3231,6 +3231,10 @@
         {
           "msg": "UI fixes",
           "date": "2026-09-30T19:50:13.067Z"
+        },
+        {
+          "msg": "Oncoplot now uses crosshair",
+          "date": "2026-09-30T19:59:43.460Z"
         }
       ]
     },

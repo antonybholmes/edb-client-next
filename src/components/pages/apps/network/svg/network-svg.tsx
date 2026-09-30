@@ -258,7 +258,7 @@ export function NetworkSvgContent() {
 
       showCrosshair({
         pos: relativeP,
-        clientPos: screenP,
+        screenPos: screenP,
         content: (
           <>
             {IS_DEV_MODE && <strong>{node.id}</strong>}

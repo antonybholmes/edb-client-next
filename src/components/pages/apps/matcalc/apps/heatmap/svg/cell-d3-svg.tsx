@@ -151,7 +151,7 @@ export const CellsD3Svg = memo(function CellsD3Svg({
 
     showCrosshair({
       pos: relativeP,
-      clientPos: screenP,
+      screenPos: screenP,
       content: (
         <>
           <span className="font-semibold">{`${df.rowName(
@@ -220,7 +220,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
 
     showCrosshair({
       pos: relativeP,
-      clientPos: screenP,
+      screenPos: screenP,
       content: (
         <>
           <span className="font-semibold">{`${df.rowName(
