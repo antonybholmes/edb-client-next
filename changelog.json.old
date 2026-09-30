@@ -3223,6 +3223,10 @@
         {
           "msg": "Lollipop now uses crosshair",
           "date": "2026-09-30T19:34:09.379Z"
+        },
+        {
+          "msg": "Replace mouse events with pointer events",
+          "date": "2026-09-30T19:36:58.894Z"
         }
       ]
     },

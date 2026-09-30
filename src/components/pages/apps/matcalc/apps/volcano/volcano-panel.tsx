@@ -9,7 +9,6 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useEffect } from 'react'
-import { useVolcanoSettings } from './volcano-settings-store'
 
 import { range } from '@/lib/math/range'
 
@@ -17,14 +16,11 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom-provider'
 
-import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { VolcanoPropsPanel } from './volcano-props-panel'
@@ -67,25 +63,10 @@ export function makeDefaultVolcanoProps(
 
 export function VolcanoPanel() {
   const { plot } = useVolcanoContext()
-  const { settings, updateSettings } = useVolcanoSettings()
-  const displayProps: IVolcanoDisplayOptions = plot.props
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
   const { autoSave, saveAs } = useSVG()
-
-  const { setZoom } = useZoom({
-    onChange: (v) =>
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = v.zoom
-        })
-      ),
-  })
-
-  useUpdateEffect(() => {
-    setZoom(settings.scale)
-  }, [settings.scale])
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)

@@ -7,16 +7,13 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom-provider'
 
-import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSVG } from '@/providers/svg-provider'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'
-import { useSankeySettings } from './sankey-settings-store'
 import { SankeySvg } from './sankey-svg'
 
 export function SankeyPanel() {
@@ -28,18 +25,7 @@ export function SankeyPanel() {
   //   return null
   // }
 
-  useZoom({
-    onChange: (z) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = z.zoom
-        })
-      )
-    },
-  })
-
   const { autoSave, saveAs } = useSVG()
-  const { settings, updateSettings } = useSankeySettings()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 

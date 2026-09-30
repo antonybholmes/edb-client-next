@@ -11,7 +11,6 @@ import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
 
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useMemo } from 'react'
@@ -19,7 +18,7 @@ import { RowLabelsSvg, RowTreeSvg } from './row-svg'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisLength } from '@/components/plot/axes/axis'
-import { SvgD3Canvas } from '@/components/plot/svg-d3-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromCmap } from '@/lib/color/colormap'
@@ -39,11 +38,7 @@ export interface ITooltip {
   cell: ICell
 }
 
-interface IProps extends ISVGProps {
-  scale?: number
-}
-
-export function HeatMapSvg({ scale = 1 }: IProps) {
+export function HeatMapSvg() {
   const { plot } = useHeatmapContext()
 
   if (!plot) {
@@ -52,12 +47,12 @@ export function HeatMapSvg({ scale = 1 }: IProps) {
 
   return (
     <CrosshairProvider>
-      <HeatMapSvgContent scale={scale} />
+      <HeatMapSvgContent />
     </CrosshairProvider>
   )
 }
 
-function HeatMapSvgContent({ scale = 1 }: IProps) {
+function HeatMapSvgContent() {
   const { plot, rowLeaves, colLeaves } = useHeatmapContext()
 
   const cf = plot.dataframes['main'] as IClusterFrame
@@ -522,9 +517,5 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     return { svg, width, height }
   }, [cf, displayOptions, groupRows, cax])
 
-  return (
-    <SvgD3Canvas scale={scale} size={{ w: width, h: height }}>
-      {svg}
-    </SvgD3Canvas>
-  )
+  return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }

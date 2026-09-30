@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI fixes.
 - Replace mouse events with pointer events.
 - Lollipop now uses crosshair.
 - Redesigning lollipop tooltips.

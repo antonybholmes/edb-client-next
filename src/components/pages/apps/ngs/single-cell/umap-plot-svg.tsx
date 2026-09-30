@@ -15,6 +15,7 @@ import { IDrawScatterOptions } from '@/components/plot/scatter/scatter-plot-canv
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
+import { useZoom } from '@/providers/zoom-provider'
 import {
   usePlotGrid,
   type IScrnaCluster,
@@ -48,7 +49,7 @@ interface IProps extends IDrawScatterOptions {
 }
 
 export function UmapPlotSvg({ size = undefined }: IProps) {
-  //const _canvasRef = useRef<HTMLCanvasElement>(null)
+  const { zoom } = useZoom()
 
   const { settings } = useSingleCellSettings()
 
@@ -206,7 +207,8 @@ export function UmapPlotSvg({ size = undefined }: IProps) {
           hue,
           cdata,
           size,
-          settings
+          settings,
+          zoom
         )
 
         imageUrls.push(canvas.toDataURL('image/png'))

@@ -41,7 +41,6 @@ import {
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { ClientLayout } from '@/app/client-layout'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
@@ -96,16 +95,6 @@ function VennPage() {
   //const [scale, setScale] = useState(1)
 
   //const [selectedSideTab, setSelectedSideTab] = useState(0)
-
-  const { zoom } = useZoom({
-    onChange: ({ zoom }) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-  })
 
   const [, setKeyPressed] = useState<string | null>(null)
 
@@ -511,10 +500,10 @@ function VennPage() {
                     className="grow h-full"
                   >
                     <TabsContent value="venn">
-                      <SvgVenn scale={zoom} />
+                      <SvgVenn />
                     </TabsContent>
                     <TabsContent value="heatmap">
-                      <HeatMapSvg scale={zoom} />
+                      <HeatMapSvg />
                     </TabsContent>
                   </Tabs>
                 </ExtScrollCard>

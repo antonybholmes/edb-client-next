@@ -31,10 +31,12 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
     channel,
   })
 
-  const [_index, _setIndex] = useState(findNearest(zoom, levels).index)
+  const [_index, _setIndex] = useState(
+    Math.max(0, findNearest(zoom, levels).index)
+  )
 
   useEffect(() => {
-    _setIndex(findNearest(zoom, levels).index)
+    _setIndex(Math.max(0, findNearest(zoom, levels).index))
   }, [zoom, levels])
 
   const { debounced: debouncedSetZoom } = useDebounceCallback(

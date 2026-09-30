@@ -9,7 +9,6 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom-provider'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
@@ -28,8 +27,6 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 // }
 
 export function HeatmapPanel() {
-  const { zoom } = useZoom()
-
   const { plot } = useHeatmapContext()
 
   const cf = plot?.dataframes['main'] as IClusterFrame
@@ -62,7 +59,7 @@ export function HeatmapPanel() {
     <>
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <HeatMapSvg scale={zoom} />
+          <HeatMapSvg />
         </ExtScrollCard>
         <HeatmapPropsPanel />
       </ResizableSidebar>

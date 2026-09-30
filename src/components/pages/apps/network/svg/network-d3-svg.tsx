@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
-import { SvgD3Canvas } from '@/components/plot/svg-d3-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
 import { IS_DEV_MODE } from '@/consts'
@@ -10,7 +10,6 @@ import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { truncate } from '@/lib/text/text'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useZoom } from '@/providers/zoom-provider'
 import * as d3 from 'd3'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
@@ -28,7 +27,6 @@ import { useUserData } from '../network-user-data-store'
 import { LegendSvg } from './legend-svg'
 
 export function NetworkD3SvgContent() {
-  const { zoom } = useZoom()
   const { ref } = useSVG()
   const { settings } = useNetworkSettings()
   const {
@@ -422,7 +420,7 @@ export function NetworkD3SvgContent() {
   }, [settings, network?.id])
 
   return (
-    <SvgD3Canvas size={size} scale={zoom}>
+    <SvgZoomCanvas size={size}>
       <SvgG id="network" />
       <SvgMargin margin={settings.plot.margin}>
         {settings.plot.border.show && (
@@ -443,7 +441,7 @@ export function NetworkD3SvgContent() {
         />
       </SvgMargin>
       <LegendSvg />
-    </SvgD3Canvas>
+    </SvgZoomCanvas>
   )
 }
 

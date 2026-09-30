@@ -25,7 +25,6 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
@@ -64,14 +63,12 @@ import { textToLines } from '@/lib/text/lines'
 
 import { GseaBubbleProvider } from '../gsea-plot/bubble/gsea-bubble-provider'
 
-import { produce } from 'immer'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { useAllPlots } from '../../../matcalc/history/history-provider/history-hooks'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
 import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
-import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
 import { GseaBubblePlotsSvg } from '../gsea-plot/bubble/svg/gsea-bubble-plots-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
@@ -82,20 +79,9 @@ export function GseaBubblePage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { setZoom } = useZoom({
-    onChange: ({ zoom }) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
-    },
-  })
-
   const { settings: edbSettings } = useEdbSettings()
 
   const { plots } = useGseaBubbleContext()
-  const { settings, updateSettings } = useGseaBubbleSettings()
 
   const { openFile } = useHistory()
 

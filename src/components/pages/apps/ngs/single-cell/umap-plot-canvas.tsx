@@ -21,8 +21,8 @@ export function drawUmap(
   hue: number[],
   cdata: number[],
   size: ((idx: number, p: IPos, color: string) => number) | number | undefined,
-
-  displayProps: ISingleCellSettings
+  displayProps: ISingleCellSettings,
+  zoom: number
 ) {
   const cmap = COLOR_MAPS[displayProps.cmap] ?? BWR_CMAP_V2
 
@@ -58,7 +58,7 @@ export function drawUmap(
     //canvas.style.width = `${width}px`
     //canvas.style.height = `${height}px`
 
-    resizeAndScaleCanvas(canvas, innerWidth, innerHeight, displayProps.scale)
+    resizeAndScaleCanvas(canvas, innerWidth, innerHeight, zoom)
 
     const ctx = canvas.getContext('2d', { alpha: false })
 

@@ -56,17 +56,17 @@ export function ButtonLink({
   //   }
   // }, [clickProps])
 
-  function _onPointerUp(e: React.MouseEvent<HTMLAnchorElement>) {
+  function _onPointerUp(e: React.PointerEvent<HTMLAnchorElement>) {
     //setClickProps({ x: -1, y: -1 })
     onPointerUp?.(e)
   }
 
-  function _onPointerDown(e: React.MouseEvent<HTMLAnchorElement>) {
+  function _onPointerDown(e: React.PointerEvent<HTMLAnchorElement>) {
     //setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     onPointerDown?.(e)
   }
 
-  function _onPointerLeave(e: React.MouseEvent<HTMLAnchorElement>) {
+  function _onPointerLeave(e: React.PointerEvent<HTMLAnchorElement>) {
     //setClickProps({ x: -1, y: -1 })
     onPointerLeave?.(e)
   }

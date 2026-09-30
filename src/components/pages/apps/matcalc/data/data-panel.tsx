@@ -44,8 +44,6 @@ export const DEFAULT_PANEL_ID = 'Table 1'
 
 export const SHEET_PANEL_CLS = 'overflow-hidden relative' //cn(DATA_PANEL_CLS, 'px-3 pt-3')
 
-//export const DATA_ZOOM_CHANNEL = 'matcalc-data'
-
 export const MESSAGE_CHANNEL = 'matcalc'
 
 export function DataPanel() {

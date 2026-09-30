@@ -49,7 +49,6 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
@@ -76,8 +75,6 @@ function LollipopPage() {
   const { sheets } = useCurrentSheets()
 
   const { setAppInfo } = useAppInfo()
-
-  const { zoom } = useZoom()
 
   const { open } = useOpen()
 

@@ -370,13 +370,13 @@ export function Button({
     // )
   }, [clickProps.x, clickProps.y])
 
-  function _onPointerUp(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerUp(e: React.PointerEvent<HTMLButtonElement>) {
     //setClickProps({ x: -1, y: -1 })
 
     onPointerUp?.(e)
   }
 
-  function _onPointerDown(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerDown(e: React.PointerEvent<HTMLButtonElement>) {
     if (ripple) {
       setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     }
@@ -384,7 +384,7 @@ export function Button({
     onPointerDown?.(e)
   }
 
-  function _onPointerLeave(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerLeave(e: React.PointerEvent<HTMLButtonElement>) {
     //setClickProps({ x: -1, y: -1 })
     onPointerLeave?.(e)
   }
