@@ -4,6 +4,7 @@
 
 ### Changed
 
+- App reorg with expanded ngs modules.
 - Motifs now calculates letter width correctly.
 - Heatmap now uses some d3 rendered cells.
 - Zoom is now value based and removes the bounding to levels.

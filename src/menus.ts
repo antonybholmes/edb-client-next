@@ -9,16 +9,16 @@ import ANNOTATE_APP from './components/pages/apps/genomic/annotate/manifest.json
 import DNA_APP from './components/pages/apps/genomic/dna/manifest.json'
 import OVERLAP_APP from './components/pages/apps/genomic/overlap/manifest.json'
 import REV_COMP_APP from './components/pages/apps/genomic/rev-comp/manifest.json'
-import SEQBROWSER_APP from './components/pages/apps/genomic/seq-browser/manifest.json'
 import HUBS_APP from './components/pages/apps/hubs/manifest.json'
 import MATCALC_APP from './components/pages/apps/matcalc/manifest.json'
 import NETWORK_APP from './components/pages/apps/network/manifest.json'
+import SEQBROWSER_APP from './components/pages/apps/ngs/seq-browser/manifest.json'
 import SINGLE_CELL_APP from './components/pages/apps/ngs/single-cell/manifest.json'
+import LOLLIPOP_APP from './components/pages/apps/ngs/wgs/lollipop/manifest.json'
+import ONCOPLOT_APP from './components/pages/apps/ngs/wgs/oncoplot/manifest.json'
+import VARIANTS_APP from './components/pages/apps/ngs/wgs/variants/manifest.json'
 import SANKEY_APP from './components/pages/apps/sankey/manifest.json'
 import VENN_APP from './components/pages/apps/venn/manifest.json'
-import LOLLIPOP_APP from './components/pages/apps/wgs/lollipop/manifest.json'
-import ONCOPLOT_APP from './components/pages/apps/wgs/oncoplot/manifest.json'
-import VARIANTS_APP from './components/pages/apps/wgs/variants/manifest.json'
 
 export interface IAppHeaderLink {
   name: string
@@ -52,12 +52,12 @@ export const HEADER_LINKS: IHeaderLink[] = [
       },
       {
         ...ONCOPLOT_APP,
-        slug: '/apps/wgs/oncoplot',
+        slug: '/apps/ngs/wgs/oncoplot',
         mode: 'prod',
       },
       {
         ...LOLLIPOP_APP,
-        slug: '/apps/wgs/lollipop',
+        slug: '/apps/ngs/wgs/lollipop',
         mode: 'prod',
       },
       {
@@ -160,7 +160,7 @@ export const HEADER_LINKS: IHeaderLink[] = [
       // },
       {
         ...SEQBROWSER_APP,
-        slug: '/apps/genomic/seq-browser',
+        slug: '/apps/ngs/seq-browser',
         mode: 'prod',
       },
     ],
@@ -170,7 +170,7 @@ export const HEADER_LINKS: IHeaderLink[] = [
     apps: [
       {
         ...VARIANTS_APP,
-        slug: '/apps/wgs/variants',
+        slug: '/apps/ngs/wgs/variants',
         mode: 'prod',
       },
     ],

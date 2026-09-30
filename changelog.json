@@ -3211,6 +3211,10 @@
         {
           "msg": "Motifs now calculates letter width correctly",
           "date": "2026-09-30T17:09:56.342Z"
+        },
+        {
+          "msg": "App reorg with expanded ngs modules",
+          "date": "2026-09-30T17:46:29.508Z"
         }
       ]
     },

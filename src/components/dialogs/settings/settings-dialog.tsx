@@ -17,10 +17,10 @@ import { getTabName, ITab, renderTab, useTabs } from '../../tabs/tab-provider'
 import { GlassSideDialog } from '../glass-side-dialog'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
 
-import { SettingsCytobandPanel } from '@/components/pages/apps/genomic/seq-browser/settings/settings-cytoband-panel'
-import { SettingsPlotPanel } from '@/components/pages/apps/genomic/seq-browser/settings/settings-plot-panel'
-import { SettingsTracksPanel } from '@/components/pages/apps/genomic/seq-browser/settings/settings-tracks-panel'
 import { SettingsAppsPanel } from '@/components/pages/apps/matcalc/settings/settings-apps-panel'
+import { SettingsCytobandPanel } from '@/components/pages/apps/ngs/seq-browser/settings/settings-cytoband-panel'
+import { SettingsPlotPanel } from '@/components/pages/apps/ngs/seq-browser/settings/settings-plot-panel'
+import { SettingsTracksPanel } from '@/components/pages/apps/ngs/seq-browser/settings/settings-tracks-panel'
 import { Compass, Layers, Settings } from 'lucide-react'
 import {
   SettingsCardsPanel,
@@ -28,8 +28,8 @@ import {
 } from './settings-general-panel'
 
 import { AppIconSmall } from '@/components/dialogs/settings/app-icon-small'
-import SEQ_BROWSER_APP_INFO from '@/components/pages/apps/genomic/seq-browser/manifest.json'
 import MATCALC_APP_INFO from '@/components/pages/apps/matcalc/manifest.json'
+import SEQ_BROWSER_APP_INFO from '@/components/pages/apps/ngs/seq-browser/manifest.json'
 
 // These tabs always appear in the UI
 export const DEFAULT_TABS: readonly ITab[] = Object.freeze([

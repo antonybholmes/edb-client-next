@@ -1,0 +1,153 @@
+import { OncoplotSvg } from './oncoplot-svg'
+
+import { useEffect, useState } from 'react'
+
+import { DisplayPropsPanel } from './display-props-panel'
+
+import { FooterPortal } from '@/components/toolbar/footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
+
+import {
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinVResizeHandle,
+} from '@/themed/resizable'
+
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { HistoryLayout } from '../../../matcalc/history/history-layout'
+
+import { useSideTabs } from '@/components/tabs/tab-provider'
+import { useSVG } from '@/providers/svg-provider'
+import { FeaturePropsPanel } from './feature-props-panel'
+
+export const PANEL_ID = 'oncoplot-panel'
+
+interface IOncoplotPanelProps {
+  panelId: string
+  //oncoProps: IOncoProps
+}
+
+export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
+  const { autoSave, saveAs } = useSVG()
+
+  const { messages, removeMessage } = useMessages('oncoplot') //'onco-panel')
+
+  const [showSideBar, setShowSideBar] = useState(true)
+  const { setTabs: setSideTabs } = useSideTabs()
+
+  useEffect(() => {
+    const filteredMessages = messages.filter(
+      (message) => message.target === panelId
+    )
+
+    for (const message of filteredMessages) {
+      if (typeof message.data === 'string') {
+        if (message.data.includes('save')) {
+          if (message.data.includes(':')) {
+            autoSave(`oncoplot.${messageImageFileFormat(message)}`)
+          } else {
+            saveAs('oncoplot')
+          }
+        }
+
+        if (message.data.includes('show-sidebar')) {
+          setShowSideBar(!showSideBar)
+        }
+
+        removeMessage(message.id)
+      }
+    }
+  }, [messages])
+
+  useEffect(() => {
+    setSideTabs([
+      {
+        id: 'Display',
+        component: DisplayPropsPanel,
+      },
+      {
+        id: 'Features',
+        component: FeaturePropsPanel,
+      },
+    ])
+  }, [setSideTabs])
+
+  return (
+    <>
+      {/* <DialogsRoot filter={['save-image']} /> */}
+
+      <HistoryLayout>
+        <TabSlideBar
+          side="right"
+          open={showSideBar}
+          onOpenChange={setShowSideBar}
+        >
+          <ResizablePanelGroup orientation="vertical" className="px-2 grow">
+            <ResizablePanel
+              id="chart"
+              defaultSize="70%"
+              minSize="0%"
+              className="flex flex-col text-sm"
+              collapsible={true}
+            >
+              <ExtScrollCard>
+                <OncoplotSvg />
+              </ExtScrollCard>
+            </ResizablePanel>
+            <ThinVResizeHandle />
+            <ResizablePanel
+              className="flex flex-col text-sm"
+              id="output"
+              defaultSize="30%"
+              minSize="0%"
+              collapsible={true}
+            >
+              <TabbedDataFrames
+                //selectedSheet={sheet?.id ?? ''}
+                //dataFrames=sheets as AnnotationDataFrame[]}
+                // onTabChange={(selectedTab) => {
+                //   goto({ file, sheet: selectedTab.tab })
+                // }}
+                zoom={1}
+                //className={DATA_PANEL_CLS}
+              />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </TabSlideBar>
+      </HistoryLayout>
+
+      <FooterPortal className="shrink-0 grow-0 justify-end">
+        <></>
+        <></>
+
+        <ZoomSlider />
+      </FooterPortal>
+    </>
+  )
+}
+
+//interface IOncoplotPanelWrapperProps extends IPlotState, IOncoplotPanelProps {}
+
+// export function OncoplotPanelWrapper({
+//   panelId,
+//   mutationFrame,
+//   clinicalTracks,
+//   displayProps,
+//   oncoProps,
+// }: IOncoplotPanelWrapperProps) {
+//   return (
+//     <PlotProvider
+//       mutationFrame={mutationFrame}
+//       clinicalTracks={clinicalTracks}
+//       displayProps={displayProps}
+//     >
+//       <OncoplotPanel panelId={panelId} oncoProps={oncoProps} />
+//     </PlotProvider>
+//   )
+// }

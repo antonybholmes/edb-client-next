@@ -26,7 +26,7 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { Settings2 } from 'lucide-react'
-import { TRACK_ITEM_BUTTONS_CLS } from '../../genomic/seq-browser/track-items/seq-track-item'
+import { TRACK_ITEM_BUTTONS_CLS } from '../../ngs/seq-browser/track-items/seq-track-item'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { move } from '@dnd-kit/helpers'

@@ -99,8 +99,6 @@ const MotifPlot = memo(function MotifPlot({
 
   const xScaleFactor = letterWidth / DEFAULT_LETTER_WIDTH
 
-  console.log('letterw', letterWidth, xScaleFactor, af(1), af(0), xax)
-
   return (
     <SvgG pos={{ x: plotX, y: plotY }} id={motif.id} motif-id={motif.motifId}>
       {range(motifLength).map((positioni) => {
