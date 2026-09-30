@@ -226,11 +226,11 @@ function Node({
       fp={settings.bubbles.fill}
       sp={settings.bubbles.stroke}
       key={xi}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         setHover(false)
         handleVariantLeave()
       }}
-      onMouseEnter={() => {
+      onPointerEnter={() => {
         setHover(true)
         handleVariantEnter(plotInfo.plot, xi, {
           x: x1 + plotPos.x,

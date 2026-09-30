@@ -96,7 +96,7 @@ export function VSplitPane({
     }
   }
 
-  function onMouseMove(e: MouseEvent) {
+  function onPointerMove(e: MouseEvent) {
     if (ref.current) {
       move(e.pageY - ref.current.getBoundingClientRect().top)
     }
@@ -105,7 +105,7 @@ export function VSplitPane({
     //e.stopPropagation()
   }
 
-  function onMouseDown(e: { pageY: number; preventDefault: () => void }) {
+  function onPointerDown(e: { pageY: number; preventDefault: () => void }) {
     if (refC1.current && ref.current) {
       //previousClientX.current = e.clientX
       dragging.current = {
@@ -120,7 +120,7 @@ export function VSplitPane({
     e.preventDefault()
   }
 
-  function onMouseUp() {
+  function onPointerUp() {
     dragging.current = null
     setIsDrag(false)
   }
@@ -144,8 +144,8 @@ export function VSplitPane({
     }
   }
 
-  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
-  useMouseUpListener(onMouseUp)
+  useMouseMoveListener((e) => onPointerMove(e as MouseEvent))
+  useMouseUpListener(onPointerUp)
 
   if (panels.length < 2) {
     return null
@@ -174,7 +174,7 @@ export function VSplitPane({
           TRANS_COLOR_CLS,
           'group m-1  shrink-0 grow-0 cursor-ns-resize justify-center p-1 outline-hidden'
         )}
-        onMouseDown={onMouseDown}
+        onPointerDown={onPointerDown}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(true)}
         onKeyDown={onKeyDown}

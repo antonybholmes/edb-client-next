@@ -116,7 +116,7 @@ function _OutlookTabs({
       <TabsList
         className={cn('relative shrink-0 pl-2 gap-y-px', className)}
         ref={tabListRef}
-        onMouseLeave={() => {
+        onPointerLeave={() => {
           setTabPosition(undefined)
         }}
       >
@@ -136,7 +136,7 @@ function _OutlookTabs({
                   buttonsRef.current[ti] = el
                 }
               }}
-              onMouseEnter={() => {
+              onPointerEnter={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
                     scale: 0.5,
@@ -145,7 +145,7 @@ function _OutlookTabs({
 
                 _scale(ti || 0)
               }}
-              onMouseLeave={() => {
+              onPointerLeave={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
                     scale: 0.6,

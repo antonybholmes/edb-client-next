@@ -200,7 +200,7 @@ export function SeqTrackItem({
       group={group}
       active={active}
       multiselect={multiselect}
-      onMouseDown={() => setDrag(true)}
+      onPointerDown={() => setDrag(true)}
       className="data-[hover=true]:bg-transparent"
     >
       {group.tracks.length > 1 && <UngroupButton group={group} />}

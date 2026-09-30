@@ -23,8 +23,8 @@ export function AppHeaderIcon() {
   return (
     <BaseLink href="/" title={`${config.name} Home`}>
       <VCenterRow
-        //onMouseEnter={() => setHover(true)}
-        //onMouseLeave={() => setHover(false)}
+        //onPointerEnter={() => setHover(true)}
+        //onPointerLeave={() => setHover(false)}
         className={cn(
           //BUTTON_LG_W_CLS,
           'aspect-square justify-center group relative'

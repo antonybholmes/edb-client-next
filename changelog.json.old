@@ -3219,6 +3219,10 @@
         {
           "msg": "Redesigning lollipop tooltips",
           "date": "2026-09-30T18:21:56.545Z"
+        },
+        {
+          "msg": "Lollipop now uses crosshair",
+          "date": "2026-09-30T19:34:09.379Z"
         }
       ]
     },

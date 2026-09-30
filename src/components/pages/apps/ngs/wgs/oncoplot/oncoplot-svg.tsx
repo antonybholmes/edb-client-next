@@ -729,7 +729,7 @@ function OncoplotSvgContent() {
     hideCrosshair()
   }, [hideTooltip, hideCrosshair])
 
-  const onMouseMove = useCallback(
+  const onPointerMove = useCallback(
     (e: React.MouseEvent) => {
       if (!ref.current) {
         return
@@ -944,7 +944,7 @@ function OncoplotSvgContent() {
       size={{ w: width, h: height }}
 
       //shapeRendering={SVG_CRISP_EDGES}
-      onMouseMove={onMouseMove}
+      onPointerMove={onPointerMove}
     >
       {/* clinical tracks */}
       {displayProps.clinical.show && (

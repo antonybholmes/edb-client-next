@@ -242,8 +242,8 @@ export function AccordionTrigger({
         className={accordionTriggerVariants({ variant })}
         //data-hover={hover}
 
-        //onMouseOver={() => setHover(true)}
-        //onMouseOut={() => setHover(false)}
+        //onPointerOver={() => setHover(true)}
+        //onPointerOut={() => setHover(false)}
         {...props}
       >
         {side === 'right' && children}

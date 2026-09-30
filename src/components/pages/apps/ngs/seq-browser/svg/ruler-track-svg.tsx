@@ -140,7 +140,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
         stroke="none"
         fill="black"
         opacity="0"
-        onMouseDown={handleMouseDown}
+        onPointerDown={handleMouseDown}
         style={{ cursor: isDragging ? 'ew-resize' : 'auto' }}
       />
 

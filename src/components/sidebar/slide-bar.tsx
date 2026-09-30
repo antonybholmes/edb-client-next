@@ -139,7 +139,7 @@ export function SlideBar({
     }
   }, [wSize])
 
-  function onMouseDown(e: MouseEvent | React.MouseEvent) {
+  function onPointerDown(e: MouseEvent | React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
 
@@ -161,20 +161,20 @@ export function SlideBar({
     //setShowAnimation(false)
     showAnimation.current = 0
 
-    function onMouseUp() {
+    function onPointerUp() {
       e.preventDefault()
       e.stopPropagation()
 
       //setShowAnimation(true)
       //showAnimation.current = ANIMATION_DURATION_S
 
-      document.removeEventListener('mouseup', onMouseUp)
-      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onPointerUp)
+      document.removeEventListener('mousemove', onPointerMove)
 
       setDragDir('')
     }
 
-    function onMouseMove(e: MouseEvent) {
+    function onPointerMove(e: MouseEvent) {
       e.preventDefault()
       e.stopPropagation()
 
@@ -204,8 +204,8 @@ export function SlideBar({
       _setDivOffsetFromEdge(divOffset, p, 'fixed')
     }
 
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onPointerMove)
+    document.addEventListener('mouseup', onPointerUp)
   }
 
   function _onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
@@ -455,7 +455,7 @@ export function SlideBar({
         id="divider-hitbox"
         ref={hHitBoxRef}
         className={HANDLE_CLS}
-        onMouseDown={(e) => onMouseDown(e)}
+        onPointerDown={(e) => onPointerDown(e)}
         onClick={() => {
           hHitBoxRef.current!.focus()
         }}

@@ -128,7 +128,7 @@
 //   const [currentCell, setCurrentCell] = useState<ICell>(NO_SELECTION)
 //   const selectionRef = useRef(selection)
 
-//   const [selectionMouseDown, setSelectionMouseDown] = useState(false)
+//   const [selectionPointerDown, setSelectionPointerDown] = useState(false)
 //   const [resizenMouseDown, setResizeMouseDown] = useState(-1)
 
 //   useEffect(() => {
@@ -340,7 +340,7 @@
 //     startPos.current = { x: event.clientX, y: -1 }
 //     startWidth.current = getColWidth(col)
 
-//     function onMouseMove(moveEvent: MouseEvent) {
+//     function onPointerMove(moveEvent: MouseEvent) {
 //       const newWidth = Math.max(
 //         startWidth.current + (moveEvent.clientX - startPos.current.x),
 //         MIN_CELL_WIDTH
@@ -351,12 +351,12 @@
 //       )
 //     }
 
-//     function onMouseUp() {
+//     function onPointerUp() {
 //       setResizeMouseDown(-1)
 //       document.body.style.cursor = 'default'
 //       // Remove the event listeners when mouse is released
-//       document.removeEventListener('mousemove', onMouseMove)
-//       document.removeEventListener('mouseup', onMouseUp)
+//       document.removeEventListener('mousemove', onPointerMove)
+//       document.removeEventListener('mouseup', onPointerUp)
 //     }
 
 //     setResizeMouseDown(col)
@@ -364,12 +364,12 @@
 //     document.body.style.cursor = 'col-resize'
 
 //     // Add event listeners for mousemove and mouseup
-//     document.addEventListener('mousemove', onMouseMove)
-//     document.addEventListener('mouseup', onMouseUp)
+//     document.addEventListener('mousemove', onPointerMove)
+//     document.addEventListener('mouseup', onPointerUp)
 //   }
 
 //   function handleHeaderMouseDown(index: number) {
-//     function onMouseMove(moveEvent: MouseEvent) {
+//     function onPointerMove(moveEvent: MouseEvent) {
 //       const newX =
 //         moveEvent.clientX - (tableRef.current?.getBoundingClientRect().x ?? 0)
 
@@ -398,31 +398,31 @@
 //       }
 //     }
 
-//     setSelectionMouseDown(true)
+//     setSelectionPointerDown(true)
 
 //     resizeSelection({
 //       start: { row: -1, col: index },
 //       end: { row: -1, col: index },
 //     })
 
-//     function onMouseUp() {
-//       setSelectionMouseDown(false)
+//     function onPointerUp() {
+//       setSelectionPointerDown(false)
 
 //       //document.body.style.cursor = 'default'
 //       // Remove the event listeners when mouse is released
-//       document.removeEventListener('mousemove', onMouseMove)
-//       document.removeEventListener('mouseup', onMouseUp)
+//       document.removeEventListener('mousemove', onPointerMove)
+//       document.removeEventListener('mouseup', onPointerUp)
 //     }
 
 //     //document.body.style.cursor = 'col-resize'
 
 //     // Add event listeners for mousemove and mouseup
-//     document.addEventListener('mousemove', onMouseMove)
-//     document.addEventListener('mouseup', onMouseUp)
+//     document.addEventListener('mousemove', onPointerMove)
+//     document.addEventListener('mouseup', onPointerUp)
 //   }
 
 //   function handleIndexMouseDown(row: number) {
-//     function onMouseMove(moveEvent: MouseEvent) {
+//     function onPointerMove(moveEvent: MouseEvent) {
 //       const newY =
 //         moveEvent.clientY - (tableRef.current?.getBoundingClientRect().y ?? 0)
 
@@ -437,27 +437,27 @@
 //       })
 //     }
 
-//     setSelectionMouseDown(true)
+//     setSelectionPointerDown(true)
 
 //     resizeSelection({
 //       start: { row, col: -1 },
 //       end: { row, col: -1 },
 //     })
 
-//     function onMouseUp() {
-//       setSelectionMouseDown(false)
+//     function onPointerUp() {
+//       setSelectionPointerDown(false)
 
 //       //document.body.style.cursor = 'default'
 //       // Remove the event listeners when mouse is released
-//       document.removeEventListener('mousemove', onMouseMove)
-//       document.removeEventListener('mouseup', onMouseUp)
+//       document.removeEventListener('mousemove', onPointerMove)
+//       document.removeEventListener('mouseup', onPointerUp)
 //     }
 
 //     //document.body.style.cursor = 'col-resize'
 
 //     // Add event listeners for mousemove and mouseup
-//     document.addEventListener('mousemove', onMouseMove)
-//     document.addEventListener('mouseup', onMouseUp)
+//     document.addEventListener('mousemove', onPointerMove)
+//     document.addEventListener('mouseup', onPointerUp)
 //   }
 
 //   function handleTableMouseDown(event: MouseEvent | React.MouseEvent) {
@@ -465,7 +465,7 @@
 //     const bottomMargin = elementRect.bottom - SCROLL_MARGIN_SIZE // Calculate bottom SCROLL_MARGIN_SIZE pixels of element
 //     const rightMargin = elementRect.right - SCROLL_MARGIN_SIZE // Calculate bottom SCROLL_MARGIN_SIZE pixels of element
 
-//     function onMouseMove(moveEvent: MouseEvent) {
+//     function onPointerMove(moveEvent: MouseEvent) {
 //       if (moveEvent.clientY - elementRect.top <= SCROLL_MARGIN_SIZE) {
 //         if (!loopRef.current) {
 //           loopRef.current = setInterval(() => {
@@ -589,24 +589,24 @@
 //       end: { row, col },
 //     })
 
-//     function onMouseUp() {
+//     function onPointerUp() {
 //       if (loopRef.current) {
 //         clearInterval(loopRef.current)
 //         loopRef.current = null
 //       }
 
-//       setSelectionMouseDown(false)
+//       setSelectionPointerDown(false)
 //       //document.body.style.cursor = 'default'
 //       // Remove the event listeners when mouse is released
-//       document.removeEventListener('mousemove', onMouseMove)
-//       document.removeEventListener('mouseup', onMouseUp)
+//       document.removeEventListener('mousemove', onPointerMove)
+//       document.removeEventListener('mouseup', onPointerUp)
 //     }
 
 //     //document.body.style.cursor = 'col-resize'
-//     setSelectionMouseDown(true)
+//     setSelectionPointerDown(true)
 //     // Add event listeners for mousemove and mouseup
-//     document.addEventListener('mousemove', onMouseMove)
-//     document.addEventListener('mouseup', onMouseUp)
+//     document.addEventListener('mousemove', onPointerMove)
+//     document.addEventListener('mouseup', onPointerUp)
 //   }
 
 //   function onKeyDown(e: KeyboardEvent | React.KeyboardEvent) {
@@ -1130,7 +1130,7 @@
 //                 return (
 //                   <VCenterRow
 //                     key={row}
-//                     onMouseDown={() => handleIndexMouseDown(row)}
+//                     onPointerDown={() => handleIndexMouseDown(row)}
 //                     className={INDEX_CLS}
 //                     data-show-border={showBorder}
 //                     data-checked={
@@ -1222,7 +1222,7 @@
 //                         height: headerHeight,
 //                         fontSize,
 //                       }}
-//                       onMouseDown={() => handleHeaderMouseDown(col)}
+//                       onPointerDown={() => handleHeaderMouseDown(col)}
 //                       data-show-border={showBorder}
 //                       data-checked={
 //                         primarySelected
@@ -1253,7 +1253,7 @@
 
 //                       <VCenterRow
 //                         className={RESIZE_CLS}
-//                         onMouseDown={e => {
+//                         onPointerDown={e => {
 //                           // don't want parent thinking we are changing selection
 //                           e.stopPropagation()
 //                           e.preventDefault()
@@ -1281,7 +1281,7 @@
 //               //     [headerRef, hScrollRef]
 //               //   )
 //               // }
-//               onMouseDown={(e: MouseEvent | React.MouseEvent) => {
+//               onPointerDown={(e: MouseEvent | React.MouseEvent) => {
 //                 e.stopPropagation()
 //                 e.preventDefault()
 //                 handleTableMouseDown(e)
@@ -1300,7 +1300,7 @@
 //                   //left: -scrollOffset.left,
 //                   //top: -scrollOffset.top,
 //                   transform: `translate(-${scrollOffset.left}px, -${scrollOffset.top}px)`,
-//                   userSelect: selectionMouseDown ? 'none' : 'auto',
+//                   userSelect: selectionPointerDown ? 'none' : 'auto',
 //                 }}
 //                 onKeyDown={onKeyDown}
 //                 tabIndex={0}
@@ -1373,7 +1373,7 @@
 //                 onKeyDown={handleCellKeyDown}
 //                 //onFocus={e => e.target.select()}
 //                 onClick={e => e.stopPropagation()}
-//                 onMouseDown={e => e.stopPropagation()}
+//                 onPointerDown={e => e.stopPropagation()}
 //                 ref={editRef}
 //               />
 //             </div>

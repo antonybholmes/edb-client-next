@@ -284,9 +284,9 @@ export function NumericalInput({
 
           className={UP_BUTTON_CLS}
 
-          onMouseDown={() => startUpdating(step)}
-          onMouseUp={stopUpdating}
-          onMouseLeave={stopUpdating}
+          onPointerDown={() => startUpdating(step)}
+          onPointerUp={stopUpdating}
+          onPointerLeave={stopUpdating}
           onKeyDown={(e) => handleKeyDown(e, step)}
           onKeyUp={handleKeyUp}
           aria-label="Increase value"
@@ -298,9 +298,9 @@ export function NumericalInput({
 
           className={DOWN_BUTTON_CLS}
 
-          onMouseDown={() => startUpdating(-step)}
-          onMouseUp={stopUpdating}
-          onMouseLeave={stopUpdating}
+          onPointerDown={() => startUpdating(-step)}
+          onPointerUp={stopUpdating}
+          onPointerLeave={stopUpdating}
           onKeyDown={(e) => handleKeyDown(e, -step)}
           onKeyUp={handleKeyUp}
           aria-label="Decrease value"

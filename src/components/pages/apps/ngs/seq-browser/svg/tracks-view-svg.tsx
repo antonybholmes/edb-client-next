@@ -539,7 +539,7 @@ export function TracksViewSvg({ style }: ISVGProps) {
     <SvgZoomCanvas
       size={{ w: width, h: height }}
       style={style}
-      // onMouseMove={(e) => {
+      // onPointerMove={(e) => {
       //   const rect = e.currentTarget.getBoundingClientRect()
       //   const x = e.clientX - rect.left - settings.margin.left
       //   const y = e.clientY - rect.top - settings.margin.top

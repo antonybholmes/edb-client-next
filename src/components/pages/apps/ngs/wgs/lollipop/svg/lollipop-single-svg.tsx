@@ -529,7 +529,7 @@ export function LollipopSingleSvg() {
         size={{ w: width, h: height }}
 
         //shapeRendering={SVG_CRISP_EDGES}
-        //onMouseMove={onMouseMove}
+        //onPointerMove={onPointerMove}
       >
         {displayProps.title.text.show && (
           <g

@@ -103,7 +103,7 @@ function BaseSeqTrackSvgContent({
     hideCrosshair()
   }, [hideTooltip, hideCrosshair])
 
-  const onMouseMove = useCallback(
+  const onPointerMove = useCallback(
     (e: React.MouseEvent) => {
       const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
 
@@ -235,7 +235,11 @@ function BaseSeqTrackSvgContent({
           </SvgG>
         )}
 
-        <SvgG id="plot" onMouseMove={onMouseMove} onMouseLeave={_hideTooltip}>
+        <SvgG
+          id="plot"
+          onPointerMove={onPointerMove}
+          onPointerLeave={_hideTooltip}
+        >
           <SvgMouseRect
             width={xl}
             height={tracks[0]!.track.displayOptions.height}
@@ -366,11 +370,11 @@ function BaseSeqTrackSvgContent({
         fill="white"
         opacity={0}
         height={tracks[0]!.track.displayOptions.height}
-        // onMouseEnter={handleMouseEnter}
-        onMouseLeave={() => {
+        // onPointerEnter={handleMouseEnter}
+        onPointerLeave={() => {
           setTooltip({ ...NO_TRACK_TOOLTIP })
         }}
-        //onMouseMove={handleMouseMove}
+        //onPointerMove={handleMouseMove}
       /> */}
     </>
   )

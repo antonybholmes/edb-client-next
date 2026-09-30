@@ -52,7 +52,7 @@ export function Slider({
     onSliderChange?.(v)
   }
 
-  function onMouseMove(event: MouseEvent | React.MouseEvent) {
+  function onPointerMove(event: MouseEvent | React.MouseEvent) {
     if (ref.current) {
       const { left, width } = ref.current.getBoundingClientRect()
       const x = event.clientX - left
@@ -63,23 +63,23 @@ export function Slider({
     }
   }
 
-  function onMouseUp() {
+  function onPointerUp() {
     setIsDragging(false)
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-    //document.removeEventListener('touchmove', onMouseMove)
-    document.removeEventListener('touchend', onMouseUp)
-    document.removeEventListener('touchcancel', onMouseUp)
+    document.removeEventListener('mousemove', onPointerMove)
+    document.removeEventListener('mouseup', onPointerUp)
+    //document.removeEventListener('touchmove', onPointerMove)
+    document.removeEventListener('touchend', onPointerUp)
+    document.removeEventListener('touchcancel', onPointerUp)
   }
 
-  function onMouseDown(event: MouseEvent | React.MouseEvent) {
+  function onPointerDown(event: MouseEvent | React.MouseEvent) {
     setIsDragging(true)
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
-    //document.addEventListener('touchmove', onMouseMove)
-    document.addEventListener('touchend', onMouseUp)
-    document.addEventListener('touchcancel', onMouseUp)
-    onMouseMove(event)
+    document.addEventListener('mousemove', onPointerMove)
+    document.addEventListener('mouseup', onPointerUp)
+    //document.addEventListener('touchmove', onPointerMove)
+    document.addEventListener('touchend', onPointerUp)
+    document.addEventListener('touchcancel', onPointerUp)
+    onPointerMove(event)
   }
 
   function increment() {
@@ -132,9 +132,9 @@ export function Slider({
           'group relative grow cursor-pointer select-none',
           className
         )}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onMouseDown={onMouseDown}
+        onPointerEnter={() => setHover(true)}
+        onPointerLeave={() => setHover(false)}
+        onPointerDown={onPointerDown}
         onKeyDown={(e) => {
           switch (e.code) {
             case 'ArrowUp':

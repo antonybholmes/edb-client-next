@@ -244,10 +244,10 @@ export function PileupPlotSvg() {
                         width={BASE_W}
                         height={BASE_H}
 
-                        onMouseEnter={() => {
+                        onPointerEnter={() => {
                           handleVariantEnter(v, x, h)
                         }}
-                        onMouseLeave={hideTooltip}
+                        onPointerLeave={hideTooltip}
                       />
                     </Fragment>
                   )
@@ -281,7 +281,7 @@ export function PileupPlotSvg() {
 
       //shapeRendering={SVG_CRISP_EDGES}
 
-      onMouseLeave={hideTooltip}
+      onPointerLeave={hideTooltip}
     >
       {svgContent}
     </SvgZoomCanvas>

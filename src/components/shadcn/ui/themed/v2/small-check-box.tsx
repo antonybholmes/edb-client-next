@@ -51,8 +51,8 @@ export function SmallCheckbox({
       className={CHECK_CLS}
       style={style}
       disabled={disabled}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       id={id}
       title={title}
       aria-label={ariaLabel}

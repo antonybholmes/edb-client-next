@@ -49,8 +49,8 @@ export function Checkbox({
       onCheckedChange={onCheckedChange}
       className={CHECK_CLS}
       disabled={disabled}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       id={id}
       {...props}
     >

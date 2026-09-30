@@ -28,8 +28,8 @@ export function ColorButton({
 
   return (
     <button
-      onMouseEnter={() => tl.current?.play()}
-      onMouseLeave={() => tl.current?.reverse()}
+      onPointerEnter={() => tl.current?.play()}
+      onPointerLeave={() => tl.current?.reverse()}
       onFocus={() => tl.current?.play()}
       onBlur={() => tl.current?.reverse()}
 

@@ -57,7 +57,7 @@ function _DevPanel() {
         <TabsList
           className="text-xs"
           ref={tabListRef}
-          onMouseLeave={() => {
+          onPointerLeave={() => {
             setPosition(undefined)
           }}
         >
@@ -82,7 +82,7 @@ function _DevPanel() {
                   w: clientRect.width,
                 })
               }}
-              onMouseOver={() => {
+              onPointerOver={() => {
                 const containerRect =
                   tabListRef.current!.getBoundingClientRect()
                 const clientRect =

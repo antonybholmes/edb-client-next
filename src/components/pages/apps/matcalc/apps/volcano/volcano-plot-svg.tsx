@@ -351,13 +351,13 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
                 opacity={displayOptions.dots.opacity}
                 key={xi}
 
-                onMouseEnter={() =>
+                onPointerEnter={() =>
                   handleVariantEnter(xi, {
                     x: x1 + MARGIN.left + TOOLTIP_OFFSET,
                     y: y1 + MARGIN.top + TOOLTIP_OFFSET,
                   })
                 }
-                onMouseLeave={hideTooltip}
+                onPointerLeave={hideTooltip}
               />
             )
           })}

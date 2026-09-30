@@ -94,7 +94,7 @@ export function HSplitPane({
     }
   }
 
-  function onMouseMove(e: MouseEvent) {
+  function onPointerMove(e: MouseEvent) {
     if (ref.current) {
       move(e.pageX - ref.current.getBoundingClientRect().left)
     }
@@ -103,7 +103,7 @@ export function HSplitPane({
     //e.stopPropagation()
   }
 
-  function onMouseDown(e: { pageX: number; preventDefault: () => void }) {
+  function onPointerDown(e: { pageX: number; preventDefault: () => void }) {
     if (refC1.current && ref.current) {
       //previousClientX.current = e.clientX
       dragging.current = {
@@ -118,7 +118,7 @@ export function HSplitPane({
     e.preventDefault()
   }
 
-  function onMouseUp() {
+  function onPointerUp() {
     dragging.current = null
     setIsDragging(false)
   }
@@ -142,8 +142,8 @@ export function HSplitPane({
     }
   }
 
-  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
-  useMouseUpListener(onMouseUp)
+  useMouseMoveListener((e) => onPointerMove(e as MouseEvent))
+  useMouseUpListener(onPointerUp)
 
   return (
     <div
@@ -169,7 +169,7 @@ export function HSplitPane({
           'group m-1 flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center rounded-full p-1 outline-hidden hover:bg-ring/20 focus-visible:bg-ring/20',
           [isDragging, 'bg-ring/20']
         )}
-        onMouseDown={onMouseDown}
+        onPointerDown={onPointerDown}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(true)}
         onKeyDown={onKeyDown}

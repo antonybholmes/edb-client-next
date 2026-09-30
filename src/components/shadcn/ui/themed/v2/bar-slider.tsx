@@ -47,8 +47,8 @@ export function BarSlider({
       {...props}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       thumbAlignment="edge"
       className={cn('relative', className)}
     >

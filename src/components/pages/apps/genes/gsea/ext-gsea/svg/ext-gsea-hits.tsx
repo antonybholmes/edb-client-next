@@ -66,7 +66,7 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
     return esHits.map((e) => xaf(e.rank))
   }, [esHits, xax])
 
-  const onMouseMove = useCallback(
+  const onPointerMove = useCallback(
     (e: React.MouseEvent) => {
       if (!ref.current) {
         return
@@ -206,8 +206,8 @@ export const ExtGseaHitsSvg = memo(function ExtGseaHitsSvg({
           width={w}
           height={settings.genes.height}
 
-          onMouseMove={onMouseMove}
-          onMouseLeave={hideCrosshair}
+          onPointerMove={onPointerMove}
+          onPointerLeave={hideCrosshair}
         />
       </>
     )

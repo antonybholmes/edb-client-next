@@ -13,8 +13,8 @@ import { HomeIcon } from './home-icon'
 export function FavIcon() {
   return (
     <VCenterRow
-      //onMouseEnter={() => setHover(true)}
-      //onMouseLeave={() => setHover(false)}
+      //onPointerEnter={() => setHover(true)}
+      //onPointerLeave={() => setHover(false)}
       className={cn(
         BUTTON_LG_W_CLS,
         'aspect-square justify-center group relative'

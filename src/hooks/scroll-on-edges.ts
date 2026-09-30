@@ -3,7 +3,7 @@ import { useRef, useState, type RefObject } from 'react'
 interface IProps {
   edgeSize?: number
   scrollSpeed?: { x: number; y: number }
-  onMouseUp?: () => void
+  onPointerUp?: () => void
 }
 
 export const EDGE_SCROLL_ZONE = 20
@@ -14,7 +14,7 @@ export function useScrollOnEdges(
   ref: RefObject<HTMLElement | null>,
   props: IProps = {}
 ) {
-  const { edgeSize, scrollSpeed, onMouseUp } = {
+  const { edgeSize, scrollSpeed, onPointerUp } = {
     edgeSize: EDGE_SCROLL_ZONE,
     scrollSpeed: { x: 5, y: 5 },
     ...props,
@@ -136,12 +136,12 @@ export function useScrollOnEdges(
     }
   }
 
-  function _onMouseUp() {
+  function _onPointerUp() {
     setIsMouseDown(false)
     // we only use these listeners when actually dragging
     window.removeEventListener('mousemove', scrollOnEdgesMouseMove)
-    window.removeEventListener('mouseup', _onMouseUp)
-    onMouseUp?.()
+    window.removeEventListener('mouseup', _onPointerUp)
+    onPointerUp?.()
   }
 
   /**
@@ -155,7 +155,7 @@ export function useScrollOnEdges(
     setIsMouseDown(true)
 
     window.addEventListener('mousemove', scrollOnEdgesMouseMove)
-    window.addEventListener('mouseup', _onMouseUp)
+    window.addEventListener('mouseup', _onPointerUp)
   }
 
   // useEffect(() => {
@@ -182,8 +182,8 @@ export function useScrollOnEdges(
   //     return {
   //       ...elementProps,
   //       style: { overflow: 'scroll', ...(elementProps && elementProps.style) },
-  //       onMouseMove: callAllFns(
-  //         elementProps && elementProps.onMouseMove,
+  //       onPointerMove: callAllFns(
+  //         elementProps && elementProps.onPointerMove,
   //         handleMousemove
   //       )
   //     }

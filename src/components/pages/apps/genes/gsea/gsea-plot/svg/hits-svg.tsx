@@ -219,7 +219,7 @@ export const GenesSvg = memo(function GenesSvg({
   //   hideTooltip()
   // }, [hideCrosshair, hideTooltip])
 
-  const onMouseMove = useCallback(
+  const onPointerMove = useCallback(
     (e: React.MouseEvent) => {
       if (!ref.current) {
         return
@@ -285,8 +285,8 @@ export const GenesSvg = memo(function GenesSvg({
         width={innerPlotSize.w}
         height={settings.genes.height}
 
-        onMouseMove={onMouseMove}
-        onMouseLeave={hideCrosshair}
+        onPointerMove={onPointerMove}
+        onPointerLeave={hideCrosshair}
       />
     </>
   )

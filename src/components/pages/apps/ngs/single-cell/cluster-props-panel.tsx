@@ -58,8 +58,8 @@ function ClusterItem({
       data-drag={cluster.label === active}
       data-hover={hoverMode}
       className={GROUP_CLS}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
     >
       <Checkbox
         checked={cluster.show}

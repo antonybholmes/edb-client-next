@@ -181,8 +181,8 @@ export const CellsSvg = memo(function CellsSvg({
         <SvgMouseRect
           width={plotSize.w}
           height={plotSize.h}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={hideCrosshair}
+          onPointerMove={handleMouseMove}
+          onPointerLeave={hideCrosshair}
         />
       </SvgG>
     </>
@@ -381,8 +381,8 @@ export const DotsSvg = memo(function DotsSvg({
       <SvgMouseRect
         width={plotSize.w}
         height={plotSize.h}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={hideCrosshair}
+        onPointerMove={handleMouseMove}
+        onPointerLeave={hideCrosshair}
       />
     </SvgG>
   )

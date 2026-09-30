@@ -35,7 +35,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
                 fill="white"
                 stroke="cornflowerblue"
                 strokeWidth={1}
-                onMouseDown={(e) => {
+                onPointerDown={(e) => {
                   e.stopPropagation()
                   handleMouseDown(e, dir)
                 }}
@@ -55,7 +55,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
                 fill="white"
                 stroke="cornflowerblue"
                 strokeWidth={1}
-                onMouseDown={(e) => {
+                onPointerDown={(e) => {
                   e.stopPropagation()
                   handleMouseDown(e, dir)
                 }}
@@ -72,7 +72,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
                 fill="cornflowerblue"
                 stroke="white"
                 strokeWidth={1}
-                onMouseDown={(e) => {
+                onPointerDown={(e) => {
                   e.stopPropagation()
                   handleMouseDown(e, dir)
                 }}
@@ -87,7 +87,7 @@ export function BoundingBoxSvg({ bbox, handleMouseDown }: IProps) {
         y={bbox.y}
         width={bbox.width}
         height={bbox.height}
-        onMouseDown={(e) => {
+        onPointerDown={(e) => {
           handleMouseDown(e, 'move')
         }}
       />

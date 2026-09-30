@@ -744,7 +744,7 @@ export function LollipopStackContent() {
         size={{ w: width, h: height }}
 
         //shapeRendering={SVG_CRISP_EDGES}
-        //onMouseMove={onMouseMove}
+        //onPointerMove={onPointerMove}
         //className="absolute"
       >
         {displayProps.title.text.show && (

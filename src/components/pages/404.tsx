@@ -60,12 +60,12 @@ export function Error404Page() {
     // })
 
     // Hover handlers
-    const onMouseEnter = () => {
+    const onPointerEnter = () => {
       jumpTl.restart()
       //spinTween.play()
     }
 
-    const onMouseLeave = () => {
+    const onPointerLeave = () => {
       //jumpTl.pause(0) //.reverse()
 
       gsap.to(jumpTl, {
@@ -78,13 +78,13 @@ export function Error404Page() {
       })
     }
 
-    ref.current!.addEventListener('mouseenter', onMouseEnter)
-    ref.current!.addEventListener('mouseleave', onMouseLeave)
+    ref.current!.addEventListener('mouseenter', onPointerEnter)
+    ref.current!.addEventListener('mouseleave', onPointerLeave)
 
     // Cleanup
     return () => {
-      ref.current?.removeEventListener('mouseenter', onMouseEnter)
-      ref.current?.removeEventListener('mouseleave', onMouseLeave)
+      ref.current?.removeEventListener('mouseenter', onPointerEnter)
+      ref.current?.removeEventListener('mouseleave', onPointerLeave)
       //spinTween.kill()
       jumpTl.kill()
     }
@@ -112,8 +112,8 @@ export function Error404Page() {
               ref={dinoRef}
               title="Look at them jump, they're so happy!"
               className="shrink-0 transform-origin-center cursor-pointer"
-              //onMouseOver={() => setHover(true)}
-              //onMouseOut={() => setHover(false)}
+              //onPointerOver={() => setHover(true)}
+              //onPointerOut={() => setHover(false)}
             >
               <DinoIcon size={6} stroke="fill-emerald-500" />
             </div>

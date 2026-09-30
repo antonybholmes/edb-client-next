@@ -173,8 +173,8 @@ export const CellsD3Svg = memo(function CellsD3Svg({
         <SvgMouseRect
           width={plotSize.w}
           height={plotSize.h}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={hideCrosshair}
+          onPointerMove={handleMouseMove}
+          onPointerLeave={hideCrosshair}
         />
       </SvgG>
     </>
@@ -388,8 +388,8 @@ export const DotsD3Svg = memo(function DotsD3Svg({
       <SvgMouseRect
         width={plotSize.w}
         height={plotSize.h}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={hideCrosshair}
+        onPointerMove={handleMouseMove}
+        onPointerLeave={hideCrosshair}
       />
     </SvgG>
   )

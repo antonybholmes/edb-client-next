@@ -55,10 +55,10 @@ function AppTile({ module, view }: { module: IAppHeaderLink; view: string }) {
       href={module.slug}
       data-view={view}
       className={APP_CLS}
-      onMouseEnter={() => {
+      onPointerEnter={() => {
         setHover(true)
       }}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         setHover(false)
       }}
       onFocus={() => {

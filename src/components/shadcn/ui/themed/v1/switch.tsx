@@ -154,10 +154,10 @@ export function Switch({
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
       style={{ height: 'calc(1rem + 4px)', width: 'calc(1.75rem + 4px)' }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
       title={title}
       aria-label={ariaLabel}
       {...props}

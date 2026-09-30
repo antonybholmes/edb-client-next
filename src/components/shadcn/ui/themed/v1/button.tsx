@@ -3,23 +3,23 @@ import type { IPos } from '@/interfaces/pos'
 import type { ITooltipSide } from '@/interfaces/tooltip-side-props'
 import { cn } from '@/lib/shadcn-utils'
 import {
-    BASE_BUTTON_CLS,
-    BASE_ICON_BUTTON_CLS,
-    BUTTON_XL_H_CLS,
-    BUTTON_XS_H_CLS,
-    CENTERED_ROW_CLS,
-    CORE_PRIMARY_BUTTON_CLS,
-    CORE_THEME_BUTTON_CLS,
-    DESTRUCTIVE_CLS,
-    DROPDOWN_BUTTON_CLS,
-    DROPDOWN_WITH_ICON_BUTTON_CLS,
-    FOCUS_RING_CLS,
-    ICON_BUTTON_CLS,
-    LARGE_ICON_BUTTON_CLS,
-    SM_ICON_BUTTON_CLS,
-    TOOLBAR_DROPDOWN_BUTTON_CLS,
-    TRANS_COLOR_CLS,
-    XL_ICON_BUTTON_CLS,
+  BASE_BUTTON_CLS,
+  BASE_ICON_BUTTON_CLS,
+  BUTTON_XL_H_CLS,
+  BUTTON_XS_H_CLS,
+  CENTERED_ROW_CLS,
+  CORE_PRIMARY_BUTTON_CLS,
+  CORE_THEME_BUTTON_CLS,
+  DESTRUCTIVE_CLS,
+  DROPDOWN_BUTTON_CLS,
+  DROPDOWN_WITH_ICON_BUTTON_CLS,
+  FOCUS_RING_CLS,
+  ICON_BUTTON_CLS,
+  LARGE_ICON_BUTTON_CLS,
+  SM_ICON_BUTTON_CLS,
+  TOOLBAR_DROPDOWN_BUTTON_CLS,
+  TRANS_COLOR_CLS,
+  XL_ICON_BUTTON_CLS,
 } from '@/theme'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -569,9 +569,9 @@ export function Button({
 
   'aria-label': ariaLabel,
   tooltipSide = 'bottom',
-  onMouseUp,
-  onMouseDown,
-  onMouseLeave,
+  onPointerUp,
+  onPointerDown,
+  onPointerLeave,
   title,
   ref,
   className,
@@ -627,23 +627,23 @@ export function Button({
     // )
   }, [clickProps.x, clickProps.y])
 
-  function _onMouseUp(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerUp(e: React.MouseEvent<HTMLButtonElement>) {
     //setClickProps({ x: -1, y: -1 })
 
-    onMouseUp?.(e)
+    onPointerUp?.(e)
   }
 
-  function _onMouseDown(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerDown(e: React.MouseEvent<HTMLButtonElement>) {
     if (ripple) {
       setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     }
 
-    onMouseDown?.(e)
+    onPointerDown?.(e)
   }
 
-  function _onMouseLeave(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerLeave(e: React.MouseEvent<HTMLButtonElement>) {
     //setClickProps({ x: -1, y: -1 })
-    onMouseLeave?.(e)
+    onPointerLeave?.(e)
   }
 
   return (
@@ -682,9 +682,9 @@ export function Button({
       data-state={open ? 'open' : 'closed'}
       //data-state={state}
       type={type}
-      onMouseDown={_onMouseDown}
-      onMouseUp={_onMouseUp}
-      onMouseLeave={_onMouseLeave}
+      onPointerDown={_onPointerDown}
+      onPointerUp={_onPointerUp}
+      onPointerLeave={_onPointerLeave}
       title={title}
       aria-label={ariaLabel}
       {...props}

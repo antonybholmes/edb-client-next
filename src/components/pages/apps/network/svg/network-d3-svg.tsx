@@ -192,7 +192,7 @@ export function NetworkD3SvgContent() {
   //   [renderNodeMap]
   // )
 
-  const onMouseMove = useCallback(
+  const onPointerMove = useCallback(
     (e: React.MouseEvent) => {
       if (!ref.current || !settings.plot.crosshair.show || !tree) {
         return
@@ -300,7 +300,7 @@ export function NetworkD3SvgContent() {
     ]
   )
 
-  const onMouseDoubleClick = useCallback(
+  const onPointerDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       if (!currentNode) {
         return
@@ -382,9 +382,9 @@ export function NetworkD3SvgContent() {
 
   //         <SvgMouseRect
   //           size={settings.plot.size}
-  //           onMouseMove={onMouseMove}
-  //           onMouseLeave={hideCrosshair}
-  //           onDoubleClick={onMouseDoubleClick}
+  //           onPointerMove={onPointerMove}
+  //           onPointerLeave={hideCrosshair}
+  //           onDoubleClick={onPointerDoubleClick}
   //         />
   //       </SvgMargin>
   //       <LegendSvg />
@@ -436,9 +436,9 @@ export function NetworkD3SvgContent() {
         )}
         <SvgMouseRect
           size={settings.plot.size}
-          onMouseMove={onMouseMove}
-          onMouseLeave={hideCrosshair}
-          onDoubleClick={onMouseDoubleClick}
+          onPointerMove={onPointerMove}
+          onPointerLeave={hideCrosshair}
+          onDoubleClick={onPointerDoubleClick}
           //fill="red"
         />
       </SvgMargin>

@@ -19,9 +19,9 @@ export function ButtonLink({
   items,
   flow,
   className,
-  onMouseUp,
-  onMouseDown,
-  onMouseLeave,
+  onPointerUp,
+  onPointerDown,
+  onPointerLeave,
   children,
   ...props
 }: IButtonLinkProps) {
@@ -56,19 +56,19 @@ export function ButtonLink({
   //   }
   // }, [clickProps])
 
-  function _onMouseUp(e: React.MouseEvent<HTMLAnchorElement>) {
+  function _onPointerUp(e: React.MouseEvent<HTMLAnchorElement>) {
     //setClickProps({ x: -1, y: -1 })
-    onMouseUp?.(e)
+    onPointerUp?.(e)
   }
 
-  function _onMouseDown(e: React.MouseEvent<HTMLAnchorElement>) {
+  function _onPointerDown(e: React.MouseEvent<HTMLAnchorElement>) {
     //setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
-    onMouseDown?.(e)
+    onPointerDown?.(e)
   }
 
-  function _onMouseLeave(e: React.MouseEvent<HTMLAnchorElement>) {
+  function _onPointerLeave(e: React.MouseEvent<HTMLAnchorElement>) {
     //setClickProps({ x: -1, y: -1 })
-    onMouseLeave?.(e)
+    onPointerLeave?.(e)
   }
 
   return (
@@ -88,9 +88,9 @@ export function ButtonLink({
           className
         ),
       })}
-      onMouseDown={_onMouseDown}
-      onMouseUp={_onMouseUp}
-      onMouseLeave={_onMouseLeave}
+      onPointerDown={_onPointerDown}
+      onPointerUp={_onPointerUp}
+      onPointerLeave={_onPointerLeave}
       {...props}
     >
       {children}

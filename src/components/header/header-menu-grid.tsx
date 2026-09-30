@@ -66,8 +66,8 @@ export function ModuleButtonLink({
   return (
     <BaseLink
       className={cn(BASE_MUTED_THEME_CLS, className)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       {...props}
     >
       <span className={MODULE_BG_CLS} data-hover={present(hover)} />

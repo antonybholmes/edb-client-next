@@ -63,7 +63,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
   const cf = plot.dataframes['main'] as IClusterFrame
 
   const groupRows = plot.groupRows || []
-  const groups0 = groupRows[0]?.groups || []
+
   //const groups = plot.groupRows[0].groups || []
 
   //const groups = groups.filter(g => g.show|| settings.groups.filter.mode === 'keep')

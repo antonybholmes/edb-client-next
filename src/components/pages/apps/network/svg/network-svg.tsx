@@ -191,7 +191,7 @@ export function NetworkSvgContent() {
     [renderNodes, canvasCoordinates]
   )
 
-  const onMouseMove = useCallback(
+  const onPointerMove = useCallback(
     (e: React.MouseEvent) => {
       if (!ref.current || !settings.plot.crosshair.show) {
         return
@@ -277,7 +277,7 @@ export function NetworkSvgContent() {
     [tree, canvasCoordinates]
   )
 
-  const onMouseDoubleClick = useCallback(
+  const onPointerDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       if (!currentNode.current) {
         return
@@ -418,9 +418,9 @@ export function NetworkSvgContent() {
 
           <SvgMouseRect
             size={settings.plot.size}
-            onMouseMove={onMouseMove}
-            onMouseLeave={hideCrosshair}
-            onDoubleClick={onMouseDoubleClick}
+            onPointerMove={onPointerMove}
+            onPointerLeave={hideCrosshair}
+            onDoubleClick={onPointerDoubleClick}
           />
         </SvgMargin>
         <LegendSvg />
@@ -507,7 +507,7 @@ function NodeCircle({
   //   })
   // }, [hover])
 
-  // const onMouseEnter = useCallback(
+  // const onPointerEnter = useCallback(
   //   (e: React.MouseEvent) => {
   //     if (!ref.current) {
   //       return
@@ -574,8 +574,8 @@ function NodeCircle({
         stroke={stroke}
         sp={settings.plot.nodes.line}
         className="mix-blend-multiply"
-        //onMouseEnter={onMouseEnter}
-        //onMouseLeave={hide}
+        //onPointerEnter={onPointerEnter}
+        //onPointerLeave={hide}
         // double click
         // onDoubleClick={(e) => {
         //   if (labelsInNodeIds(node, labelSet)) {

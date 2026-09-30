@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Replace mouse events with pointer events.
 - Lollipop now uses crosshair.
 - Redesigning lollipop tooltips.
 - App reorg with expanded ngs modules.

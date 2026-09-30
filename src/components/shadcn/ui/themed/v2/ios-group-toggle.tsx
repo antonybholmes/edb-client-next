@@ -106,7 +106,7 @@ function _IosGroupToggle({ w, value, tabs, ...props }: IProps) {
                 width: `${w}rem`,
               }}
 
-              onMouseEnter={() => {
+              onPointerEnter={() => {
                 if (isSelected) {
                   setSelectedPosition({
                     ...selectedPosition,
@@ -115,7 +115,7 @@ function _IosGroupToggle({ w, value, tabs, ...props }: IProps) {
                 }
               }}
 
-              onMouseLeave={() => {
+              onPointerLeave={() => {
                 if (isSelected) {
                   setSelectedPosition({
                     ...selectedPosition,

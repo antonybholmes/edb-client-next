@@ -189,8 +189,8 @@ function GroupRowItem({
         <VCenterRow
           data-hover={present(hover)}
           className="gap-x-1 px-1 py-2 h-full min-h-8 data-hover:bg-muted/20 rounded-theme"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
+          onPointerEnter={() => setHover(true)}
+          onPointerLeave={() => setHover(false)}
         >
           {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
               The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}

@@ -104,10 +104,10 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
             width={bbox.width}
             height={bbox.height}
 
-            onMouseOver={() => {
+            onPointerOver={() => {
               setHighlight(true)
             }}
-            onMouseOut={() => {
+            onPointerOut={() => {
               setHighlight(false)
             }}
           />

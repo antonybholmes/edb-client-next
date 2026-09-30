@@ -14,8 +14,8 @@ export function ArrowLink({
   return (
     <BaseLink
       className={cn('inline-flex flex-row items-center', className)}
-      onMouseOver={() => setHover(true)}
-      onMouseOut={() => setHover(false)}
+      onPointerOver={() => setHover(true)}
+      onPointerOut={() => setHover(false)}
       {...props}
     >
       {children}
