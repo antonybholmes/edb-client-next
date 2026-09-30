@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { SvgCanvas } from '@/components/plot/svg-base'
-
 import { SvgMargin } from '@/components/plot/svg-margin'
 
+import { SvgD3Canvas } from '@/components/plot/svg-d3-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
 import { IS_DEV_MODE } from '@/consts'
@@ -419,7 +418,7 @@ export function NetworkD3SvgContent() {
   }, [settings, network?.id])
 
   return (
-    <SvgCanvas size={size} scale={zoom}>
+    <SvgD3Canvas size={size}>
       <SvgG id="network" />
       <SvgMargin margin={settings.plot.margin}>
         {settings.plot.border.show && (
@@ -440,7 +439,7 @@ export function NetworkD3SvgContent() {
         />
       </SvgMargin>
       <LegendSvg />
-    </SvgCanvas>
+    </SvgD3Canvas>
   )
 }
 

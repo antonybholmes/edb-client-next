@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Zoom is now value based and removes the bounding to levels.
 - Added default clipping to axes.
 - Bug fixes and updates.
 

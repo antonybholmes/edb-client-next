@@ -3199,6 +3199,10 @@
         {
           "msg": "Added default clipping to axes",
           "date": "2026-09-29T22:31:41.532Z"
+        },
+        {
+          "msg": "Zoom is now value based and removes the bounding to levels",
+          "date": "2026-09-30T14:39:37.499Z"
         }
       ]
     },
