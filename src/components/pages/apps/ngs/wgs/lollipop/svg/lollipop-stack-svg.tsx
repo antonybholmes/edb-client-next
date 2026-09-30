@@ -8,7 +8,7 @@ import {
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
@@ -82,11 +82,13 @@ export function yTickLinesSvg(
 }
 
 function ColGraphsSvg({
+  pos,
   yax,
   flattenedPileups,
   blockSize,
   displayProps,
 }: {
+  pos: IPos
   yax: IAxis
   flattenedPileups: {
     id: string
@@ -101,150 +103,31 @@ function ColGraphsSvg({
   const initial = useRef<boolean>(true)
   const { showCrosshair, hideCrosshair } = useCrosshair()
   const lollipopRef = useRef<SVGGElement | null>(null)
-  const h = axisLength(yax)
 
-  // useEffect(() => {
-  //   //const tooltip = tooltipRef.current
-
-  //   const handlePointerEnter = (e: PointerEvent) => {
-  //     const group = (e.target as Element).closest('g[data-id]')
-  //     if (group) {
-  //       const idx = Number(group.getAttribute('data-id'))
-
-  //       const entry = flattenedPileups[idx]
-  //       if (entry) {
-  //         const lines = entry.id?.split('|')
-
-  //         if (lines.length > 0) {
-  //           const { relativeP, screenP } = svgPointToScreen(
-  //             svgRef.current,
-  //             entry.pos
-  //           )
-
-  //           console.log(entry.pos)
-
-  //           showCrosshair({ pos: relativeP, clientPos: screenP })
-
-  //           //lines[lines.length - 1] = `Position: ${lines[lines.length - 1]}`
-
-  //           //setTooltipText([...lines, `x: ${entry.pos.x}, y: ${entry.pos.y}`])
-  //         }
-  //       }
-
-  //       gsap.to(group, {
-  //         scale: 1.5,
-  //         transformOrigin: 'center',
-  //         duration: 0.3,
-  //         ease: 'power2.out',
-  //       })
-  //     }
-  //   }
-
-  //   const handlePointerLeave = (e: PointerEvent) => {
-  //     const group = (e.target as Element).closest('g[data-id]')
-  //     if (group) {
-  //       gsap.to(group, {
-  //         scale: 1,
-  //         transformOrigin: 'center',
-  //         duration: 0.3,
-  //         ease: 'power2.out',
-  //       })
-  //     }
-
-  //     //tooltip.style.display = 'none'
-  //   }
-
-  //   const handlePointerMove = (e: PointerEvent) => {
-  //     const svg = svgRef.current
-
-  //     if (!svg) {
-  //       return
-  //     }
-
-  //     const rect = svg.getBoundingClientRect()
-
-  //     // Mouse position relative to the container's top-left corner
-  //     const x = e.clientX - rect.left
-  //     const y = e.clientY - rect.top
-
-  //     //tooltip.style.left = `${x + 10}px`
-  //     //tooltip.style.top = `${y + 10}px`
-  //   }
-
-  //   // svg.addEventListener('pointerover', handlePointerEnter)
-  //   // svg.addEventListener('pointerout', handlePointerLeave)
-  //   // svg.addEventListener('pointermove', handlePointerMove)
-
-  //   // return () => {
-  //   //   svg.removeEventListener('pointerover', handlePointerEnter)
-  //   //   svg.removeEventListener('pointerout', handlePointerLeave)
-  //   //   svg.removeEventListener('pointermove', handlePointerMove)
-  //   // }
-  // }, [flattenedPileups, svgRef])
-
-  const handleMouseMove = useCallback(
-    (e: React.PointerEvent<SVGRectElement>) => {
-      console.log(e)
-      const group = (lollipopRef.current as Element).closest('g[data-id]')
-      if (group) {
-        const idx = Number(group.getAttribute('data-id'))
-
-        const entry = flattenedPileups[idx]
-        if (entry) {
-          const lines = entry.id?.split('|')
-
-          if (lines.length > 0) {
-            const { relativeP, screenP } = svgPointToScreen(
-              svgRef.current,
-              entry.pos
-            )
-
-            showCrosshair({ pos: relativeP, clientPos: screenP })
-
-            //lines[lines.length - 1] = `Position: ${lines[lines.length - 1]}`
-
-            //setTooltipText([...lines, `x: ${entry.pos.x}, y: ${entry.pos.y}`])
-          }
-        }
-
-        gsap.to(group, {
-          scale: 1.5,
-          transformOrigin: 'center',
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-      }
-    },
-    [flattenedPileups, svgRef]
-  )
-
-  // set height of each circle
+  // animate each circle into position after React has populated the refs
   useEffect(() => {
-    if (
-      !circlesRef.current ||
-      circlesRef.current.length === 0 ||
-      !flattenedPileups ||
-      flattenedPileups.length === 0
-    ) {
+    if (!circlesRef.current || flattenedPileups.length === 0) {
       return
     }
 
-    gsap.timeline().to(circlesRef.current, {
-      x: (i: number) => flattenedPileups[i]?.rect.x || 0, // unique X position (cx in SVG)
-      y: (i: number) => flattenedPileups[i]?.rect.y || 0, // unique Y position (cy in SVG)
-      duration: 0.5,
-      ease: 'elastic.out(1, 0.5)', //ease: 'power2.out',
-      //stagger: 0.01,
+    const nodes = circlesRef.current.filter(Boolean) as SVGGElement[]
+
+    gsap.timeline().to(nodes, {
+      x: (i: number) => flattenedPileups[i]?.rect.x || 0,
+      y: (i: number) => flattenedPileups[i]?.rect.y || 0,
+      duration: 0.3,
+      ease: 'power2.out',
+      stagger: 0.01,
     })
 
     initial.current = false
-  }, [flattenedPileups, circlesRef])
+  }, [flattenedPileups])
 
   // default them all to 1
   const dy = axisDomainToRange(yax, 1) // - yax.domainToRange(0) // 0.5 * blockSize.h
 
   return (
-    <>
+    <SvgG pos={pos}>
       <SvgG id="lollipop" ref={lollipopRef}>
         {flattenedPileups.map((entry, ei) => {
           const [mutType] = entry.id.split('|')
@@ -266,12 +149,29 @@ function ColGraphsSvg({
                   ease: 'power2.out',
                 })
 
+                const p = {
+                  x: flattenedPileups[ei]?.rect.x + pos.x,
+                  y: flattenedPileups[ei]?.rect.y + pos.y,
+                }
+
                 const { relativeP, screenP } = svgPointToScreen(
                   svgRef.current,
-                  entry.pos
+                  p
                 )
 
-                //showCrosshair({ pos: relativeP, clientPos: screenP })
+                const lines = entry.id?.split('|')
+
+                showCrosshair({
+                  pos: relativeP,
+                  clientPos: screenP,
+                  content: (
+                    <>
+                      {lines.map((line, index) => (
+                        <span key={index}>{line}</span>
+                      ))}
+                    </>
+                  ),
+                })
               }}
               onPointerLeave={() => {
                 gsap.to(circlesRef.current[ei], {
@@ -300,16 +200,7 @@ function ColGraphsSvg({
           )
         })}
       </SvgG>
-      {/* <SvgMouseRect
-        x={0}
-        y={-20}
-        width="100%"
-        height={h + 20}
-        //fill="red"
-        onPointerMove={handleMouseMove}
-        onPointerLeave={hideCrosshair}
-      /> */}
-    </>
+    </SvgG>
   )
 }
 
@@ -857,9 +748,12 @@ export function LollipopStackContent() {
         //className="absolute"
       >
         {displayProps.title.text.show && (
-          <g
+          <SvgG
             id="title"
-            transform={`translate(${marginLeft + gridWidth / 2}, ${top - displayProps.title.offset})`}
+            pos={{
+              x: marginLeft + gridWidth / 2,
+              y: top - displayProps.title.offset,
+            }}
           >
             <SvgText
               dominantBaseline="central"
@@ -869,81 +763,80 @@ export function LollipopStackContent() {
             >
               {protein?.name ?? ''}
             </SvgText>
-          </g>
+          </SvgG>
         )}
 
         {displayProps.labels.show && (
-          <g
-            transform={`translate(${marginLeft + 0.5 * blockSize.w}, ${
-              top - displayProps.plotGap - displayProps.labels.height
-            })`}
+          <SvgG
+            pos={{
+              x: marginLeft + 0.5 * blockSize.w,
+              y: top - displayProps.plotGap - displayProps.labels.height,
+            }}
           >
             {labelsSvg(xax, labels, displayProps)}
-          </g>
+          </SvgG>
         )}
 
         {displayProps.axes.y.show && (
-          <g
-            transform={`translate(${marginLeft - displayProps.axisOffset}, ${top})`}
-          >
+          <SvgG pos={{ x: marginLeft - displayProps.axisOffset, y: top }}>
             <AxisLeftSvg
               ax={yax}
               strokeWidth={displayProps.variants.plot.border.width}
               font={displayProps.axes.labels}
               labelFont={displayProps.axes.title}
             />
-          </g>
+          </SvgG>
         )}
 
         {displayProps.axes.y.ticks.lines.show && (
-          <g transform={`translate(${marginLeft}, ${top})`}>
+          <SvgG pos={{ x: marginLeft, y: top }}>
             {yTickLinesSvg(yax, gridWidth, displayProps)}
-          </g>
+          </SvgG>
         )}
 
         {displayProps.variants.plot.show && (
-          <g transform={`translate(${marginLeft}, ${top})`}>
-            <ColGraphsSvg
-              yax={yax}
-              flattenedPileups={flattenedPileups}
+          <ColGraphsSvg
+            pos={{ x: marginLeft, y: top }}
+            yax={yax}
+            flattenedPileups={flattenedPileups}
 
-              blockSize={blockSize}
-              displayProps={displayProps}
-            />
-          </g>
+            blockSize={blockSize}
+            displayProps={displayProps}
+          />
         )}
 
         {displayProps.seq.show && (
-          <g
-            transform={`translate(${marginLeft}, ${
-              top + graphHeight + displayProps.plotGap
-            })`}
+          <SvgG
+            pos={{ x: marginLeft, y: top + graphHeight + displayProps.plotGap }}
           >
             {seqSvg(xax, protein, aaColor, blockSize)}
-          </g>
+          </SvgG>
         )}
 
         {displayProps.features.show && (
-          <g
-            transform={`translate(${marginLeft}, ${
-              top + graphHeight + displayProps.plotGap + 15
-            })`}
+          <SvgG
+            pos={{
+              x: marginLeft,
+              y: top + graphHeight + displayProps.plotGap + 15,
+            }}
           >
             {featuresSvg(xax, features, blockSize, displayProps)}
-          </g>
+          </SvgG>
         )}
 
         {displayProps.axes.x.show && (
-          <g
-            transform={`translate(${marginLeft}, ${
-              top +
-              graphHeight +
-              displayProps.plotGap +
-              displayProps.seq.height +
-              displayProps.plotGap +
-              displayProps.features.height +
-              displayProps.plotGap
-            })`}
+          <SvgG
+            pos={{
+              x: marginLeft,
+              y:
+                top +
+                graphHeight +
+                displayProps.plotGap +
+                displayProps.seq.height +
+                displayProps.plotGap +
+                displayProps.features.height +
+                displayProps.plotGap,
+            }}
           >
             <AxisBottomSvg
               ax={xax}
@@ -951,7 +844,7 @@ export function LollipopStackContent() {
               font={displayProps.axes.labels}
               labelFont={displayProps.axes.title}
             />
-          </g>
+          </SvgG>
         )}
 
         {/* legend */}

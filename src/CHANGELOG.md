@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Lollipop now uses crosshair.
 - Redesigning lollipop tooltips.
 - App reorg with expanded ngs modules.
 - Motifs now calculates letter width correctly.
