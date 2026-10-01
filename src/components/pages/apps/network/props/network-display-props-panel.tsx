@@ -7,7 +7,6 @@ import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
-import { useRunning } from '@/components/toolbar/running-indicator'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
@@ -20,30 +19,16 @@ import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-pane
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { MarginPopover } from '../margin-popover'
 import { useNetworkSettings } from '../network-settings-store'
-import { useNetwork } from '../network-store'
-import { useNetworkSim } from '../network-store-sim'
 import { FieldSelectList } from './field-select-list'
 import { PositionDropdown } from './position-dropdown'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
-  const { network } = useNetwork()
-  const { run } = useNetworkSim()
-  const { setMessage, clearMessage } = useRunning('network')
 
   return (
     <PropsPanel>
       <ScrollAccordion
-        value={[
-          'layout',
-          'plot',
-          'nodes',
-          'labels',
-          'edges',
-          'statistics',
-          'bubbles',
-          'size',
-        ]}
+        value={['layout', 'plot', 'nodes', 'labels', 'edges', 'legend']}
       >
         <AccordionItem value="layout">
           <AccordionTrigger
@@ -256,7 +241,7 @@ export function NetworkDisplayPropsPanel() {
               }
             /> */}
 
-            <PropRow title="Scale">
+            {/* <PropRow title="Scale">
               <NumSlider
                 min={0}
                 max={5}
@@ -272,7 +257,7 @@ export function NetworkDisplayPropsPanel() {
                   )
                 }
               />
-            </PropRow>
+            </PropRow> */}
           </AccordionContent>
         </AccordionItem>
 
@@ -514,6 +499,34 @@ export function NetworkDisplayPropsPanel() {
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.edges.highlight = value
+                  })
+                )
+              }
+            />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="legend">
+          <AccordionTrigger>Legend</AccordionTrigger>
+          <AccordionContent>
+            <CheckPropRow
+              title="Show"
+              checked={settings.plot.legend.show}
+              onCheckedChange={(value) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.legend.show = value
+                  })
+                )
+              }
+            />
+            <CheckPropRow
+              title="Auto Margin"
+              checked={settings.plot.legend.autoMargin}
+              onCheckedChange={(value) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.legend.autoMargin = value
                   })
                 )
               }

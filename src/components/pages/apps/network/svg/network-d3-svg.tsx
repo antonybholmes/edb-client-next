@@ -22,6 +22,7 @@ import {
   useNetwork,
 } from '../network-store'
 
+import { max } from '@/lib/math/math'
 import { useNetworkD3Sim } from '../network-store-d3-sim'
 import { useUserData } from '../network-user-data-store'
 import { LegendSvg } from './legend-svg'
@@ -37,11 +38,10 @@ export function NetworkD3SvgContent() {
 
   const {
     network,
-
+    groups,
     renderEdgeMap,
     nodeEdgeMap,
     nodeLabelMap,
-
     nodeColorMap,
     renderNodeMap,
   } = useNetwork()
@@ -66,27 +66,6 @@ export function NetworkD3SvgContent() {
       return
     }
 
-    // g.selectAll<SVGCircleElement, IRenderNode>('circle')
-    //   .attr('fill', (d) => nodeColorMap.get(d.id))
-    //   .attr('fill-opacity', (d) => {
-    //     const node = renderNodeMap.get(d.id)
-
-    //     return node.view === 'translucent'
-    //       ? settings.plot.nodes.view.hidden.opacity
-    //       : settings.plot.nodes.color.opacity
-    //   })
-    //   .attr('stroke', (d) =>
-    //     settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
-    //       ? nodeColorMap.get(d.id)
-    //       : undefined
-    //   )
-    //   .attr('visibility', (d) => {
-    //     const node = renderNodeMap.get(d.id)
-
-    //     return node.view === 'hidden' ? 'hidden' : 'visible'
-    //   })
-
-    // g.selectAll<SVGTextElement, IRenderNode>('text').call((g) => formatText(g))
     g.selectAll<SVGCircleElement, IRenderNode>('circle').call((g) =>
       formatCircle(g)
     )
@@ -377,11 +356,17 @@ export function NetworkD3SvgContent() {
 
     // inner height is determined by the size of the largest bubble plot
 
+    let rightMargin = settings.plot.margin.right
+
+    if (settings.plot.legend.show && settings.plot.legend.autoMargin) {
+      const maxChars = max(groups.map((g) => g.name.length))
+
+      rightMargin +=
+        (maxChars * settings.plot.nodes.labels.text.font.fontSize) / 2
+    }
+
     const size = {
-      w:
-        settings.plot.size.w +
-        settings.plot.margin.left +
-        settings.plot.margin.right,
+      w: settings.plot.size.w + settings.plot.margin.left + rightMargin,
 
       h:
         settings.plot.size.h +
@@ -411,7 +396,7 @@ export function NetworkD3SvgContent() {
           />
         )}
       </SvgMargin>
-      <LegendSvg />
+      {settings.plot.legend.show && <LegendSvg />}
     </SvgZoomCanvas>
   )
 }

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network can now auto size right margin to cope with font changes to legend.
 - Network updates.
 - Network reengineering to reduce re-renders. More props moved to store as there was a subtle bug caused by hooks not sharing info.
 - Draggable network.
