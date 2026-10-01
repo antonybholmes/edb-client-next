@@ -47,7 +47,7 @@ import type { IDivProps } from '@/interfaces/div-props'
 import { TEXT_SIGN_IN } from '@/consts'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { AppIcon } from '@/components/icons/app-icon'
+import { AppIcon } from '@/components/icons/edb-icon'
 import { config } from '@/config'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useForm } from 'react-hook-form'

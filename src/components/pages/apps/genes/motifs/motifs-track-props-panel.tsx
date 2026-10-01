@@ -41,7 +41,7 @@ export function MotifsTrackPropsPanel() {
     useMotifs()
 
   return (
-    <PropsPanel className="pr-2 gap-y-2">
+    <PropsPanel className="gap-y-2">
       <SelectAll
         className="pl-6.5"
         setSelectAll={(v) => {

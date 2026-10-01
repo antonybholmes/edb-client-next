@@ -92,8 +92,8 @@ export function Slider({
 
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       onValueChange={(value, eventDetails) => {
         _onValueChange?.(value, eventDetails)
       }}

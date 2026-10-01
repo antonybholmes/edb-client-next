@@ -34,8 +34,8 @@ export function NodePropsPanel() {
   useEffect(() => {
     setTabs([
       {
-        id: 'nodes',
-        name: 'Nodes',
+        id: 'labels',
+        name: 'Labels',
       },
 
       { id: 'groups', name: 'Groups' },
@@ -55,7 +55,7 @@ export function NodePropsPanel() {
         onValueChange={() => {}}
         className="grow"
       >
-        <TabsContent value="nodes">
+        <TabsContent value="labels">
           <NodesDisplayPropsPanel />
         </TabsContent>
         <TabsContent value="groups">

@@ -7,7 +7,7 @@ import { median } from '@/lib/math/median'
 
 import { SwarmPlotSvg } from '@/components/plot/box-whisker/swarm-plot-svg'
 import { ViolinPlotSvg } from '@/components/plot/box-whisker/violin-plot-svg'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -59,7 +59,7 @@ interface IBoxProps {
 
 export interface IBoxPlotDisplayOptions {
   globalYAxis: boolean
-  page: { scale: number }
+  //page: { scale: number }
   padding: {
     hue: number
     plot: number
@@ -107,9 +107,7 @@ export const DEFAULT_BOX_PLOT_DISPLAY_PROPS: IBoxPlotDisplayOptions = {
   },
   plot: { w: 50, h: 200 },
   margin: { ...DEFAULT_MARGIN, right: 200 },
-  page: {
-    scale: 1,
-  },
+
   globalYAxis: true,
   title: {
     offset: 20,
@@ -441,13 +439,11 @@ export function BoxPlotSvg() {
   }, [displayProps, plot])
 
   return (
-    <SvgBase
-      scale={displayProps.page.scale}
-      width={width}
-      height={height}
+    <SvgZoomCanvas
+      size={{ w: width, h: height }}
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {svg}
-    </SvgBase>
+    </SvgZoomCanvas>
   )
 }

@@ -27,5 +27,6 @@
   { "name": "OAuth2", "url": "https://oauth.net/2/" },
   { "name": "JWT", "url": "https://jwt.io/" },
   { "name": "SVG", "url": "https://www.w3.org/Graphics/SVG/" },
-  { "name": "JSON", "url": "https://www.json.org/json-en.html" }
+  { "name": "JSON", "url": "https://www.json.org/json-en.html" },
+  { "name": "D3.js", "url": "https://d3js.org/" }
 ]

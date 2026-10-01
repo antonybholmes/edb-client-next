@@ -361,10 +361,10 @@ function CollapseTreeNode({
           data-mode={mode}
           data-focus={present(focus)}
           data-selected={present(isSelected)}
-          onMouseEnter={() => {
+          onPointerEnter={() => {
             setHover(true)
           }}
-          onMouseLeave={() => setHover(false)}
+          onPointerLeave={() => setHover(false)}
         >
           {/* Spacing for the expand icon if there are children */}
           <CenterCol className="w-4 h-full shrink-0 grow-0">
@@ -419,8 +419,8 @@ function CollapseTreeNode({
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <DropdownMenuTrigger
               className={MENU_BUTTON_CLS}
-              onMouseEnter={() => setMenuHover(true)}
-              onMouseLeave={() => setMenuHover(false)}
+              onPointerEnter={() => setMenuHover(true)}
+              onPointerLeave={() => setMenuHover(false)}
               name={`Delete ${tab.name}`}
               aria-label={`Delete ${tab.name}`}
               data-focus={present(focus)}

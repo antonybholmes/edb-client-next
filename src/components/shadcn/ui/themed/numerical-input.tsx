@@ -1,20 +1,44 @@
 import { VCenterCol } from '@/components/layout/v-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
+import { SvgBase } from '@/components/plot/svg-base'
+import { SvgPath } from '@/components/plot/svg-path'
 import { useDebounce } from '@/hooks/debounce'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { clamp } from '@/lib/math/clamp'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Input, type IInputProps } from './v2/input'
 
-const BUTTON_CLS = `w-4 flex h-3 min-h-0 overflow-hidden shrink-0 flex-row justify-center items-center
-  enabled:text-foreground/80 disabled:text-foreground/50 
-  enabled:hover:text-app-theme enabled:focus-visible:text-app-theme
+const BUTTON_CLS = `flex w-4 h-3 min-h-0 overflow-hidden shrink-0 
+  flex-row justify-center items-center
+  disabled:text-foreground/50
+  enabled:focus-visible:text-app-theme
+  bg-muted/50 enabled:hover:bg-muted
   outline-none trans-color`
+
+const UP_BUTTON_CLS = cn(BUTTON_CLS, 'rounded-t-sm')
+const DOWN_BUTTON_CLS = cn(BUTTON_CLS, 'rounded-b-sm')
 
 const UPDATE_INTERVAL_MS = 150
 
 const REMOVE_TRAILING_ZEROS_REGEX = /\.?0+$/
+
+export function SmallChevronIcon({ direction }: { direction: 'up' | 'down' }) {
+  return (
+    <SvgBase size={{ w: 24, h: 24 }}>
+      <SvgPath
+        d={
+          direction === 'up'
+            ? 'M7.5 14, L12 10, L16.5 14'
+            : 'M7.5 10, L12 14, L16.5 10'
+        }
+        strokeWidth={1.5}
+        className="stroke-foreground"
+        strokeLinecap="round"
+      />
+    </SvgBase>
+  )
+}
 
 export interface INumericalInputProps extends Omit<IInputProps, 'value'> {
   value: number
@@ -148,6 +172,8 @@ export function NumericalInput({
 
       onNumChange?.(v)
 
+      console.log('New value:', v, triggerChanged)
+
       if (triggerChanged) {
         onNumChanged?.(v)
       }
@@ -227,7 +253,7 @@ export function NumericalInput({
   }
 
   return (
-    <VCenterRow className="gap-x-0.5" data-disabled={disabled}>
+    <VCenterRow className="gap-x-0.75" data-disabled={disabled}>
       <Input
         id={id}
         name={name}
@@ -254,34 +280,34 @@ export function NumericalInput({
         aria-label={ariaLabel}
         title={title}
       />
-      <VCenterCol>
+      <VCenterCol className="gap-y-px">
         <button
           disabled={disabled}
 
-          className={BUTTON_CLS}
+          className={UP_BUTTON_CLS}
 
-          onMouseDown={() => startUpdating(step)}
-          onMouseUp={stopUpdating}
-          onMouseLeave={stopUpdating}
+          onPointerDown={() => startUpdating(step)}
+          onPointerUp={stopUpdating}
+          onPointerLeave={stopUpdating}
           onKeyDown={(e) => handleKeyDown(e, step)}
           onKeyUp={handleKeyUp}
           aria-label="Increase value"
         >
-          <ChevronUp size={14} strokeWidth={3} />
+          <SmallChevronIcon direction="up" />
         </button>
         <button
           disabled={disabled}
 
-          className={BUTTON_CLS}
+          className={DOWN_BUTTON_CLS}
 
-          onMouseDown={() => startUpdating(-step)}
-          onMouseUp={stopUpdating}
-          onMouseLeave={stopUpdating}
+          onPointerDown={() => startUpdating(-step)}
+          onPointerUp={stopUpdating}
+          onPointerLeave={stopUpdating}
           onKeyDown={(e) => handleKeyDown(e, -step)}
           onKeyUp={handleKeyUp}
           aria-label="Decrease value"
         >
-          <ChevronDown size={14} strokeWidth={3} />
+          <SmallChevronIcon direction="down" />
         </button>
       </VCenterCol>
     </VCenterRow>

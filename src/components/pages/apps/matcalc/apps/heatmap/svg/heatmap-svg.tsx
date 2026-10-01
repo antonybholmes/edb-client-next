@@ -8,10 +8,9 @@ import {
   MIN_INNER_HEIGHT,
 } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
-import { CellsSvg, DotsSvg, GridSvg } from './cell-svg'
+import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
 
-import type { ISVGProps } from '@/interfaces/svg-props'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useMemo } from 'react'
@@ -19,7 +18,7 @@ import { RowLabelsSvg, RowTreeSvg } from './row-svg'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisLength } from '@/components/plot/axes/axis'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromCmap } from '@/lib/color/colormap'
@@ -29,6 +28,7 @@ import { SvgTitle } from '../../../../../../plot/svg-title'
 import { ActionListSvg } from '../action-list-svg'
 import { useHeatmapContext } from '../heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from '../legend-svg'
+import { CellsD3Svg, DotsD3Svg } from './cell-d3-svg'
 import { CellGaps } from './cell-gaps'
 
 export const TOOLTIP_CLEAR_MS = 300
@@ -38,11 +38,7 @@ export interface ITooltip {
   cell: ICell
 }
 
-interface IProps extends ISVGProps {
-  scale?: number
-}
-
-export function HeatMapSvg({ scale = 1 }: IProps) {
+export function HeatMapSvg() {
   const { plot } = useHeatmapContext()
 
   if (!plot) {
@@ -51,18 +47,18 @@ export function HeatMapSvg({ scale = 1 }: IProps) {
 
   return (
     <CrosshairProvider>
-      <HeatMapSvgContent scale={scale} />
+      <HeatMapSvgContent />
     </CrosshairProvider>
   )
 }
 
-function HeatMapSvgContent({ scale = 1 }: IProps) {
+function HeatMapSvgContent() {
   const { plot, rowLeaves, colLeaves } = useHeatmapContext()
 
   const cf = plot.dataframes['main'] as IClusterFrame
 
   const groupRows = plot.groupRows || []
-  const groups0 = groupRows[0]?.groups || []
+
   //const groups = plot.groupRows[0].groups || []
 
   //const groups = groups.filter(g => g.show|| settings.groups.filter.mode === 'keep')
@@ -381,7 +377,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
               pos={{ x: margin.left, y: margin.top }}
             />
             {/* Draw cells after grid so the are not obscured */}
-            <DotsSvg
+            <DotsD3Svg
               df={dfMain}
               dfRaw={dfRaw}
               dfSize={dfSize}
@@ -399,7 +395,7 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
           </>
         ) : (
           <>
-            <CellsSvg
+            <CellsD3Svg
               df={dfMain}
               margin={margin}
               plotSize={{ w: innerWidth, h: innerHeight }}
@@ -521,9 +517,5 @@ function HeatMapSvgContent({ scale = 1 }: IProps) {
     return { svg, width, height }
   }, [cf, displayOptions, groupRows, cax])
 
-  return (
-    <SvgBase scale={scale} width={width} height={height}>
-      {svg}
-    </SvgBase>
-  )
+  return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }

@@ -17,7 +17,7 @@ import { vfill } from '@/lib/fill'
 import type { ILim } from '@/lib/math/math'
 import { ones } from '@/lib/math/ones'
 import { TickLabel } from './axes/svg-axis-props'
-import { SvgBase } from './svg-base'
+import { SvgZoomCanvas } from './svg-base'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 200 }
 
@@ -38,7 +38,7 @@ export interface IDisplayProps {
   yticks: number[] | undefined
   ytickLabels: TickLabel[] | undefined
   padding: number
-  scale: number
+  //scale: number
   tickSize: number
   barWidth: number
 }
@@ -53,7 +53,7 @@ export const DEFAULT_DISPLAY_PROPS: IDisplayProps = {
   yticks: undefined,
   ytickLabels: undefined,
   padding: 10,
-  scale: 5,
+
   tickSize: 5,
   barWidth: 2,
 }
@@ -353,13 +353,12 @@ export function VertBarPlotSvg({
   // }, [dataFile, search])
 
   return (
-    <SvgBase
-      width={width}
-      height={height}
-      scale={_displayProps.scale}
+    <SvgZoomCanvas
+      size={{ w: width, h: height }}
+
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {svg}
-    </SvgBase>
+    </SvgZoomCanvas>
   )
 }

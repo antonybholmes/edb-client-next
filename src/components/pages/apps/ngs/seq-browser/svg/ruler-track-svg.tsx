@@ -1,0 +1,223 @@
+import { type IDivProps } from '@/interfaces/div-props'
+
+import {
+  autoTickInterval,
+  axisDomainToRangeFunc,
+  axisLength,
+  IAxis,
+  setAxisClip,
+  setAxisDomain,
+} from '@/components/plot/axes/axis'
+import { SvgLine } from '@/components/plot/svg-line'
+import { SvgText } from '@/components/plot/svg-text'
+import type { IPos } from '@/interfaces/pos'
+
+import { SvgG } from '@/components/plot/svg-g'
+import { newGenomicLocation } from '@/lib/genomic/genomic-location'
+import { range } from '@/lib/math/range'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { useSeqBrowserSettings } from '../seq-browser-settings'
+import { LocationContext, type IRulerTrack } from '../tracks-provider'
+
+interface IProps extends IDivProps {
+  track: IRulerTrack
+  xax: IAxis
+}
+
+export function RulerTrackSvg({ track, xax }: IProps) {
+  const { location, setLocation } = useContext(LocationContext)
+  const { settings } = useSeqBrowserSettings()
+
+  const startPos = useRef<IPos | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [_xax, setAx] = useState(setAxisClip(xax, false))
+
+  useEffect(() => {
+    setAx(setAxisClip(xax, false))
+  }, [xax])
+
+  function handleMouseDown(e: React.MouseEvent) {
+    setIsDragging(true)
+    // Get the initial mouse position when the mouse is pressed down
+    startPos.current = { x: e.clientX, y: e.clientY }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+  }
+
+  function handleMouseUp(e: MouseEvent) {
+    setIsDragging(false)
+    // Remove event listeners after drag ends
+    window.removeEventListener('mousemove', handleMouseMove)
+    window.removeEventListener('mouseup', handleMouseUp)
+
+    if (startPos.current) {
+      // Calculate the new position based on the mouse movement
+      const dx = e.clientX - startPos.current.x
+      //const dy = e.clientY - startPos.current.y
+
+      const domainX = (-dx / xl) * (xax.domain[1] - xax.domain[0] + 1)
+
+      startPos.current = null
+
+      setLocation(
+        newGenomicLocation(
+          location.chr,
+          xax.domain[0] + domainX,
+          xax.domain[1] + domainX
+        )
+      )
+    }
+  }
+
+  function handleMouseMove(e: MouseEvent) {
+    if (startPos.current) {
+      // Calculate the new position based on the mouse movement
+      const dx = e.clientX - startPos.current.x
+      //const dy = e.clientY - startPos.current.y
+
+      const domainX = (-dx / xl) * (xax.domain[1] - xax.domain[0] + 1)
+
+      // we use the current axes used in the ui to internally set an
+      // axes object to track the mouse movements. Once the mouse is
+      // released, the real ax is synced with the internal one.
+      setAx(
+        setAxisDomain(_xax, [xax.domain[0] + domainX, xax.domain[1] + domainX])
+      )
+    }
+  }
+
+  const { interval } = autoTickInterval([location.start, location.end])
+
+  let rulerBb: number = settings.tracks.ruler.autoSize
+    ? interval
+    : settings.tracks.ruler.bp
+
+  if (Math.abs(_xax.domain[1] - _xax.domain[0]) / rulerBb > 4) {
+    rulerBb *= 2
+  }
+
+  const x1 = Math.floor(_xax.domain[0] / rulerBb) * rulerBb
+  const x2 = (Math.floor(_xax.domain[1] / rulerBb) + 1) * rulerBb
+
+  const ticks = range(Math.min(x1, x2), Math.max(x1, x2) + rulerBb, rulerBb)
+
+  const xaf = axisDomainToRangeFunc(_xax)
+
+  const dx1 = xaf(_xax.domain[0] - rulerBb / 4)
+  const dx2 = xaf(_xax.domain[1] + rulerBb / 4)
+
+  //let labelTicks = ticks.slice()
+
+  // if it seems like there are too many ticks, take
+  // every other one
+  //while (labelTicks.length > 5) {
+  //labelTicks = labelTicks.filter((_, i) => i % 2 === 0)
+  //}
+
+  const h = track.displayOptions.height / 2
+  const majorH2 = track.displayOptions.majorTicks.height / 2
+
+  const minX = xaf(_xax.domain[0])
+  const maxX = xaf(_xax.domain[1])
+
+  const xl = axisLength(_xax)
+
+  return (
+    <>
+      <defs>
+        <clipPath id="ruler-clip">
+          <rect
+            width={xl}
+            height={settings.titles.height + track.displayOptions.height}
+          />
+        </clipPath>
+      </defs>
+
+      <rect
+        width={xl}
+        height={settings.titles.height + track.displayOptions.height}
+        stroke="none"
+        fill="black"
+        opacity="0"
+        onPointerDown={handleMouseDown}
+        style={{ cursor: isDragging ? 'ew-resize' : 'auto' }}
+      />
+
+      {/* <g id="clip" clipPath="url(#ruler-clip)"> */}
+      <SvgG
+        pos={{ x: 0, y: settings.titles.height + h }}
+        style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+      >
+        <g id="minor-ticks">
+          {range(1, ticks.length).map((ti) => {
+            const previousTick = ticks[ti - 1]!
+            const tick = ticks[ti]!
+            const d = (tick - previousTick) / 8
+
+            return (
+              <g id="minor-tick" key={ti}>
+                {range(1, 8)
+                  .map((tti) => xaf(previousTick + tti * d))
+                  .filter((px2) => px2 >= minX && px2 <= maxX)
+                  .map((px2, tti) => {
+                    return (
+                      <SvgLine
+                        key={`${ti}:${tti}`}
+                        x1={px2}
+                        x2={px2}
+                        y1={majorH2 - track.displayOptions.minorTicks.height}
+                        y2={majorH2}
+                        s={track.displayOptions.stroke}
+                      />
+                    )
+                  })}
+              </g>
+            )
+          })}
+        </g>
+
+        <g id="major-ticks">
+          {ticks
+            .map((tick) => xaf(tick))
+            .filter((px1) => px1 >= minX && px1 <= maxX)
+            .map((px1, pi) => {
+              return (
+                <SvgLine
+                  id={`major-tick-${pi}`}
+                  key={pi}
+                  x1={px1}
+                  x2={px1}
+                  y1={-majorH2}
+                  y2={majorH2}
+                  s={track.displayOptions.stroke}
+                />
+              )
+            })}
+        </g>
+
+        <g id="major-tick-labels">
+          {ticks
+            .map((tick) => ({ domain: tick, range: xaf(tick) }))
+            .filter((t) => t.range >= dx1 && t.range <= dx2)
+            .map((t, pi) => {
+              const { domain: tick, range: px1 } = t
+              return (
+                <SvgText
+                  id={`major-tick-${pi}`}
+                  key={pi}
+                  transform={`translate(${px1}, ${-h - 5})`}
+                  font={track.displayOptions.text}
+                  dominantBaseline="auto"
+
+                  //fontWeight="bold"
+                >
+                  {tick.toLocaleString()}
+                </SvgText>
+              )
+            })}
+        </g>
+      </SvgG>
+    </>
+  )
+}

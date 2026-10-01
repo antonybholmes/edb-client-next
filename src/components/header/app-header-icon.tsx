@@ -8,10 +8,10 @@ import {
 import { cn } from '@/lib/shadcn-utils'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
+import { AppIcon } from '../icons/app-icon'
 import { HomeIcon } from '../icons/home-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { BaseLink } from '../link/base-link'
-import { AppIcon } from './app-icon'
 
 export function AppHeaderIcon() {
   const { appInfo } = useAppInfo()
@@ -23,8 +23,8 @@ export function AppHeaderIcon() {
   return (
     <BaseLink href="/" title={`${config.name} Home`}>
       <VCenterRow
-        //onMouseEnter={() => setHover(true)}
-        //onMouseLeave={() => setHover(false)}
+        //onPointerEnter={() => setHover(true)}
+        //onPointerLeave={() => setHover(false)}
         className={cn(
           //BUTTON_LG_W_CLS,
           'aspect-square justify-center group relative'

@@ -83,7 +83,7 @@ function HistoryTabsContent() {
       <TabsList
         //className={cn('relative shrink-0', className)}
         ref={tabListRef}
-        onMouseLeave={() => {
+        onPointerLeave={() => {
           setTabPosition(undefined)
         }}
         className="gap-y-px"
@@ -101,7 +101,7 @@ function HistoryTabsContent() {
               ref={(el) => {
                 buttonsRef.current[hi] = el!
               }}
-              onMouseEnter={() => {
+              onPointerEnter={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
                     scale: 0.5,
@@ -109,7 +109,7 @@ function HistoryTabsContent() {
                 }
                 _scale(hi)
               }}
-              onMouseLeave={() => {
+              onPointerLeave={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
                     scale: 0.6,

@@ -181,7 +181,7 @@ export function TableData() {
     }
   }
 
-  function onMouseMove(e: MouseEvent) {
+  function onPointerMove(e: MouseEvent) {
     const elementRect = tableDataRef.current!.getBoundingClientRect()
     const bottomMargin = elementRect.bottom - SCROLL_MARGIN_SIZE // Calculate bottom SCROLL_MARGIN_SIZE pixels of element
     const rightMargin = elementRect.right - SCROLL_MARGIN_SIZE // Calculate bottom SCROLL_MARGIN_SIZE pixels of element
@@ -326,24 +326,24 @@ export function TableData() {
       cols: { start: col, end: col },
     })
 
-    function onMouseUp() {
+    function onPointerUp() {
       if (loopRef.current) {
         clearInterval(loopRef.current)
         loopRef.current = null
       }
 
-      //setSelectionMouseDown(false)
+      //setSelectionPointerDown(false)
       //document.body.style.cursor = 'default'
       // Remove the event listeners when mouse is released
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onPointerMove)
+      document.removeEventListener('mouseup', onPointerUp)
     }
 
     //document.body.style.cursor = 'col-resize'
-    //setSelectionMouseDown(true)
+    //setSelectionPointerDown(true)
     // Add event listeners for mousemove and mouseup
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onPointerMove)
+    document.addEventListener('mouseup', onPointerUp)
   }
 
   function onDataKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {

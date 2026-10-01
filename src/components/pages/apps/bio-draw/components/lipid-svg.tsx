@@ -824,7 +824,7 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
           r={6}
           fill="white"
           stroke="cornflowerblue"
-          onMouseDown={e => {
+          onPointerDown={e => {
             e.stopPropagation()
             handleMouseDown(i, pt)
           }}
@@ -844,7 +844,7 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
           fill={pt.type === 'control' ? 'cornflowerblue' : 'white'}
           stroke="cornflowerblue"
           strokeWidth={2}
-          onMouseDown={(e) => {
+          onPointerDown={(e) => {
             e.stopPropagation()
             handleMouseDown(i, pt)
           }}

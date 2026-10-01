@@ -59,7 +59,7 @@ export function GseaPropsPanel() {
   } = useGsea()
 
   return (
-    <PropsPanel className="grow gap-y-1 pr-2 text-xs">
+    <PropsPanel className="grow gap-y-1 text-xs">
       {/* <PropRow title="Columns">
         <NumericalInput
           value={settings.page.columns}

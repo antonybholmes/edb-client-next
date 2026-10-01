@@ -7,16 +7,12 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom-provider'
 
-import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useSVG } from '@/providers/svg-provider'
-import { useHistory } from '../../history/history-provider/history-provider'
 import { BoxPlotPropsPanel } from './box-plot-props-panel'
 import { BoxPlotSvg } from './boxplot-plot-svg'
 import { useBoxPlotContext } from './boxplot-provider'
@@ -25,24 +21,11 @@ export const VOLCANO_X = 'Log2 fold change'
 export const VOLCANO_Y = '-log10 p-value'
 
 export function BoxPlotPanel() {
-  //const { plotsState, plotsDispatch } = useContext(PlotsContext)
-  const { updatePlot } = useHistory()
-
   const { plot } = useBoxPlotContext()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 
   const { autoSave, saveAs } = useSVG()
-
-  const { setZoom } = useZoom({
-    onChange: (z) => {
-      updatePlot(
-        produce(plot, (draft) => {
-          draft.props.page.scale = z.zoom
-        })
-      )
-    },
-  })
 
   const [showSideBar, setShowSideBar] = useState(true)
 
@@ -67,10 +50,6 @@ export function BoxPlotPanel() {
       removeMessage(message.id)
     }
   }, [messages])
-
-  useUpdateEffect(() => {
-    setZoom(plot.props.page.scale)
-  }, [plot.props.page.scale])
 
   return (
     <>

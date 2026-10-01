@@ -2,9 +2,10 @@ import { cn } from '@/lib/shadcn-utils'
 import { BUTTON_XS_H_CLS } from '@/theme'
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 
+import { TruncateSpan } from '@/components/truncate-span'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
-import { type ComponentProps } from 'react'
+import { ReactNode, useMemo, type ComponentProps } from 'react'
 import {
   BASE_FLAT_BUTTON_CLS,
   DROPDOWN_MENU_ICON_CONTAINER_CLS,
@@ -279,26 +280,51 @@ interface ISelectListProps
   extends ComponentProps<typeof Select>, VariantProps<typeof triggerVariants> {
   title?: string
   className?: string
+  format?: (value: any) => string
 }
 
 export function SelectList({
+  value,
   variant,
   w = 'md',
   multiple = false,
   title,
+  items,
+  format = (value: any) => value,
   className = '',
   children,
   ...props
 }: ISelectListProps) {
+  const itemMap: Record<string, ReactNode> = useMemo(() => {
+    if (!items) {
+      return {}
+    }
+
+    if (Array.isArray(items) && items.length > 0) {
+      return Object.fromEntries(items.map((item) => [item.value, item.label]))
+    }
+
+    return items
+  }, [items])
+
+  const displayValue = useMemo(() => {
+    const key = value.toString()
+    return itemMap[key] ?? format(value)
+  }, [itemMap, value, format])
+
   return (
-    <Select multiple={multiple} {...props}>
+    <Select value={value} multiple={multiple} items={items} {...props}>
       <SelectTrigger
         w={w}
         variant={variant}
         className={className}
         title={title}
       >
-        <SelectValue />
+        <SelectValue
+          render={() => (
+            <TruncateSpan className="h-6">{displayValue}</TruncateSpan>
+          )}
+        />
       </SelectTrigger>
       <SelectContent>{children}</SelectContent>
     </Select>

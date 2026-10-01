@@ -1,6 +1,8 @@
+import { IDim } from '@/interfaces/dim'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { useSVG } from '@/providers/svg-provider'
-import { useCallback, useId } from 'react'
+import { useZoom } from '@/providers/zoom-provider'
+import { ComponentProps, useCallback, useId } from 'react'
 
 export const ARIAL_FONT_FAMILY = 'Arial, Helvetica, sans-serif'
 
@@ -32,22 +34,26 @@ export function getFontFamilies(fontFamily: string) {
   return FONT_MAP[fontFamily] ?? fontFamily
 }
 
+export function SvgZoomCanvas({
+  ...props
+}: Omit<ComponentProps<typeof SvgCanvas>, 'scale'>) {
+  const { zoom } = useZoom()
+
+  return (
+    <SvgCanvas
+      scale={zoom}
+
+      {...props}
+    />
+  )
+}
+
 /**
  * Svg component with useful defaults set and a view box to match the width and height
  * @param param0
  * @returns
  */
-export function SvgBase({
-  width = 100,
-  height = 100,
-  scale = 1,
-  style,
-  ...props
-}: Omit<ISVGProps, 'width' | 'height' | 'ref'> & {
-  width?: number
-  height?: number
-  scale?: number
-}) {
+export function SvgCanvas({ ...props }: ComponentProps<typeof SvgBase>) {
   const id = useId()
   const { registerSVG } = useSVG()
 
@@ -61,13 +67,30 @@ export function SvgBase({
   )
 
   return (
-    <svg
+    <SvgBase
       ref={setSVG}
+
+      {...props}
+    />
+  )
+}
+
+export function SvgBase({
+  size = { w: 100, h: 100 },
+  scale = 1,
+  style,
+  ...props
+}: Omit<ISVGProps, 'width' | 'height'> & {
+  size?: IDim
+  scale?: number
+}) {
+  return (
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox={`0 0 ${width} ${height}`}
-      width={typeof width === 'number' ? width * scale : width}
-      height={typeof height === 'number' ? height * scale : height}
+      viewBox={`0 0 ${size.w} ${size.h}`}
+      width={typeof size.w === 'number' ? size.w * scale : size.w}
+      height={typeof size.h === 'number' ? size.h * scale : size.h}
       style={{ ...style, fontFamily: ARIAL_FONT_FAMILY }}
       fontFamily={ARIAL_FONT_FAMILY}
       {...props}

@@ -11,10 +11,11 @@ interface IToolbarColButtonProps extends ComponentProps<typeof Button> {
   //largeIcon?: React.ReactNode
 }
 
-const TOOLBAR_COL_BUTTON_CLS = `group-data-[ribbon=single]:w-toolbar-button 
+//group-data-[ribbon=single]:w-toolbar-button
+const TOOLBAR_COL_BUTTON_CLS = `
   group-data-[ribbon=single]:h-toolbar-button
   group-data-[ribbon=classic]:flex-col 
-  group-data-[ribbon=classic]:gap-y-2 
+  group-data-[ribbon=classic]:gap-y-1.5
   group-data-[ribbon=classic]:w-large-toolbar-button-width 
   group-data-[ribbon=classic]:h-large-toolbar-button-height`
 
@@ -33,7 +34,7 @@ export function ToolbarColButton({
       //variant="flat"
       rounded="theme"
       size="none"
-      pad="none"
+      //pad="none"
       className={cn(TOOLBAR_COL_BUTTON_CLS, className)}
       // ripple={ripple}
       {...props}
@@ -58,12 +59,15 @@ export function ToolbarColSmallButton({
       rounded="theme"
       size="none"
       pad="none"
-      className="group-data-[ribbon=single]:w-toolbar-button h-toolbar-button group-data-[ribbon=classic]:w-auto group-data-[ribbon=classic]:pl-1 group-data-[ribbon=classic]:pr-2"
+      className={cn(
+        TOOLBAR_COL_BUTTON_CLS,
+        'group-data-[ribbon=single]:aspect-square group-data-[ribbon=single]:w-toolbar-button',
+        className
+      )}
       // ripple={ripple}
       {...props}
     >
-      {icon && icon}
-      {ribbon === 'classic' && children}
+      {ribbon === 'single' && icon ? icon : children}
     </Button>
   )
 }

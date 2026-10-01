@@ -5,7 +5,7 @@ import { cellStr } from '@/lib/dataframe/cell'
 
 import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axes/svg-axis'
 
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import {
   DEFAULT_STROKE_PROPS,
   type IStrokeProps,
@@ -351,13 +351,13 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
                 opacity={displayOptions.dots.opacity}
                 key={xi}
 
-                onMouseEnter={() =>
+                onPointerEnter={() =>
                   handleVariantEnter(xi, {
                     x: x1 + MARGIN.left + TOOLTIP_OFFSET,
                     y: y1 + MARGIN.top + TOOLTIP_OFFSET,
                   })
                 }
-                onMouseLeave={hideTooltip}
+                onPointerLeave={hideTooltip}
               />
             )
           })}
@@ -632,13 +632,12 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   // }, [dataFile, search])
 
   return (
-    <SvgBase
-      width={width}
-      height={height}
-      scale={settings.scale}
+    <SvgZoomCanvas
+      size={{ w: width, h: height }}
+
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {svg}
-    </SvgBase>
+    </SvgZoomCanvas>
   )
 }

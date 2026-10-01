@@ -49,7 +49,7 @@ export function GseaDisplayPropsPanel() {
   // }
 
   return (
-    <PropsPanel className="pr-1 gap-y-4">
+    <PropsPanel className="gap-y-4">
       <SideBarHeader className="justify-end">
         {/* <LinkButton
             onClick={() => reset()}

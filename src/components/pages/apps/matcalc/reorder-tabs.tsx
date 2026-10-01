@@ -135,8 +135,8 @@ function SheetItem({
         })}
         variant="base"
 
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
+        onPointerEnter={() => setHover(true)}
+        onPointerLeave={() => setHover(false)}
       >
         <SmallDragHandle
           index={index}

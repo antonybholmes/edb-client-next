@@ -1,4 +1,4 @@
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { useVennSettings } from '../venn-settings-store'
 import { useVenn } from '../venn-store'
@@ -7,7 +7,7 @@ import { SVGOneWayVenn } from './svg-one-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
 import { SVGTwoWayVenn } from './svg-two-way-venn'
 
-export function SvgVenn({ scale }: { scale: number }) {
+export function SvgVenn() {
   const { vennListsInUse } = useVenn()
   const { settings } = useVennSettings()
 
@@ -17,13 +17,13 @@ export function SvgVenn({ scale }: { scale: number }) {
     settings.w + settings.page.margin.top + settings.page.margin.bottom
 
   return (
-    <SvgBase scale={scale} width={width} height={height}>
+    <SvgZoomCanvas size={{ w: width, h: height }}>
       <SvgMargin margin={settings.page.margin}>
         {vennListsInUse.length < 2 && <SVGOneWayVenn />}
         {vennListsInUse.length === 2 && <SVGTwoWayVenn />}
         {vennListsInUse.length === 3 && <SVGThreeWayVenn />}
         {vennListsInUse.length > 3 && <SVGFourWayVenn />}
       </SvgMargin>
-    </SvgBase>
+    </SvgZoomCanvas>
   )
 }

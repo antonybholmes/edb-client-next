@@ -1,9 +1,10 @@
 import { config } from '@/config'
+import { useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:network:user-data:v2`
+const SETTINGS_KEY = `${config.appId}:app:network:user-data:v8`
 
 interface IUserDataGroups {
   colors: Record<string, string>
@@ -11,6 +12,7 @@ interface IUserDataGroups {
 
 interface IUserDataLabels {
   ids: string[]
+  mode: 'partial' | 'exact'
 }
 
 export interface IUserDataSettings {
@@ -22,7 +24,7 @@ const DEFAULT_SETTINGS: IUserDataSettings = {
   groups: {
     colors: {},
   },
-  labels: { ids: [] },
+  labels: { ids: [], mode: 'partial' },
 }
 
 export interface IUserDataStore extends IUserDataSettings {
@@ -62,6 +64,7 @@ export const useNetworkSettingsStore = create<IUserDataStore>()(
 export function useUserData(): {
   settings: IUserDataStore
   updateSettings: (settings: IUserDataSettings) => void
+  userLabelSet: Set<string>
 } {
   const settings = useNetworkSettingsStore((state) => state)
 
@@ -69,8 +72,19 @@ export function useUserData(): {
     (state) => state.updateSettings
   )
 
+  const userLabelSet = useMemo(
+    () =>
+      new Set(
+        settings.labels.ids
+          .filter((x) => x.length > 0)
+          .map((x) => x.toLowerCase())
+      ),
+    [settings.labels.ids]
+  )
+
   return {
     settings,
     updateSettings,
+    userLabelSet,
   }
 }

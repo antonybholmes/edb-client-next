@@ -127,7 +127,7 @@ export function GroupIndicatorToggle({
     <GroupToggle
       ref={ref}
 
-      onMouseEnter={(e) => {
+      onPointerEnter={(e) => {
         if (!isSelected) {
           return
         }
@@ -138,7 +138,7 @@ export function GroupIndicatorToggle({
         })
       }}
 
-      onMouseLeave={(e) => {
+      onPointerLeave={(e) => {
         if (!isSelected) {
           return
         }

@@ -28,7 +28,7 @@ export function FilesPropsPanel() {
 
   return (
     <>
-      <PropsPanel className="pr-2">
+      <PropsPanel>
         <VScrollPanel>
           <DragDropProvider
             //onDragStart={event => setActiveId(event.active.id as string)}

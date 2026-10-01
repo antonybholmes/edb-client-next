@@ -1,0 +1,10 @@
+{
+  "name": "Oncoplot",
+  "description": "Create oncoplots.",
+  "color": "#ff99cc",
+  "version": "30.2.4",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-09-30T22:54:39.397Z",
+  "hash": "610625969e7b963ad2363fb922da65e8c218815390d3efa50ace888b2d162264",
+  "build": 1156
+}

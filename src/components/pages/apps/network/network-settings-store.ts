@@ -7,7 +7,7 @@ import {
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { IDim } from '@/interfaces/dim'
-import { COLOR_BLACK, COLOR_LIGHTGRAY } from '@/lib/color/color'
+import { COLOR_BLACK, COLOR_GRAY } from '@/lib/color/color'
 import { ICmap } from '@/lib/color/colormap'
 import { useCallback } from 'react'
 
@@ -15,11 +15,13 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v8`
+const SETTINGS_KEY = `${config.appId}:app:network:v10`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
-type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
+export type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
+
+export type NodeViewMode = 'normal' | 'translucent' | 'hidden'
 
 export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Center', value: 'center' },
@@ -57,7 +59,7 @@ export interface INetworkSettings {
   plot: {
     size: IDim
     margin: IMarginProps
-    scaleToFit: boolean
+    autoFit: boolean
     scale: number
     border: IStrokeProps
     nodes: {
@@ -79,27 +81,72 @@ export interface INetworkSettings {
           on: boolean
           default: string
         }
-        position: 'left' | 'center' | 'right' | 'below' | 'above'
+        position: LabelPosition
         offset: number
         //type: LabelType
       }
-      keepWithinBounds: boolean
+      view: {
+        /**
+         * The default view mode for the node.
+         */
+        mode: NodeViewMode
+        /**
+         * If the node is labelled, it can have a different view mode.
+         */
+        labelled: {
+          on: boolean
+          /**
+           * The view mode for the node when it is labelled.
+           */
+          mode: NodeViewMode
+        }
+        translucent: {
+          opacity: number
+        }
+      }
+      clamp: boolean
+      clip: boolean
     }
 
     edges: {
       scale: number
+      /**
+       * The default way edges are displayed.
+       */
+      mode: NodeViewMode
+      /**
+       * If either node is labelled, edge can be styled differently.
+       */
+      labelled: {
+        /**
+         * If on, will draw edges between labelled nodes.
+         */
+        on: boolean
+        /**
+         * The view mode for the edge when either connected node is labelled.
+         */
+        mode: NodeViewMode
+      }
+      minWidth: number
       line: IStrokeProps
+      highlight: boolean
     }
     legend: {
       dot: {
         radius: number
       }
-      // sizes: {
-      //   ticks: number[]
-      // }
+      sizes: {
+        ticks: number
+      }
       edges: {
         size: number
-        //ticks: number[]
+        ticks: number
+      }
+    }
+    crosshair: {
+      show: boolean
+      search: {
+        radius: number
       }
     }
   }
@@ -115,14 +162,14 @@ const DEFAULT_SETTINGS: INetworkSettings = {
   plot: {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
-    scaleToFit: true,
+    autoFit: true,
     scale: 1,
     border: { ...DEFAULT_STROKE_PROPS, show: false },
     nodes: {
       //scale: 0.1,
       radius: 25,
       scale: {
-        mode: 'linear',
+        mode: 'area',
       },
       color: {
         mode: 'group',
@@ -138,23 +185,47 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         offset: 5,
         //type: 'label',
       },
-      keepWithinBounds: true,
+      view: {
+        mode: 'normal',
+        labelled: {
+          on: true,
+          mode: 'normal',
+        },
+        translucent: {
+          opacity: 0.1,
+        },
+      },
+      clamp: false,
+      clip: false,
     },
 
     edges: {
       scale: 1,
-      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_LIGHTGRAY },
+      mode: 'normal',
+      labelled: {
+        on: true,
+        mode: 'normal',
+      },
+      minWidth: 1,
+      highlight: true,
+      line: { ...DEFAULT_STROKE_PROPS, value: COLOR_GRAY, opacity: 0.5 },
     },
     legend: {
       dot: {
         radius: 8,
       },
-      // sizes: {
-      //   ticks: [100, 200, 300, 400],
-      // },
+      sizes: {
+        ticks: 4,
+      },
       edges: {
         size: 15,
-        //ticks: [0.2, 0.4, 0.6, 0.8, 1],
+        ticks: 5,
+      },
+    },
+    crosshair: {
+      show: true,
+      search: {
+        radius: 20,
       },
     },
   },

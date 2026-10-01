@@ -135,10 +135,7 @@ export const APP_ACCENT_MENU_CLS = cn(
 export const DROPDOWN_MENU_ICON_CONTAINER_CLS =
   'w-7 aspect-square flex flex-row items-center shrink-0 grow-0 justify-center'
 
-const LINK_CLS = cn(
-  FOCUS_RING_CLS,
-  'text-app-theme underline-offset-4 hover:underline'
-)
+const LINK_CLS = cn(FOCUS_RING_CLS, 'text-app-theme hover:underline')
 
 const RED_LINK_CLS = cn(
   FOCUS_RING_CLS,
@@ -191,7 +188,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       none: '',
       theme: 'rounded-theme',
       xs: 'rounded-xs',
-      sm: 'rounded-xs',
+      sm: 'rounded-sm',
       md: 'rounded-md',
       lg: 'rounded-lg',
       xl: 'rounded-xl',
@@ -320,9 +317,9 @@ export function Button({
   disabled = false,
   'aria-label': ariaLabel,
   tooltipSide = 'bottom',
-  onMouseUp,
-  onMouseDown,
-  onMouseLeave,
+  onPointerUp,
+  onPointerDown,
+  onPointerLeave,
   title,
   ref,
   className,
@@ -370,40 +367,27 @@ export function Button({
     // )
   }, [clickProps.x, clickProps.y])
 
-  function _onMouseUp(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerUp(e: React.PointerEvent<HTMLButtonElement>) {
     //setClickProps({ x: -1, y: -1 })
 
-    onMouseUp?.(e)
+    onPointerUp?.(e)
   }
 
-  function _onMouseDown(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerDown(e: React.PointerEvent<HTMLButtonElement>) {
     if (ripple) {
       setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     }
 
-    onMouseDown?.(e)
+    onPointerDown?.(e)
   }
 
-  function _onMouseLeave(e: React.MouseEvent<HTMLButtonElement>) {
+  function _onPointerLeave(e: React.PointerEvent<HTMLButtonElement>) {
     //setClickProps({ x: -1, y: -1 })
-    onMouseLeave?.(e)
+    onPointerLeave?.(e)
   }
 
   return (
     <ButtonPrimitive
-      // className={buttonVariants({
-      //   variant,
-      //   size,
-      //   rounded,
-      //   ring,
-      //   font,
-      //   pad,
-      //   gap,
-      //   justify,
-      //   items,
-      //   animation,
-      //   className: cn("relative", className),
-      // })}
       className={buttonVariants({
         variant,
         size,
@@ -423,9 +407,9 @@ export function Button({
       data-checked={present(checked)}
       data-state={open ? 'open' : 'closed'}
       disabled={disabled}
-      onMouseDown={_onMouseDown}
-      onMouseUp={_onMouseUp}
-      onMouseLeave={_onMouseLeave}
+      onPointerDown={_onPointerDown}
+      onPointerUp={_onPointerUp}
+      onPointerLeave={_onPointerLeave}
       title={title}
       aria-label={ariaLabel}
       {...props}

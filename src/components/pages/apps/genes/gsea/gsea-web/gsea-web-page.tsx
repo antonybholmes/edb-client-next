@@ -45,13 +45,10 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { BoolSearchQuery } from '@/lib/search'
-import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
-import { produce } from 'immer'
 
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
-import { useGseaSettings } from './gsea-settings-store'
 import { useGsea } from './gsea-web-store'
 
 import { ClientLayout } from '@/app/client-layout'
@@ -73,7 +70,6 @@ const LI_CLS =
 
 export function GseaWebPage() {
   const { settings: edbSettings } = useEdbSettings()
-  const { settings, updateSettings } = useGseaSettings()
 
   const [showSideBar, setShowSideBar] = useState(true)
   const { setAppInfo } = useAppInfo()
@@ -93,17 +89,6 @@ export function GseaWebPage() {
   const [searchResults, setSearchResults] = useState<IGseaTableResult[]>([])
 
   const [toolbarTab, setToolbarTab] = useState('Home')
-
-  useZoom({
-    onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.page.scale = zoom
-        })
-      )
-    },
-  })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)

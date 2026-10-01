@@ -1,5 +1,6 @@
 import { cn } from '@/lib/shadcn-utils'
 import {
+  BUTTON_XS_H_CLS,
   CENTERED_ROW_CLS,
   FOCUS_INSET_RING_CLS,
   ICON_BUTTON_CLS,
@@ -10,7 +11,7 @@ import { type ComponentProps } from 'react'
 
 const TOGGLE_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'disabled:pointer-events-none disabled:opacity-50 trans-color overflow-hidden truncate data-pressed:font-medium'
+  'disabled:pointer-events-none disabled:opacity-50 trans-color overflow-hidden truncate'
 )
 
 export const toggleVariants = cva(TOGGLE_CLS, {
@@ -18,7 +19,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     variant: {
       default: cn(
         CENTERED_ROW_CLS,
-        'hover:bg-muted/50 data-pressed:bg-muted/50 '
+        'hover:bg-muted/50 data-pressed:bg-muted/70'
       ),
       outline:
         'border-2 border-transparent text-xs data-pressed:bg-app-theme/5 data-pressed:border-app-theme/50 hover:border-app-theme/25 rounded-theme items-center justify-center flex gap-2 aspect-square',
@@ -30,8 +31,8 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       ios: '',
     },
     size: {
-      xs: 'h-6',
-      sm: 'h-7',
+      xs: BUTTON_XS_H_CLS,
+      sm: 'h-7.5',
       md: 'h-button-md',
       lg: 'h-9',
       toolbar: 'h-toolbar-button',
@@ -55,7 +56,9 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     },
     pad: {
       none: '',
+      sm: 'px-1',
       md: 'px-2',
+      lg: 'px-3',
     },
   },
   defaultVariants: {
@@ -77,11 +80,17 @@ export function Toggle({
   rounded,
   pad,
   aspect,
+  title,
+  'aria-label': ariaLabel,
   className,
   children,
   ...props
 }: ComponentProps<typeof TogglePrimitive> &
   VariantProps<typeof toggleVariants>) {
+  if (!ariaLabel) {
+    ariaLabel = title
+  }
+
   return (
     <TogglePrimitive
       pressed={pressed}
@@ -95,6 +104,8 @@ export function Toggle({
         aspect,
         className,
       })}
+      title={title}
+      aria-label={ariaLabel}
       {...props}
     >
       {children}

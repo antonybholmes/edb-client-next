@@ -344,6 +344,8 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
   const { open: openDialog } = useDialogs()
   const { addCustomColor } = useEdbSettings()
 
+  console.log('cp', cp)
+
   return (
     <DropdownMenuItem
       onClick={() => {
@@ -353,6 +355,7 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
             cp,
 
             callback: (color) => {
+              console.log('color', color)
               addCustomColor(color.color, color.opacity ?? 1)
               cp.onColorChange?.({
                 ...color,

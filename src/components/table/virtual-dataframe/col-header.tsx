@@ -1,4 +1,4 @@
- import {
+import {
   useExtScrollRefsContext,
   useExtScrollStateContext,
 } from '@/components/ext-scroll-card/ext-scroll-provider'
@@ -54,7 +54,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
 
   const { selection, update: updateSelection } = useSelectionRange()
 
-  //const [selectionMouseDown, setSelectionMouseDown] = useState(false)
+  //const [selectionPointerDown, setSelectionPointerDown] = useState(false)
   const [resizenMouseDown, setResizeMouseDown] = useState(-1)
 
   function handleResizeMouseDown(
@@ -64,7 +64,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
     startPos.current = { x: event.clientX, y: -1 }
     startWidth.current = getColWidth(col)
 
-    function onMouseMove(moveEvent: MouseEvent) {
+    function onPointerMove(moveEvent: MouseEvent) {
       const newWidth = Math.max(
         startWidth.current + (moveEvent.clientX - startPos.current.x),
         MIN_CELL_WIDTH
@@ -73,12 +73,12 @@ export function ColHeader({ col }: { col: VirtualItem }) {
       setColWidth(col, newWidth)
     }
 
-    function onMouseUp() {
+    function onPointerUp() {
       setResizeMouseDown(-1)
       document.body.style.cursor = 'default'
       // Remove the event listeners when mouse is released
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onPointerMove)
+      document.removeEventListener('mouseup', onPointerUp)
     }
 
     setResizeMouseDown(col)
@@ -86,12 +86,12 @@ export function ColHeader({ col }: { col: VirtualItem }) {
     document.body.style.cursor = 'col-resize'
 
     // Add event listeners for mousemove and mouseup
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onPointerMove)
+    document.addEventListener('mouseup', onPointerUp)
   }
 
   function handleHeaderMouseDown(index: number) {
-    function onMouseMove(moveEvent: MouseEvent) {
+    function onPointerMove(moveEvent: MouseEvent) {
       const newX =
         moveEvent.clientX -
         (tableDataRef.current?.getBoundingClientRect().x ?? 0)
@@ -126,16 +126,16 @@ export function ColHeader({ col }: { col: VirtualItem }) {
       cols: { start: index, end: index },
     })
 
-    function onMouseUp() {
+    function onPointerUp() {
       //document.body.style.cursor = 'default'
       // Remove the event listeners when mouse is released
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onPointerMove)
+      document.removeEventListener('mouseup', onPointerUp)
     }
 
     // Add event listeners for mousemove and mouseup
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onPointerMove)
+    document.addEventListener('mouseup', onPointerUp)
   }
 
   // if there is a selection and no cols, it means
@@ -163,7 +163,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
 
         transform: `translate3d(${col.start - scrollOffset.left}px, 0, 0)`,
       }}
-      onMouseDown={() => handleHeaderMouseDown(col.index)}
+      onPointerDown={() => handleHeaderMouseDown(col.index)}
     >
       {rangeMap((metaDataCol) => {
         const v = df.colVars.get(col.index, metaDataCol)
@@ -184,7 +184,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
 
       <VCenterRow
         className={RESIZE_CLS}
-        onMouseDown={(e) => {
+        onPointerDown={(e) => {
           // don't want parent thinking we are changing selection
           e.stopPropagation()
           e.preventDefault()

@@ -34,7 +34,7 @@ import { Button } from '../shadcn/ui/themed/v2/button'
 import { VScrollPanel } from '../v-scroll-panel'
 
 import { present } from '@/lib/dom-utils'
-import { APP_ICON_CLS, AppIcon } from './app-icon'
+import { APP_ICON_CLS, AppIcon } from '../icons/app-icon'
 import type { IHeaderLinksProps } from './header-menu'
 
 export const SIDE_OVERLAY_CLS = cn(
@@ -66,8 +66,8 @@ export function ModuleButtonLink({
   return (
     <BaseLink
       className={cn(BASE_MUTED_THEME_CLS, className)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       {...props}
     >
       <span className={MODULE_BG_CLS} data-hover={present(hover)} />

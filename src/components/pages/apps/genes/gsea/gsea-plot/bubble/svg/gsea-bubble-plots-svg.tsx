@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
 
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
@@ -10,8 +10,6 @@ import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { IPos } from '@/interfaces/pos'
 import { ILim } from '@/lib/math/math'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
-import { useSVG } from '@/providers/svg-provider'
-import { useZoom } from '@/providers/zoom-provider'
 import { IDisplayAxis } from '../../../../../matcalc/apps/volcano/volcano-plot-svg'
 import { IGseaBubble } from '../../gsea-store'
 import { IBubblePoint, useGseaBubbleContext } from '../gsea-bubble-provider'
@@ -40,10 +38,8 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
 
 export function GseaBubblePlotsContent() {
   const { plots, points, xlims } = useGseaBubbleContext()
-  const { ref: svgRef } = useSVG()
 
   const { settings } = useGseaBubbleSettings()
-  const { zoom } = useZoom()
 
   // const { showTooltip, hideTooltip } = useTooltip()
 
@@ -170,11 +166,7 @@ export function GseaBubblePlotsContent() {
     return null
   }
 
-  return (
-    <SvgBase width={width} height={height} scale={zoom}>
-      {svg}
-    </SvgBase>
-  )
+  return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }
 
 export function GseaBubblePlotsSvg() {

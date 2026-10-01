@@ -1,3 +1,4 @@
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { COLOR_BLACK, COLOR_WHITE, isLightColor } from '@/lib/color/color'
 import { DEG_TO_RAD, type ILim } from '@/lib/math/math'
 import type { TextAnchor } from '@/types/types'
@@ -97,17 +98,16 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
         style={{ cursor: 'pointer' }}
       >
         {bbox && (
-          <rect
+          <SvgMouseRect
             x={bbox.x}
             y={bbox.y}
             width={bbox.width}
             height={bbox.height}
-            fill="transparent"
-            //fillOpacity={0.2} // Invisible but captures mouse events
-            onMouseOver={() => {
+
+            onPointerOver={() => {
               setHighlight(true)
             }}
-            onMouseOut={() => {
+            onPointerOut={() => {
               setHighlight(false)
             }}
           />

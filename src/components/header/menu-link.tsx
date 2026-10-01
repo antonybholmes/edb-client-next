@@ -27,11 +27,11 @@ export function MenuLink({ link, selected, onClick }: IProps) {
   const [hover, setHover] = useState(false)
   const [hasFocus, setHasFocus] = useState(false)
 
-  function onMouseEnter() {
+  function onPointerEnter() {
     setHover(true)
   }
 
-  function onMouseLeave() {
+  function onPointerLeave() {
     setHover(false)
   }
 
@@ -47,8 +47,8 @@ export function MenuLink({ link, selected, onClick }: IProps) {
     <BaseLink
       href={link.url}
       aria-label={`Visit ${link.name}`}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       onFocus={onFocus}
       onBlur={onBlur}
       onClick={onClick}

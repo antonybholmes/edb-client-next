@@ -119,7 +119,7 @@ export interface ISingleCellSettings extends IScatterDisplayOptions {
   }
 
   padding: number
-  scale: number
+  //scale: number
 
   autoAxes: boolean
   genesets: IGeneSet[]
@@ -233,7 +233,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
   },
   genome: { ...GENOMES[0]! },
   search: '',
-  scale: 1,
+  //scale: 1,
 }
 
 export interface ISingleCellSettingsStore extends ISingleCellSettings {

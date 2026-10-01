@@ -247,7 +247,7 @@
 //   //const gridCanvasRef = useRef<HTMLCanvasElement >()
 //   const tableCanvasRef = useRef<HTMLCanvasElement>(null)
 
-//   const scrollOnEdgesMouseDown = useScrollOnEdges(scrollRef, { onMouseUp })
+//   const scrollOnEdgesMouseDown = useScrollOnEdges(scrollRef, { onPointerUp })
 
 //   const [dfProps, setDFProps] = useState<IDFProps>({
 //     dim: NO_SHAPE,
@@ -340,7 +340,7 @@
 
 //   useResizeObserver<HTMLDivElement>(scrollRef, resizeCallBack)
 
-//   useMouseUpListener(onMouseUp)
+//   useMouseUpListener(onPointerUp)
 
 //   /**
 //    * Draw the index (left column) background.
@@ -1206,7 +1206,7 @@
 //   function onHeaderMouseMove(e: MouseEvent) {
 //     // if within table area, send scroll events elsewhere
 //     if (e.target === scrollRef.current) {
-//       onMouseMove(e)
+//       onPointerMove(e)
 //       return
 //     }
 
@@ -1309,7 +1309,7 @@
 //     setEditCell(NO_SELECTION)
 
 //     if (e.target === scrollRef.current) {
-//       onMouseDown(e)
+//       onPointerDown(e)
 //       return
 //     }
 
@@ -1459,7 +1459,7 @@
 //     return { row: row, col: col }
 //   }
 
-//   function onMouseDown(e: MouseEvent) {
+//   function onPointerDown(e: MouseEvent) {
 //     const d = scrollRef.current
 
 //     if (!d) {
@@ -1498,7 +1498,7 @@
 //     //e.stopPropagation()
 //   }
 
-//   function onMouseUp() {
+//   function onPointerUp() {
 //     //setIsMouseDown(false)
 //     isMouseDown.current = ''
 //     //setVScroll(0)
@@ -1525,7 +1525,7 @@
 //   //   }
 //   // }
 
-//   function onMouseMove(e: MouseEvent) {
+//   function onPointerMove(e: MouseEvent) {
 //     hoverCol.current = -1 //setHoverCol(-1)
 
 //     // when mouse over main table, change cursor
@@ -1930,9 +1930,9 @@
 //         <BaseRow className=" grow">
 //           <BaseCol
 //             onKeyDown={onKeyDown}
-//             onMouseDown={onHeaderMouseDown}
-//             onMouseMove={onHeaderMouseMove}
-//             onMouseUp={onMouseUp}
+//             onPointerDown={onHeaderMouseDown}
+//             onPointerMove={onHeaderMouseMove}
+//             onPointerUp={onPointerUp}
 //             //onWheel={onHeaderWheel}
 //             ref={ref}
 //             className={cn(
@@ -1949,15 +1949,15 @@
 //               id="dataframe-scroll"
 //               ref={scrollRef}
 //               className="relative z-50 grow overflow-scroll scrollbar-hide"
-//               //onMouseMove={onMouseMove}
+//               //onPointerMove={onPointerMove}
 //               onClick={onClick}
 //               onScroll={() =>
 //                 onScroll(scrollRef, scrollRef, vScrollRef, hScrollRef)
 //               }
 //               //{...events}
 
-//               //onMouseUp={scrollOnEdgesMouseUp}
-//               //onMouseMove={scrollOnEdgesMouseMove}
+//               //onPointerUp={scrollOnEdgesMouseUp}
+//               //onPointerMove={scrollOnEdgesMouseMove}
 //             >
 //               {/* Used to create scroll bars */}
 //               <span
@@ -1987,8 +1987,8 @@
 //                       scale,
 //                     height: dfProps.scaledCellSize[1] + scale,
 //                   }}
-//                   onMouseDown={(e: MouseEvent) => e.preventDefault()}
-//                   onMouseUp={(e: MouseEvent) => e.preventDefault()}
+//                   onPointerDown={(e: MouseEvent) => e.preventDefault()}
+//                   onPointerUp={(e: MouseEvent) => e.preventDefault()}
 //                 >
 //                   <input
 //                     className={cn(
@@ -2000,7 +2000,7 @@
 //                     onChange={onEditChange}
 //                     onFocus={e => e.target.select()}
 //                     onClick={(e: MouseEvent) => e.stopPropagation()}
-//                     onMouseDown={(e: MouseEvent) => e.stopPropagation()}
+//                     onPointerDown={(e: MouseEvent) => e.stopPropagation()}
 //                     readOnly={false}
 //                     ref={editRef}
 //                   />

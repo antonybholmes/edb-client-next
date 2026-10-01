@@ -47,14 +47,14 @@ export function Checkbox({
       checked={checked}
       data-hover={present(hover)}
       onCheckedChange={onCheckedChange}
-      className={cn(CHECK_CLS, className)}
+      className={CHECK_CLS}
       disabled={disabled}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
       id={id}
       {...props}
     >
-      <CheckboxPrimitive.Indicator className="data-unchecked:hidden">
+      <CheckboxPrimitive.Indicator>
         <Check className="stroke-white" size={14} strokeWidth={3} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
@@ -62,8 +62,8 @@ export function Checkbox({
 
   if (children) {
     ret = (
-      <Field.Root>
-        <Field.Label className="flex flex-row items-center gap-x-1.5">
+      <Field.Root className={className}>
+        <Field.Label className="flex flex-row items-center gap-x-1">
           {ret}
           {children}
         </Field.Label>

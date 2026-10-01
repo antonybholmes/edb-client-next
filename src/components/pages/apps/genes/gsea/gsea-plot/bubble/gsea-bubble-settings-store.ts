@@ -77,7 +77,7 @@ export interface IGseaBubbleSettings {
   margin: IMarginProps
   plot: { margin: IMarginProps }
   page: {
-    scale: number
+    //scale: number
     grid: {
       cols: number
     }
@@ -143,7 +143,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   margin: { ...MARGIN },
   plot: { margin: { ...PLOT_MARGIN } },
   page: {
-    scale: 1,
+    //scale: 1,
     grid: {
       cols: 2,
     },

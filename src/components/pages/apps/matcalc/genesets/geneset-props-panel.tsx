@@ -97,8 +97,8 @@ function GenesetItem({
             'hover:text-destructive focus-visible:text-destructive trans-color'
           )}
           title={`Delete ${geneset.name} gene set`}
-          //onMouseEnter={() => setDelHover(true)}
-          //onMouseLeave={() => setDelHover(false)}
+          //onPointerEnter={() => setDelHover(true)}
+          //onPointerLeave={() => setDelHover(false)}
         >
           <TrashIcon className={DRAG_ICON_ANIM_CLS} />
         </button>
@@ -407,8 +407,8 @@ export function GenesetPropsPanel() {
                           fill: group.color,
                         }}
                         title={`Delete ${group.name} group`}
-                        //onMouseEnter={() => setDelHover(true)}
-                        //onMouseLeave={() => setDelHover(false)}
+                        //onPointerEnter={() => setDelHover(true)}
+                        //onPointerLeave={() => setDelHover(false)}
                       >
                         <TrashIcon fill="" />
                       </button>

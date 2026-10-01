@@ -3,7 +3,7 @@
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { MYACCOUNT_PATH, TEXT_MY_ACCOUNT } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { AppIcon } from '@/components/icons/app-icon'
+import { AppIcon } from '@/components/icons/edb-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ArrowRight } from 'lucide-react'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import {
   getRedirectStateFromURI,
@@ -32,7 +33,6 @@ import { isSafeRelativeUrl, useEdbSession } from '@/components/edb/auth/session'
 import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
-import { ClientLayout } from '@/app/client-layout'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'

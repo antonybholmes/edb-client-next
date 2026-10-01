@@ -28,7 +28,6 @@ import {
 import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
@@ -90,16 +89,6 @@ export function BioDrawPage() {
   //const [showFileMenu, setShowFileMenu] = useState(false)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
-  const { zoom } = useZoom({
-    onChange: (z) => {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.zoom = z.zoom
-        })
-      )
-    },
-  })
 
   const { settings, updateSettings } = useMotifSettings()
 

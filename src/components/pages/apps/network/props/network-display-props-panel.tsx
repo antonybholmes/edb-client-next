@@ -1,16 +1,13 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Button } from '@/components/shadcn/ui/themed/v2/button'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { RunningIndicator } from '@/components/toolbar/running-indicator'
-import { TEXT_APPLY } from '@/consts'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
+import { useRunning } from '@/components/toolbar/running-indicator'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
@@ -19,17 +16,20 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
-import { useState } from 'react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import { POSITIONS, useNetworkSettings } from '../network-settings-store'
-import { useNetwork, useNetworkSim } from '../network-store'
+import { MarginPopover } from '../margin-popover'
+import { useNetworkSettings } from '../network-settings-store'
+import { useNetwork } from '../network-store'
+import { useNetworkSim } from '../network-store-sim'
+import { FieldSelectList } from './field-select-list'
+import { PositionDropdown } from './position-dropdown'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
-  const { network, nodes, setNodeLabelField } = useNetwork()
+  const { network } = useNetwork()
   const { run } = useNetworkSim()
-  const [message, setMessage] = useState('')
+  const { setMessage, clearMessage } = useRunning('network')
 
   return (
     <PropsPanel>
@@ -38,6 +38,7 @@ export function NetworkDisplayPropsPanel() {
           'layout',
           'plot',
           'nodes',
+          'labels',
           'edges',
           'statistics',
           'bubbles',
@@ -45,7 +46,22 @@ export function NetworkDisplayPropsPanel() {
         ]}
       >
         <AccordionItem value="layout">
-          <AccordionTrigger>Layout</AccordionTrigger>
+          <AccordionTrigger
+          // rightChildren={
+          //   <button
+          //     onClick={() => {
+          //       setMessage('Creating graph...')
+          //       run(network, () => clearMessage())
+          //     }}
+          //     aria-label="Recalculate network layout"
+          //     title="Recalculate network layout"
+          //   >
+          //     <RotateCw size={16} />
+          //   </button>
+          // }
+          >
+            Layout
+          </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Distance">
               <NumSlider
@@ -88,76 +104,48 @@ export function NetworkDisplayPropsPanel() {
                 )
               }
             /> */}
-
-            <VCenterRow className="gap-x-2">
-              <Button
-                variant="app-theme"
-                onClick={() => {
-                  setMessage('Running...')
-                  run(network, () => setMessage(''))
-                }}
-              >
-                {TEXT_APPLY}
-              </Button>
-              <RunningIndicator message={message} />
-            </VCenterRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Size">
-              <DoubleNumericalInput
+              <span className="w-3 text-center">W</span>
+              <NumericalInput
+                w="xxs"
                 h="sm"
-                w="xs"
-                v1={settings.plot.size.w}
+                value={settings.plot.size.w}
                 placeholder="Width"
                 limit={[1, 5000]}
                 dp={0}
-                onNumChanged1={(v) => {
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.size.w = v
                     })
                   )
                 }}
-                v2={settings.plot.size.h}
-                onNumChanged2={(v) => {
+              />
+              <span className="w-3 text-center">H</span>
+              <NumericalInput
+                w="xxs"
+                h="sm"
+                value={settings.plot.size.h}
+                placeholder="Height"
+                limit={[1, 5000]}
+                dp={0}
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.plot.size.h = v
+                      draft.plot.size.w = v
                     })
                   )
                 }}
               />
             </PropRow>
-
-            <CheckPropRow
-              title="Auto Scale"
-              checked={settings.plot.scaleToFit}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.scaleToFit = checked
-                  })
-                )
-              }
-            >
-              <NumSlider
-                min={0}
-                max={2}
-                step={0.01}
-                dp={2}
-                value={settings.plot.scale}
-                onNumChanged={(value) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.scale = value
-                    })
-                  )
-                }
-              />
-            </CheckPropRow>
+            <PropRow title="Margin">
+              <MarginPopover />
+            </PropRow>
 
             <PropRow title="Border">
               <StrokeButton
@@ -176,24 +164,121 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
+            {/* <PropRow title="Bounds">
+              <Toggle
+                //variant="app-theme"
+                pad="md"
+                size="sm"
+                //rounded="full"
+                pressed={settings.plot.autoFit}
+                onPressedChange={(pressed) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.autoFit = pressed
+                    })
+                  )
+                }
+              >
+                Auto Fit
+              </Toggle>
+
+              <Toggle
+                //variant="app-theme"
+                pad="md"
+                size="sm"
+                //rounded="full"
+                pressed={settings.plot.nodes.clamp}
+                onPressedChange={(pressed) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clamp = pressed
+                    })
+                  )
+                }
+              >
+                Clamp
+              </Toggle> */}
+
+            {/* <Toggle
+                pad="md"
+                size="sm"
+                pressed={settings.plot.nodes.clip}
+                onPressedChange={(pressed) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clip = pressed
+                    })
+                  )
+                }
+              >
+                Clip
+              </Toggle> */}
+
+            {/* <Checkbox
+                title="Clamp"
+                tooltip="Nodes will be clamped within the plot boundaries."
+                checked={settings.plot.nodes.clamp}
+                onCheckedChange={(checked) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clamp = checked
+                    })
+                  )
+                }
+              >
+                Clamp
+              </Checkbox> */}
+
+            {/* <Checkbox
+                title="Clip"
+                tooltip="Clip nodes at the plot boundaries."
+                checked={settings.plot.nodes.clip}
+                onCheckedChange={(checked) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.clip = checked
+                    })
+                  )
+                }
+              >
+                Clip
+              </Checkbox> */}
+
+            {/* <CheckPropRow
+              title="Auto Fit"
+              checked={settings.plot.autoFit}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.autoFit = checked
+                  })
+                )
+              }
+            /> */}
+
+            <PropRow title="Scale">
+              <NumSlider
+                min={0}
+                max={5}
+                step={0.1}
+                dp={1}
+
+                value={settings.plot.scale}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.scale = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="nodes">
           <AccordionTrigger>Nodes</AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Keep Within Bounds"
-              tooltip="Force nodes to stay within the plot bounds. Nodes at the edges will be constrained."
-              checked={settings.plot.nodes.keepWithinBounds}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.keepWithinBounds = checked
-                  })
-                )
-              }
-            />
             <PropRow title="Radius">
               <NumSlider
                 min={0}
@@ -239,16 +324,32 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow> */}
             <PropRow title="Opacity">
-              <NumSlider
+              <PercentSlider
                 min={0}
                 max={1}
                 step={0.01}
-                dp={2}
+                //dp={2}
                 value={settings.plot.nodes.color.opacity}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.color.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Translucent Opacity">
+              <PercentSlider
+                min={0}
+                max={1}
+                step={0.01}
+                //dp={2}
+                value={settings.plot.nodes.view.translucent.opacity}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.view.translucent.opacity = value
                     })
                   )
                 }
@@ -267,10 +368,13 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Line">
-              <Checkbox
-                checked={settings.plot.nodes.line.autoColor}
-                onCheckedChange={(checked) =>
+            <PropRow title="Outline">
+              <Toggle
+                size="sm"
+                pad="md"
+                //rounded="full"
+                pressed={settings.plot.nodes.line.autoColor}
+                onPressedChange={(checked) =>
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.plot.nodes.line.autoColor = checked
@@ -279,7 +383,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               >
                 Auto Color
-              </Checkbox>
+              </Toggle>
               <StrokeButton
                 colors={[
                   {
@@ -296,12 +400,19 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            <PropRow title="Labels">
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="labels">
+          <AccordionTrigger>Labels</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Position">
+              <PositionDropdown />
               <FontPopover
                 fonts={[
                   {
                     title: 'Font',
                     textProps: settings.plot.nodes.labels.text,
+                    showEnabled: false,
                     update: (textProps) =>
                       updateSettings(
                         produce(settings, (draft) => {
@@ -330,7 +441,7 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
 
-              <SelectList
+              {/* <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}
                 onValueChange={(value) => {
@@ -349,31 +460,10 @@ export function NetworkDisplayPropsPanel() {
                     {position.label}
                   </SelectItem>
                 ))}
-              </SelectList>
+              </SelectList> */}
             </PropRow>
-
-            <PropRow title="Display Text">
-              <SelectList
-                //items={LABEL_TYPES}
-                value={nodes.label.field}
-                onValueChange={(value) => {
-                  setNodeLabelField(value as string)
-                }}
-                w="md"
-                variant="toolbar"
-              >
-                {nodes.label.fields.map((field) => (
-                  <SelectItem key={field} value={field}>
-                    {field}
-                  </SelectItem>
-                ))}
-                <SelectItem key="id" value="id">
-                  id
-                </SelectItem>
-                <SelectItem key="id2" value="id2">
-                  id2
-                </SelectItem>
-              </SelectList>
+            <PropRow title="Field">
+              <FieldSelectList />
             </PropRow>
           </AccordionContent>
         </AccordionItem>
@@ -403,18 +493,31 @@ export function NetworkDisplayPropsPanel() {
                 colors={[
                   {
                     color: settings.plot.edges.line.value,
+                    opacity: settings.plot.edges.line.opacity,
                     show: settings.plot.edges.line.show,
-                    onColorChange: ({ color, show }) =>
+                    onColorChange: ({ color, opacity, show }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.plot.edges.line.value = color
                           draft.plot.edges.line.show = show
+                          draft.plot.edges.line.opacity = opacity
                         })
                       ),
                   },
                 ]}
               />
             </PropRow>
+            <CheckPropRow
+              title="Highlight"
+              checked={settings.plot.edges.highlight}
+              onCheckedChange={(value) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.edges.highlight = value
+                  })
+                )
+              }
+            />
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

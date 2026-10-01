@@ -1,22 +1,21 @@
 'use client'
 
 import { clamp } from '@/lib/math/clamp'
+import { ILimit } from '@/lib/math/limit'
 import { numSort } from '@/lib/math/math'
-import { findNearest } from '@/lib/search'
+import { round } from '@/lib/math/round'
 
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useShallow } from 'zustand/react/shallow'
 
-export const DEFAULT_ZOOM_LEVELS = [0.25, 0.5, 0.75, 1, 2, 3, 4]
+export const DEFAULT_ZOOM_LEVELS = [0.1, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]
 
 interface IZoomContext {
-  index: number
-  //index: number
+  zoom: number
   levels: number[]
   setZoom: (zoom: number) => void
-  setZoomLevel: (index: number) => void
   setZoomLevels: (levels: number[]) => void
   increaseZoom: () => void
   decreaseZoom: () => void
@@ -25,31 +24,30 @@ interface IZoomContext {
 
 interface IZoomChannel {
   id: string
-  //zoom: number
-  index: number
+  zoom: number
   levels: number[]
 }
 
-const STORAGE_KEY = 'zoom-channels:v10'
+const STORAGE_KEY = 'zoom-channels:v14'
 
 export const DEFAULT_ZOOM_CHANNEL_NAME = 'default'
 
 export const DEFAULT_ZOOM_CHANNEL: IZoomChannel = {
   id: DEFAULT_ZOOM_CHANNEL_NAME,
-  //zoom: 1,
-  index: 3, // corresponds to 1x zoom in DEFAULT_ZOOM_SCALES
+  zoom: 1,
+
   levels: DEFAULT_ZOOM_LEVELS,
 }
 
 export interface IZoomStore {
   zooms: Record<string, IZoomChannel>
   //initializeZoom: (id: string, defaults?: IZoomChannel) => void
-  setZoom: (id: string, value: number) => { index: number; zoom: number }
-  setZoomLevel: (id: string, index: number) => void
+  setZoom: (id: string, value: number) => { zoom: number }
+
   setZoomLevels: (id: string, levels: number[]) => void
   resetZoom: (id: string) => void
-  increaseZoom: (id: string) => { index: number; zoom: number }
-  decreaseZoom: (id: string) => { index: number; zoom: number }
+  increaseZoom: (id: string) => { zoom: number }
+  decreaseZoom: (id: string) => { zoom: number }
   resetAll: () => void
 }
 
@@ -63,11 +61,16 @@ export const useZoomStore = create<IZoomStore>()(
       setZoom: (id, value) => {
         const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
 
-        const index = findZoomLevel(zc, value)
+        //const index = zc.levels.findIndex((level) => level === zoom)
 
-        if (index === zc.index) {
-          return { zoom: zc.levels[zc.index], index: zc.index }
-        }
+        //if (index === zc.index) {
+        //  return { zoom: zc.levels[zc.index], index: zc.index }
+        //}
+
+        const zoom = clamp(value, {
+          min: zc.levels[0],
+          max: zc.levels.at(-1),
+        })
 
         set((state) => {
           return {
@@ -75,43 +78,21 @@ export const useZoomStore = create<IZoomStore>()(
               ...state.zooms,
               [id]: {
                 ...zc,
-                index,
+                zoom,
               },
             },
           }
         })
 
-        return { zoom: zc.levels[index], index }
+        return { zoom }
       },
-      setZoomLevel: (id, index) => {
-        const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
 
-        index = clamp(index, { min: 0, max: zc.levels.length - 1 })
-
-        if (index === zc.index) {
-          return { zoom: zc.levels[zc.index], index: zc.index }
-        }
-
-        set((state) => {
-          return {
-            zooms: {
-              ...state.zooms,
-              [id]: {
-                ...zc,
-                index,
-              },
-            },
-          }
-        })
-
-        return { zoom: zc.levels[index], index }
-      },
       setZoomLevels: (id, levels) => {
         const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
 
         levels = numSort(levels)
 
-        const index = clamp(zc.index, { min: 0, max: levels.length - 1 })
+        const index = clamp(zc.zoom, { min: levels[0], max: levels.at(-1) })
 
         set((state) => {
           return {
@@ -120,7 +101,7 @@ export const useZoomStore = create<IZoomStore>()(
               [id]: {
                 ...zc,
                 index,
-                levels: numSort(levels),
+                levels,
               },
             },
           }
@@ -129,41 +110,39 @@ export const useZoomStore = create<IZoomStore>()(
       increaseZoom: (id) => {
         const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
 
-        const index = Math.min(zc.index + 1, zc.levels.length - 1)
-
-        if (index === zc.index) {
-          return { index: zc.index, zoom: zc.levels[zc.index] }
-        }
+        const zoom = clamp(round(zc.zoom + 0.1, 1), {
+          min: zc.levels[0],
+          max: zc.levels.at(-1),
+        })
 
         set((state) => {
           return {
             zooms: {
               ...state.zooms,
-              [id]: { ...zc, index },
+              [id]: { ...zc, zoom },
             },
           }
         })
 
-        return { index, zoom: zc.levels[index] }
+        return { zoom }
       },
       decreaseZoom: (id) => {
         const zc = get().zooms[id] ?? { ...DEFAULT_ZOOM_CHANNEL, id }
-        const index = Math.max(zc.index - 1, 0)
-
-        if (index === zc.index) {
-          return { index: zc.index, zoom: zc.levels[zc.index] }
-        }
+        const zoom = clamp(round(zc.zoom - 0.1, 1), {
+          min: zc.levels[0],
+          max: zc.levels.at(-1),
+        })
 
         set((state) => {
           return {
             zooms: {
               ...state.zooms,
-              [id]: { ...zc, index },
+              [id]: { ...zc, zoom },
             },
           }
         })
 
-        return { index, zoom: zc.levels[index] }
+        return { zoom }
       },
       resetZoom: (channel) => {
         set((state) => {
@@ -197,7 +176,9 @@ interface IZoomOpts {
  * @param channel The zoom channel to access.
  * @returns An object containing the current zoom value and a function to set the zoom value for the specified channel.
  */
-export function useZoom(opts: IZoomOpts = {}): IZoomContext & { zoom: number } {
+export function useZoom(
+  opts: IZoomOpts = {}
+): IZoomContext & { zoom: number; limit: ILimit } {
   const {
     channel = DEFAULT_ZOOM_CHANNEL_NAME,
     defaultZoom = DEFAULT_ZOOM_CHANNEL,
@@ -213,13 +194,11 @@ export function useZoom(opts: IZoomOpts = {}): IZoomContext & { zoom: number } {
   )
 
   const setZoom = useZoomStore((state) => state.setZoom)
-  const setZoomLevel = useZoomStore((state) => state.setZoomLevel)
+
   const setZoomLevels = useZoomStore((state) => state.setZoomLevels)
   const resetZoom = useZoomStore((state) => state.resetZoom)
   const increaseZoom = useZoomStore((state) => state.increaseZoom)
   const decreaseZoom = useZoomStore((state) => state.decreaseZoom)
-
-  const zoom = useMemo(() => z.levels[z.index], [z.index, z.levels])
 
   // useEffect(() => {
   //   initializeZoom(channel, { ...defaultZoom, id: channel })
@@ -230,13 +209,6 @@ export function useZoom(opts: IZoomOpts = {}): IZoomContext & { zoom: number } {
       setZoom(channel, value)
     },
     [channel, setZoom]
-  )
-
-  const setChannelZoomLevel = useCallback(
-    (index: number) => {
-      setZoomLevel(channel, index)
-    },
-    [channel, setZoomLevel]
   )
 
   const setChannelZoomLevels = useCallback(
@@ -261,24 +233,25 @@ export function useZoom(opts: IZoomOpts = {}): IZoomContext & { zoom: number } {
 
   useEffect(() => {
     return useZoomStore.subscribe((state, previousState) => {
-      const nextIndex = state.zooms[channel]?.index
-      const previousIndex = previousState.zooms[channel]?.index
+      const nextZoom = state.zooms[channel]?.zoom
+      const previousZoom = previousState.zooms[channel]?.zoom
 
-      if (nextIndex !== previousIndex && nextIndex !== undefined) {
-        const zoom = state.zooms[channel]?.levels[nextIndex]
-        onChange?.({ zoom })
+      if (nextZoom !== previousZoom && nextZoom !== undefined) {
+        onChange?.({ zoom: nextZoom })
       }
     })
   }, [channel, onChange])
 
   return {
-    zoom,
-    index: z.index,
+    zoom: z.zoom,
     levels: z.levels,
+    limit: {
+      min: z.levels[0],
+      max: z.levels[z.levels.length - 1],
+    },
     increaseZoom: incrementChannelZoom,
     decreaseZoom: decrementChannelZoom,
     setZoom: setChannelZoom,
-    setZoomLevel: setChannelZoomLevel,
     setZoomLevels: setChannelZoomLevels,
     resetZoom: resetChannelZoom,
   }
@@ -344,11 +317,11 @@ export function useZoom(opts: IZoomOpts = {}): IZoomContext & { zoom: number } {
 //   return levels.length - 1
 // }
 
-function findZoomLevel(zc: IZoomChannel, zoom: number) {
-  const { index } = findNearest(zoom, zc.levels)
+// function findZoomLevel(zc: IZoomChannel, zoom: number) {
+//   const { index } = findNearest(zoom, zc.levels)
 
-  return index
-}
+//   return index
+// }
 
 /**
  * Find the next zoom level above the current zoom level and return its index and value.
@@ -357,13 +330,13 @@ function findZoomLevel(zc: IZoomChannel, zoom: number) {
  * @param zc
  * @returns
  */
-function increaseZoom(zc: IZoomChannel): { index: number; zoom: number } {
-  // find the next zoom level below the current zoom then add
-  // one to get the index of the next zoom level above the current zoom
-  const newIndex = Math.min(zc.index + 1, zc.levels.length - 1)
+// function increaseZoom(zc: IZoomChannel): { index: number; zoom: number } {
+//   // find the next zoom level below the current zoom then add
+//   // one to get the index of the next zoom level above the current zoom
+//   const newIndex = Math.min(zc.index + 1, zc.levels.length - 1)
 
-  return { index: newIndex, zoom: zc.levels[newIndex]! }
-}
+//   return { index: newIndex, zoom: zc.levels[newIndex]! }
+// }
 
 /**
  * Find the next zoom level below the current zoom level and return its index and value.
@@ -372,10 +345,10 @@ function increaseZoom(zc: IZoomChannel): { index: number; zoom: number } {
  * @param zc
  * @returns
  */
-function decreaseZoom(zc: IZoomChannel): { index: number; zoom: number } {
-  // find the next zoom level below the current zoom then subtract one to get
-  // the index of the next zoom level below the current zoom
-  const newIndex = Math.max(zc.index - 1, 0)
+// function decreaseZoom(zc: IZoomChannel): { index: number; zoom: number } {
+//   // find the next zoom level below the current zoom then subtract one to get
+//   // the index of the next zoom level below the current zoom
+//   const newIndex = Math.max(zc.index - 1, 0)
 
-  return { index: newIndex, zoom: zc.levels[newIndex]! }
-}
+//   return { index: newIndex, zoom: zc.levels[newIndex]! }
+// }

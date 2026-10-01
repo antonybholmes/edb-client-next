@@ -1,17 +1,58 @@
 import { BaseCol } from '@/components/layout/base-col'
+import { IChildrenProps } from '@/interfaces/children-props'
 import { IPos } from '@/interfaces/pos'
 import { cn } from '@/lib/shadcn-utils'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { create } from 'zustand'
-import { samePosition, TOOLTIP_CLEAR_MS } from './tooltip-provider'
+import { TOOLTIP_CLEAR_MS } from './tooltip-provider'
 
-const CROSSHAIR_CLS =
-  'absolute z-(--z-modal) bg-foreground/50 pointer-events-none w-0.5 h-0.5 top-0 left-0'
+const CROSS_LINE_CLS =
+  'absolute z-(--z-modal) pointer-events-none w-px h-px top-0 left-0 opacity-30'
+
+const TOOLTIP_CLS =
+  'z-(--z-tooltip) rounded-xl bg-black/50 backdrop-blur-xs p-4 flex flex-col text-xs text-white pointer-events-none'
+
+const CROSSHAIR_CLS = 'absolute pointer-events-none aspect-square top-0 left-0'
+
+const CROSSHAIR_SIZE = 9
+//const CROSS_SIZE = CROSSHAIR_SIZE - 2
+const CROSS_GAP = CROSSHAIR_SIZE
+const CROSS_MID = Math.floor(CROSSHAIR_SIZE / 2)
+//const ANIMATION_DURATION_MS = 0.1
+//const EASE = 'power1.out'
 
 interface ICrosshair {
+  /**
+   * The position of the crosshair relative to the SVG or plotting area.
+   */
   pos: IPos
+
+  /**
+   * The client position of the crosshair, typically the mouse position relative to the viewport.
+   * If this is set, the tooltip will float on the window rather than being in the bounds of the svg.
+   */
+  screenPos?: IPos
+
+  /**
+   * Tooltip content
+   */
   content?: ReactNode
+
+  /**
+   * Whether to show the crosshair lines.
+   */
+  showLines?: boolean
+
+  /**
+   * Offset for the tooltip relative to the crosshair position.
+   */
   offset?: IPos
+
+  /**
+   * The color of the crosshair lines.
+   */
+  color?: string
 }
 
 const DEFAULT_OFFSET: IPos = { x: 10, y: 10 }
@@ -19,7 +60,16 @@ const DEFAULT_OFFSET: IPos = { x: 10, y: 10 }
 interface ICrosshairStore {
   crosshair: ICrosshair | null
   showCrosshair: (crosshair: ICrosshair) => void
+  /**
+   * Hides the crosshair after a short delay which is useful for avoiding flickering.
+   * @returns void
+   */
   hideCrosshair: () => void
+  /**
+   * Cancels the current crosshair display immediately without any delay.
+   * @returns void
+   */
+  cancelCrosshair: () => void
   dispose: () => void
 }
 
@@ -37,50 +87,51 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
     pendingCrosshair = null
   }
 
+  const clearPendingTimeout = () => {
+    if (clearTimeoutId !== null) {
+      clearTimeout(clearTimeoutId)
+      clearTimeoutId = null
+    }
+  }
+
   return {
     crosshair: null,
 
     showCrosshair: (crosshair) => {
-      const { pos, content, offset = DEFAULT_OFFSET } = crosshair
+      const {
+        pos,
+        screenPos: clientPos,
+        content,
+        offset = DEFAULT_OFFSET,
+        color = 'var(--color-foreground)',
+        showLines = true,
+      } = crosshair
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-        clearTimeoutId = null
-      }
+      cancelPendingFrame()
 
-      // if (samePosition(get().crosshair, pos)) {
-      //   cancelPendingFrame()
-      //   return
-      // }
+      clearPendingTimeout()
 
-      if (crosshairFrame !== null && samePosition(pendingCrosshair.pos, pos)) {
-        return
-      }
-
-      pendingCrosshair = { pos, content, offset }
-
-      if (crosshairFrame !== null) {
-        return
+      pendingCrosshair = {
+        pos,
+        screenPos: clientPos,
+        content,
+        offset,
+        color,
+        showLines,
       }
 
       crosshairFrame = requestAnimationFrame(() => {
         crosshairFrame = null
 
-        const nextCrosshair = pendingCrosshair
+        set({ crosshair: pendingCrosshair })
         pendingCrosshair = null
-
-        if (!samePosition(get().crosshair?.pos, pos)) {
-          set({ crosshair: nextCrosshair })
-        }
       })
     },
 
     hideCrosshair: () => {
       cancelPendingFrame()
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-      }
+      clearPendingTimeout()
 
       clearTimeoutId = setTimeout(() => {
         clearTimeoutId = null
@@ -88,13 +139,17 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
       }, TOOLTIP_CLEAR_MS)
     },
 
-    dispose: () => {
+    cancelCrosshair: () => {
       cancelPendingFrame()
 
-      if (clearTimeoutId) {
-        clearTimeout(clearTimeoutId)
-        clearTimeoutId = null
-      }
+      clearPendingTimeout()
+
+      set({ crosshair: null })
+    },
+
+    dispose: () => {
+      cancelPendingFrame()
+      clearPendingTimeout()
 
       set({ crosshair: null })
     },
@@ -104,75 +159,233 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
 export function useCrosshair() {
   const showCrosshair = useCrosshairStore((state) => state.showCrosshair)
   const hideCrosshair = useCrosshairStore((state) => state.hideCrosshair)
+  const cancelCrosshair = useCrosshairStore((state) => state.cancelCrosshair)
 
-  return { showCrosshair, hideCrosshair }
+  return { showCrosshair, hideCrosshair, cancelCrosshair }
 }
 
 // isolates the fast-changing crosshair position so mousemove only
 // re-renders this small overlay, not every GseaPlot in the grid
-export function CrosshairProvider({ children }: { children?: ReactNode }) {
+export function CrosshairProvider({ children }: IChildrenProps) {
   const crosshair = useCrosshairStore((state) => state.crosshair)
   const dispose = useCrosshairStore((state) => state.dispose)
+  const vTopRef = useRef<HTMLSpanElement>(null)
+  const vBottomRef = useRef<HTMLSpanElement>(null)
+  const hLeftRef = useRef<HTMLSpanElement>(null)
+  const hRightRef = useRef<HTMLSpanElement>(null)
+  const crossRef = useRef<HTMLDivElement>(null)
+
+  //const tlRef = useRef<gsap.core.Timeline | null>(null)
 
   useEffect(() => {
     return dispose
   }, [dispose])
 
+  const { tooltip, useFixed } = useMemo(() => {
+    if (!crosshair) {
+      return { tooltip: null, usePortal: false }
+    }
+
+    const useFixed = !!crosshair.screenPos
+    const pos = useFixed ? crosshair.screenPos : crosshair.pos
+    const tooltip = crosshair.content ? (
+      <BaseCol
+        className={cn(useFixed ? 'fixed' : 'absolute', TOOLTIP_CLS)}
+        style={{
+          left: pos.x + crosshair.offset.x,
+          top: pos.y + crosshair.offset.y,
+        }}
+      >
+        {crosshair.content}
+      </BaseCol>
+    ) : null
+
+    return { tooltip, useFixed }
+  }, [crosshair])
+
+  // const { tooltipPos, useFixed } = useMemo(() => {
+  //   if (!crosshair) {
+  //     return { tooltipPos: null, useFixed: false }
+  //   }
+
+  //   const useFixed = !!crosshair.clientPos
+  //   const pos = useFixed ? crosshair.clientPos : crosshair.pos
+
+  //   const tooltipPos: IPos = {
+  //     x: pos.x + crosshair.offset.x,
+  //     y: pos.y + crosshair.offset.y,
+  //   }
+  //   return { tooltipPos, useFixed }
+  // }, [crosshair])
+
+  useEffect(() => {
+    if (!crossRef.current || !crosshair?.pos) {
+      return
+    }
+
+    // if (!tlRef.current) {
+    //   tlRef.current = gsap.timeline()
+    // }
+
+    // const tl = tlRef.current
+
+    // tl.to(
+    //   vTopRef.current,
+    //   {
+    //     x: crosshair.pos.x,
+    //     height: crosshair.pos.y - CROSS_GAP,
+    //     duration: ANIMATION_DURATION_MS,
+    //     ease: EASE,
+    //   },
+    //   0
+    // )
+    //   .to(
+    //     vBottomRef.current,
+    //     {
+    //       x: crosshair.pos.x,
+    //       y: crosshair.pos.y + CROSS_GAP,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+    //   .to(
+    //     hLeftRef.current,
+    //     {
+    //       y: crosshair.pos.y,
+    //       width: crosshair.pos.x - CROSS_GAP,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+    //   .to(
+    //     hRightRef.current,
+    //     {
+    //       y: crosshair.pos.y,
+    //       x: crosshair.pos.x + CROSS_GAP,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+    //   .to(
+    //     crossRef.current,
+    //     {
+    //       x: crosshair.pos.x - CROSS_MID,
+    //       y: crosshair.pos.y - CROSS_MID,
+    //       duration: ANIMATION_DURATION_MS,
+    //       ease: EASE,
+    //     },
+    //     0
+    //   )
+
+    vTopRef.current.style.transform = `translate(${crosshair.pos.x}px, 0px)`
+    vTopRef.current.style.height = `${crosshair.pos.y - CROSS_GAP}px`
+    vTopRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
+
+    vBottomRef.current.style.transform = `translate(${crosshair.pos.x}px, ${crosshair.pos.y + CROSS_GAP + 1}px)`
+    vBottomRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
+
+    hLeftRef.current.style.transform = `translate(0px, ${crosshair.pos.y}px)`
+    hLeftRef.current.style.width = `${crosshair.pos.x - CROSS_GAP}px`
+    hLeftRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
+
+    hRightRef.current.style.transform = `translate(${crosshair.pos.x + CROSS_GAP + 1}px, ${crosshair.pos.y}px)`
+    hRightRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
+
+    crossRef.current.style.transform = `translate(${crosshair.pos.x - CROSS_MID}px, ${crosshair.pos.y - CROSS_MID}px)`
+  }, [crosshair?.pos])
+
   return (
     <>
       {children && children}
 
-      {crosshair?.pos && (
-        <>
-          <span
-            className={CROSSHAIR_CLS}
-            style={{ left: crosshair.pos.x - 1, height: crosshair.pos.y - 4 }}
-          />
+      <span
+        ref={vTopRef}
+        className={CROSS_LINE_CLS}
+        style={{
+          backgroundColor: crosshair?.color,
+          visibility: crosshair ? 'visible' : 'hidden',
+        }}
+      />
 
-          {/* Center dot */}
-          <span
-            className={CROSSHAIR_CLS}
-            style={{ left: crosshair.pos.x - 1, top: crosshair.pos.y - 1 }}
-          />
+      <span
+        ref={vBottomRef}
+        className={CROSS_LINE_CLS}
+        style={{
+          height: '100%',
+          backgroundColor: crosshair?.color,
+          visibility: crosshair ? 'visible' : 'hidden',
+        }}
+      />
 
-          <span
-            className={CROSSHAIR_CLS}
-            style={{ top: crosshair.pos.y - 1, width: crosshair.pos.x - 4 }}
-          />
+      <span
+        ref={hLeftRef}
+        className={CROSS_LINE_CLS}
+        style={{
+          backgroundColor: crosshair?.color,
+          visibility: crosshair ? 'visible' : 'hidden',
+        }}
+      />
+      <span
+        ref={hRightRef}
+        className={CROSS_LINE_CLS}
+        style={{
+          width: '100%',
+          backgroundColor: crosshair?.color,
+          visibility: crosshair ? 'visible' : 'hidden',
+        }}
+      />
 
-          <span
-            className={CROSSHAIR_CLS}
+      <div
+        ref={crossRef}
+        id="crosshair"
+        className={CROSSHAIR_CLS}
+        style={{
+          width: CROSSHAIR_SIZE,
+          height: CROSSHAIR_SIZE,
+          visibility: crosshair ? 'visible' : 'hidden',
+        }}
+      >
+        {/* <span
+          className="w-full h-full rounded-full absolute border"
+          style={{ borderColor: crosshair?.color }}
+        /> */}
+
+        <span
+          className="absolute w-full h-px bg-current"
+          style={{ top: CROSS_MID, backgroundColor: crosshair?.color }}
+        />
+        <span
+          className="absolute h-full w-px bg-current"
+          style={{ left: CROSS_MID, backgroundColor: crosshair?.color }}
+        />
+      </div>
+
+      {tooltip && (useFixed ? createPortal(tooltip, document.body) : tooltip)}
+
+      {/* <BaseCol
+            className={cn(
+              useFixed ? 'fixed' : 'absolute',
+              crosshair.content ? 'visible' : 'invisible',
+              TOOLTIP_CLS
+            )}
             style={{
-              top: crosshair.pos.y - 1,
-              left: crosshair.pos.x + 4,
-              width: '100%',
+              left: tooltipPos?.x ?? 0,
+              top: tooltipPos?.y ?? 0,
             }}
-          />
-
-          <span
-            className={CROSSHAIR_CLS}
-            style={{
-              left: crosshair.pos.x - 1,
-              top: crosshair.pos.y + 4,
-              height: '100%',
-            }}
-          />
-
-          {crosshair?.content && (
-            <BaseCol
-              className={cn(
-                'absolute z-(--z-tooltip) rounded-lg bg-black/50 backdrop-blur-sm px-4 py-3 text-xs text-white pointer-events-none'
-              )}
-              style={{
-                left: crosshair.pos.x + crosshair.offset.x,
-                top: crosshair.pos.y + crosshair.offset.y,
-              }}
-            >
-              {crosshair.content}
-            </BaseCol>
-          )}
-        </>
-      )}
+          >
+            {crosshair.content}
+          </BaseCol> */}
     </>
   )
 }

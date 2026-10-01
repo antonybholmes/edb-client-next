@@ -8,7 +8,7 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, type IAxis } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
@@ -93,7 +93,9 @@ const MotifPlot = memo(function MotifPlot({
   // we can determine where to cut off rendering
   const xMax = xax.domain[1] - 1
 
-  const letterWidth = af(1) - af(0)
+  // since start of x can be 0.5, we want full space between two letters
+  // so use the difference between af(2) and af(1) to determine the letter width
+  const letterWidth = af(2) - af(1)
 
   const xScaleFactor = letterWidth / DEFAULT_LETTER_WIDTH
 
@@ -253,10 +255,8 @@ export function MotifsSvg() {
   const yScaleFactor = settings.plot.height / H
 
   const svg = (
-    <SvgBase
-      scale={edbSettings.plots.scale}
-      width={width}
-      height={height}
+    <SvgZoomCanvas
+      size={{ w: width, h: height }}
       shapeRendering={SVG_CRISP_EDGES}
     >
       <SvgMargin
@@ -280,7 +280,7 @@ export function MotifsSvg() {
           )
         })}
       </SvgMargin>
-    </SvgBase>
+    </SvgZoomCanvas>
   )
 
   return svg

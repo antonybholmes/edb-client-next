@@ -157,16 +157,6 @@ function GroupRowItem({
           })
         )
 
-        // if (groupRows.some((gr) => gr.groups.some((g) => g.id === group.id))) {
-        //   // we modified and existing group so clone list, but replace existing
-        //   // group with new group when they have the same id
-
-        //   updateGroup(group)
-        // } else {
-        //   // append new group
-        //   addGroups([group])
-        // }
-
         setOpenGroupDialog(undefined)
       },
     })
@@ -188,16 +178,6 @@ function GroupRowItem({
         />
       )}
 
-      {/* <BaseSortableItem
-        as="li"
-        id={groupRow.id}
-        index={index}
-        group="group-rows"
-        type="group-row"
-        accept="group-row"
-        className={'flex flex-col gap-y-1 p-2 rounded-lg bg-muted/20'}
-        style={{ minWidth: 0 }}
-      > */}
       <li
         id={groupRow.id}
         data-type="group-row"
@@ -209,8 +189,8 @@ function GroupRowItem({
         <VCenterRow
           data-hover={present(hover)}
           className="gap-x-1 px-1 py-2 h-full min-h-8 data-hover:bg-muted/20 rounded-theme"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
+          onPointerEnter={() => setHover(true)}
+          onPointerLeave={() => setHover(false)}
         >
           {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
               The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
@@ -268,10 +248,7 @@ function GroupRowItem({
         </VCenterRow>
 
         {groupRow.groups.length > 0 && (
-          <ul
-            //data-is-dragging={present(isDragging)}
-            className="flex flex-col data-is-dragging:pointer-events-none ml-3 pb-2"
-          >
+          <ul className="flex flex-col data-is-dragging:pointer-events-none ml-3 pb-2">
             {groupRow.groups.map((group, gi) => {
               return (
                 <GroupItem
@@ -352,10 +329,25 @@ function GroupItem({
       <Checkbox
         checked={group.show}
         onCheckedChange={(v) => {
-          console.log('Checkbox changed:', v)
           updateGroup({ ...group, show: v })
         }}
+        style={{ color: group.color }}
       />
+
+      <VCenterCol className="overflow-hidden grow gap-y-1 ">
+        <TruncateSpan
+          className="grow h-5 font-semibold text-xs"
+          style={{ color: group.color }}
+        >
+          {`${group.name} (${cols.length} col${cols.length !== 1 ? 's' : ''})`}
+        </TruncateSpan>
+
+        {cols.length > 0 && (
+          <TruncateSpan className="grow h-5 text-xs opacity-75">
+            {cols.join(', ')}
+          </TruncateSpan>
+        )}
+      </VCenterCol>
 
       <FillButton
         colors={[
@@ -372,23 +364,6 @@ function GroupItem({
 
         title="Set Group Color"
       />
-
-      <VCenterCol className="overflow-hidden grow gap-y-1">
-        <VCenterRow className="gap-x-1 h-4">
-          <TruncateSpan
-            className="grow h-full font-semibold text-xs"
-            style={{ color: group.color }}
-          >
-            {`${group.name} (${cols.length} col${cols.length !== 1 ? 's' : ''})`}
-          </TruncateSpan>
-        </VCenterRow>
-
-        {cols.length > 0 && (
-          <TruncateSpan className="grow h-4 text-xs opacity-75">
-            {cols.join(', ')}
-          </TruncateSpan>
-        )}
-      </VCenterCol>
       <BaseCol
         className={cn(DRAG_HANDLE_APPEAR_CLS, 'gap-x-1 items-center shrink-0')}
       >
@@ -398,7 +373,10 @@ function GroupItem({
           onClick={() => editGroup(groupRow, group)}
         >
           {/* <SettingsIcon style={{ stroke: group.color }} /> */}
-          <Settings2 className={cn('w-4', DRAG_ICON_ANIM_CLS)} />
+          <Settings2
+            className={cn('w-4', DRAG_ICON_ANIM_CLS)}
+            style={{ stroke: group.color }}
+          />
         </button>
       </BaseCol>
     </SortableItem>

@@ -3069,10 +3069,188 @@
         {
           "msg": "Gsea bubble now uses crosshairs and has some bubble animations",
           "date": "2026-09-25T19:33:19.525Z"
+        },
+        {
+          "msg": "Network legend now uses autotickinterval to create a nice legend",
+          "date": "2026-09-25T19:42:34.924Z"
+        },
+        {
+          "msg": "Network has ability to hide nodes",
+          "date": "2026-09-25T22:07:39.106Z"
+        },
+        {
+          "msg": "Network hidden nodes can now be shown as translucent with adjustable opacity",
+          "date": "2026-09-25T22:39:12.949Z"
+        },
+        {
+          "msg": "Network legend has better reflow for larger fonts with variable spacing as font size increases",
+          "date": "2026-09-25T22:57:28.563Z"
+        },
+        {
+          "msg": "App page icons ui overhaul",
+          "date": "2026-09-26T01:43:10.078Z"
+        },
+        {
+          "msg": "Combined nodes and columns into one prop panel in network to reduce tab switching",
+          "date": "2026-09-26T01:55:40.190Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-09-23T21:43:07.131Z"
+  },
+  {
+    "version": "91.2.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Netwok has view toolbar",
+          "date": "2026-09-26T02:45:49.521Z"
+        },
+        {
+          "msg": "Network now allows node labels to be turned on and off in either all label or no label mode so user can easily label a new few nodes or turn off a few if all nodes are shown",
+          "date": "2026-09-26T04:56:05.936Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-26T04:56:26.142Z"
+        },
+        {
+          "msg": "Network centralized most mouse events to reduce need for listeners on every node",
+          "date": "2026-09-26T17:02:02.465Z"
+        },
+        {
+          "msg": "Standardized svg mouse interaction rect",
+          "date": "2026-09-26T17:17:27.898Z"
+        },
+        {
+          "msg": "Network groups now save color preferences",
+          "date": "2026-09-26T18:22:15.883Z"
+        },
+        {
+          "msg": "Reduced size of sidebar props. Switched network to use running system to create running indicators",
+          "date": "2026-09-26T19:46:37.601Z"
+        },
+        {
+          "msg": "Network label positions now in dropdown menu to save UI space",
+          "date": "2026-09-26T20:12:45.997Z"
+        },
+        {
+          "msg": "Fixed selectlist to use truncating span and then made it work with items and a custom formatter",
+          "date": "2026-09-26T23:32:57.066Z"
+        },
+        {
+          "msg": "Crosshair redesigned to look more elegant and move with animation effects",
+          "date": "2026-09-27T03:04:39.464Z"
+        },
+        {
+          "msg": "Updated app info page",
+          "date": "2026-09-27T03:33:23.757Z"
+        },
+        {
+          "msg": "UI tweaks",
+          "date": "2026-09-27T03:50:14.039Z"
+        },
+        {
+          "msg": "Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements",
+          "date": "2026-09-27T18:46:06.857Z"
+        },
+        {
+          "msg": "Create d3 version of network renderer",
+          "date": "2026-09-28T17:19:52.595Z"
+        },
+        {
+          "msg": "network now has smooth animation using d3",
+          "date": "2026-09-28T23:05:06.769Z"
+        },
+        {
+          "msg": "Auto fit now works with d3 network",
+          "date": "2026-09-29T02:53:33.859Z"
+        },
+        {
+          "msg": "Clamping now works",
+          "date": "2026-09-29T02:55:53.493Z"
+        },
+        {
+          "msg": "Network edge highlight, edge opacity varies when nodes are translucent",
+          "date": "2026-09-29T17:50:50.319Z"
+        },
+        {
+          "msg": "Network support for turning of edges of hidden or translucent nodes",
+          "date": "2026-09-29T20:28:27.181Z"
+        },
+        {
+          "msg": "Added margin props to network. Auto fit now uses animation",
+          "date": "2026-09-29T22:19:16.195Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-26T02:45:49.521Z"
+  },
+  {
+    "version": "91.4.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-09-29T22:26:06.366Z"
+        },
+        {
+          "msg": "Added default clipping to axes",
+          "date": "2026-09-29T22:31:41.532Z"
+        },
+        {
+          "msg": "Zoom is now value based and removes the bounding to levels",
+          "date": "2026-09-30T14:39:37.499Z"
+        },
+        {
+          "msg": "Heatmap now uses some d3 rendered cells",
+          "date": "2026-09-30T16:37:18.454Z"
+        },
+        {
+          "msg": "Motifs now calculates letter width correctly",
+          "date": "2026-09-30T17:09:56.342Z"
+        },
+        {
+          "msg": "App reorg with expanded ngs modules",
+          "date": "2026-09-30T17:46:29.508Z"
+        },
+        {
+          "msg": "Redesigning lollipop tooltips",
+          "date": "2026-09-30T18:21:56.545Z"
+        },
+        {
+          "msg": "Lollipop now uses crosshair",
+          "date": "2026-09-30T19:34:09.379Z"
+        },
+        {
+          "msg": "Replace mouse events with pointer events",
+          "date": "2026-09-30T19:36:58.894Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2026-09-30T19:50:13.067Z"
+        },
+        {
+          "msg": "Oncoplot now uses crosshair",
+          "date": "2026-09-30T19:59:43.460Z"
+        },
+        {
+          "msg": "Network can show groups in nodes",
+          "date": "2026-10-01T01:20:09.522Z"
+        },
+        {
+          "msg": "Draggable network",
+          "date": "2026-10-01T03:17:36.336Z"
+        },
+        {
+          "msg": "Network reengineering to reduce re-renders. More props moved to store as there was a subtle bug caused by hooks not sharing info",
+          "date": "2026-10-01T18:17:01.429Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-09-29T22:26:06.366Z"
   }
 ]

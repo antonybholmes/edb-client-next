@@ -2,7 +2,10 @@ import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { RunningIndicator } from '@/components/toolbar/running-indicator'
+import {
+  RunningIndicator,
+  useRunning,
+} from '@/components/toolbar/running-indicator'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -12,7 +15,8 @@ import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
 import { useNetworkSettings } from './network-settings-store'
-import { dataframesToNetwork, useNetwork, useNetworkSim } from './network-store'
+import { dataframesToNetwork, useNetwork } from './network-store'
+import { useNetworkD3Sim } from './network-store-d3-sim'
 import { useUserData } from './network-user-data-store'
 
 const MAX_COLS = 10
@@ -145,8 +149,8 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const { setNetwork } = useNetwork()
   const { settings: userData } = useUserData()
 
-  const { run: runSim } = useNetworkSim()
-  const [message, setMessage] = useState<string | null>(null)
+  const { status, setIdle } = useNetworkD3Sim()
+  const { setMessage, clearMessage } = useRunning('network')
 
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
   const [dfEdge, setDfEdge] = useState<BaseDataFrame | null>(null)
@@ -195,6 +199,14 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
     setStrengthCol(findStrengthCol(dfEdge))
   }, [dfEdge])
 
+  useEffect(() => {
+    if (status === 'finished') {
+      clearMessage()
+      setIdle()
+      close()
+    }
+  }, [status, clearMessage, close])
+
   async function submit() {
     if (
       !dfNode ||
@@ -210,8 +222,6 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       close()
       return
     }
-
-    console.log('dfnode', dfNode.columns)
 
     const { network, groups, nodeDataTypes } = dataframesToNetwork(
       dfNode,
@@ -244,11 +254,14 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       metric2Col
     )
 
-    setMessage('Creating network graph...')
-    runSim(network, () => {
-      setMessage(null)
-      close()
-    })
+    setMessage('Creating graph...')
+
+    // runSim(() => {
+    //   setMessage(null)
+    //   close()
+    // })
+
+    //close()
   }
 
   const colorCols = [
@@ -266,9 +279,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
           close()
         }
       }}
-      leftFooterChildren={
-        <RunningIndicator message={message}></RunningIndicator>
-      }
+      leftFooterChildren={<RunningIndicator id="network"></RunningIndicator>}
     >
       <strong>Nodes</strong>
       <ActionDialogRow title="Label">

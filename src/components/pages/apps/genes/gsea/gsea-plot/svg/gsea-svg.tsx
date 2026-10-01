@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react'
 
-import { SvgBase } from '@/components/plot/svg-base'
+import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
@@ -16,7 +16,6 @@ import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { range } from '@/lib/math/range'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
-import { useZoom } from '@/providers/zoom-provider'
 import { useGseaPlot } from '../gsea-plot-provider'
 import { useGseaSettings } from '../gsea-settings-store'
 import { IGseaTableResult, useGseaData } from '../gsea-store'
@@ -199,7 +198,7 @@ const GseaPlot = memo(function GseaPlot({
  */
 function GseaSvgContent() {
   const { settings } = useGseaSettings()
-  const { zoom } = useZoom()
+
   const { pathways } = useGseaPlot()
 
   // stable across renders so GseaPlot's memo() isn't defeated by
@@ -252,7 +251,10 @@ function GseaSvgContent() {
   }
 
   const rows = Math.ceil(pathways.length / settings.page.columns)
-  const pageSize = [plotSize.w * settings.page.columns, plotSize.h * rows]
+  const pageSize: IDim = {
+    w: plotSize.w * settings.page.columns,
+    h: plotSize.h * rows,
+  }
 
   const svgPlots = useMemo(
     () =>
@@ -278,15 +280,13 @@ function GseaSvgContent() {
   )
 
   return (
-    <SvgBase
-      scale={zoom}
-      width={pageSize[0]!}
-      height={pageSize[1]!}
+    <SvgZoomCanvas
+      size={pageSize}
       //shapeRendering={SVG_CRISP_EDGES}
       //className="absolute"
     >
       {svgPlots}
-    </SvgBase>
+    </SvgZoomCanvas>
   )
 }
 

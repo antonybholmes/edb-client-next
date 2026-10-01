@@ -49,10 +49,13 @@ import { textToLines } from '@/lib/text/lines'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
+import { useNetworkSettings } from './network-settings-store'
 import { useNetwork } from './network-store'
+import { useNetworkD3Sim } from './network-store-d3-sim'
 import { NetworkPropsPanel } from './props/network-props-panel'
-import { NetworkSvg } from './svg/network-svg'
+import { NetworkD3Svg } from './svg/network-d3-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
+import { ViewToolbar } from './toolbars/view-toolbar'
 
 export function NetworkPage() {
   const { setAppInfo } = useAppInfo()
@@ -67,8 +70,10 @@ export function NetworkPage() {
 
   const { autoSave } = useSVG()
 
-  const { network } = useNetwork()
   const { addDFSize } = useFooter()
+  const { settings } = useNetworkSettings()
+  const { network, radiusMap } = useNetwork()
+  const { runSim, updateTree } = useNetworkD3Sim()
 
   useEffect(() => {
     addDFSize()
@@ -100,8 +105,28 @@ export function NetworkPage() {
         id: 'Home',
         component: HomeToolbar,
       },
+
+      {
+        id: 'View',
+        component: ViewToolbar,
+      },
     ])
   }, [setToolbarTabs])
+
+  // effect is here to stop toolbar changing view from triggering re-render
+  useEffect(() => {
+    runSim()
+  }, [
+    network,
+    radiusMap,
+
+    settings.plot.autoFit,
+    settings.plot.margin,
+    settings.layout.chargeStrength,
+    settings.layout.linkDistance,
+    settings.plot.crosshair.search.radius,
+    updateTree,
+  ])
 
   // // sync local query state when the global search query changes
   // useEffect(() => {
@@ -248,7 +273,16 @@ export function NetworkPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <ExtScrollCard>{<NetworkSvg />}</ExtScrollCard>
+              <ExtScrollCard>
+                {/* <RunningIndicator
+                  id="network"
+                  className="w-full p-4"
+                >
+                  <NetworkSvg />
+                </RunningIndicator> */}
+
+                <NetworkD3Svg />
+              </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel

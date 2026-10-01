@@ -1,9 +1,61 @@
 # Changelog
 
+## 91.4.0 (Sep, 2026)
+
+### Changed
+
+- Network updates.
+- Network reengineering to reduce re-renders. More props moved to store as there was a subtle bug caused by hooks not sharing info.
+- Draggable network.
+- Network can show groups in nodes.
+- Oncoplot now uses crosshair.
+- UI fixes.
+- Replace mouse events with pointer events.
+- Lollipop now uses crosshair.
+- Redesigning lollipop tooltips.
+- App reorg with expanded ngs modules.
+- Motifs now calculates letter width correctly.
+- Heatmap now uses some d3 rendered cells.
+- Zoom is now value based and removes the bounding to levels.
+- Added default clipping to axes.
+- Bug fixes and updates.
+
+
+## 91.2.0 (Sep, 2026)
+
+### Changed
+
+- Added margin props to network. Auto fit now uses animation.
+- Network support for turning of edges of hidden or translucent nodes.
+- Network edge highlight, edge opacity varies when nodes are translucent.
+- Clamping now works.
+- Auto fit now works with d3 network.
+- network now has smooth animation using d3.
+- Create d3 version of network renderer.
+- Crosshair more efficient with fewer conditional renders. UI tweaks to reduce space used by network UI elements.
+- UI tweaks.
+- Updated app info page.
+- Crosshair redesigned to look more elegant and move with animation effects.
+- Fixed selectlist to use truncating span and then made it work with items and a custom formatter.
+- Network label positions now in dropdown menu to save UI space.
+- Reduced size of sidebar props. Switched network to use running system to create running indicators.
+- Network groups now save color preferences.
+- Standardized svg mouse interaction rect.
+- Network centralized most mouse events to reduce need for listeners on every node.
+- Bug fixes and updates.
+- Network now allows node labels to be turned on and off in either all label or no label mode so user can easily label a new few nodes or turn off a few if all nodes are shown.
+- Netwok has view toolbar.
+
+
 ## 91.0.0 (Sep, 2026)
 
 ### Changed
 
+- Combined nodes and columns into one prop panel in network to reduce tab switching.
+- App page icons ui overhaul.
+- Network legend has better reflow for larger fonts with variable spacing as font size increases.
+- Network hidden nodes can now be shown as translucent with adjustable opacity.
+- Network has ability to hide nodes.
 - Network legend now uses autotickinterval to create a nice legend.
 - Gsea bubble now uses crosshairs and has some bubble animations.
 - Added test page for experiments that might be put into components.

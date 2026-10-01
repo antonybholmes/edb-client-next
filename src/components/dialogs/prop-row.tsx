@@ -77,7 +77,7 @@ export function PropRow({
   title,
   align,
   gap,
-  contentCls = 'gap-x-1',
+  contentCls = 'gap-x-0.5',
   side = 'right',
   info,
   tooltip,

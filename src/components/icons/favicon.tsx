@@ -7,14 +7,14 @@ import {
 import { cn } from '@/lib/shadcn-utils'
 import { BUTTON_LG_W_CLS } from '@/theme'
 import { VCenterRow } from '../layout/v-center-row'
-import { AppIcon } from './app-icon'
+import { AppIcon } from './edb-icon'
 import { HomeIcon } from './home-icon'
 
 export function FavIcon() {
   return (
     <VCenterRow
-      //onMouseEnter={() => setHover(true)}
-      //onMouseLeave={() => setHover(false)}
+      //onPointerEnter={() => setHover(true)}
+      //onPointerLeave={() => setHover(false)}
       className={cn(
         BUTTON_LG_W_CLS,
         'aspect-square justify-center group relative'

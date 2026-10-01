@@ -1,6 +1,6 @@
 'use client'
 
-import { AppIcon } from '@/components/icons/app-icon'
+import { AppIcon } from '@/components/icons/edb-icon'
 import { CenterCol } from '@/components/layout/center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import type { IChildrenProps } from '@/interfaces/children-props'

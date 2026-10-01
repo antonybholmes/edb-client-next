@@ -21,7 +21,6 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
 } from '@/consts'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
@@ -34,7 +33,6 @@ import {
   ResizablePanelGroup,
   ThinVResizeHandle,
 } from '@/themed/resizable'
-import { produce } from 'immer'
 
 import APP_INFO from './manifest.json'
 
@@ -74,17 +72,6 @@ export function SankeyPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const { open: openDialog } = useDialogs()
-
-  useZoom({
-    onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-  })
 
   const { settings, updateSettings } = useSankeySettings()
 

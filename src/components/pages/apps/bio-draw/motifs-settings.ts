@@ -17,7 +17,7 @@ export interface IMotifSettings {
   plotHeight: number
   letterWidth: number
   mode: Mode
-  zoom: number
+  //zoom: number
   margin: IMarginProps
   baseColors: Record<string, string>
   titleOffset: number
@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   view: 'bits',
   plotHeight: 100,
   letterWidth: LW,
-  zoom: 1,
+  //zoom: 1,
   mode: 'bits',
   gap: 80,
   margin: { top: 100, right: 100, bottom: 100, left: 100 },

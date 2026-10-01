@@ -1,9 +1,5 @@
 import { IClusterGroupRow, type IClusterGroup } from '@/lib/cluster-group'
 
-import { VCenterRow } from '@/layout/v-center-row'
-
-import { VCenterCol } from '@/layout/v-center-col'
-
 import { DragDropProvider } from '@dnd-kit/react'
 
 import {
@@ -25,25 +21,12 @@ import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import { IGroup, useNetwork } from '../network-store'
+import { useUserData } from '../network-user-data-store'
 import { GroupDialog } from './group-dialog'
 
-export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
-hover:opacity-100 trans-opacity hover:bg-muted/50 data-[focus=true]:bg-muted/50`
-
-export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
-  w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
-  group-hover:bg-muted group-data-[focus=true]:bg-muted`
-
-function GroupItem({
-  index,
-
-  group,
-}: {
-  index: number
-
-  group: IGroup
-}) {
+export function GroupItem({ index, group }: { index: number; group: IGroup }) {
   const { setGroups, groups } = useNetwork()
+  const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { openCustom: openCustomDialog } = useDialogs()
 
   return (
@@ -54,7 +37,7 @@ function GroupItem({
 
       type="group"
       accept="group"
-      className="group"
+      className="group h-10"
     >
       <Checkbox
         checked={group.show}
@@ -68,12 +51,19 @@ function GroupItem({
             })
           )
         }}
+        style={{ color: group.color }}
+        title={group.show ? 'Hide group' : 'Show group'}
+        //icon={<Eye size={16} strokeWidth={1.5} />}
       />
+
+      <TruncateSpan className="grow h-6 text-xs" style={{ color: group.color }}>
+        {group.name}
+      </TruncateSpan>
+
       <FillButton
         colors={[
           {
             color: group.color,
-
             allowAlpha: false,
             allowNoColor: false,
             onColorChange: ({ color }) => {
@@ -85,6 +75,17 @@ function GroupItem({
                   }
                 })
               )
+
+              // save colors user likes for groups so it will
+              // default to this color next time the group is created
+              updateUserData(
+                produce(userData, (draft) => {
+                  draft.groups.colors = {
+                    ...draft.groups.colors,
+                    [group.name.toLowerCase()]: color,
+                  }
+                })
+              )
             },
           },
         ]}
@@ -92,26 +93,19 @@ function GroupItem({
         title="Set Group Color"
       />
 
-      <VCenterCol className="overflow-hidden grow gap-y-1">
-        <VCenterRow className="gap-x-1 h-4">
-          <TruncateSpan
-            className="grow h-full font-semibold text-xs"
-            style={{ color: group.color }}
-          >
-            {group.name}
-          </TruncateSpan>
-        </VCenterRow>
-      </VCenterCol>
       <BaseCol
         className={cn(DRAG_HANDLE_APPEAR_CLS, 'gap-x-1 items-center shrink-0')}
       >
         <button
-          title={`Edit ${group.name} group`}
+          title="Edit group"
           //className="text-foreground/50 focus-visible:text-foreground hover:text-foreground trans-color"
           onClick={() => openCustomDialog(GroupDialog, { group })}
         >
           {/* <SettingsIcon style={{ stroke: group.color }} /> */}
-          <Settings2 className={cn('w-4', DRAG_ICON_ANIM_CLS)} />
+          <Settings2
+            className={cn('w-4', DRAG_ICON_ANIM_CLS)}
+            style={{ color: group.color }}
+          />
         </button>
       </BaseCol>
     </SortableItem>

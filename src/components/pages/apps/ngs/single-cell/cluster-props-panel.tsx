@@ -58,8 +58,8 @@ function ClusterItem({
       data-drag={cluster.label === active}
       data-hover={hoverMode}
       className={GROUP_CLS}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
     >
       <Checkbox
         checked={cluster.show}
@@ -124,7 +124,7 @@ export function ClusterPropsPanel() {
   const { clusterInfo } = usePlotGrid()
 
   return (
-    <PropsPanel className="gap-y-2 pr-1">
+    <PropsPanel className="gap-y-2">
       <VCenterRow className="justify-end px-2">
         <LinkButton
           onClick={() => {

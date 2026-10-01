@@ -19,29 +19,45 @@ export function LegendSvg() {
   const { settings } = useNetworkSettings()
   const { groups, nodes, edges } = useNetwork()
 
+  const nodeLabelFontSize = settings.plot.nodes.labels.text.font.fontSize
+
+  //estimate the space needed for node labels based on font size
+  const nodeLabelHeight = nodeLabelFontSize // * 1.2 // approximate line height for labels
+
   const nodeRadiusScale = nodeRadiusFunc(
     settings.plot.nodes.radius,
     settings.plot.nodes.scale.mode
   )
 
-  const groupsHeight =
-    30 + groups.length * (settings.plot.legend.dot.radius * 2 + 5)
+  let blockHeight = Math.max(
+    nodeLabelHeight,
+    settings.plot.legend.dot.radius * 2 + 5
+  )
+
+  const groupsHeight = (groups.length + 2) * blockHeight
 
   let {
     ticks: sizeTicks,
     interval: sizeInterval,
     format: sizeFormat,
-  } = autoTickInterval({
-    min: 0,
-    max: nodes.metricLim1.max,
-  })
+  } = autoTickInterval(
+    {
+      min: 0,
+      max: nodes.metricLim1.max,
+    },
+    settings.plot.legend.sizes.ticks
+  )
 
   if (sizeTicks[0] < sizeInterval) {
     sizeTicks = sizeTicks.slice(1)
   }
 
+  if (sizeTicks.length > settings.plot.legend.sizes.ticks) {
+    sizeTicks = sizeTicks.slice(0, settings.plot.legend.sizes.ticks)
+  }
+
   const sizeHeight =
-    35 +
+    2 * blockHeight +
     2 * sum(sizeTicks.map((t) => nodeRadiusScale(t / nodes.metricLim1.max))) +
     5 * sizeTicks.length
 
@@ -49,16 +65,23 @@ export function LegendSvg() {
     ticks: strengthTicks,
     interval: strengthInterval,
     format: strengthFormat,
-  } = autoTickInterval({
-    min: 0,
-    max: edges.strengthLim.max,
-  })
+  } = autoTickInterval(
+    {
+      min: 0,
+      max: edges.strengthLim.max,
+    },
+    settings.plot.legend.edges.ticks
+  )
 
   if (strengthTicks[0] < strengthInterval) {
     strengthTicks = strengthTicks.slice(1)
   }
 
-  const edgesHeight = 35 + strengthTicks.length * 20
+  if (strengthTicks.length > settings.plot.legend.edges.ticks) {
+    strengthTicks = strengthTicks.slice(0, settings.plot.legend.edges.ticks)
+  }
+
+  const edgesHeight = 2 * blockHeight + strengthTicks.length * blockHeight
 
   return (
     <SvgG
@@ -68,7 +91,7 @@ export function LegendSvg() {
         y: settings.plot.margin.top,
       }}
     >
-      <GroupsSvg />
+      <GroupsSvg blockHeight={blockHeight} />
       <SizesSvg
         pos={{
           x: 0,
@@ -78,6 +101,7 @@ export function LegendSvg() {
         format={sizeFormat}
       />
       <EdgesSvg
+        blockHeight={blockHeight}
         ticks={strengthTicks}
         format={strengthFormat}
         pos={{
@@ -87,13 +111,22 @@ export function LegendSvg() {
       />
 
       {settings.plot.nodes.color.mode === 'auto' && (
-        <Size2Svg pos={{ x: 0, y: groupsHeight + sizeHeight + edgesHeight }} />
+        <Size2Svg
+          pos={{ x: 0, y: groupsHeight + sizeHeight + edgesHeight }}
+          blockHeight={blockHeight}
+        />
       )}
     </SvgG>
   )
 }
 
-export function Size2Svg({ pos }: { pos: IPos }) {
+export function Size2Svg({
+  pos,
+  blockHeight,
+}: {
+  pos: IPos
+  blockHeight: number
+}) {
   const { settings } = useNetworkSettings()
   const { headings, nodes } = useNetwork()
 
@@ -124,13 +157,13 @@ export function Size2Svg({ pos }: { pos: IPos }) {
     <SvgG id="size2-legend" pos={pos}>
       <SvgText
         textAnchor="start"
+        dominantBaseline="auto"
         font={settings.plot.nodes.labels.text}
-
         fontWeight="bold"
       >
         {getSize2Label(headings, settings)}
       </SvgText>
-      <SvgG pos={{ x: 0, y: 15 }}>
+      <SvgG pos={{ x: 0, y: blockHeight }}>
         <SvgVColorBar ax={cax} cmap={cmap} />
       </SvgG>
     </SvgG>
@@ -138,6 +171,7 @@ export function Size2Svg({ pos }: { pos: IPos }) {
 }
 
 export function EdgesSvg({
+  blockHeight,
   pos,
   ticks,
   format,
@@ -145,6 +179,7 @@ export function EdgesSvg({
   pos: IPos
   ticks: number[]
   format: (n: number) => string
+  blockHeight: number
 }) {
   const { settings } = useNetworkSettings()
   const { headings } = useNetwork()
@@ -174,20 +209,20 @@ export function EdgesSvg({
       </SvgG>
     )
 
-    y += 20
+    y += blockHeight
   }
 
   return (
     <SvgG id="edge-legend" pos={pos}>
       <SvgText
         textAnchor="start"
+        dominantBaseline="auto"
         font={settings.plot.nodes.labels.text}
-
         fontWeight="bold"
       >
         {capitalCase(headings.score)}
       </SvgText>
-      <SvgG pos={{ x: 0, y: 20 }}>{elems}</SvgG>
+      <SvgG pos={{ x: 0, y: blockHeight }}>{elems}</SvgG>
     </SvgG>
   )
 }
@@ -250,6 +285,7 @@ export function SizesSvg({
     <SvgG id="size-legend" pos={pos}>
       <SvgText
         textAnchor="start"
+        dominantBaseline="auto"
         font={settings.plot.nodes.labels.text}
         fill={COLOR_BLACK}
         fontWeight="bold"
@@ -261,7 +297,7 @@ export function SizesSvg({
   )
 }
 
-export function GroupsSvg() {
+export function GroupsSvg({ blockHeight }: { blockHeight: number }) {
   const { settings } = useNetworkSettings()
 
   const { groups } = useNetwork()
@@ -270,19 +306,23 @@ export function GroupsSvg() {
     <SvgG id="group-legend">
       <SvgText
         textAnchor="start"
+        dominantBaseline="auto"
         font={settings.plot.nodes.labels.text}
         fill={COLOR_BLACK}
         fontWeight="bold"
       >
         Groups
       </SvgText>
-      <SvgG pos={{ x: settings.plot.legend.dot.radius, y: 10 }} id="groups">
+      <SvgG
+        pos={{ x: settings.plot.legend.dot.radius, y: blockHeight / 2 }}
+        id="groups"
+      >
         {groups.map((group, gi) => (
           <SvgG
             key={group.id}
             pos={{
               x: 0,
-              y: 10 + gi * (settings.plot.legend.dot.radius * 2 + 5),
+              y: 10 + gi * blockHeight,
             }}
           >
             <SvgCircle

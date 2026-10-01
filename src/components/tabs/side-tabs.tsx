@@ -133,7 +133,7 @@ function _SideTabs({
       <TabsList
         className={cn('relative shrink-0 pl-1.5 pr-1', className)}
         ref={tabListRef}
-        onMouseLeave={() => {
+        onPointerLeave={() => {
           setTabPosition(undefined)
         }}
       >
@@ -151,7 +151,7 @@ function _SideTabs({
               ref={(el) => {
                 buttonsRef.current[ti] = el
               }}
-              onMouseEnter={() => {
+              onPointerEnter={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
                     scale: 0.6,
@@ -159,7 +159,7 @@ function _SideTabs({
                 }
                 _scale(selectedTabIndex || 0, isSelected)
               }}
-              onMouseLeave={() => {
+              onPointerLeave={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
                     scale: 0.8,

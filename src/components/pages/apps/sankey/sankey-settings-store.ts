@@ -20,7 +20,7 @@ export interface ISankeySettings {
   //padding: number
   width: number
   height: number
-  scale: number
+  //scale: number
   margin: IMarginProps
   links: {
     colorMode: 'gradient' | 'source' | 'target' | 'static'
@@ -53,7 +53,7 @@ export interface ISankeySettings {
 const DEFAULT_SETTINGS: ISankeySettings = {
   width: 800,
   height: 400,
-  scale: 1,
+  //scale: 1,
   margin: { ...DEFAULT_MARGIN },
   links: {
     colorMode: 'gradient',

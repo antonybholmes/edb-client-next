@@ -34,8 +34,6 @@ export const SIMPLE_COLOR_EXT_CLS = cn(
   FOCUS_RING_CLS
 )
 
-const DEFAULT_COLOR: tinycolor.Instance = tinycolor(COLOR_BLACK)
-
 export type IProps = IModalProps<IColorChangeProps> & {
   cp: IColorPickerProps
   keepAlphaChannel?: boolean
@@ -52,11 +50,16 @@ export function ColorPickerDialog({
 }: IProps) {
   const { settings, addCustomColor } = useEdbSettings()
 
-  const [color, setColor] = useState(DEFAULT_COLOR)
-  const [opacity, setOpacity] = useState(1)
+  const [color, setColor] = useState(
+    tinycolor(cp.color ?? COLOR_BLACK).setAlpha(cp.opacity ?? 1)
+  )
+  const [opacity, setOpacity] = useState(cp.opacity ?? 1)
 
   useEffect(() => {
-    setColor(tinycolor(cp.color).setAlpha(cp.opacity ?? 1))
+    if (cp.color !== color.toHex8String() || cp.opacity !== color.getAlpha()) {
+      console.log('cp changed', cp.color, tinycolor(cp.color ?? COLOR_BLACK))
+      setColor(tinycolor(cp.color ?? COLOR_BLACK).setAlpha(cp.opacity ?? 1))
+    }
   }, [cp.color, cp.opacity])
 
   useEffect(() => {
@@ -64,8 +67,6 @@ export function ColorPickerDialog({
   }, [cp.opacity])
 
   const rgba = useMemo(() => color.toRgb(), [color])
-
-  console.log(rgba)
 
   function handleColorChange(newColor: string, newOpacity: number = 1) {
     setColor(tinycolor(newColor).setAlpha(newOpacity))
@@ -82,6 +83,7 @@ export function ColorPickerDialog({
       onResponse={(r) => {
         if (r === TEXT_OK) {
           addCustomColor(color.toHexString(), opacity)
+
           onResponse?.(r, {
             color:
               cp.allowAlpha && keepAlphaChannel
@@ -102,6 +104,7 @@ export function ColorPickerDialog({
         <HexAlphaColorPicker
           color={color.toHex8String()}
           onChange={(v) => {
+            console.log('new color', color.toHex8String(), v)
             const newColor = tinycolor(v)
             setColor(newColor)
             setOpacity(newColor.getAlpha())
@@ -112,6 +115,7 @@ export function ColorPickerDialog({
         <HexColorPicker
           color={color.toHexString()}
           onChange={(v) => {
+            console.log('new color2', v)
             setColor(tinycolor(v))
           }}
           style={{ height: '15rem' }}
@@ -149,7 +153,7 @@ export function ColorPickerDialog({
                 // if keepAlphaChannel is true, we need to reconstruct the color
                 // to include the new alpha, otherwise strip the alpha from the color
                 setOpacity(a)
-                setColor(color.setAlpha(a))
+                setColor(tinycolor(color).setAlpha(a))
               }}
               limit={[0, 1]}
               step={0.1}
@@ -169,8 +173,7 @@ export function ColorPickerDialog({
                   newRgba.r = v
                   setColor(tinycolor(newRgba))
                 }}
-                min={0}
-                max={255}
+                limit={[0, 255]}
                 step={1}
                 variant="alt"
                 w="xxs"
@@ -185,8 +188,7 @@ export function ColorPickerDialog({
                   newRgba.g = v
                   setColor(tinycolor(newRgba))
                 }}
-                min={0}
-                max={255}
+                limit={[0, 255]}
                 step={1}
                 variant="alt"
                 w="xxs"
@@ -201,8 +203,7 @@ export function ColorPickerDialog({
                   newRgba.b = v
                   setColor(tinycolor(newRgba))
                 }}
-                min={0}
-                max={255}
+                limit={[0, 255]}
                 step={1}
                 variant="alt"
                 w="xxs"

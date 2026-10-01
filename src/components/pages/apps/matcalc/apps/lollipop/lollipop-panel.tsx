@@ -12,20 +12,18 @@ import {
 } from '@/providers/message-provider'
 import { produce } from 'immer'
 
-import { useZoom } from '@/providers/zoom-provider'
-
-import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'
-import { LabelPropsPanel } from '../../../wgs/lollipop/label-props-panel'
-import { LollipopDisplayPropsPanel } from '../../../wgs/lollipop/lollipop-display-props-panel'
-import { useLollipopSettings } from '../../../wgs/lollipop/lollipop-settings-store'
-import { LollipopStackSvg } from '../../../wgs/lollipop/lollipop-stack-svg'
-import { useLollipopStore } from '../../../wgs/lollipop/lollipop-store'
-import { VariantPropsPanel } from '../../../wgs/lollipop/variant-props-panel'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
 //import { getPlot } from '../../history/history-provider/history-hooks'
 import { useSVG } from '@/providers/svg-provider'
+import { DomainPropsPanel } from '../../../ngs/wgs/lollipop/domain-props-panel'
+import { LabelPropsPanel } from '../../../ngs/wgs/lollipop/label-props-panel'
+import { LollipopDisplayPropsPanel } from '../../../ngs/wgs/lollipop/lollipop-display-props-panel'
+
+import { useLollipopStore } from '../../../ngs/wgs/lollipop/lollipop-store'
+import { LollipopStackSvg } from '../../../ngs/wgs/lollipop/svg/lollipop-stack-svg'
+import { VariantPropsPanel } from '../../../ngs/wgs/lollipop/variant-props-panel'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
@@ -40,18 +38,6 @@ function LollipopPanel() {
   const { autoSave, saveAs } = useSVG()
 
   const { aaStats } = useLollipopStore()
-
-  const { displayProps, setDisplayProps } = useLollipopSettings()
-
-  useZoom({
-    onChange: (z) => {
-      setDisplayProps(
-        produce(displayProps, (draft) => {
-          draft.scale = z.zoom
-        })
-      )
-    },
-  })
 
   const { setTabs: setSideTabs } = useSideTabs()
 

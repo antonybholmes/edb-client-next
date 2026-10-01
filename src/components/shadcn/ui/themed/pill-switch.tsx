@@ -132,10 +132,10 @@ export const PillSwitch = forwardRef<
 
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
       title={title}
       {...props}
     >

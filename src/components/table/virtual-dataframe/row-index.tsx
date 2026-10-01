@@ -35,7 +35,7 @@ function RowIndex({ row }: { row: VirtualItem }) {
   const { selection, update: updateSelection } = useSelectionRange()
 
   function handleIndexMouseDown(row: number) {
-    function onMouseMove(moveEvent: MouseEvent) {
+    function onPointerMove(moveEvent: MouseEvent) {
       const newY =
         moveEvent.clientY -
         (tableDataRef.current?.getBoundingClientRect().y ?? 0)
@@ -49,24 +49,24 @@ function RowIndex({ row }: { row: VirtualItem }) {
       updateSelection({ rows: { start: i1, end: i2 }, cols: undefined })
     }
 
-    //setSelectionMouseDown(true)
+    //setSelectionPointerDown(true)
 
     updateSelection({ rows: { start: row, end: row }, cols: undefined })
 
-    function onMouseUp() {
-      //setSelectionMouseDown(false)
+    function onPointerUp() {
+      //setSelectionPointerDown(false)
 
       //document.body.style.cursor = 'default'
       // Remove the event listeners when mouse is released
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onPointerMove)
+      document.removeEventListener('mouseup', onPointerUp)
     }
 
     //document.body.style.cursor = 'col-resize'
 
     // Add event listeners for mousemove and mouseup
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onPointerMove)
+    document.addEventListener('mouseup', onPointerUp)
   }
 
   const inSelection =
@@ -81,7 +81,7 @@ function RowIndex({ row }: { row: VirtualItem }) {
   return (
     <VCenterRow
       key={row.key}
-      onMouseDown={() => handleIndexMouseDown(row.index)}
+      onPointerDown={() => handleIndexMouseDown(row.index)}
       data-in-selection={inSelection}
       data-row-selected={rowSelected}
       className={INDEX_CLS}

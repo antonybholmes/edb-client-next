@@ -6,7 +6,6 @@ import {
   BaseSelectTrigger,
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
 } from '@/themed/v2/select'
 import { useEffect, useState } from 'react'
@@ -16,29 +15,29 @@ import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
 import { Slider } from '@/themed/v2/slider'
 
 import { useDebounceCallback } from '@/hooks/debounce'
+import { findNearest } from '@/lib/search'
 import { ChevronDown, Minus, Plus } from 'lucide-react'
 import { VCenterRow } from '../layout/v-center-row'
 import { Input } from '../shadcn/ui/themed/v2/input'
 import { ToolbarFooterButton } from './toolbar-footer-button'
-
-function formatZoom(scale: number): string {
-  return `${(scale * 100).toFixed(0)}%`
-}
+import { formatZoom } from './zoom-select-list'
 
 interface IZoomSliderProps extends IDivProps {
   channel?: string
 }
 
 export function ZoomSlider({ channel, className }: IZoomSliderProps) {
-  const { index, levels, setZoom, increaseZoom, decreaseZoom } = useZoom({
+  const { zoom, levels, setZoom, increaseZoom, decreaseZoom } = useZoom({
     channel,
   })
 
-  const [_index, _setIndex] = useState(index)
+  const [_index, _setIndex] = useState(
+    Math.max(0, findNearest(zoom, levels).index)
+  )
 
   useEffect(() => {
-    _setIndex(index)
-  }, [index])
+    _setIndex(Math.max(0, findNearest(zoom, levels).index))
+  }, [zoom, levels])
 
   const { debounced: debouncedSetZoom } = useDebounceCallback(
     (index: number) => setZoom(levels[index]),
@@ -133,18 +132,14 @@ export function ZoomSelect({
         </BaseSelectTrigger>
 
         <SelectContent className="text-xs">
-          <SelectGroup>
-            {/* <SelectLabel>Zoom Level</SelectLabel> */}
-
-            {levels
-              .map((l, li) => ({ index: li, value: l }))
-              .sort((a, b) => b.index - a.index)
-              .map((v) => (
-                <SelectItem value={v.value} key={v.index}>
-                  {formatZoom(v.value)}
-                </SelectItem>
-              ))}
-          </SelectGroup>
+          {levels
+            .map((l, li) => ({ index: li, value: l }))
+            .sort((a, b) => b.index - a.index)
+            .map((v) => (
+              <SelectItem value={v.value} key={v.index}>
+                {formatZoom(v.value)}
+              </SelectItem>
+            ))}
         </SelectContent>
       </Select>
     </VCenterRow>

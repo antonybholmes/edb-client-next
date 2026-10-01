@@ -35,7 +35,7 @@ export interface IVolcanoSettings {
     }
   }
   margin: IMarginProps
-  scale: number
+  //scale: number
   cmap: string
   preprocess: {
     applyLog2FC: boolean
@@ -64,7 +64,7 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
     },
   },
   margin: { ...MARGIN },
-  scale: 1,
+  //scale: 1,
   cmap: 'bwr-v2',
   preprocess: {
     applyLog2FC: false,

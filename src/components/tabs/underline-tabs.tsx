@@ -190,7 +190,7 @@ function UnderlineTrigger({
         ref.current = el
         buttonsRef.current[ti] = el!
       }}
-      onMouseEnter={() => {
+      onPointerEnter={() => {
         _scale(ti)
       }}
       className={tabButtonVariants({
@@ -317,7 +317,7 @@ export function _UnderlineTabs({
         className={cn('relative', tabListCls)}
         ref={tabListRef}
         id="underline-tabs"
-        onMouseLeave={() => {
+        onPointerLeave={() => {
           setTabPosition(undefined)
         }}
       >

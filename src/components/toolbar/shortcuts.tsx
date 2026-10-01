@@ -57,7 +57,7 @@ export function ShortcutContent({
     _scale(selectedTabIndex, pressed.current ? 0.6 : 0.4)
   }, [selectedTabIndex])
 
-  const w = `${((position?.h as number) ?? 0)}rem`
+  const w = `${(position?.h as number) ?? 0}rem`
 
   return (
     <Tabs
@@ -92,22 +92,22 @@ export function ShortcutContent({
                 // onClick={() => {
                 //   onTabChange?.({ index: ti, tab })
                 // }}
-                onMouseDown={() => {
+                onPointerDown={() => {
                   pressed.current = true
                 }}
-                onMouseEnter={() => {
+                onPointerEnter={() => {
                   if (selected) {
                     _scale(ti, 0.6)
                   }
                 }}
-                // onMouseDown={() => {
+                // onPointerDown={() => {
                 //   setScale(0.3)
                 // }}
 
-                onMouseUp={() => {
+                onPointerUp={() => {
                   pressed.current = false
                 }}
-                onMouseLeave={() => {
+                onPointerLeave={() => {
                   if (selected) {
                     _scale(ti, 0.4)
                   }

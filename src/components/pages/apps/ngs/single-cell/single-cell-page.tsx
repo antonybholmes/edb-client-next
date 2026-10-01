@@ -31,7 +31,6 @@ import {
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { makeUuid } from '@/lib/id'
-import { useZoom } from '@/providers/zoom-provider'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
@@ -76,8 +75,6 @@ import { useSingleCellSettings, type GeneSetMode } from './single-cell-settings'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { UmapPlotSvg } from './umap-plot-svg'
 
-const PLOT_ZOOM_CHANNEL = 'single-cell-plot-zoom'
-
 export function SingleCellPage() {
   const { sheets } = useCurrentSheets()
 
@@ -93,17 +90,6 @@ export function SingleCellPage() {
   )
 
   //const [search, setSearch] = useState('=aicda')
-
-  useZoom({
-    onChange: ({ zoom }) => {
-      console.log('Zoom changed:', zoom)
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.scale = zoom
-        })
-      )
-    },
-  })
 
   //const [selectedTab, setSelectedTab] = useState('Data')
   //const [selectedRightTab, setSelectedRightTab] = useState(0)

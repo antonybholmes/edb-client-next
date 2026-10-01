@@ -70,7 +70,7 @@ export interface IGseaDisplayProps {
   }
   title: ITextProps & { offset: number }
   page: {
-    scale: number
+    //scale: number
     columns: number
   }
   plot: {
@@ -96,7 +96,7 @@ export interface IGseaDisplayProps {
 export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   page: {
     columns: 3,
-    scale: 1,
+    //scale: 1,
   },
 
   title: {
