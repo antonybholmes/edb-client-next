@@ -40,6 +40,11 @@ interface ICrosshair {
   content?: ReactNode
 
   /**
+   * Whether to show the crosshair lines.
+   */
+  showLines?: boolean
+
+  /**
    * Offset for the tooltip relative to the crosshair position.
    */
   offset?: IPos
@@ -99,13 +104,21 @@ export const useCrosshairStore = create<ICrosshairStore>()((set, get) => {
         content,
         offset = DEFAULT_OFFSET,
         color = 'var(--color-foreground)',
+        showLines = true,
       } = crosshair
 
       cancelPendingFrame()
 
       clearPendingTimeout()
 
-      pendingCrosshair = { pos, screenPos: clientPos, content, offset, color }
+      pendingCrosshair = {
+        pos,
+        screenPos: clientPos,
+        content,
+        offset,
+        color,
+        showLines,
+      }
 
       crosshairFrame = requestAnimationFrame(() => {
         crosshairFrame = null
@@ -269,13 +282,25 @@ export function CrosshairProvider({ children }: IChildrenProps) {
 
     vTopRef.current.style.transform = `translate(${crosshair.pos.x}px, 0px)`
     vTopRef.current.style.height = `${crosshair.pos.y - CROSS_GAP}px`
+    vTopRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
 
     vBottomRef.current.style.transform = `translate(${crosshair.pos.x}px, ${crosshair.pos.y + CROSS_GAP + 1}px)`
+    vBottomRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
 
     hLeftRef.current.style.transform = `translate(0px, ${crosshair.pos.y}px)`
     hLeftRef.current.style.width = `${crosshair.pos.x - CROSS_GAP}px`
+    hLeftRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
 
     hRightRef.current.style.transform = `translate(${crosshair.pos.x + CROSS_GAP + 1}px, ${crosshair.pos.y}px)`
+    hRightRef.current.style.visibility = crosshair?.showLines
+      ? 'visible'
+      : 'hidden'
 
     crossRef.current.style.transform = `translate(${crosshair.pos.x - CROSS_MID}px, ${crosshair.pos.y - CROSS_MID}px)`
   }, [crosshair?.pos])

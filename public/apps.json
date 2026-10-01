@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.6.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.394Z",
-    "hash": "710601fccb5f46aa3403e87210bf56b5bf6582e39e5d686d53e4a25ea204afd9",
-    "build": 2114
+    "modified": "2026-10-01T21:11:29.570Z",
+    "hash": "9d6451070b133ce5aeb2d239e4c35c297bc48074eaeac43c11171a81df9ff557",
+    "build": 2116
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.4.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-01T18:17:00.423Z",
-    "hash": "47c5ad9eb5f6dcad72640944a773f28cde0c1b926b7c5fb6704606f81ea67f64",
-    "build": 112
+    "modified": "2026-10-01T21:11:29.570Z",
+    "hash": "54be3a93bc70fa310a054973c71c59c10d47de60a2debcd32704b5846a894d42",
+    "build": 114
   },
   {
     "name": "Oncoplot",

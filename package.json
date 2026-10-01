@@ -17,7 +17,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.27.0",
+    "@auth0/auth0-react": "^2.28.0",
     "@auth0/nextjs-auth0": "^4.31.0",
     "@base-ui/react": "^1.8.0",
     "@clerk/react": "^6.17.4",
@@ -73,7 +73,7 @@
     "deepmerge-ts": "^8.0.2",
     "fflate": "^0.8.3",
     "fuse.js": "^7.5.0",
-    "generic-filehandle2": "^2.4.0",
+    "generic-filehandle2": "^2.5.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.15.0",
     "idb": "^8.0.3",

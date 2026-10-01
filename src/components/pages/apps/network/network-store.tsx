@@ -10,12 +10,15 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { DEFAULT_LIMIT, ILimit } from '@/lib/math/limit'
 import { min } from '@/lib/math/math'
-import { Quadtree } from 'd3'
 import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
 import { nodeRadiusFunc } from '../matcalc/apps/heatmap/svg/cell-svg'
-import { INetworkSettings, useNetworkSettings } from './network-settings-store'
+import {
+  INetworkSettings,
+  NodeViewMode,
+  useNetworkSettings,
+} from './network-settings-store'
 import { IUserDataSettings, useUserData } from './network-user-data-store'
 
 export interface IGroup extends IDBEntity {
@@ -59,15 +62,13 @@ export interface INetwork extends IDBEntity {
   edges: IEdge[]
 }
 
-export type NodeView = 'default' | 'hidden' | 'translucent'
-
 export interface IRenderNode extends INode, d3.SimulationNodeDatum {
   //group: IGroup
-  view: NodeView
+  view: NodeViewMode
 }
 
 export interface IRenderEdge extends Omit<IEdge, 'source' | 'target'> {
-  view: NodeView
+  view: NodeViewMode
   source: string | INode
   target: string | INode
 }
@@ -291,7 +292,7 @@ export interface INetworkStore {
     metric2: string
   }
   groups: IGroup[]
-  tree: Quadtree<IRenderNode> | null
+
   coordinateMap: Record<string, IPos>
   size: IDim
 
@@ -307,7 +308,6 @@ export interface INetworkStore {
   setNodeLabelField: (field: string) => void
   setGroups: (groups: IGroup[]) => void
   updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => void
-  setTree: (tree: Quadtree<IRenderNode>) => void
 }
 
 export const useNetworkStore = create<INetworkStore>()((set, get) => ({
@@ -442,11 +442,6 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
       size,
     })
   },
-  setTree: (tree: Quadtree<IRenderNode>) => {
-    set({
-      tree,
-    })
-  },
 }))
 
 export function useNetwork() {
@@ -462,14 +457,12 @@ export function useNetwork() {
   const coordinates = useNetworkStore(
     useShallow((state) => state.coordinateMap)
   )
-  const tree = useNetworkStore((state) => state.tree)
 
   const size = useNetworkStore((state) => state.size)
 
   const setNodeLabelField = useNetworkStore((state) => state.setNodeLabelField)
   const setNetwork = useNetworkStore((state) => state.setNetwork)
   const setGroups = useNetworkStore((state) => state.setGroups)
-  const setTree = useNetworkStore((state) => state.setTree)
 
   const groupMap = useMemo(
     () => new Map<string, IGroup>(groups.map((group) => [group.id, group])),
@@ -504,23 +497,23 @@ export function useNetwork() {
       return []
     }
 
-    //console.log('aha')
-
     return network.nodes.map((node) => {
-      let view: NodeView = groupMap.get(node.groupId)?.show
-        ? 'default'
-        : 'hidden'
+      let view: NodeViewMode = 'hidden'
 
-      if (
-        settings.plot.nodes.view.mode === 'labelled' &&
-        !showNodeLabel(
+      if (groupMap.get(node.groupId)?.show) {
+        const isLabelled = getIsNodeLabelled(
           node,
           userLabelSet,
           settings.plot.nodes.labels.showAll,
+          settings.plot.nodes.view.labelled.on,
           userData.labels.mode
         )
-      ) {
-        view = settings.plot.nodes.view.hidden.show ? 'translucent' : 'hidden'
+
+        if (isLabelled) {
+          view = settings.plot.nodes.view.labelled.mode
+        } else {
+          view = settings.plot.nodes.view.mode
+        }
       }
 
       return {
@@ -535,7 +528,8 @@ export function useNetwork() {
     userLabelSet,
     settings.plot.nodes.view.mode,
     settings.plot.nodes.labels.showAll,
-    settings.plot.nodes.view.hidden.show,
+    settings.plot.nodes.view.labelled.mode,
+    settings.plot.nodes.view.labelled.on,
     userData.labels.mode,
   ])
 
@@ -571,36 +565,27 @@ export function useNetwork() {
     }
 
     return network.edges.map((edge) => {
-      let view = 'default'
+      let view: NodeViewMode = settings.plot.edges.mode
 
       const sourceNode = renderNodeMap.get(edge.source)
       const targetNode = renderNodeMap.get(edge.target)
 
-      if (settings.plot.edges.mode === 'labelled') {
+      if (settings.plot.edges.labelled.on) {
         // to view an edge, both nodes must be in the 'default' view
-        if (sourceNode?.view !== 'default' || targetNode?.view !== 'default') {
-          view = 'hidden'
+        if (sourceNode?.view === 'normal' || targetNode?.view === 'normal') {
+          view = settings.plot.edges.labelled.mode
         }
-      } else if (
-        sourceNode?.view === 'translucent' ||
-        targetNode?.view === 'translucent'
-      ) {
-        // if all edges are on, if one of the connecting nodes
-        // is translucent, the edge should also be translucent
-        view = 'translucent'
-      } else if (
-        sourceNode?.view === 'hidden' ||
-        targetNode?.view === 'hidden'
-      ) {
-        // if one of the connecting nodes is hidden, the edge should also be hidden
-        view = 'hidden'
-      } else {
-        view = 'default'
       }
 
       return { ...edge, view } as IRenderEdge
     })
-  }, [network?.edges, renderNodeMap, settings.plot.edges.mode])
+  }, [
+    network?.edges,
+    renderNodeMap,
+    settings.plot.edges.mode,
+    settings.plot.edges.labelled.on,
+    settings.plot.edges.labelled.mode,
+  ])
 
   const renderEdgeMap = useMemo(() => {
     return new Map(renderEdges.map((edge) => [edge.id, edge]))
@@ -681,8 +666,6 @@ export function useNetwork() {
     setNetwork,
     setGroups,
     setNodeLabelField,
-    tree,
-    setTree,
   }
 }
 
@@ -809,19 +792,21 @@ export function getNodeText(
   }
 }
 
-export function showNodeLabel(
+export function getIsNodeLabelled(
   node: INode,
   labelSet: Set<string>,
   showAll: boolean,
+  labelledOn: boolean,
   mode: 'partial' | 'exact'
 ) {
+  // whether found in user node data or the ids we attach to each node
   const found =
     inNodeData(node, labelSet, mode) || labelsInNodeIds(node, labelSet)
 
   // if showAll is true, we show the label only if it is not found in the node data or node ids
   // if showAll is false, we show the label only if it is found in the node data or node ids
   // therefore we just check if showAll is different from found because that captures both cases correctly
-  const showLabel = showAll !== found
+  const showLabel = showAll || (labelledOn && found)
 
   return showLabel
 }

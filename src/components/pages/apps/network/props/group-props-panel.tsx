@@ -12,14 +12,14 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { SmallCheckbox } from '@/components/shadcn/ui/themed/v2/small-check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { StretchRow } from '@/layout/stretch-row'
 import { cn } from '@/lib/shadcn-utils'
 import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
-import { Eye, Settings2 } from 'lucide-react'
+import { Settings2 } from 'lucide-react'
 import { IGroup, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
 import { GroupDialog } from './group-dialog'
@@ -39,7 +39,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
       accept="group"
       className="group h-10"
     >
-      <SmallCheckbox
+      <Checkbox
         checked={group.show}
         onCheckedChange={(checked) => {
           setGroups(
@@ -53,7 +53,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
         }}
         style={{ color: group.color }}
         title={group.show ? 'Hide group' : 'Show group'}
-        icon={<Eye size={16} strokeWidth={1.5} />}
+        //icon={<Eye size={16} strokeWidth={1.5} />}
       />
 
       <TruncateSpan className="grow h-6 text-xs" style={{ color: group.color }}>

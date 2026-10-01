@@ -2,7 +2,10 @@ import { PropsPanel } from '@/components/props-panel'
 import { produce } from 'immer'
 import { useNetworkSettings } from '../network-settings-store'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -12,6 +15,7 @@ import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { RotateCw, SearchCheck, Tags } from 'lucide-react'
@@ -24,6 +28,7 @@ export function NodesDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
   const { setGroups, groups } = useNetwork()
+  const { open: openDialog } = useDialogs()
 
   const [text, setText] = useState('')
 
@@ -168,6 +173,25 @@ export function NodesDisplayPropsPanel() {
               Exact Match
             </Checkbox>
           </VCenterRow> */}
+          <VCenterRow>
+            <LinkButton
+              onClick={() =>
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    content: 'Are you sure you want to clear all the text?',
+                    callback: (r) => {
+                      if (r === TEXT_OK) {
+                        setText('')
+                      }
+                    },
+                  },
+                })
+              }
+            >
+              {TEXT_CLEAR}
+            </LinkButton>
+          </VCenterRow>
         </ResizablePanel>
 
         <ThinVResizeHandle autoHide={false} />

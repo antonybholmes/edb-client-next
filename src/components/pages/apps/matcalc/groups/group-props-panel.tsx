@@ -46,8 +46,8 @@ import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
-import { SmallCheckbox } from '@/components/shadcn/ui/themed/v2/small-check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -326,7 +326,7 @@ function GroupItem({
         </button>
       }
     >
-      <SmallCheckbox
+      <Checkbox
         checked={group.show}
         onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })

@@ -72,8 +72,8 @@ export function NetworkPage() {
 
   const { addDFSize } = useFooter()
   const { settings } = useNetworkSettings()
-  const { network, radiusMap, setTree } = useNetwork()
-  const { runSim } = useNetworkD3Sim()
+  const { network, radiusMap } = useNetwork()
+  const { runSim, updateTree } = useNetworkD3Sim()
 
   useEffect(() => {
     addDFSize()
@@ -119,12 +119,13 @@ export function NetworkPage() {
   }, [
     network,
     radiusMap,
+
     settings.plot.autoFit,
     settings.plot.margin,
     settings.layout.chargeStrength,
     settings.layout.linkDistance,
     settings.plot.crosshair.search.radius,
-    setTree,
+    updateTree,
   ])
 
   // // sync local query state when the global search query changes

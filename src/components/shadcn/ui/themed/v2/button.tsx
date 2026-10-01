@@ -135,10 +135,7 @@ export const APP_ACCENT_MENU_CLS = cn(
 export const DROPDOWN_MENU_ICON_CONTAINER_CLS =
   'w-7 aspect-square flex flex-row items-center shrink-0 grow-0 justify-center'
 
-const LINK_CLS = cn(
-  FOCUS_RING_CLS,
-  'text-app-theme underline-offset-4 hover:underline'
-)
+const LINK_CLS = cn(FOCUS_RING_CLS, 'text-app-theme hover:underline')
 
 const RED_LINK_CLS = cn(
   FOCUS_RING_CLS,

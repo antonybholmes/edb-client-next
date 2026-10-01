@@ -339,17 +339,17 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Hidden Opacity">
+            <PropRow title="Translucent Opacity">
               <PercentSlider
                 min={0}
                 max={1}
                 step={0.01}
                 //dp={2}
-                value={settings.plot.nodes.view.hidden.opacity}
+                value={settings.plot.nodes.view.translucent.opacity}
                 onNumChanged={(value) =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.plot.nodes.view.hidden.opacity = value
+                      draft.plot.nodes.view.translucent.opacity = value
                     })
                   )
                 }
@@ -507,6 +507,17 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
+            <CheckPropRow
+              title="Highlight"
+              checked={settings.plot.edges.highlight}
+              onCheckedChange={(value) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.edges.highlight = value
+                  })
+                )
+              }
+            />
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

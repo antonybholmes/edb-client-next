@@ -9,17 +9,21 @@ import { ZoomSelectList } from '@/components/toolbar/zoom-select-list'
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { Fullscreen, Tags } from 'lucide-react'
-import { useNetworkSettings, ViewMode } from '../network-settings-store'
+import { NodeViewMode, useNetworkSettings } from '../network-settings-store'
 import { FieldSelectList } from '../props/field-select-list'
 
 const NODE_VIEW_MODES = [
   {
-    value: 'all',
-    label: 'All',
+    value: 'normal',
+    label: 'Normal',
   },
   {
-    value: 'labelled',
-    label: 'Labelled',
+    value: 'translucent',
+    label: 'Translucent',
+  },
+  {
+    value: 'hidden',
+    label: 'Hidden',
   },
 ]
 
@@ -45,13 +49,10 @@ export function ViewToolbar() {
 
       <ToolbarTabGroup title="Nodes" className="gap-x-2">
         <ToolbarColButton
+          title="Toggle Whether All Node Labels Are Shown"
           className="text-xs font-normal"
           checked={settings.plot.nodes.labels.showAll}
           onClick={() => {
-            console.log(
-              'Toggling show all labels:',
-              !settings.plot.nodes.labels.showAll
-            )
             updateSettings(
               produce(settings, (draft) => {
                 draft.plot.nodes.labels.showAll =
@@ -77,16 +78,15 @@ export function ViewToolbar() {
               items={NODE_VIEW_MODES}
               value={settings.plot.nodes.view.mode}
               onValueChange={(value) => {
-                console.log('New node view mode value:', value)
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.nodes.view.mode = value as ViewMode
+                    draft.plot.nodes.view.mode = value as NodeViewMode
                   })
                 )
               }}
               w="sm"
               variant="toolbar"
-              title="Which Nodes Should Be Shown"
+              title="Default Node View"
             >
               {NODE_VIEW_MODES.map((position) => (
                 <SelectItem key={position.value} value={position.value}>
@@ -97,21 +97,18 @@ export function ViewToolbar() {
           </ToolbarRow>
           <ToolbarRow>
             <ToolbarButton
-              checked={settings.plot.nodes.view.hidden.show}
+              checked={settings.plot.nodes.view.labelled.on}
               onClick={() => {
-                console.log(
-                  'Toggling show hidden nodes:',
-                  !settings.plot.nodes.view.hidden.show
-                )
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.nodes.view.hidden.show =
-                      !settings.plot.nodes.view.hidden.show
+                    draft.plot.nodes.view.labelled.on =
+                      !settings.plot.nodes.view.labelled.on
                   })
                 )
               }}
+              title="Highlight Labelled Nodes"
             >
-              Show Hidden
+              Labelled
             </ToolbarButton>
           </ToolbarRow>
         </ToolbarCol>
@@ -126,13 +123,13 @@ export function ViewToolbar() {
                 console.log('New edge view mode value:', value)
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.plot.edges.mode = value as ViewMode
+                    draft.plot.edges.mode = value as NodeViewMode
                   })
                 )
               }}
               w="sm"
               variant="toolbar"
-              title="Which Edges Should Be Shown"
+              title="Default Edge View"
             >
               {NODE_VIEW_MODES.map((position) => (
                 <SelectItem key={position.value} value={position.value}>
@@ -140,6 +137,22 @@ export function ViewToolbar() {
                 </SelectItem>
               ))}
             </SelectList>
+          </ToolbarRow>
+          <ToolbarRow>
+            <ToolbarButton
+              checked={settings.plot.edges.labelled.on}
+              onClick={() => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.edges.labelled.on =
+                      !settings.plot.edges.labelled.on
+                  })
+                )
+              }}
+              title="Highlight Edges Connected to Labelled Nodes"
+            >
+              Labelled
+            </ToolbarButton>
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>

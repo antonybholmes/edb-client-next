@@ -37,7 +37,7 @@ export function NetworkD3SvgContent() {
 
   const {
     network,
-    tree,
+
     renderEdgeMap,
     nodeEdgeMap,
     nodeLabelMap,
@@ -46,7 +46,7 @@ export function NetworkD3SvgContent() {
     renderNodeMap,
   } = useNetwork()
 
-  const { formatText, formatCircle } = useNetworkD3Sim()
+  const { tree, formatText, formatCircle, formatEdge } = useNetworkD3Sim()
 
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
@@ -85,8 +85,6 @@ export function NetworkD3SvgContent() {
 
     //     return node.view === 'hidden' ? 'hidden' : 'visible'
     //   })
-
-    console.log('update circles')
 
     // g.selectAll<SVGTextElement, IRenderNode>('text').call((g) => formatText(g))
     g.selectAll<SVGCircleElement, IRenderNode>('circle').call((g) =>
@@ -127,37 +125,31 @@ export function NetworkD3SvgContent() {
       return
     }
 
-    const highlightedEdges =
-      nodeEdgeMap.get(currentNode?.id) ?? new Set<string>()
-
     g.selectAll<SVGLineElement, IRenderEdge>('line')
-      .attr('stroke', (d) => {
-        return highlightedEdges.has(d.id)
-          ? 'var(--color-app-theme)'
-          : settings.plot.edges.line.value
-      })
-      .attr('stroke-opacity', (d) => {
-        return renderEdgeMap.get(d.id)?.view === 'translucent' &&
-          !highlightedEdges.has(d.id)
-          ? settings.plot.nodes.view.hidden.opacity
-          : settings.plot.edges.line.opacity
-      })
-      .attr('stroke-width', (d) =>
-        Math.min(
-          settings.plot.edges.minWidth,
-          d.strength *
-            settings.plot.edges.scale *
-            (highlightedEdges.has(d.id) ? 3 : 1)
-        )
-      )
-      .attr('visibility', (d) => {
-        const hide = renderEdgeMap.get(d.id)?.view === 'hidden'
-        return hide ? 'hidden' : 'visible'
-      })
-
-    // .attr('stroke', (d) => {
-    //   return 'red'
-    // })
+      // .attr('stroke', (d) => {
+      //   return highlightedEdges.has(d.id)
+      //     ? 'var(--color-app-theme)'
+      //     : settings.plot.edges.line.value
+      // })
+      // .attr('stroke-opacity', (d) => {
+      //   return renderEdgeMap.get(d.id)?.view === 'translucent' &&
+      //     !highlightedEdges.has(d.id)
+      //     ? settings.plot.nodes.view.hidden.opacity
+      //     : settings.plot.edges.line.opacity
+      // })
+      // .attr('stroke-width', (d) =>
+      //   Math.min(
+      //     settings.plot.edges.minWidth,
+      //     d.strength *
+      //       settings.plot.edges.scale *
+      //       (highlightedEdges.has(d.id) ? 3 : 1)
+      //   )
+      // )
+      // .attr('visibility', (d) => {
+      //   const hide = renderEdgeMap.get(d.id)?.view === 'hidden'
+      //   return hide ? 'hidden' : 'visible'
+      // })
+      .call((g) => formatEdge(g, currentNode))
   }, [currentNode, renderEdgeMap, nodeEdgeMap, settings])
 
   // const tree = useMemo(
@@ -248,6 +240,7 @@ export function NetworkD3SvgContent() {
       showCrosshair({
         pos: relativeP,
         screenPos: screenP,
+        showLines: false,
         content: (
           <>
             {IS_DEV_MODE && <strong>{node.id}</strong>}
@@ -282,7 +275,9 @@ export function NetworkD3SvgContent() {
         return
       }
 
-      if (labelsInNodeIds(currentNode, userLabelSet)) {
+      const inUserData = labelsInNodeIds(currentNode, userLabelSet)
+
+      if (inUserData) {
         updateUserData(
           produce(userData, (draft) => {
             draft.labels.ids = userData.labels.ids.filter(

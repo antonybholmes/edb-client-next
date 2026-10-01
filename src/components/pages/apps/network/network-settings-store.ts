@@ -21,7 +21,7 @@ const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
 export type LabelPosition = 'left' | 'center' | 'right' | 'below' | 'above'
 
-export type ViewMode = 'all' | 'labelled'
+export type NodeViewMode = 'normal' | 'translucent' | 'hidden'
 
 export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Center', value: 'center' },
@@ -86,9 +86,21 @@ export interface INetworkSettings {
         //type: LabelType
       }
       view: {
-        mode: ViewMode
-        hidden: {
-          show: boolean
+        /**
+         * The default view mode for the node.
+         */
+        mode: NodeViewMode
+        /**
+         * If the node is labelled, it can have a different view mode.
+         */
+        labelled: {
+          on: boolean
+          /**
+           * The view mode for the node when it is labelled.
+           */
+          mode: NodeViewMode
+        }
+        translucent: {
           opacity: number
         }
       }
@@ -98,9 +110,26 @@ export interface INetworkSettings {
 
     edges: {
       scale: number
-      mode: ViewMode
+      /**
+       * The default way edges are displayed.
+       */
+      mode: NodeViewMode
+      /**
+       * If either node is labelled, edge can be styled differently.
+       */
+      labelled: {
+        /**
+         * If on, will draw edges between labelled nodes.
+         */
+        on: boolean
+        /**
+         * The view mode for the edge when either connected node is labelled.
+         */
+        mode: NodeViewMode
+      }
       minWidth: number
       line: IStrokeProps
+      highlight: boolean
     }
     legend: {
       dot: {
@@ -157,9 +186,12 @@ const DEFAULT_SETTINGS: INetworkSettings = {
         //type: 'label',
       },
       view: {
-        mode: 'all',
-        hidden: {
-          show: true,
+        mode: 'normal',
+        labelled: {
+          on: true,
+          mode: 'normal',
+        },
+        translucent: {
           opacity: 0.1,
         },
       },
@@ -169,8 +201,13 @@ const DEFAULT_SETTINGS: INetworkSettings = {
 
     edges: {
       scale: 1,
-      mode: 'all',
+      mode: 'normal',
+      labelled: {
+        on: true,
+        mode: 'normal',
+      },
       minWidth: 1,
+      highlight: true,
       line: { ...DEFAULT_STROKE_PROPS, value: COLOR_GRAY, opacity: 0.5 },
     },
     legend: {

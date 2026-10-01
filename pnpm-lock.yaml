@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@auth0/auth0-react':
-        specifier: ^2.27.0
-        version: 2.27.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        specifier: ^2.28.0
+        version: 2.28.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@auth0/nextjs-auth0':
         specifier: ^4.31.0
         version: 4.31.0(next@16.3.0(@babel/core@7.29.7)(@types/node@26.1.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -177,8 +177,8 @@ importers:
         specifier: ^7.5.0
         version: 7.5.0
       generic-filehandle2:
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^2.5.0
+        version: 2.5.0
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -390,17 +390,17 @@ packages:
     resolution: {integrity: sha512-NT4s3yZLjovPpliRpTvdsdzyPjqRqiCZj9MxnarBihbaY5MbAG7DWAJcrLlhmC7xKTNCXsTELcqB8YsqpLnUFQ==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  '@auth0/auth0-auth-js@1.15.0':
-    resolution: {integrity: sha512-obn/Qhxx3eNs2wV6/lLsIDIcEiSJvBEEy15hppB5Me1j2No2toa7KqQcXHBCyGX4mBBdVnxZJBjEX6E4WanYwg==}
+  '@auth0/auth0-auth-js@1.16.0':
+    resolution: {integrity: sha512-Yiz4ZJWrE0cBpqmr2fXOCQZuENVU0tHzi++O1I8D07vbcjRIUmKZC5oYBpPOGDtvfm1DTNTaQcBFvIN/Mwh4lg==}
 
-  '@auth0/auth0-react@2.27.0':
-    resolution: {integrity: sha512-SVDiQM1Eatv+zLzy7qyxMdcETdbGVOqXR+zaBXbMyX32xUzTNIppgcHFoD0AFLqVQrBZgTHX4ujj9D9+sfCXsQ==}
+  '@auth0/auth0-react@2.28.0':
+    resolution: {integrity: sha512-y6ZyUl0dGFNHA/4jUi3j3Xh72I5sAC+lt/GQAZj9ggzhI13K5bD2sPCXZmX5HhPW54l1+BSC1k2NV30O+cZFkA==}
     peerDependencies:
       react: ^16.11.0 || ^17 || ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
       react-dom: ^16.11.0 || ^17 || ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
 
-  '@auth0/auth0-spa-js@2.27.0':
-    resolution: {integrity: sha512-E9U4v9IiowT+z26PQYT55ZAU5J1feyEV9umVX+lvnaHl43E3GvGVsTrfukhPLLWnoCRItWa2TxVQ3Svj1S4qyA==}
+  '@auth0/auth0-spa-js@2.28.0':
+    resolution: {integrity: sha512-2bUynidfpFEVb+yTQsr3ZoccmMtzoy46Cvy0fZtIGhbRs40/k975oh9o6j+ePF86Q5OQB5Cz4JAOnSICw4hpJg==}
 
   '@auth0/nextjs-auth0@4.31.0':
     resolution: {integrity: sha512-nCSqKCLlFTXQkoQi0qIWnj3TeJrrW5jajEcpzOrJ1lfXkKXCbpQb+CkYShoXbSq7OOlxkFXWyS0SQ+XeYCSkjg==}
@@ -3480,6 +3480,9 @@ packages:
   generic-filehandle2@2.4.0:
     resolution: {integrity: sha512-+ah1SBkiusKbBguKuj11zrdAMRdWE9g3zPTtUQtC5LRCGvbfg534KHRjolJFnapCj0Xtt4ZQxs86Vr/WpfuZ8A==}
 
+  generic-filehandle2@2.5.0:
+    resolution: {integrity: sha512-qrzjvxfFTswagFQRW7Gc8m5Fy+ra538mrXg4Ggtn+05PpeGYQ9QPkvQQ2O4poa2eGdUN/jAR49M5Y31Wvrr/xA==}
+
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -5390,20 +5393,20 @@ snapshots:
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.5.3
 
-  '@auth0/auth0-auth-js@1.15.0':
+  '@auth0/auth0-auth-js@1.16.0':
     dependencies:
       jose: 6.2.4
       openid-client: 6.8.4
 
-  '@auth0/auth0-react@2.27.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+  '@auth0/auth0-react@2.28.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
-      '@auth0/auth0-spa-js': 2.27.0
+      '@auth0/auth0-spa-js': 2.28.0
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
 
-  '@auth0/auth0-spa-js@2.27.0':
+  '@auth0/auth0-spa-js@2.28.0':
     dependencies:
-      '@auth0/auth0-auth-js': 1.15.0
+      '@auth0/auth0-auth-js': 1.16.0
       browser-tabs-lock: 1.3.0
       dpop: 2.1.1
       es-cookie: 1.3.2
@@ -8478,6 +8481,8 @@ snapshots:
   generator-function@2.0.1: {}
 
   generic-filehandle2@2.4.0: {}
+
+  generic-filehandle2@2.5.0: {}
 
   gensync@1.0.0-beta.2: {}
 

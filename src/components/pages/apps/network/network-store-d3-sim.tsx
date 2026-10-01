@@ -10,19 +10,19 @@ import { argMin } from '@/lib/math/argmin'
 import { max } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
-import { quadtree } from 'd3-quadtree'
+import { Quadtree, quadtree } from 'd3-quadtree'
 import { useCallback } from 'react'
 import { useNetworkSettings } from './network-settings-store'
 
 import { BaseType } from 'd3'
 import { create } from 'zustand'
 import {
+  getIsNodeLabelled,
   getNodeText,
   getTextAnchor,
   INode,
   IRenderEdge,
   IRenderNode,
-  showNodeLabel,
   useNetwork,
 } from './network-store'
 import { useUserData } from './network-user-data-store'
@@ -32,16 +32,19 @@ type SimulationStatus = 'idle' | 'running' | 'finished'
 interface INetworkD3SimSettings {
   status: SimulationStatus
   simNodes: IRenderNode[]
+  tree: Quadtree<IRenderNode> | null
 }
 
 interface INetworkD3SimStore extends INetworkD3SimSettings {
   updateStatus: (status: SimulationStatus) => void
   updateSimNodes: (simNodes: IRenderNode[]) => void
+  updateTree: (tree: Quadtree<IRenderNode> | null) => void
 }
 
 const DEFAULT_SETTINGS: INetworkD3SimSettings = {
   status: 'idle',
   simNodes: [],
+  tree: null,
 }
 
 export const useNetworkD3SimStore = create<INetworkD3SimStore>()((set) => ({
@@ -52,6 +55,9 @@ export const useNetworkD3SimStore = create<INetworkD3SimStore>()((set) => ({
   },
   updateSimNodes: (simNodes: IRenderNode[]) => {
     set({ simNodes })
+  },
+  updateTree: (tree: Quadtree<IRenderNode> | null) => {
+    set({ tree })
   },
 }))
 
@@ -69,13 +75,16 @@ export function useNetworkD3Sim() {
     renderNodeMap,
     userLabelSet,
     groupMap,
-    setTree,
+    renderEdgeMap,
+    nodeEdgeMap,
   } = useNetwork()
 
   const status = useNetworkD3SimStore((state) => state.status)
   const simNodes = useNetworkD3SimStore((state) => state.simNodes)
+  const tree = useNetworkD3SimStore((state) => state.tree)
   const updateStatus = useNetworkD3SimStore((state) => state.updateStatus)
   const updateSimNodes = useNetworkD3SimStore((state) => state.updateSimNodes)
+  const updateTree = useNetworkD3SimStore((state) => state.updateTree)
 
   // const canvasCoordinates = useMemo(
   //   () => d3ToCanvasSpace(coordinates, d3Size, radiusMap, settings),
@@ -148,16 +157,17 @@ export function useNetworkD3Sim() {
     link
       .attr('id', (d) => `edge-${d.id}`)
       .attr('class', 'edge')
-      .attr('stroke', networkSettings.plot.edges.line.value)
-      .attr('stroke-opacity', (d) =>
-        d.view === 'translucent'
-          ? networkSettings.plot.nodes.view.hidden.opacity
-          : networkSettings.plot.edges.line.opacity
-      )
-      .attr(
-        'stroke-width',
-        (d) => d.strength * networkSettings.plot.edges.scale
-      )
+      .call((g) => formatEdge(g, null))
+    // .attr('stroke', networkSettings.plot.edges.line.value)
+    // .attr('stroke-opacity', (d) =>
+    //   d.view === 'translucent'
+    //     ? networkSettings.plot.nodes.view.hidden.opacity
+    //     : networkSettings.plot.edges.line.opacity
+    // )
+    // .attr(
+    //   'stroke-width',
+    //   (d) => d.strength * networkSettings.plot.edges.scale
+    // )
 
     // Nodes
     const node = world
@@ -271,7 +281,7 @@ export function useNetworkD3Sim() {
 
     simulation.on('end', () => {
       console.log('Simulation ended')
-      setTree(
+      updateTree(
         quadtree<IRenderNode>(
           nodes,
           (c) => c.x,
@@ -286,7 +296,7 @@ export function useNetworkD3Sim() {
     network,
     radiusMap,
     networkSettings,
-    setTree,
+    updateTree,
     updateSimNodes,
     updateStatus,
   ])
@@ -387,14 +397,14 @@ export function useNetworkD3Sim() {
       )
     )
 
-    setTree(
+    updateTree(
       quadtree<IRenderNode>(
         nodes,
         (c) => c.x,
         (c) => c.y
       )
     )
-  }, [network, radiusMap, networkSettings, setTree, simNodes])
+  }, [network, radiusMap, networkSettings, updateTree, simNodes])
 
   const formatCircle = useCallback(
     (g: d3.Selection<SVGCircleElement, IRenderNode, BaseType, unknown>) => {
@@ -404,11 +414,9 @@ export function useNetworkD3Sim() {
         .attr('fill-opacity', (d) => {
           const node = renderNodeMap.get(d.id)
 
-          if (!node || node.view !== 'translucent') {
-            return networkSettings.plot.nodes.color.opacity
-          }
-
-          return networkSettings.plot.nodes.view.hidden.opacity
+          return !node || node.view !== 'translucent'
+            ? networkSettings.plot.nodes.color.opacity
+            : networkSettings.plot.nodes.view.translucent.opacity
         })
         .attr('stroke', (d) =>
           networkSettings.plot.nodes.line.autoColor &&
@@ -419,10 +427,52 @@ export function useNetworkD3Sim() {
         .attr('visibility', (d) => {
           const node = renderNodeMap.get(d.id)
 
-          return !node || node.view === 'default' ? 'visible' : 'hidden'
+          return !node || node.view !== 'hidden' ? 'visible' : 'hidden'
         })
     },
     [radiusMap, nodeColorMap, renderNodeMap, networkSettings]
+  )
+
+  const formatEdge = useCallback(
+    (
+      g: d3.Selection<SVGGElement, IRenderEdge, BaseType, unknown>,
+      currentNode: INode
+    ) => {
+      const highlightedEdges =
+        nodeEdgeMap.get(currentNode?.id) ?? new Set<string>()
+
+      return g
+        .attr('stroke', (d) => {
+          return networkSettings.plot.edges.highlight &&
+            highlightedEdges.has(d.id)
+            ? 'var(--color-app-theme)'
+            : networkSettings.plot.edges.line.value
+        })
+        .attr('stroke-opacity', (d) => {
+          return (networkSettings.plot.edges.highlight &&
+            highlightedEdges.has(d.id)) ||
+            renderEdgeMap.get(d.id)?.view === 'normal'
+            ? networkSettings.plot.edges.line.opacity
+            : networkSettings.plot.nodes.view.translucent.opacity
+        })
+        .attr('stroke-width', (d) => {
+          return Math.min(
+            networkSettings.plot.edges.minWidth,
+            d.strength *
+              networkSettings.plot.edges.scale *
+              (networkSettings.plot.edges.highlight &&
+              highlightedEdges.has(d.id)
+                ? 3
+                : 1)
+          )
+        })
+        .attr('visibility', (d) => {
+          return highlightedEdges.has(d.id)
+            ? 'visible'
+            : (renderEdgeMap.get(d.id)?.view ?? 'hidden')
+        })
+    },
+    [nodeEdgeMap, renderEdgeMap, networkSettings]
   )
 
   const formatText = useCallback(
@@ -454,10 +504,11 @@ export function useNetworkD3Sim() {
         })
         .attr('font-size', networkSettings.plot.nodes.labels.text.font.fontSize)
         .attr('visibility', (d) =>
-          showNodeLabel(
+          getIsNodeLabelled(
             d,
             userLabelSet,
             networkSettings.plot.nodes.labels.showAll,
+            networkSettings.plot.nodes.view.labelled.on,
             userData.labels.mode
           )
             ? 'visible'
@@ -481,10 +532,13 @@ export function useNetworkD3Sim() {
 
   return {
     status,
+    tree,
     autoFit,
     runSim,
     formatText,
     formatCircle,
+    formatEdge,
     setIdle,
+    updateTree,
   }
 }
