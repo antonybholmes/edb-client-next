@@ -1,3 +1,4 @@
+import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import type { ComponentProps } from 'react'
 import { useNetwork } from '../network-store'
@@ -18,12 +19,24 @@ export function FieldSelectList({
       w="md"
       variant={variant}
       title="Text That Appears in Node Labels"
+      items={[
+        ...nodes.label.fields.map((field) => {
+          return { value: field, label: field }
+        }),
+        { value: 'group', label: 'Group' },
+        { value: 'id', label: 'id' },
+        { value: 'id2', label: 'id2' },
+      ]}
     >
       {nodes.label.fields.map((field) => (
         <SelectItem key={field} value={field}>
           {field}
         </SelectItem>
       ))}
+      <MenuSeparator />
+      <SelectItem key="group" value="group">
+        Group
+      </SelectItem>
       <SelectItem key="id" value="id">
         id
       </SelectItem>

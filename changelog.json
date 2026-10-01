@@ -3235,6 +3235,10 @@
         {
           "msg": "Oncoplot now uses crosshair",
           "date": "2026-09-30T19:59:43.460Z"
+        },
+        {
+          "msg": "Network can show groups in nodes",
+          "date": "2026-10-01T01:20:09.522Z"
         }
       ]
     },

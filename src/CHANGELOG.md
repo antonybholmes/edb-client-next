@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network can show groups in nodes.
 - Oncoplot now uses crosshair.
 - UI fixes.
 - Replace mouse events with pointer events.

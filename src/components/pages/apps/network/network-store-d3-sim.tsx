@@ -66,7 +66,7 @@ export function useNetworkD3Sim() {
     return new Map<string, string>(
       network.nodes.map((node) => [
         node.id,
-        getNodeText(node, nodes.label.field),
+        getNodeText(node, nodes.label.field, groupMap),
       ])
     )
   }, [network?.nodes, nodes.label.field])
@@ -663,12 +663,18 @@ export function inLabelSet(
  * @param field The field name to retrieve the text from.
  * @returns The text value of the specified field.
  */
-export function getNodeText(node: INode, field: string): string {
+export function getNodeText(
+  node: INode,
+  field: string,
+  groupMap: Map<string, IGroup>
+): string {
   switch (field) {
     case 'id':
       return node.id
     case 'id2':
       return node.id2
+    case 'group':
+      return groupMap.get(node.groupId)?.name ?? ''
     default:
       let value = node.data[field]
 
