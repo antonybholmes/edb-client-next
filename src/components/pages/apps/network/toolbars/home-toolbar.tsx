@@ -23,14 +23,17 @@ import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
+import { RotateCw } from 'lucide-react'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { NetworkDialog } from '../network-dialog'
 import { useNetworkSettings } from '../network-settings-store'
+import { useNetworkD3Sim } from '../network-store-d3-sim'
 
 export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
   const { settings, updateSettings } = useNetworkSettings()
+  const { autoFit, runSim } = useNetworkD3Sim()
 
   const { openCustom: openCustomDialog } = useDialogs()
 
@@ -67,12 +70,23 @@ export function HomeToolbar() {
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}
           onClick={() => {
+            console.log('Running plot action')
             openCustomDialog(NetworkDialog, {})
           }}
         >
           <PlayIcon variant="app-theme" />
           {TEXT_PLOT}
         </ToolbarColSmallButton>
+        <ToolbarCol>
+          <ToolbarRow>
+            <ToolbarIconButton onClick={() => runSim()} title="Run Simulation">
+              <RotateCw size={16} />
+            </ToolbarIconButton>
+          </ToolbarRow>
+          <ToolbarRow>
+            <ToolbarButton onClick={() => autoFit()}>Auto Fit</ToolbarButton>
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
@@ -81,6 +95,7 @@ export function HomeToolbar() {
             <span className="w-3 text-center">W</span>
             <NumericalInput
               w="xxs"
+              h="sm"
 
               value={settings.plot.size.w}
               placeholder="Width"
@@ -106,6 +121,7 @@ export function HomeToolbar() {
               dp={0}
 
               onNumChange={(v) => {
+                console.log('New height value:', v)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.size.h = v
@@ -115,22 +131,7 @@ export function HomeToolbar() {
             />
           </ToolbarRow>
         </ToolbarCol>
-        <ToolbarCol>
-          <ToolbarRow>
-            <ToolbarButton
-              checked={settings.plot.autoFit}
-              onClick={() =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.autoFit = !settings.plot.autoFit
-                  })
-                )
-              }
-            >
-              Auto Fit
-            </ToolbarButton>
-          </ToolbarRow>
-        </ToolbarCol>
+        <ToolbarCol></ToolbarCol>
       </ToolbarTabGroup>
       <ToolbarTabGroup title="Color">
         <ToolbarCol>
@@ -140,6 +141,7 @@ export function HomeToolbar() {
             <ToggleGroup
               value={[settings.plot.nodes.color.mode]}
               onValueChange={(v) => {
+                console.log('New color mode value:', v)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.nodes.color.mode = v[0]! as 'auto' | 'group'
@@ -164,49 +166,12 @@ export function HomeToolbar() {
                 Auto
               </GroupToggle>
             </ToggleGroup>
-
-            {/* <SelectList
-              items={[
-                {
-                  value: 'auto',
-                  label: 'Auto',
-                },
-                {
-                  value: 'group',
-                  label: 'Group',
-                },
-              ]}
-              value={settings.plot.nodes.color.mode}
-              onValueChange={(value) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.color.mode = value as 'auto' | 'group'
-                  })
-                )
-              }}
-              w="xs"
-              variant="toolbar"
-            >
-              {[
-                {
-                  value: 'auto',
-                  label: 'Auto',
-                },
-                {
-                  value: 'group',
-                  label: 'Group',
-                },
-              ].map((position) => (
-                <SelectItem key={position.value} value={position.value}>
-                  {position.label}
-                </SelectItem>
-              ))}
-            </SelectList> */}
           </ToolbarRow>
           <ColorMapMenu
             cmap={getColorMap(settings.plot.nodes.color.cmap)}
             onChange={(cmap) => {
               // store the cmap the user likes
+              console.log('New color map value:', cmap)
               updateSettings(
                 produce(settings, (draft) => {
                   draft.plot.nodes.color.cmap.name = cmap.id as ColorMapName

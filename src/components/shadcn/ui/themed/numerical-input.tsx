@@ -172,6 +172,8 @@ export function NumericalInput({
 
       onNumChange?.(v)
 
+      console.log('New value:', v, triggerChanged)
+
       if (triggerChanged) {
         onNumChanged?.(v)
       }

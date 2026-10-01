@@ -149,7 +149,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const { setNetwork } = useNetwork()
   const { settings: userData } = useUserData()
 
-  const { status } = useNetworkD3Sim()
+  const { status, setIdle } = useNetworkD3Sim()
   const { setMessage, clearMessage } = useRunning('network')
 
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
@@ -202,9 +202,10 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   useEffect(() => {
     if (status === 'finished') {
       clearMessage()
+      setIdle()
       close()
     }
-  }, [status, clearMessage])
+  }, [status, clearMessage, close])
 
   async function submit() {
     if (

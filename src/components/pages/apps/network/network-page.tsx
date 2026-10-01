@@ -49,6 +49,9 @@ import { textToLines } from '@/lib/text/lines'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
+import { useNetworkSettings } from './network-settings-store'
+import { useNetwork } from './network-store'
+import { useNetworkD3Sim } from './network-store-d3-sim'
 import { NetworkPropsPanel } from './props/network-props-panel'
 import { NetworkD3Svg } from './svg/network-d3-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
@@ -68,6 +71,9 @@ export function NetworkPage() {
   const { autoSave } = useSVG()
 
   const { addDFSize } = useFooter()
+  const { settings } = useNetworkSettings()
+  const { network, radiusMap, setTree } = useNetwork()
+  const { runSim } = useNetworkD3Sim()
 
   useEffect(() => {
     addDFSize()
@@ -106,6 +112,20 @@ export function NetworkPage() {
       },
     ])
   }, [setToolbarTabs])
+
+  // effect is here to stop toolbar changing view from triggering re-render
+  useEffect(() => {
+    runSim()
+  }, [
+    network,
+    radiusMap,
+    settings.plot.autoFit,
+    settings.plot.margin,
+    settings.layout.chargeStrength,
+    settings.layout.linkDistance,
+    settings.plot.crosshair.search.radius,
+    setTree,
+  ])
 
   // // sync local query state when the global search query changes
   // useEffect(() => {

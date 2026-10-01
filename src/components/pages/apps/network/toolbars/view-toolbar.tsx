@@ -47,14 +47,18 @@ export function ViewToolbar() {
         <ToolbarColButton
           className="text-xs font-normal"
           checked={settings.plot.nodes.labels.showAll}
-          onClick={() =>
+          onClick={() => {
+            console.log(
+              'Toggling show all labels:',
+              !settings.plot.nodes.labels.showAll
+            )
             updateSettings(
               produce(settings, (draft) => {
                 draft.plot.nodes.labels.showAll =
                   !settings.plot.nodes.labels.showAll
               })
             )
-          }
+          }}
         >
           <Tags className="group-data-[ribbon=single]:hidden" size={18} />
 
@@ -73,6 +77,7 @@ export function ViewToolbar() {
               items={NODE_VIEW_MODES}
               value={settings.plot.nodes.view.mode}
               onValueChange={(value) => {
+                console.log('New node view mode value:', value)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.nodes.view.mode = value as ViewMode
@@ -94,6 +99,10 @@ export function ViewToolbar() {
             <ToolbarButton
               checked={settings.plot.nodes.view.hidden.show}
               onClick={() => {
+                console.log(
+                  'Toggling show hidden nodes:',
+                  !settings.plot.nodes.view.hidden.show
+                )
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.nodes.view.hidden.show =
@@ -114,6 +123,7 @@ export function ViewToolbar() {
               items={NODE_VIEW_MODES}
               value={settings.plot.edges.mode}
               onValueChange={(value) => {
+                console.log('New edge view mode value:', value)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.edges.mode = value as ViewMode

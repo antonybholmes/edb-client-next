@@ -3,16 +3,20 @@ import { IPos } from '@/interfaces/pos'
 
 import { autoTickInterval } from '@/components/plot/axes/axis'
 import { IDim } from '@/interfaces/dim'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { getColorMap } from '@/lib/color/colormap'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { DEFAULT_LIMIT, ILimit } from '@/lib/math/limit'
 import { min } from '@/lib/math/math'
+import { Quadtree } from 'd3'
 import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
-import { INetworkSettings } from './network-settings-store'
-import { IUserDataSettings } from './network-user-data-store'
+import { nodeRadiusFunc } from '../matcalc/apps/heatmap/svg/cell-svg'
+import { INetworkSettings, useNetworkSettings } from './network-settings-store'
+import { IUserDataSettings, useUserData } from './network-user-data-store'
 
 export interface IGroup extends IDBEntity {
   color: string
@@ -53,6 +57,19 @@ export interface INetwork extends IDBEntity {
   nodes: INode[]
   nodeMap: Record<string, INode>
   edges: IEdge[]
+}
+
+export type NodeView = 'default' | 'hidden' | 'translucent'
+
+export interface IRenderNode extends INode, d3.SimulationNodeDatum {
+  //group: IGroup
+  view: NodeView
+}
+
+export interface IRenderEdge extends Omit<IEdge, 'source' | 'target'> {
+  view: NodeView
+  source: string | INode
+  target: string | INode
 }
 
 const FRAME_SKIP = 5
@@ -274,7 +291,7 @@ export interface INetworkStore {
     metric2: string
   }
   groups: IGroup[]
-
+  tree: Quadtree<IRenderNode> | null
   coordinateMap: Record<string, IPos>
   size: IDim
 
@@ -290,6 +307,7 @@ export interface INetworkStore {
   setNodeLabelField: (field: string) => void
   setGroups: (groups: IGroup[]) => void
   updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => void
+  setTree: (tree: Quadtree<IRenderNode>) => void
 }
 
 export const useNetworkStore = create<INetworkStore>()((set, get) => ({
@@ -314,6 +332,7 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
     metric2: 'Size2',
   },
   groups: [],
+  tree: null,
 
   coordinateMap: {},
   size: { w: 0, h: 0 },
@@ -423,9 +442,17 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
       size,
     })
   },
+  setTree: (tree: Quadtree<IRenderNode>) => {
+    set({
+      tree,
+    })
+  },
 }))
 
 export function useNetwork() {
+  const { settings } = useNetworkSettings()
+  const { settings: userData } = useUserData()
+
   const network = useNetworkStore(useShallow((state) => state.network))
   const nodes = useNetworkStore(useShallow((state) => state.nodes))
   const edges = useNetworkStore(useShallow((state) => state.edges))
@@ -435,17 +462,203 @@ export function useNetwork() {
   const coordinates = useNetworkStore(
     useShallow((state) => state.coordinateMap)
   )
+  const tree = useNetworkStore((state) => state.tree)
 
   const size = useNetworkStore((state) => state.size)
 
   const setNodeLabelField = useNetworkStore((state) => state.setNodeLabelField)
   const setNetwork = useNetworkStore((state) => state.setNetwork)
   const setGroups = useNetworkStore((state) => state.setGroups)
+  const setTree = useNetworkStore((state) => state.setTree)
 
   const groupMap = useMemo(
     () => new Map<string, IGroup>(groups.map((group) => [group.id, group])),
     [groups]
   )
+
+  const userLabelSet = useMemo(
+    () =>
+      new Set(
+        userData.labels.ids
+          .filter((x) => x.length > 0)
+          .map((x) => x.toLowerCase())
+      ),
+    [userData.labels.ids]
+  )
+
+  // how to label each node
+  const nodeLabelMap = useMemo(() => {
+    if (!network) {
+      return new Map()
+    }
+    return new Map<string, string>(
+      network.nodes.map((node) => [
+        node.id,
+        getNodeText(node, nodes.label.field, groupMap),
+      ])
+    )
+  }, [network?.nodes, nodes.label.field])
+
+  const renderNodes: IRenderNode[] = useMemo(() => {
+    if (!network) {
+      return []
+    }
+
+    //console.log('aha')
+
+    return network.nodes.map((node) => {
+      let view: NodeView = groupMap.get(node.groupId)?.show
+        ? 'default'
+        : 'hidden'
+
+      if (
+        settings.plot.nodes.view.mode === 'labelled' &&
+        !showNodeLabel(
+          node,
+          userLabelSet,
+          settings.plot.nodes.labels.showAll,
+          userData.labels.mode
+        )
+      ) {
+        view = settings.plot.nodes.view.hidden.show ? 'translucent' : 'hidden'
+      }
+
+      return {
+        ...node,
+        group: groupMap.get(node.groupId),
+        view,
+      }
+    })
+  }, [
+    network,
+    groupMap,
+    userLabelSet,
+    settings.plot.nodes.view.mode,
+    settings.plot.nodes.labels.showAll,
+    settings.plot.nodes.view.hidden.show,
+    userData.labels.mode,
+  ])
+
+  const renderNodeMap = useMemo(() => {
+    return new Map(renderNodes.map((node) => [node.id, node]))
+  }, [renderNodes])
+
+  const nodeEdgeMap = useMemo(() => {
+    if (!network?.edges || network.edges.length === 0) {
+      return new Map<string, Set<string>>()
+    }
+
+    const map = new Map<string, Set<string>>()
+
+    for (const edge of network.edges) {
+      if (!map.has(edge.source)) {
+        map.set(edge.source, new Set())
+      }
+      if (!map.has(edge.target)) {
+        map.set(edge.target, new Set())
+      }
+
+      map.get(edge.source)?.add(edge.id)
+      map.get(edge.target)?.add(edge.id)
+    }
+
+    return map
+  }, [network?.edges])
+
+  const renderEdges: IRenderEdge[] = useMemo(() => {
+    if (!network) {
+      return []
+    }
+
+    return network.edges.map((edge) => {
+      let view = 'default'
+
+      const sourceNode = renderNodeMap.get(edge.source)
+      const targetNode = renderNodeMap.get(edge.target)
+
+      if (settings.plot.edges.mode === 'labelled') {
+        // to view an edge, both nodes must be in the 'default' view
+        if (sourceNode?.view !== 'default' || targetNode?.view !== 'default') {
+          view = 'hidden'
+        }
+      } else if (
+        sourceNode?.view === 'translucent' ||
+        targetNode?.view === 'translucent'
+      ) {
+        // if all edges are on, if one of the connecting nodes
+        // is translucent, the edge should also be translucent
+        view = 'translucent'
+      } else if (
+        sourceNode?.view === 'hidden' ||
+        targetNode?.view === 'hidden'
+      ) {
+        // if one of the connecting nodes is hidden, the edge should also be hidden
+        view = 'hidden'
+      } else {
+        view = 'default'
+      }
+
+      return { ...edge, view } as IRenderEdge
+    })
+  }, [network?.edges, renderNodeMap, settings.plot.edges.mode])
+
+  const renderEdgeMap = useMemo(() => {
+    return new Map(renderEdges.map((edge) => [edge.id, edge]))
+  }, [renderEdges])
+
+  const radiusMap = useMemo(() => {
+    if (!network?.nodes || network.nodes.length === 0) {
+      return new Map<string, number>()
+    }
+
+    const nodeRadiusScale = nodeRadiusFunc(
+      settings.plot.nodes.radius,
+      settings.plot.nodes.scale.mode
+    )
+
+    return new Map<string, number>(
+      network.nodes.map((node) => [
+        node.id,
+        nodeRadiusScale((node.size ?? 0) / nodes.metricLim1.max),
+      ])
+    )
+  }, [
+    network?.nodes,
+    settings.plot.nodes.radius,
+    settings.plot.nodes.scale.mode,
+    nodes.metricLim1.max,
+  ])
+
+  const nodeColorMap = useMemo(() => {
+    if (!network?.nodes || network.nodes.length === 0) {
+      return new Map<string, string>()
+    }
+
+    switch (settings.plot.nodes.color.mode) {
+      case 'group':
+        return new Map(
+          network.nodes.map((node) => [
+            node.id,
+            groupMap.get(node.groupId)?.color ?? COLOR_BLACK,
+          ])
+        )
+
+      default:
+        const colorMap = getColorMap(settings.plot.nodes.color.cmap)
+
+        return new Map(
+          network.nodes.map((node) => [
+            node.id,
+            colorMap.getHexColor(node.size2 ?? 0) ?? COLOR_BLACK,
+          ])
+        )
+    }
+  }, [
+    settings.plot.nodes.color.mode,
+    groupMap,
+    settings.plot.nodes.color.cmap,
+    network?.nodes,
+  ])
 
   return {
     network,
@@ -455,9 +668,21 @@ export function useNetwork() {
     coordinates,
     size,
     headings,
+    groupMap,
+    renderEdges,
+    renderNodes,
+    renderEdgeMap,
+    radiusMap,
+    nodeColorMap,
+    nodeLabelMap,
+    renderNodeMap,
+    nodeEdgeMap,
+    userLabelSet,
     setNetwork,
     setGroups,
     setNodeLabelField,
+    tree,
+    setTree,
   }
 }
 
@@ -553,3 +778,139 @@ export function useNetwork() {
 //     run,
 //   }
 // }
+
+/**
+ * Get the text for a specific field of a node.
+ *
+ * @param node The node object.
+ * @param field The field name to retrieve the text from.
+ * @returns The text value of the specified field.
+ */
+export function getNodeText(
+  node: INode,
+  field: string,
+  groupMap: Map<string, IGroup>
+): string {
+  switch (field) {
+    case 'id':
+      return node.id
+    case 'id2':
+      return node.id2
+    case 'group':
+      return groupMap.get(node.groupId)?.name ?? ''
+    default:
+      let value = node.data[field]
+
+      if (typeof value === 'number') {
+        value = value.toString()
+      }
+
+      return value ?? ''
+  }
+}
+
+export function showNodeLabel(
+  node: INode,
+  labelSet: Set<string>,
+  showAll: boolean,
+  mode: 'partial' | 'exact'
+) {
+  const found =
+    inNodeData(node, labelSet, mode) || labelsInNodeIds(node, labelSet)
+
+  // if showAll is true, we show the label only if it is not found in the node data or node ids
+  // if showAll is false, we show the label only if it is found in the node data or node ids
+  // therefore we just check if showAll is different from found because that captures both cases correctly
+  const showLabel = showAll !== found
+
+  return showLabel
+}
+
+export function labelsInNodeIds(node: INode, labelSet: Set<string>): boolean {
+  return (
+    inLabelSet(node.id, labelSet, 'exact') ||
+    inLabelSet(node.id2, labelSet, 'exact')
+  )
+}
+
+export function inNodeData(
+  node: INode,
+  labelSet: Set<string>,
+  mode: 'partial' | 'exact'
+) {
+  return Object.values(node.data)
+    .filter((d) => typeof d === 'string')
+    .some((d) => inLabelSet(d.toString(), labelSet, mode))
+}
+
+export function inLabelSet(
+  text: string,
+  labelSet: Set<string>,
+  mode: 'partial' | 'exact'
+): boolean {
+  text = text.toLowerCase().trim()
+
+  if (mode === 'exact') {
+    return labelSet.has(text)
+  }
+
+  // check if anything in label set is within the text
+  for (const label of labelSet) {
+    if (text.includes(label)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+// function getNodeText(node: INode, settings: INetworkSettings): string {
+//   switch (settings.plot.nodes.labels.type) {
+//     case 'label':
+//       return node.label
+//     case 'name':
+//       return node.name
+//     case 'group':
+//       return node.group
+//     case 'size':
+//       return node.size.toString()
+//     case 'id':
+//       return node.id
+//     case 'id2':
+//       return node.id2
+//     default:
+//       return ''
+//   }
+// }
+
+export function getTextAnchor(settings: INetworkSettings, radius: number) {
+  let textAnchor: 'start' | 'middle' | 'end' = 'middle'
+  let baseline: 'auto' | 'middle' | 'hanging' = 'middle'
+
+  let offset: IPos = { x: 0, y: 0 }
+
+  switch (settings.plot.nodes.labels.position) {
+    case 'left':
+      textAnchor = 'end'
+      offset = { x: -radius - settings.plot.nodes.labels.offset, y: 0 }
+      break
+    case 'right':
+      textAnchor = 'start'
+      offset = { x: radius + settings.plot.nodes.labels.offset, y: 0 }
+      break
+    case 'below':
+      textAnchor = 'middle'
+      baseline = 'hanging'
+      offset = { x: 0, y: radius + settings.plot.nodes.labels.offset }
+      break
+    case 'above':
+      textAnchor = 'middle'
+      baseline = 'auto'
+      offset = { x: 0, y: -radius - settings.plot.nodes.labels.offset }
+      break
+    default:
+      textAnchor = 'middle'
+      break
+  }
+  return { textAnchor, baseline, offset }
+}

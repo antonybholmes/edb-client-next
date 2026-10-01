@@ -6,244 +6,88 @@ import {
   forceSimulation,
 } from 'd3-force'
 
-import { COLOR_BLACK } from '@/lib/color/color'
-import { getColorMap } from '@/lib/color/colormap'
+import { argMin } from '@/lib/math/argmin'
+import { max } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
-import { quadtree, Quadtree } from 'd3-quadtree'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { nodeRadiusFunc } from '../matcalc/apps/heatmap/svg/cell-svg'
-import { INetworkSettings, useNetworkSettings } from './network-settings-store'
-import { IEdge, IGroup, INode, useNetwork } from './network-store'
+import { quadtree } from 'd3-quadtree'
+import { useCallback } from 'react'
+import { useNetworkSettings } from './network-settings-store'
+
+import { BaseType } from 'd3'
+import { create } from 'zustand'
+import {
+  getNodeText,
+  getTextAnchor,
+  INode,
+  IRenderEdge,
+  IRenderNode,
+  showNodeLabel,
+  useNetwork,
+} from './network-store'
 import { useUserData } from './network-user-data-store'
-
-export type NodeView = 'default' | 'hidden' | 'translucent'
-
-export interface IRenderNode extends INode, d3.SimulationNodeDatum {
-  //group: IGroup
-  view: NodeView
-}
-
-export interface IRenderEdge extends Omit<IEdge, 'source' | 'target'> {
-  view: NodeView
-  source: string | INode
-  target: string | INode
-}
 
 type SimulationStatus = 'idle' | 'running' | 'finished'
 
+interface INetworkD3SimSettings {
+  status: SimulationStatus
+  simNodes: IRenderNode[]
+}
+
+interface INetworkD3SimStore extends INetworkD3SimSettings {
+  updateStatus: (status: SimulationStatus) => void
+  updateSimNodes: (simNodes: IRenderNode[]) => void
+}
+
+const DEFAULT_SETTINGS: INetworkD3SimSettings = {
+  status: 'idle',
+  simNodes: [],
+}
+
+export const useNetworkD3SimStore = create<INetworkD3SimStore>()((set) => ({
+  ...DEFAULT_SETTINGS,
+
+  updateStatus: (status: SimulationStatus) => {
+    set({ status })
+  },
+  updateSimNodes: (simNodes: IRenderNode[]) => {
+    set({ simNodes })
+  },
+}))
+
 export function useNetworkD3Sim() {
   const { ref } = useSVG()
-  const { settings } = useNetworkSettings()
+  const { settings: networkSettings } = useNetworkSettings()
   const { settings: userData } = useUserData()
-
-  const { network, groups, nodes } = useNetwork()
-
-  const [tree, setTree] = useState<Quadtree<IRenderNode> | null>(null)
-  const [status, setStatus] = useState<SimulationStatus>('idle')
-  const currentNetworkId = useRef(network?.id ?? '')
-
-  const groupMap = useMemo(
-    () => new Map<string, IGroup>(groups.map((group) => [group.id, group])),
-    [groups]
-  )
-
-  const userLabelSet = useMemo(
-    () =>
-      new Set(
-        userData.labels.ids
-          .filter((x) => x.length > 0)
-          .map((x) => x.toLowerCase())
-      ),
-    [userData.labels.ids]
-  )
-
-  // how to label each node
-  const nodeLabelMap = useMemo(() => {
-    if (!network) {
-      return new Map()
-    }
-    return new Map<string, string>(
-      network.nodes.map((node) => [
-        node.id,
-        getNodeText(node, nodes.label.field, groupMap),
-      ])
-    )
-  }, [network?.nodes, nodes.label.field])
-
-  const renderNodes: IRenderNode[] = useMemo(() => {
-    if (!network) {
-      return []
-    }
-
-    console.log('renderNodes computation')
-
-    return network.nodes.map((node) => {
-      let view: NodeView = groupMap.get(node.groupId)?.show
-        ? 'default'
-        : 'hidden'
-
-      if (
-        settings.plot.nodes.view.mode === 'labelled' &&
-        !showNodeLabel(
-          node,
-          userLabelSet,
-          settings.plot.nodes.labels.showAll,
-          userData.labels.mode
-        )
-      ) {
-        view = settings.plot.nodes.view.hidden.show ? 'translucent' : 'hidden'
-      }
-
-      return {
-        ...node,
-        group: groupMap.get(node.groupId),
-        view,
-      }
-    })
-  }, [
-    network?.nodes,
-    groupMap,
+  const {
+    network,
+    nodes,
+    renderEdges,
+    radiusMap,
+    renderNodes,
+    nodeColorMap,
+    renderNodeMap,
     userLabelSet,
-    settings.plot.nodes.view.mode,
-    settings.plot.nodes.labels.showAll,
-    settings.plot.nodes.view.hidden.show,
-    userData.labels.mode,
-  ])
-
-  const renderNodeMap = useMemo(() => {
-    return new Map(renderNodes.map((node) => [node.id, node]))
-  }, [renderNodes])
-
-  const nodeEdgeMap = useMemo(() => {
-    if (!network?.edges || network.edges.length === 0) {
-      return new Map<string, Set<string>>()
-    }
-
-    const map = new Map<string, Set<string>>()
-
-    for (const edge of network.edges) {
-      if (!map.has(edge.source)) {
-        map.set(edge.source, new Set())
-      }
-      if (!map.has(edge.target)) {
-        map.set(edge.target, new Set())
-      }
-
-      map.get(edge.source)?.add(edge.id)
-      map.get(edge.target)?.add(edge.id)
-    }
-
-    return map
-  }, [network?.edges])
-
-  const renderEdges: IRenderEdge[] = useMemo(() => {
-    if (!network) {
-      return []
-    }
-
-    return network.edges.map((edge) => {
-      let view = 'default'
-
-      const sourceNode = renderNodeMap.get(edge.source)
-      const targetNode = renderNodeMap.get(edge.target)
-
-      if (settings.plot.edges.mode === 'labelled') {
-        // to view an edge, both nodes must be in the 'default' view
-        if (sourceNode?.view !== 'default' || targetNode?.view !== 'default') {
-          view = 'hidden'
-        }
-      } else if (
-        sourceNode?.view === 'translucent' ||
-        targetNode?.view === 'translucent'
-      ) {
-        // if all edges are on, if one of the connecting nodes
-        // is translucent, the edge should also be translucent
-        view = 'translucent'
-      } else if (
-        sourceNode?.view === 'hidden' ||
-        targetNode?.view === 'hidden'
-      ) {
-        // if one of the connecting nodes is hidden, the edge should also be hidden
-        view = 'hidden'
-      } else {
-        view = 'default'
-      }
-
-      return { ...edge, view } as IRenderEdge
-    })
-  }, [network?.edges, renderNodeMap, settings.plot.edges.mode])
-
-  const renderEdgeMap = useMemo(() => {
-    return new Map(renderEdges.map((edge) => [edge.id, edge]))
-  }, [renderEdges])
-
-  const radiusMap = useMemo(() => {
-    if (!network?.nodes || network.nodes.length === 0) {
-      return new Map<string, number>()
-    }
-
-    const nodeRadiusScale = nodeRadiusFunc(
-      settings.plot.nodes.radius,
-      settings.plot.nodes.scale.mode
-    )
-
-    return new Map<string, number>(
-      network.nodes.map((node) => [
-        node.id,
-        nodeRadiusScale((node.size ?? 0) / nodes.metricLim1.max),
-      ])
-    )
-  }, [
-    network?.nodes,
-    settings.plot.nodes.radius,
-    settings.plot.nodes.scale.mode,
-    nodes.metricLim1.max,
-  ])
-
-  const nodeColorMap = useMemo(() => {
-    if (!network?.nodes || network.nodes.length === 0) {
-      return new Map<string, string>()
-    }
-
-    switch (settings.plot.nodes.color.mode) {
-      case 'group':
-        return new Map(
-          network.nodes.map((node) => [
-            node.id,
-            groupMap.get(node.groupId)?.color ?? COLOR_BLACK,
-          ])
-        )
-
-      default:
-        const colorMap = getColorMap(settings.plot.nodes.color.cmap)
-
-        return new Map(
-          network.nodes.map((node) => [
-            node.id,
-            colorMap.getHexColor(node.size2 ?? 0) ?? COLOR_BLACK,
-          ])
-        )
-    }
-  }, [
-    settings.plot.nodes.color.mode,
     groupMap,
-    settings.plot.nodes.color.cmap,
-    network?.nodes,
-  ])
+    setTree,
+  } = useNetwork()
+
+  const status = useNetworkD3SimStore((state) => state.status)
+  const simNodes = useNetworkD3SimStore((state) => state.simNodes)
+  const updateStatus = useNetworkD3SimStore((state) => state.updateStatus)
+  const updateSimNodes = useNetworkD3SimStore((state) => state.updateSimNodes)
 
   // const canvasCoordinates = useMemo(
   //   () => d3ToCanvasSpace(coordinates, d3Size, radiusMap, settings),
   //   [coordinates, d3Size, radiusMap, settings]
   // )
 
-  useEffect(() => {
+  const runSim = useCallback(() => {
     if (!ref.current || !network) {
       return
     }
 
-    setStatus('running')
-    currentNetworkId.current = network.id
+    updateStatus('running')
 
     // 2. Clone the structure out into D3-friendly array mutations
     // const nodes = network.nodes.map((node, ni) => {
@@ -275,12 +119,12 @@ export function useNetworkD3Sim() {
     const svg = d3.select(ref.current)
 
     // get the main container for network nodes
-    const g = svg.select('#network')
+    const networkNode = svg.select('#network')
 
-    g.selectAll('*').remove()
+    networkNode.selectAll('*').remove()
 
     // Main container
-    // const g = svg.append('g')
+    const world = networkNode.append('g').attr('id', 'world')
 
     // Zoom
     // const zoom = d3
@@ -293,7 +137,7 @@ export function useNetworkD3Sim() {
     // svg.call(zoom)
 
     // Edges
-    const link = g
+    const link = world
       .append('g')
       .attr('id', 'edges')
       .attr('class', 'edges')
@@ -304,16 +148,19 @@ export function useNetworkD3Sim() {
     link
       .attr('id', (d) => `edge-${d.id}`)
       .attr('class', 'edge')
-      .attr('stroke', settings.plot.edges.line.value)
+      .attr('stroke', networkSettings.plot.edges.line.value)
       .attr('stroke-opacity', (d) =>
         d.view === 'translucent'
-          ? settings.plot.nodes.view.hidden.opacity
-          : settings.plot.edges.line.opacity
+          ? networkSettings.plot.nodes.view.hidden.opacity
+          : networkSettings.plot.edges.line.opacity
       )
-      .attr('stroke-width', (d) => d.strength * settings.plot.edges.scale)
+      .attr(
+        'stroke-width',
+        (d) => d.strength * networkSettings.plot.edges.scale
+      )
 
     // Nodes
-    const node = g
+    const node = world
       .append('g')
       .attr('id', 'nodes')
       .attr('class', 'nodes')
@@ -327,43 +174,36 @@ export function useNetworkD3Sim() {
       .append('circle')
       .attr('id', (d) => `node-circle-${d.id}`)
       .attr('class', 'node-circle')
-      .attr('r', (d) => radiusMap.get(d.id))
-      .attr('fill', (d) => nodeColorMap.get(d.id))
-      .attr('fill-opacity', (d) =>
-        d.view === 'translucent'
-          ? settings.plot.nodes.view.hidden.opacity
-          : settings.plot.nodes.color.opacity
-      )
-      .attr('stroke', (d) =>
-        settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
-          ? nodeColorMap.get(d.id)
-          : undefined
-      )
+      .call((g) => formatCircle(g))
 
     node
       .append('text')
       .attr('id', (d) => `node-text-${d.id}`)
       .attr('class', 'node-text')
-      .text((d) => nodeLabelMap.get(d.id) ?? '')
+
+      .call((g) => formatText(g))
 
     const linkForce = forceLink<INode, IRenderEdge>(edges)
       .id((d: INode) => d.id)
-      .distance(settings.layout.linkDistance)
+      .distance(networkSettings.layout.linkDistance)
 
     // Conditionally apply custom strength or let D3 use its default internal formula
-    if (settings.layout.useStrength) {
+    if (networkSettings.layout.useStrength) {
       linkForce.strength((d: IRenderEdge) => d.strength)
     }
 
     // 3. Initialize the D3 Force Engine
     const simulation = forceSimulation(nodes)
       //.alphaDecay(0.05)
-      .force('charge', forceManyBody().strength(settings.layout.chargeStrength))
+      .force(
+        'charge',
+        forceManyBody().strength(networkSettings.layout.chargeStrength)
+      )
       .force(
         'center',
         forceCenter(
-          settings.plot.size.w / 2 + settings.plot.margin.left,
-          settings.plot.size.h / 2 + settings.plot.margin.top
+          networkSettings.plot.size.w / 2 + networkSettings.plot.margin.left,
+          networkSettings.plot.size.h / 2 + networkSettings.plot.margin.top
         )
       )
       .force('link', linkForce)
@@ -371,7 +211,7 @@ export function useNetworkD3Sim() {
     const drag = d3
       .drag<SVGGElement, IRenderNode>()
       .filter((event) => {
-        return event.button === 0 && !event.ctrlKey
+        return event.button === 0 && event.ctrlKey
       })
       .on('start', (event, d) => {
         if (!event.active) {
@@ -385,6 +225,7 @@ export function useNetworkD3Sim() {
         d.fy = event.y
       })
       .on('end', (event, d) => {
+        // drag event has ended
         if (!event.active) {
           simulation.alphaTarget(0)
         }
@@ -429,137 +270,7 @@ export function useNetworkD3Sim() {
     })
 
     simulation.on('end', () => {
-      const maxRadius = Math.max(...Array.from(radiusMap.values()))
-
-      if (settings.plot.autoFit) {
-        const d3XBounds = {
-          xMin: d3.min(nodes, (d) => d.x) - maxRadius,
-          xMax: d3.max(nodes, (d) => d.x) + maxRadius,
-        }
-
-        const d3YBounds = {
-          yMin: d3.min(nodes, (d) => d.y) - maxRadius,
-          yMax: d3.max(nodes, (d) => d.y) + maxRadius,
-        }
-
-        const d3Size = {
-          w: d3XBounds.xMax - d3XBounds.xMin,
-          h: d3YBounds.yMax - d3YBounds.yMin,
-        }
-
-        const plotScale = {
-          x: settings.plot.size.w / d3Size.w,
-          y: settings.plot.size.h / d3Size.h,
-        }
-
-        const mid = {
-          x: (d3XBounds.xMin + d3XBounds.xMax) / 2,
-          y: (d3YBounds.yMin + d3YBounds.yMax) / 2,
-        }
-
-        const plotMid = {
-          x: settings.plot.size.w / 2 + settings.plot.margin.left,
-          y: settings.plot.size.h / 2 + settings.plot.margin.top,
-        }
-
-        const toPlot = (x: number, y: number) => ({
-          x: (x - mid.x) * plotScale.x + plotMid.x,
-          y: (y - mid.y) * plotScale.y + plotMid.y,
-        })
-
-        node
-          .transition()
-          .duration(1000) // Time in milliseconds
-          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
-          .attr('transform', (d) => {
-            const p = toPlot(d.x, d.y)
-            return `translate(${p.x}, ${p.y})`
-          })
-
-        link
-          .transition()
-          .duration(1000) // Time in milliseconds
-          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
-          .attr(
-            'x1',
-            (d) => toPlot((d.source as INode).x!, (d.source as INode).y!).x
-          )
-          .attr(
-            'y1',
-            (d) => toPlot((d.source as INode).x!, (d.source as INode).y!).y
-          )
-          .attr(
-            'x2',
-            (d) => toPlot((d.target as INode).x!, (d.target as INode).y!).x
-          )
-          .attr(
-            'y2',
-            (d) => toPlot((d.target as INode).x!, (d.target as INode).y!).y
-          )
-
-        for (let d of nodes) {
-          const p = toPlot(d.x, d.y)
-          d.x = p.x
-          d.y = p.y
-        }
-      }
-
-      if (settings.plot.nodes.clamp) {
-        const clampX = (x: number, y: number) => ({
-          x: Math.max(
-            settings.plot.margin.left + maxRadius,
-            Math.min(
-              settings.plot.size.w + settings.plot.margin.left - maxRadius,
-              x
-            )
-          ),
-
-          y: Math.max(
-            settings.plot.margin.top + maxRadius,
-            Math.min(
-              settings.plot.size.h + settings.plot.margin.top - maxRadius,
-              y
-            )
-          ),
-        })
-
-        node
-          .transition()
-          .duration(1000) // Time in milliseconds
-          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
-          .attr('transform', (d) => {
-            const p = clampX(d.x, d.y)
-            return `translate(${p.x}, ${p.y})`
-          })
-
-        link
-          .transition()
-          .duration(1000) // Time in milliseconds
-          .ease(d3.easeCubicInOut) // Smooth acceleration/deceleration
-          .attr(
-            'x1',
-            (d) => clampX((d.source as INode).x!, (d.source as INode).y!).x
-          )
-          .attr(
-            'y1',
-            (d) => clampX((d.source as INode).x!, (d.source as INode).y!).y
-          )
-          .attr(
-            'x2',
-            (d) => clampX((d.target as INode).x!, (d.target as INode).y!).x
-          )
-          .attr(
-            'y2',
-            (d) => clampX((d.target as INode).x!, (d.target as INode).y!).y
-          )
-
-        for (let d of nodes) {
-          const p = clampX(d.x, d.y)
-          d.x = p.x
-          d.y = p.y
-        }
-      }
-
+      console.log('Simulation ended')
       setTree(
         quadtree<IRenderNode>(
           nodes,
@@ -568,198 +279,212 @@ export function useNetworkD3Sim() {
         )
       )
 
-      // if (nodes.length > 0) {
-      //   if (nodes.length === 0) return
-      //   // Extract all final positions
-      //   const xVals = nodes.map((n: any) => n.x)
-      //   const yVals = nodes.map((n: any) => n.y)
-      //   const minX = Math.min(...xVals)
-      //   const maxX = Math.max(...xVals)
-      //   const minY = Math.min(...yVals)
-      //   const maxY = Math.max(...yVals)
-      //   const width = maxX - minX
-      //   const height = maxY - minY
-      //   // keep coordinates centered around 0,
-      //   // the plotter will move them to center of canvas
-      //   const coordinates: Record<string, IPos> = Object.fromEntries(
-      //     nodes.map((node) => [
-      //       node.id,
-      //       {
-      //         x: node.x,
-      //         y: node.y,
-      //       },
-      //     ])
-      //   )
-      //   //
-      //   updateCoordinates(coordinates, { w: width, h: height })
-      // }
-      //onFinished?.()
-
-      setStatus('finished')
+      updateSimNodes(nodes)
+      updateStatus('finished')
     })
-
-    // 5. Hard lifecycle boundary: If the hook unmounts or options change, kill the simulation loop immediately
-    return () => {
-      simulation.stop()
-    }
   }, [
     network,
     radiusMap,
-    settings.plot.autoFit,
-    settings.plot.nodes.clamp,
-    settings.plot.margin,
-    settings.layout.chargeStrength,
-    settings.layout.linkDistance,
-    settings.plot.crosshair.search.radius,
+    networkSettings,
     setTree,
+    updateSimNodes,
+    updateStatus,
   ])
 
-  return {
-    renderNodes,
-    renderNodeMap,
-    renderEdges,
-    renderEdgeMap,
-    nodeEdgeMap,
-    radiusMap,
-    nodeLabelMap,
-    nodeColorMap,
-    tree,
-    status,
-  }
-}
+  // useEffect(() => {
+  //   runSim()
+  // }, [
+  //   network,
+  //   radiusMap,
+  //   settings.plot.autoFit,
+  //   settings.plot.margin,
+  //   settings.layout.chargeStrength,
+  //   settings.layout.linkDistance,
+  //   settings.plot.crosshair.search.radius,
+  //   setTree,
+  // ])
 
-export function showNodeLabel(
-  node: INode,
-  labelSet: Set<string>,
-  showAll: boolean,
-  mode: 'partial' | 'exact'
-) {
-  const found =
-    inNodeData(node, labelSet, mode) || labelsInNodeIds(node, labelSet)
-
-  // if showAll is true, we show the label only if it is not found in the node data or node ids
-  // if showAll is false, we show the label only if it is found in the node data or node ids
-  // therefore we just check if showAll is different from found because that captures both cases correctly
-  const showLabel = showAll !== found
-
-  return showLabel
-}
-
-export function labelsInNodeIds(node: INode, labelSet: Set<string>): boolean {
-  return (
-    inLabelSet(node.id, labelSet, 'exact') ||
-    inLabelSet(node.id2, labelSet, 'exact')
-  )
-}
-
-export function inNodeData(
-  node: INode,
-  labelSet: Set<string>,
-  mode: 'partial' | 'exact'
-) {
-  return Object.values(node.data)
-    .filter((d) => typeof d === 'string')
-    .some((d) => inLabelSet(d.toString(), labelSet, mode))
-}
-
-export function inLabelSet(
-  text: string,
-  labelSet: Set<string>,
-  mode: 'partial' | 'exact'
-): boolean {
-  text = text.toLowerCase().trim()
-
-  if (mode === 'exact') {
-    return labelSet.has(text)
-  }
-
-  // check if anything in label set is within the text
-  for (const label of labelSet) {
-    if (text.includes(label)) {
-      return true
+  const autoFit = useCallback(() => {
+    if (!ref.current) {
+      return
     }
-  }
 
-  return false
-}
+    const svg = d3.select(ref.current)
 
-/**
- * Get the text for a specific field of a node.
- *
- * @param node The node object.
- * @param field The field name to retrieve the text from.
- * @returns The text value of the specified field.
- */
-export function getNodeText(
-  node: INode,
-  field: string,
-  groupMap: Map<string, IGroup>
-): string {
-  switch (field) {
-    case 'id':
-      return node.id
-    case 'id2':
-      return node.id2
-    case 'group':
-      return groupMap.get(node.groupId)?.name ?? ''
-    default:
-      let value = node.data[field]
+    const world = svg.select('#world')
 
-      if (typeof value === 'number') {
-        value = value.toString()
+    if (world.empty()) {
+      return
+    }
+
+    const maxRadius = max([...radiusMap.values()])
+
+    const d3XBounds = {
+      xMin: d3.min(simNodes, (d) => d.x) - maxRadius,
+      xMax: d3.max(simNodes, (d) => d.x) + maxRadius,
+    }
+
+    const d3YBounds = {
+      yMin: d3.min(simNodes, (d) => d.y) - maxRadius,
+      yMax: d3.max(simNodes, (d) => d.y) + maxRadius,
+    }
+
+    const d3Size = {
+      w: d3XBounds.xMax - d3XBounds.xMin,
+      h: d3YBounds.yMax - d3YBounds.yMin,
+    }
+
+    const plotScale = Math.min(
+      (networkSettings.plot.size.w - 2 * maxRadius) / Math.max(d3Size.w, 1),
+      (networkSettings.plot.size.h - 2 * maxRadius) / Math.max(d3Size.h, 1)
+    )
+
+    const d3Mid = {
+      x: (d3XBounds.xMin + d3XBounds.xMax) / 2,
+      y: (d3YBounds.yMin + d3YBounds.yMax) / 2,
+    }
+
+    const mid = {
+      x: networkSettings.plot.size.w / 2 + networkSettings.plot.margin.left,
+      y: networkSettings.plot.size.h / 2 + networkSettings.plot.margin.top,
+    }
+
+    const projectToView = (point: { x?: number; y?: number }): IPos => {
+      const px = point.x ?? 0
+      const py = point.y ?? 0
+
+      return {
+        x: (px - d3Mid.x) * plotScale + mid.x,
+        y: (py - d3Mid.y) * plotScale + mid.y,
       }
+    }
 
-      return value ?? ''
+    const viewTransform = `translate(${mid.x}, ${mid.y}) scale(${plotScale}) translate(${-d3Mid.x}, ${-d3Mid.y})`
+
+    // Keep the rendered transform and the pointer-hit quadtree in lockstep.
+    // If the DOM transform is animated separately, the tree is left behind at the
+    // final transform while the visible nodes are still in the in-between state.
+    world.transition().duration(300).attr('transform', viewTransform)
+
+    const nodes = simNodes.map((d) => {
+      const p = projectToView(d)
+      return {
+        ...d,
+        x: p.x,
+        y: p.y,
+      }
+    })
+
+    const idx = argMin(nodes.map((d) => d.x))
+
+    console.log('what', nodes[idx])
+
+    console.log(
+      quadtree<IRenderNode>(
+        nodes,
+        (c) => c.x,
+        (c) => c.y
+      )
+    )
+
+    setTree(
+      quadtree<IRenderNode>(
+        nodes,
+        (c) => c.x,
+        (c) => c.y
+      )
+    )
+  }, [network, radiusMap, networkSettings, setTree, simNodes])
+
+  const formatCircle = useCallback(
+    (g: d3.Selection<SVGCircleElement, IRenderNode, BaseType, unknown>) => {
+      return g
+        .attr('r', (d) => radiusMap.get(d.id))
+        .attr('fill', (d) => nodeColorMap.get(d.id))
+        .attr('fill-opacity', (d) => {
+          const node = renderNodeMap.get(d.id)
+
+          if (!node || node.view !== 'translucent') {
+            return networkSettings.plot.nodes.color.opacity
+          }
+
+          return networkSettings.plot.nodes.view.hidden.opacity
+        })
+        .attr('stroke', (d) =>
+          networkSettings.plot.nodes.line.autoColor &&
+          networkSettings.plot.nodes.line.show
+            ? nodeColorMap.get(d.id)
+            : undefined
+        )
+        .attr('visibility', (d) => {
+          const node = renderNodeMap.get(d.id)
+
+          return !node || node.view === 'default' ? 'visible' : 'hidden'
+        })
+    },
+    [radiusMap, nodeColorMap, renderNodeMap, networkSettings]
+  )
+
+  const formatText = useCallback(
+    (g: d3.Selection<SVGTextElement, IRenderNode, BaseType, unknown>) => {
+      return g
+        .text((d) => getNodeText(d, nodes.label.field, groupMap))
+        .attr('fill', (d) =>
+          networkSettings.plot.nodes.labels.color.on
+            ? nodeColorMap.get(d.id)
+            : networkSettings.plot.nodes.labels.color.default
+        )
+        .attr('transform', (d) => {
+          const { offset } = getTextAnchor(networkSettings, radiusMap.get(d.id))
+          return `translate(${offset.x}, ${offset.y})`
+        })
+        .attr('dominant-baseline', (d) => {
+          const { baseline } = getTextAnchor(
+            networkSettings,
+            radiusMap.get(d.id)
+          )
+          return baseline
+        })
+        .attr('text-anchor', (d) => {
+          const { textAnchor } = getTextAnchor(
+            networkSettings,
+            radiusMap.get(d.id)
+          )
+          return textAnchor
+        })
+        .attr('font-size', networkSettings.plot.nodes.labels.text.font.fontSize)
+        .attr('visibility', (d) =>
+          showNodeLabel(
+            d,
+            userLabelSet,
+            networkSettings.plot.nodes.labels.showAll,
+            userData.labels.mode
+          )
+            ? 'visible'
+            : 'hidden'
+        )
+    },
+    [
+      nodes.label.field,
+      groupMap,
+      nodeColorMap,
+      radiusMap,
+      networkSettings,
+      userLabelSet,
+      userData.labels.mode,
+    ]
+  )
+
+  const setIdle = useCallback(() => {
+    updateStatus('idle')
+  }, [updateStatus])
+
+  return {
+    status,
+    autoFit,
+    runSim,
+    formatText,
+    formatCircle,
+    setIdle,
   }
-}
-
-// function getNodeText(node: INode, settings: INetworkSettings): string {
-//   switch (settings.plot.nodes.labels.type) {
-//     case 'label':
-//       return node.label
-//     case 'name':
-//       return node.name
-//     case 'group':
-//       return node.group
-//     case 'size':
-//       return node.size.toString()
-//     case 'id':
-//       return node.id
-//     case 'id2':
-//       return node.id2
-//     default:
-//       return ''
-//   }
-// }
-
-export function getTextAnchor(settings: INetworkSettings, radius: number) {
-  let textAnchor: 'start' | 'middle' | 'end' = 'middle'
-  let baseline: 'auto' | 'middle' | 'hanging' = 'middle'
-
-  let offset: IPos = { x: 0, y: 0 }
-
-  switch (settings.plot.nodes.labels.position) {
-    case 'left':
-      textAnchor = 'end'
-      offset = { x: -radius - settings.plot.nodes.labels.offset, y: 0 }
-      break
-    case 'right':
-      textAnchor = 'start'
-      offset = { x: radius + settings.plot.nodes.labels.offset, y: 0 }
-      break
-    case 'below':
-      textAnchor = 'middle'
-      baseline = 'hanging'
-      offset = { x: 0, y: radius + settings.plot.nodes.labels.offset }
-      break
-    case 'above':
-      textAnchor = 'middle'
-      baseline = 'auto'
-      offset = { x: 0, y: -radius - settings.plot.nodes.labels.offset }
-      break
-    default:
-      textAnchor = 'middle'
-      break
-  }
-  return { textAnchor, baseline, offset }
 }

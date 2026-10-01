@@ -164,7 +164,7 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            <PropRow title="Bounds">
+            {/* <PropRow title="Bounds">
               <Toggle
                 //variant="app-theme"
                 pad="md"
@@ -197,9 +197,9 @@ export function NetworkDisplayPropsPanel() {
                 }
               >
                 Clamp
-              </Toggle>
+              </Toggle> */}
 
-              {/* <Toggle
+            {/* <Toggle
                 pad="md"
                 size="sm"
                 pressed={settings.plot.nodes.clip}
@@ -214,7 +214,7 @@ export function NetworkDisplayPropsPanel() {
                 Clip
               </Toggle> */}
 
-              {/* <Checkbox
+            {/* <Checkbox
                 title="Clamp"
                 tooltip="Nodes will be clamped within the plot boundaries."
                 checked={settings.plot.nodes.clamp}
@@ -229,7 +229,7 @@ export function NetworkDisplayPropsPanel() {
                 Clamp
               </Checkbox> */}
 
-              {/* <Checkbox
+            {/* <Checkbox
                 title="Clip"
                 tooltip="Clip nodes at the plot boundaries."
                 checked={settings.plot.nodes.clip}
@@ -243,7 +243,6 @@ export function NetworkDisplayPropsPanel() {
               >
                 Clip
               </Checkbox> */}
-            </PropRow>
 
             {/* <CheckPropRow
               title="Auto Fit"

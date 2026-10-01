@@ -14,15 +14,15 @@ import * as d3 from 'd3'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
 import { useNetworkSettings } from '../network-settings-store'
-import { INode, useNetwork } from '../network-store'
 import {
-  getTextAnchor,
+  INode,
   IRenderEdge,
   IRenderNode,
   labelsInNodeIds,
-  showNodeLabel,
-  useNetworkD3Sim,
-} from '../network-store-d3-sim'
+  useNetwork,
+} from '../network-store'
+
+import { useNetworkD3Sim } from '../network-store-d3-sim'
 import { useUserData } from '../network-user-data-store'
 import { LegendSvg } from './legend-svg'
 
@@ -35,17 +35,18 @@ export function NetworkD3SvgContent() {
     userLabelSet,
   } = useUserData()
 
-  const { network } = useNetwork()
-
   const {
+    network,
+    tree,
     renderEdgeMap,
     nodeEdgeMap,
     nodeLabelMap,
-    radiusMap,
+
     nodeColorMap,
     renderNodeMap,
-    tree,
-  } = useNetworkD3Sim()
+  } = useNetwork()
+
+  const { formatText, formatCircle } = useNetworkD3Sim()
 
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
@@ -65,56 +66,33 @@ export function NetworkD3SvgContent() {
       return
     }
 
-    g.selectAll<SVGCircleElement, IRenderNode>('circle')
-      .attr('fill', (d) => nodeColorMap.get(d.id))
-      .attr('fill-opacity', (d) => {
-        const node = renderNodeMap.get(d.id)
+    // g.selectAll<SVGCircleElement, IRenderNode>('circle')
+    //   .attr('fill', (d) => nodeColorMap.get(d.id))
+    //   .attr('fill-opacity', (d) => {
+    //     const node = renderNodeMap.get(d.id)
 
-        return node.view === 'translucent'
-          ? settings.plot.nodes.view.hidden.opacity
-          : settings.plot.nodes.color.opacity
-      })
-      .attr('stroke', (d) =>
-        settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
-          ? nodeColorMap.get(d.id)
-          : undefined
-      )
-      .attr('visibility', (d) => {
-        const node = renderNodeMap.get(d.id)
+    //     return node.view === 'translucent'
+    //       ? settings.plot.nodes.view.hidden.opacity
+    //       : settings.plot.nodes.color.opacity
+    //   })
+    //   .attr('stroke', (d) =>
+    //     settings.plot.nodes.line.autoColor && settings.plot.nodes.line.show
+    //       ? nodeColorMap.get(d.id)
+    //       : undefined
+    //   )
+    //   .attr('visibility', (d) => {
+    //     const node = renderNodeMap.get(d.id)
 
-        return node.view === 'hidden' ? 'hidden' : 'visible'
-      })
+    //     return node.view === 'hidden' ? 'hidden' : 'visible'
+    //   })
 
-    g.selectAll<SVGTextElement, IRenderNode>('text')
-      .attr('fill', (d) =>
-        settings.plot.nodes.labels.color.on
-          ? nodeColorMap.get(d.id)
-          : settings.plot.nodes.labels.color.default
-      )
-      .attr('transform', (d) => {
-        const { offset } = getTextAnchor(settings, radiusMap.get(d.id))
-        return `translate(${offset.x}, ${offset.y})`
-      })
-      .attr('dominant-baseline', (d) => {
-        const { baseline } = getTextAnchor(settings, radiusMap.get(d.id))
-        return baseline
-      })
-      .attr('text-anchor', (d) => {
-        const { textAnchor } = getTextAnchor(settings, radiusMap.get(d.id))
-        return textAnchor
-      })
-      .attr('font-size', settings.plot.nodes.labels.text.font.fontSize)
-      .attr('visibility', (d) =>
-        showNodeLabel(
-          d,
-          userLabelSet,
-          settings.plot.nodes.labels.showAll,
-          userData.labels.mode
-        )
-          ? 'visible'
-          : 'hidden'
-      )
-  }, [renderNodeMap, userLabelSet, nodeColorMap, settings])
+    console.log('update circles')
+
+    // g.selectAll<SVGTextElement, IRenderNode>('text').call((g) => formatText(g))
+    g.selectAll<SVGCircleElement, IRenderNode>('circle').call((g) =>
+      formatCircle(g)
+    )
+  }, [renderNodeMap, nodeColorMap, settings])
 
   // update node labels
   useEffect(() => {
@@ -129,10 +107,12 @@ export function NetworkD3SvgContent() {
       return
     }
 
-    g.selectAll<SVGTextElement, IRenderNode>('text').text(
-      (d) => nodeLabelMap.get(d.id) ?? ''
-    )
-  }, [nodeLabelMap, settings])
+    // g.selectAll<SVGTextElement, IRenderNode>('text').text(
+    //   (d) => nodeLabelMap.get(d.id) ?? ''
+    // )
+
+    g.selectAll<SVGTextElement, IRenderNode>('text').call((g) => formatText(g))
+  }, [renderNodeMap, nodeLabelMap, userLabelSet, settings])
 
   useEffect(() => {
     if (!ref.current) {
@@ -214,8 +194,6 @@ export function NetworkD3SvgContent() {
         svgP.y,
         settings.plot.crosshair.search.radius
       )
-
-      //console.log(node, currentNode)
 
       // since we have lots of mouse events, only react when the current node changes
       if (!node) {
