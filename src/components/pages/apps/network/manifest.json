@@ -1,10 +1,10 @@
 {
   "name": "Network",
-  "description": "Create beautiful network graphs.",
+  "description": "Beautiful network graphs.",
   "color": "#4169E1",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-01T01:20:07.283Z",
-  "hash": "e2a144ea669f00a6a3ca5bcc8e85831b1cc5c72adf73d47f965c411bbf2cd60e",
-  "build": 108
+  "modified": "2026-10-01T03:17:34.223Z",
+  "hash": "10434372c29b9ff584e14295a4bed728f363dfe21beaa9294fde50e244605b25",
+  "build": 110
 }

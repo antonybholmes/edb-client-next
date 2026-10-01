@@ -19,7 +19,7 @@ import { StretchRow } from '@/layout/stretch-row'
 import { cn } from '@/lib/shadcn-utils'
 import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
-import { Settings2 } from 'lucide-react'
+import { Eye, Settings2 } from 'lucide-react'
 import { IGroup, useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
 import { GroupDialog } from './group-dialog'
@@ -53,6 +53,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
         }}
         style={{ color: group.color }}
         title={group.show ? 'Hide group' : 'Show group'}
+        icon={<Eye size={16} strokeWidth={1.5} />}
       />
 
       <TruncateSpan className="grow h-6 text-xs" style={{ color: group.color }}>

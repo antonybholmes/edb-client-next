@@ -19,7 +19,7 @@ import { useUserData } from './network-user-data-store'
 
 export type NodeView = 'default' | 'hidden' | 'translucent'
 
-export interface IRenderNode extends INode {
+export interface IRenderNode extends INode, d3.SimulationNodeDatum {
   //group: IGroup
   view: NodeView
 }
@@ -367,6 +367,33 @@ export function useNetworkD3Sim() {
         )
       )
       .force('link', linkForce)
+
+    const drag = d3
+      .drag<SVGGElement, IRenderNode>()
+      .filter((event) => {
+        return event.button === 0 && !event.ctrlKey
+      })
+      .on('start', (event, d) => {
+        if (!event.active) {
+          simulation.alphaTarget(0.3).restart()
+        }
+        d.fx = d.x ?? event.x
+        d.fy = d.y ?? event.y
+      })
+      .on('drag', (event, d) => {
+        d.fx = event.x
+        d.fy = event.y
+      })
+      .on('end', (event, d) => {
+        if (!event.active) {
+          simulation.alphaTarget(0)
+        }
+        d.fx = null
+        d.fy = null
+      })
+
+    node.call(drag)
+
     // .force('boundary-elastic', () => {
     //   const strength = 0.2
 

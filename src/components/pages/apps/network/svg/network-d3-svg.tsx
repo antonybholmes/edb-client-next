@@ -4,7 +4,7 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
-import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { IS_DEV_MODE } from '@/consts'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { truncate } from '@/lib/text/text'
@@ -420,7 +420,12 @@ export function NetworkD3SvgContent() {
   }, [settings, network?.id])
 
   return (
-    <SvgZoomCanvas size={size}>
+    <SvgZoomCanvas
+      size={size}
+      onPointerMove={onPointerMove}
+      onPointerLeave={hideCrosshair}
+      onDoubleClick={onPointerDoubleClick}
+    >
       <SvgG id="network" />
       <SvgMargin margin={settings.plot.margin}>
         {settings.plot.border.show && (
@@ -432,13 +437,6 @@ export function NetworkD3SvgContent() {
             sp={settings.plot.border}
           />
         )}
-        <SvgMouseRect
-          size={settings.plot.size}
-          onPointerMove={onPointerMove}
-          onPointerLeave={hideCrosshair}
-          onDoubleClick={onPointerDoubleClick}
-          //fill="red"
-        />
       </SvgMargin>
       <LegendSvg />
     </SvgZoomCanvas>

@@ -14,13 +14,14 @@ export interface ICheckboxProps extends ComponentProps<
 > {
   index?: number
   tooltip?: string
+  icon?: ReactNode
   onCheckedChange?: ICheckedChange
 }
 
 export const CHECK_CLS = cn(
   FOCUS_RING_CLS,
   'flex flex-row items-center justify-center shrink-0 cursor-pointer',
-  'group aspect-square shrink-0 border border-border/80 w-4 h-4 rounded-xs'
+  'group aspect-square shrink-0 border border-border/80 w-4.5 h-4.5 rounded-xs'
 )
 
 export function SmallCheckbox({
@@ -33,6 +34,7 @@ export function SmallCheckbox({
   className,
   style,
   title,
+  icon,
   'aria-label': ariaLabel,
   ...props
 }: ICheckboxProps) {
@@ -40,6 +42,10 @@ export function SmallCheckbox({
 
   if (!ariaLabel) {
     ariaLabel = title
+  }
+
+  if (!icon) {
+    icon = <Check className="mt-0.5" size={14} strokeWidth={3} />
   }
 
   let ret: ReactNode = (
@@ -58,9 +64,7 @@ export function SmallCheckbox({
       aria-label={ariaLabel}
       {...props}
     >
-      <CheckboxPrimitive.Indicator>
-        <Check className="mt-0.5" size={14} strokeWidth={3} />
-      </CheckboxPrimitive.Indicator>
+      <CheckboxPrimitive.Indicator>{icon}</CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
 

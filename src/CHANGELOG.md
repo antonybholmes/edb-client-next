@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Draggable network.
 - Network can show groups in nodes.
 - Oncoplot now uses crosshair.
 - UI fixes.
