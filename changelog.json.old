@@ -3251,6 +3251,10 @@
         {
           "msg": "Network updates",
           "date": "2026-10-01T21:11:30.538Z"
+        },
+        {
+          "msg": "Network can now auto size right margin to cope with font changes to legend",
+          "date": "2026-10-01T21:38:15.829Z"
         }
       ]
     },
