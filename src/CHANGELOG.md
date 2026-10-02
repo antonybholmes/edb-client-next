@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Make toolbar buttons a little smaller.
 - Added font toolbar ui.
 - Network can now auto size right margin to cope with font changes to legend.
 - Network updates.
