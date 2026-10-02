@@ -3255,6 +3255,10 @@
         {
           "msg": "Network can now auto size right margin to cope with font changes to legend",
           "date": "2026-10-01T21:38:15.829Z"
+        },
+        {
+          "msg": "Added font toolbar ui",
+          "date": "2026-10-02T23:00:26.831Z"
         }
       ]
     },

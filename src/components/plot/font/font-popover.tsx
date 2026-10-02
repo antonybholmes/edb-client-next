@@ -59,6 +59,7 @@ interface IFontPopoverProps {
     showEnabled?: boolean
     showAlign?: boolean
     showRotation?: boolean
+    showColor?: boolean
     /**
      * extended UI can be rendered here, for example to set font size with a slider
      */
@@ -72,8 +73,6 @@ export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
   if (!fonts || fonts.length === 0) {
     return null
   }
-
-  const font = fonts[0]!
 
   // create a pleasing icon if one is not set
   if (!icon) {
@@ -98,6 +97,7 @@ export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
             showEnabled={f.showEnabled ?? true}
             showAlign={f.showAlign ?? true}
             showRotation={f.showRotation ?? false}
+            showColor={f.showColor ?? false}
           />
           {f.ext && f.ext}
         </Fragment>

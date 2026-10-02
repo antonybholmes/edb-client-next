@@ -503,6 +503,22 @@ export function useNetworkD3Sim() {
           return textAnchor
         })
         .attr('font-size', networkSettings.plot.nodes.labels.text.font.fontSize)
+        .attr(
+          'font-family',
+          networkSettings.plot.nodes.labels.text.font.fontFamily
+        )
+        .attr(
+          'font-weight',
+          networkSettings.plot.nodes.labels.text.font.fontWeight
+        )
+        .attr(
+          'font-style',
+          networkSettings.plot.nodes.labels.text.font.fontStyle
+        )
+        .attr(
+          'text-decoration',
+          networkSettings.plot.nodes.labels.text.font.decoration
+        )
         .attr('visibility', (d) =>
           getIsNodeLabelled(
             d,

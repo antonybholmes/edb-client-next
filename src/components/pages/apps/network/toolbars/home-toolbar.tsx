@@ -28,6 +28,7 @@ import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { NetworkDialog } from '../network-dialog'
 import { useNetworkSettings } from '../network-settings-store'
 import { useNetworkD3Sim } from '../network-store-d3-sim'
+import { FontToolbarGroup } from './font-toolbar-group'
 
 export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
@@ -89,55 +90,22 @@ export function HomeToolbar() {
         </ToolbarCol>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
-        <ToolbarCol>
-          <ToolbarRow>
-            <span className="w-3 text-center">W</span>
-            <NumericalInput
-              w="xxs"
-              h="sm"
+      <FontToolbarGroup
+        showColor={false}
+        showAlign={false}
+        textProps={settings.plot.nodes.labels.text}
+        update={(textProps) => {
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.plot.nodes.labels.text = textProps
+            })
+          )
+        }}
+      />
 
-              value={settings.plot.size.w}
-              placeholder="Width"
-              limit={[1, 5000]}
-              dp={0}
-              onNumChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.size.w = v
-                  })
-                )
-              }}
-            />
-          </ToolbarRow>
-          <ToolbarRow>
-            <span className="w-3 text-center">H</span>
-            <NumericalInput
-              w="xxs"
-              h="sm"
-              value={settings.plot.size.h}
-              placeholder="Height"
-              limit={[1, 5000]}
-              dp={0}
-
-              onNumChange={(v) => {
-                console.log('New height value:', v)
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.size.h = v
-                  })
-                )
-              }}
-            />
-          </ToolbarRow>
-        </ToolbarCol>
-        <ToolbarCol></ToolbarCol>
-      </ToolbarTabGroup>
       <ToolbarTabGroup title="Color">
         <ToolbarCol>
           <ToolbarRow>
-            {/* <span>Mode</span> */}
-
             <ToggleGroup
               value={[settings.plot.nodes.color.mode]}
               onValueChange={(v) => {
@@ -180,6 +148,50 @@ export function HomeToolbar() {
               )
             }}
           />
+        </ToolbarCol>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
+        <ToolbarCol>
+          <ToolbarRow>
+            <span className="w-3 text-center">W</span>
+            <NumericalInput
+              w="xxs"
+              h="sm"
+
+              value={settings.plot.size.w}
+              placeholder="Width"
+              limit={[1, 5000]}
+              dp={0}
+              onNumChanged={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.size.w = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow>
+            <span className="w-3 text-center">H</span>
+            <NumericalInput
+              w="xxs"
+              h="sm"
+              value={settings.plot.size.h}
+              placeholder="Height"
+              limit={[1, 5000]}
+              dp={0}
+
+              onNumChange={(v) => {
+                console.log('New height value:', v)
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.size.h = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>
     </>

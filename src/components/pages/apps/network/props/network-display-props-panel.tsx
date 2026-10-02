@@ -398,6 +398,8 @@ export function NetworkDisplayPropsPanel() {
                     title: 'Font',
                     textProps: settings.plot.nodes.labels.text,
                     showEnabled: false,
+                    showAlign: false,
+                    showColor: false,
                     update: (textProps) =>
                       updateSettings(
                         produce(settings, (draft) => {
