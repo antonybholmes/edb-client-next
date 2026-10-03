@@ -29,5 +29,13 @@ export function PercentSlider({
 }: ComponentProps<typeof NumSlider>) {
   const f = useCallback((v: number) => formatAsPercent(v, dp), [dp])
 
-  return <NumSlider value={value} format={f} parser={parsePercent} {...props} />
+  return (
+    <NumSlider
+      value={value}
+      format={f}
+      inputW="xs"
+      parser={parsePercent}
+      {...props}
+    />
+  )
 }

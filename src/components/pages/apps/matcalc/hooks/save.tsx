@@ -1,7 +1,9 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { TXT_FORMAT } from '@/components/dialogs/save-txt-dialog'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { download } from '@/lib/download-utils'
 import { friendlyFilename } from '@/lib/path'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 
@@ -93,6 +95,32 @@ export function useBasicSaveAs() {
         name,
         callback: (data) => {
           save(data.name, data.format.ext)
+        },
+      },
+    })
+  }
+
+  return {
+    save,
+    saveAs,
+  }
+}
+
+export function useSaveTxt() {
+  const { open: openDialog } = useDialogs()
+
+  function save(data: string, file: string) {
+    download(data, file)
+  }
+
+  function saveAs(data: string, name: string = 'data') {
+    openDialog({
+      type: 'save',
+      payload: {
+        name,
+        fileTypes: [TXT_FORMAT],
+        callback: (t) => {
+          save(data, t.name)
         },
       },
     })

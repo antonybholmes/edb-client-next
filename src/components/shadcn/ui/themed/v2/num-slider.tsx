@@ -43,6 +43,7 @@ export function NumSlider({
   dp = 0,
   labelCls,
   delayMs = 300,
+  inputW = 'xxs',
   parser = parseNumber,
   onNumChange,
   onNumChanged,
@@ -51,6 +52,7 @@ export function NumSlider({
 }: ComponentProps<typeof Slider> & {
   labelCls?: string
   dp?: number
+  inputW?: ComponentProps<typeof Input>['w']
   parser?: INumParser
   format?: (v: number) => string
 }) {
@@ -105,7 +107,7 @@ export function NumSlider({
           }
         }}
         inputCls={cn('text-right', labelCls)}
-        w="xxs"
+        w={inputW}
         h="xs"
         variant="flat"
       />

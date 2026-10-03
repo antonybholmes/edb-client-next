@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Text viewer now has basic toolbar ui.
 - New margin UI. Lots of UI tweaks. New toolbar size.
 - Make toolbar buttons a little smaller.
 - Added font toolbar ui.

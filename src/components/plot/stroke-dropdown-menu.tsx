@@ -33,6 +33,8 @@ const WEIGHTS = [
 ]
 
 export type ButtonStyle = 'flat' | 'simple'
+export const SIMPLE_BUTTON_CLS =
+  'opacity-70 data-popup-open:opacity-100 hover:opacity-100 focus-visible:opacity-100 trans-opacity'
 
 export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   colors: IColorPickerProps[]

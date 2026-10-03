@@ -22,9 +22,9 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
@@ -65,8 +65,8 @@ export function ExtGseaDisplayPropsPanel() {
   const displayOptions = plot!.props
 
   return (
-    <PropsPanel>
-      <SideBarHeader>
+    <PropsPanel className="gap-y-2">
+      <VCenterRow className="justify-end">
         <LinkButton
           onClick={() =>
             updatePlot(
@@ -79,7 +79,7 @@ export function ExtGseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </SideBarHeader>
+      </VCenterRow>
       <ScrollAccordion
         value={openTabs}
         onValueChange={(v) => setOpenTabs(v as string[])}
@@ -94,6 +94,7 @@ export function ExtGseaDisplayPropsPanel() {
                 limit={[1, 1000]}
                 placeholder="Width..."
                 w="xxs"
+                h="toolbar"
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -389,6 +390,7 @@ export function ExtGseaDisplayPropsPanel() {
                 limit={[1, 1000]}
                 placeholder="Height..."
                 w="xxs"
+                h="toolbar"
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -399,7 +401,7 @@ export function ExtGseaDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Color" className="ml-2">
+            <PropRow title="Color" contentCls="gap-x-1">
               <StrokeButton
                 colors={[
                   {

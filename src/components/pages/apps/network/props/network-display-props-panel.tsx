@@ -6,6 +6,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
@@ -17,10 +18,9 @@ import {
 import { produce } from 'immer'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import { useNetworkSettings } from '../network-settings-store'
+import { POSITIONS, useNetworkSettings } from '../network-settings-store'
 import { FieldSelectList } from './field-select-list'
 import { MarginPopover } from './margin-popover'
-import { PositionDropdown } from './position-dropdown'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
@@ -352,7 +352,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Outline" contentCls="gap-x-1">
+            <PropRow title="Outline" contentCls="gap-x-2">
               <Toggle
                 size="sm"
                 pad="md"
@@ -390,8 +390,8 @@ export function NetworkDisplayPropsPanel() {
         <AccordionItem value="labels">
           <AccordionTrigger>Labels</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Position">
-              <PositionDropdown />
+            <PropRow title="Position" contentCls="gap-x-2">
+              {/* <PositionDropdown /> */}
               <FontPopover
                 fonts={[
                   {
@@ -427,8 +427,7 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
-
-              {/* <SelectList
+              <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}
                 onValueChange={(value) => {
@@ -447,7 +446,7 @@ export function NetworkDisplayPropsPanel() {
                     {position.label}
                   </SelectItem>
                 ))}
-              </SelectList> */}
+              </SelectList>
             </PropRow>
             <PropRow title="Field">
               <FieldSelectList />

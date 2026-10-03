@@ -10,7 +10,7 @@ import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
 import { ReactNode } from 'react'
-import { ButtonStyle } from '../../stroke-dropdown-menu'
+import { ButtonStyle, SIMPLE_BUTTON_CLS } from '../../stroke-dropdown-menu'
 import { IMarginProps } from '../../svg-props'
 
 export function PlotMarginPopover({
@@ -36,10 +36,7 @@ export function PlotMarginPopover({
         }
       />
     ) : (
-      <PopoverTrigger
-        title={title}
-        className="opacity-60 hover:opacity-80 data-popup-open:opacity-100 trans-opacity"
-      >
+      <PopoverTrigger title={title} className={SIMPLE_BUTTON_CLS}>
         <MarginIcon />
       </PopoverTrigger>
     )

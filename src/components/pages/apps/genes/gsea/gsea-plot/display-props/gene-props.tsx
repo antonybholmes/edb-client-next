@@ -8,7 +8,6 @@ import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { ColorMapMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -123,6 +122,7 @@ export function GeneProps() {
             )
           }}
           w="xs"
+          variant="toolbar"
         >
           <SelectItem value="score">Score</SelectItem>
           <SelectItem value="rank">Rank</SelectItem>
@@ -193,7 +193,7 @@ export function GeneProps() {
       </CheckPropRow>
 
       <CheckPropRow
-        title="Custom colors"
+        title="Custom Colors"
         checked={settings.genes.color.gradient.mode === 'user'}
         onCheckedChange={() => {
           updateSettings(
@@ -203,46 +203,44 @@ export function GeneProps() {
           )
         }}
       >
-        <VCenterRow>
-          <FillButton
-            colors={[
-              {
-                color: settings.genes.pos.value,
-                opacity: settings.genes.pos.opacity,
-                onColorChange: ({ color, opacity }) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.pos.value = color
-                      draft.genes.pos.opacity = opacity ?? 1
-                      draft.genes.color.gradient.mode = 'user'
-                    })
-                  )
-                },
+        <FillButton
+          colors={[
+            {
+              color: settings.genes.pos.value,
+              opacity: settings.genes.pos.opacity,
+              onColorChange: ({ color, opacity }) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.pos.value = color
+                    draft.genes.pos.opacity = opacity ?? 1
+                    draft.genes.color.gradient.mode = 'user'
+                  })
+                )
               },
-            ]}
-            title="Positive Gene Color"
-          />
+            },
+          ]}
+          title="Positive Gene Color"
+        />
 
-          <FillButton
-            colors={[
-              {
-                color: settings.genes.neg.value,
-                opacity: settings.genes.neg.opacity,
-                onColorChange: ({ color, opacity }) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.neg.value = color
-                      draft.genes.neg.opacity = opacity ?? 1
-                      draft.genes.color.gradient.mode = 'user'
-                    })
-                  )
-                },
+        <FillButton
+          colors={[
+            {
+              color: settings.genes.neg.value,
+              opacity: settings.genes.neg.opacity,
+              onColorChange: ({ color, opacity }) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.neg.value = color
+                    draft.genes.neg.opacity = opacity ?? 1
+                    draft.genes.color.gradient.mode = 'user'
+                  })
+                )
               },
-            ]}
+            },
+          ]}
 
-            title="Negative Gene Color"
-          />
-        </VCenterRow>
+          title="Negative Gene Color"
+        />
       </CheckPropRow>
 
       <PropRow title="Opacity">

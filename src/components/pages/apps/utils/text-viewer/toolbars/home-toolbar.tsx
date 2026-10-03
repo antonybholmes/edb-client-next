@@ -2,30 +2,19 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { TEXT_FILE, TEXT_SAVE_TABLE } from '@/consts'
+import { TEXT_FILE, TEXT_SAVE } from '@/consts'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
-import { friendlyFilename } from '@/lib/path'
-import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
+import { useSaveTxt } from '../../../matcalc/hooks/save'
+import { useTextSave } from '../text-provider'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
-  const { sheets } = useCurrentSheets()
+  const { saveAs } = useSaveTxt()
+  const { text } = useTextSave()
 
   return (
     <>
       <ToolbarTabGroup title={TEXT_FILE}>
-        <ToolbarIconButton
-          title={TEXT_SAVE_TABLE}
-          onClick={() =>
-            openDialog({
-              type: 'save',
-              payload: {
-                name: friendlyFilename(sheets[0].name),
-              },
-            })
-          }
-        >
+        <ToolbarIconButton title={TEXT_SAVE} onClick={() => saveAs(text)}>
           <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
