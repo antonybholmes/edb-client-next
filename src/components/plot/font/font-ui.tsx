@@ -98,6 +98,7 @@ export function FontFamilySelect({
       value={value}
       onValueChange={(v) => onChange(v as string)}
       w="md"
+      variant="toolbar"
     >
       {FONTS.map((font) => (
         <SelectItem key={font.label} value={font.label}>
@@ -129,6 +130,7 @@ export function FontSizeSelect({
         if (!isNaN(Number(val))) val = Number(val)
         onChange(val as number)
       }}
+      variant="toolbar"
     >
       {FONT_SIZES.map((size) => (
         <SelectItem key={size.value} value={size.value}>

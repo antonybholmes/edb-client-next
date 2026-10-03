@@ -3259,6 +3259,10 @@
         {
           "msg": "Added font toolbar ui",
           "date": "2026-10-02T23:00:26.831Z"
+        },
+        {
+          "msg": "Make toolbar buttons a little smaller",
+          "date": "2026-10-02T23:02:03.507Z"
         }
       ]
     },

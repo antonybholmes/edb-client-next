@@ -39,7 +39,7 @@ export function ViewToolbar() {
             <ZoomSelectList />
           </ToolbarRow>
           <ToolbarRow>
-            <ToolbarButton onClick={() => setZoom(1)} title="Zoom to 100%">
+            <ToolbarButton onClick={() => setZoom(1)} title="Zoom To 100%">
               <Fullscreen size={16} />
               <span>100%</span>
             </ToolbarButton>

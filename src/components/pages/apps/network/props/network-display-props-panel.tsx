@@ -17,9 +17,9 @@ import {
 import { produce } from 'immer'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import { MarginPopover } from '../margin-popover'
 import { useNetworkSettings } from '../network-settings-store'
 import { FieldSelectList } from './field-select-list'
+import { MarginPopover } from './margin-popover'
 import { PositionDropdown } from './position-dropdown'
 
 export function NetworkDisplayPropsPanel() {
@@ -97,8 +97,7 @@ export function NetworkDisplayPropsPanel() {
             <PropRow title="Size">
               <span className="w-3 text-center">W</span>
               <NumericalInput
-                w="xxs"
-                h="sm"
+                w="xs"
                 value={settings.plot.size.w}
                 placeholder="Width"
                 limit={[1, 5000]}
@@ -113,8 +112,7 @@ export function NetworkDisplayPropsPanel() {
               />
               <span className="w-3 text-center">H</span>
               <NumericalInput
-                w="xxs"
-                h="sm"
+                w="xs"
                 value={settings.plot.size.h}
                 placeholder="Height"
                 limit={[1, 5000]}
@@ -134,6 +132,7 @@ export function NetworkDisplayPropsPanel() {
 
             <PropRow title="Border">
               <StrokeButton
+                title="Border Color"
                 colors={[
                   {
                     color: settings.plot.border.value,
@@ -353,7 +352,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Outline">
+            <PropRow title="Outline" contentCls="gap-x-1">
               <Toggle
                 size="sm"
                 pad="md"
@@ -370,6 +369,7 @@ export function NetworkDisplayPropsPanel() {
                 Auto Color
               </Toggle>
               <StrokeButton
+                title="Outline Color"
                 colors={[
                   {
                     color: settings.plot.nodes.line.value,
@@ -477,6 +477,7 @@ export function NetworkDisplayPropsPanel() {
 
             <PropRow title="Line">
               <StrokeButton
+                title="Line Color"
                 colors={[
                   {
                     color: settings.plot.edges.line.value,

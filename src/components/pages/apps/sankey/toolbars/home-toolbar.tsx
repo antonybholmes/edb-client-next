@@ -82,7 +82,7 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
       <ToolbarTabGroup title="Plot">
         <DoubleNumericalInput
-          h="sm"
+          h="toolbar"
           v1={settings.width}
           v2={settings.height}
           onNumChange1={(v) => {

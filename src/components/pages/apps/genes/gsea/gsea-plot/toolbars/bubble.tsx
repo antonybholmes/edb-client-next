@@ -103,7 +103,7 @@ export function BubbleToolbar() {
               value={settings.bubbles.size}
               placeholder="Size..."
               dp={0}
-              h="sm"
+              h="toolbar"
               onNumChanged={(v) => {
                 updateSettings(
                   produce(settings, (draft) => {

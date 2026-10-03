@@ -13,7 +13,7 @@ const BUTTON_CLS = `flex w-4 h-3 min-h-0 overflow-hidden shrink-0
   flex-row justify-center items-center
   disabled:text-foreground/50
   enabled:focus-visible:text-app-theme
-  bg-muted/50 enabled:hover:bg-muted
+  enabled:hover:bg-muted/50
   outline-none trans-color`
 
 const UP_BUTTON_CLS = cn(BUTTON_CLS, 'rounded-t-sm')
@@ -29,8 +29,8 @@ export function SmallChevronIcon({ direction }: { direction: 'up' | 'down' }) {
       <SvgPath
         d={
           direction === 'up'
-            ? 'M7.5 14, L12 10, L16.5 14'
-            : 'M7.5 10, L12 14, L16.5 10'
+            ? 'M7  14, L12 9, L17 14'
+            : 'M7  10, L12 15, L17 10'
         }
         strokeWidth={1.5}
         className="stroke-foreground"
@@ -253,7 +253,7 @@ export function NumericalInput({
   }
 
   return (
-    <VCenterRow className="gap-x-0.75" data-disabled={disabled}>
+    <VCenterRow className="gap-x-0.5" data-disabled={disabled}>
       <Input
         id={id}
         name={name}
@@ -280,7 +280,7 @@ export function NumericalInput({
         aria-label={ariaLabel}
         title={title}
       />
-      <VCenterCol className="gap-y-px">
+      <VCenterCol>
         <button
           disabled={disabled}
 

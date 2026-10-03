@@ -13,7 +13,7 @@ interface IProps extends IDivProps {
 }
 
 const TAB_GROUP_CLS = cn(
-  'group-data-[ribbon=single]:min-h-8 shrink-0 text-xs items-start overflow-hidden',
+  'group-data-[ribbon=single]:min-h-7 shrink-0 text-xs items-start overflow-hidden',
   'group-data-[ribbon=classic]:min-h-16'
 )
 

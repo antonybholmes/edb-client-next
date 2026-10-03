@@ -34,7 +34,7 @@ export function ToolbarColButton({
       //variant="flat"
       rounded="theme"
       size="none"
-      //pad="none"
+      pad="sm"
       className={cn(TOOLBAR_COL_BUTTON_CLS, className)}
       // ripple={ripple}
       {...props}

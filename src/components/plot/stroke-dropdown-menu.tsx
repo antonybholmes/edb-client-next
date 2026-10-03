@@ -19,6 +19,7 @@ import {
 } from '../shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarIconButton } from '../toolbar/toolbar-icon-button'
 
+import { ReactNode } from 'react'
 import { ColorButton } from './color-picker-button'
 import { IColorPickerProps, PRESET_COLORS } from './color-picker-popover'
 import { THEME_COLOR_GRID } from './theme'
@@ -31,9 +32,12 @@ const WEIGHTS = [
   { label: '4pt', value: 4 },
 ]
 
+export type ButtonStyle = 'flat' | 'simple'
+
 export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   colors: IColorPickerProps[]
   align?: 'start' | 'end'
+  button?: ButtonStyle
   onCancel?: () => void
   open?: boolean
   onOpenChanged?: (open: boolean) => void
@@ -45,6 +49,7 @@ export function StrokeButton({
   className = '',
   title,
   'aria-label': ariaLabel,
+  button = 'simple',
   children,
   ...props
 }: IOutlineButtonProps) {
@@ -54,13 +59,8 @@ export function StrokeButton({
 
   const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
 
-  return (
-    <StrokeDropdownMenu
-      colors={colors}
-      align={align}
-      className={className}
-      {...props}
-    >
+  const trigger: ReactNode =
+    button === 'flat' ? (
       <DropdownMenuTrigger
         render={
           <ToolbarIconButton title={title}>
@@ -68,6 +68,20 @@ export function StrokeButton({
           </ToolbarIconButton>
         }
       />
+    ) : (
+      <DropdownMenuTrigger title={title}>
+        <OutlineIcon cp={color0} />
+      </DropdownMenuTrigger>
+    )
+
+  return (
+    <StrokeDropdownMenu
+      colors={colors}
+      align={align}
+      className={className}
+      {...props}
+    >
+      {trigger}
     </StrokeDropdownMenu>
   )
 }
@@ -76,10 +90,10 @@ function OutlineIcon({ cp }: { cp: IColorPickerProps }) {
   return (
     <CenterRow className="flex flex-row items-center justify-center  relative h-6 w-5 grow-0 shrink-0">
       <Pencil size={16} strokeWidth={1.5} className="z-10 fill-white" />
-      <span className="absolute top-1.25 left-0 h-2.5 w-3/5 z-0 border border-foreground rounded-xs"></span>
+      <span className="absolute top-1.5 left-0.5 h-2.25 w-3/5 z-0 border border-foreground rounded-xs"></span>
 
       <span
-        className="absolute bottom-0 h-1.5 w-full z-0 border border-foreground rounded-xs"
+        className="absolute bottom-0 h-1.25 w-9/10 z-0 border border-foreground rounded-xs"
         style={{
           backgroundColor:
             cp.show === undefined || cp.show ? cp.color : 'transparent',

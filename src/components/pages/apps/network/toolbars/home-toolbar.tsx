@@ -157,7 +157,7 @@ export function HomeToolbar() {
             <span className="w-3 text-center">W</span>
             <NumericalInput
               w="xxs"
-              h="sm"
+              h="toolbar"
 
               value={settings.plot.size.w}
               placeholder="Width"
@@ -176,7 +176,7 @@ export function HomeToolbar() {
             <span className="w-3 text-center">H</span>
             <NumericalInput
               w="xxs"
-              h="sm"
+              h="toolbar"
               value={settings.plot.size.h}
               placeholder="Height"
               limit={[1, 5000]}

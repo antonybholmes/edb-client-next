@@ -61,7 +61,7 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Plot Size">
         <DoubleNumericalInput
-          h="sm"
+          h="toolbar"
           v1={settings.es.axes.x.length}
           placeholder="Width"
           limit={[1, 1000]}
@@ -90,7 +90,7 @@ export function HomeToolbar() {
             Columns
             <NumericalInput
               value={settings.page.columns}
-              h="sm"
+              h="toolbar"
               placeholder="Opacity"
               limit={[1, 100]}
               step={1}
