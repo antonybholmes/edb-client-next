@@ -1,5 +1,5 @@
-import MODULE_INFO from '@/components/pages/apps/utils/text-viewer/manifest.json'
-import { TextViewerQueryPage } from '@/components/pages/apps/utils/text-viewer/text-viewer-page'
+import MODULE_INFO from '@/components/pages/apps/utils/text-view/manifest.json'
+import { TextViewerQueryPage } from '@/components/pages/apps/utils/text-view/text-view-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 import { Suspense } from 'react'
 

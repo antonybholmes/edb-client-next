@@ -1,0 +1,10 @@
+{
+  "name": "Text View",
+  "description": "A basic text viewer.",
+  "version": "1.0.0",
+  "color": "#000000",
+  "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
+  "modified": "2026-10-03T03:38:43.560Z",
+  "hash": "00df7bc6dd6e9cdee5b2d0ddb3936c8b18f356bee14457eeec5efb2960303a4b",
+  "build": 8
+}
