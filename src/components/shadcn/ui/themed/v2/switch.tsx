@@ -47,7 +47,7 @@ const TOGGLE_CLS = cn(
 const THUMB_CLS = cn(
   'absolute pointer-events-none shrink-0',
   'cursor-pointer rounded-full bg-white z-30',
-  'top-1/2 -translate-y-1/2 flex flex-row justify-center items-center'
+  'left-[2px] top-1/2 -translate-y-1/2 flex flex-row justify-center items-center'
 )
 
 export interface ISwitchProps extends ComponentProps<
@@ -80,23 +80,20 @@ export function Switch({
   const initial = useRef(true)
 
   useEffect(() => {
-    const duration = initial.current ? 0 : 0.4 //ANIMATION_DURATION_S
+    if (!thumbRef.current) {
+      return
+    }
 
-    const tl = gsap.timeline()
+    const duration = initial.current ? 0 : 0.3 //ANIMATION_DURATION_S
 
-    tl.to(
-      thumbRef.current,
-      {
-        //width: checked || hover ? '1.25rem' : '1rem',
-
-        //left: hover ? 2 : 8,
-        //scaleX: hover ? 1.5 : 1,
-        transform: checked ? 'translate(10px, -50%)' : 'translate(2px, -50%)',
-        duration,
-        ease: 'back.out',
-      },
-      0
-    )
+    gsap.to(thumbRef.current, {
+      //left: hover ? 2 : 8,
+      scale: hover ? 1.05 : 1,
+      transformOrigin: checked ? 'right center' : 'left center',
+      x: checked ? 8 : 0,
+      duration,
+      ease: 'power2.out',
+    })
 
     initial.current = false
   }, [checked, hover, pressed])

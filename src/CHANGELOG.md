@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Switch animations tweaked.
 - Bug fixes and updates.
 
 
