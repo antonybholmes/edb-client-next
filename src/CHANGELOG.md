@@ -1,5 +1,12 @@
 # Changelog
 
+## 91.6.0 (Oct, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 91.4.0 (Sep, 2026)
 
 ### Changed

@@ -56,12 +56,12 @@ export function ToolbarColSmallButton({
   return (
     <Button
       //variant="flat"
-      rounded="theme"
-      size="none"
+      //rounded="theme"
+      size="toolbar"
       pad="none"
       className={cn(
         TOOLBAR_COL_BUTTON_CLS,
-        'group-data-[ribbon=single]:aspect-square group-data-[ribbon=single]:w-toolbar-button',
+        'group-data-[ribbon=single]:aspect-square',
         className
       )}
       // ripple={ripple}
