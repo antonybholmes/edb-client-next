@@ -18,7 +18,7 @@ import {
 import { produce } from 'immer'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import { POSITIONS, useNetworkSettings } from '../network-settings-store'
+import { POSITIONS, useNetworkSettings } from '../network-settings'
 import { FieldSelectList } from './field-select-list'
 import { MarginPopover } from './margin-popover'
 

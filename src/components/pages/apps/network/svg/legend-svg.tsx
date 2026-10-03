@@ -12,7 +12,7 @@ import { capitalCase } from '@/lib/text/capital-case'
 
 import { ReactElement } from 'react'
 import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
-import { INetworkSettings, useNetworkSettings } from '../network-settings-store'
+import { INetworkSettings, useNetworkSettings } from '../network-settings'
 import { useNetwork } from '../network-store'
 
 export function LegendSvg() {

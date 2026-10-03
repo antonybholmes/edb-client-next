@@ -25,10 +25,10 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { RotateCw } from 'lucide-react'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
+import { FontToolbarGroup } from '../../utils/text/toolbars/font-toolbar-group'
 import { NetworkDialog } from '../network-dialog'
-import { useNetworkSettings } from '../network-settings-store'
+import { useNetworkSettings } from '../network-settings'
 import { useNetworkD3Sim } from '../network-store-d3-sim'
-import { FontToolbarGroup } from './font-toolbar-group'
 
 export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })

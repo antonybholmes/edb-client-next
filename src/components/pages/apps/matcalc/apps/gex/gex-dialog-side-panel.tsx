@@ -315,7 +315,7 @@ export function GexDialogSidePanel({
                               )
 
                               window.open(
-                                `/apps/utils/table-viewer?key=${id}`,
+                                `/apps/utils/table?key=${id}`,
                                 '_blank',
                                 'width=800,height=600'
                               )

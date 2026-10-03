@@ -36,6 +36,9 @@ import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { BaseCol } from '@/components/layout/base-col'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { formatString } from '@/lib/text/format-string'
 import { useFooter } from '@/providers/footer-provider'
@@ -44,7 +47,7 @@ import { useHistory } from '../../matcalc/history/history-provider/history-provi
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
-export function TableViewerPage() {
+export function TablePage() {
   const { openFile } = useHistory()
   const { setAppInfo } = useAppInfo()
 
@@ -158,46 +161,52 @@ export function TableViewerPage() {
   ]
 
   return (
-    <ShortcutLayout showHeader={false} signinRequired={false}>
-      <Toolbar>
-        <ToolbarMenu
-          open={showFileMenu}
-          onOpenChange={setShowFileMenu}
-          fileMenuTabs={fileMenuTabs}
-          extMenus={{
-            info: (
-              <DropdownMenuItem variant="none" className="h-16">
-                <BaseCol className="text-xs gap-y-0.5">
-                  <p>{APP_INFO.name}</p>
+    <>
+      <HeaderPortal>
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
+      </HeaderPortal>
+      <ShortcutLayout signinRequired={false}>
+        <Toolbar>
+          <ToolbarMenu
+            open={showFileMenu}
+            onOpenChange={setShowFileMenu}
+            fileMenuTabs={fileMenuTabs}
+            extMenus={{
+              info: (
+                <DropdownMenuItem variant="none" className="h-16">
+                  <BaseCol className="text-xs gap-y-0.5">
+                    <p>{APP_INFO.name}</p>
 
-                  <p>Version {APP_INFO.version}</p>
-                  <p>{formatString(APP_INFO.copyright)}</p>
-                </BaseCol>
-              </DropdownMenuItem>
-            ),
-          }}
-          //rightShortcuts={<HistoryShowButton />}
-        />
-        <ToolbarPanel />
-      </Toolbar>
+                    <p>Version {APP_INFO.version}</p>
+                    <p>{formatString(APP_INFO.copyright)}</p>
+                  </BaseCol>
+                </DropdownMenuItem>
+              ),
+            }}
+            //rightShortcuts={<HistoryShowButton />}
+          />
+          <ToolbarPanel />
+        </Toolbar>
 
-      {/* <HistoryLayout> */}
-      <TabbedDataFrames className="mx-2" />
-      {/* </HistoryLayout> */}
+        <TabbedDataFrames className="mx-2" />
 
-      <FooterPortal className="justify-end">
-        <></>
-        <></>
-        <ZoomSlider />
-      </FooterPortal>
-    </ShortcutLayout>
+        <FooterPortal className="justify-end">
+          <></>
+          <></>
+          <ZoomSlider />
+        </FooterPortal>
+      </ShortcutLayout>
+    </>
   )
 }
 
-export function TableViewerQueryPage() {
+export function TableQueryPage() {
   return (
     <ClientLayout>
-      <TableViewerPage />
+      <TablePage />
     </ClientLayout>
   )
 }

@@ -9,7 +9,7 @@ import { ZoomSelectList } from '@/components/toolbar/zoom-select-list'
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { Fullscreen, Tags } from 'lucide-react'
-import { NodeViewMode, useNetworkSettings } from '../network-settings-store'
+import { NodeViewMode, useNetworkSettings } from '../network-settings'
 import { FieldSelectList } from '../props/field-select-list'
 
 const NODE_VIEW_MODES = [

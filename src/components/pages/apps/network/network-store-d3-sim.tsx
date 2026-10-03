@@ -12,7 +12,7 @@ import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
 import { Quadtree, quadtree } from 'd3-quadtree'
 import { useCallback } from 'react'
-import { useNetworkSettings } from './network-settings-store'
+import { useNetworkSettings } from './network-settings'
 
 import { BaseType } from 'd3'
 import { create } from 'zustand'

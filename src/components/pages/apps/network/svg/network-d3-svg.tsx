@@ -13,7 +13,7 @@ import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
-import { useNetworkSettings } from '../network-settings-store'
+import { useNetworkSettings } from '../network-settings'
 import {
   INode,
   IRenderEdge,

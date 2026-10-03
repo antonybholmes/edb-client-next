@@ -1,6 +1,6 @@
 import { PlotMarginPopover } from '@/components/plot/axes/plot/plot-margin-popover'
 import { produce } from 'immer'
-import { useNetworkSettings } from '../network-settings-store'
+import { useNetworkSettings } from '../network-settings'
 
 export function MarginPopover() {
   const { settings, updateSettings } = useNetworkSettings()

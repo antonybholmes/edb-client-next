@@ -76,7 +76,7 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
         <ToolbarRow title="Width">
           <NumericalInput
-            h="md"
+            h="toolbar"
             value={gseaSettings.es.axes.x.length}
             placeholder="Width"
             limit={[1, 1000]}
@@ -92,7 +92,7 @@ export function HomeToolbar() {
         </ToolbarRow>
         <ToolbarRow title="ES Height">
           <NumericalInput
-            h="md"
+            h="toolbar"
             value={gseaSettings.es.axes.y.length}
             placeholder="Height"
             limit={[1, 1000]}

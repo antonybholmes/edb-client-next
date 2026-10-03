@@ -1,6 +1,6 @@
 import { PropsPanel } from '@/components/props-panel'
 import { produce } from 'immer'
-import { useNetworkSettings } from '../network-settings-store'
+import { useNetworkSettings } from '../network-settings'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'

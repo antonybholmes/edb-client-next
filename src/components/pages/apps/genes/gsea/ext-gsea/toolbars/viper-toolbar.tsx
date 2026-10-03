@@ -68,7 +68,7 @@ export function ViperToolbar() {
 
             // open a window to load a text file with title
             const w = window.open(
-              `/apps/utils/text-view?url=/data/modules/genes/gsea/ext-gsea/viper-gsea.r`,
+              `/apps/utils/text?url=/data/modules/genes/gsea/ext-gsea/viper-gsea.r`,
               '_blank',
               'width=800,height=600'
             )
