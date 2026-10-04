@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches.
 - Switch animations tweaked.
 - Bug fixes and updates.
 

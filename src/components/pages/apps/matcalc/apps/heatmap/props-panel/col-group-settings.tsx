@@ -4,13 +4,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/shadcn/ui/themed/v2/accordion'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_BORDER, TEXT_HEIGHT, TEXT_SHOW } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -21,8 +21,8 @@ export function ColGroupsSettingsPanel() {
   return (
     <AccordionItem value="column-groups">
       <AccordionTrigger
-        rightChildren={
-          <Switch
+        leftChildren={
+          <Checkbox
             title={TEXT_SHOW}
             checked={displayProps.groups.show}
             onCheckedChange={(v) =>

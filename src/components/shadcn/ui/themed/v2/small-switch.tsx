@@ -58,7 +58,7 @@ export interface ISwitchProps extends ComponentProps<
   side?: LeftRightPos
 }
 
-export function Switch({
+export function SmallSwitch({
   ref,
   checked = false,
   disabled = false,
@@ -86,7 +86,7 @@ export function Switch({
     gsap.to(thumbRef.current, {
       //scale: hover ? 1.1 : 1,
       transformOrigin: 'center',
-      x: checked ? 10 : 0,
+      x: checked ? 8 : 0,
       duration,
       ease: 'power1.out',
     })
@@ -101,7 +101,7 @@ export function Switch({
       disabled={disabled}
       data-enabled={present(!disabled)}
       className={TOGGLE_CLS}
-      style={{ height: 20, width: 32 }}
+      style={{ height: 16, width: 28 }}
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       onPointerDown={() => setPressed(true)}
@@ -116,7 +116,7 @@ export function Switch({
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
-        style={{ height: 16, width: 18 }}
+        style={{ height: 12, width: 16 }}
       />
     </SwitchPrimitive.Root>
   )

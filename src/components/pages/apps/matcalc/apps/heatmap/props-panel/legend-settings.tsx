@@ -10,13 +10,13 @@ import {
   RadioGroup,
   SideRadioGroupItem,
 } from '@/components/shadcn/ui/themed/v2/radio-group'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
-import { TEXT_SHOW, TEXT_TITLE } from '@/consts'
+import { TEXT_TITLE } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -27,51 +27,49 @@ export function LegendSettingsPanel() {
   return (
     <AccordionItem value="legend">
       <AccordionTrigger
+        leftChildren={
+          <Checkbox
+            checked={displayProps.legend.show}
+            onCheckedChange={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.legend.show = v
+                })
+              )
+            }}
+          />
+        }
         rightChildren={
-          <>
-            <FontPopover
-              fonts={[
-                {
-                  title: 'Title',
-                  textProps: displayProps.legend.title,
-                  update: (f) => {
-                    updatePlot(
-                      produce(plot, (draft) => {
-                        draft.props.legend.title.font = f.font
-                        draft.props.legend.title.show = f.show
-                      })
-                    )
-                  },
-                  showEnabled: false,
+          <FontPopover
+            fonts={[
+              {
+                title: 'Title',
+                textProps: displayProps.legend.title,
+                update: (f) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.legend.title.font = f.font
+                      draft.props.legend.title.show = f.show
+                    })
+                  )
                 },
-                {
-                  title: 'Labels',
-                  textProps: displayProps.legend,
-                  update: (f) => {
-                    updatePlot(
-                      produce(plot, (draft) => {
-                        draft.props.legend.font = f.font
-                        draft.props.legend.show = f.show
-                      })
-                    )
-                  },
-                  showEnabled: false,
+                showEnabled: false,
+              },
+              {
+                // title: 'Labels',
+                textProps: displayProps.legend,
+                update: (f) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.legend.font = f.font
+                      draft.props.legend.show = f.show
+                    })
+                  )
                 },
-              ]}
-            />
-
-            <Switch
-              title={TEXT_SHOW}
-              checked={displayProps.legend.show}
-              onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.legend.show = v
-                  })
-                )
-              }}
-            />
-          </>
+                showEnabled: false,
+              },
+            ]}
+          />
         }
       >
         Legend

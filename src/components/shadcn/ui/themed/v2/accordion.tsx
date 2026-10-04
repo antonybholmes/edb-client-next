@@ -165,24 +165,21 @@ const TRIGGER_CLS = cn(
 )
 
 //  [&>div]:pl-2
-export const accordionHeaderVariants = cva(
-  'group flex flex-row items-center gap-x-1.5',
-  {
-    variants: {
-      variant: {
-        default: '',
-        settings:
-          'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
-        sidebar:
-          'h-6 rounded-theme overflow-hidden hover:bg-muted/50 text-xs trans-color pr-1.5',
-        none: '',
-      },
+export const accordionHeaderVariants = cva('group flex flex-row items-center', {
+  variants: {
+    variant: {
+      default: '',
+      settings:
+        'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
+      sidebar:
+        'h-6 rounded-theme overflow-hidden hover:bg-muted/50  bg-muted/30 text-xs trans-color px-1.5 gap-x-1',
+      none: '',
     },
-    defaultVariants: {
-      variant: 'sidebar',
-    },
-  }
-)
+  },
+  defaultVariants: {
+    variant: 'sidebar',
+  },
+})
 
 export const accordionTriggerVariants = cva(
   'flex flex-row items-center grow gap-x-1 truncate h-full',
@@ -235,26 +232,19 @@ export function AccordionTrigger({
         variant,
       })}
     >
-      {leftChildren && leftChildren}
-
-      <AccordionPrimitive.Trigger
-        ref={ref}
-        className={accordionTriggerVariants({ variant })}
-        //data-hover={hover}
-
-        //onPointerOver={() => setHover(true)}
-        //onPointerOut={() => setHover(false)}
-        {...props}
-      >
-        {side === 'right' && children}
+      <AccordionPrimitive.Trigger>
         <ChevronRight
           className="trans-transform group-data-open:rotate-90 shrink-0"
           style={arrowStyle}
           size={16}
         />
-
-        {side === 'left' && children}
       </AccordionPrimitive.Trigger>
+      {leftChildren && leftChildren}
+      {children && (
+        <AccordionPrimitive.Trigger className="flex grow">
+          {children}
+        </AccordionPrimitive.Trigger>
+      )}
 
       {rightChildren && rightChildren}
     </AccordionPrimitive.Header>

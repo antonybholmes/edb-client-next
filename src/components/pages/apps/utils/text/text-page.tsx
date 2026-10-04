@@ -18,19 +18,19 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/components/toolbar/toolbar'
-import { TEXT_SAVE_AS } from '@/consts'
+import { TEXT_DOWNLOAD_AS_TXT, TEXT_SAVE_AS } from '@/consts'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useSaveTxt } from '../../matcalc/hooks/save'
 import APP_INFO from './manifest.json'
-import { TextProvider, useTextSave } from './text-provider'
+import { TextProvider, useText } from './text-provider'
 import { useTextSettings } from './text-settings'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function TextPage() {
   const { setAppInfo } = useAppInfo()
   const [showFileMenu, setShowFileMenu] = useState(false)
-  const { settings, updateSettings } = useTextSettings()
-  const { text, setText } = useTextSave()
+  const { settings } = useTextSettings()
+  const { text, setText, ref } = useText()
   const { save } = useSaveTxt()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
@@ -76,7 +76,7 @@ export function TextPage() {
             }}
           >
             <FileIcon stroke="" />
-            <span>{TEXT_SAVE_AS}</span>
+            <span>{TEXT_DOWNLOAD_AS_TXT}</span>
           </DropdownMenuItem>
         </>
       ),
@@ -95,8 +95,6 @@ export function TextPage() {
         return 'left'
     }
   }, [settings.text.font.textAnchor])
-
-  console.log('align:', align)
 
   return (
     <>
@@ -120,6 +118,7 @@ export function TextPage() {
             <pre className="whitespace-pre-wrap absolute">{text}</pre>
           </BaseCol> */}
         <Textarea
+          ref={ref}
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="mx-2 mb-2"

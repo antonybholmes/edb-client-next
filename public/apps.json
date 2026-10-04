@@ -45,9 +45,9 @@
     "color": "#006666",
     "version": "2.4.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-04T02:24:25.330Z",
-    "hash": "42290cf2f1f8cafcbe69e83ab638d84ca7a89a340dab75aeee4c44822097fb3a",
-    "build": 1050
+    "modified": "2026-10-04T15:45:12.113Z",
+    "hash": "7c9ef32b545dbdc3104d4ba1306bd1e045d596197f077011120624da2ac10862",
+    "build": 1052
   },
   {
     "name": "Get DNA",
@@ -84,9 +84,9 @@
     "color": "#4169E1",
     "version": "3.6.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.391Z",
-    "hash": "5cb33146213f0c7dd891c60f82650e6315fc67aaeed359eeed978ed4a6d0c9b7",
-    "build": 132
+    "modified": "2026-10-04T15:45:12.116Z",
+    "hash": "6772f3461151609d4291cc61735e4ebd76e8581dde68795fbb08aa67becbfe79",
+    "build": 134
   },
   {
     "name": "History Viewer",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-04T02:24:25.354Z",
-    "hash": "5e53cdd2ea5a069e51cd77f3ef982843716584169d5384d6d3e3b649ba7b68ec",
-    "build": 2124
+    "modified": "2026-10-04T15:45:12.123Z",
+    "hash": "23607272cb7e6247680d0cd75a122ba6483e41b5fc0bba359975f24c222fae32",
+    "build": 2126
   },
   {
     "name": "Motifs",
@@ -242,9 +242,9 @@
     "version": "1.0.2",
     "color": "#000000",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-03T04:46:41.442Z",
-    "hash": "909d34bc216e1a4e493c29cd9fd5c484c7ad592b79195bc1083d2d3b5e183abf",
-    "build": 12
+    "modified": "2026-10-04T15:45:12.130Z",
+    "hash": "afecfda800743008376ada04b6fad6ed5bd4c693835d8bc1105200b103abc26a",
+    "build": 14
   },
   {
     "name": "Users",
