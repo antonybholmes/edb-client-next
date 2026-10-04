@@ -283,7 +283,7 @@ export function ExtGseaPage() {
               collapsible={true}
             >
               <CenterRow className="gap-x-8 text-xs">
-                <VCenterRow className="gap-x-1">
+                <VCenterRow className="gap-x-1.5">
                   <span>Phenotypes</span>
 
                   <Input
@@ -297,8 +297,9 @@ export function ExtGseaPage() {
                       )
                     }
                     w="md"
+                    inputCls="text-center"
                   />
-                  <span>/</span>
+                  <span>vs</span>
 
                   <Input
                     placeholder="Phenotype 2..."
@@ -311,11 +312,12 @@ export function ExtGseaPage() {
                       )
                     }
                     w="md"
+                    inputCls="text-center"
                   />
                 </VCenterRow>
 
                 {plot && plot.results.length > 0 && (
-                  <VCenterRow className="gap-x-1">
+                  <VCenterRow className="gap-x-1.5">
                     <span>Genesets</span>
 
                     <Input
@@ -331,8 +333,9 @@ export function ExtGseaPage() {
                         )
                       }
                       w="md"
+                      inputCls="text-center"
                     />
-                    <span>/</span>
+                    <span>vs</span>
                     <Input
                       placeholder="Geneset 2..."
                       value={plot.results[0].gs2.name}
@@ -346,6 +349,7 @@ export function ExtGseaPage() {
                         )
                       }
                       w="md"
+                      inputCls="text-center"
                     />
                   </VCenterRow>
                 )}

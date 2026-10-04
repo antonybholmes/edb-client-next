@@ -43,11 +43,11 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.4.2",
+    "version": "2.4.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-03T04:24:06.637Z",
-    "hash": "fbcb33e89431f1a81fe4dcd721d602be02812ebe7ebe3ee141e2458ade646d86",
-    "build": 1048
+    "modified": "2026-10-04T02:24:25.330Z",
+    "hash": "42290cf2f1f8cafcbe69e83ab638d84ca7a89a340dab75aeee4c44822097fb3a",
+    "build": 1050
   },
   {
     "name": "Get DNA",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-03T04:24:06.649Z",
-    "hash": "c4ede2f894f3d0f9599996a88bda0459a5835aba577dcfce31fc89f1d62669b0",
-    "build": 2122
+    "modified": "2026-10-04T02:24:25.354Z",
+    "hash": "5e53cdd2ea5a069e51cd77f3ef982843716584169d5384d6d3e3b649ba7b68ec",
+    "build": 2124
   },
   {
     "name": "Motifs",

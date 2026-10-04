@@ -36,7 +36,7 @@ import {
 
 const TOGGLE_CLS = cn(
   'flex flex-row items-center',
-  'relative shrink-0 rounded-full cursor-pointer group outline-none',
+  'relative shrink-0 rounded-sm cursor-pointer group outline-none',
   'data-enabled:data-checked:bg-app-theme/70',
   'data-enabled:data-checked:hover:bg-app-theme',
   'data-enabled:data-checked:focus-visible:bg-app-theme',
@@ -48,8 +48,8 @@ const TOGGLE_CLS = cn(
 const THUMB_CLS = cn(
   'absolute pointer-events-none shrink-0',
   'cursor-pointer rounded-full bg-white z-10',
-  'backdrop-blur-sm',
-  'left-[2px]'
+  'border border-border shadow-md'
+  //'left-[2px]'
 )
 
 export interface ISwitchProps extends ComponentProps<
@@ -58,7 +58,7 @@ export interface ISwitchProps extends ComponentProps<
   side?: LeftRightPos
 }
 
-export function Switch({
+export function SquareSwitch({
   ref,
   checked = false,
   disabled = false,
@@ -101,7 +101,7 @@ export function Switch({
       disabled={disabled}
       data-enabled={present(!disabled)}
       className={TOGGLE_CLS}
-      style={{ height: 19, width: 30 }}
+      style={{ height: 6, width: 26 }}
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       onPointerDown={() => setPressed(true)}
@@ -116,7 +116,7 @@ export function Switch({
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
-        style={{ height: 15, width: 18 }}
+        style={{ height: 18, width: 18 }}
       />
     </SwitchPrimitive.Root>
   )

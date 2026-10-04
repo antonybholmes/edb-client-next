@@ -70,7 +70,7 @@ export function GroupingPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      <OutlookTabs id={ID} className="border-t border-border/50 py-2" />
+      <OutlookTabs id={ID} />
     </BaseCol>
   )
 }

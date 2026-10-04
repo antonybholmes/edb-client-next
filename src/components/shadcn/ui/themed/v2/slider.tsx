@@ -41,7 +41,7 @@ export function Slider({
   const [focus, setFocus] = useState(false)
   const [hover, setHover] = useState(false)
 
-  const ref = useRef<HTMLDivElement | null>(null)
+  const thumbRef = useRef<HTMLDivElement | null>(null)
 
   const [_v, setV] = useState<number>(
     Array.isArray(value) ? value[0] : value || 0
@@ -56,11 +56,11 @@ export function Slider({
   }, [value])
 
   useEffect(() => {
-    if (!ref.current) {
+    if (!thumbRef.current) {
       return
     }
 
-    gsap.to(ref.current, {
+    gsap.to(thumbRef.current, {
       scale: hover ? 1.2 : 1,
       opacity: hover ? 0.6 : 1,
       ease: 'power2.out',
@@ -117,7 +117,7 @@ export function Slider({
           />
 
           <SliderPrimitive.Thumb
-            ref={ref}
+            ref={thumbRef}
             data-focus={present(focus)}
             className={THUMB_CLS}
             aria-label="Slider control"

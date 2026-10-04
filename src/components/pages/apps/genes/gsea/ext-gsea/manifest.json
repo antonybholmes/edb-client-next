@@ -3,9 +3,9 @@
   "description": "Extended GSEA.",
   "abbr": "ExG",
   "color": "#006666",
-  "version": "2.4.2",
+  "version": "2.4.4",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-03T04:24:06.637Z",
-  "hash": "fbcb33e89431f1a81fe4dcd721d602be02812ebe7ebe3ee141e2458ade646d86",
-  "build": 1048
+  "modified": "2026-10-04T02:24:25.330Z",
+  "hash": "42290cf2f1f8cafcbe69e83ab638d84ca7a89a340dab75aeee4c44822097fb3a",
+  "build": 1050
 }
