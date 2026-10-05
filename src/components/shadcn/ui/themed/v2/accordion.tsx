@@ -159,7 +159,7 @@ export function AccordionItem({
 }
 
 const TRIGGER_CLS = cn(
-  'group relative outline-2 outline-transparent',
+  'group relative outline-2 outline-transparent grow-0 shrink-0',
   'focus-visible:outline-ring data-focus:outline-ring -outline-offset-2',
   'flex flex-row grow items-center font-semibold'
 )
@@ -172,7 +172,7 @@ export const accordionHeaderVariants = cva('group flex flex-row items-center', {
       settings:
         'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
       sidebar:
-        'h-6 rounded-theme overflow-hidden hover:bg-muted/50  bg-muted/30 text-xs trans-color px-1.5 gap-x-1',
+        'h-6 rounded-theme overflow-hidden hover:bg-muted/50 bg-muted/30 text-xs trans-color px-1.5 gap-x-1',
       none: '',
     },
   },
@@ -232,7 +232,7 @@ export function AccordionTrigger({
         variant,
       })}
     >
-      <AccordionPrimitive.Trigger>
+      <AccordionPrimitive.Trigger className="aspect-square">
         <ChevronRight
           className="trans-transform group-data-open:rotate-90 shrink-0"
           style={arrowStyle}

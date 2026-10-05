@@ -5,6 +5,7 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
@@ -388,10 +389,8 @@ export function NetworkDisplayPropsPanel() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="labels">
-          <AccordionTrigger>Labels</AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Position" contentCls="gap-x-2">
-              {/* <PositionDropdown /> */}
+          <AccordionTrigger
+            rightChildren={
               <FontPopover
                 fonts={[
                   {
@@ -399,7 +398,7 @@ export function NetworkDisplayPropsPanel() {
                     textProps: settings.plot.nodes.labels.text,
                     showEnabled: false,
                     showAlign: false,
-                    showColor: false,
+                    showColor: true,
                     update: (textProps) =>
                       updateSettings(
                         produce(settings, (draft) => {
@@ -427,6 +426,14 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
+            }
+          >
+            Labels
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Position" contentCls="gap-x-2">
+              {/* <PositionDropdown /> */}
+
               <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}
@@ -438,7 +445,7 @@ export function NetworkDisplayPropsPanel() {
                     })
                   )
                 }}
-                w="xs"
+                w="sm"
                 variant="toolbar"
               >
                 {POSITIONS.map((position) => (
@@ -509,19 +516,24 @@ export function NetworkDisplayPropsPanel() {
         </AccordionItem>
 
         <AccordionItem value="legend">
-          <AccordionTrigger>Legend</AccordionTrigger>
+          <AccordionTrigger
+            leftChildren={
+              <OutlineCheckbox
+                title="Show"
+                checked={settings.plot.legend.show}
+                onCheckedChange={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.legend.show = value
+                    })
+                  )
+                }
+              />
+            }
+          >
+            Legend
+          </AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Show"
-              checked={settings.plot.legend.show}
-              onCheckedChange={(value) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.legend.show = value
-                  })
-                )
-              }
-            />
             <CheckPropRow
               title="Auto Margin"
               checked={settings.plot.legend.autoMargin}

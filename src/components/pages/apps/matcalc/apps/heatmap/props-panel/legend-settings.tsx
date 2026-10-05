@@ -16,7 +16,7 @@ import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -28,7 +28,7 @@ export function LegendSettingsPanel() {
     <AccordionItem value="legend">
       <AccordionTrigger
         leftChildren={
-          <Checkbox
+          <OutlineCheckbox
             checked={displayProps.legend.show}
             onCheckedChange={(v) => {
               updatePlot(

@@ -24,11 +24,6 @@ export function LegendSvg() {
   //estimate the space needed for node labels based on font size
   const nodeLabelHeight = nodeLabelFontSize // * 1.2 // approximate line height for labels
 
-  const nodeRadiusScale = nodeRadiusFunc(
-    settings.plot.nodes.radius,
-    settings.plot.nodes.scale.mode
-  )
-
   let blockHeight = Math.max(
     nodeLabelHeight,
     settings.plot.legend.dot.radius * 2 + 5
@@ -55,6 +50,11 @@ export function LegendSvg() {
   if (sizeTicks.length > settings.plot.legend.sizes.ticks) {
     sizeTicks = sizeTicks.slice(0, settings.plot.legend.sizes.ticks)
   }
+
+  const nodeRadiusScale = nodeRadiusFunc(
+    settings.plot.nodes.radius,
+    settings.plot.nodes.scale.mode
+  )
 
   const sizeHeight =
     2 * blockHeight +
@@ -98,7 +98,9 @@ export function LegendSvg() {
           y: groupsHeight,
         }}
         ticks={sizeTicks}
+        blockHeight={blockHeight}
         format={sizeFormat}
+        nodeRadiusScale={nodeRadiusScale}
       />
       <EdgesSvg
         blockHeight={blockHeight}
@@ -230,19 +232,18 @@ export function EdgesSvg({
 export function SizesSvg({
   pos,
   ticks,
+  blockHeight,
   format,
+  nodeRadiusScale,
 }: {
   pos: IPos
   ticks: number[]
+  blockHeight: number
   format: (n: number) => string
+  nodeRadiusScale: (v: number) => number
 }) {
   const { settings } = useNetworkSettings()
   const { headings, nodes } = useNetwork()
-
-  const nodeRadiusScale = nodeRadiusFunc(
-    settings.plot.nodes.radius,
-    settings.plot.nodes.scale.mode
-  )
 
   const maxRadius = nodeRadiusScale(1)
 
@@ -252,6 +253,8 @@ export function SizesSvg({
 
   for (const [si, step] of ticks.entries()) {
     const radius = nodeRadiusScale(step / nodes.metricLim1.max)
+
+    y += radius
 
     elems.push(
       <SvgG key={si} pos={{ x: 0, y }}>
@@ -277,7 +280,7 @@ export function SizesSvg({
     // add our radius plus radius of next element to get
     // nice spacing
     if (si < ticks.length - 1) {
-      y += radius + nodeRadiusScale(ticks[si + 1] / nodes.metricLim1.max) + 5
+      y += radius + 5
     }
   }
 
@@ -287,12 +290,12 @@ export function SizesSvg({
         textAnchor="start"
         dominantBaseline="auto"
         font={settings.plot.nodes.labels.text}
-        fill={COLOR_BLACK}
+        //fill={COLOR_BLACK}
         fontWeight="bold"
       >
         {getSizeLabel(headings, settings)}
       </SvgText>
-      <SvgG pos={{ x: maxRadius, y: 25 }}>{elems}</SvgG>
+      <SvgG pos={{ x: maxRadius, y: blockHeight * 0.5 }}>{elems}</SvgG>
     </SvgG>
   )
 }
@@ -308,13 +311,13 @@ export function GroupsSvg({ blockHeight }: { blockHeight: number }) {
         textAnchor="start"
         dominantBaseline="auto"
         font={settings.plot.nodes.labels.text}
-        fill={COLOR_BLACK}
+        //fill={COLOR_BLACK}
         fontWeight="bold"
       >
         Groups
       </SvgText>
       <SvgG
-        pos={{ x: settings.plot.legend.dot.radius, y: blockHeight / 2 }}
+        pos={{ x: settings.plot.legend.dot.radius, y: blockHeight * 0.5 }}
         id="groups"
       >
         {groups.map((group, gi) => (
