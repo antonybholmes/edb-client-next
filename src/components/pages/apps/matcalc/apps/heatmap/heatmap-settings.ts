@@ -38,7 +38,7 @@ export const DEFAULT_COLORBAR_SIZE: IDim = { w: 100, h: 12 }
 
 export const LEGEND_BLOCK_SIZE: IBlock = { w: 20, h: 20 }
 
-const BLOCK_SIZE: IBlock = { w: 3, h: 3 }
+const BLOCK_SIZE: IBlock = { w: 24, h: 24 }
 
 const GROUPS_SIZE = 15
 

@@ -36,6 +36,16 @@ export const CellsD3Svg = memo(function CellsD3Svg({
 
   const cmap = getColorMap(props.cmap)
 
+  // Cells are rendered larger to account for grid width
+  // which are drawn on the right and bottom edges of the cells
+  // If there is no grid, the inner block size is the same as the block size
+  const innerBlockSize = useMemo(() => {
+    return {
+      w: blockSize.w - props.grid.width,
+      h: blockSize.h - props.grid.width,
+    }
+  }, [blockSize.w, blockSize.h, props.grid.width])
+
   const colors = useMemo(
     () =>
       rowLeaves.map((row) => {
@@ -119,14 +129,11 @@ export const CellsD3Svg = memo(function CellsD3Svg({
     selection
       .selectAll<SVGUseElement, (typeof cellData)[number]>('use')
       .data(cellData, (d) => d.id)
-      .join(
-        (enter) =>
-          enter
-            .append('use')
-            .attr('href', (d) => `#${getUseRectId(d.fill)}`)
-            .attr('xlink:href', (d) => `#${getUseRectId(d.fill)}`),
-        (update) => update,
-        (exit) => exit.remove()
+      .join((enter) =>
+        enter
+          .append('use')
+          .attr('href', (d) => `#${getUseRectId(d.fill)}`)
+          .attr('xlink:href', (d) => `#${getUseRectId(d.fill)}`)
       )
       .attr('transform', (d) => `translate(${d.x},${d.y})`)
       .attr('shape-rendering', 'crispEdges')
@@ -146,10 +153,15 @@ export const CellsD3Svg = memo(function CellsD3Svg({
       return
     }
 
-    const { relativeP, screenP } = svgPointToScreen(ref.current, {
-      x: cell.col.x + blockSize.w / 2 + margin.left,
-      y: cell.row.x + blockSize.h / 2 + margin.top,
-    })
+    // We substract props.grid.width  to account for the
+    // padding around the cell to render the grid correctly
+    // so a 10x10 cell with a 1px grid will have 9x9 content
+    const cellP = {
+      x: cell.col.x + Math.floor(innerBlockSize.w / 2) + margin.left,
+      y: cell.row.x + Math.floor(innerBlockSize.h / 2) + margin.top,
+    }
+
+    const { relativeP, screenP } = svgPointToScreen(ref.current, cellP)
 
     showCrosshair({
       pos: relativeP,
@@ -201,6 +213,13 @@ export const DotsD3Svg = memo(function DotsD3Svg({
   const hostRef = useRef<SVGGElement | null>(null)
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
+  const innerBlockSize = useMemo(() => {
+    return {
+      w: blockSize.w - props.grid.width,
+      h: blockSize.h - props.grid.width,
+    }
+  }, [blockSize.w, blockSize.h, props.grid.width])
+
   function handleMouseMove(e: React.MouseEvent) {
     const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
 
@@ -215,10 +234,12 @@ export const DotsD3Svg = memo(function DotsD3Svg({
       return
     }
 
-    const { relativeP, screenP } = svgPointToScreen(ref.current, {
-      x: cell.col.x + blockSize.w / 2 + margin.left,
-      y: cell.row.x + blockSize.h / 2 + margin.top,
-    })
+    const cellP = {
+      x: cell.col.x + Math.floor(innerBlockSize.w / 2) + margin.left,
+      y: cell.row.x + Math.floor(innerBlockSize.h / 2) + margin.top,
+    }
+
+    const { relativeP, screenP } = svgPointToScreen(ref.current, cellP)
 
     showCrosshair({
       pos: relativeP,

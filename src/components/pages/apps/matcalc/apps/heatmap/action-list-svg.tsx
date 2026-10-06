@@ -3,7 +3,7 @@ import { type IPos } from '@/interfaces/pos'
 import {
   LEGEND_BLOCK_SIZE,
   type IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { memo } from 'react'
 
 export interface IProps {

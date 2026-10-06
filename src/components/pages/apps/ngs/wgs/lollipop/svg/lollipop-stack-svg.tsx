@@ -10,7 +10,7 @@ import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import { useEffect, useMemo, useRef } from 'react'
 
-import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import type { IRect } from '@/interfaces/rect'
 import { COLOR_WHITE } from '@/lib/color/color'

@@ -19,7 +19,7 @@ import { ColorMapMenu } from '../../../color-map-menu'
 
 import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -31,7 +31,7 @@ export function ColormapSettingsPanel() {
     <AccordionItem value="colormap">
       <AccordionTrigger
         leftChildren={
-          <OutlineCheckbox
+          <SmallSwitch
             checked={displayProps.colorbar.show}
             onCheckedChange={(v) => {
               updatePlot(

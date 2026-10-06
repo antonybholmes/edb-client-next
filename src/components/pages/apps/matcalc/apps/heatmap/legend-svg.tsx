@@ -1,6 +1,6 @@
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
-import { LEGEND_BLOCK_SIZE } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { LEGEND_BLOCK_SIZE } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'

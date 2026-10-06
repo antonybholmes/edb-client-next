@@ -14,7 +14,7 @@ import { create } from 'zustand'
 import {
   DEFAULT_HEATMAP_PROPS,
   IHeatMapSettings,
-} from '../matcalc/apps/heatmap/heatmap-settings-store'
+} from '../matcalc/apps/heatmap/heatmap-settings'
 import { newHeatMapPlot } from '../matcalc/history/history-provider/history-factories'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'

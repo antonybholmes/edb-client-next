@@ -2,7 +2,7 @@ import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import type {
   HeatmapMode,
   IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import {
   AccordionContent,

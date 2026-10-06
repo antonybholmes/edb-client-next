@@ -86,7 +86,7 @@ export function SmallSwitch({
     gsap.to(thumbRef.current, {
       //scale: hover ? 1.1 : 1,
       transformOrigin: 'center',
-      x: checked ? 8 : 0,
+      x: checked ? 6 : 0,
       duration,
       ease: 'power1.out',
     })
@@ -101,7 +101,7 @@ export function SmallSwitch({
       disabled={disabled}
       data-enabled={present(!disabled)}
       className={TOGGLE_CLS}
-      style={{ height: 16, width: 28 }}
+      style={{ height: 16, width: 24 }}
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       onPointerDown={() => setPressed(true)}
@@ -116,7 +116,7 @@ export function SmallSwitch({
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
-        style={{ height: 12, width: 16 }}
+        style={{ height: 12, width: 14 }}
       />
     </SwitchPrimitive.Root>
   )

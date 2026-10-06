@@ -6,7 +6,7 @@ import { type IClusterFrame } from '@/lib/math/hcluster'
 import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
@@ -65,17 +65,7 @@ function HeatMapSvgContent() {
 
   const displayOptions = plot.props
 
-  const blockSize = useMemo(() => {
-    const ext = displayOptions.grid.show ? displayOptions.grid.width : 0
-    return {
-      w: displayOptions.blockSize.w + ext,
-      h: displayOptions.blockSize.h + ext,
-    }
-  }, [
-    displayOptions.blockSize,
-    displayOptions.grid.show,
-    displayOptions.grid.width,
-  ])
+  const blockSize = displayOptions.blockSize
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
 
@@ -294,6 +284,7 @@ function HeatMapSvgContent() {
                 groupRows.length *
                   (displayOptions.groups.height + displayOptions.padding),
             }}
+            blockSize={blockSize}
             leaves={colLeaves}
           />
         )}
@@ -302,7 +293,7 @@ function HeatMapSvgContent() {
           <ColLabelsSvg
             gaps={xgaps}
             leaves={colLeaves}
-
+            blockSize={blockSize}
             colorMap={colColorMap}
             pos={{
               x: margin.left,
@@ -365,6 +356,7 @@ function HeatMapSvgContent() {
           <RowLabelsSvg
             leaves={rowLeaves}
             gaps={ygaps}
+            blockSize={blockSize}
             pos={{
               x:
                 displayOptions.labels.row.position === 'left'

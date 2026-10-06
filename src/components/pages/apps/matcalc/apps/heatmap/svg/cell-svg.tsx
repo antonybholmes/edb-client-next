@@ -2,7 +2,7 @@ import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgPath } from '@/components/plot/svg-path'
 import { IMarginProps } from '@/components/plot/svg-props'
-import { SvgMouseRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { ICell } from '@/interfaces/cell'
@@ -19,7 +19,7 @@ import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
 import { memo, ReactNode, useMemo } from 'react'
-import { IHeatMapSettings } from '../heatmap-settings-store'
+import { IHeatMapSettings } from '../heatmap-settings'
 import { CellGaps } from './cell-gaps'
 
 // we want circles slightly smaller than box to allow for borders
@@ -418,23 +418,24 @@ export const GridSvg = memo(function GridSvg({
 
   const rects: ReactNode[] = []
 
-  // if (props.border.show) {
-  //   for (const [yi, yspan] of ygaps.spans.entries()) {
-  //     for (const [xi, xspan] of xgaps.spans.entries()) {
-  //       rects.push(
-  //         <SvgRect
-  //           key={`grid:${yi}:${xi}`}
-  //           x={xspan.p1}
-  //           y={yspan.p1}
-  //           width={xspan.w}
-  //           height={yspan.w}
-  //           sp={props.border}
-  //           shapeRendering={SVG_CRISP_EDGES}
-  //         />
-  //       )
-  //     }
-  //   }
-  // }
+  if (props.border.show) {
+    const offset = props.border.width / 2
+    for (const [yi, yspan] of ygaps.spans.entries()) {
+      for (const [xi, xspan] of xgaps.spans.entries()) {
+        rects.push(
+          <SvgRect
+            key={`grid:${yi}:${xi}`}
+            x={xspan.p1 - offset}
+            y={yspan.p1 - offset}
+            width={xspan.w + props.border.width}
+            height={yspan.w + props.border.width}
+            sp={props.border}
+            shapeRendering={SVG_CRISP_EDGES}
+          />
+        )
+      }
+    }
+  }
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>

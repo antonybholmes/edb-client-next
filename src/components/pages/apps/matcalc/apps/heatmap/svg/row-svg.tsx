@@ -60,6 +60,7 @@ export function RowTreeSvg({
 export const RowLabelsSvg = memo(function RowLabelsSvg({
   leaves,
   gaps,
+  blockSize,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
   const { plot } = useHeatmapContext()
@@ -67,7 +68,6 @@ export const RowLabelsSvg = memo(function RowLabelsSvg({
 
   const df = (plot.dataframes['main'] as IClusterFrame).df
 
-  const blockSize = props.blockSize
   const offset = blockSize.h / 2
   const rowMetaN = range(
     0,

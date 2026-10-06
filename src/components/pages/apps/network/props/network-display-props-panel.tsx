@@ -5,9 +5,9 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
@@ -17,6 +17,7 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
+import { useState } from 'react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { POSITIONS, useNetworkSettings } from '../network-settings'
@@ -26,11 +27,18 @@ import { MarginPopover } from './margin-popover'
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
 
+  const [values, setValues] = useState([
+    'layout',
+    'plot',
+    'nodes',
+    'labels',
+    'edges',
+    'legend',
+  ])
+
   return (
     <PropsPanel>
-      <ScrollAccordion
-        value={['layout', 'plot', 'nodes', 'labels', 'edges', 'legend']}
-      >
+      <ScrollAccordion value={values} onValueChange={setValues}>
         <AccordionItem value="layout">
           <AccordionTrigger
           // rightChildren={
@@ -518,7 +526,7 @@ export function NetworkDisplayPropsPanel() {
         <AccordionItem value="legend">
           <AccordionTrigger
             leftChildren={
-              <OutlineCheckbox
+              <SmallSwitch
                 title="Show"
                 checked={settings.plot.legend.show}
                 onCheckedChange={(value) =>

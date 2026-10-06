@@ -9,8 +9,10 @@ import { range } from '@/lib/math/range'
 import { memo, ReactElement } from 'react'
 
 import { SvgG } from '@/components/plot/svg-g'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
-import { IHeatMapSettings } from '../heatmap-settings-store'
+import { IDim } from '@/interfaces/dim'
+import { IHeatMapSettings } from '../heatmap-settings'
 import { CellGaps } from './cell-gaps'
 
 export interface ITreeSvgProps {
@@ -70,6 +72,7 @@ export const ColTreeTopSvg = memo(function ColTreeTopSvg({
 export interface IColLabelsSvgProps {
   leaves: number[]
   gaps: CellGaps
+  blockSize: IDim
 
   colorMap?: Map<string, Map<number, string>>
   pos?: IPos
@@ -79,6 +82,7 @@ export const ColLabelsSvg = memo(function ColLabelsSvg({
   leaves,
   gaps,
   colorMap,
+  blockSize,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
   const { plot } = useHeatmapContext()
@@ -88,8 +92,6 @@ export const ColLabelsSvg = memo(function ColLabelsSvg({
 
   const groupRows = plot.groupRows || []
   const id = groupRows[0]?.id
-
-  const blockSize = props.blockSize
 
   const gElems: ReactElement[] = []
 
@@ -124,6 +126,7 @@ export const ColGroupsSvg = memo(function ColGroupsSvg({
   leaves,
   gaps,
   colorMap,
+  blockSize,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
   const { plot } = useHeatmapContext()
@@ -131,8 +134,6 @@ export const ColGroupsSvg = memo(function ColGroupsSvg({
   const props = plot.props
 
   const groupRows = plot.groupRows || []
-
-  const blockSize = props.blockSize
 
   const elems: ReactElement[] = []
   let y = 0
@@ -148,7 +149,7 @@ export const ColGroupsSvg = memo(function ColGroupsSvg({
       const x = gaps.position(col)
 
       gElems.push(
-        <rect
+        <SvgRect
           id={`group:${gri}:${ci}`}
           key={`group:${gri}:${ci}`}
           x={x}
@@ -156,25 +157,26 @@ export const ColGroupsSvg = memo(function ColGroupsSvg({
           width={blockSize.w}
           height={props.groups.height}
           fill={fill}
-          stroke={props.groups.grid.show ? props.groups.grid.value : 'none'}
-          strokeWidth={props.groups.grid.width}
+          sp={props.groups.grid}
+
           shapeRendering={SVG_CRISP_EDGES}
         />
       )
     }
 
     if (props.groups.border.show) {
+      const offset = props.border.width / 2
       for (const [spanIndex, span] of gaps.spans.entries()) {
         gElems.push(
-          <rect
+          <SvgRect
             key={`group-border:${gri}:${spanIndex}`}
-            x={span.p1}
-            y={0}
-            width={span.w}
-            height={props.groups.height}
+            x={span.p1 - offset}
+            y={-offset}
+            width={span.w + props.border.width}
+            height={props.groups.height + props.border.width}
             fill="none"
-            stroke={props.groups.border.value}
-            strokeWidth={props.groups.border.width}
+            sp={props.groups.border}
+
             shapeRendering={SVG_CRISP_EDGES}
           />
         )

@@ -2,7 +2,7 @@ import type { IFieldMap } from '@/interfaces/field-map'
 
 import { createContext, type Dispatch } from 'react'
 
-import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { deepFreeze } from '@/lib/utils'
 import type { IBoxPlotDisplayOptions } from './apps/boxplot/boxplot-plot-svg'
 

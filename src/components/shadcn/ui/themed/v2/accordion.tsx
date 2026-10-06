@@ -1,3 +1,4 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { present } from '@/lib/dom-utils'
@@ -53,6 +54,7 @@ export function Accordion({
 interface IScrollAccordionProps extends IChildrenProps {
   value: string[]
   onValueChange?: (value: string[]) => void
+  innerCls?: string
 }
 
 export function ScrollAccordion({
@@ -64,8 +66,9 @@ export function ScrollAccordion({
   className,
   children,
   innerCls,
-}: ComponentProps<typeof Accordion> &
-  VariantProps<typeof accordionVariants> & { innerCls?: string }) {
+}: Omit<ComponentProps<typeof Accordion>, 'onValueChange'> &
+  VariantProps<typeof accordionVariants> &
+  IScrollAccordionProps) {
   const [_value, setValue] = useState<AccordionValue | undefined>(value)
 
   useEffect(() => {
@@ -206,6 +209,7 @@ export function AccordionTrigger({
   side = 'left',
   leftChildren,
   rightChildren,
+  afterChildren,
   children,
   variant,
 
@@ -214,6 +218,7 @@ export function AccordionTrigger({
   VariantProps<typeof accordionHeaderVariants> & {
     leftChildren?: ReactNode
     rightChildren?: ReactNode
+    afterChildren?: ReactNode
     side?: 'left' | 'right'
     isFirst?: boolean
     'data-show-border'?: boolean
@@ -239,14 +244,17 @@ export function AccordionTrigger({
           size={16}
         />
       </AccordionPrimitive.Trigger>
-      {leftChildren && leftChildren}
-      {children && (
-        <AccordionPrimitive.Trigger className="flex grow">
-          {children}
-        </AccordionPrimitive.Trigger>
-      )}
+      {leftChildren}
+      <VCenterRow className="grow gap-x-1">
+        {children && (
+          <AccordionPrimitive.Trigger className="flex">
+            {children}
+          </AccordionPrimitive.Trigger>
+        )}
 
-      {rightChildren && rightChildren}
+        {afterChildren}
+      </VCenterRow>
+      {rightChildren}
     </AccordionPrimitive.Header>
   )
 }

@@ -35,7 +35,7 @@ export function SvgRect({
     <rect
       width={width}
       height={height}
-      stroke={stroke ?? sp?.value ?? 'none'}
+      stroke={stroke ?? (sp?.show && sp?.value ? sp.value : 'none')}
       strokeWidth={strokeWidth ?? sp?.width}
       strokeOpacity={strokeOpacity ?? sp?.opacity}
       strokeDasharray={strokeDasharray ?? sp?.dasharray}
