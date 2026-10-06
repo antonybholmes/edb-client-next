@@ -59,7 +59,7 @@ export function HomeToolbar() {
             })
           }}
         >
-          <Clipboard size={24} />
+          <Clipboard size={24} strokeWidth={1} />
           {TEXT_PASTE}
         </ToolbarColSmallButton>
         <ToolbarCol>

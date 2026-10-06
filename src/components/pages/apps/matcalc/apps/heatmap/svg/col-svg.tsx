@@ -24,7 +24,6 @@ export interface ITreeSvgProps {
 }
 
 export const ColTreeTopSvg = memo(function ColTreeTopSvg({
-  df,
   tree,
   width,
   height,

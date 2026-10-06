@@ -27,7 +27,7 @@ export const CHECK_CLS = cn(
   FOCUS_RING_CLS,
   'flex flex-row items-center justify-center shrink-0 cursor-pointer',
   'whitespace-nowrap gap-x-1.5 p-0 m-0 group rounded-sm aspect-square',
-  'w-4.5 h-4.5 shrink-0 trans-color border border-(--checkbox-theme)/30 data-checked:border-(--checkbox-theme)/80'
+  'w-4.5 h-4.5 shrink-0 trans-color border border-(--checkbox-theme)/30 data-checked:border-(--checkbox-theme)/30 bg-background'
 )
 
 export function OutlineCheckbox({
@@ -71,8 +71,8 @@ export function OutlineCheckbox({
               '--checkbox-theme': checkboxTheme,
             } as CSSProperties
           }
-          className="opacity-0 stroke-(--checkbox-theme) group-data-unchecked:hover:opacity-50 group-data-checked:opacity-90 trans-opacity"
-          size={16}
+          className="opacity-0 stroke-(--checkbox-theme) group-data-unchecked:hover:opacity-50 group-data-checked:opacity-70 trans-opacity"
+          size={14}
           strokeWidth={3}
         />
       </CheckboxPrimitive.Indicator>

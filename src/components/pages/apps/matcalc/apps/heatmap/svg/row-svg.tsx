@@ -11,13 +11,13 @@ import { SvgText } from '@/components/plot/svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
 export function RowTreeSvg({
-  df,
   tree,
   width,
   height,
   gaps,
   mode,
   props,
+
   pos = { ...ZERO_POS },
 }: ITreeSvgProps & { mode: LeftRightPos }) {
   const gElems: ReactElement[] = []

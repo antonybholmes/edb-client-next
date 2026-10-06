@@ -26,15 +26,13 @@ export const CellsD3Svg = memo(function CellsD3Svg({
   rowLeaves,
   colLeaves,
   props,
-
+  blockSize,
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
   const { ref } = useSVG()
   const hostRef = useRef<SVGGElement | null>(null)
 
   const { showCrosshair, hideCrosshair } = useCrosshair()
-
-  const { blockSize } = props
 
   const cmap = getColorMap(props.cmap)
 
@@ -108,7 +106,7 @@ export const CellsD3Svg = memo(function CellsD3Svg({
           />
         )
       }),
-    [colors, blockSize.h, blockSize.w]
+    [colors, blockSize]
   )
 
   useEffect(() => {
@@ -143,6 +141,10 @@ export const CellsD3Svg = memo(function CellsD3Svg({
     }
 
     const cell = { col: xgaps.nearest(plotP.x), row: ygaps.nearest(plotP.y) }
+
+    if (cell.col.index === -1 || cell.row.index === -1) {
+      return
+    }
 
     const { relativeP, screenP } = svgPointToScreen(ref.current, {
       x: cell.col.x + blockSize.w / 2 + margin.left,

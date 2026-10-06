@@ -65,7 +65,17 @@ function HeatMapSvgContent() {
 
   const displayOptions = plot.props
 
-  const blockSize = displayOptions.blockSize
+  const blockSize = useMemo(() => {
+    const ext = displayOptions.grid.show ? displayOptions.grid.width : 0
+    return {
+      w: displayOptions.blockSize.w + ext,
+      h: displayOptions.blockSize.h + ext,
+    }
+  }, [
+    displayOptions.blockSize,
+    displayOptions.grid.show,
+    displayOptions.grid.width,
+  ])
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
 
@@ -152,8 +162,6 @@ function HeatMapSvgContent() {
     groupId: 'cbar',
     axisId: 'cbar',
   })
-
-  //console.log('cax', plot.id, cax)
 
   const { svg, width, height } = useMemo(() => {
     if (!cf) {
@@ -334,6 +342,7 @@ function HeatMapSvgContent() {
               df={cf.df}
               tree={cf.rowTree}
               gaps={ygaps}
+
               width={ungappedInnerHeight}
               height={displayOptions.tree.row.width}
               mode="right"
@@ -374,6 +383,7 @@ function HeatMapSvgContent() {
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
+              blockSize={blockSize}
               pos={{ x: margin.left, y: margin.top }}
             />
             {/* Draw cells after grid so the are not obscured */}
@@ -389,6 +399,7 @@ function HeatMapSvgContent() {
               colLeaves={colLeaves}
               // handleVariantEnter={handleVariantEnter}
               // handleVariantLeave={hideTooltip}
+              blockSize={blockSize}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
             />
@@ -404,6 +415,7 @@ function HeatMapSvgContent() {
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
+              blockSize={blockSize}
               pos={{ x: margin.left, y: margin.top }}
             />
             <GridSvg
@@ -412,6 +424,7 @@ function HeatMapSvgContent() {
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
+              blockSize={blockSize}
               pos={{ x: margin.left, y: margin.top }}
             />
           </>
@@ -423,7 +436,6 @@ function HeatMapSvgContent() {
           <SvgHColorBar
             ax={cax}
             cmap={cmap}
-
             pos={{
               x: margin.left,
               y:

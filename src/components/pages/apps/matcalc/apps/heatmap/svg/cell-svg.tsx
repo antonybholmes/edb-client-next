@@ -2,7 +2,7 @@ import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgPath } from '@/components/plot/svg-path'
 import { IMarginProps } from '@/components/plot/svg-props'
-import { SvgMouseRect, SvgRect } from '@/components/plot/svg-rect'
+import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { ICell } from '@/interfaces/cell'
@@ -33,6 +33,7 @@ export interface ICellsSvgProps {
   ygaps: CellGaps
   dfRaw?: BaseDataFrame | undefined
   dfSize?: BaseDataFrame | undefined
+  blockSize: IDim
   rowLeaves: number[]
   colLeaves: number[]
   handleVariantEnter?: (pos: IPos, cell: ICell) => void
@@ -53,6 +54,7 @@ export const CellsSvg = memo(function CellsSvg({
   plotSize,
   rowLeaves,
   colLeaves,
+  blockSize,
   props,
 
   pos = { ...ZERO_POS },
@@ -61,7 +63,7 @@ export const CellsSvg = memo(function CellsSvg({
 
   const { showCrosshair, hideCrosshair } = useCrosshair() // Assuming there is a useCrosshair hook similar to useTooltip
 
-  const { blockSize } = props
+  //const { blockSize } = props
 
   const cmap = getColorMapFromCmap(props.cmap)
 
@@ -113,8 +115,6 @@ export const CellsSvg = memo(function CellsSvg({
     }
 
     const cell = { col: xgaps.nearest(plotP.x), row: ygaps.nearest(plotP.y) }
-
-    //console.log('bb', cell.col.index, cell.row.index)
 
     //if (cell.col.index === -1 || cell.row.index === -1) {
     //  _hideTooltip()
@@ -231,19 +231,6 @@ export const DotsSvg = memo(function DotsSvg({
       x: cell.col.x + blockSize.w / 2 + margin.left,
       y: cell.row.x + blockSize.h / 2 + margin.top,
     })
-
-    // showTooltip({
-    //   pos: { x: screenP.x + 2, y: screenP.y + 2 },
-    //   content: (
-    //     <>
-    //       <span className="font-semibold">{`${df.rowName(
-    //         cell.row.index
-    //       )}, ${df.colName(cell.col.index)}`}</span>
-    //       <span>{`Row ${cell.row.index + 1}, col ${cell.col.index + 1}`}</span>
-    //       <span>{cellStr(df.get(cell.row.index, cell.col.index))}</span>
-    //     </>
-    //   ),
-    // })
 
     showCrosshair({
       pos: relativeP,
@@ -395,22 +382,22 @@ interface IGridSvgProps {
   pos?: IPos
   xgaps: CellGaps
   ygaps: CellGaps
+  blockSize: IDim
 }
 
 export const GridSvg = memo(function GridSvg({
   props,
   xgaps,
   ygaps,
+  blockSize,
   pos = { ...ZERO_POS },
 }: IGridSvgProps) {
-  const blockSize = props.blockSize
-
   const hlines = []
 
   for (const xspan of xgaps.spans) {
     for (const yspan of ygaps.spans) {
-      let y = yspan.p1
-      for (let row = 0; row < yspan.size; row++) {
+      let y = yspan.p1 + blockSize.h
+      for (let row = 1; row < yspan.size; row++) {
         hlines.push(`M ${xspan.p1},${y} L ${xspan.p2},${y}`)
         y += blockSize.h
       }
@@ -421,8 +408,8 @@ export const GridSvg = memo(function GridSvg({
 
   for (const yspan of ygaps.spans) {
     for (const xspan of xgaps.spans) {
-      let x = xspan.p1
-      for (let col = 0; col < xspan.size; col++) {
+      let x = xspan.p1 + blockSize.w
+      for (let col = 1; col < xspan.size; col++) {
         vlines.push(`M ${x},${yspan.p1} L ${x},${yspan.p2}`)
         x += blockSize.w
       }
@@ -431,23 +418,23 @@ export const GridSvg = memo(function GridSvg({
 
   const rects: ReactNode[] = []
 
-  if (props.border.show) {
-    for (const [yi, yspan] of ygaps.spans.entries()) {
-      for (const [xi, xspan] of xgaps.spans.entries()) {
-        rects.push(
-          <SvgRect
-            key={`grid:${yi}:${xi}`}
-            x={xspan.p1}
-            y={yspan.p1}
-            width={xspan.w}
-            height={yspan.w}
-            sp={props.border}
-            shapeRendering={SVG_CRISP_EDGES}
-          />
-        )
-      }
-    }
-  }
+  // if (props.border.show) {
+  //   for (const [yi, yspan] of ygaps.spans.entries()) {
+  //     for (const [xi, xspan] of xgaps.spans.entries()) {
+  //       rects.push(
+  //         <SvgRect
+  //           key={`grid:${yi}:${xi}`}
+  //           x={xspan.p1}
+  //           y={yspan.p1}
+  //           width={xspan.w}
+  //           height={yspan.w}
+  //           sp={props.border}
+  //           shapeRendering={SVG_CRISP_EDGES}
+  //         />
+  //       )
+  //     }
+  //   }
+  // }
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
