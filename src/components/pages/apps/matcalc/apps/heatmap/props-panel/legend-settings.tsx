@@ -40,36 +40,38 @@ export function LegendSettingsPanel() {
           />
         }
         rightChildren={
-          <FontPopover
-            fonts={[
-              {
-                title: 'Title',
-                textProps: displayProps.legend.title,
-                update: (f) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.legend.title.font = f.font
-                      draft.props.legend.title.show = f.show
-                    })
-                  )
+          <>
+            <FontPopover
+              fonts={[
+                {
+                  title: 'Title',
+                  textProps: displayProps.legend.title,
+                  update: (f) => {
+                    updatePlot(
+                      produce(plot, (draft) => {
+                        draft.props.legend.title.font = f.font
+                        draft.props.legend.title.show = f.show
+                      })
+                    )
+                  },
+                  showEnabled: false,
                 },
-                showEnabled: false,
-              },
-              {
-                // title: 'Labels',
-                textProps: displayProps.legend,
-                update: (f) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.legend.font = f.font
-                      draft.props.legend.show = f.show
-                    })
-                  )
+                {
+                  // title: 'Labels',
+                  textProps: displayProps.legend,
+                  update: (f) => {
+                    updatePlot(
+                      produce(plot, (draft) => {
+                        draft.props.legend.font = f.font
+                        draft.props.legend.show = f.show
+                      })
+                    )
+                  },
+                  showEnabled: false,
                 },
-                showEnabled: false,
-              },
-            ]}
-          />
+              ]}
+            />
+          </>
         }
       >
         Legend

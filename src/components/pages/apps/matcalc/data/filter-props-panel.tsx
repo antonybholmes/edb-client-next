@@ -139,11 +139,7 @@ export function FilterPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2">
-      <VCenterRow className="justify-end">
-        {/* <DialogFloatingToolbar className="mt-2">
-          <SafariTabs id={tabsId} defaultWidth={4} />
-        </DialogFloatingToolbar> */}
-
+      <VCenterRow className="justify-end h-8">
         <LinkButton
           onClick={() => {
             openDialog({

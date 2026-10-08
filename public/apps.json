@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.8.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-06T22:41:28.277Z",
-    "hash": "1f979c0a685f2d8947b4d1b84691ca99180aee27d604ed7f3032bbadfbbd60ed",
-    "build": 2132
+    "modified": "2026-10-08T22:08:23.382Z",
+    "hash": "6f2b17c3581d4909ae8b28f87cf9e24ba86766811e00c0125ba92e89c416bcdc",
+    "build": 2134
   },
   {
     "name": "Motifs",
@@ -150,11 +150,11 @@
     "name": "Network",
     "description": "Beautiful network graphs.",
     "color": "#4169E1",
-    "version": "1.4.4",
+    "version": "1.4.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-06T22:41:28.278Z",
-    "hash": "02f5f681718ee40b28c9c6dbbc7fe13e0b22d689883c924eb372bc8bf38ec95b",
-    "build": 128
+    "modified": "2026-10-08T22:08:23.382Z",
+    "hash": "742a18517545cf545c6841721624857409b8dd6ede1af2ca7662882a09eebfdb",
+    "build": 130
   },
   {
     "name": "Oncoplot",
@@ -271,8 +271,8 @@
     "color": "#00008B",
     "version": "26.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-06T22:41:28.280Z",
-    "hash": "38ad9b4bb2f95117cfd64aa0f5047b99fba18243ebf5d74cdbf3f0c70ab4260c",
-    "build": 966
+    "modified": "2026-10-08T22:08:23.385Z",
+    "hash": "febfe841cb996e228462a597cc0f7d9f9637733f0b6305f347071b856468397f",
+    "build": 968
   }
 ]

@@ -48,6 +48,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -442,7 +443,7 @@ export function GroupPropsPanel() {
       <PropsPanel className="gap-y-1">
         <StretchRow className="gap-x-1 justify-between">
           <VCenterRow>
-            <IconButton
+            <ToolbarIconButton
               onClick={() =>
                 openFilesDialog({
                   fileTypes: ['json', 'cls'],
@@ -459,9 +460,9 @@ export function GroupPropsPanel() {
               title="Open Groups"
             >
               <UploadIcon />
-            </IconButton>
+            </ToolbarIconButton>
 
-            <IconButton
+            <ToolbarIconButton
               onClick={() => {
                 openDialog({
                   type: 'save',
@@ -490,11 +491,11 @@ export function GroupPropsPanel() {
               title="Save Groups"
             >
               <DownloadIcon />
-            </IconButton>
+            </ToolbarIconButton>
 
             <ToolbarSeparator />
 
-            <IconButton
+            <ToolbarIconButton
               onClick={() => {
                 addGroups(
                   [newGroupRow({ name: `Groups ${groupRows.length + 1}` })],
@@ -506,7 +507,7 @@ export function GroupPropsPanel() {
               title="New Group Set"
             >
               <LayersPlus size={20} strokeWidth={1.5} />
-            </IconButton>
+            </ToolbarIconButton>
           </VCenterRow>
           <LinkButton
             onClick={() =>

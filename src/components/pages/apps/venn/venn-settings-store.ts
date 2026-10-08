@@ -13,7 +13,7 @@ import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v74`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v76`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -132,6 +132,7 @@ export interface IVennSettings {
     }
     showDiagonal: boolean
     upperTriangular: boolean
+    metric: 'jaccard' | 'overlap'
   }
   page: {
     margin: IMarginProps
@@ -174,6 +175,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
     },
     showDiagonal: false,
     upperTriangular: false,
+    metric: 'jaccard',
   },
 
   page: {

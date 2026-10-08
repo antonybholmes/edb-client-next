@@ -12,9 +12,13 @@ export function useOpen() {
     const file = files[0]!
     const name = file.name
 
+    console.log('name', name)
+
     const lines = textToLines(file.text)
 
     const sep = name.endsWith('csv') ? ',' : '\t'
+
+    //console.log('sep', sep, lines)
 
     const table = new DataFrameReader()
       .delimiter(sep)
@@ -22,13 +26,21 @@ export function useOpen() {
       .colNames(1)
       .read(lines).t
 
-    setVennLists(
-      rangeMap((ri) => {
-        const id = (ri + 1).toString()
+    console.log('t', table.shape)
 
-        return makeVennList(id, table.index.str(ri), table.row(ri).strs)
-      }, table.shape[0])
-    )
+    const lists = rangeMap((ri) => {
+      const id = (ri + 1).toString()
+
+      return makeVennList(
+        id,
+        table.index.str(ri),
+        table.row(ri).strs.filter((s) => s !== '')
+      )
+    }, table.shape[0])
+
+    console.log('lists', lists)
+
+    setVennLists(lists)
 
     // setListTextMap(
     //   new Map(
@@ -55,6 +67,7 @@ export function useOpen() {
   }
 
   function openDataframe(df: BaseDataFrame) {
+    console.log('df', df)
     setVennLists(
       rangeMap((ri) => {
         const id = (ri + 1).toString()

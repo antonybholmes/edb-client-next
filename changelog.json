@@ -3300,6 +3300,10 @@
         {
           "msg": "Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches",
           "date": "2026-10-04T15:45:14.345Z"
+        },
+        {
+          "msg": "Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.",
+          "date": "2026-10-08T22:08:24.470Z"
         }
       ]
     },

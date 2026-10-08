@@ -219,7 +219,7 @@ export function NetworkD3SvgContent() {
       showCrosshair({
         pos: relativeP,
         screenPos: screenP,
-        showLines: false,
+        //showLines: false,
         content: (
           <>
             {IS_DEV_MODE && <strong>{node.id}</strong>}
