@@ -2,7 +2,7 @@ import type { LeftRightPos } from '@/components/side'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { Field } from '@base-ui/react/field'
-import { Switch as SwitchPrimitives } from '@base-ui/react/switch'
+import { Switch as SwitchPrimitive } from '@base-ui/react/switch'
 import gsap from 'gsap'
 import {
   useEffect,
@@ -35,6 +35,7 @@ import {
 // export { Switch }
 
 const TOGGLE_CLS = cn(
+  'flex flex-row items-center',
   'relative shrink-0 rounded-full cursor-pointer group outline-none',
   'data-enabled:data-checked:bg-app-theme/70',
   'data-enabled:data-checked:hover:bg-app-theme',
@@ -46,12 +47,13 @@ const TOGGLE_CLS = cn(
 
 const THUMB_CLS = cn(
   'absolute pointer-events-none shrink-0',
-  'cursor-pointer rounded-full bg-white z-30',
-  'top-1/2 -translate-y-1/2 flex flex-row justify-center items-center'
+  'cursor-pointer rounded-full bg-white z-10',
+  'backdrop-blur-sm',
+  'left-[2px]'
 )
 
 export interface ISwitchProps extends ComponentProps<
-  typeof SwitchPrimitives.Root
+  typeof SwitchPrimitive.Root
 > {
   side?: LeftRightPos
 }
@@ -69,40 +71,31 @@ export function Switch({
 }: ISwitchProps) {
   const thumbRef = useRef<HTMLSpanElement>(null)
   //const highlightThumbRef = useRef<HTMLSpanElement>(null)
-  //const pressedThumbRef = useRef<HTMLSpanElement>(null)
-
+  // Looks nicer if animations are disabled on first render
+  const initial = useRef(true)
   const [hover, setHover] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  ariaLabel = ariaLabel ?? title ?? 'Switch'
-
-  // Looks nicer if animations are disabled on first render
-  const initial = useRef(true)
-
   useEffect(() => {
-    const duration = initial.current ? 0 : 0.4 //ANIMATION_DURATION_S
+    if (!thumbRef.current) {
+      return
+    }
 
-    const tl = gsap.timeline()
+    const duration = initial.current ? 0 : 0.5
 
-    tl.to(
-      thumbRef.current,
-      {
-        //width: checked || hover ? '1.25rem' : '1rem',
-
-        //left: hover ? 2 : 8,
-        //scaleX: hover ? 1.5 : 1,
-        transform: checked ? 'translate(10px, -50%)' : 'translate(2px, -50%)',
-        duration,
-        ease: 'back.out',
-      },
-      0
-    )
+    gsap.to(thumbRef.current, {
+      //scale: hover ? 1.1 : 1,
+      transformOrigin: 'center',
+      x: checked ? 10 : 0,
+      duration,
+      ease: 'power1.out',
+    })
 
     initial.current = false
   }, [checked, hover, pressed])
 
   let ret: ReactNode = (
-    <SwitchPrimitives.Root
+    <SwitchPrimitive.Root
       ref={ref}
       checked={checked}
       disabled={disabled}
@@ -114,18 +107,18 @@ export function Switch({
       onPointerDown={() => setPressed(true)}
       onPointerUp={() => setPressed(false)}
       title={title}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? title ?? 'Switch'}
       {...props}
     >
-      <span
+      <SwitchPrimitive.Thumb
         data-hover={hover}
         className={THUMB_CLS}
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
-        style={{ height: 16, width: 20 }}
+        style={{ height: 16, width: 18 }}
       />
-    </SwitchPrimitives.Root>
+    </SwitchPrimitive.Root>
   )
 
   if (children) {

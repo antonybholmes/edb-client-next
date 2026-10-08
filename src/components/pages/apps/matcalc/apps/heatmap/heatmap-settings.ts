@@ -40,7 +40,7 @@ export const LEGEND_BLOCK_SIZE: IBlock = { w: 20, h: 20 }
 
 const BLOCK_SIZE: IBlock = { w: 24, h: 24 }
 
-const GROUPS_SIZE: IBlock = { w: 24, h: 16 }
+const GROUPS_SIZE = 15
 
 export const MIN_INNER_HEIGHT: number = 200
 
@@ -212,7 +212,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
   },
   groups: {
     show: true,
-    height: GROUPS_SIZE.h,
+    height: GROUPS_SIZE,
     keepUnused: false,
     border: { ...DEFAULT_STROKE_PROPS },
     grid: {

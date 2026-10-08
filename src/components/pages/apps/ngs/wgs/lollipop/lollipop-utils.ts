@@ -1,7 +1,7 @@
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 
-import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { makeUuid } from '@/lib/id'
 
 import {

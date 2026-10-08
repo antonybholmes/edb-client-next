@@ -45,7 +45,7 @@ export const inputVariants = cva(CONTAINER_CLS, {
     },
     h: {
       xs: 'h-6.5',
-      sm: 'h-7.5',
+      toolbar: 'h-toolbar-button',
       md: 'h-button-md',
       //dialog: 'h-9',
       lg: 'h-9',
@@ -56,10 +56,10 @@ export const inputVariants = cva(CONTAINER_CLS, {
     w: {
       none: '',
       xxs: 'w-11',
-      xs: 'w-14',
-      sm: 'w-20',
-      md: 'w-30',
-      lg: 'w-40',
+      xs: 'w-12',
+      sm: 'w-16',
+      md: 'w-20',
+      lg: 'w-32',
       xl: 'w-64',
       grow: 'grow',
       full: 'w-full',

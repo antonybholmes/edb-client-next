@@ -100,11 +100,7 @@ function GridView({ view }: { view: string }) {
   // }, [size.w])
 
   return (
-    <ul
-      className={cn(
-        'grid grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'
-      )}
-    >
+    <ul className={cn('grid grid-cols-3 gap-2  md:grid-cols-4 lg:grid-cols-5')}>
       {HEADER_LINKS.map((section) => {
         return section.apps.filter(
           (module) =>

@@ -1,5 +1,5 @@
 import { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { ITextFileOpen } from '@/components/pages/open-files'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'

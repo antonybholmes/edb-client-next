@@ -10,13 +10,13 @@ import {
   RadioGroup,
   SideRadioGroupItem,
 } from '@/components/shadcn/ui/themed/v2/radio-group'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
-import { TEXT_SHOW, TEXT_TITLE } from '@/consts'
+import { TEXT_TITLE } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -27,6 +27,18 @@ export function LegendSettingsPanel() {
   return (
     <AccordionItem value="legend">
       <AccordionTrigger
+        leftChildren={
+          <SmallSwitch
+            checked={displayProps.legend.show}
+            onCheckedChange={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.legend.show = v
+                })
+              )
+            }}
+          />
+        }
         rightChildren={
           <>
             <FontPopover
@@ -45,7 +57,7 @@ export function LegendSettingsPanel() {
                   showEnabled: false,
                 },
                 {
-                  title: 'Labels',
+                  // title: 'Labels',
                   textProps: displayProps.legend,
                   update: (f) => {
                     updatePlot(
@@ -58,18 +70,6 @@ export function LegendSettingsPanel() {
                   showEnabled: false,
                 },
               ]}
-            />
-
-            <Switch
-              title={TEXT_SHOW}
-              checked={displayProps.legend.show}
-              onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.legend.show = v
-                  })
-                )
-              }}
             />
           </>
         }

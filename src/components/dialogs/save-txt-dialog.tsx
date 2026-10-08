@@ -9,16 +9,19 @@ import {
 
 export const FILE_FORMAT_JSON = { name: 'JSON', ext: 'json' }
 
-export const TXT_FORMAT = {
+export const TXT_FORMAT: ISaveAsFileType = {
   name: 'Text (Tab delimited) (*.txt)',
   ext: 'txt',
 }
 
-export const TAB_DELIMITED_FORMAT = {
+export const TAB_DELIMITED_FORMAT: ISaveAsFileType = {
   name: 'TSV (Tab delimited) (*.tsv)',
   ext: 'tsv',
 }
-export const CSV_FORMAT = { name: 'CSV (Comma delimited) (*.csv)', ext: 'csv' }
+export const CSV_FORMAT: ISaveAsFileType = {
+  name: 'CSV (Comma delimited) (*.csv)',
+  ext: 'csv',
+}
 
 export const TXT_FILE_FORMATS: ISaveAsFileType[] = [
   TAB_DELIMITED_FORMAT,

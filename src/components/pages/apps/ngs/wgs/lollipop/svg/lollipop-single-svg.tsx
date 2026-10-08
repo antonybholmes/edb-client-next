@@ -4,7 +4,7 @@ import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 
-import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'

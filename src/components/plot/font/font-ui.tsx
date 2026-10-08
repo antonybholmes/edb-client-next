@@ -50,7 +50,7 @@ const FONT_SIZES = [
 ]
 
 // Extracted alignment toggles
-function FontAlignToggles({
+export function FontAlignToggles({
   value,
   onChange,
 }: {
@@ -86,7 +86,7 @@ function FontAlignToggles({
 }
 
 // Extracted font family select
-function FontFamilySelect({
+export function FontFamilySelect({
   value,
   onChange,
 }: {
@@ -98,6 +98,7 @@ function FontFamilySelect({
       value={value}
       onValueChange={(v) => onChange(v as string)}
       w="md"
+      variant="toolbar"
     >
       {FONTS.map((font) => (
         <SelectItem key={font.label} value={font.label}>
@@ -109,7 +110,7 @@ function FontFamilySelect({
 }
 
 // Extracted font size select
-function FontSizeSelect({
+export function FontSizeSelect({
   value,
   onChange,
 }: {
@@ -121,46 +122,62 @@ function FontSizeSelect({
     FONT_SIZES.findIndex((s) => s.value === value)
   )
   return (
-    <VCenterRow className="gap-x-1">
-      <SelectList
-        w="xxxs"
-        value={value}
-        onValueChange={(v) => {
-          let val = v
-          if (!isNaN(Number(val))) val = Number(val)
-          onChange(val as number)
-        }}
+    <SelectList
+      w="xxxs"
+      value={value}
+      onValueChange={(v) => {
+        let val = v
+        if (!isNaN(Number(val))) val = Number(val)
+        onChange(val as number)
+      }}
+      variant="toolbar"
+    >
+      {FONT_SIZES.map((size) => (
+        <SelectItem key={size.value} value={size.value}>
+          {size.label}
+        </SelectItem>
+      ))}
+    </SelectList>
+  )
+}
+
+export function FontIncDec({
+  className,
+  value,
+  onChange,
+}: {
+  className?: string
+  value: number
+  onChange: (v: number) => void
+}) {
+  const idx = Math.max(
+    0,
+    FONT_SIZES.findIndex((s) => s.value === value)
+  )
+  return (
+    <VCenterRow className={className}>
+      <ToolbarIconButton
+        title="Grow Font"
+        onClick={() =>
+          onChange(
+            idx < FONT_SIZES.length - 1 ? FONT_SIZES[idx + 1]!.value : value
+          )
+        }
       >
-        {FONT_SIZES.map((size) => (
-          <SelectItem key={size.value} value={size.value}>
-            {size.label}
-          </SelectItem>
-        ))}
-      </SelectList>
-      <VCenterRow>
-        <ToolbarIconButton
-          title="Grow Font"
-          onClick={() =>
-            onChange(
-              idx < FONT_SIZES.length - 1 ? FONT_SIZES[idx + 1]!.value : value
-            )
-          }
-        >
-          <AArrowUp size={18} strokeWidth={1.5} />
-        </ToolbarIconButton>
-        <ToolbarIconButton
-          title="Shrink Font"
-          onClick={() => onChange(idx > 0 ? FONT_SIZES[idx - 1]!.value : value)}
-        >
-          <AArrowDown size={18} strokeWidth={1.5} />
-        </ToolbarIconButton>
-      </VCenterRow>
+        <AArrowUp size={18} strokeWidth={1.5} />
+      </ToolbarIconButton>
+      <ToolbarIconButton
+        title="Shrink Font"
+        onClick={() => onChange(idx > 0 ? FONT_SIZES[idx - 1]!.value : value)}
+      >
+        <AArrowDown size={18} strokeWidth={1.5} />
+      </ToolbarIconButton>
     </VCenterRow>
   )
 }
 
 // Extracted style toggle buttons for clarity and reuse
-function FontStyleToggles({
+export function FontStyleToggles({
   font,
   update,
   showColor,
@@ -321,16 +338,28 @@ export function FontUI({
       )}
 
       {showFontSize && (
-        <FontSizeSelect
-          value={textProps.font.fontSize}
-          onChange={(v) =>
-            update?.(
-              produce(textProps, (draft) => {
-                draft.font.fontSize = v as IFontProps['fontSize']
-              })
-            )
-          }
-        />
+        <>
+          <FontSizeSelect
+            value={textProps.font.fontSize}
+            onChange={(v) =>
+              update?.(
+                produce(textProps, (draft) => {
+                  draft.font.fontSize = v as IFontProps['fontSize']
+                })
+              )
+            }
+          />
+          <FontIncDec
+            value={textProps.font.fontSize}
+            onChange={(v) =>
+              update?.(
+                produce(textProps, (draft) => {
+                  draft.font.fontSize = v as IFontProps['fontSize']
+                })
+              )
+            }
+          />
+        </>
       )}
     </VCenterRow>
   )

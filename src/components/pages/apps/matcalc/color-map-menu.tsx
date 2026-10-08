@@ -1,6 +1,7 @@
 import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { ColorMapIcon } from '@/components/plot/color-map-icon'
+import { ButtonStyle } from '@/components/plot/stroke-dropdown-menu'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -16,7 +17,7 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { BWR_CMAP_V2, COLOR_MAP_MENU, ColorMap } from '@/lib/color/colormap'
 import { cn } from '@/lib/shadcn-utils'
 import { SwatchBook } from 'lucide-react'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 export const BUTTON_CLS = cn(
   'relative border border-transparent rounded-md aspect-square w-8 h-8',
@@ -116,12 +117,15 @@ export function ColorMapMenuContent({
 
 interface IProps {
   cmap: ColorMap
+  title?: string
+  button?: ButtonStyle
   onChange?: (cmap: ColorMap) => void
 }
 
 export function ColorMapMenu({
   cmap = BWR_CMAP_V2,
-
+  title,
+  button = 'simple',
   onChange,
 }: IProps) {
   const [open, setOpen] = useState(false)
@@ -129,6 +133,22 @@ export function ColorMapMenu({
   function _onChange(cmap: ColorMap) {
     onChange?.(cmap)
   }
+
+  const trigger: ReactNode =
+    button === 'flat' ? (
+      <DropdownMenuTrigger
+        onClick={() => setOpen(true)}
+        render={
+          <ToolbarIconButton title={title}>
+            <ColorMapMenuIcon cmap={cmap} />
+          </ToolbarIconButton>
+        }
+      />
+    ) : (
+      <DropdownMenuTrigger title={title} onClick={() => setOpen(true)}>
+        <ColorMapMenuIcon cmap={cmap} />
+      </DropdownMenuTrigger>
+    )
 
   return (
     // <Popover open={open} onOpenChange={setOpen}>
@@ -173,15 +193,8 @@ export function ColorMapMenu({
     // </Popover>
 
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger
-        title="Colormap"
-        onClick={() => setOpen(true)}
-        render={
-          <ToolbarIconButton>
-            <ColorMapMenuIcon cmap={cmap} />
-          </ToolbarIconButton>
-        }
-      />
+      {trigger}
+
       <ColorMapMenuContent
         cmap={cmap}
 

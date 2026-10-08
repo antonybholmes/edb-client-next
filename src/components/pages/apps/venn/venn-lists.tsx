@@ -15,11 +15,14 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { TEXT_OK } from '@/consts'
 import { VennList } from './venn-list'
-import { useVenn } from './venn-store'
+import { MAX_VISIBLE_LISTS, useVenn } from './venn-store'
 
 export function VennLists() {
   const { vennLists, addList, removeList } = useVenn()
   const { open: openDialog } = useDialogs()
+
+  const visibleVennLists = vennLists.slice(0, MAX_VISIBLE_LISTS)
+
   return (
     <PropsPanel>
       <VCenterRow className="border-b border-border/50 mb-2 pb-1">
@@ -33,7 +36,7 @@ export function VennLists() {
         </IconButton>
       </VCenterRow>
       <ScrollAccordion value={vennLists.map((vl) => `List ${vl.name}`)}>
-        {vennLists.map((vennList, vi) => {
+        {visibleVennLists.map((vennList, vi) => {
           return (
             <AccordionItem
               value={`List ${vennList.name}`}

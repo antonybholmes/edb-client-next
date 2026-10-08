@@ -18,12 +18,14 @@ export function ZoomSelectList({
     <SelectList
       value={zoom}
       onValueChange={(value) => setZoom(value as number)}
-      w="xs"
-      items={levels.map((l, li) => ({ value: l, label: formatZoom(l) }))}
+      w="xxs"
+      variant="toolbar"
+      //items={levels.map((l, li) => ({ value: l, label: formatZoom(l) }))}
+      format={(value) => formatZoom(value as number)}
     >
       {levels
         .map((l, li) => ({ index: li, value: l }))
-        .sort((a, b) => b.index - a.index)
+        //.sort((a, b) => b.index - a.index)
         .map((v) => (
           <SelectItem value={v.value} key={v.index}>
             {formatZoom(v.value)}

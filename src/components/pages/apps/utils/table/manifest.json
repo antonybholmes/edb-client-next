@@ -1,0 +1,10 @@
+{
+  "name": "Table",
+  "description": "A basic viewer for tabular data.",
+  "version": "14.8.0",
+  "color": "#000000",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-10-03T04:24:06.659Z",
+  "hash": "c3361d20df45269dca918ac36753b2f5e4a57d51b7c9a68cbcb635bef3cafb6c",
+  "build": 486
+}

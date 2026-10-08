@@ -12,7 +12,7 @@ import {
   LabelPosition,
   POSITIONS,
   useNetworkSettings,
-} from '../network-settings-store'
+} from '../network-settings'
 
 export function PositionDropdown() {
   const { settings, updateSettings } = useNetworkSettings()

@@ -48,7 +48,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
     <VCenterRow className={cn('gap-x-1', className)}>
       <VCenterRow className="gap-x-1">
         <ToolbarFooterButton
-          aria-label="Zoom Out"
+          title="Zoom Out"
           onClick={() => decreaseZoom()}
           size="icon-sm"
         >
@@ -70,7 +70,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         />
 
         <ToolbarFooterButton
-          aria-label="Zoom In"
+          title="Zoom In"
           onClick={() => increaseZoom()}
           size="icon-sm"
         >

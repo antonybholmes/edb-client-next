@@ -14,11 +14,13 @@ import { create } from 'zustand'
 import {
   DEFAULT_HEATMAP_PROPS,
   IHeatMapSettings,
-} from '../matcalc/apps/heatmap/heatmap-settings-store'
+} from '../matcalc/apps/heatmap/heatmap-settings'
 import { newHeatMapPlot } from '../matcalc/history/history-provider/history-factories'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
 import { useVennSettings } from './venn-settings-store'
+
+export const MAX_VISIBLE_LISTS = 5
 
 export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
 
@@ -186,6 +188,21 @@ function makeVennElemMap(vennLists: IVennList[]): Record<string, string[]> {
   return vennElemMap
 }
 
+function makeCombNames(vennLists: IVennList[]) {
+  // Need to prevent combination explosion by limiting to MAX_VISIBLE_LISTS
+  const listIdxCombinations = makeCombinations(
+    range(Math.min(vennLists.length, MAX_VISIBLE_LISTS))
+  )
+
+  const combinationNames = Object.fromEntries(
+    listIdxCombinations.map((combination) => [
+      combination.map((index) => (index + 1).toString()).join(':'),
+      combination.map((index) => vennLists[index]!.name).join(' AND '),
+    ])
+  )
+  return combinationNames
+}
+
 export const useVennStore = create<IVennStore>((set, get) => ({
   ...DEFAULT_SETTINGS,
   setSelectedItems: (name: string, items: string[]) => {
@@ -205,6 +222,7 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       return {
         vennLists,
         vennElemMap: makeVennElemMap(vennLists),
+        combinationNames: makeCombNames(vennLists),
         updateCounter: state.updateCounter + 1,
       }
     })
@@ -218,6 +236,7 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       return {
         vennLists,
         vennElemMap: makeVennElemMap(vennLists),
+        combinationNames: makeCombNames(vennLists),
         updateCounter: state.updateCounter + 1,
       }
     })
@@ -228,18 +247,11 @@ export const useVennStore = create<IVennStore>((set, get) => ({
         .flatMap((vennList) => vennList.uniqueItems.entries())
         .map(([key, value]) => [key, value])
     )
-    const listIdxCombinations = makeCombinations(range(vennLists.length))
-    const combinationNames = Object.fromEntries(
-      listIdxCombinations.map((combination) => [
-        combination.map((index) => (index + 1).toString()).join(':'),
-        combination.map((index) => vennLists[index]!.name).join(' AND '),
-      ])
-    )
 
     set({
       vennLists,
       originalNames,
-      combinationNames,
+      combinationNames: makeCombNames(vennLists),
       vennElemMap: makeVennElemMap(vennLists),
       updateCounter: 0,
     })
@@ -291,9 +303,6 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       }
     })
   },
-  // setVennListsInUse: (ids: Set<string>) => {
-  //   set({ vennListsInUse: ids })
-  // },
 }))
 
 export function useVenn(): IVennStore & {
@@ -386,28 +395,45 @@ export function useVenn(): IVennStore & {
     })
 
     for (const [row, vlA] of vennListsInUse.entries()) {
-      for (const [col, vlB] of vennListsInUse.entries()) {
+      // iterate over the upper triangle of the matrix, including the diagonal
+      // to reduce redundant calculations, we only compute the upper triangle and mirror it to the lower triangle
+      for (const col of range(row, vennListsInUse.length)) {
+        const vlB = vennListsInUse[col]!
+
         const s1 = new Set(vlA.uniqueItems.keys())
         const s2 = new Set(vlB.uniqueItems.keys())
         const overlap = [...s1].filter((item) => s2.has(item)).length
 
-        const jaccard = overlap / (s1.size + s2.size - overlap)
+        const jaccard =
+          settings.heatmap.metric === 'jaccard'
+            ? overlap / (s1.size + s2.size - overlap)
+            : overlap / Math.min(s1.size, s2.size)
+
+        const dist = 1 - jaccard
 
         overlapData[row]![col] = overlap
-        distData[row]![col] = 1 - jaccard
+        overlapData[col]![row] = overlap
 
-        const showUpper = col > row
+        distData[row]![col] = dist
+        distData[col]![row] = dist
 
-        const showLower = col < row && !settings.heatmap.upperTriangular
+        //const showUpper = col > row
+
+        //const showLower = col < row && !settings.heatmap.upperTriangular
 
         const showDiagonal = row === col && settings.heatmap.showDiagonal
 
         if (row !== col || showDiagonal) {
           zData[row]![col] = jaccard
+          zData[col]![row] = jaccard
         }
 
         //if (showUpper || showLower || showDiagonal) {
-        sizeData[row]![col] = Math.max(MIN_RADIUS, jaccard)
+        const r = Math.max(MIN_RADIUS, jaccard)
+
+        sizeData[row]![col] = r
+        sizeData[col]![row] = r
+
         //}
 
         // if (row === 1 && col === 0) {

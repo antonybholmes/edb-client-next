@@ -6,7 +6,7 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import {
   DEFAULT_HEATMAP_PROPS,
   type IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { TEXT_CANCEL } from '@/consts'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 

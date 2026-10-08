@@ -203,6 +203,7 @@ function VennPage() {
 
     const table = new DataFrameReader().indexCols(0).colNames(1).read(lines).t
 
+    console.log('table', table)
     openDataframe(table)
   }
 

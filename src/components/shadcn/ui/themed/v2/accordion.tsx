@@ -1,3 +1,4 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { present } from '@/lib/dom-utils'
@@ -53,6 +54,7 @@ export function Accordion({
 interface IScrollAccordionProps extends IChildrenProps {
   value: string[]
   onValueChange?: (value: string[]) => void
+  innerCls?: string
 }
 
 export function ScrollAccordion({
@@ -64,8 +66,9 @@ export function ScrollAccordion({
   className,
   children,
   innerCls,
-}: ComponentProps<typeof Accordion> &
-  VariantProps<typeof accordionVariants> & { innerCls?: string }) {
+}: Omit<ComponentProps<typeof Accordion>, 'onValueChange'> &
+  VariantProps<typeof accordionVariants> &
+  IScrollAccordionProps) {
   const [_value, setValue] = useState<AccordionValue | undefined>(value)
 
   useEffect(() => {
@@ -159,30 +162,27 @@ export function AccordionItem({
 }
 
 const TRIGGER_CLS = cn(
-  'group relative outline-2 outline-transparent',
+  'group relative outline-2 outline-transparent grow-0 shrink-0',
   'focus-visible:outline-ring data-focus:outline-ring -outline-offset-2',
   'flex flex-row grow items-center font-semibold'
 )
 
 //  [&>div]:pl-2
-export const accordionHeaderVariants = cva(
-  'group flex flex-row items-center gap-x-1.5',
-  {
-    variants: {
-      variant: {
-        default: '',
-        settings:
-          'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
-        sidebar:
-          'h-6 rounded-theme overflow-hidden hover:bg-muted/50 text-xs trans-color pr-1.5',
-        none: '',
-      },
+export const accordionHeaderVariants = cva('group flex flex-row items-center', {
+  variants: {
+    variant: {
+      default: '',
+      settings:
+        'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
+      sidebar:
+        'h-6 rounded-theme overflow-hidden hover:bg-muted/50 bg-muted/30 text-xs trans-color pl-1 pr-2 gap-x-1',
+      none: '',
     },
-    defaultVariants: {
-      variant: 'sidebar',
-    },
-  }
-)
+  },
+  defaultVariants: {
+    variant: 'sidebar',
+  },
+})
 
 export const accordionTriggerVariants = cva(
   'flex flex-row items-center grow gap-x-1 truncate h-full',
@@ -209,6 +209,7 @@ export function AccordionTrigger({
   side = 'left',
   leftChildren,
   rightChildren,
+  afterChildren,
   children,
   variant,
 
@@ -217,6 +218,7 @@ export function AccordionTrigger({
   VariantProps<typeof accordionHeaderVariants> & {
     leftChildren?: ReactNode
     rightChildren?: ReactNode
+    afterChildren?: ReactNode
     side?: 'left' | 'right'
     isFirst?: boolean
     'data-show-border'?: boolean
@@ -235,28 +237,24 @@ export function AccordionTrigger({
         variant,
       })}
     >
-      {leftChildren && leftChildren}
-
-      <AccordionPrimitive.Trigger
-        ref={ref}
-        className={accordionTriggerVariants({ variant })}
-        //data-hover={hover}
-
-        //onPointerOver={() => setHover(true)}
-        //onPointerOut={() => setHover(false)}
-        {...props}
-      >
-        {side === 'right' && children}
+      <AccordionPrimitive.Trigger className="aspect-square">
         <ChevronRight
           className="trans-transform group-data-open:rotate-90 shrink-0"
           style={arrowStyle}
           size={16}
         />
-
-        {side === 'left' && children}
       </AccordionPrimitive.Trigger>
+      {leftChildren}
+      <VCenterRow className="grow gap-x-1">
+        {children && (
+          <AccordionPrimitive.Trigger className="flex">
+            {children}
+          </AccordionPrimitive.Trigger>
+        )}
 
-      {rightChildren && rightChildren}
+        {afterChildren}
+      </VCenterRow>
+      {rightChildren}
     </AccordionPrimitive.Header>
   )
 }

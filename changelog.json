@@ -3251,10 +3251,63 @@
         {
           "msg": "Network updates",
           "date": "2026-10-01T21:11:30.538Z"
+        },
+        {
+          "msg": "Network can now auto size right margin to cope with font changes to legend",
+          "date": "2026-10-01T21:38:15.829Z"
+        },
+        {
+          "msg": "Added font toolbar ui",
+          "date": "2026-10-02T23:00:26.831Z"
+        },
+        {
+          "msg": "Make toolbar buttons a little smaller",
+          "date": "2026-10-02T23:02:03.507Z"
+        },
+        {
+          "msg": "New margin UI. Lots of UI tweaks. New toolbar size.",
+          "date": "2026-10-03T02:32:26.852Z"
+        },
+        {
+          "msg": "Text viewer now has basic toolbar ui",
+          "date": "2026-10-03T03:23:46.231Z"
+        },
+        {
+          "msg": "Text Viewer is now Text View",
+          "date": "2026-10-03T03:38:45.617Z"
+        },
+        {
+          "msg": "Added font edit to text editor",
+          "date": "2026-10-03T04:24:08.761Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-09-29T22:26:06.366Z"
+  },
+  {
+    "version": "91.6.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-10-03T04:46:43.479Z"
+        },
+        {
+          "msg": "Switch animations tweaked",
+          "date": "2026-10-03T16:13:22.841Z"
+        },
+        {
+          "msg": "Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches",
+          "date": "2026-10-04T15:45:14.345Z"
+        },
+        {
+          "msg": "Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.",
+          "date": "2026-10-08T22:08:24.470Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-03T04:46:43.479Z"
   }
 ]

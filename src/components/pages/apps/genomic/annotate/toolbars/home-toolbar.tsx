@@ -108,7 +108,7 @@ export function HomeToolbar() {
           <ToolbarRow gap="gap-x-1">
             <span>5'</span>
             <NumericalInput
-              h="sm"
+              h="toolbar"
               value={settings.tss.prom5p}
 
               limit={[0, 1000000]}
@@ -127,7 +127,7 @@ export function HomeToolbar() {
           <ToolbarRow gap="gap-x-1">
             <span>3'</span>
             <NumericalInput
-              h="sm"
+              h="toolbar"
 
               value={settings.tss.prom3p}
               limit={[0, 1000000]}
@@ -151,7 +151,7 @@ export function HomeToolbar() {
           <ToolbarRow gap="gap-x-1">
             <span>Closest genes</span>
             <NumericalInput
-              h="sm"
+              h="toolbar"
               value={settings.closest}
               onNumChange={(value) =>
                 updateSettings({ ...settings, closest: value })

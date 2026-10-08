@@ -1,9 +1,26 @@
 # Changelog
 
+## 91.6.0 (Oct, 2026)
+
+### Changed
+
+- Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.
+- Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches.
+- Switch animations tweaked.
+- Bug fixes and updates.
+
+
 ## 91.4.0 (Sep, 2026)
 
 ### Changed
 
+- Added font edit to text editor.
+- Text Viewer is now Text View.
+- Text viewer now has basic toolbar ui.
+- New margin UI. Lots of UI tweaks. New toolbar size.
+- Make toolbar buttons a little smaller.
+- Added font toolbar ui.
+- Network can now auto size right margin to cope with font changes to legend.
 - Network updates.
 - Network reengineering to reduce re-renders. More props moved to store as there was a subtle bug caused by hooks not sharing info.
 - Draggable network.

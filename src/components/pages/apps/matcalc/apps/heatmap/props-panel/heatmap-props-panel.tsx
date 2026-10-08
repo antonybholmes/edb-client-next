@@ -7,7 +7,7 @@ import { useState } from 'react'
 import {
   DEFAULT_HEATMAP_PROPS,
   type IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
 

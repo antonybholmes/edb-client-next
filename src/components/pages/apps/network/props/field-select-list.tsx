@@ -16,7 +16,7 @@ export function FieldSelectList({
       onValueChange={(value) => {
         setNodeLabelField(value as string)
       }}
-      w="md"
+      w="sm"
       variant={variant}
       title="Text That Appears in Node Labels"
       items={[

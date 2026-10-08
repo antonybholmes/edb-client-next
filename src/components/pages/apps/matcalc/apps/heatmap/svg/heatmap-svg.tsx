@@ -6,7 +6,7 @@ import { type IClusterFrame } from '@/lib/math/hcluster'
 import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings-store'
+} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
@@ -153,8 +153,6 @@ function HeatMapSvgContent() {
     axisId: 'cbar',
   })
 
-  //console.log('cax', plot.id, cax)
-
   const { svg, width, height } = useMemo(() => {
     if (!cf) {
       return {
@@ -286,6 +284,7 @@ function HeatMapSvgContent() {
                 groupRows.length *
                   (displayOptions.groups.height + displayOptions.padding),
             }}
+            blockSize={blockSize}
             leaves={colLeaves}
           />
         )}
@@ -294,7 +293,7 @@ function HeatMapSvgContent() {
           <ColLabelsSvg
             gaps={xgaps}
             leaves={colLeaves}
-
+            blockSize={blockSize}
             colorMap={colColorMap}
             pos={{
               x: margin.left,
@@ -334,6 +333,7 @@ function HeatMapSvgContent() {
               df={cf.df}
               tree={cf.rowTree}
               gaps={ygaps}
+
               width={ungappedInnerHeight}
               height={displayOptions.tree.row.width}
               mode="right"
@@ -356,6 +356,7 @@ function HeatMapSvgContent() {
           <RowLabelsSvg
             leaves={rowLeaves}
             gaps={ygaps}
+            blockSize={blockSize}
             pos={{
               x:
                 displayOptions.labels.row.position === 'left'
@@ -374,6 +375,7 @@ function HeatMapSvgContent() {
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
+              blockSize={blockSize}
               pos={{ x: margin.left, y: margin.top }}
             />
             {/* Draw cells after grid so the are not obscured */}
@@ -389,6 +391,7 @@ function HeatMapSvgContent() {
               colLeaves={colLeaves}
               // handleVariantEnter={handleVariantEnter}
               // handleVariantLeave={hideTooltip}
+              blockSize={blockSize}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
             />
@@ -404,6 +407,7 @@ function HeatMapSvgContent() {
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
+              blockSize={blockSize}
               pos={{ x: margin.left, y: margin.top }}
             />
             <GridSvg
@@ -412,6 +416,7 @@ function HeatMapSvgContent() {
               props={displayOptions}
               xgaps={xgaps}
               ygaps={ygaps}
+              blockSize={blockSize}
               pos={{ x: margin.left, y: margin.top }}
             />
           </>
@@ -423,7 +428,6 @@ function HeatMapSvgContent() {
           <SvgHColorBar
             ax={cax}
             cmap={cmap}
-
             pos={{
               x: margin.left,
               y:

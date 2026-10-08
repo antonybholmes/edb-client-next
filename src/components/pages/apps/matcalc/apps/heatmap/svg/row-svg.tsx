@@ -11,13 +11,13 @@ import { SvgText } from '@/components/plot/svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
 export function RowTreeSvg({
-  df,
   tree,
   width,
   height,
   gaps,
   mode,
   props,
+
   pos = { ...ZERO_POS },
 }: ITreeSvgProps & { mode: LeftRightPos }) {
   const gElems: ReactElement[] = []
@@ -60,6 +60,7 @@ export function RowTreeSvg({
 export const RowLabelsSvg = memo(function RowLabelsSvg({
   leaves,
   gaps,
+  blockSize,
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
   const { plot } = useHeatmapContext()
@@ -67,7 +68,6 @@ export const RowLabelsSvg = memo(function RowLabelsSvg({
 
   const df = (plot.dataframes['main'] as IClusterFrame).df
 
-  const blockSize = props.blockSize
   const offset = blockSize.h / 2
   const rowMetaN = range(
     0,

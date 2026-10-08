@@ -6,8 +6,9 @@ import { PropsPanel } from '@/components/props-panel'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
-import { useRunning } from '@/components/toolbar/running-indicator'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
@@ -16,35 +17,28 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
+import { useState } from 'react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
-import { MarginPopover } from '../margin-popover'
-import { useNetworkSettings } from '../network-settings-store'
-import { useNetwork } from '../network-store'
-import { useNetworkSim } from '../network-store-sim'
+import { POSITIONS, useNetworkSettings } from '../network-settings'
 import { FieldSelectList } from './field-select-list'
-import { PositionDropdown } from './position-dropdown'
+import { MarginPopover } from './margin-popover'
 
 export function NetworkDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
-  const { network } = useNetwork()
-  const { run } = useNetworkSim()
-  const { setMessage, clearMessage } = useRunning('network')
+
+  const [values, setValues] = useState([
+    'layout',
+    'plot',
+    'nodes',
+    'labels',
+    'edges',
+    'legend',
+  ])
 
   return (
     <PropsPanel>
-      <ScrollAccordion
-        value={[
-          'layout',
-          'plot',
-          'nodes',
-          'labels',
-          'edges',
-          'statistics',
-          'bubbles',
-          'size',
-        ]}
-      >
+      <ScrollAccordion value={values} onValueChange={setValues}>
         <AccordionItem value="layout">
           <AccordionTrigger
           // rightChildren={
@@ -112,8 +106,7 @@ export function NetworkDisplayPropsPanel() {
             <PropRow title="Size">
               <span className="w-3 text-center">W</span>
               <NumericalInput
-                w="xxs"
-                h="sm"
+                w="xs"
                 value={settings.plot.size.w}
                 placeholder="Width"
                 limit={[1, 5000]}
@@ -128,8 +121,7 @@ export function NetworkDisplayPropsPanel() {
               />
               <span className="w-3 text-center">H</span>
               <NumericalInput
-                w="xxs"
-                h="sm"
+                w="xs"
                 value={settings.plot.size.h}
                 placeholder="Height"
                 limit={[1, 5000]}
@@ -149,6 +141,7 @@ export function NetworkDisplayPropsPanel() {
 
             <PropRow title="Border">
               <StrokeButton
+                title="Border Color"
                 colors={[
                   {
                     color: settings.plot.border.value,
@@ -256,7 +249,7 @@ export function NetworkDisplayPropsPanel() {
               }
             /> */}
 
-            <PropRow title="Scale">
+            {/* <PropRow title="Scale">
               <NumSlider
                 min={0}
                 max={5}
@@ -272,7 +265,7 @@ export function NetworkDisplayPropsPanel() {
                   )
                 }
               />
-            </PropRow>
+            </PropRow> */}
           </AccordionContent>
         </AccordionItem>
 
@@ -368,7 +361,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Outline">
+            <PropRow title="Outline" contentCls="gap-x-2">
               <Toggle
                 size="sm"
                 pad="md"
@@ -385,6 +378,7 @@ export function NetworkDisplayPropsPanel() {
                 Auto Color
               </Toggle>
               <StrokeButton
+                title="Outline Color"
                 colors={[
                   {
                     color: settings.plot.nodes.line.value,
@@ -403,16 +397,16 @@ export function NetworkDisplayPropsPanel() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="labels">
-          <AccordionTrigger>Labels</AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Position">
-              <PositionDropdown />
+          <AccordionTrigger
+            rightChildren={
               <FontPopover
                 fonts={[
                   {
                     title: 'Font',
                     textProps: settings.plot.nodes.labels.text,
                     showEnabled: false,
+                    showAlign: false,
+                    showColor: true,
                     update: (textProps) =>
                       updateSettings(
                         produce(settings, (draft) => {
@@ -440,8 +434,15 @@ export function NetworkDisplayPropsPanel() {
                   },
                 ]}
               />
+            }
+          >
+            Labels
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Position" contentCls="gap-x-2">
+              {/* <PositionDropdown /> */}
 
-              {/* <SelectList
+              <SelectList
                 items={POSITIONS}
                 value={settings.plot.nodes.labels.position}
                 onValueChange={(value) => {
@@ -452,7 +453,7 @@ export function NetworkDisplayPropsPanel() {
                     })
                   )
                 }}
-                w="xs"
+                w="sm"
                 variant="toolbar"
               >
                 {POSITIONS.map((position) => (
@@ -460,7 +461,7 @@ export function NetworkDisplayPropsPanel() {
                     {position.label}
                   </SelectItem>
                 ))}
-              </SelectList> */}
+              </SelectList>
             </PropRow>
             <PropRow title="Field">
               <FieldSelectList />
@@ -490,6 +491,7 @@ export function NetworkDisplayPropsPanel() {
 
             <PropRow title="Line">
               <StrokeButton
+                title="Line Color"
                 colors={[
                   {
                     color: settings.plot.edges.line.value,
@@ -514,6 +516,39 @@ export function NetworkDisplayPropsPanel() {
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.edges.highlight = value
+                  })
+                )
+              }
+            />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="legend">
+          <AccordionTrigger
+            leftChildren={
+              <SmallSwitch
+                title="Show"
+                checked={settings.plot.legend.show}
+                onCheckedChange={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.legend.show = value
+                    })
+                  )
+                }
+              />
+            }
+          >
+            Legend
+          </AccordionTrigger>
+          <AccordionContent>
+            <CheckPropRow
+              title="Auto Margin"
+              checked={settings.plot.legend.autoMargin}
+              onCheckedChange={(value) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.legend.autoMargin = value
                   })
                 )
               }

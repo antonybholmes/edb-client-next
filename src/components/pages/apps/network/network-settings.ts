@@ -15,7 +15,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v10`
+const SETTINGS_KEY = `${config.appId}:app:network:v12`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -60,7 +60,7 @@ export interface INetworkSettings {
     size: IDim
     margin: IMarginProps
     autoFit: boolean
-    scale: number
+    //scale: number
     border: IStrokeProps
     nodes: {
       //scale: number
@@ -132,6 +132,11 @@ export interface INetworkSettings {
       highlight: boolean
     }
     legend: {
+      show: boolean
+      /**
+       * Adjust the margin of the legend automatically based on its content.
+       */
+      autoMargin: boolean
       dot: {
         radius: number
       }
@@ -163,7 +168,7 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },
     autoFit: true,
-    scale: 1,
+    //scale: 1,
     border: { ...DEFAULT_STROKE_PROPS, show: false },
     nodes: {
       //scale: 0.1,
@@ -211,6 +216,8 @@ const DEFAULT_SETTINGS: INetworkSettings = {
       line: { ...DEFAULT_STROKE_PROPS, value: COLOR_GRAY, opacity: 0.5 },
     },
     legend: {
+      show: true,
+      autoMargin: true,
       dot: {
         radius: 8,
       },

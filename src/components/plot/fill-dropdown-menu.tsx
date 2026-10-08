@@ -13,6 +13,7 @@ import { ToolbarIconButton } from '../toolbar/toolbar-icon-button'
 import { IColorPickerProps } from './color-picker-popover'
 import {
   addStandardDefaultsToColorPickerProps,
+  ButtonStyle,
   MoreColors,
   StandardColors,
   ThemeColors,
@@ -25,7 +26,7 @@ export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
    * Whether to render as a flat, clickable button, or a simple icon button
    * with no ui effects
    */
-  button?: 'flat' | 'simple'
+  button?: ButtonStyle
   onCancel?: () => void
   open?: boolean
   onOpenChanged?: (open: boolean) => void

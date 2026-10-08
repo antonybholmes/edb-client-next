@@ -78,7 +78,7 @@ export interface ITextProps {
   //text: string
   font: IFontProps
   rotation?: number
-  textAnchor?: 'start' | 'middle' | 'end'
+  //textAnchor?: 'start' | 'middle' | 'end'
 }
 
 export const DEFAULT_TEXT_PROPS: ITextProps = {

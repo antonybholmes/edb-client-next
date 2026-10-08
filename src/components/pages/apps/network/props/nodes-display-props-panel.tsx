@@ -1,10 +1,9 @@
 import { PropsPanel } from '@/components/props-panel'
 import { produce } from 'immer'
-import { useNetworkSettings } from '../network-settings-store'
+import { useNetworkSettings } from '../network-settings'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import {
   ResizablePanel,
@@ -66,8 +65,28 @@ export function NodesDisplayPropsPanel() {
           className="flex flex-col gap-y-1.5"
           collapsible={true}
         >
-          <PropRow title="Nodes" className="text-sm">
+          <PropRow title="Nodes" className="text-xs">
+            <LinkButton
+              className="mr-5"
+              onClick={() =>
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    content: 'Are you sure you want to clear all the text?',
+                    callback: (r) => {
+                      if (r === TEXT_OK) {
+                        setText('')
+                      }
+                    },
+                  },
+                })
+              }
+            >
+              {TEXT_CLEAR}
+            </LinkButton>
+
             <Button
+              variant="app-theme"
               size="xs"
               aspect="icon"
               pad="none"
@@ -85,7 +104,7 @@ export function NodesDisplayPropsPanel() {
                   })
                 )
               }
-              title="Update graph"
+              title="Update Graph"
             >
               <RotateCw size={16} />
             </Button>
@@ -173,7 +192,7 @@ export function NodesDisplayPropsPanel() {
               Exact Match
             </Checkbox>
           </VCenterRow> */}
-          <VCenterRow>
+          {/* <VCenterRow>
             <LinkButton
               onClick={() =>
                 openDialog({
@@ -191,7 +210,7 @@ export function NodesDisplayPropsPanel() {
             >
               {TEXT_CLEAR}
             </LinkButton>
-          </VCenterRow>
+          </VCenterRow> */}
         </ResizablePanel>
 
         <ThinVResizeHandle autoHide={false} />

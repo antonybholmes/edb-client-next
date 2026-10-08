@@ -46,8 +46,9 @@ import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -326,7 +327,7 @@ function GroupItem({
         </button>
       }
     >
-      <Checkbox
+      <OutlineCheckbox
         checked={group.show}
         onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })
@@ -399,21 +400,6 @@ export function GroupPropsPanel() {
 
   const { sheets } = useCurrentSheets()
 
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(KeyboardSensor, {
-  //     coordinateGetter: sortableKeyboardCoordinates,
-  //   })
-  // )
-
-  // cache the group items so that when dragging, they are
-  // not re-rendered so that on drag effects work
-  // const items = useMemo(() => {
-  //   return groupState.groups.map((group, gi) => (
-  //     <GroupItem group={group} key={gi} />
-  //   ))
-  // }, [groupState.groups])
-
   function downloadCls(name: string) {
     if (groupRows.length < 1) {
       return
@@ -457,7 +443,7 @@ export function GroupPropsPanel() {
       <PropsPanel className="gap-y-1">
         <StretchRow className="gap-x-1 justify-between">
           <VCenterRow>
-            <IconButton
+            <ToolbarIconButton
               onClick={() =>
                 openFilesDialog({
                   fileTypes: ['json', 'cls'],
@@ -474,9 +460,9 @@ export function GroupPropsPanel() {
               title="Open Groups"
             >
               <UploadIcon />
-            </IconButton>
+            </ToolbarIconButton>
 
-            <IconButton
+            <ToolbarIconButton
               onClick={() => {
                 openDialog({
                   type: 'save',
@@ -505,11 +491,11 @@ export function GroupPropsPanel() {
               title="Save Groups"
             >
               <DownloadIcon />
-            </IconButton>
+            </ToolbarIconButton>
 
             <ToolbarSeparator />
 
-            <IconButton
+            <ToolbarIconButton
               onClick={() => {
                 addGroups(
                   [newGroupRow({ name: `Groups ${groupRows.length + 1}` })],
@@ -521,7 +507,7 @@ export function GroupPropsPanel() {
               title="New Group Set"
             >
               <LayersPlus size={20} strokeWidth={1.5} />
-            </IconButton>
+            </ToolbarIconButton>
           </VCenterRow>
           <LinkButton
             onClick={() =>

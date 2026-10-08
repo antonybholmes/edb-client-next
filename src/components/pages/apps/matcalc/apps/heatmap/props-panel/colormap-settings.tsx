@@ -10,7 +10,6 @@ import {
   RadioGroup,
   SideRadioGroupItem,
 } from '@/components/shadcn/ui/themed/v2/radio-group'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_BORDER } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
@@ -20,6 +19,7 @@ import { ColorMapMenu } from '../../../color-map-menu'
 
 import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -30,8 +30,8 @@ export function ColormapSettingsPanel() {
   return (
     <AccordionItem value="colormap">
       <AccordionTrigger
-        rightChildren={
-          <Switch
+        leftChildren={
+          <SmallSwitch
             checked={displayProps.colorbar.show}
             onCheckedChange={(v) => {
               updatePlot(

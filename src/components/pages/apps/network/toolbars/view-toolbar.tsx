@@ -9,7 +9,7 @@ import { ZoomSelectList } from '@/components/toolbar/zoom-select-list'
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { Fullscreen, Tags } from 'lucide-react'
-import { NodeViewMode, useNetworkSettings } from '../network-settings-store'
+import { NodeViewMode, useNetworkSettings } from '../network-settings'
 import { FieldSelectList } from '../props/field-select-list'
 
 const NODE_VIEW_MODES = [
@@ -39,7 +39,7 @@ export function ViewToolbar() {
             <ZoomSelectList />
           </ToolbarRow>
           <ToolbarRow>
-            <ToolbarButton onClick={() => setZoom(1)} title="Zoom to 100%">
+            <ToolbarButton onClick={() => setZoom(1)} title="Zoom To 100%">
               <Fullscreen size={16} />
               <span>100%</span>
             </ToolbarButton>

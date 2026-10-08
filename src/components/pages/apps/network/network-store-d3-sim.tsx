@@ -12,7 +12,7 @@ import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
 import { Quadtree, quadtree } from 'd3-quadtree'
 import { useCallback } from 'react'
-import { useNetworkSettings } from './network-settings-store'
+import { useNetworkSettings } from './network-settings'
 
 import { BaseType } from 'd3'
 import { create } from 'zustand'
@@ -503,6 +503,22 @@ export function useNetworkD3Sim() {
           return textAnchor
         })
         .attr('font-size', networkSettings.plot.nodes.labels.text.font.fontSize)
+        .attr(
+          'font-family',
+          networkSettings.plot.nodes.labels.text.font.fontFamily
+        )
+        .attr(
+          'font-weight',
+          networkSettings.plot.nodes.labels.text.font.fontWeight
+        )
+        .attr(
+          'font-style',
+          networkSettings.plot.nodes.labels.text.font.fontStyle
+        )
+        .attr(
+          'text-decoration',
+          networkSettings.plot.nodes.labels.text.font.decoration
+        )
         .attr('visibility', (d) =>
           getIsNodeLabelled(
             d,

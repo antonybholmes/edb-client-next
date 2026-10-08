@@ -18,7 +18,7 @@ import {
   INetworkSettings,
   NodeViewMode,
   useNetworkSettings,
-} from './network-settings-store'
+} from './network-settings'
 import { IUserDataSettings, useUserData } from './network-user-data-store'
 
 export interface IGroup extends IDBEntity {

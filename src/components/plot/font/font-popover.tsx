@@ -10,6 +10,7 @@ import type { UndefStr } from '@/lib/text/text'
 import { CaseSensitive } from 'lucide-react'
 import { Fragment, type ReactNode } from 'react'
 import { MenuSeparator } from '../../shadcn/ui/themed/v2/dropdown-menu'
+import { ButtonStyle, SIMPLE_BUTTON_CLS } from '../stroke-dropdown-menu'
 import { FontUI } from './font-ui'
 
 // const FONT_SIZE_NAMES = [
@@ -22,21 +23,31 @@ import { FontUI } from './font-ui'
 export function BaseFontPopover({
   title,
   icon = <CaseSensitive size={18} />,
+  button = 'simple',
   className,
   children,
-}: { title?: UndefStr; icon?: ReactNode } & IChildrenProps) {
-  return (
-    <Popover>
-      {/* <PopoverTrigger
-        render={<ToolbarIconButton title={title}>{icon}</ToolbarIconButton>}
-      /> */}
-
+}: {
+  title?: UndefStr
+  icon?: ReactNode
+  button?: ButtonStyle
+} & IChildrenProps) {
+  const trigger: ReactNode =
+    button === 'simple' ? (
+      <PopoverTrigger className={SIMPLE_BUTTON_CLS} title={title}>
+        {icon}
+      </PopoverTrigger>
+    ) : (
       <PopoverTrigger
-        className="opacity-70 data-popup-open:opacity-100 hover:opacity-100 focus-visible:opacity-100 trans-opacity"
+        className={SIMPLE_BUTTON_CLS}
         title={title}
         aria-label={title}
         render={<ToolbarIconButton>{icon}</ToolbarIconButton>}
-      ></PopoverTrigger>
+      />
+    )
+
+  return (
+    <Popover>
+      {trigger}
 
       <PopoverContent
         //alignOffset={4}
@@ -59,21 +70,24 @@ interface IFontPopoverProps {
     showEnabled?: boolean
     showAlign?: boolean
     showRotation?: boolean
+    showColor?: boolean
     /**
      * extended UI can be rendered here, for example to set font size with a slider
      */
     ext?: ReactNode
   }[]
-
+  title?: string
   icon?: ReactNode
 }
 
-export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
+export function FontPopover({
+  fonts = [],
+  title = 'Font',
+  icon,
+}: IFontPopoverProps) {
   if (!fonts || fonts.length === 0) {
     return null
   }
-
-  const font = fonts[0]!
 
   // create a pleasing icon if one is not set
   if (!icon) {
@@ -82,7 +96,7 @@ export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
 
   return (
     <BaseFontPopover
-      title={fonts[0]!.title}
+      title={fonts[0]!.title ?? title}
       icon={icon}
       className="flex flex-col gap-y-1"
     >
@@ -98,6 +112,7 @@ export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
             showEnabled={f.showEnabled ?? true}
             showAlign={f.showAlign ?? true}
             showRotation={f.showRotation ?? false}
+            showColor={f.showColor ?? false}
           />
           {f.ext && f.ext}
         </Fragment>

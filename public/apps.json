@@ -3,11 +3,11 @@
     "name": "Annotate",
     "description": "Annotate genomic coordinates.",
     "color": "#FA8072",
-    "version": "20.6.8",
+    "version": "20.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-30T00:53:16.873Z",
-    "hash": "6f1f8405887ca6da4d41fb010670fca685e76e6c1d077878483bd942a3e9e41f",
-    "build": 858
+    "modified": "2026-10-03T02:32:24.659Z",
+    "hash": "d395834491026c70da59c00c3172bb6b015d41c42f11e55da77c9ed03d0e2097",
+    "build": 860
   },
   {
     "name": "Bio Draw",
@@ -43,11 +43,11 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.4.2",
+    "version": "2.4.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-30T19:36:57.928Z",
-    "hash": "e45d88e7369920838213bb43b20f2210276eafd0404920786c1b047fe01c7190",
-    "build": 1042
+    "modified": "2026-10-04T15:45:12.113Z",
+    "hash": "7c9ef32b545dbdc3104d4ba1306bd1e045d596197f077011120624da2ac10862",
+    "build": 1052
   },
   {
     "name": "Get DNA",
@@ -64,19 +64,19 @@
     "color": "#4169E1",
     "version": "1.2.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-30T19:50:12.132Z",
-    "hash": "79795376987c2412f1a4ada2a3a2a6ba94861096e346d4801aa3c0b72fafee58",
-    "build": 76
+    "modified": "2026-10-03T02:32:24.649Z",
+    "hash": "5a179b6b1f901ec4f459417c287bcf33f617675ed5615858a1ea6592a3a5f010",
+    "build": 78
   },
   {
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "23.6.8",
+    "version": "23.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.391Z",
-    "hash": "eb97a74c1f1d49b916d9f64c55bcd7c8430151cf6cd6df17d191cbcde176ae5c",
-    "build": 1018
+    "modified": "2026-10-03T03:23:44.111Z",
+    "hash": "4379a0bca88b91bf22da475d060c7aca157ede27e3007bc64f7d70609f8b59b6",
+    "build": 1022
   },
   {
     "name": "GSEA Web",
@@ -84,9 +84,9 @@
     "color": "#4169E1",
     "version": "3.6.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.391Z",
-    "hash": "5cb33146213f0c7dd891c60f82650e6315fc67aaeed359eeed978ed4a6d0c9b7",
-    "build": 132
+    "modified": "2026-10-04T15:45:12.116Z",
+    "hash": "6772f3461151609d4291cc61735e4ebd76e8581dde68795fbb08aa67becbfe79",
+    "build": 134
   },
   {
     "name": "History Viewer",
@@ -122,19 +122,19 @@
     "color": "#DA70D6",
     "version": "27.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.396Z",
-    "hash": "b6c2db5cc041ef6fbc9b69e56a4f1d14393b1667c07b8b355fe1e1af13b92ad2",
-    "build": 1146
+    "modified": "2026-10-06T22:41:28.279Z",
+    "hash": "e7c66ab7b3451e020552bde81b7697a977ef5f8483898bc9f89934c5a20aaa6b",
+    "build": 1148
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.6.6",
+    "version": "50.8.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-01T21:11:29.570Z",
-    "hash": "9d6451070b133ce5aeb2d239e4c35c297bc48074eaeac43c11171a81df9ff557",
-    "build": 2116
+    "modified": "2026-10-08T22:08:23.382Z",
+    "hash": "6f2b17c3581d4909ae8b28f87cf9e24ba86766811e00c0125ba92e89c416bcdc",
+    "build": 2134
   },
   {
     "name": "Motifs",
@@ -150,11 +150,11 @@
     "name": "Network",
     "description": "Beautiful network graphs.",
     "color": "#4169E1",
-    "version": "1.4.2",
+    "version": "1.4.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-01T21:11:29.570Z",
-    "hash": "54be3a93bc70fa310a054973c71c59c10d47de60a2debcd32704b5846a894d42",
-    "build": 114
+    "modified": "2026-10-08T22:08:23.382Z",
+    "hash": "742a18517545cf545c6841721624857409b8dd6ede1af2ca7662882a09eebfdb",
+    "build": 130
   },
   {
     "name": "Oncoplot",
@@ -162,9 +162,9 @@
     "color": "#ff99cc",
     "version": "30.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.397Z",
-    "hash": "610625969e7b963ad2363fb922da65e8c218815390d3efa50ace888b2d162264",
-    "build": 1156
+    "modified": "2026-10-06T22:41:28.279Z",
+    "hash": "fb1f369782920a03f9c345c7e33417efb75b5882f749f9aa5153ce9192f46ff9",
+    "build": 1158
   },
   {
     "name": "Overlap",
@@ -202,9 +202,9 @@
     "color": "#ff9900",
     "version": "1.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T19:50:12.138Z",
-    "hash": "61cbfd6858d81581ff654461f3843fe39a981e0eab680599419e2a8dac5efd96",
-    "build": 92
+    "modified": "2026-10-03T02:32:24.677Z",
+    "hash": "d7fe31fb2e2298cbbb990f235dc55141a1240b9bc97abc9e904c0c6153b6f7eb",
+    "build": 94
   },
   {
     "name": "Seq Browser",
@@ -222,29 +222,29 @@
     "color": "#9966ff",
     "version": "26.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.396Z",
-    "hash": "c53ba5c454910b483136bc007c558e18290c3b668f59577ca1ab869edeed3d4e",
-    "build": 886
+    "modified": "2026-10-06T22:41:28.279Z",
+    "hash": "c515a4ef7180e1d262da07c9b98881acc5fc4f2edd53d9463f118643028a2b36",
+    "build": 888
   },
   {
-    "name": "Table Viewer",
+    "name": "Table",
     "description": "A basic viewer for tabular data.",
     "version": "14.8.0",
     "color": "#000000",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-15T17:40:11.271Z",
-    "hash": "ef7cb4605b1cf968a2aecbf6ac64d652c3b3f615cfadb105914a4668c22886ab",
-    "build": 484
+    "modified": "2026-10-03T04:24:06.659Z",
+    "hash": "c3361d20df45269dca918ac36753b2f5e4a57d51b7c9a68cbcb635bef3cafb6c",
+    "build": 486
   },
   {
-    "name": "Text Viewer",
-    "description": "A basic text viewer.",
-    "version": "1.0.0",
+    "name": "Text",
+    "description": "A basic text editor.",
+    "version": "1.0.2",
     "color": "#000000",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-09-15T17:40:11.272Z",
-    "hash": "1799ec55a51b068c67a94caf35d42e2b919e587406250934f813aa86981e2c92",
-    "build": 4
+    "modified": "2026-10-06T02:31:39.536Z",
+    "hash": "fc327d735d999da11eee2a057f3e57e039764ef2b7ce39292452f7e8e416ae70",
+    "build": 16
   },
   {
     "name": "Users",
@@ -271,8 +271,8 @@
     "color": "#00008B",
     "version": "26.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.398Z",
-    "hash": "8093b552acabc6d96c88b5c99bcc77c2f5271178578adc3c3f7e7dcdcf24f66d",
-    "build": 964
+    "modified": "2026-10-08T22:08:23.385Z",
+    "hash": "febfe841cb996e228462a597cc0f7d9f9637733f0b6305f347071b856468397f",
+    "build": 968
   }
 ]

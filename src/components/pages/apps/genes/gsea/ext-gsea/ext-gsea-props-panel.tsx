@@ -8,7 +8,7 @@ import { useEffect } from 'react'
 import { GroupingPropsPanel } from '../../../matcalc/data/grouping-props-panel'
 import { ExtGseaViewPropsPanel } from './ext-gsea-view-props-panel'
 
-const ID = 'ext-gsea-plot-props-panel'
+const ID = 'ext-gsea-props-panel'
 
 export function ExtGseaPropsPanel() {
   const { selectedTab, setTabs } = useTabs(ID)
@@ -34,7 +34,6 @@ export function ExtGseaPropsPanel() {
       </UnderlineTabs>
 
       <Tabs
-        orientation="vertical"
         value={selectedTab?.id ?? ''}
         onValueChange={() => {}}
         className="grow"

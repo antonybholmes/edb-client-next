@@ -308,6 +308,10 @@ export function SelectList({
   }, [items])
 
   const displayValue = useMemo(() => {
+    if (!value) {
+      return ''
+    }
+
     const key = value.toString()
     return itemMap[key] ?? format(value)
   }, [itemMap, value, format])
