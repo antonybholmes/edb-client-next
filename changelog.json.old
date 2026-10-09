@@ -3304,6 +3304,10 @@
         {
           "msg": "Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.",
           "date": "2026-10-08T22:08:24.470Z"
+        },
+        {
+          "msg": "Heatmap settings now checks if plot exists before rendering",
+          "date": "2026-10-09T02:12:58.449Z"
         }
       ]
     },

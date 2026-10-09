@@ -4,18 +4,13 @@ import { PlusIcon } from '@/components/icons/plus-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { PropsPanel } from '@/components/props-panel'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  ScrollAccordion,
-} from '@/components/shadcn/ui/themed/v2/accordion'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { TrashIcon } from '@/components/icons/trash-icon'
-import { TEXT_OK } from '@/consts'
+import { VScrollPanel } from '@/components/v-scroll-panel'
 import { VennList } from './venn-list'
-import { MAX_VISIBLE_LISTS, useVenn } from './venn-store'
+import { useVenn } from './venn-store'
+
+const MAX_VISIBLE_LISTS = 100
 
 export function VennLists() {
   const { vennLists, addList, removeList } = useVenn()
@@ -35,44 +30,17 @@ export function VennLists() {
           <PlusIcon />
         </IconButton>
       </VCenterRow>
-      <ScrollAccordion value={vennLists.map((vl) => `List ${vl.name}`)}>
+      <VScrollPanel>
         {visibleVennLists.map((vennList, vi) => {
           return (
-            <AccordionItem
-              value={`List ${vennList.name}`}
+            <VennList
               key={vennList.listId}
-            >
-              <AccordionTrigger
-                rightChildren={
-                  <button
-                    className="hover:text-red-500 trans-color"
-                    onClick={() => {
-                      openDialog({
-                        type: 'warning',
-                        payload: {
-                          content: `Are you sure you want to remove '${vennList.name}'?`,
-                          callback: (response) => {
-                            if (response === TEXT_OK) {
-                              removeList(vennList.id)
-                            }
-                          },
-                        },
-                      })
-                    }}
-                  >
-                    <TrashIcon />
-                  </button>
-                }
-              >
-                {vennList.name}
-              </AccordionTrigger>
-              <AccordionContent>
-                <VennList vennList={vennList} />
-              </AccordionContent>
-            </AccordionItem>
+              vennList={vennList}
+              className={vi > 0 ? 'pt-2 border-t border-border/50' : ''}
+            />
           )
         })}
-      </ScrollAccordion>
+      </VScrollPanel>
     </PropsPanel>
   )
 }

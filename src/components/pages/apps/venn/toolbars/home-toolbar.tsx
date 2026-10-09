@@ -135,6 +135,7 @@ export function HomeToolbar() {
                   })
                 )
               }}
+              h="toolbar"
             />
           </ToolbarRow>
         </ToolbarCol>
@@ -175,6 +176,7 @@ export function HomeToolbar() {
               )
             }}
             w="md"
+            h="toolbar"
           />
         </ToolbarRow>
       </ToolbarTabGroup>

@@ -17,29 +17,30 @@ import {
 } from '@/components/pages/apps/venn/venn-settings-store'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
+import { cn } from '@/lib/shadcn-utils'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { type IVennList, useVenn } from './venn-store'
 
 interface IProps {
   vennList: IVennList
+  className?: string
 }
 
-export function VennList({ vennList }: IProps) {
+export function VennList({ vennList, className }: IProps) {
   const { circles, updateCircles } = useVennSettings()
 
   const { setVennListName, updateVennListFromText, updateCounter } = useVenn()
 
   const [text, setText] = useState(vennList.items.join('\n'))
 
-  const debouncedText = useDebounce(text, {
-    delayMs: DEFAULT_DEBOUNCE_DELAY_MS,
-  })
+  // const debouncedText = useDebounce(text, {
+  //   delayMs: DEFAULT_DEBOUNCE_DELAY_MS,
+  // })
 
-  useEffect(() => {
-    updateVennListFromText(vennList.listId, debouncedText)
-  }, [debouncedText])
+  // useEffect(() => {
+  //   updateVennListFromText(vennList.listId, debouncedText)
+  // }, [debouncedText])
 
   useEffect(() => {
     if (updateCounter === 0) {
@@ -75,12 +76,12 @@ export function VennList({ vennList }: IProps) {
   const circle = circles[vennList.listId] ?? DEFAULT_VENN_CIRCLE_PROPS
 
   return (
-    <BaseCol className="gap-y-1">
+    <BaseCol className={cn('gap-y-1', className)}>
       <VCenterRow className="gap-x-2">
         <Input
           id={`label${vennList.listId}`}
           value={vennList.name ?? ''}
-          onTextChange={(v) => {
+          onTextChanged={(v) => {
             setVennListName(vennList.listId, v)
           }}
           className="w-0 grow rounded-theme"
@@ -162,9 +163,9 @@ export function VennList({ vennList }: IProps) {
           //   })
           // )
         }}
-        // onTextChanged={(v) => {
-        //   updateVennListFromText(vennList.setId, v)
-        // }}
+        onTextChanged={(v) => {
+          updateVennListFromText(vennList.listId, v)
+        }}
         className="h-24"
       />
       <VCenterRow className="justify-between pr-1">
