@@ -1,5 +1,5 @@
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_XS_H_CLS } from '@/theme'
+
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 
 import { TruncateSpan } from '@/components/truncate-span'
@@ -44,7 +44,7 @@ export const triggerVariants = cva(
         ),
         button: cn(BASE_FLAT_BUTTON_CLS, 'h-button rounded-theme'),
 
-        footer: cn(BASE_FLAT_BUTTON_CLS, BUTTON_XS_H_CLS),
+        footer: cn(BASE_FLAT_BUTTON_CLS, 'h-button-xs'),
         header: cn(BASE_FLAT_BUTTON_CLS, 'h-button-lg px-2 pl-3 rounded-theme'),
         glass: '',
       },

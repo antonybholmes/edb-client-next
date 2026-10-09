@@ -57,7 +57,7 @@ export function ShowOptionsButton({
       ref={ref}
       variant="flat"
       rounded="md"
-      size="icon-sm"
+      size="icon-xs"
       // ripple={false}
       aria-label="Show options"
       name="Show options"
@@ -292,7 +292,7 @@ export function ToolbarPanel({
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <ToolbarIconButton title="More Options" size="icon-sm">
+                <ToolbarIconButton title="More Options" size="icon-xs">
                   <ChevronRightIcon className="rotate-90" />
                 </ToolbarIconButton>
               }
@@ -382,7 +382,7 @@ export function ToolbarPanel({
             render={
               <IconButton
                 variant="flat"
-                size="icon-sm"
+                size="icon-xs"
                 // ripple={false}
                 title="Show Pane"
                 checked={showDropdown}

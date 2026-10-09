@@ -50,7 +50,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         <ToolbarFooterButton
           title="Zoom Out"
           onClick={() => decreaseZoom()}
-          size="icon-sm"
+          size="icon-xs"
         >
           <Minus className="w-4 h-4" strokeWidth={2} />
         </ToolbarFooterButton>
@@ -72,7 +72,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         <ToolbarFooterButton
           title="Zoom In"
           onClick={() => increaseZoom()}
-          size="icon-sm"
+          size="icon-xs"
         >
           <Plus className="w-4 h-4" strokeWidth={2} />
         </ToolbarFooterButton>

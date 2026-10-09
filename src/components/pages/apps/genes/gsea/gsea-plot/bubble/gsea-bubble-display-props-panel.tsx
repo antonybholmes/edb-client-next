@@ -73,7 +73,7 @@ export function GseaBubbleDisplayPropsPanel() {
     <>
       <SideBarHeader className="gap-x-2">
         <IconButton
-          size="xs"
+          size="icon-xs"
 
           onClick={() => {
             setOpenTabs(collapsed ? TABS : [])

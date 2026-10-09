@@ -11,7 +11,6 @@ import {
   BASE_BUTTON_CLS,
   BASE_ICON_BUTTON_CLS,
   BUTTON_XL_H_CLS,
-  BUTTON_XS_H_CLS,
   CENTERED_ROW_CLS,
   CORE_APP_ACCENT_BUTTON_CLS,
   CORE_PRIMARY_BUTTON_CLS,
@@ -211,7 +210,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       end: 'justify-end',
     },
     size: {
-      xs: BUTTON_XS_H_CLS,
+      xs: 'h-button-xs',
       //sm: BUTTON_SM_H_CLS,
       md: 'h-button-md',
       toolbar: 'h-toolbar-button',
@@ -227,7 +226,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
         LARGE_ICON_BUTTON_CLS
       ),
 
-      'icon-sm': SM_ICON_BUTTON_CLS,
+      'icon-xs': SM_ICON_BUTTON_CLS,
       //'icon-xs': XS_ICON_BUTTON_CLS,
       dropdown: DROPDOWN_BUTTON_CLS,
       'dropdown-with-icon': DROPDOWN_WITH_ICON_BUTTON_CLS,

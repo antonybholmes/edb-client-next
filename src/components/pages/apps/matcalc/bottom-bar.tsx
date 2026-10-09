@@ -51,7 +51,7 @@ export function BottomBar({
           <ToolbarIconButton
             title="Previous Sheet"
             variant="flat"
-            size="icon-sm"
+            size="icon-xs"
             //rounded="full"
             onClick={() => {
               let selectedTabIndex = sheets
@@ -71,7 +71,7 @@ export function BottomBar({
           </ToolbarIconButton>
           <ToolbarIconButton
             title="Next Sheet"
-            size="icon-sm"
+            size="icon-xs"
             onClick={() => {
               const selectedTabIndex = sheets
                 .map((t, ti) => ({ tab: t, index: ti }))
@@ -95,7 +95,7 @@ export function BottomBar({
           >
             <SelectPrimitive.Trigger
               render={
-                <IconButton size="icon-sm" title="Sheet List">
+                <IconButton size="icon-xs" title="Sheet List">
                   <HamburgerIcon />
                 </IconButton>
               }

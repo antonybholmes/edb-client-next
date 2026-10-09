@@ -40,7 +40,7 @@ export function VennSettingsPropsPanel() {
     <PropsPanel>
       <VCenterRow className="justify-end">
         <IconButton
-          size="xs"
+          size="icon-xs"
 
           onClick={() => {
             setValues(collapsed ? TABS : [])

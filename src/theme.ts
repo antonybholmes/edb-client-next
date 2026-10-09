@@ -30,9 +30,6 @@ export const TRANS_OPACITY_CLS = cn(TRANS_TIME_CLS, 'transition-opacity')
 export const DRAG_OUTLINE_CLS =
   'trans-color rounded-theme border-2 border-dashed border-transparent data-[drag=true]:bg-theme/5 data-[drag=true]:border-theme/20'
 
-export const BUTTON_XS_W_CLS = 'w-6'
-export const BUTTON_XS_H_CLS = 'h-6'
-
 //export const BUTTON_SM_W_CLS = 'w-7'
 //export const BUTTON_SM_H_CLS = 'h-7'
 //export const BUTTON_TOOLBAR_H_CLS = 'h-8'
@@ -74,17 +71,16 @@ export const CENTERED_ROW_CLS = 'flex flex-row items-center justify-center'
 
 export const COL_BUTTON_CLS = 'flex flex-col'
 
-// export const XS_ICON_BUTTON_CLS = cn(
-//   BASE_ICON_BUTTON_CLS,
-//   CENTERED_ROW_CLS,
-//   BUTTON_XS_W_CLS,
-//   BUTTON_XS_H_CLS
-// )
-
 export const SM_ICON_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
   CENTERED_ROW_CLS,
   'w-button-sm h-button-sm'
+)
+
+export const XS_ICON_BUTTON_CLS = cn(
+  BASE_ICON_BUTTON_CLS,
+  CENTERED_ROW_CLS,
+  'w-button-xs h-button-xs'
 )
 
 //export const SMALL_BUTTON_CLS = cn(BUTTON_SM_H_CLS, 'px-2')

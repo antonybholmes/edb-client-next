@@ -71,7 +71,7 @@ export function NodesDisplayPropsPanel() {
             leftChildren={
               <IconButton
                 //variant="app-theme"
-                size="xs"
+                size="icon-xs"
 
                 onClick={() =>
                   updateUserData(

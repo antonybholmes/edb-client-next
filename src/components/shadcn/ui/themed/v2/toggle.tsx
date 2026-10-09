@@ -1,6 +1,5 @@
 import { cn } from '@/lib/shadcn-utils'
 import {
-  BUTTON_XS_H_CLS,
   CENTERED_ROW_CLS,
   FOCUS_INSET_RING_CLS,
   ICON_BUTTON_CLS,
@@ -31,7 +30,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       flat: 'data-pressed:bg-background data-pressed:shadow-sm',
     },
     size: {
-      xs: BUTTON_XS_H_CLS,
+      xs: 'h-button-xs',
       sm: 'h-7.5',
       md: 'h-button-md',
       lg: 'h-9',

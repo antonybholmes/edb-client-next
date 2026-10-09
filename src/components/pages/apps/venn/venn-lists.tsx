@@ -36,7 +36,7 @@ export function VennLists() {
     <PropsPanel className="gap-y-1">
       <VCenterRow className="justify-end">
         <IconButton
-          size="xs"
+          size="icon-xs"
           onClick={() => {
             addList()
           }}
@@ -45,7 +45,7 @@ export function VennLists() {
           <PlusIcon size={16} />
         </IconButton>
         <IconButton
-          size="xs"
+          size="icon-xs"
           onClick={() => {
             if (!collapsed) {
               setValues([])

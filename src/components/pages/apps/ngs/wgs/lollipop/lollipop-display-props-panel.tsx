@@ -426,7 +426,7 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
                     <PopoverTrigger
                       render={
                         <IconButton
-                          size="icon-sm"
+                          size="icon-xs"
                           className="shrink-0"
                           title="Color scheme"
                         >

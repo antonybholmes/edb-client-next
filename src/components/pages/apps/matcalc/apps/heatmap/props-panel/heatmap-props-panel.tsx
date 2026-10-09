@@ -77,7 +77,7 @@ export function HeatmapPropsPanel() {
     <PropsPanel className="gap-y-2 text-xs">
       <SideBarHeader className="gap-x-2">
         <IconButton
-          size="xs"
+          size="icon-xs"
 
           onClick={() => {
             setOpenTabs(collapsed ? TABS : [])
