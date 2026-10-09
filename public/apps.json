@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.8.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-09T21:22:16.694Z",
-    "hash": "303c678fd938de5f60e9d7dde5e4d553c451f243191dc23b9a9798d5d755c562",
-    "build": 2142
+    "modified": "2026-10-09T22:17:09.894Z",
+    "hash": "7e3c56219a0c22ac06026d45588ee28a3a64d218ee5c65c66eacc01c15f7a846",
+    "build": 2144
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.4.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-09T20:52:39.406Z",
-    "hash": "4c7919ba73daa0fc42d42b54c00828c63d983fc1cff50a4c8acfee8516931cb2",
-    "build": 132
+    "modified": "2026-10-09T22:17:09.895Z",
+    "hash": "eef3684d9a2cfe099b13a00d931c33441cdad01b6dede5d3f305fe8fd4668fad",
+    "build": 134
   },
   {
     "name": "Oncoplot",
@@ -267,7 +267,7 @@
   },
   {
     "name": "Venn",
-    "description": "Make Venn diagrams.",
+    "description": "Venn diagrams and overlap heatmaps.",
     "color": "#00008B",
     "version": "26.8.2",
     "copyright": "© 2023-2026 Antony Holmes",

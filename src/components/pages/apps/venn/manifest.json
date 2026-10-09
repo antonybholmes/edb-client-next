@@ -1,6 +1,6 @@
 {
   "name": "Venn",
-  "description": "Make Venn diagrams.",
+  "description": "Venn diagrams and overlap heatmaps.",
   "color": "#00008B",
   "version": "26.8.2",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",

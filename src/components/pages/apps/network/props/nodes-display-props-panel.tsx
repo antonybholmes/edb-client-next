@@ -4,20 +4,19 @@ import { useNetworkSettings } from '../network-settings'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
   ResizablePanel,
   ResizablePanelGroup,
   ThinVResizeHandle,
 } from '@/components/shadcn/ui/themed/resizable'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
-import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
-import { RotateCw, SearchCheck, Tags } from 'lucide-react'
+import { Broom, RotateCw, SearchCheck, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNetwork } from '../network-store'
 import { useUserData } from '../network-user-data-store'
@@ -65,8 +64,36 @@ export function NodesDisplayPropsPanel() {
           className="flex flex-col gap-y-1.5"
           collapsible={true}
         >
-          <PropRow title="Nodes" className="text-xs">
-            <LinkButton
+          <PropRow
+            title="Nodes"
+            className="text-sm"
+            contentCls="text-xs gap-x-px"
+            leftChildren={
+              <IconButton
+                //variant="app-theme"
+                size="xs"
+
+                onClick={() =>
+                  updateUserData(
+                    produce(userData, (draft) => {
+                      draft.labels.ids = [
+                        ...new Set(
+                          text
+                            .split('\n')
+                            .map((x) => x.trim())
+                            .filter((x) => x.length > 0)
+                        ),
+                      ].sort()
+                    })
+                  )
+                }
+                title="Update Graph"
+              >
+                <RotateCw size={16} />
+              </IconButton>
+            }
+          >
+            {/* <LinkButton
               className="mr-5"
               onClick={() =>
                 openDialog({
@@ -83,31 +110,7 @@ export function NodesDisplayPropsPanel() {
               }
             >
               {TEXT_CLEAR}
-            </LinkButton>
-
-            <Button
-              variant="app-theme"
-              size="xs"
-              aspect="icon"
-              pad="none"
-              onClick={() =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.ids = [
-                      ...new Set(
-                        text
-                          .split('\n')
-                          .map((x) => x.trim())
-                          .filter((x) => x.length > 0)
-                      ),
-                    ].sort()
-                  })
-                )
-              }
-              title="Update Graph"
-            >
-              <RotateCw size={16} />
-            </Button>
+            </LinkButton> */}
 
             <Toggle
               aspect="icon"
@@ -140,6 +143,28 @@ export function NodesDisplayPropsPanel() {
             >
               <Tags size={16} />
             </Toggle>
+
+            <IconButton
+              //variant="app-theme"
+              size="xs"
+
+              onClick={() =>
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    content: 'Are you sure you want to clear all the text?',
+                    callback: (r) => {
+                      if (r === TEXT_OK) {
+                        setText('')
+                      }
+                    },
+                  },
+                })
+              }
+              title={TEXT_CLEAR}
+            >
+              <Broom size={16} />
+            </IconButton>
           </PropRow>
           {/* <SwitchPropRow
             title="Show All Labels"
@@ -222,7 +247,7 @@ export function NodesDisplayPropsPanel() {
           minSize="0%"
           collapsible={true}
         >
-          <PropRow title="Groups" className="text-sm"></PropRow>
+          <PropRow title="Groups" className="text-sm" />
           <VScrollPanel className="grow">
             <DragDropProvider
               onDragEnd={(event) => {

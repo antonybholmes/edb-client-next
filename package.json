@@ -20,7 +20,7 @@
     "@auth0/auth0-react": "^2.28.2",
     "@auth0/nextjs-auth0": "^4.31.1",
     "@base-ui/react": "^1.9.0",
-    "@clerk/react": "^6.17.7",
+    "@clerk/react": "^6.17.8",
     "@dnd-kit/abstract": "^0.5.0",
     "@dnd-kit/helpers": "^0.5.0",
     "@dnd-kit/react": "^0.5.0",

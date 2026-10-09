@@ -24,6 +24,7 @@ import { CookieIcon } from '../icons/cookie-icon'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { present } from '@/lib/dom-utils'
+import { capitalCase } from '@/lib/text/capital-case'
 import { format } from 'date-fns'
 import { Globe } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -80,7 +81,7 @@ function AppInfo() {
         </VCenterRow>
 
         <BaseCol className="gap-y-1">
-          <p>{appInfo?.description}</p>
+          <p>{capitalCase(appInfo?.description)}</p>
           <p>
             Build {appInfo.version}.{appInfo.build}
           </p>

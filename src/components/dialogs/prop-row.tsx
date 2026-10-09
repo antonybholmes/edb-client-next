@@ -83,6 +83,8 @@ export function PropRow({
   tooltip,
   htmlTooltip,
   className,
+  leftChildren,
+
   children,
 }: IProps) {
   return (
@@ -99,9 +101,13 @@ export function PropRow({
         })}
       >
         {side === 'right' && (
-          <label className={cn({ 'font-medium': info })} title={htmlTooltip}>
-            {title}
-          </label>
+          <VCenterRow className="gap-x-1">
+            {/* {leftChildren && leftChildren} */}
+            <label className={cn({ 'font-medium': info })} title={htmlTooltip}>
+              {title}
+            </label>
+            {leftChildren && leftChildren}
+          </VCenterRow>
         )}
         <VCenterRow
           className={cn(
