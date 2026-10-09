@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Dot plots now have animation effects.
 - Dot rendering in heatmap now correctly accounts for space occupied by grid lines.
 - Venn list ui tweaked.
 - Venn lists revised to remove accordions and use enter key to update to make lots of lists more performant.

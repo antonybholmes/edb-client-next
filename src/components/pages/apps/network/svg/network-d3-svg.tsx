@@ -169,16 +169,18 @@ export function NetworkD3SvgContent() {
       // since we have lots of mouse events, only react when the current node changes
       if (!node) {
         if (currentNode) {
-          gsap.timeline().to(
-            `#node-circle-${currentNode.id}`,
-            {
+          const currentCircle = document.getElementById(
+            `node-circle-${currentNode.id}`
+          )
+
+          if (currentCircle instanceof SVGCircleElement) {
+            gsap.to(currentCircle, {
               scale: 1,
               transformOrigin: 'center',
               duration: 0.3,
               ease: 'power2.out',
-            },
-            0
-          )
+            })
+          }
 
           setCurrentNode(null)
         }
@@ -193,16 +195,16 @@ export function NetworkD3SvgContent() {
 
       setCurrentNode(node)
 
-      gsap.timeline().to(
-        `#node-circle-${node.id}`,
-        {
+      const nextCircle = document.getElementById(`node-circle-${node.id}`)
+
+      if (nextCircle instanceof SVGCircleElement) {
+        gsap.to(nextCircle, {
           scale: 1.2,
           transformOrigin: 'center',
           duration: 0.3,
           ease: 'power2.out',
-        },
-        0
-      )
+        })
+      }
 
       const plotNodePos = { x: node.x, y: node.y }
 

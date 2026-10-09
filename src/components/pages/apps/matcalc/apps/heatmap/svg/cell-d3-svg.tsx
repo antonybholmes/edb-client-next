@@ -11,7 +11,8 @@ import { formatNumber } from '@/lib/text/text'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
-import { memo, useEffect, useMemo, useRef } from 'react'
+import gsap from 'gsap'
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { getUseRectId, ICellsSvgProps, nodeRadiusFunc } from './cell-svg'
 
 // we want circles slightly smaller than box to allow for borders
@@ -212,6 +213,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
   const { ref } = useSVG()
   const hostRef = useRef<SVGGElement | null>(null)
   const { showCrosshair, hideCrosshair } = useCrosshair()
+  const currentCircle = useRef<string | null>(null)
 
   const innerBlockSize = useMemo(() => {
     return {
@@ -219,6 +221,26 @@ export const DotsD3Svg = memo(function DotsD3Svg({
       h: blockSize.h - props.grid.width,
     }
   }, [blockSize.w, blockSize.h, props.grid.width])
+
+  const animateCircle = useCallback((id: string | null, scale: number) => {
+    if (!id) {
+      return
+    }
+
+    // const el = document.getElementById(`node-circle-${id}`)
+
+    // if (!(el instanceof SVGCircleElement)) {
+    //   return
+    // }
+
+    gsap.to(`#node-circle-${id}`, {
+      scale,
+      transformOrigin: 'center',
+      duration: 0.2,
+      ease: 'power2.out',
+      overwrite: true,
+    })
+  }, [])
 
   function handleMouseMove(e: React.MouseEvent) {
     const svgP = screenToSvgPoint(ref.current, { x: e.clientX, y: e.clientY })
@@ -231,8 +253,23 @@ export const DotsD3Svg = memo(function DotsD3Svg({
     const cell = { col: xgaps.nearest(plotP.x), row: ygaps.nearest(plotP.y) }
 
     if (cell.col.index === -1 || cell.row.index === -1) {
+      if (currentCircle.current) {
+        animateCircle(currentCircle.current, 1)
+        currentCircle.current = null
+      }
+
       return
     }
+
+    const cellId = `${cell.row.index}-${cell.col.index}`
+
+    if (currentCircle.current && currentCircle.current !== cellId) {
+      animateCircle(currentCircle.current, 1)
+    }
+
+    currentCircle.current = cellId
+
+    animateCircle(currentCircle.current, 1.2)
 
     const cellP = {
       x: cell.col.x + Math.floor(innerBlockSize.w / 2) + margin.left,
@@ -268,7 +305,10 @@ export const DotsD3Svg = memo(function DotsD3Svg({
   const cmap = getColorMap(props.cmap)
   const w = Math.min(innerBlockSize.w, innerBlockSize.h)
   const isSquare = df.shape[0] === df.shape[1]
-  const radiusScale = nodeRadiusFunc(w, props.dot.scale.mode)
+  const radiusScale = useMemo(
+    () => nodeRadiusFunc(w, props.dot.scale.mode),
+    [w, props.dot.scale.mode]
+  )
 
   const cellData = useMemo(() => {
     return rowLeaves.flatMap((row, ri) => {
@@ -327,7 +367,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
 
         return [
           {
-            id: `${ri}:${ci}`,
+            id: `${ri}-${ci}`,
             x,
             y,
             cx,
@@ -383,6 +423,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
       .selectAll<SVGCircleElement, (typeof cellData)[number]>('circle')
       .data((d) => [d])
       .join('circle')
+      .attr('id', (d) => `node-circle-${d.id}`)
       .attr('cx', (d) => d.cx)
       .attr('cy', (d) => d.cy)
       .attr('r', (d) => d.r)
