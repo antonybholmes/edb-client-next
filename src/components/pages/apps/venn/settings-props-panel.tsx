@@ -10,7 +10,7 @@ export function SettingsPropsPanel() {
 
   return (
     <Tabs value={settings.view.tab} onValueChange={() => {}} className="grow">
-      <TabsContent value="venn">
+      <TabsContent value="circles">
         <VennSettingsPropsPanel />
       </TabsContent>
       <TabsContent value="heatmap">

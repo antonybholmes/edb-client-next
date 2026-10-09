@@ -69,10 +69,12 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Circle A */}
       <Circle ref={circle1Ref} loc={cA} circle={circles['1']!} />
 
-      <TitleText
-        vennList={vennListsInUse[0]}
-        center={[cA[0]!, cA[1]! - labelRadius]}
-      />
+      {settings.fonts.title.show && (
+        <TitleText
+          vennList={vennListsInUse[0]}
+          center={[cA[0]!, cA[1]! - labelRadius]}
+        />
+      )}
 
       <CountText
         id="1"
@@ -85,10 +87,12 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Circle ref={circle2Ref} loc={cB} circle={circles['2']!} />
 
-      <TitleText
-        vennList={vennListsInUse[1]}
-        center={[cB[0]!, cB[1]! - labelRadius]}
-      />
+      {settings.fonts.title.show && (
+        <TitleText
+          vennList={vennListsInUse[1]}
+          center={[cB[0]!, cB[1]! - labelRadius]}
+        />
+      )}
 
       <CountText
         id="2"

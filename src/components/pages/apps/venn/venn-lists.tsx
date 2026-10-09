@@ -12,9 +12,9 @@ import {
 } from '@/components/shadcn/ui/themed/v2/accordion'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { CollapseIcon } from '@/components/icons/collapse-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { TEXT_OK } from '@/consts'
-import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { VennList } from './venn-list'
 import { useVenn } from './venn-store'
@@ -55,13 +55,9 @@ export function VennLists() {
 
             setCollapsed(!collapsed)
           }}
-          title="Toggle Collapse"
+          title={collapsed ? 'Expand' : 'Collapse'}
         >
-          {collapsed ? (
-            <ChevronsUpDown size={16} />
-          ) : (
-            <ChevronsDownUp size={16} />
-          )}
+          <CollapseIcon collapsed={collapsed} />
         </IconButton>
         <IconButton
           size="xs"

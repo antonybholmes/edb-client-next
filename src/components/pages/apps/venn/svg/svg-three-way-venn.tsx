@@ -1,4 +1,6 @@
+import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgMouseRect } from '@/components/plot/svg-rect'
+import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK, COLOR_WHITE, isLightColor } from '@/lib/color/color'
 import { DEG_TO_RAD, type ILim } from '@/lib/math/math'
 import type { TextAnchor } from '@/types/types'
@@ -113,7 +115,7 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
           />
         )}
 
-        <text
+        <SvgText
           x={center[0]!}
           y={center[1]!}
           fontSize={settings.fonts.counts.size}
@@ -125,10 +127,10 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
           pointerEvents="none"
         >
           {n.toLocaleString()}
-        </text>
+        </SvgText>
 
         {settings.fonts.percentages.show && (
-          <text
+          <SvgText
             x={center[0]!}
             y={center[1]! + 16}
             fontSize={settings.fonts.percentages.size}
@@ -140,7 +142,7 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
             pointerEvents="none"
           >
             {Number.isInteger(p) ? p.toString() : p.toFixed(1)}%
-          </text>
+          </SvgText>
         )}
       </g>
     </>
@@ -165,7 +167,7 @@ export function TitleText({
   }
 
   return (
-    <text
+    <SvgText
       x={center[0]!}
       y={center[1]!}
       fontSize={settings.fonts.title.size}
@@ -187,7 +189,7 @@ export function TitleText({
           {` (${(vennList?.uniqueItems.size || 0).toLocaleString()})`}
         </tspan>
       )}
-    </text>
+    </SvgText>
   )
 }
 
@@ -201,7 +203,7 @@ export function Circle({ circle, ref, loc }: ICircleProps) {
   const { settings } = useVennSettings()
 
   return (
-    <circle
+    <SvgCircle
       ref={ref}
       cx={loc[0]!}
       cy={loc[1]!}

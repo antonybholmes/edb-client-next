@@ -19,19 +19,39 @@ import {
 import { PropRow } from '@/dialogs/prop-row'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { CollapseIcon } from '@/components/icons/collapse-icon'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { LinkButton } from '@/themed/link-button'
 import { produce } from 'immer'
+import { useState } from 'react'
+
+const TABS = ['plot', 'circles', 'titles', 'counts', 'percentages']
 
 export function VennSettingsPropsPanel() {
   const { settings, updateSettings, resetSettings, resetCircles } =
     useVennSettings()
+  const [collapsed, setCollapsed] = useState<boolean>(false)
+  const [values, setValues] = useState(TABS)
 
   return (
     <PropsPanel>
-      <ScrollAccordion
-        value={['plot', 'circles', 'titles', 'counts', 'percentages']}
-      >
+      <VCenterRow className="justify-end">
+        <IconButton
+          size="xs"
+
+          onClick={() => {
+            setValues(collapsed ? TABS : [])
+            setCollapsed(!collapsed)
+          }}
+          title={collapsed ? 'Expand' : 'Collapse'}
+        >
+          <CollapseIcon collapsed={collapsed} size={14} />
+        </IconButton>
+      </VCenterRow>
+      <ScrollAccordion value={values} onValueChange={setValues}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
@@ -124,19 +144,23 @@ export function VennSettingsPropsPanel() {
         </AccordionItem>
 
         <AccordionItem value="titles">
-          <AccordionTrigger>Titles</AccordionTrigger>
+          <AccordionTrigger
+            leftChildren={
+              <SmallSwitch
+                checked={settings.fonts.title.show}
+                onCheckedChange={(state) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.fonts.title.show = state
+                    })
+                  )
+                }
+              />
+            }
+          >
+            Titles
+          </AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Show"
-              checked={settings.fonts.title.show}
-              onCheckedChange={(state) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.fonts.title.show = state
-                  })
-                )
-              }
-            />
             <CheckPropRow
               title="Use colors"
               checked={settings.fonts.title.colored}
@@ -222,19 +246,23 @@ export function VennSettingsPropsPanel() {
         </AccordionItem>
 
         <AccordionItem value="percentages">
-          <AccordionTrigger>Percentages</AccordionTrigger>
+          <AccordionTrigger
+            leftChildren={
+              <SmallSwitch
+                checked={settings.fonts.percentages.show}
+                onCheckedChange={(state) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.fonts.percentages.show = state
+                    })
+                  )
+                }
+              />
+            }
+          >
+            Percentages
+          </AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Show"
-              checked={settings.fonts.percentages.show}
-              onCheckedChange={(state) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.fonts.percentages.show = state
-                  })
-                )
-              }
-            />
             <PropRow title="Font Size">
               <NumericalInput
                 limit={[1, 128]}
