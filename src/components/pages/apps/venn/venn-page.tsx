@@ -468,7 +468,7 @@ function VennPage() {
               >
                 <HCenterRow className="pb-2">
                   <ToggleGroup
-                    className="text-xs gap-x-px"
+                    className="text-xs gap-x-px bg-muted/50 p-0.5 rounded-lg"
                     value={[settings.view.tab]}
                     onValueChange={(v) => {
                       updateSettings(
@@ -477,8 +477,9 @@ function VennPage() {
                         })
                       )
                     }}
-                    rounded="full"
-                    variant="app-theme"
+                    rounded="theme"
+                    variant="flat"
+                    size="sm"
                   >
                     <GroupToggle value="venn" className="w-18">
                       Venn

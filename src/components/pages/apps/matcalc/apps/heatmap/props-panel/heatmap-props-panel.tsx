@@ -31,15 +31,18 @@ import { TreeSettingsPanel } from './tree-settings'
 
 export function HeatmapPropsPanel() {
   const { updatePlot } = useHistory()
-
+  const [openTabs, setOpenTabs] = useState<string[]>(['plot'])
   const { open: openDialog } = useDialogs()
 
   const { plot } = useHeatmapContext()
 
+  if (!plot) {
+    return <span>No plot available.</span>
+  }
+
   const cf = plot?.dataframes['main'] as IClusterFrame
 
   const displayProps: IHeatMapSettings = plot.props
-  const [openTabs, setOpenTabs] = useState<string[]>(['plot'])
 
   function reset() {
     const props: IHeatMapSettings = {

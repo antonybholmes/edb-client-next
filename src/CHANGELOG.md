@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Heatmap settings now checks if plot exists before rendering.
 - Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.
 - Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches.
 - Switch animations tweaked.
