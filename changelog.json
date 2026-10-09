@@ -3316,6 +3316,10 @@
         {
           "msg": "Venn list ui tweaked.",
           "date": "2026-10-09T15:50:31.483Z"
+        },
+        {
+          "msg": "Dot rendering in heatmap now correctly accounts for space occupied by grid lines",
+          "date": "2026-10-09T19:44:14.721Z"
         }
       ]
     },

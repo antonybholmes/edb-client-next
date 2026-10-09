@@ -120,11 +120,11 @@
     "name": "Lollipop",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
-    "version": "27.8.8",
+    "version": "29.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-06T22:41:28.279Z",
-    "hash": "e7c66ab7b3451e020552bde81b7697a977ef5f8483898bc9f89934c5a20aaa6b",
-    "build": 1148
+    "modified": "2026-10-09T19:44:13.844Z",
+    "hash": "f008c008f963897f17a76213665ab801c1c73e7ed3a9ecc1a6f64483e5270974",
+    "build": 1150
   },
   {
     "name": "Matcalc",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.8.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-09T02:12:56.504Z",
-    "hash": "e9e6a21e256a3bc0d42ca32c48275da9f19c89fcf3d457ef353ed2016d7c6b0b",
-    "build": 2136
+    "modified": "2026-10-09T19:44:13.842Z",
+    "hash": "c5c2617f07d09f83972a8f3d86e68737e545457fbd700a82beeb074b872a08aa",
+    "build": 2138
   },
   {
     "name": "Motifs",
@@ -160,11 +160,11 @@
     "name": "Oncoplot",
     "description": "Create oncoplots.",
     "color": "#ff99cc",
-    "version": "30.2.4",
+    "version": "30.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-06T22:41:28.279Z",
-    "hash": "fb1f369782920a03f9c345c7e33417efb75b5882f749f9aa5153ce9192f46ff9",
-    "build": 1158
+    "modified": "2026-10-09T19:44:13.844Z",
+    "hash": "2432f4e8fbea515b6af858c092fb09629a446c3b111dca934d673091a64ade09",
+    "build": 1160
   },
   {
     "name": "Overlap",
@@ -210,21 +210,21 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.6.0",
+    "version": "32.6.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-09-30T22:54:39.395Z",
-    "hash": "13077daf8ddc67c09a9b2f61086e5bfe8cab602307c1b2152d08fe831aa31f01",
-    "build": 1178
+    "modified": "2026-10-09T19:44:13.843Z",
+    "hash": "97dca848126131b182d7f3c138145befad17fb3f29267e2d56ab74f66bb57262",
+    "build": 1180
   },
   {
     "name": "Single Cell",
     "description": "Explore Single Cell data.",
     "color": "#9966ff",
-    "version": "26.8.0",
+    "version": "26.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-06T22:41:28.279Z",
-    "hash": "c515a4ef7180e1d262da07c9b98881acc5fc4f2edd53d9463f118643028a2b36",
-    "build": 888
+    "modified": "2026-10-09T19:44:13.844Z",
+    "hash": "54b78a000010289be03bca467a13bed09b430e76373fa268f127c5ef25c93f06",
+    "build": 890
   },
   {
     "name": "Table",
@@ -249,11 +249,11 @@
   {
     "name": "Users",
     "description": "User dashboard for admins.",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-30T00:53:16.867Z",
-    "hash": "6590e9f482ff020af0f446c474404716040c7b5e72c7c490aace6c349a5cf014",
-    "build": 18
+    "modified": "2026-10-09T19:44:13.838Z",
+    "hash": "84e7279e34648c622eab27ff1c1bd2dbf55fb9ae05ddc550a0677a52fe8384b0",
+    "build": 20
   },
   {
     "name": "Variants",
@@ -271,8 +271,8 @@
     "color": "#00008B",
     "version": "26.8.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-09T15:50:30.641Z",
-    "hash": "cecfbdf4ff4ac771eeb6177d24868688d22800e81d2ad61672d7733e6536700a",
-    "build": 974
+    "modified": "2026-10-09T19:44:13.845Z",
+    "hash": "b884cca97a99bbb139ffce4a906c10f029347f5381bb7e8cb98fa4f596c72fd4",
+    "build": 976
   }
 ]

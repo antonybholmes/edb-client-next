@@ -60,6 +60,7 @@ export function BaseTrackItem({
           />
         ) : undefined
       }
+      className="group"
     >
       <VCenterRow
         className={cn(

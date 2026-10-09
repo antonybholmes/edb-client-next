@@ -43,12 +43,12 @@ import { CenterCol } from '@/components/layout/center-col'
 import { BaseCol } from '@/layout/base-col'
 import { Card } from '@/themed/card'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { AdminLayout } from '@/layouts/admin-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
-import { ClientLayout } from '@/app/client-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 
@@ -286,10 +286,7 @@ export function AdminUsersPage() {
             }}
             className="group"
           >
-            <TrashIcon
-              stroke="stroke-foreground/25"
-              className="group-hover:stroke-destructive"
-            />
+            <TrashIcon />
           </button>
         </VCenterRow>
       ),
@@ -354,10 +351,7 @@ export function AdminUsersPage() {
           </button>
 
           <button title="Delete user" onClick={() => {}} className="group">
-            <TrashIcon
-              stroke="stroke-foreground/25"
-              className="group-hover:stroke-destructive"
-            />
+            <TrashIcon />
           </button>
         </VCenterRow>
       ),

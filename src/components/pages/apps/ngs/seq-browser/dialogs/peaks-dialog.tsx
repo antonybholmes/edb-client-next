@@ -553,7 +553,7 @@ function CartItems({
                       }}
                       title={TEXT_REMOVE_FROM_CART}
                     >
-                      <TrashIcon stroke="" />
+                      <TrashIcon />
                     </button>
                   </li>
                 )

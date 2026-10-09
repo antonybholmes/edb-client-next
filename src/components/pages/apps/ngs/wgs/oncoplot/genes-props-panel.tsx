@@ -74,7 +74,7 @@ function SortableGeneElem({ gene, index }: IGeneElemProps) {
             }}
             title="Delete gene"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }

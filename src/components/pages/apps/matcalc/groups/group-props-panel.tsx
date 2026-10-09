@@ -46,8 +46,8 @@ import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
-import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -244,7 +244,7 @@ function GroupRowItem({
 
             title={`Delete ${group.name} group`}
           >
-            <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
+            <TrashIcon className={DRAG_ICON_ANIM_CLS} />
           </button>
         </VCenterRow>
 
@@ -316,18 +316,15 @@ function GroupItem({
               },
             })
           }
-          className={cn(
-            DRAG_HANDLE_APPEAR_CLS,
-            'stroke-foreground/50 hover:stroke-destructive focus-visible:stroke-destructive trans-color'
-          )}
+          className={cn(DRAG_HANDLE_APPEAR_CLS)}
 
           title={`Delete ${group.name} group`}
         >
-          <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
+          <TrashIcon />
         </button>
       }
     >
-      <OutlineCheckbox
+      <Checkbox
         checked={group.show}
         onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })

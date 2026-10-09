@@ -98,7 +98,7 @@ function DomainElem({ domain, setDelDomain, index }: IDomainProps) {
             title="Delete domain"
             //className="hover:text-destructive focus-visible:text-destructive trans-color"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }

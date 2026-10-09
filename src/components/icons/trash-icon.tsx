@@ -1,14 +1,28 @@
-import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
-import { cn } from '@/lib/shadcn-utils'
+import { VECTOR_ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cva, VariantProps } from 'class-variance-authority'
 import { Trash2 } from 'lucide-react'
+
+export const variants = cva(VECTOR_ICON_CLS, {
+  variants: {
+    variant: {
+      default: '',
+      colorful:
+        'hover:text-destructive group-hover:text-destructive trans-color',
+    },
+  },
+  defaultVariants: {
+    variant: 'colorful',
+  },
+})
 
 export function TrashIcon({
   size = 16,
   className,
   stroke = 'currentColor',
   strokeWidth = 1.5,
+  variant,
   style,
-}: IIconProps) {
+}: IIconProps & VariantProps<typeof variants>) {
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +53,7 @@ export function TrashIcon({
     // </svg>
 
     <Trash2
-      className={cn(ICON_CLS, className)}
+      className={variants({ variant, className })}
       strokeWidth={strokeWidth}
       stroke={stroke}
       style={style}

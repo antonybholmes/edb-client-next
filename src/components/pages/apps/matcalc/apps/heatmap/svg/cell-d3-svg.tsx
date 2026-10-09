@@ -205,10 +205,10 @@ export const DotsD3Svg = memo(function DotsD3Svg({
   ygaps,
   rowLeaves,
   colLeaves,
+  blockSize,
   props,
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
-  const blockSize = props.blockSize
   const { ref } = useSVG()
   const hostRef = useRef<SVGGElement | null>(null)
   const { showCrosshair, hideCrosshair } = useCrosshair()
@@ -266,7 +266,7 @@ export const DotsD3Svg = memo(function DotsD3Svg({
   }
 
   const cmap = getColorMap(props.cmap)
-  const w = Math.min(blockSize.w, blockSize.h)
+  const w = Math.min(innerBlockSize.w, innerBlockSize.h)
   const isSquare = df.shape[0] === df.shape[1]
   const radiusScale = nodeRadiusFunc(w, props.dot.scale.mode)
 
@@ -313,8 +313,8 @@ export const DotsD3Svg = memo(function DotsD3Svg({
           }
         }
 
-        const cx = 0.5 * blockSize.w
-        const cy = 0.5 * blockSize.h
+        const cx = 0.5 * innerBlockSize.w
+        const cy = 0.5 * innerBlockSize.h
         const r = 0.5 * radiusScale(dotSize) * props.dot.scale.factor
 
         const textColor =

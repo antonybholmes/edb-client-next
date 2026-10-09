@@ -38,8 +38,6 @@ export function useOpen() {
       )
     }, table.shape[0])
 
-    console.log('lists', lists)
-
     setVennLists(lists)
 
     // setListTextMap(

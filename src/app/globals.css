@@ -186,8 +186,6 @@
   --edb-faint: oklch(0.44 0 0);
   --edb-muted: oklch(0.44 0 0);
 
-  --edb-destructive: rgb(239 68 68);
-  --edb-destructive-foreground: white;
   --edb-overlay: rgb(2 6 23);
   --edb-border: rgb(115 115 115);
   --edb-border-light: rgb(51 65 85);

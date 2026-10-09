@@ -16,7 +16,7 @@ import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
 
 // Will make items fade in when hovering over a drag item
-export const DRAG_HANDLE_APPEAR_CLS = `opacity-0 
+export const DRAG_HANDLE_APPEAR_CLS = `opacity-0
   group-data-focus:opacity-100 
   group-hover:opacity-100
   hover:opacity-100

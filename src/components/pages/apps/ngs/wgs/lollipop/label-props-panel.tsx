@@ -256,7 +256,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                         }}
                         title="Delete label"
                       >
-                        <TrashIcon stroke="" />
+                        <TrashIcon />
                       </button>
                     </VCenterRow>
                   }

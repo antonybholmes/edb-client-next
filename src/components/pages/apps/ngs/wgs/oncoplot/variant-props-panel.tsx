@@ -6,8 +6,6 @@ import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { downloadJson } from '@/lib/download-utils'
 import { makeUuid } from '@/lib/id'
-import { cn } from '@/lib/shadcn-utils'
-import { TRANS_COLOR_CLS } from '@/theme'
 import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'
 
@@ -87,14 +85,11 @@ function MutationElem({
 
       <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
         <button
-          className={cn(
-            TRANS_COLOR_CLS,
-            'stroke-foreground/50 hover:stroke-red-400'
-          )}
+          className="group"
           onClick={() => setDelMutation?.(mutation)}
           title="Delete feature"
         >
-          <TrashIcon stroke="" />
+          <TrashIcon />
         </button>
       </VCenterRow>
     </SortableItem>

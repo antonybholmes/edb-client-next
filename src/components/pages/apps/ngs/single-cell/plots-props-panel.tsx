@@ -76,7 +76,7 @@ function PlotItem({ geneset, index }: { geneset: IGeneSet; index: number }) {
             className="stroke-foreground/50 hover:stroke-destructive"
             title="Delete location"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }
