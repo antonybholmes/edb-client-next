@@ -28,8 +28,8 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useMemo, useState } from 'react'
 
+import { TrashIcon } from '@/components/icons/trash-icon'
 import { CenterRow } from '@/components/layout/center-row'
-import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { getTabName, useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
@@ -139,8 +139,10 @@ export function FilterPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2">
-      <VCenterRow className="justify-end h-8">
-        <LinkButton
+      <CenterRow className="relative">
+        <SafariTabs id={tabsId} defaultWidth={4} />
+
+        <button
           onClick={() => {
             openDialog({
               type: 'warning',
@@ -161,14 +163,11 @@ export function FilterPropsPanel() {
               },
             })
           }}
-          className="text-xs"
+          className="text-xs group absolute right-0 top-1/2 -translate-y-1/2"
+          title={TEXT_CLEAR}
         >
-          {TEXT_CLEAR}
-        </LinkButton>
-      </VCenterRow>
-
-      <CenterRow>
-        <SafariTabs id={tabsId} defaultWidth={4} />
+          <TrashIcon />
+        </button>
       </CenterRow>
 
       <ResizablePanelGroup orientation="vertical" className="grow mt-4">

@@ -11,7 +11,7 @@ import {
   type IClusterGroup,
 } from '@/lib/cluster-group'
 
-import { TEXT_CLEAR, TEXT_OK } from '@/consts'
+import { TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 
@@ -45,7 +45,6 @@ import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -503,10 +502,10 @@ export function GroupPropsPanel() {
               }}
               title="New Group Set"
             >
-              <LayersPlus size={20} strokeWidth={1.5} />
+              <LayersPlus size={18} strokeWidth={1.5} />
             </ToolbarIconButton>
           </VCenterRow>
-          <LinkButton
+          <button
             onClick={() =>
               openDialog({
                 type: 'warning',
@@ -521,10 +520,10 @@ export function GroupPropsPanel() {
               })
             }
             title="Clear all groups"
-            className="text-xs"
+            className="text-xs group"
           >
-            {TEXT_CLEAR}
-          </LinkButton>
+            <TrashIcon />
+          </button>
         </StretchRow>
 
         <FileDropZonePanel

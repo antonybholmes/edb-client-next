@@ -10,18 +10,22 @@ import {
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
+import { CollapseIcon } from '@/components/icons/collapse-icon'
 import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_SORT } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
+import { useState } from 'react'
 import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
 import { MarginPopover } from '../../bubble/margin-popover'
@@ -33,9 +37,13 @@ import {
   useGseaBubbleSettings,
 } from './gsea-bubble-settings-store'
 
+const TABS = ['plot', 'style', 'statistics', 'bubbles', 'size']
+
 export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
   const { plots } = useGseaBubbleContext()
+  const [collapsed, setCollapsed] = useState(false)
+  const [openTabs, setOpenTabs] = useState(TABS)
 
   const axes = plots
     .map((p) => ({
@@ -62,41 +70,52 @@ export function GseaBubbleDisplayPropsPanel() {
     })
 
   return (
-    <ScrollAccordion
-      className="mt-8"
-      value={['plot', 'style', 'statistics', 'bubbles', 'size']}
-    >
-      <AccordionItem value="plot">
-        <AccordionTrigger>Plot</AccordionTrigger>
-        <AccordionContent>
-          <PropRow title="Size">
-            <DoubleNumericalInput
-              id="size"
-              v1={settings.axes.x.length}
-              v2={settings.axes.y.rowHeight}
-              placeholder="Size..."
+    <>
+      <SideBarHeader className="gap-x-2">
+        <IconButton
+          size="xs"
 
-              dp={0}
-              inc={1}
-              limit={[1, 1000]}
-              w="xxs"
-              onNumChanged1={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.x.length = v
-                  })
-                )
-              }}
-              onNumChanged2={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.y.rowHeight = v
-                  })
-                )
-              }}
-            />
+          onClick={() => {
+            setOpenTabs(collapsed ? TABS : [])
+            setCollapsed(!collapsed)
+          }}
+          title={collapsed ? 'Expand' : 'Collapse'}
+        >
+          <CollapseIcon collapsed={collapsed} size={14} />
+        </IconButton>
+      </SideBarHeader>
+      <ScrollAccordion value={openTabs} onValueChange={setOpenTabs}>
+        <AccordionItem value="plot">
+          <AccordionTrigger>Plot</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Size">
+              <DoubleNumericalInput
+                id="size"
+                v1={settings.axes.x.length}
+                v2={settings.axes.y.rowHeight}
+                placeholder="Size..."
 
-            {/* <NumericalInput
+                dp={0}
+                inc={1}
+                limit={[1, 1000]}
+                w="xxs"
+                onNumChanged1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.length = v
+                    })
+                  )
+                }}
+                onNumChanged2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.y.rowHeight = v
+                    })
+                  )
+                }}
+              />
+
+              {/* <NumericalInput
                 value={settings.axes.x.length}
 
                 limit={[1, 1000]}
@@ -110,9 +129,9 @@ export function GseaBubbleDisplayPropsPanel() {
                   )
                 }}
               /> */}
-          </PropRow>
+            </PropRow>
 
-          {/* <NumericalPropRow
+            {/* <NumericalPropRow
               title="Row Height"
               value={settings.axes.y.rowHeight}
               onNumChanged={(v) => {
@@ -124,202 +143,205 @@ export function GseaBubbleDisplayPropsPanel() {
               }}
             /> */}
 
-          <PropRow title="Layout">
-            <FillButton
-              title="Border"
-              colors={[
-                {
-                  color: settings.border.value,
-                  show: settings.border.show,
-                  onColorChange: ({ color, show }) =>
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.border.value = color
-                        draft.border.show = show
-                      })
-                    ),
-                },
-              ]}
-            />
-            <MarginPopover />
+            <PropRow title="Layout">
+              <FillButton
+                title="Border"
+                colors={[
+                  {
+                    color: settings.border.value,
+                    show: settings.border.show,
+                    onColorChange: ({ color, show }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.border.value = color
+                          draft.border.show = show
+                        })
+                      ),
+                  },
+                ]}
+              />
+              <MarginPopover />
 
-            <NumericalInput
-              title="Grid Cols"
-              value={settings.page.grid.cols}
-              onNumChanged={(v) => {
+              <NumericalInput
+                title="Grid Cols"
+                value={settings.page.grid.cols}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.page.grid.cols = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
+            {/* <AxesPropRow /> */}
+            <PropRow title="Axes">
+              <AxesDisplayPropsPopover plots={axes} />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="style">
+          <AccordionTrigger>Style</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Mode">
+              <SelectList
+                items={MODE_ITEMS}
+                onValueChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.scale.mode = v as Mode
+                    })
+                  )
+                }
+                value={settings.scale.mode}
+                w="sm"
+              >
+                {MODE_ITEMS.map((item) => (
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
+            </PropRow>
+            <CheckPropRow
+              title="Merge Phenotypes"
+              checked={settings.phenotypes.merge}
+              onCheckedChange={(v) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.page.grid.cols = v
+                    draft.phenotypes.merge = v
                   })
                 )
               }}
             />
-          </PropRow>
 
-          {/* <AxesPropRow /> */}
-          <PropRow title="Axes">
-            <AxesDisplayPropsPopover plots={axes} />
-          </PropRow>
-        </AccordionContent>
-      </AccordionItem>
+            <PropRow title="Colormap">
+              <ColorMapMenu
+                cmap={getColorMap(settings.scale.cmap)}
+                onChange={(cmap) => {
+                  // store the cmap the user likes
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.scale.cmap = cmap.id as ColorMapName
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
 
-      <AccordionItem value="style">
-        <AccordionTrigger>Style</AccordionTrigger>
-        <AccordionContent>
-          <PropRow title="Mode">
-            <SelectList
-              items={MODE_ITEMS}
-              onValueChange={(v) =>
+        <AccordionItem value="statistics">
+          <AccordionTrigger>Statistics</AccordionTrigger>
+          <AccordionContent>
+            <CheckPropRow
+              title="Auto NES"
+              checked={settings.axes.x.auto}
+              onCheckedChange={(v) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.scale.mode = v as Mode
-                  })
-                )
-              }
-              value={settings.scale.mode}
-              w="sm"
-            >
-              {MODE_ITEMS.map((item) => (
-                <SelectItem value={item.value} key={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectList>
-          </PropRow>
-          <CheckPropRow
-            title="Merge Phenotypes"
-            checked={settings.phenotypes.merge}
-            onCheckedChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.phenotypes.merge = v
-                })
-              )
-            }}
-          />
-
-          <PropRow title="Colormap">
-            <ColorMapMenu
-              cmap={getColorMap(settings.scale.cmap)}
-              onChange={(cmap) => {
-                // store the cmap the user likes
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.scale.cmap = cmap.id as ColorMapName
+                    draft.axes.x.auto = v
                   })
                 )
               }}
             />
-          </PropRow>
-        </AccordionContent>
-      </AccordionItem>
+            <PropRow title="NES Limit">
+              <DoubleNumericalInput
+                id="x-limit"
+                v1={settings.axes.x.domain[0]}
+                v2={settings.axes.x.domain[1]}
+                placeholder="Limit..."
+                disabled={settings.axes.x.auto}
+                dp={1}
+                limit={[-10000, 10000]}
+                w="xxs"
+                onNumChanged1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.domain = [
+                        v,
+                        round(settings.axes.x.domain[1], 1),
+                      ]
+                    })
+                  )
+                }}
+                onNumChanged2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.domain = [
+                        round(draft.axes.x.domain[0], 1),
+                        v,
+                      ]
+                    })
+                  )
+                }}
+              >
+                <span>to</span>
+              </DoubleNumericalInput>
+            </PropRow>
+            <PropRow title="Max P-value">
+              <NumericalInput
+                id="size"
+                value={settings.scale.p.range[1]}
+                placeholder="Size..."
+                dp={0}
+                limit={[1, 1000]}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.scale.p.range[1] = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
 
-      <AccordionItem value="statistics">
-        <AccordionTrigger>Statistics</AccordionTrigger>
-        <AccordionContent>
-          <CheckPropRow
-            title="Auto NES"
-            checked={settings.axes.x.auto}
-            onCheckedChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.axes.x.auto = v
-                })
-              )
-            }}
-          />
-          <PropRow title="NES Limit">
-            <DoubleNumericalInput
-              id="x-limit"
-              v1={settings.axes.x.domain[0]}
-              v2={settings.axes.x.domain[1]}
-              placeholder="Limit..."
-              disabled={settings.axes.x.auto}
-              dp={1}
-              limit={[-10000, 10000]}
-              w="xxs"
-              onNumChanged1={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.x.domain = [
-                      v,
-                      round(settings.axes.x.domain[1], 1),
-                    ]
+        <AccordionItem value="bubbles">
+          <AccordionTrigger>Bubbles</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title={TEXT_SORT}>
+              <SelectList
+                items={SORT_BY_ITEMS}
+                onValueChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.sortBy = v as SortBy
+                    })
+                  )
+                }
+                value={settings.sortBy}
+                w="sm"
+              >
+                {SORT_BY_ITEMS.map((item) => (
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
+            </PropRow>
+            <PropRow title="Radius">
+              <NumSlider
+                value={settings.bubbles.size}
+
+                min={1}
+                max={100}
+                step={1}
+
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.bubbles.size = v
                   })
-                )
-              }}
-              onNumChanged2={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.x.domain = [round(draft.axes.x.domain[0], 1), v]
-                  })
-                )
-              }}
-            >
-              <span>to</span>
-            </DoubleNumericalInput>
-          </PropRow>
-          <PropRow title="Max P-value">
-            <NumericalInput
-              id="size"
-              value={settings.scale.p.range[1]}
-              placeholder="Size..."
-              dp={0}
-              limit={[1, 1000]}
-              onNumChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.scale.p.range[1] = v
-                  })
-                )
-              }}
-            />
-          </PropRow>
-        </AccordionContent>
-      </AccordionItem>
 
-      <AccordionItem value="bubbles">
-        <AccordionTrigger>Bubbles</AccordionTrigger>
-        <AccordionContent>
-          <PropRow title={TEXT_SORT}>
-            <SelectList
-              items={SORT_BY_ITEMS}
-              onValueChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.sortBy = v as SortBy
-                  })
-                )
-              }
-              value={settings.sortBy}
-              w="sm"
-            >
-              {SORT_BY_ITEMS.map((item) => (
-                <SelectItem value={item.value} key={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectList>
-          </PropRow>
-          <PropRow title="Radius">
-            <NumSlider
-              value={settings.bubbles.size}
-
-              min={1}
-              max={100}
-              step={1}
-
-              onValueChange={(values) => {
-                const v = Array.isArray(values) ? values[0] : values
-
-                const newSettings = produce(settings, (draft) => {
-                  draft.bubbles.size = v
-                })
-
-                updateSettings(newSettings)
-              }}
-            />
-            {/* <NumericalInput
+                  updateSettings(newSettings)
+                }}
+              />
+              {/* <NumericalInput
                 id="size"
                 value={settings.bubbles.size}
                 placeholder="Size..."
@@ -333,95 +355,95 @@ export function GseaBubbleDisplayPropsPanel() {
                   )
                 }}
               /> */}
-          </PropRow>
-          <PropRow title="Scale Mode">
-            <RadiusScaleModeSelectList
-              value={settings.bubbles.scale.mode}
-              onValueChange={(value) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.bubbles.scale.mode = value
-                  })
-                )
-              }
-            />
-          </PropRow>
-          <PropRow title="Opacity">
-            <PercentSlider
-              value={settings.bubbles.fill.opacity}
-              disabled={false}
-              min={0}
-              max={1}
-              step={0.05}
-
-              onValueChange={(values) => {
-                const v = Array.isArray(values) ? values[0] : values
-
-                const newSettings = produce(settings, (draft) => {
-                  draft.bubbles.fill.opacity = v
-                })
-
-                updateSettings(newSettings)
-              }}
-            />
-          </PropRow>
-          <PropRow title="Border">
-            <StrokeButton
-              colors={[
-                {
-                  color: settings.bubbles.stroke.value,
-                  show: settings.bubbles.stroke.show,
-                  onColorChange: ({ color, show }) =>
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.bubbles.stroke.value = color
-                        draft.bubbles.stroke.show = show
-                      })
-                    ),
-                },
-              ]}
-            />
-          </PropRow>
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem value="size">
-        <AccordionTrigger>Size</AccordionTrigger>
-        <AccordionContent>
-          <PropRow title="Max">
-            <NumericalInput
-              id="size"
-              value={settings.size.maxSize}
-              placeholder="Size..."
-              dp={0}
-              limit={[1, 1000]}
-
-              onNumChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.size.maxSize = v
-                  })
-                )
-              }}
-            />
-          </PropRow>
-
-          <TextPropRow
-            title="Legend"
-            value={settings.legend.bubbles.sizes.join(', ')}
-            onTextChanged={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.legend.bubbles.sizes = numSort(
-                    v.split(',').map((x) => parseFloat(x.trim()))
+            </PropRow>
+            <PropRow title="Scale Mode">
+              <RadiusScaleModeSelectList
+                value={settings.bubbles.scale.mode}
+                onValueChange={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.bubbles.scale.mode = value
+                    })
                   )
-                })
-              )
-            }}
-            w="md"
-          />
+                }
+              />
+            </PropRow>
+            <PropRow title="Opacity">
+              <PercentSlider
+                value={settings.bubbles.fill.opacity}
+                disabled={false}
+                min={0}
+                max={1}
+                step={0.05}
 
-          {/* <PropRow title="Colorbar">
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.bubbles.fill.opacity = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </PropRow>
+            <PropRow title="Border">
+              <StrokeButton
+                colors={[
+                  {
+                    color: settings.bubbles.stroke.value,
+                    show: settings.bubbles.stroke.show,
+                    onColorChange: ({ color, show }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.bubbles.stroke.value = color
+                          draft.bubbles.stroke.show = show
+                        })
+                      ),
+                  },
+                ]}
+              />
+            </PropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="size">
+          <AccordionTrigger>Size</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Max">
+              <NumericalInput
+                id="size"
+                value={settings.size.maxSize}
+                placeholder="Size..."
+                dp={0}
+                limit={[1, 1000]}
+
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.size.maxSize = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
+            <TextPropRow
+              title="Legend"
+              value={settings.legend.bubbles.sizes.join(', ')}
+              onTextChanged={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.legend.bubbles.sizes = numSort(
+                      v.split(',').map((x) => parseFloat(x.trim()))
+                    )
+                  })
+                )
+              }}
+              w="md"
+            />
+
+            {/* <PropRow title="Colorbar">
               <RadioGroup
                 value={displayProps.colorbar.position}
                 disabled={!displayProps.colorbar.show}
@@ -451,8 +473,9 @@ export function GseaBubbleDisplayPropsPanel() {
                 />
               </RadioGroup>
             </PropRow> */}
-        </AccordionContent>
-      </AccordionItem>
-    </ScrollAccordion>
+          </AccordionContent>
+        </AccordionItem>
+      </ScrollAccordion>
+    </>
   )
 }

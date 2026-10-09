@@ -76,7 +76,6 @@ export function HeatmapPropsPanel() {
   return (
     <PropsPanel className="gap-y-2 text-xs">
       <SideBarHeader className="gap-x-2">
-        {' '}
         <IconButton
           size="xs"
 
