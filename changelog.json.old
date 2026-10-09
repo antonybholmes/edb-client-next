@@ -3328,6 +3328,10 @@
         {
           "msg": "Venn view toggle now in header to save vertical space",
           "date": "2026-10-09T21:22:17.634Z"
+        },
+        {
+          "msg": "Standardized collapse icon. Venn settings now supports collapse",
+          "date": "2026-10-09T21:38:28.940Z"
         }
       ]
     },

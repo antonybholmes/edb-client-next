@@ -418,25 +418,6 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
             </SelectList>
           </ActionDialogRow>
           <ActionDialogRow title="View">
-            {/* <IosGroupToggle
-              w={5.5}
-              tabs={[
-                { id: 'transcript', name: 'Transcripts' },
-                { id: 'features', name: 'Features' },
-              ]}
-              value={[settings.tracks.genes.view]}
-              onValueChange={(v, e) => {
-                if (!v || v.length === 0) {
-                  return
-                }
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.view = v[0] as GeneView
-                })
-
-                updateSettings(newSettings)
-              }}
-            /> */}
-
             <ToggleGroup
               direction="row"
 
