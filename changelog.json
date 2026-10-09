@@ -3324,6 +3324,10 @@
         {
           "msg": "Dot plots now have animation effects",
           "date": "2026-10-09T20:52:40.383Z"
+        },
+        {
+          "msg": "Venn view toggle now in header to save vertical space",
+          "date": "2026-10-09T21:22:17.634Z"
         }
       ]
     },

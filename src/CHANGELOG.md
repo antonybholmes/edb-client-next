@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Venn view toggle now in header to save vertical space.
 - Dot plots now have animation effects.
 - Dot rendering in heatmap now correctly accounts for space occupied by grid lines.
 - Venn list ui tweaked.

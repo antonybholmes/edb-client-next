@@ -111,7 +111,7 @@ export interface IVennSettings {
     percentages: IFontProps
   }
   view: {
-    tab: 'venn' | 'heatmap'
+    tab: 'circles' | 'heatmap'
   }
   heatmap: {
     cluster: {
@@ -157,7 +157,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
     percentages: { ...DEFAULT_FONT, size: 12 },
   },
   view: {
-    tab: 'venn',
+    tab: 'circles',
   },
   heatmap: {
     cluster: {

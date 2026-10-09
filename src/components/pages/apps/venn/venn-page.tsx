@@ -63,7 +63,6 @@ import { useOpen } from './use-open'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { HCenterRow } from '@/components/layout/h-center-row'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
   GroupToggle,
@@ -414,6 +413,31 @@ function VennPage() {
         <AppInfoButton />
       </HeaderSlotPortal>
 
+      <HeaderSlotPortal slot="header-center">
+        <ToggleGroup
+          className="text-xs"
+          value={[settings.view.tab]}
+          onValueChange={(v) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.view.tab = v[0] as 'circles' | 'heatmap'
+              })
+            )
+          }}
+          rounded="lg"
+          //variant="flat"
+          size="lg"
+        >
+          <GroupToggle value="circles" className="w-18">
+            Circles
+          </GroupToggle>
+
+          <GroupToggle value="heatmap" className="w-18">
+            Heatmap
+          </GroupToggle>
+        </ToggleGroup>
+      </HeaderSlotPortal>
+
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
@@ -466,9 +490,9 @@ function VennPage() {
                 className="flex flex-col overflow-hidden px-2"
                 id="venn"
               >
-                <HCenterRow className="pb-2">
+                {/* <HCenterRow className="pb-2">
                   <ToggleGroup
-                    className="text-xs gap-x-px bg-muted/50 p-0.5 rounded-lg"
+                    className="text-xs gap-x-px bg-muted/50 p-0.75 rounded-[0.7rem]"
                     value={[settings.view.tab]}
                     onValueChange={(v) => {
                       updateSettings(
@@ -477,7 +501,7 @@ function VennPage() {
                         })
                       )
                     }}
-                    rounded="theme"
+                    rounded="lg"
                     variant="flat"
                     size="sm"
                   >
@@ -489,7 +513,7 @@ function VennPage() {
                       Heatmap
                     </GroupToggle>
                   </ToggleGroup>
-                </HCenterRow>
+                </HCenterRow> */}
 
                 <ExtScrollCard
                   tabIndex={0}
@@ -501,7 +525,7 @@ function VennPage() {
                     onValueChange={() => {}}
                     className="grow h-full"
                   >
-                    <TabsContent value="venn">
+                    <TabsContent value="circles">
                       <SvgVenn />
                     </TabsContent>
                     <TabsContent value="heatmap">

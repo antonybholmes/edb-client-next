@@ -227,13 +227,13 @@ export const DotsD3Svg = memo(function DotsD3Svg({
       return
     }
 
-    // const el = document.getElementById(`node-circle-${id}`)
+    const el = document.getElementById(`node-circle-${id}`)
 
-    // if (!(el instanceof SVGCircleElement)) {
-    //   return
-    // }
+    if (!(el instanceof SVGCircleElement)) {
+      return
+    }
 
-    gsap.to(`#node-circle-${id}`, {
+    gsap.to(el, {
       scale,
       transformOrigin: 'center',
       duration: 0.2,
