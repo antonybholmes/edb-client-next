@@ -1,6 +1,12 @@
 import {
+  DEFAULT_BOLD_FONT_PROPS,
+  DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_FONT_PROPS,
   DEFAULT_MARGIN,
+  DEFAULT_TEXT_PROPS,
   IMarginProps,
+  ITextProps,
+  WHITE_FILL_PROPS,
   type IPaintProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
@@ -13,7 +19,7 @@ import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v76`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v78`
 
 export interface IVennCircleProps extends IDBEntity {
   fill: IPaintProps
@@ -81,19 +87,6 @@ export interface IFontProps {
   weight: string
 }
 
-const DEFAULT_FONT: IFontProps = {
-  color: COLOR_BLACK,
-  size: 16,
-  family: 'Arial',
-  weight: 'normal',
-  show: true,
-}
-
-const BOLD_FONT: IFontProps = {
-  ...DEFAULT_FONT,
-  weight: 'bold',
-}
-
 export interface IVennSettings {
   w: number
   radius: number
@@ -106,9 +99,9 @@ export interface IVennSettings {
   normalize: boolean
   circles: Record<string, IVennCircleProps>
   fonts: {
-    title: IFontProps & { colored: boolean }
-    counts: IFontProps
-    percentages: IFontProps
+    title: ITextProps & { colored: boolean }
+    counts: ITextProps
+    percentages: ITextProps
   }
   view: {
     tab: 'circles' | 'heatmap'
@@ -152,9 +145,30 @@ const DEFAULT_SETTINGS: IVennSettings = {
   normalize: false,
   circles: { ...DEFAULT_CIRCLE_MAP },
   fonts: {
-    title: { ...BOLD_FONT, colored: true },
-    counts: DEFAULT_FONT,
-    percentages: { ...DEFAULT_FONT, size: 12 },
+    title: {
+      ...DEFAULT_BOLD_TEXT_PROPS,
+      font: {
+        ...DEFAULT_BOLD_FONT_PROPS,
+        textAnchor: 'middle',
+      },
+      colored: true,
+    },
+    counts: {
+      ...DEFAULT_TEXT_PROPS,
+      font: {
+        ...DEFAULT_FONT_PROPS,
+        textAnchor: 'middle',
+        fill: { ...WHITE_FILL_PROPS },
+      },
+    },
+    percentages: {
+      ...DEFAULT_TEXT_PROPS,
+      font: {
+        ...DEFAULT_FONT_PROPS,
+        textAnchor: 'middle',
+        fill: { ...WHITE_FILL_PROPS },
+      },
+    },
   },
   view: {
     tab: 'circles',

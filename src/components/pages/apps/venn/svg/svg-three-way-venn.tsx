@@ -118,12 +118,10 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
         <SvgText
           x={center[0]!}
           y={center[1]!}
-          fontSize={settings.fonts.counts.size}
-          fontWeight={settings.fonts.counts.weight}
-          fontFamily={settings.fonts.counts.family}
+          font={settings.fonts.counts}
+
           textAnchor="middle"
-          dominantBaseline="middle"
-          fill={color}
+
           pointerEvents="none"
         >
           {n.toLocaleString()}
@@ -133,10 +131,8 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
           <SvgText
             x={center[0]!}
             y={center[1]! + 16}
-            fontSize={settings.fonts.percentages.size}
-            fontWeight={settings.fonts.percentages.weight}
-            fontFamily={settings.fonts.percentages.family}
-            textAnchor="middle"
+            font={settings.fonts.percentages}
+
             dominantBaseline="middle"
             fill={color}
             pointerEvents="none"
@@ -170,17 +166,14 @@ export function TitleText({
     <SvgText
       x={center[0]!}
       y={center[1]!}
-      fontSize={settings.fonts.title.size}
-      fontWeight={settings.fonts.title.weight}
-      fontFamily={settings.fonts.title.family}
+      font={settings.fonts.title}
+
       fill={
         settings.fonts.title.colored
           ? circles[vennList.listId]?.fill.value
-          : settings.fonts.title.color
+          : settings.fonts.title.font.fill.value
       }
-      //fillOpacity={settings.fonts.title.colored ? circles[id]?.fill.opacity : 1}
       textAnchor={textAnchor}
-      dominantBaseline="middle"
     >
       {vennList?.name || `List ${vennList.listId}`}
 

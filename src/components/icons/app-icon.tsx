@@ -5,28 +5,29 @@ import type { IAppInfo } from '@/lib/app-info'
 import { cn } from '@/lib/shadcn-utils'
 import { capitalCase } from '@/lib/text/capital-case'
 import type { IAppHeaderLink } from '@/menus'
-import { CSSProperties } from 'react'
+import { CSSProperties, useMemo } from 'react'
 import { CenterRow } from '../layout/center-row'
 
 export const APP_ICON_CLS = `relative app-icon rounded-full aspect-square shrink-0 grow-0`
 
 export function AppIcon({
+  ref,
   appInfo,
   size = 2,
   className,
 }: IDivProps & { size?: number; appInfo: IAppInfo | IAppHeaderLink }) {
-  let abbr = ''
-
-  if (appInfo.abbr) {
-    abbr = capitalCase(appInfo.abbr)
-  } else {
-    const words = appInfo.name.split(' ')
-
-    abbr = `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
-  }
+  const abbr = useMemo(() => {
+    if (appInfo.abbr) {
+      return capitalCase(appInfo.abbr)
+    } else {
+      const words = appInfo.name.split(' ')
+      return `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
+    }
+  }, [appInfo])
 
   return (
     <CenterRow
+      ref={ref}
       className={cn(APP_ICON_CLS, className)}
       // style={{
       //   backgroundColor: appInfo.color ?? 'lightslategray',

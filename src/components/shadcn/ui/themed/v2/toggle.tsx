@@ -27,7 +27,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
         'overflow-hidden text-xs aria-[pressed=false]:hover:bg-app-theme/20 data-pressed:bg-app-theme/40',
       group:
         'hover:bg-muted/50 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border',
-      flat: 'data-pressed:bg-background data-pressed:shadow-sm',
+      flat: 'data-pressed:font-medium data-pressed:bg-background data-pressed:shadow-sm',
     },
     size: {
       xs: 'h-button-xs',

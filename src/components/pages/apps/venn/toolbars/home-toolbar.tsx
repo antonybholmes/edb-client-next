@@ -98,7 +98,7 @@ export function HomeToolbar() {
             Z-score
             <SelectList
               variant="toolbar"
-              w="sm"
+              w="xs"
               value={settings.heatmap.cluster.zscore}
               items={[
                 { value: 'row', label: 'Row' },

@@ -12,17 +12,14 @@ import {
 } from '@/themed/v2/accordion'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
 import { PropRow } from '@/dialogs/prop-row'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { CollapseIcon } from '@/components/icons/collapse-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { LinkButton } from '@/themed/link-button'
 import { produce } from 'immer'
@@ -145,16 +142,38 @@ export function VennSettingsPropsPanel() {
 
         <AccordionItem value="titles">
           <AccordionTrigger
-            leftChildren={
-              <SmallSwitch
-                checked={settings.fonts.title.show}
-                onCheckedChange={(state) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.fonts.title.show = state
-                    })
-                  )
-                }
+            // leftChildren={
+            //   <SmallSwitch
+            //     checked={settings.fonts.title.show}
+            //     onCheckedChange={(state) =>
+            //       updateSettings(
+            //         produce(settings, (draft) => {
+            //           draft.fonts.title.show = state
+            //         })
+            //       )
+            //     }
+            //   />
+            // }
+            rightChildren={
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Font',
+                    textProps: settings.fonts.title,
+                    showEnabled: true,
+                    showAlign: true,
+                    showColor: true,
+                    update: (textProps) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.fonts.title = Object.assign(
+                            { ...settings.fonts.title },
+                            textProps
+                          )
+                        })
+                      ),
+                  },
+                ]}
               />
             }
           >
@@ -184,24 +203,35 @@ export function VennSettingsPropsPanel() {
                 )
               }
             />
-            <PropRow title="Font size">
-              <NumericalInput
-                limit={[1, 128]}
-                value={settings.fonts.title.size}
-                placeholder="Cell width..."
-                onNumChanged={(w) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.fonts.title.size = w
-                    })
-                  )
-                }}
-              />
-            </PropRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="counts">
-          <AccordionTrigger>Counts</AccordionTrigger>
+          <AccordionTrigger
+            rightChildren={
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Font',
+                    textProps: settings.fonts.counts,
+                    showEnabled: true,
+                    showAlign: true,
+                    showColor: true,
+                    update: (textProps) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.fonts.counts = Object.assign(
+                            { ...settings.fonts.counts },
+                            textProps
+                          )
+                        })
+                      ),
+                  },
+                ]}
+              />
+            }
+          >
+            Counts
+          </AccordionTrigger>
           <AccordionContent>
             <CheckPropRow
               title="Auto-color"
@@ -214,7 +244,7 @@ export function VennSettingsPropsPanel() {
               }
             />
             <PropRow title="Intersection">
-              <ColorPickerButton
+              <FillButton
                 colors={[
                   {
                     color: settings.intersectionColor,
@@ -224,60 +254,53 @@ export function VennSettingsPropsPanel() {
                       }),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             </PropRow>
 
-            <PropRow title="Font size">
-              <NumericalInput
-                limit={[1, 128]}
-                value={settings.fonts.counts.size}
-                placeholder="Font size..."
-                onNumChanged={(w) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.fonts.counts.size = w
-                    })
-                  )
-                }}
-              />
-            </PropRow>
+            <PropRow title="Font"></PropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="percentages">
           <AccordionTrigger
-            leftChildren={
-              <SmallSwitch
-                checked={settings.fonts.percentages.show}
-                onCheckedChange={(state) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.fonts.percentages.show = state
-                    })
-                  )
-                }
+            rightChildren={
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Font',
+                    textProps: settings.fonts.percentages,
+                    showEnabled: true,
+                    showAlign: true,
+                    showColor: true,
+                    update: (textProps) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.fonts.percentages = Object.assign(
+                            { ...settings.fonts.percentages },
+                            textProps
+                          )
+                        })
+                      ),
+                  },
+                ]}
               />
             }
+            // leftChildren={
+            //   <SmallSwitch
+            //     checked={settings.fonts.percentages.show}
+            //     onCheckedChange={(state) =>
+            //       updateSettings(
+            //         produce(settings, (draft) => {
+            //           draft.fonts.percentages.show = state
+            //         })
+            //       )
+            //     }
+            //   />
+            // }
           >
             Percentages
           </AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Font Size">
-              <NumericalInput
-                limit={[1, 128]}
-                value={settings.fonts.percentages.size}
-                placeholder="Font size..."
-                onNumChanged={(w) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.fonts.percentages.size = w
-                    })
-                  )
-                }}
-              />
-            </PropRow>
-          </AccordionContent>
+          <AccordionContent></AccordionContent>
         </AccordionItem>
       </ScrollAccordion>
 

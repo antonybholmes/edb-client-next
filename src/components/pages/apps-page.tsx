@@ -18,27 +18,43 @@ const APP_CLS = cn(
 )
 
 const APP_BG_CLS = cn(
-  'pointer-events-none absolute z-0 rounded-3xl w-full aspect-square shrink-0 grow-0',
+  'pointer-events-none absolute z-0 rounded-full w-full aspect-square shrink-0 grow-0',
   'origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 )
 
 function AppTile({ module, view }: { module: IAppHeaderLink; view: string }) {
   const ref = useRef<HTMLSpanElement>(null)
+  const appRef = useRef<HTMLDivElement>(null)
   const [hover, setHover] = useState(false)
 
   useEffect(() => {
     if (!ref) {
       return
     }
-    gsap.timeline().to(ref.current, {
-      backgroundColor: addAlphaToHex(
-        module.color ?? '#c0c0c0',
-        hover ? 0.2 : 0.08
-      ),
-      scale: hover ? 1.1 : 1,
-      duration: 0.3,
-      ease: 'power1.out',
-    }) // Placeholder for GSAP animation
+    gsap.timeline().to(
+      ref.current,
+      {
+        backgroundColor: addAlphaToHex(
+          module.color ?? '#c0c0c0',
+          hover ? 0.2 : 0.08
+        ),
+        scale: hover ? 1.1 : 1,
+        //borderRadius: hover ? '2rem' : '1.5rem',
+        duration: 0.3,
+        ease: 'power1.out',
+      },
+      0
+    )
+    // .to(
+    //   appRef.current,
+    //   {
+    //     width: hover ? '3.3rem' : '3rem',
+    //     height: hover ? '3.3rem' : '3rem',
+    //     duration: 0.3,
+    //     ease: 'power1.out',
+    //   },
+    //   0
+    // )
   }, [hover])
 
   let abbr = ''
@@ -71,7 +87,12 @@ function AppTile({ module, view }: { module: IAppHeaderLink; view: string }) {
       <CenterCol className="relative w-full aspect-square">
         <span ref={ref} className={APP_BG_CLS} />
 
-        <AppIcon appInfo={module} size={3} className="text-lg z-10" />
+        <AppIcon
+          ref={appRef}
+          appInfo={module}
+          size={3}
+          className="text-lg z-10"
+        />
       </CenterCol>
       <span className="text-xs text-center">{module.name}</span>
     </BaseLink>

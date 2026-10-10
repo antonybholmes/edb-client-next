@@ -415,7 +415,7 @@ function VennPage() {
 
       <HeaderSlotPortal slot="header-center">
         <ToggleGroup
-          className="text-xs"
+          className="text-xs bg-muted/50 p-0.5 rounded-full"
           value={[settings.view.tab]}
           onValueChange={(v) => {
             updateSettings(
@@ -424,9 +424,9 @@ function VennPage() {
               })
             )
           }}
-          rounded="lg"
-          //variant="flat"
-          size="lg"
+          rounded="full"
+          variant="flat"
+          size="sm"
         >
           <GroupToggle value="circles" className="w-18">
             Circles
