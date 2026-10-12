@@ -63,7 +63,7 @@ export function ModuleButtonLink({
 
   return (
     <BaseLink
-      className={cn('flex flex-col aspect-square', className)}
+      className={cn('flex flex-col aspect-10/9', className)}
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       {...props}
@@ -107,7 +107,7 @@ export function HeaderLinks({
             }
             title={module.description}
           >
-            <AppIcon appInfo={module} size={2} />
+            <AppIcon appInfo={module} size={2.4} />
             <p className="text-[0.7rem] text-center truncate">{module.name}</p>
           </ModuleButtonLink>
         </li>
