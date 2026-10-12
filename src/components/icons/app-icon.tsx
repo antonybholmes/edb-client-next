@@ -8,7 +8,7 @@ import { capitalCase } from '@/lib/text/capital-case'
 import type { IAppHeaderLink } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
 import gsap from 'gsap'
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { CSSProperties, Ref, useEffect, useMemo, useRef, useState } from 'react'
 import { CenterCol } from '../layout/center-col'
 import { CenterRow } from '../layout/center-row'
 import { BaseLink } from '../link/base-link'
@@ -39,17 +39,16 @@ export function AppTile({
 
       className={APP_CLS}
     >
-      <AppIcon appInfo={module} size={size} className="z-20" />
+      <AppAnimatedIcon appInfo={module} size={size} className="z-20" />
 
       <span className="text-xs text-center">{module.name}</span>
     </BaseLink>
   )
 }
 
-export function AppIcon({
+export function AppAnimatedIcon({
   appInfo,
   size = 2,
-
   className,
 }: IDivProps & {
   size?: number
@@ -101,7 +100,10 @@ export function AppIcon({
   }, [appInfo])
 
   return (
-    <CenterCol
+    <AppIcon
+      ref={intRef}
+      appInfo={appInfo}
+      size={size}
       className="relative w-full aspect-square"
       onPointerEnter={() => {
         setHover(true)
@@ -121,8 +123,42 @@ export function AppIcon({
         className={cn(APP_BG_CLS, 'z-0')}
         style={{ width: `${size + 1.5}rem`, height: `${size + 1.5}rem` }}
       />
+    </AppIcon>
+  )
+}
+
+export function AppIcon({
+  ref,
+  appInfo,
+  size = 2,
+  className,
+  children,
+  ...props
+}: Omit<IDivProps, 'ref'> & {
+  ref?: Ref<HTMLSpanElement>
+  size?: number
+  appInfo: IAppInfo | IAppHeaderLink
+}) {
+  const abbr = useMemo(() => {
+    if (appInfo.abbr) {
+      return capitalCase(appInfo.abbr)
+    } else {
+      const words = appInfo.name.split(' ')
+      return `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
+    }
+  }, [appInfo])
+
+  return (
+    <CenterCol
+      {...props}
+      style={{
+        width: `${size}rem`,
+        height: `${size}rem`,
+      }}
+      className={cn('relative w-full aspect-square', className)}
+    >
       <span
-        ref={intRef}
+        ref={ref}
         className={cn(APP_BG_CLS, 'app-icon z-10')}
 
         style={
@@ -134,12 +170,14 @@ export function AppIcon({
         }
       />
 
-      <CenterRow className={cn('relative z-20', className)}>
+      <CenterRow className="relative z-20">
         <span className="font-light text-white/90">
           {abbr[0]!.toUpperCase()}
         </span>
         <span className="font-semibold text-white/90">{abbr.slice(1)}</span>
       </CenterRow>
+
+      {children}
     </CenterCol>
   )
 }
