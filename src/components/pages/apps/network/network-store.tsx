@@ -250,7 +250,7 @@ export function dataframesToNetwork(
 
   const idNodeMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
 
-  return {
+  const network = {
     network: {
       id: makeUuid(),
       name: 'Network',
@@ -261,6 +261,10 @@ export function dataframesToNetwork(
     nodeDataTypes: colNames,
     groups: uniqueGroups,
   }
+
+  console.log(network)
+
+  return network
 }
 
 export interface INetworkStore {
