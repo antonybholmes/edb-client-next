@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added dataframe created by copilot. might integrate some designs into anndataframe.
 - AppIcon now has separate animated version.
 - Standardized collapse icon. Venn settings now supports collapse.
 - Venn view toggle now in header to save vertical space.
