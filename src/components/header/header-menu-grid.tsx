@@ -194,7 +194,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
   const [open, setOpen] = useState(false)
   const { settings } = useEdbSettings()
   //const windowSize = useWindowSize()
-  const width = `${5 * 5.5}rem`
+  const width = `${5 * 5.25}rem`
   const [search, setSearch] = useState('')
 
   const searchRef = useRef<HTMLDivElement>(null)

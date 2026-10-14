@@ -3353,6 +3353,10 @@
         {
           "msg": "v2 now called baseui",
           "date": "2026-10-14T13:33:59.714Z"
+        },
+        {
+          "msg": "Refined app icons. Simplifying network dialog",
+          "date": "2026-10-14T13:58:29.871Z"
         }
       ]
     },

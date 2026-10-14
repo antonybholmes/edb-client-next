@@ -1,14 +1,14 @@
 'use client'
 
+import { useUpdateEffect } from '@/hooks/update-effect'
 import type { IDivProps } from '@/interfaces/div-props'
 import type { IAppInfo } from '@/lib/app-info'
-import { addAlphaToHex } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import { capitalCase } from '@/lib/text/capital-case'
 import type { IAppHeaderLink } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
 import gsap from 'gsap'
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { CSSProperties, useMemo, useRef, useState } from 'react'
 import { CenterCol } from '../layout/center-col'
 import { CenterRow } from '../layout/center-row'
 import { BaseLink } from '../link/base-link'
@@ -22,7 +22,7 @@ const APP_CLS = cn(
 
 const APP_BG_CLS = cn(
   'pointer-events-none absolute rounded-full aspect-square shrink-0 grow-0',
-  'origin-center top-1/2 left-1/2 -translate-1/2'
+  'origin-center top-1/2 left-1/2 -translate-1/2 '
 )
 
 export function AppTile({
@@ -39,14 +39,14 @@ export function AppTile({
 
       className={APP_CLS}
     >
-      <AppAnimatedIcon appInfo={module} size={size} />
+      <AppIcon appInfo={module} size={size} animate={true} />
 
       <span className="text-xs text-center">{module.name}</span>
     </BaseLink>
   )
 }
 
-export function AppAnimatedIcon({
+export function AnimatedAppIcon({
   appInfo,
   size = 2,
 }: IDivProps & {
@@ -56,9 +56,9 @@ export function AppAnimatedIcon({
   const ref = useRef<HTMLSpanElement>(null)
 
   const [hover, setHover] = useState(false)
-  useEffect(() => {
+
+  useUpdateEffect(() => {
     gsap.to(ref.current, {
-      backgroundColor: appInfo.color,
       opacity: hover ? 0.2 : 0.1,
       scale: hover ? 1.2 : 1,
       //borderRadius: hover ? '2rem' : '1.5rem',
@@ -72,12 +72,17 @@ export function AppAnimatedIcon({
       setHover={setHover}
       appInfo={appInfo}
       size={size}
+      animate={true}
       className="relative w-full aspect-square"
     >
       <span
         ref={ref}
-        className={cn(APP_BG_CLS, 'z-0')}
-        style={{ width: `${size + 1.2}rem`, height: `${size + 1.2}rem` }}
+        className={cn(APP_BG_CLS, 'z-0 opacity-10')}
+        style={{
+          width: `${size + 1.2}rem`,
+          height: `${size + 1.2}rem`,
+          backgroundColor: appInfo.color,
+        }}
       />
     </AppIcon>
   )
@@ -87,6 +92,7 @@ export function AppIcon({
   appInfo,
   size = 2,
   setHover,
+  animate = false,
   className,
   children,
   ...props
@@ -94,23 +100,43 @@ export function AppIcon({
   size?: number
   appInfo: IAppInfo | IAppHeaderLink
   setHover?: (hover: boolean) => void
+  animate?: boolean
 }) {
   const [hover, _setHover] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
+  const bgRef = useRef<HTMLSpanElement>(null)
 
-  useEffect(() => {
-    gsap.to(ref.current, {
-      backgroundColor: addAlphaToHex(
-        appInfo.color ?? '#c0c0c0',
-        hover ? 0.2 : 0.1
-      ),
-      opacity: hover ? 1 : 0.8,
-      scale: hover ? 1.1 : 1,
-      //borderRadius: hover ? '2rem' : '1.5rem',
-      duration: 0.5,
-      ease: 'power1.out',
-    })
-  }, [hover])
+  useUpdateEffect(() => {
+    if (!animate) {
+      return
+    }
+
+    gsap
+      .timeline()
+
+      .to(
+        bgRef.current,
+        {
+          opacity: hover ? 0.2 : 0.1,
+          scale: hover ? 1.2 : 1,
+          //borderRadius: hover ? '2rem' : '1.5rem',
+          duration: 0.8,
+          ease: 'back.out',
+        },
+        0
+      )
+      .to(
+        ref.current,
+        {
+          opacity: hover ? 1 : 0.7,
+          scale: hover ? 1.1 : 1,
+          //borderRadius: hover ? '2rem' : '1.5rem',
+          duration: 0.5,
+          ease: 'power1.out',
+        },
+        0
+      )
+  }, [hover, animate])
 
   const abbr = useMemo(() => {
     if (appInfo.abbr) {
@@ -149,8 +175,18 @@ export function AppIcon({
       }}
     >
       <span
+        ref={bgRef}
+        className={cn(APP_BG_CLS, 'z-0 opacity-10')}
+        style={{
+          width: `${size + 1}rem`,
+          height: `${size + 1}rem`,
+          backgroundColor: appInfo.color,
+        }}
+      />
+
+      <span
         ref={ref}
-        className={cn(APP_BG_CLS, 'app-icon z-10')}
+        className={cn(APP_BG_CLS, 'app-icon opacity-70 z-10')}
 
         style={
           {

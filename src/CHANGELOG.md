@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined app icons. Simplifying network dialog.
 - v2 now called baseui.
 
 
