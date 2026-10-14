@@ -3,7 +3,7 @@ import { textJoin } from '@/lib/text/text'
 import { useEffect } from 'react'
 import { IGseaBubble, useGsea } from '../gsea-store'
 import { useGseaBubbleContext } from './gsea-bubble-provider'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from './gsea-bubble-settings'
 import { GseaBubblePlotsSvg } from './svg/gsea-bubble-plots-svg'
 
 export function GseaBubbleTabPanel() {

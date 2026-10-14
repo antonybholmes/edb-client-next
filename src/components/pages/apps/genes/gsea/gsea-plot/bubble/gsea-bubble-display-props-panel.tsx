@@ -38,7 +38,7 @@ import {
   MODE_ITEMS,
   SortBy,
   useGseaBubbleSettings,
-} from './gsea-bubble-settings-store'
+} from './gsea-bubble-settings'
 
 const TABS = ['plot', 'style', 'statistics', 'bubbles', 'size']
 

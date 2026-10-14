@@ -31,7 +31,7 @@ import { produce } from 'immer'
 import {
   SortBy,
   useGseaBubbleSettings,
-} from '../../gsea-plot/bubble/gsea-bubble-settings-store'
+} from '../../gsea-plot/bubble/gsea-bubble-settings'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
 
 export function HomeToolbar() {

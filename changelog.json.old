@@ -3361,6 +3361,10 @@
         {
           "msg": "network edge no longer restricted by min. Edges now support dashed array",
           "date": "2026-10-14T16:51:04.241Z"
+        },
+        {
+          "msg": "Make more readonly arrays to strengthen api design",
+          "date": "2026-10-14T21:43:05.164Z"
         }
       ]
     },

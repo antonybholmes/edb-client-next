@@ -17,7 +17,7 @@ import {
   MODE_ITEMS,
   SortBy,
   useGseaBubbleSettings,
-} from '../bubble/gsea-bubble-settings-store'
+} from '../bubble/gsea-bubble-settings'
 
 export function BubbleToolbar() {
   const { settings, updateSettings } = useGseaBubbleSettings()

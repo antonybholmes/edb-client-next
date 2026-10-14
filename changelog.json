@@ -3365,6 +3365,10 @@
         {
           "msg": "Make more readonly arrays to strengthen api design",
           "date": "2026-10-14T21:43:05.164Z"
+        },
+        {
+          "msg": "Adding support for split groups to gsea bubble",
+          "date": "2026-10-14T23:11:53.074Z"
         }
       ]
     },

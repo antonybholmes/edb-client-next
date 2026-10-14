@@ -2,12 +2,13 @@
 
 import { range, rangeMap } from '@/lib/math/range'
 
-import type { Index, IndexFromType, Shape } from '.'
+import { ExcelIndex, Index, type IndexFromType, type Shape } from '.'
 
 import { cellStr } from './cell'
 
 import { makeUuid } from '../id'
 import { whereMatches, whereStartsWith, whereStrExact } from '../math/where'
+import { Annotations } from './annotations'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
 
@@ -41,12 +42,18 @@ export abstract class BaseDataFrame {
   protected _name: string
   private _id: string
   private _shape: Shape
+  private _indexAnn: Annotations
+  private _colAnn: Annotations
 
   constructor(shape: Shape, opts: { name?: string } = {}) {
     const { name } = opts
     this._id = makeUuid()
     this._name = name
     this._shape = shape
+    this._indexAnn = new Annotations(shape[0])
+    this._colAnn = new Annotations(shape[1], {
+      indexCreator: () => new ExcelIndex(),
+    })
   }
 
   get id(): string {
@@ -142,22 +149,26 @@ export abstract class BaseDataFrame {
   //   return this
   // }
 
-  abstract get index(): Index
+  get index(): Index {
+    return this._indexAnn.get('index')
+  }
 
   rowName(index: number): string {
-    return cellStr(this.index.get(index))
+    return cellStr(this.index.at(index))
   }
 
   get rowNames(): readonly string[] {
     return rangeMap((c) => this.rowName(c), 0, this.shape[0])
   }
 
-  //abstract get columns(): Index
-
   abstract get cols(): readonly BaseSeries[]
 
+  get colIndex(): Index {
+    return this._colAnn.get('index')
+  }
+
   colName(index: number): string {
-    return this.columns[index] ?? ''
+    return this.colIndex.str(index) ?? ''
   }
 
   /**

@@ -57,7 +57,7 @@ export abstract class InfIndex extends Index {
     this._length = length
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return index
   }
 
@@ -67,7 +67,7 @@ export abstract class InfIndex extends Index {
 
   override filter(idx: number[]): Index {
     return new DataIndex(
-      idx.map((i) => this.get(i)),
+      idx.map((i) => this.at(i)),
       { name: this._name }
     )
   }
@@ -96,7 +96,7 @@ export class NumInfIndex extends InfIndex {
     return index + 1
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return this.num(index)
   }
 
@@ -129,7 +129,7 @@ export class DataIndex extends Index {
     return [...this._data]
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return this._data[index] ?? NaN
   }
 
@@ -238,7 +238,7 @@ export class ExcelIndex extends InfIndex {
     return range(this.length).map((i) => getExcelColName(i))
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return getExcelColName(index)
   }
 

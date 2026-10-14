@@ -1,4 +1,4 @@
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 
 import { AxisBottomSvg } from '../../../../../../../plot/axes/svg-axis'
 
@@ -19,7 +19,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { SvgG } from '@/components/plot/svg-g'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import gsap from 'gsap'
-import { IGseaBubble } from '../../gsea-store'
+import { IGseaBubble, IGseaTableResult } from '../../gsea-store'
 import { IBubblePoint } from '../gsea-bubble-provider'
 
 export interface IPlotInfo {
@@ -148,6 +148,7 @@ function Node({
   point,
   xi,
   plotInfo,
+
   plotPos,
 }: {
   x1: number
@@ -155,6 +156,7 @@ function Node({
   point: IBubblePoint
   xi: number
   plotInfo: IPlotInfo
+
   plotPos: IPos
 }) {
   const ref = useRef<SVGCircleElement>(null)
@@ -180,7 +182,7 @@ function Node({
   }, [hover])
 
   const handleVariantEnter = useCallback(
-    (plot: IGseaBubble, row: number, p: IPos) => {
+    (plot: IGseaBubble, geneset: IGseaTableResult, row: number, p: IPos) => {
       const { relativeP, screenP } = svgPointToScreen(svgRef.current, p)
 
       showCrosshair({
@@ -188,10 +190,10 @@ function Node({
         screenPos: screenP,
         content: (
           <>
-            <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
-            <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
-            <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
-            <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+            <p className="font-semibold">{`${geneset.name}`}</p>
+            <p>{`${plot.nes.label}: ${geneset.nes.toFixed(2)}`}</p>
+            <p>{`-log10(${plot.log10q.label}): ${geneset.log10q.toFixed(2)}`}</p>
+            <p>{`${plot.size.label}: ${geneset.size}`}</p>
           </>
         ),
       })
@@ -231,7 +233,7 @@ function Node({
       }}
       onPointerEnter={() => {
         setHover(true)
-        handleVariantEnter(plotInfo.plot, xi, {
+        handleVariantEnter(plotInfo.plot, point.geneset, xi, {
           x: x1 + plotPos.x,
           y: y1 + plotPos.y,
         })

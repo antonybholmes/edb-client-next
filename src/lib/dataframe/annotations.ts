@@ -1,3 +1,5 @@
+import { DataIndex, Index, NumInfIndex } from '.'
+import { BaseIndex } from './base-index'
 import { cellStr } from './cell'
 import { SeriesData } from './series-data'
 
@@ -8,10 +10,13 @@ import { SeriesData } from './series-data'
 export class Annotations {
   private _size: number
   private _fields: string[] = []
-  private _fieldMap = new Map<string, SeriesData[]>()
+  private _fieldMap = new Map<string, Index>()
+  private _indexCreator: () => Index
 
-  constructor(size: number) {
+  constructor(size: number, opts: { indexCreator?: () => Index } = {}) {
+    const { indexCreator = () => new NumInfIndex() } = opts
     this._size = size
+    this._indexCreator = indexCreator
   }
 
   get size(): number {
@@ -26,13 +31,25 @@ export class Annotations {
     return this._fieldMap.has(name)
   }
 
-  get(name: string): readonly SeriesData[] {
-    return this.field(name)
+  _get(name: string): Index {
+    if (!this._fieldMap.has(name)) {
+      this._fieldMap.set(name, this._indexCreator())
+    }
+
+    return this._fieldMap.get(name)!
+  }
+
+  get(name: string): Index {
+    return this._get(name)
+  }
+
+  values(name: string): readonly SeriesData[] {
+    return this._get(name).values
   }
 
   /** Returns all annotation values as strings. */
   strs(name: string): readonly string[] {
-    return this.field(name).map((v) => cellStr(v))
+    return this._get(name).values.map((v) => cellStr(v))
   }
 
   /** Adds or replaces an annotation. Missing trailing values are set to `fill`. */
@@ -57,7 +74,7 @@ export class Annotations {
       this._fields.push(name)
     }
 
-    this._fieldMap.set(name, padded)
+    this._fieldMap.set(name, new DataIndex(padded))
   }
 
   delete(name: string): boolean {
@@ -90,12 +107,12 @@ export class Annotations {
   }
 
   at(name: string, i: number): SeriesData {
-    return this.field(name)[i]!
+    return this.field(name).at(i)
   }
 
-  setAt(name: string, i: number, value: SeriesData): void {
-    this.field(name)[i] = value
-  }
+  // setAt(name: string, i: number, value: SeriesData): void {
+  //   this.field(name)[i] = value
+  // }
 
   /** All annotation values for a single position. */
   record(i: number): Record<string, SeriesData> {
@@ -108,32 +125,32 @@ export class Annotations {
     return ret
   }
 
-  insert(at: number, fill: SeriesData = ''): void {
-    for (const values of this._fieldMap.values()) {
-      values.splice(at, 0, fill)
-    }
+  // insert(at: number, fill: SeriesData = ''): void {
+  //   for (const values of this._fieldMap.values()) {
+  //     values.splice(at, 0, fill)
+  //   }
 
-    ++this._size
-  }
+  //   ++this._size
+  // }
 
-  remove(at: number): void {
-    for (const values of this._fieldMap.values()) {
-      values.splice(at, 1)
-    }
+  // remove(at: number): void {
+  //   for (const values of this._fieldMap.values()) {
+  //     values.splice(at, 1)
+  //   }
 
-    --this._size
-  }
+  //   --this._size
+  // }
 
   /** Appends `n` empty positions. */
-  extend(n: number, fill: SeriesData = ''): void {
-    for (const values of this._fieldMap.values()) {
-      for (let i = 0; i < n; ++i) {
-        values.push(fill)
-      }
-    }
+  // extend(n: number, fill: SeriesData = ''): void {
+  //   for (const values of this._fieldMap.values()) {
+  //     for (let i = 0; i < n; ++i) {
+  //       values.push(fill)
+  //     }
+  //   }
 
-    this._size += n
-  }
+  //   this._size += n
+  // }
 
   /**
    * New annotations containing only the given positions, in order.
@@ -141,17 +158,14 @@ export class Annotations {
   take(indices: readonly number[]): Annotations {
     const ret = new Annotations(indices.length)
 
-    for (const [name, values] of this._fieldMap) {
-      ret._fieldMap.set(
-        name,
-        indices.map((i) => values[i]!)
-      )
+    for (const [name, index] of this._fieldMap) {
+      ret._fieldMap.set(name, new DataIndex(indices.map((i) => index.at(i))))
     }
 
     return ret
   }
 
-  private field(name: string): SeriesData[] {
+  private field(name: string): BaseIndex {
     if (!this._fieldMap.has(name)) {
       throw new Error(`annotation "${name}" not found`)
     }

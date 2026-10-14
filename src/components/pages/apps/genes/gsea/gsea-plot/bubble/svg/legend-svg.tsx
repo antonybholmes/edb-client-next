@@ -1,4 +1,4 @@
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'

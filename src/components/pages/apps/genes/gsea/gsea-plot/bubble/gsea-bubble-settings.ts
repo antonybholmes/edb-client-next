@@ -16,7 +16,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v28`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v30`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
@@ -40,6 +40,11 @@ export interface IGseaBubbleSettings {
   size: {
     label: string
     maxSize: number
+  }
+  groups: {
+    split: {
+      on: boolean
+    }
   }
   phenotypes: {
     merge: boolean
@@ -89,7 +94,6 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   axes: {
     x: {
       name: 'Log2 fold change',
-
       domain: [-2, 2],
       length: 300,
       ticks: [],
@@ -102,7 +106,11 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
       rowHeight: 24,
     },
   },
-
+  groups: {
+    split: {
+      on: false,
+    },
+  },
   scale: {
     mode: 'p',
     p: { range: [0, 10] },

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 
@@ -80,7 +80,10 @@ export function GseaBubblePlotsContent() {
     // inner height is determined by the size of the largest bubble plot
     const innerPlotHeight =
       settings.axes.y.rowHeight *
-      (Math.max(...plots.map((p) => p.genesets.length)) + 1)
+      (Math.max(
+        ...plots.map((p) => p.groups.flatMap((gr) => gr.genesets).length)
+      ) +
+        1)
 
     const innerPlotWidth = settings.axes.x.length
 

@@ -48,7 +48,7 @@ export function getStrCol(df: BaseDataFrame, col = 0): string[] {
 }
 
 export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
-  return df.cols.map((col) => cellNum(col.get(row)))
+  return df.cols.map((col) => cellNum(col.at(row)))
 }
 
 /**

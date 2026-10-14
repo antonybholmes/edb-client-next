@@ -144,7 +144,7 @@ export class DataFrame extends BaseDataFrame {
     const v = this._data.map((row) => row[idx]!) //this.colValues(idx)
 
     return new DataSeries(v, {
-      name: this._columns.get(idx) as string,
+      name: this._columns.at(idx) as string,
       index: this._index,
     })
   }
@@ -296,7 +296,7 @@ export class DataFrame extends BaseDataFrame {
         new DataSeries(
           this._data.map((row) => row[c]!),
           {
-            name: this._columns.get(c) as string,
+            name: this._columns.at(c) as string,
           }
         )
     )

@@ -12,7 +12,7 @@ export abstract class BaseIndex {
    * Returns the value at a given position in the index.
    * @param index
    */
-  abstract get(index: number): SeriesData
+  abstract at(index: number): SeriesData
 
   map<T>(f: IndexMapFunc<T>): T[] {
     return _map(this, f)
@@ -46,7 +46,7 @@ export abstract class BaseIndex {
    * @returns
    */
   str(index: number): string {
-    return cellStr(this.get(index))
+    return cellStr(this.at(index))
   }
 
   /**
@@ -56,7 +56,7 @@ export abstract class BaseIndex {
    * @returns
    */
   num(index: number): number {
-    return cellNum(this.get(index))
+    return cellNum(this.at(index))
   }
 
   /**
