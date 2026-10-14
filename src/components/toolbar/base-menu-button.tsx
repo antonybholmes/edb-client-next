@@ -1,5 +1,5 @@
 import { cn } from '@/lib/shadcn-utils'
-import { Button, type IButtonProps } from '@/themed/v2/button'
+import { Button, type IButtonProps } from '@/themed/baseui/button'
 
 import { Children } from 'react'
 

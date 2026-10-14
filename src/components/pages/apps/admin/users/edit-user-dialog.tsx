@@ -1,6 +1,6 @@
 import type { IEdbUser, INewUser, IRBACGroup } from '@/components/edb/edb'
 import { FormInputError } from '@/components/input-error'
-import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
+import { Form, FormField } from '@/components/shadcn/ui/themed/baseui/form'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
@@ -12,8 +12,8 @@ import {
   TEXT_USERNAME_DESCRIPTION,
   USERNAME_PATTERN,
 } from '@/layouts/signin-layout'
-import { Input } from '@/themed/v2/input'
-import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
+import { Input } from '@/themed/baseui/input'
+import { GroupToggle, ToggleGroup } from '@/themed/baseui/toggle-group'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'

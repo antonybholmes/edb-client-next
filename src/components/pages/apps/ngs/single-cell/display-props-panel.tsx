@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 import { useState } from 'react'
 
 import { TEXT_OK, TEXT_RESET } from '@/consts'
@@ -21,14 +21,14 @@ import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
+import { NumericalInput } from '@/themed/numerical-input'
 import { usePlotGrid } from './plot-grid-store'
 import { useSingleCellSettings } from './single-cell-settings'
 

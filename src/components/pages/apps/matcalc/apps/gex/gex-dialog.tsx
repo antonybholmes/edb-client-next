@@ -9,7 +9,7 @@ import { bearerHeaders } from '@/lib/http/urls'
 import { TEXT_NA, TEXT_OK, TIME_5_MINUTES_MS } from '@/consts'
 import { BaseCol } from '@/layout/base-col'
 import { DEFAULT_PALETTE } from '@/lib/color/palette'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import {
   makeNewGroup,
@@ -38,7 +38,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { appsConfig } from '@/config/apps'
 import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'

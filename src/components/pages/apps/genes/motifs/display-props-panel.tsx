@@ -5,19 +5,19 @@ import { PropRow } from '@/dialogs/prop-row'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
-import { LinkButton } from '@/themed/link-button'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
+import { LinkButton } from '@/themed/link-button'
+import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { FillDropdownMenu } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { DNABase } from '@/lib/genomic/dna'
 import { produce } from 'immer'

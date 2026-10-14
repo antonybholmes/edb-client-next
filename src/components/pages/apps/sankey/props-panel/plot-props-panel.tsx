@@ -4,17 +4,20 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'

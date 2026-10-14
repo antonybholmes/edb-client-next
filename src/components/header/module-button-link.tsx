@@ -1,7 +1,7 @@
 import { ButtonLink } from '@/components/link/button-link'
 import { type ILinkProps } from '@/interfaces/link-props'
 import { cn } from '@/lib/shadcn-utils'
-import { BASE_FLAT_BUTTON_CLS } from '../shadcn/ui/themed/v2/button'
+import { BASE_FLAT_BUTTON_CLS } from '../shadcn/ui/themed/baseui/button'
 
 export function ModuleButtonLink({
   className,

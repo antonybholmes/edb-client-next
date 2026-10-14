@@ -1,13 +1,13 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import { IS_DEV_MODE, TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { getColNamesFromGroup } from '@/lib/dataframe/dataframe-utils'
-import { Checkbox } from '@/themed/v2/check-box'
-import { Input } from '@/themed/v2/input'
+import { Checkbox } from '@/themed/baseui/check-box'
+import { Input } from '@/themed/baseui/input'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 
@@ -17,7 +17,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 

@@ -8,8 +8,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
@@ -20,7 +20,7 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { Circle, Square } from 'lucide-react'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { IHeatMapPlot } from '../../../history/history-provider/history-types'

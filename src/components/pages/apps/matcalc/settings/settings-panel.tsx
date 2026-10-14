@@ -8,7 +8,7 @@ import { TextPropRow } from '@/dialogs/text-prop-row'
 import { TextareaPropRow } from '@/dialogs/textarea-prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import { isStringArray, splitOnCapitalLetters } from '@/lib/text/text'
-import { Accordion } from '@/themed/v2/accordion'
+import { Accordion } from '@/themed/baseui/accordion'
 import { produce } from 'immer'
 import { useMatcalcSettings } from './matcalc-settings'
 
@@ -19,13 +19,13 @@ export function SettingsPanel() {
     (({ ...rest }) => rest)(settings)
   ).sort() as (keyof typeof settings)[]
 
-  const friendlyAppNames = appKeys.map(k =>
+  const friendlyAppNames = appKeys.map((k) =>
     capitalCase(splitOnCapitalLetters(k))
   )
 
   return (
     <Accordion
-      defaultValue={friendlyAppNames.map(n => getAccordionId(n))}
+      defaultValue={friendlyAppNames.map((n) => getAccordionId(n))}
       multiple={true}
       variant="settings"
     >
@@ -38,7 +38,7 @@ export function SettingsPanel() {
           appSettings
         ).sort() as (keyof typeof appSettings)[]
 
-        const friendlySettingsNames = settingKeys.map(k =>
+        const friendlySettingsNames = settingKeys.map((k) =>
           capitalCase(splitOnCapitalLetters(k))
         )
 
@@ -55,8 +55,8 @@ export function SettingsPanel() {
                     key={settingName}
                     title={settingName}
                     value={setting}
-                    onTextChange={v => {
-                      const newOptions = produce(settings, draft => {
+                    onTextChange={(v) => {
+                      const newOptions = produce(settings, (draft) => {
                         // the compiler refuses to get the correct type so we have to
                         // force it to behave
                         draft[appKey][settingKey] = v as never
@@ -74,8 +74,8 @@ export function SettingsPanel() {
                     key={settingName}
                     title={settingName}
                     value={setting}
-                    onNumChange={v => {
-                      const newOptions = produce(settings, draft => {
+                    onNumChange={(v) => {
+                      const newOptions = produce(settings, (draft) => {
                         // the compiler refuses to get the correct type so we have to
                         // force it to behave
                         draft[appKey][settingKey] = v as never
@@ -91,8 +91,8 @@ export function SettingsPanel() {
                     key={settingName}
                     title={settingName}
                     checked={setting}
-                    onCheckedChange={v => {
-                      const newOptions = produce(settings, draft => {
+                    onCheckedChange={(v) => {
+                      const newOptions = produce(settings, (draft) => {
                         // the compiler refuses to get the correct type so we have to
                         // force it to behave
                         draft[appKey][settingKey] = v as never
@@ -108,8 +108,8 @@ export function SettingsPanel() {
                     key={settingName}
                     title={settingName}
                     lines={setting}
-                    onLinesChange={v => {
-                      const newOptions = produce(settings, draft => {
+                    onLinesChange={(v) => {
+                      const newOptions = produce(settings, (draft) => {
                         // the compiler refuses to get the correct type so we have to
                         // force it to behave
                         draft[appKey][settingKey] = v as never

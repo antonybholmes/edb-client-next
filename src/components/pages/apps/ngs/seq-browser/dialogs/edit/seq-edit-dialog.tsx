@@ -3,15 +3,18 @@ import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { Label, LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import {
+  Label,
+  LabelContainer,
+} from '@/components/shadcn/ui/themed/baseui/label'
 import { TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { BaseCol } from '@/layout/base-col'
+import { Input } from '@/themed/baseui/input'
 import { NumericalInput } from '@/themed/numerical-input'
-import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import type {

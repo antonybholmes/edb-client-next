@@ -12,7 +12,7 @@ import {
   Input,
   inputVariants,
   type IInputProps,
-} from './shadcn/ui/themed/v2/input'
+} from './shadcn/ui/themed/baseui/input'
 
 const BUTTON_CLS = cn(
   CENTERED_ROW_CLS,

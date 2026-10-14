@@ -1,16 +1,16 @@
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { TEXT_BORDER, TEXT_HEIGHT, TEXT_SHOW } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 

@@ -2,8 +2,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import type { IClusterFrame } from '@/lib/math/hcluster'
 import { produce } from 'immer'
 

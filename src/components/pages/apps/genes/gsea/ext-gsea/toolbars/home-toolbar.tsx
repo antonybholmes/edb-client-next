@@ -15,7 +15,10 @@ import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'

@@ -2,7 +2,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectList,
-} from '@/components/shadcn/ui/themed/v2/select'
+} from '@/components/shadcn/ui/themed/baseui/select'
 
 import { useLollipopStore } from './lollipop-store'
 

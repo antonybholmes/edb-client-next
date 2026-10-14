@@ -1,6 +1,9 @@
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'

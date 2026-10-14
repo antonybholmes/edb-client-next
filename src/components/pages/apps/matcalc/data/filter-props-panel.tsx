@@ -22,9 +22,9 @@ import { useSearchFilters } from '@/stores/search-filter-store'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { UploadIcon } from '@/components/icons/upload-icon'
+import { Button } from '@/themed/baseui/button'
+import { Checkbox } from '@/themed/baseui/check-box'
 import { Textarea } from '@/themed/textarea'
-import { Button } from '@/themed/v2/button'
-import { Checkbox } from '@/themed/v2/check-box'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useMemo, useState } from 'react'
 

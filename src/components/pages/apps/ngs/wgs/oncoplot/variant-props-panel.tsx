@@ -6,8 +6,8 @@ import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { downloadJson } from '@/lib/download-utils'
 import { makeUuid } from '@/lib/id'
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 
 import {
   DRAG_HANDLE_APPEAR_CLS,

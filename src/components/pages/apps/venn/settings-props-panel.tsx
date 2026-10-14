@@ -1,7 +1,7 @@
 'use client'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { HeatmapPropsPanel } from '../matcalc/apps/heatmap/props-panel/heatmap-props-panel'
 import { VennSettingsPropsPanel } from './venn-settings-props-panel'
 

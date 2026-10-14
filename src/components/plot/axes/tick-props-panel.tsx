@@ -3,7 +3,7 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { produce } from 'immer'
 
 export function TickPropsPanel() {

@@ -9,7 +9,7 @@ import {
   dropdownContentVariants,
   DropdownMenuItemContent,
   dropdownMenuItemVariants,
-} from '../v2/dropdown-menu'
+} from '../baseui/dropdown-menu'
 
 export function ContextMenu({
   ...props

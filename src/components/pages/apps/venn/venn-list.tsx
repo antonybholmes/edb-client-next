@@ -6,8 +6,8 @@ import { VCenterRow } from '@/layout/v-center-row'
 
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 
 import { TEXT_CLEAR } from '@/consts'
 

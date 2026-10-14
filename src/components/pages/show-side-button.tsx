@@ -6,7 +6,7 @@ import {
 import { cn } from '@/lib/shadcn-utils'
 import { IconButton } from '@/themed/icon-button'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
-import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
+import type { IButtonProps } from '../shadcn/ui/themed/baseui/button'
 
 /**
  * Standardized button for showing a side menu consisting of a simple

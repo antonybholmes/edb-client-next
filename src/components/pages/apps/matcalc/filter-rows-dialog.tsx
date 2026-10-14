@@ -3,8 +3,8 @@ import {
   ActionDialogCardContent,
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
@@ -18,7 +18,7 @@ import {
   stdevFilter,
   xInY,
 } from '@/lib/dataframe/dataframe-utils'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { Blend, ListFilterPlus } from 'lucide-react'
 import {
   RefObject,

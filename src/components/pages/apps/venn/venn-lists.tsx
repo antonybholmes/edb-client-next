@@ -3,13 +3,13 @@
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { PropsPanel } from '@/components/props-panel'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/components/shadcn/ui/themed/v2/accordion'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { CollapseIcon } from '@/components/icons/collapse-icon'

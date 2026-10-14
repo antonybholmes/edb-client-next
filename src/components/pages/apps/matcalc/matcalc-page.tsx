@@ -14,7 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   DOCS_URL,
   TEXT_DOWNLOAD_AS_CSV,
@@ -43,7 +43,7 @@ import { OpenIcon } from '@/icons/open-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import { ShowSideButton } from '@/components/pages/show-side-button'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { type ITab } from '@/components/tabs/tab-provider'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { textToLines } from '@/lib/text/lines'

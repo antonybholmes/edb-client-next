@@ -2,8 +2,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { ExtTitle } from '@/dialogs/switch-prop-row'

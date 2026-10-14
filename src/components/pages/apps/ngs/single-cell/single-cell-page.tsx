@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { type ITab } from '@/components/tabs/tab-provider'
 import {
@@ -44,7 +44,7 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { ShowSideButton } from '../../../show-side-button'
 
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
@@ -63,7 +63,7 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'

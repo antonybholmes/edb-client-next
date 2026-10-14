@@ -11,7 +11,7 @@ import { cn } from '@/lib/shadcn-utils'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { InfoIcon } from '@/components/icons/info-icon'
-import type { IButtonProps } from '@/components/shadcn/ui/themed/v2/button'
+import type { IButtonProps } from '@/components/shadcn/ui/themed/baseui/button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { where } from '@/lib/math/where'
 import { Settings2 } from 'lucide-react'

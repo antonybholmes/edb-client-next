@@ -8,10 +8,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import { TRANS_COLOR_CLS } from '@/theme'
-import { Button, type IButtonProps } from '@/themed/v2/button'
+import { Button, type IButtonProps } from '@/themed/baseui/button'
 
 import { BaseCol } from '../layout/base-col'
 

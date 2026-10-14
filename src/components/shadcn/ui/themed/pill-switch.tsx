@@ -10,8 +10,8 @@ import {
   useState,
   type ComponentRef,
 } from 'react'
-import type { ISwitchProps } from './v2/switch'
-import * as SwitchPrimitives from './v2/switch'
+import type { ISwitchProps } from './baseui/switch'
+import * as SwitchPrimitives from './baseui/switch'
 
 // const THUMB_CLS =
 //   "pointer-events-none block h-4 w-4 rounded-full bg-background ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"

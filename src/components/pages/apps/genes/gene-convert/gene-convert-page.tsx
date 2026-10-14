@@ -22,7 +22,7 @@ import {
   TEXT_SAVE_AS,
 } from '@/consts'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
@@ -40,10 +40,10 @@ import { useStableId } from '@/hooks/stable-id'
 import { HeaderButton } from '@/layouts/header-button'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { ClientLayout } from '@/app/client-layout'
 import {
   HistoryLayout,
   HistoryShowButton,

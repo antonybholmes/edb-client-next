@@ -6,7 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import {
   IS_DEV_MODE,
   TEXT_EMAIL,
@@ -29,7 +29,7 @@ import { Auth0SignInButton } from '@/components/pages/account/auth/oauth2/auth0/
 import { CognitoSignInButton } from '@/components/pages/account/auth/oauth2/cognito/cognito-signin-button'
 
 import { SupabaseSignInButton } from '@/components/pages/account/auth/oauth2/supabase/supabase-signin-button'
-import { StrikeThroughMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { StrikeThroughMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { HeaderIconButton } from '@/layouts/header-icon-button'
 import {
   fromBase64Url,
@@ -37,7 +37,7 @@ import {
   REDIRECT_DELAY_MS,
   toBase64Url,
 } from '@/lib/http/urls'
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'

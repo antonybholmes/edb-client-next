@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-import { Tabs, TabsList, TabsTrigger } from '../../../shadcn/ui/themed/v2/tabs'
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '../../../shadcn/ui/themed/baseui/tabs'
 
 import { getTabName } from '../../../tabs/tab-provider'
 
@@ -17,7 +21,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from '../../../shadcn/ui/themed/v2/context-menu'
+} from '../../../shadcn/ui/themed/baseui/context-menu'
 import { BaseSortableItem, SmallDragHandle } from '../../../sortable-item'
 import { UnderlineSpan, type ITabMenu } from '../../../tabs/underline-tabs'
 import {

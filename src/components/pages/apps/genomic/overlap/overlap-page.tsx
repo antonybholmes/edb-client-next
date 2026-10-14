@@ -32,7 +32,7 @@ import {
   TEXT_SAVE_AS,
 } from '@/consts'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { UploadIcon } from '@/icons/upload-icon'
 
@@ -42,6 +42,7 @@ import { DeleteIcon } from '@/icons/delete-icon'
 import { FileIcon } from '@/icons/file-icon'
 import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -53,7 +54,6 @@ import {
   useTabs,
   useToolbarTabs,
 } from '@/components/tabs/tab-provider'
-import { ClientLayout } from '@/app/client-layout'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'

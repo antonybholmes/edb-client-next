@@ -7,7 +7,7 @@ import {
 } from 'react'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
-import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/baseui/tabs'
 
 import { cn } from '@/lib/shadcn-utils'
 import { getTabName, useTabs, type ITab } from './tab-provider'

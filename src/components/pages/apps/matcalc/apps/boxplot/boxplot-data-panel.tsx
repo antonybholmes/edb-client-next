@@ -4,7 +4,7 @@ import {
 } from '@/components/plot/color-picker-popover'
 import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
 import { PropsPanel } from '@/components/props-panel'
-import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { PropRow } from '@/dialogs/prop-row'
@@ -14,7 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   SubAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'

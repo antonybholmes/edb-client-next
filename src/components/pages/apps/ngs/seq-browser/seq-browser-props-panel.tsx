@@ -1,5 +1,5 @@
 import { BaseCol } from '@/components/layout/base-col'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'

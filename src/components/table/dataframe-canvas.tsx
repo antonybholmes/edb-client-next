@@ -2,7 +2,7 @@
 // import { useResizeObserver } from '@/hooks/resize-observer'
 // import { BaseCol } from '@/layout/base-col'
 // import { VCenterRow } from '@/layout/v-center-row'
-// import { Input } from '@/themed/v2/input'
+// import { Input } from '@/themed/baseui/input'
 
 // import { EDGE_SCROLL_ZONE, useScrollOnEdges } from '@/hooks/scroll-on-edges'
 // import { NO_CELL, type ICell } from '@/interfaces/cell'

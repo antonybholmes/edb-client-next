@@ -2,7 +2,7 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { TEXT_CANCEL, TEXT_CLEAR, TEXT_OK } from '@/consts'
 import type { ISelectionRange } from '@/providers/selection-range-provider'
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { colMean, getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
@@ -10,8 +10,8 @@ import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
 
 import { VCenterRow } from '@/layout/v-center-row'
+import { Button } from '@/themed/baseui/button'
 import { Textarea } from '@/themed/textarea'
-import { Button } from '@/themed/v2/button'
 import { useEffect } from 'react'
 
 import {

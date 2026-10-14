@@ -1,7 +1,7 @@
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   RunningIndicator,
   useRunning,
@@ -9,7 +9,7 @@ import {
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'

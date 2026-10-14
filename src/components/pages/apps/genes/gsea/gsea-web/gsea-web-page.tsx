@@ -10,7 +10,7 @@ import {
 
 import { OpenIcon } from '@/icons/open-icon'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { UploadIcon } from '@/icons/upload-icon'
 
@@ -29,7 +29,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'

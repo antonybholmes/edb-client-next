@@ -1,5 +1,12 @@
 # Changelog
 
+## 91.8.0 (Oct, 2026)
+
+### Changed
+
+- v2 now called baseui.
+
+
 ## 91.6.0 (Oct, 2026)
 
 ### Changed

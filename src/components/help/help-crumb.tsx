@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../shadcn/ui/themed/v2/dropdown-menu'
+} from '../shadcn/ui/themed/baseui/dropdown-menu'
 import type { ITopicTree } from './help-tree-node'
 
 export function HelpCrumb({
@@ -52,7 +52,7 @@ export function HelpCrumb({
                     <span>{p}</span>
                   </DropdownMenuItem>
 
-                  {pathChildren[i]!.map(tab => {
+                  {pathChildren[i]!.map((tab) => {
                     const url = `/help/${tab.slug}`
                     return (
                       <DropdownMenuItem

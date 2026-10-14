@@ -7,18 +7,18 @@ import {
   Select,
   SelectContent,
   SelectItem,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
 import { useEffect, useState } from 'react'
 
 // import { Slider } from "../toolbar/slider"
 import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
-import { Slider } from '@/themed/v2/slider'
+import { Slider } from '@/themed/baseui/slider'
 
 import { useDebounceCallback } from '@/hooks/debounce'
 import { findNearest } from '@/lib/search'
 import { ChevronDown, Minus, Plus } from 'lucide-react'
 import { VCenterRow } from '../layout/v-center-row'
-import { Input } from '../shadcn/ui/themed/v2/input'
+import { Input } from '../shadcn/ui/themed/baseui/input'
 import { ToolbarFooterButton } from './toolbar-footer-button'
 import { formatZoom } from './zoom-select-list'
 

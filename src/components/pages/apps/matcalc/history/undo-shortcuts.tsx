@@ -1,6 +1,6 @@
 import { OptionalDropdownButton } from '@/toolbar/optional-dropdown-button'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { Redo2, Undo2 } from 'lucide-react'
 import { useHistory } from './history-provider/history-provider'

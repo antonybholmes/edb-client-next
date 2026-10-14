@@ -1,13 +1,13 @@
 import { PropRow } from '@/components/dialogs/prop-row'
 import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ITEM_REGEX } from '@/consts'
 import { vfill } from '@/lib/fill'

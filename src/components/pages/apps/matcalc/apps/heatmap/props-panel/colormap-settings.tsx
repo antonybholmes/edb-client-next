@@ -1,15 +1,15 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import type { ColorBarPos } from '@/components/plot/svg-props'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
 import {
   RadioGroup,
   SideRadioGroupItem,
-} from '@/components/shadcn/ui/themed/v2/radio-group'
+} from '@/components/shadcn/ui/themed/baseui/radio-group'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { TEXT_BORDER } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
@@ -19,7 +19,7 @@ import { ColorMapMenu } from '../../../color-map-menu'
 
 import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 

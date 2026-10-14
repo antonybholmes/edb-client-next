@@ -6,7 +6,7 @@ import { HistoryProvider } from '@/components/pages/apps/matcalc/history/history
 import {
   StackedToasts,
   Provider as ToastProvider,
-} from '@/components/shadcn/ui/themed/v2/toast'
+} from '@/components/shadcn/ui/themed/baseui/toast'
 import { TabProvider } from '@/components/tabs/tab-provider'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { QCP } from '@/qcp'

@@ -18,13 +18,14 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { cn } from '@/lib/shadcn-utils'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -35,7 +36,6 @@ import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { ClientLayout } from '@/app/client-layout'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import APP_INFO from './manifest.json'

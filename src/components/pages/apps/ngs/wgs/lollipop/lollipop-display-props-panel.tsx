@@ -1,6 +1,6 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 
 import { useState } from 'react'
 
@@ -14,25 +14,25 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PropRow } from '@/dialogs/prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
-import { IconButton } from '@/themed/icon-button'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
-import { Button } from '@/themed/v2/button'
+} from '@/themed/baseui/accordion'
+import { Button } from '@/themed/baseui/button'
+import { IconButton } from '@/themed/icon-button'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { Brush, Palette } from 'lucide-react'
 import { useLollipopSettings } from './lollipop-settings-store'
@@ -44,12 +44,12 @@ import {
 } from './variants'
 
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import {
   ResizablePanel,
   ResizablePanelGroup,
   ThinVResizeHandle,
 } from '@/components/shadcn/ui/themed/resizable'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { ProteinPanel } from './protein-panel'
 

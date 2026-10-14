@@ -8,12 +8,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import { ROUNDED_CLS, TRANS_COLOR_CLS } from '@/theme'
 
 import { BaseCol } from '../layout/base-col'
-import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
+import type { IButtonProps } from '../shadcn/ui/themed/baseui/button'
 import { ToolbarButton } from './toolbar-button'
 import { ToolbarIconButton } from './toolbar-icon-button'
 

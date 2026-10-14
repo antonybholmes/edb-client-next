@@ -1,4 +1,4 @@
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TEXT_DOWNLOAD_AS_PNG, TEXT_DOWNLOAD_AS_SVG } from '@/consts'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SaveIcon } from '@/icons/save-icon'

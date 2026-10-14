@@ -18,7 +18,7 @@ import {
   openFilesDialog,
   pasteTextAsFiles,
 } from '@/components/pages/open-files'
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import {
@@ -63,11 +63,11 @@ import { useOpen } from './use-open'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { usePasteText } from '@/hooks/paste-text'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'

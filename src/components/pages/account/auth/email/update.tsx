@@ -22,13 +22,14 @@ import {
   Form,
   FormField,
   FormItem,
-} from '@/components/shadcn/ui/themed/v2/form'
+} from '@/components/shadcn/ui/themed/baseui/form'
 import { TEXT_CANCEL, TEXT_CONFIRM } from '@/consts'
 
 import { VCenterRow } from '@/layout/v-center-row'
 
+import { ClientLayout } from '@/app/client-layout'
 import { WarningButtonLink } from '@/components/link/warning-button-link'
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import {
   EMAIL_PATTERN,
   FORWARD_DELAY_MS,
@@ -36,12 +37,11 @@ import {
   TEXT_EMAIL_ERROR,
 } from '@/layouts/signin-layout'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { ClientLayout } from '@/app/client-layout'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 import { Toast } from '@base-ui/react/toast'
 import { useForm } from 'react-hook-form'
 

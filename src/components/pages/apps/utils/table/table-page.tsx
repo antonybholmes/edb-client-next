@@ -16,7 +16,7 @@ import {
   TEXT_SAVE_AS,
 } from '@/consts'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import { FileIcon } from '@/icons/file-icon'
 import {

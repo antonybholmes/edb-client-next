@@ -1,6 +1,6 @@
 import { PropsPanel } from '@/components/props-panel'
 import type { IClusterFrame } from '@/lib/math/hcluster'
-import { ScrollAccordion } from '@/themed/v2/accordion'
+import { ScrollAccordion } from '@/themed/baseui/accordion'
 
 import { useState } from 'react'
 

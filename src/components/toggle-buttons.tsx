@@ -6,8 +6,11 @@ import { cn } from '@/lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { BaseCol } from './layout/base-col'
-import { type toggleVariants } from './shadcn/ui/themed/v2/toggle'
-import { GroupToggle, ToggleGroup } from './shadcn/ui/themed/v2/toggle-group'
+import { type toggleVariants } from './shadcn/ui/themed/baseui/toggle'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from './shadcn/ui/themed/baseui/toggle-group'
 import {
   getTabFromValue,
   getTabName,

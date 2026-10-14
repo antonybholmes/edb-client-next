@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { produce } from 'immer'
@@ -33,8 +33,8 @@ export function HubsPropsPanel() {
             <CheckPropRow
               title="Hide tracks"
               checked={settings.hideTracks}
-              onCheckedChange={v => {
-                const newStore = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newStore = produce(settings, (draft) => {
                   draft.hideTracks = v
                 })
 
@@ -44,8 +44,8 @@ export function HubsPropsPanel() {
             <CheckPropRow
               title="Show guidelines"
               checked={settings.showGuidelines}
-              onCheckedChange={v => {
-                const newStore = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newStore = produce(settings, (draft) => {
                   draft.showGuidelines = v
                 })
 

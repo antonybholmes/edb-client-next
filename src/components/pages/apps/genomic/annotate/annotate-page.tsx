@@ -30,7 +30,7 @@ import {
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
@@ -39,9 +39,9 @@ import { httpFetch } from '@/lib/http/http-fetch'
 
 import { textToLines } from '@/lib/text/lines'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { ClientLayout } from '@/app/client-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'

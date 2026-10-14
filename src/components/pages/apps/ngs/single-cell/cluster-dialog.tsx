@@ -9,7 +9,7 @@ import {
   ActionSwitchRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { useEffect, useState } from 'react'
 import { usePlotGrid, type IScrnaCluster } from './plot-grid-store'
 

@@ -15,7 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../shadcn/ui/themed/v2/popover'
+} from '../shadcn/ui/themed/baseui/popover'
 
 import { DOCS_URL } from '@/consts'
 import {
@@ -30,7 +30,7 @@ import { CenterCol } from '../layout/center-col'
 import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
-import { Button } from '../shadcn/ui/themed/v2/button'
+import { Button } from '../shadcn/ui/themed/baseui/button'
 import { VScrollPanel } from '../v-scroll-panel'
 
 import { APP_ICON_CLS, AppIcon } from '../icons/app-icon'

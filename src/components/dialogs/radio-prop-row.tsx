@@ -1,7 +1,10 @@
 import { cn } from '@/lib/shadcn-utils'
 import type { ComponentProps } from 'react'
 import { VCenterRow } from '../layout/v-center-row'
-import { RadioGroup, RadioGroupItem } from '../shadcn/ui/themed/v2/radio-group'
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '../shadcn/ui/themed/baseui/radio-group'
 import { H_CLS } from './prop-row'
 
 export function RadioPropRow({

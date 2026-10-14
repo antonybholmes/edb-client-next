@@ -1,7 +1,7 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 import type { ComponentProps, ReactNode } from 'react'
 import { HCenterCol } from '../layout/h-center-col'
 import { HCenterRow } from '../layout/h-center-row'

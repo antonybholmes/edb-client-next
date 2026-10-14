@@ -1,4 +1,4 @@
-import { type IButtonProps } from '@/themed/v2/button'
+import { type IButtonProps } from '@/themed/baseui/button'
 import { ToolbarButton } from './toolbar-button'
 
 export function ToolbarIconButton({

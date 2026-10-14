@@ -7,12 +7,12 @@ import { IClassProps } from '@/interfaces/class-props'
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 import { FileDropZonePanel, IFileDropProps } from '../../../file-dropzone-panel'
 import { HamburgerIcon } from '../../../icons/hamburger-icon'
-import { IconButton } from '../../../shadcn/ui/themed/icon-button'
 import {
   Select,
   SelectContent,
   SelectItem,
-} from '../../../shadcn/ui/themed/v2/select'
+} from '../../../shadcn/ui/themed/baseui/select'
+import { IconButton } from '../../../shadcn/ui/themed/icon-button'
 import { getTabName } from '../../../tabs/tab-provider'
 import { type ITabMenu } from '../../../tabs/underline-tabs'
 import {

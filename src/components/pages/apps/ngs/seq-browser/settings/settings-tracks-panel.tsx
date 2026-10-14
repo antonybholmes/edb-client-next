@@ -2,15 +2,14 @@ import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { BasicHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { PropRow } from '@/dialogs/prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   Select,
   SelectContent,
@@ -18,7 +17,8 @@ import {
   SelectList,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { Circle, Square } from 'lucide-react'
 import {

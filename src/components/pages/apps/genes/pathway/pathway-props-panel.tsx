@@ -5,16 +5,16 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 import { PropsPanel } from '@/components/props-panel'
 
 //import { toast } from '@/themed/use-toast'
 
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { useEffect, useMemo, useState } from 'react'
 
 import { SelectAll } from '@/components/select-all'

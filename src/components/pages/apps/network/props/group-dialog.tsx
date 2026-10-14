@@ -1,7 +1,7 @@
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { IS_DEV_MODE, TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 
@@ -12,7 +12,7 @@ import {
 } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
 import { IGroup, useNetwork } from '../network-store'
 
 export function GroupDialog({

@@ -1,5 +1,8 @@
-import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import type { ComponentProps } from 'react'
 import { useNetwork } from '../network-store'
 

@@ -17,6 +17,7 @@ import { createPortal } from 'react-dom'
 import { usePanelRef } from 'react-resizable-panels'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { PropsPanel } from '../props-panel'
+import type { IButtonProps } from '../shadcn/ui/themed/baseui/button'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
   ResizablePanel,
@@ -24,7 +25,6 @@ import {
   ThinHResizeHandle,
   ThinVResizeHandle,
 } from '../shadcn/ui/themed/resizable'
-import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 import type { LeftRightPos } from '../side'
 
 import { IDivProps } from '@/interfaces/div-props'

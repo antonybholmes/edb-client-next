@@ -3,13 +3,13 @@
 import { BaseCol } from '@/layout/base-col'
 
 import { PropsPanel } from '@/components/props-panel'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
+import { NumericalInput } from '@/themed/numerical-input'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import { PropRow } from '@/dialogs/prop-row'

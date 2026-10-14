@@ -3,8 +3,8 @@ import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
 import { UndefStr } from '@/lib/text/text'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
-import { Input } from '../shadcn/ui/themed/v2/input'
-import { SelectItem, SelectList } from '../shadcn/ui/themed/v2/select'
+import { Input } from '../shadcn/ui/themed/baseui/input'
+import { SelectItem, SelectList } from '../shadcn/ui/themed/baseui/select'
 import {
   ActionCheckRow,
   ActionDialogCard,

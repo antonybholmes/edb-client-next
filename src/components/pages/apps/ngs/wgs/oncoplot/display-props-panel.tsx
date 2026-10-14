@@ -1,4 +1,4 @@
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { PropsPanel } from '@/components/props-panel'
@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'

@@ -22,6 +22,7 @@ import { PenIcon } from '@/icons/pen-icon'
 import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterRow } from '@/layout/v-center-row'
+import { Button } from '@/themed/baseui/button'
 import {
   Table,
   TableBody,
@@ -30,7 +31,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/themed/table'
-import { Button } from '@/themed/v2/button'
 import {
   createColumnHelper,
   flexRender,

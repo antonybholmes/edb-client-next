@@ -3,13 +3,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { UndefStr } from '@/lib/text/text'
 import { CaseSensitive } from 'lucide-react'
 import { Fragment, type ReactNode } from 'react'
-import { MenuSeparator } from '../../shadcn/ui/themed/v2/dropdown-menu'
+import { MenuSeparator } from '../../shadcn/ui/themed/baseui/dropdown-menu'
 import { ButtonStyle, SIMPLE_BUTTON_CLS } from '../stroke-dropdown-menu'
 import { FontUI } from './font-ui'
 

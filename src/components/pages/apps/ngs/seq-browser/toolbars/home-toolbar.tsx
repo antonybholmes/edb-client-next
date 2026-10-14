@@ -4,12 +4,15 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { ZoomInIcon } from '@/components/icons/zoom-in-icon'
 import { ZoomOutIcon } from '@/components/icons/zoom-out-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { DropdownMenuCheckboxItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { DropdownMenuCheckboxItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarDropdownButton } from '@/components/toolbar/toolbar-dropdown-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'

@@ -4,6 +4,7 @@ import { useNetworkSettings } from '../network-settings'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
   ResizablePanel,
@@ -11,7 +12,6 @@ import {
   ThinVResizeHandle,
 } from '@/components/shadcn/ui/themed/resizable'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
-import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { move } from '@dnd-kit/helpers'

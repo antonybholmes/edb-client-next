@@ -6,7 +6,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 

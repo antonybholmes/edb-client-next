@@ -2,10 +2,10 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
-import { Button, type IButtonProps } from '@/themed/v2/button'
+import { Button, type IButtonProps } from '@/themed/baseui/button'
 
 import {
   addAlphaToHex,
@@ -29,8 +29,8 @@ import {
   HexColorPicker,
 } from 'react-colorful'
 import { CheckPropRow } from '../dialogs/check-prop-row'
+import { inputVariants } from '../shadcn/ui/themed/baseui/input'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
-import { inputVariants } from '../shadcn/ui/themed/v2/input'
 import { FontUI } from './font/font-ui'
 import { type ITextProps } from './svg-props'
 

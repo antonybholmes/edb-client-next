@@ -12,12 +12,12 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { FOCUS_RING_CLS } from '@/theme'
 import { useState } from 'react'
 import { GripIcon } from '../icons/grip-icon'
-import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../shadcn/ui/themed/v2/popover'
+} from '../shadcn/ui/themed/baseui/popover'
+import { IconButton } from '../shadcn/ui/themed/icon-button'
 import { HeaderMenuSheet } from './header-menu-sheet'
 
 export const SIDE_OVERLAY_CLS = cn(

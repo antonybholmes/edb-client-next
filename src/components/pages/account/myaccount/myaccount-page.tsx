@@ -23,12 +23,12 @@ import {
   Form,
   FormField,
   FormItem,
-} from '@/components/shadcn/ui/themed/v2/form'
+} from '@/components/shadcn/ui/themed/baseui/form'
 import { VCenterRow } from '@/layout/v-center-row'
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
-import { Input } from '@/themed/v2/input'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
+import { Input } from '@/themed/baseui/input'
 
 import { SIGNIN_METHOD_MAP, useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -40,10 +40,10 @@ import { IS_DEV_MODE, TEXT_SAVE, TEXT_SIGNED_IN } from '@/consts'
 import { ReloadIcon } from '@/icons/reload-icon'
 import { Textarea } from '@/themed/textarea'
 
-import { textJoin } from '@/lib/text/text'
 import { ClientLayout } from '@/app/client-layout'
+import { textJoin } from '@/lib/text/text'
 
-import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
+import { ScrollAccordion } from '@/components/shadcn/ui/themed/baseui/accordion'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { CenterLayout } from '@/layouts/center-layout'
 

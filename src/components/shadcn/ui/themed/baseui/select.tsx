@@ -9,13 +9,13 @@ import { ReactNode, useMemo, type ComponentProps } from 'react'
 import {
   BASE_FLAT_BUTTON_CLS,
   DROPDOWN_MENU_ICON_CONTAINER_CLS,
-} from '../v2/button'
+} from '../baseui/button'
 import {
   dropdownContentVariants,
   dropdownMenuItemVariants,
   POPOVER_CLS,
   POSITIONER_CLS,
-} from '../v2/dropdown-menu'
+} from '../baseui/dropdown-menu'
 
 export const Select = SelectPrimitive.Root
 

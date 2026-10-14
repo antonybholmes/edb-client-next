@@ -3,8 +3,8 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { type ReactNode } from 'react'
 import { CloseIcon } from './icons/close-icon'
+import type { IInputProps } from './shadcn/ui/themed/baseui/input'
 import { NumericalInput } from './shadcn/ui/themed/numerical-input'
-import type { IInputProps } from './shadcn/ui/themed/v2/input'
 
 export const CONTAINER_CLS = cn(
   'flex flex-row gap-x-1 justify-between disabled:cursor-not-allowed disabled:opacity-50'

@@ -4,10 +4,13 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET, TEXT_SHOW } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
@@ -18,7 +21,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 import { produce } from 'immer'
 import {
   SORT_ORDER,

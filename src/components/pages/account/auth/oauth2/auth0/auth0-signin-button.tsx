@@ -2,7 +2,7 @@
 
 import { useAuth0 } from '@auth0/auth0-react'
 
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import {} from '@/components/edb/auth/edb-signin'
 import {

@@ -2,7 +2,7 @@ import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { Children } from 'react'
 
 import { BaseCol } from '@/layout/base-col'
-import { Dialog, DialogContent, overlayVariants } from '@/themed/v2/dialog'
+import { Dialog, DialogContent, overlayVariants } from '@/themed/baseui/dialog'
 //import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { cva, type VariantProps } from 'class-variance-authority'
 

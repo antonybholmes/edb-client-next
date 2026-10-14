@@ -20,7 +20,7 @@ import { PlusIcon } from '@/components/icons/plus-icon'
 import {
   DropdownMenuItem,
   MenuSeparator,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { DropdownButton } from '@/components/toolbar/dropdown-button'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { makeUuid } from '@/lib/id'

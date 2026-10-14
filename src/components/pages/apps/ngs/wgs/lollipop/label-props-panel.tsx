@@ -14,8 +14,8 @@ import {
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   DRAG_HANDLE_APPEAR_CLS,
   SortableItem,
@@ -31,10 +31,10 @@ import { downloadJson } from '@/lib/download-utils'
 import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 import { IconButton } from '@/themed/icon-button'
 import { NumericalInput } from '@/themed/numerical-input'
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
 
 import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'

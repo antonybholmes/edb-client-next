@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '../shadcn/ui/themed/v2/dropdown-menu'
+} from '../shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarButton } from './toolbar-button'
 
 type IProps = ComponentProps<typeof ToolbarButton> & {

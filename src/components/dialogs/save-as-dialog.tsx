@@ -3,8 +3,8 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import type { UndefStr } from '@/lib/text/text'
 import { useEffect, useState } from 'react'
-import { Input } from '../shadcn/ui/themed/v2/input'
-import { SelectItem, SelectList } from '../shadcn/ui/themed/v2/select'
+import { Input } from '../shadcn/ui/themed/baseui/input'
+import { SelectItem, SelectList } from '../shadcn/ui/themed/baseui/select'
 import {
   ActionDialogCard,
   ActionDialogCardContent,

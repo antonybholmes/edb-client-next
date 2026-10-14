@@ -7,10 +7,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import { TRANS_COLOR_CLS } from '@/theme'
-import { type IButtonProps } from '@/themed/v2/button'
+import { type IButtonProps } from '@/themed/baseui/button'
 
 import { ChevronDown } from 'lucide-react'
 import { BaseCol } from '../layout/base-col'

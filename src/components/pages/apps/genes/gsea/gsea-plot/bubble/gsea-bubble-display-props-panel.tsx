@@ -1,12 +1,12 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { PropRow } from '@/dialogs/prop-row'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
+import { NumericalInput } from '@/themed/numerical-input'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
@@ -15,10 +15,13 @@ import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_SORT } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'

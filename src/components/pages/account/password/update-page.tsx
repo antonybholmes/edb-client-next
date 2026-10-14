@@ -19,7 +19,7 @@ import {
   Form,
   FormField,
   FormItem,
-} from '@/components/shadcn/ui/themed/v2/form'
+} from '@/components/shadcn/ui/themed/baseui/form'
 import { TEXT_CONTINUE } from '@/consts'
 import { WarningIcon } from '@/icons/warning-icon'
 
@@ -31,7 +31,7 @@ import {
 
 import { ClientLayout } from '@/app/client-layout'
 
-import { Button } from '@/components/shadcn/ui/themed/v2/button'
+import { Button } from '@/components/shadcn/ui/themed/baseui/button'
 
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
@@ -39,7 +39,7 @@ import { getCSRFToken } from '@/components/edb/auth/csrf'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrHeaders } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 import { Toast } from '@base-ui/react/toast'
 import { useForm } from 'react-hook-form'
 import {

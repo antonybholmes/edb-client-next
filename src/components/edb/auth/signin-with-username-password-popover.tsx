@@ -10,11 +10,11 @@ import {
   Form,
   FormField,
   FormItem,
-} from '@/components/shadcn/ui/themed/v2/form'
-import { Button } from '@/themed/v2/button'
+} from '@/components/shadcn/ui/themed/baseui/form'
+import { Button } from '@/themed/baseui/button'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
-import { Input } from '@/themed/v2/input'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
+import { Input } from '@/themed/baseui/input'
 
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 

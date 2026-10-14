@@ -1,10 +1,10 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 
-import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
+import { Form, FormField } from '@/components/shadcn/ui/themed/baseui/form'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
 import { uniqueInOrder } from '@/lib/utils'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -20,7 +20,7 @@ import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { newBoxPlot } from '../../history/history-provider/history-factories'
 import { HistoryPlot } from '../../history/history-provider/history-types'

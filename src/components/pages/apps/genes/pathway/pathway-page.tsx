@@ -20,7 +20,7 @@ import {
 
 import { OpenIcon } from '@/icons/open-icon'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import {
@@ -46,9 +46,9 @@ import { textToLines } from '@/lib/text/lines'
 
 import APP_INFO from './manifest.json'
 //import { toast } from '@/themed/use-toast'
+import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { ClientLayout } from '@/app/client-layout'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'

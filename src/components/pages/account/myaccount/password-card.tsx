@@ -7,13 +7,13 @@ import {
   Form,
   FormField,
   FormItem,
-} from '@/components/shadcn/ui/themed/v2/form'
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+} from '@/components/shadcn/ui/themed/baseui/form'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import { TEXT_UPDATE } from '@/consts'
 import { httpFetch } from '@/lib/http/http-fetch'
 
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 

@@ -2,12 +2,12 @@ import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { produce } from 'immer'
