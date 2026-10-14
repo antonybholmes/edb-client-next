@@ -12,8 +12,8 @@ const PAGE_SIZE = 100
 
 export interface IAnnotateWorkerMessage {
   id: string
-  df: SeriesData[][]
-  columns: string[]
+  df: readonly (readonly SeriesData[])[]
+  columns: readonly string[]
   closest?: number
   tss?: { prom5p: number; prom3p: number }
   useOfficialGenes?: boolean

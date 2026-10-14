@@ -75,22 +75,22 @@ export class DataFrameWriter {
     let ret: string[] = []
 
     if (this._index) {
-      ret = range(df.shape[0]).map(ri =>
+      ret = range(df.shape[0]).map((ri) =>
         [df.rowName(ri)]
           .concat(
             df
               .row(ri)!
-              .values.map(v =>
+              .values.map((v) =>
                 cellStr(v, { dp: this._dp, commas: this._commas })
               )
           )
           .join(this._sep)
       )
     } else {
-      ret = range(df.shape[0]).map(ri =>
+      ret = range(df.shape[0]).map((ri) =>
         df
           .row(ri)!
-          .values.map(v => cellStr(v, { dp: this._dp, commas: this._commas }))
+          .values.map((v) => cellStr(v, { dp: this._dp, commas: this._commas }))
           .join(this._sep)
       )
     }
@@ -113,21 +113,21 @@ export class DataFrameWriter {
     const colMetaN = df.colVars.shape[1]
 
     if (this._index) {
-      ret = range(df.shape[0]).map(ri =>
+      ret = range(df.shape[0]).map((ri) =>
         [
-          ...range(rowMetaN).map(mi => df.rowObs.get(ri, mi)),
+          ...range(rowMetaN).map((mi) => df.rowObs.get(ri, mi)),
           ...df
             .row(ri)!
-            .values.map(v =>
+            .values.map((v) =>
               cellStr(v, { dp: this._dp, commas: this._commas })
             ),
         ].join(this._sep)
       )
     } else {
-      ret = range(df.shape[0]).map(ri =>
+      ret = range(df.shape[0]).map((ri) =>
         df
           .row(ri)!
-          .values.map(v => cellStr(v, { dp: this._dp, commas: this._commas }))
+          .values.map((v) => cellStr(v, { dp: this._dp, commas: this._commas }))
           .join(this._sep)
       )
     }
@@ -139,7 +139,7 @@ export class DataFrameWriter {
       if (this._index) {
         const emptyHeadings = vfill('', rowMetaN)
 
-        headers = range(colMetaN).map(mi => [
+        headers = range(colMetaN).map((mi) => [
           ...emptyHeadings,
           ...df.colVars.col(mi).strs,
         ])
@@ -151,10 +151,10 @@ export class DataFrameWriter {
           ...df.rowObs.columns
         )
       } else {
-        headers = range(colMetaN).map(mi => df.colVars.col(mi).strs)
+        headers = range(colMetaN).map((mi) => [...df.colVars.col(mi).strs])
       }
 
-      ret = [...headers.map(h => h.join(this._sep)), ...ret]
+      ret = [...headers.map((h) => h.join(this._sep)), ...ret]
     }
 
     return ret.join('\n')

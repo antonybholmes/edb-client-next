@@ -5,7 +5,8 @@ export type Axis = 'row' | 'col'
 /** Named annotation fields, each holding exactly one value per row/col. */
 export class Annotations {
   private _size: number
-  private _fields = new Map<string, Cell[]>()
+  private _fields: string[] = []
+  private _fieldMap = new Map<string, Cell[]>()
 
   constructor(size: number) {
     this._size = size
@@ -16,11 +17,11 @@ export class Annotations {
   }
 
   get names(): string[] {
-    return [...this._fields.keys()]
+    return this._fields
   }
 
   has(name: string): boolean {
-    return this._fields.has(name)
+    return this._fieldMap.has(name)
   }
 
   get(name: string): readonly Cell[] {
@@ -41,11 +42,21 @@ export class Annotations {
       padded.push(fill)
     }
 
-    this._fields.set(name, padded)
+    if (!this._fieldMap.has(name)) {
+      this._fields.push(name)
+    }
+
+    this._fieldMap.set(name, padded)
   }
 
   delete(name: string): boolean {
-    return this._fields.delete(name)
+    const ok = this._fieldMap.delete(name)
+
+    if (ok) {
+      this._fields = this._fields.filter((f) => f !== name)
+    }
+
+    return ok
   }
 
   /** Renames an annotation, preserving field order. */
@@ -56,13 +67,15 @@ export class Annotations {
       return
     }
 
-    if (this._fields.has(newName)) {
+    if (this._fieldMap.has(newName)) {
       throw new Error(`annotation "${newName}" already exists`)
     }
 
-    this._fields = new Map(
-      [...this._fields].map(([k, v]) => [k === oldName ? newName : k, v])
+    this._fieldMap = new Map(
+      [...this._fieldMap].map(([k, v]) => [k === oldName ? newName : k, v])
     )
+
+    this._fields = this._fields.map((f) => (f === oldName ? newName : f))
   }
 
   at(name: string, i: number): Cell {
@@ -77,7 +90,7 @@ export class Annotations {
   record(i: number): Record<string, Cell> {
     const ret: Record<string, Cell> = {}
 
-    for (const [name, values] of this._fields) {
+    for (const [name, values] of this._fieldMap) {
       ret[name] = values[i]!
     }
 
@@ -85,7 +98,7 @@ export class Annotations {
   }
 
   insert(at: number, fill: Cell = ''): void {
-    for (const values of this._fields.values()) {
+    for (const values of this._fieldMap.values()) {
       values.splice(at, 0, fill)
     }
 
@@ -93,7 +106,7 @@ export class Annotations {
   }
 
   remove(at: number): void {
-    for (const values of this._fields.values()) {
+    for (const values of this._fieldMap.values()) {
       values.splice(at, 1)
     }
 
@@ -102,7 +115,7 @@ export class Annotations {
 
   /** Appends `n` empty positions. */
   extend(n: number, fill: Cell = ''): void {
-    for (const values of this._fields.values()) {
+    for (const values of this._fieldMap.values()) {
       for (let i = 0; i < n; ++i) {
         values.push(fill)
       }
@@ -111,12 +124,14 @@ export class Annotations {
     this._size += n
   }
 
-  /** New annotations containing only the given positions, in order. */
+  /**
+   * New annotations containing only the given positions, in order.
+   */
   take(indices: readonly number[]): Annotations {
     const ret = new Annotations(indices.length)
 
-    for (const [name, values] of this._fields) {
-      ret._fields.set(
+    for (const [name, values] of this._fieldMap) {
+      ret._fieldMap.set(
         name,
         indices.map((i) => values[i]!)
       )
@@ -126,11 +141,11 @@ export class Annotations {
   }
 
   private field(name: string): Cell[] {
-    const values = this._fields.get(name)
-
-    if (!values) {
+    if (!this._fieldMap.has(name)) {
       throw new Error(`annotation "${name}" not found`)
     }
+
+    const values = this._fieldMap.get(name)
 
     return values
   }

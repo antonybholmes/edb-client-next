@@ -5,7 +5,7 @@
  * @returns
  */
 export function argsort(
-  data: number[],
+  data: readonly number[],
   opts: { reverse?: boolean; abs?: boolean } = {}
 ): number[] {
   const { reverse = false, abs = false } = opts

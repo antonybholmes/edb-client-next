@@ -122,7 +122,7 @@ export function GseaBubbleDialog({
       return
     }
 
-    let nes: number[] = df.col(idx[0]!)!.nums
+    let nes: readonly number[] = df.col(idx[0]!)!.nums
 
     idx = findCols(df, sizeCol)
 
@@ -131,7 +131,7 @@ export function GseaBubbleDialog({
       return
     }
 
-    let sizes: number[] = df.col(idx[0]!)!.nums
+    let sizes: readonly number[] = df.col(idx[0]!)!.nums
 
     idx = findCols(df, pValueCol)
 
@@ -140,7 +140,9 @@ export function GseaBubbleDialog({
       return
     }
 
-    let log10q: number[] = df.col(idx[0]!)!.nums.map((v) => getGseaLog10q(v))
+    let log10q: readonly number[] = df
+      .col(idx[0]!)!
+      .nums.map((v) => getGseaLog10q(v))
 
     let names = df.index.strs
 

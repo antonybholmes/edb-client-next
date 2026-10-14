@@ -109,7 +109,6 @@ export function HomeToolbar() {
             <ToggleGroup
               value={[settings.plot.nodes.color.mode]}
               onValueChange={(v) => {
-                console.log('New color mode value:', v)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.plot.nodes.color.mode = v[0]! as 'auto' | 'group'
@@ -139,7 +138,7 @@ export function HomeToolbar() {
             cmap={getColorMap(settings.plot.nodes.color.cmap)}
             onChange={(cmap) => {
               // store the cmap the user likes
-              console.log('New color map value:', cmap)
+
               updateSettings(
                 produce(settings, (draft) => {
                   draft.plot.nodes.color.cmap.name = cmap.id as ColorMapName

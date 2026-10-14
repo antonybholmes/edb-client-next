@@ -102,7 +102,7 @@ export function VolcanoDialog({
       return
     }
 
-    let foldChanges: number[] = df.col(idx[0]!)!.nums
+    let foldChanges: readonly number[] = df.col(idx[0]!)!.nums
 
     idx = findCols(df, data.pValueCol)
 
@@ -110,7 +110,7 @@ export function VolcanoDialog({
       return
     }
 
-    let pvalues: number[] = df.col(idx[0]!)!.nums
+    let pvalues: readonly number[] = df.col(idx[0]!)!.nums
 
     // remove na
     idx = filterNA(pvalues)
@@ -118,7 +118,7 @@ export function VolcanoDialog({
     foldChanges = subset(foldChanges, idx)
     pvalues = subset(pvalues, idx)
 
-    const log2foldChanges = data.applyLog2ToFoldChange
+    const log2foldChanges: readonly number[] = data.applyLog2ToFoldChange
       ? foldChanges.map((v) => -Math.log2(v as number))
       : foldChanges
 

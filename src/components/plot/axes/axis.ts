@@ -389,13 +389,20 @@ export type RangeToDomainFunc = (v: number | ITickItem) => number
  * @returns
  */
 export function axisDomainToRangeFunc(
-  axis: IAxis | undefined
+  axis: IAxis | undefined,
+  opts: { clamp?: boolean } = {}
 ): RangeToDomainFunc {
   if (!axis) {
     return (v: number | ITickItem) => 0
   }
 
-  const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
+  const { clamp = false } = opts
+
+  const scale = d3
+    .scaleLinear()
+    .domain(axis.domain)
+    .range(axis.range)
+    .clamp(clamp)
 
   return (v: number | ITickItem) => {
     let mapped = scale(typeof v !== 'number' ? v.v : v)
@@ -416,9 +423,10 @@ export function axisDomainToRange(
 ): number[]
 export function axisDomainToRange(
   axis: IAxis,
-  values: readonly (ITickItem | number)[] | number | ITickItem
+  values: readonly (ITickItem | number)[] | number | ITickItem,
+  opts: { clamp?: boolean } = {}
 ): number[] | number {
-  const f = axisDomainToRangeFunc(axis)
+  const f = axisDomainToRangeFunc(axis, opts)
 
   if (Array.isArray(values)) {
     return values.map((value) => f(value))
@@ -434,9 +442,16 @@ export function axisDomainToRange(
  * @returns
  */
 export function axisRangeToDomainFunc(
-  axis: IAxis
+  axis: IAxis,
+  opts: { clamp?: boolean } = {}
 ): (item: number | ITickItem) => number {
-  const scale = d3.scaleLinear().domain(axis.domain).range(axis.range)
+  const { clamp = false } = opts
+
+  const scale = d3
+    .scaleLinear()
+    .domain(axis.domain)
+    .range(axis.range)
+    .clamp(clamp)
 
   return (item: number | ITickItem) => {
     let v = typeof item !== 'number' ? item.v : item
@@ -463,9 +478,10 @@ export function axisRangeToDomain(axis: IAxis, values: number): number
 export function axisRangeToDomain(axis: IAxis, values: ITickItem): number
 export function axisRangeToDomain(
   axis: IAxis,
-  values: readonly (ITickItem | number)[] | number | ITickItem
+  values: readonly (ITickItem | number)[] | number | ITickItem,
+  opts: { clamp?: boolean } = {}
 ): number[] | number {
-  const f = axisRangeToDomainFunc(axis)
+  const f = axisRangeToDomainFunc(axis, opts)
 
   if (Array.isArray(values)) {
     return values.map((value) => f(value))

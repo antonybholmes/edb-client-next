@@ -65,6 +65,7 @@ export function useNetworkD3Sim() {
   const { ref } = useSVG()
   const { settings: networkSettings } = useNetworkSettings()
   const { settings: userData } = useUserData()
+
   const {
     network,
     nodes,
@@ -73,14 +74,15 @@ export function useNetworkD3Sim() {
     renderNodes,
     nodeColorMap,
     renderNodeMap,
-    userLabelSet,
-    groupMap,
     renderEdgeMap,
     nodeEdgeMap,
+    groupMap,
+    maxStrength,
+    userLabelSet,
   } = useNetwork()
 
-  const status = useNetworkD3SimStore((state) => state.status)
   const simNodes = useNetworkD3SimStore((state) => state.simNodes)
+  const status = useNetworkD3SimStore((state) => state.status)
   const tree = useNetworkD3SimStore((state) => state.tree)
   const updateStatus = useNetworkD3SimStore((state) => state.updateStatus)
   const updateSimNodes = useNetworkD3SimStore((state) => state.updateSimNodes)
@@ -158,16 +160,6 @@ export function useNetworkD3Sim() {
       .attr('id', (d) => `edge-${d.id}`)
       .attr('class', 'edge')
       .call((g) => formatEdge(g, null))
-    // .attr('stroke', networkSettings.plot.edges.line.value)
-    // .attr('stroke-opacity', (d) =>
-    //   d.view === 'translucent'
-    //     ? networkSettings.plot.nodes.view.hidden.opacity
-    //     : networkSettings.plot.edges.line.opacity
-    // )
-    // .attr(
-    //   'stroke-width',
-    //   (d) => d.strength * networkSettings.plot.edges.scale
-    // )
 
     // Nodes
     const node = world
@@ -197,10 +189,34 @@ export function useNetworkD3Sim() {
       .id((d: INode) => d.id)
       .distance(networkSettings.layout.linkDistance)
 
+    // if (networkSettings.layout.useStrength) {
+    //   const max = d3.max(edges, (e) => e.strength) || 1
+
+    //   linkForce.distance((d: IRenderEdge) => {
+    //     if (!networkSettings.layout.useStrength) {
+    //       return networkSettings.layout.linkDistance // original behavior
+    //     }
+
+    //     const w = d.strength ?? 0
+    //     const logw = Math.log1p(w) / Math.log1p(max)
+
+    //     console.log(logw)
+
+    //     return networkSettings.layout.linkDistance * (1 - logw)
+    //   })
+    // } else {
+    //   linkForce.distance(networkSettings.layout.linkDistance)
+    // }
+
     // Conditionally apply custom strength or let D3 use its default internal formula
-    if (networkSettings.layout.useStrength) {
-      linkForce.strength((d: IRenderEdge) => d.strength)
-    }
+    // if (networkSettings.layout.useStrength) {
+    //   const defaultStrength = linkForce.strength()
+
+    //   //linkForce.strength((d: IRenderEdge) => d.strength)
+    //   linkForce.strength(
+    //     (d, i, links) => defaultStrength(d, i, links) * (d.strength / max)
+    //   )
+    // }
 
     // 3. Initialize the D3 Force Engine
     const simulation = forceSimulation(nodes)
@@ -441,6 +457,15 @@ export function useNetworkD3Sim() {
       const highlightedEdges =
         nodeEdgeMap.get(currentNode?.id) ?? new Set<string>()
 
+      // non-linear scaling of line thickness to make
+      // it visually easier to see differences
+      const strokeWidth = d3
+        .scalePow()
+        .exponent(2)
+        .domain([0, maxStrength])
+        .range([0, networkSettings.plot.edges.scale])
+        .clamp(true)
+
       return g
         .attr('stroke', (d) => {
           return networkSettings.plot.edges.highlight &&
@@ -449,16 +474,17 @@ export function useNetworkD3Sim() {
             : networkSettings.plot.edges.line.value
         })
         .attr('stroke-opacity', (d) => {
-          return (networkSettings.plot.edges.highlight &&
-            highlightedEdges.has(d.id)) ||
-            renderEdgeMap.get(d.id)?.view === 'normal'
-            ? networkSettings.plot.edges.line.opacity
-            : networkSettings.plot.nodes.view.translucent.opacity
+          return (
+            networkSettings.plot.edges.line.opacity *
+            (renderEdgeMap.get(d.id)?.view === 'normal' ||
+            (networkSettings.plot.edges.highlight && highlightedEdges.has(d.id))
+              ? 1
+              : networkSettings.plot.nodes.view.translucent.opacity)
+          )
         })
         .attr('stroke-width', (d) => {
           return (
-            d.strength *
-            networkSettings.plot.edges.scale *
+            strokeWidth(d.strength ?? 0) *
             (networkSettings.plot.edges.highlight && highlightedEdges.has(d.id)
               ? 3
               : 1)
@@ -549,8 +575,8 @@ export function useNetworkD3Sim() {
   }, [updateStatus])
 
   return {
-    status,
     tree,
+    status,
     autoFit,
     runSim,
     formatText,

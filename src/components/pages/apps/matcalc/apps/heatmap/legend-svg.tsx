@@ -13,7 +13,7 @@ import { useHeatmapContext } from './heatmap-provider'
 import { nodeRadiusFunc } from './svg/cell-svg'
 
 export interface ILegendSvgProps {
-  groupRows: IClusterGroupRow[]
+  groupRows: readonly IClusterGroupRow[]
   pos?: IPos
 }
 

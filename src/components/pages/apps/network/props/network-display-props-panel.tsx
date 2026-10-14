@@ -92,6 +92,7 @@ export function NetworkDisplayPropsPanel() {
             </PropRow>
             {/* <CheckPropRow
               title="Use Edge Strength"
+              tooltip="Use edge strength in graph calculations. It is normally better to leave this off."
               checked={settings.layout.useStrength}
               onCheckedChange={(checked) =>
                 updateSettings(
@@ -475,10 +476,10 @@ export function NetworkDisplayPropsPanel() {
         <AccordionItem value="edges">
           <AccordionTrigger>Edges</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Scale">
+            <PropRow title="Thickness Scale">
               <NumSlider
                 min={0}
-                max={5}
+                max={10}
                 step={0.01}
                 dp={2}
                 value={settings.plot.edges.scale}
@@ -491,6 +492,19 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
+
+            {/* <PropRow title="Opacity">
+              <PercentSlider
+                value={settings.plot.edges.line.opacity}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.edges.line.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow> */}
 
             <PropRow title="Line">
               <StrokeButton

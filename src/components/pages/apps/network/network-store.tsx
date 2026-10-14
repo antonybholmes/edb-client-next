@@ -143,7 +143,7 @@ export function dataframesToNetwork(
   const labels = dfNodes.col(labelCol).strs
 
   let sizes = dfNodes.col(sizeCol).nums
-  let sizes2 = []
+  let sizes2: readonly number[] = []
 
   try {
     sizes2 = dfNodes.col(colorCol).nums
@@ -311,8 +311,8 @@ export interface INetworkStore {
 
   setNetwork: (
     settings: Omit<INetwork, 'id'>,
-    nodes: { field: string; fields: string[] },
-    groups: { field: string; groups: IGroup[] },
+    nodes: { field: string; fields: readonly string[] },
+    groups: { field: string; groups: readonly IGroup[] },
 
     scoreName: string,
     sizeName: string,
@@ -476,6 +476,8 @@ export function useNetwork() {
   const setNodeLabelField = useNetworkStore((state) => state.setNodeLabelField)
   const setNetwork = useNetworkStore((state) => state.setNetwork)
   const setGroups = useNetworkStore((state) => state.setGroups)
+
+  const maxStrength = 1
 
   const groupMap = useMemo(
     () =>
@@ -677,6 +679,7 @@ export function useNetwork() {
     renderNodeMap,
     nodeEdgeMap,
     userLabelSet,
+    maxStrength,
     setNetwork,
     setGroups,
     setNodeLabelField,

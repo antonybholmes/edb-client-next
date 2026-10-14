@@ -1,6 +1,7 @@
 import { range } from '@/lib/math/range'
 import {
   BaseDataFrame,
+  DataFrameInput,
   findCol,
   findRow,
   shape,
@@ -16,7 +17,6 @@ import {
   shapesEqual,
   StringIndex,
   type IndexFromType,
-  type Shape,
 } from './index'
 import {
   BaseSeries,
@@ -45,11 +45,8 @@ export class ColFrame extends BaseDataFrame {
 
   constructor(options: IDataFrameOptions = {}) {
     let { name = '', index, indexName, data = [], columns } = options
-    super(name)
 
-    if (!Array.isArray(data)) {
-      data = [data]
-    }
+    super(shape(data), { name })
 
     if (data.length === 0) {
       throw new Error('data must be a non empty array or array of series')
@@ -325,7 +322,7 @@ export class ColFrame extends BaseDataFrame {
     return this._index
   }
 
-  override get columns(): string[] {
+  override get columns(): readonly string[] {
     return this._columns.strs
   }
 
@@ -340,22 +337,22 @@ export class ColFrame extends BaseDataFrame {
     )
   }
 
-  override get shape(): Shape {
-    return [
-      this._index.length,
-      this._columns.length, // ._data.length > 0 ? this._data[0]!.length : 0,
-    ]
-  }
+  // override get shape(): Shape {
+  //   return [
+  //     this._index.length,
+  //     this._columns.length, // ._data.length > 0 ? this._data[0]!.length : 0,
+  //   ]
+  // }
 
-  override get size(): number {
-    return this.shape[0] * this.shape[1]
-  }
+  // override get size(): number {
+  //   return this.shape[0] * this.shape[1]
+  // }
 
   override rowName(index: number): string {
     return this.index.str(index)
   }
 
-  override get rowNames(): string[] {
+  override get rowNames(): readonly string[] {
     return this._index.strs
   }
 
@@ -540,9 +537,7 @@ export class ColFrame extends BaseDataFrame {
     })
   }
 
-  override replace(
-    data: SeriesData[] | SeriesData[][] | BaseSeries
-  ): BaseDataFrame {
+  override replace(data: DataFrameInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

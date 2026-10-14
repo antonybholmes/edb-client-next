@@ -21,8 +21,8 @@ export abstract class BaseIndex {
   /**
    * Return the values as strings
    */
-  get strs(): string[] {
-    return this.values.map(v => cellStr(v))
+  get strs(): readonly string[] {
+    return this.values.map((v) => cellStr(v))
   }
 
   abstract get name(): string
@@ -62,15 +62,15 @@ export abstract class BaseIndex {
   /**
    * Return the index values as purely numbers
    */
-  get nums(): number[] {
-    return this.values.map(v => cellNum(v))
+  get nums(): readonly number[] {
+    return this.values.map((v) => cellNum(v))
   }
 
   /**
    * Returns the index values as numbers, removing any NaNs
    */
   get numsNoNA(): number[] {
-    return this.nums.filter(v => !isNaN(v))
+    return this.nums.filter((v) => !isNaN(v))
   }
 }
 

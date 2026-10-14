@@ -7,7 +7,7 @@ import {
 import { memo } from 'react'
 
 export interface IProps {
-  actions: string[]
+  actions: readonly string[]
   props: IHeatMapSettings
   pos: IPos
 }

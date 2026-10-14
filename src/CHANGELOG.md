@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Make more readonly arrays to strengthen api design.
 - network edge no longer restricted by min. Edges now support dashed array.
 - Refined app icons. Simplifying network dialog.
 - v2 now called baseui.

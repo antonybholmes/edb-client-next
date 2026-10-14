@@ -9,7 +9,7 @@
  * @returns     the indices where the applied function to the array is true.
  */
 export function where<T>(
-  data: T[],
+  data: readonly T[],
   f: (x: T, idx: number) => boolean = (x) => Boolean(x)
 ): number[] {
   const len = data.length
@@ -38,7 +38,7 @@ export function where<T>(
  * @returns                      The indices of strings beginning with search.
  */
 export function whereStr(
-  data: string[],
+  data: readonly string[],
   search: string,
   caseInsensitive: boolean = true
 ): number[] {
@@ -59,7 +59,7 @@ export function whereStr(
  * @returns                      The indices of strings beginning with search.
  */
 export function whereStartsWith(
-  data: string[],
+  data: readonly string[],
   search: string,
   caseInsensitive: boolean = true
 ): number[] {
@@ -71,7 +71,7 @@ export function whereStartsWith(
 }
 
 export function whereStrExact(
-  data: string[],
+  data: readonly string[],
   search: string,
   caseInsensitive: boolean = true
 ): number[] {
@@ -81,7 +81,7 @@ export function whereStrExact(
 }
 
 export function whereMatches(
-  data: string[],
+  data: readonly string[],
   regex: RegExp,
   caseInsensitive: boolean = true
 ): number[] {

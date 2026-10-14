@@ -23,6 +23,9 @@ export type LocType = string | number | (number | string)[]
 
 export type SheetId = string | number
 
+export type DataFrameInput =
+  readonly BaseSeries[] | readonly SeriesData[] | readonly SeriesData[][]
+
 export const NO_SHAPE: Shape = [-1, -1]
 
 export type ApplySeriesFunc = (
@@ -37,10 +40,13 @@ export type AxisMapFunc<T> = (data: SeriesData[], index: number) => T
 export abstract class BaseDataFrame {
   protected _name: string
   private _id: string
+  private _shape: Shape
 
-  constructor(name: string = '') {
+  constructor(shape: Shape, opts: { name?: string } = {}) {
+    const { name } = opts
     this._id = makeUuid()
     this._name = name
+    this._shape = shape
   }
 
   get id(): string {
@@ -75,9 +81,7 @@ export abstract class BaseDataFrame {
    * @param data
    * @returns
    */
-  abstract replace(
-    data: SeriesData[] | SeriesData[][] | BaseSeries
-  ): BaseDataFrame
+  abstract replace(data: DataFrameInput): BaseDataFrame
 
   abstract col(col: IndexId): BaseSeries
 
@@ -144,13 +148,13 @@ export abstract class BaseDataFrame {
     return cellStr(this.index.get(index))
   }
 
-  get rowNames(): string[] {
+  get rowNames(): readonly string[] {
     return rangeMap((c) => this.rowName(c), 0, this.shape[0])
   }
 
   //abstract get columns(): Index
 
-  abstract get cols(): BaseSeries[]
+  abstract get cols(): readonly BaseSeries[]
 
   colName(index: number): string {
     return this.columns[index] ?? ''
@@ -159,13 +163,15 @@ export abstract class BaseDataFrame {
   /**
    * Get the names of the columns
    */
-  get columns(): string[] {
+  get columns(): readonly string[] {
     return range(this.shape[1]).map((c) => this.colName(c))
   }
 
   abstract setColNames(index: IndexFromType, inplace: boolean): BaseDataFrame
 
-  abstract get shape(): Shape
+  get shape(): Shape {
+    return this._shape
+  }
 
   get size(): number {
     const s = this.shape
@@ -296,20 +302,6 @@ function dfToStr(df: BaseDataFrame, options: IDFToStrOpts = {}): string {
   }
 
   return ret.join('\n')
-}
-
-export function shape(
-  data: SeriesData[] | SeriesData[][] | BaseDataFrame | BaseSeries
-): Shape {
-  if (data instanceof BaseDataFrame || data instanceof BaseSeries) {
-    return data.shape
-  } else {
-    if (data.length > 0 && Array.isArray(data[0]!)) {
-      return [data.length, data[0].length]
-    } else {
-      return [data.length, 1]
-    }
-  }
 }
 
 /**
@@ -463,4 +455,32 @@ export function findCol(
   const idx = findCols(df, col, options)
 
   return idx.length > 0 ? idx[0]! : -1
+}
+
+/**
+ * Given a DataFrame input, return its shape.
+ *
+ * @param data
+ * @returns
+ */
+export function shape(data: DataFrameInput): Shape {
+  const isSeries = data[0] instanceof BaseSeries
+
+  if (isSeries) {
+    if (!data.every((d) => d instanceof BaseSeries)) {
+      throw new Error(
+        'All columns must be a series if the first column is a series'
+      )
+    }
+
+    return [(data[0] as BaseSeries).length, data.length]
+  }
+
+  // single seriesdata
+  if (!Array.isArray(data[0])) {
+    return [data.length, 1]
+  }
+
+  // normal 2d data
+  return [data.length, (data[0] as SeriesData[]).length]
 }

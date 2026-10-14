@@ -3357,6 +3357,10 @@
         {
           "msg": "Refined app icons. Simplifying network dialog",
           "date": "2026-10-14T13:58:29.871Z"
+        },
+        {
+          "msg": "network edge no longer restricted by min. Edges now support dashed array",
+          "date": "2026-10-14T16:51:04.241Z"
         }
       ]
     },

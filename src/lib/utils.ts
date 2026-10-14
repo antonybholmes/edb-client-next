@@ -47,7 +47,7 @@ export function zip<T = unknown>(...cols: T[][]): T[][] {
  * @param values
  * @returns
  */
-export function uniqueInOrder<T>(values: T[]): T[] {
+export function uniqueInOrder<T>(values: readonly T[]): T[] {
   const used = new Set<T>()
   const ret: T[] = []
 

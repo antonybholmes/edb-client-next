@@ -124,6 +124,7 @@ export function NetworkPage() {
     settings.plot.margin,
     settings.layout.chargeStrength,
     settings.layout.linkDistance,
+    settings.layout.useStrength,
     settings.plot.crosshair.search.radius,
     updateTree,
   ])

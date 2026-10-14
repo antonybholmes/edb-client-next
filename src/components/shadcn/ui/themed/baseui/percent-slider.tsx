@@ -24,6 +24,9 @@ function parsePercent(v: string): number {
 
 export function PercentSlider({
   value,
+  min = 0,
+  max = 1,
+  step = 0.01,
   dp = 0,
   ...props
 }: ComponentProps<typeof NumSlider>) {
@@ -32,6 +35,9 @@ export function PercentSlider({
   return (
     <NumSlider
       value={value}
+      min={min}
+      max={max}
+      step={step}
       format={f}
       inputW="xs"
       parser={parsePercent}

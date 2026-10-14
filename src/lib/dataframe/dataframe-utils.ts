@@ -56,21 +56,23 @@ export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
  * @param data
  * @returns
  */
-export function filterNA(data: SeriesData[]): number[] {
+export function filterNA(data: readonly SeriesData[]): number[] {
   return data
     .map((v, vi) => [v, vi] as [SeriesData, number])
     .filter((v) => typeof v[0] !== 'number' || !isNaN(v[0] as number))
     .map((v) => v[1])
 }
 
-export function subset<T = SeriesData[] | SeriesData[]>(
-  data: T[],
-  idx: number[]
+export function subset<T = readonly SeriesData[] | readonly SeriesData[]>(
+  data: readonly T[],
+  idx: readonly number[]
 ): T[] {
   return idx.map((i) => data[i]!)
 }
 
-export function zip(...cols: SeriesData[][]): SeriesData[][] {
+export function zip(
+  ...cols: readonly (readonly SeriesData[])[]
+): SeriesData[][] {
   const colIdx = range(cols.length)
 
   return range(cols[0]!.length).map((i) => colIdx.map((j) => cols[j]![i]!))
@@ -223,8 +225,8 @@ export function findRows(
 }
 
 function findIndices(
-  index: string[],
-  ids: string[],
+  index: readonly string[],
+  ids: readonly string[],
   options: IMatchOptions
 ): number[] {
   const {

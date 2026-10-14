@@ -43,7 +43,7 @@ export async function createAnnotationTable(
   } = opts
 
   //const locations:Location[] = df.col(col)!.values.map(l=>parseLocation(l as string)!)
-  const locations: string[] = df.col(col).strs
+  const locations: readonly string[] = df.col(col).strs
 
   const allData: {
     withinGenes: IGenomicFeature[]
