@@ -16,7 +16,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownSortOrderGroup,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   getAccordionId,
   SideAccordionItem,
@@ -24,26 +24,26 @@ import {
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
-import { ScrollAccordion } from '@/themed/v2/accordion'
-import { Checkbox } from '@/themed/v2/check-box'
+import { ScrollAccordion } from '@/themed/baseui/accordion'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 import { ExternalLinkIcon } from '@/components/icons/external-link'
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 import { BoolSearchQuery } from '@/lib/search'
 import { cn } from '@/lib/shadcn-utils'
 import { IconButton } from '@/themed/icon-button'
 
-import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
 import { useEffect, useMemo, useState } from 'react'
 import { type ISeqDBTrack } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { normalizeAssemblyName } from '@/components/edb/genome'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { appsConfig } from '@/config/apps'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'

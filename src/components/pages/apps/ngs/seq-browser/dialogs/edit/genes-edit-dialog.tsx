@@ -1,7 +1,7 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { produce } from 'immer'
 import { useState } from 'react'
 
@@ -15,12 +15,12 @@ import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import {
   GENE_DISPLAY_OPTIONS,
   useSeqBrowserSettings,
@@ -418,25 +418,6 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
             </SelectList>
           </ActionDialogRow>
           <ActionDialogRow title="View">
-            {/* <IosGroupToggle
-              w={5.5}
-              tabs={[
-                { id: 'transcript', name: 'Transcripts' },
-                { id: 'features', name: 'Features' },
-              ]}
-              value={[settings.tracks.genes.view]}
-              onValueChange={(v, e) => {
-                if (!v || v.length === 0) {
-                  return
-                }
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.view = v[0] as GeneView
-                })
-
-                updateSettings(newSettings)
-              }}
-            /> */}
-
             <ToggleGroup
               direction="row"
 

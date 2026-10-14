@@ -3,7 +3,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { capitalCase } from '@/lib/text/capital-case'
 import { Move3d } from 'lucide-react'

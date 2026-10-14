@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react'
 
-import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/baseui/tabs'
 
 import { getTabName, useTabs, type ITab } from './tab-provider'
 
@@ -8,7 +8,7 @@ import { IClassProps } from '@/interfaces/class-props'
 import { cn } from '@/lib/shadcn-utils'
 import { truncate } from '@/lib/text/text'
 import { VariantProps } from 'class-variance-authority'
-import { toggleGroupVariants } from '../shadcn/ui/themed/v2/toggle-group'
+import { toggleGroupVariants } from '../shadcn/ui/themed/baseui/toggle-group'
 
 export interface IMenuAction {
   action: string

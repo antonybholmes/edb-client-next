@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react'
 
 import { formatChr } from '@/lib/genomic/dna'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import {
   ResizablePanel,
@@ -48,8 +48,8 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSlideBar } from '@/components/sidebar/slide-bar-store'
 import { TAB10_PALETTE } from '@/lib/color/palette'

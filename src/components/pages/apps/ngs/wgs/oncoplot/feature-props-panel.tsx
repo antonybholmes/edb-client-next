@@ -1,4 +1,4 @@
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { useEffect } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'

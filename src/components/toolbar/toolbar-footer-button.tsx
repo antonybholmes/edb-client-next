@@ -1,9 +1,9 @@
 import { cn } from '@/lib/shadcn-utils'
-import { Button, type IButtonProps } from '@/themed/v2/button'
+import { Button, type IButtonProps } from '@/themed/baseui/button'
 
 export function ToolbarFooterButton({
   ref,
-  variant = 'flat',
+  //variant = 'flat',
   size = 'xs',
   rounded = 'sm',
   pad = 'none',
@@ -17,7 +17,7 @@ export function ToolbarFooterButton({
   return (
     <Button
       ref={ref}
-      variant={variant}
+
       size={size}
       rounded={rounded}
       pad={pad}

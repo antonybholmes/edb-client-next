@@ -1,5 +1,5 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { produce } from 'immer'
 import { SwitchPropRow } from '../switch-prop-row'
 

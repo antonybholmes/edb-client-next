@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react'
 
 import { WarningIcon } from '@/components/icons/warning-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { cumulativeSteps } from '@/lib/math/quartile'
@@ -41,7 +41,7 @@ import {
   DialogCardHeader,
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { useStableId } from '@/hooks/stable-id'
 import { Group, PencilRuler } from 'lucide-react'

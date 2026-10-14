@@ -1,4 +1,4 @@
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 // import { Slider } from "../toolbar/slider"
 import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'

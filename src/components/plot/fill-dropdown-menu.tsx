@@ -1,4 +1,4 @@
-import { type IButtonProps } from '@/themed/v2/button'
+import { type IButtonProps } from '@/themed/baseui/button'
 
 import { PaintBucket } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -8,7 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   MenuSeparator,
-} from '../shadcn/ui/themed/v2/dropdown-menu'
+} from '../shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarIconButton } from '../toolbar/toolbar-icon-button'
 import { IColorPickerProps } from './color-picker-popover'
 import {

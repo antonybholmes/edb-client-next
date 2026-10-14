@@ -7,14 +7,14 @@ import { PropsPanel } from '@/components/props-panel'
 import { TEXT_CLEAR } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { textToLines } from '@/lib/text/lines'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
-import { Button } from '@/themed/v2/button'
+} from '@/themed/baseui/accordion'
+import { Button } from '@/themed/baseui/button'
+import { NumericalInput } from '@/themed/numerical-input'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'

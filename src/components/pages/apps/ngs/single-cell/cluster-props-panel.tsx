@@ -12,7 +12,7 @@ import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { cn } from '@/lib/shadcn-utils'

@@ -6,13 +6,13 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { DNABase } from '@/lib/genomic/dna'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { useMotifSettings } from './motifs-settings'
 

@@ -26,7 +26,7 @@ import {
   TEXT_SAVE_AS,
 } from '@/consts'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
@@ -38,6 +38,7 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
+import { ClientLayout } from '@/app/client-layout'
 import { AssemblySelect } from '@/components/edb/assembly-select'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -46,7 +47,6 @@ import {
   HeaderPortal,
   HeaderSlotPortal,
 } from '@/components/header/header-portal'
-import { ClientLayout } from '@/app/client-layout'
 import {
   HistoryLayout,
   HistoryShowButton,

@@ -3,7 +3,7 @@ import { Monitor, MoonStar, Sun } from 'lucide-react'
 import {
   GroupToggle,
   ToggleGroup,
-} from '../../shadcn/ui/themed/v2/toggle-group'
+} from '../../shadcn/ui/themed/baseui/toggle-group'
 
 export function SettingsDarkModePanel() {
   const { theme, setTheme } = useTheme()

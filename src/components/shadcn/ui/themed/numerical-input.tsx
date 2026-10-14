@@ -7,7 +7,7 @@ import { useUpdateEffect } from '@/hooks/update-effect'
 import { clamp } from '@/lib/math/clamp'
 import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Input, type IInputProps } from './v2/input'
+import { Input, type IInputProps } from './baseui/input'
 
 const BUTTON_CLS = `flex w-4 h-3 min-h-0 overflow-hidden shrink-0 
   flex-row justify-center items-center

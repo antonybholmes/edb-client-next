@@ -2,7 +2,7 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'

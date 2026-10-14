@@ -11,7 +11,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   MenuSeparator,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 
 import { BWR_CMAP_V2, COLOR_MAP_MENU, ColorMap } from '@/lib/color/colormap'

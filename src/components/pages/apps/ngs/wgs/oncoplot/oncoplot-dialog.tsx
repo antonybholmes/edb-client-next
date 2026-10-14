@@ -2,20 +2,20 @@ import { TEXT_CANCEL } from '@/consts'
 import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
 import { produce } from 'immer'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import type { MultiMode } from './oncoplot-utils'
 
-import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { Checkbox } from '@/themed/v2/check-box'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 export type OncoplotType = 'loconcoplot' | 'oncoplot'
 
@@ -42,7 +42,7 @@ export function OncoPlotDialog({
     <OKCancelDialog
       open={open}
       title="Oncoplot"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onCancel?.()
         } else {
@@ -56,9 +56,9 @@ export function OncoPlotDialog({
         <Label htmlFor="plot-mode-select">Plot mode</Label>
         <Select
           defaultValue={displayProps.multi}
-          onValueChange={v => {
+          onValueChange={(v) => {
             setDisplayProps(
-              produce(displayProps, draft => {
+              produce(displayProps, (draft) => {
                 draft.multi = v as MultiMode
               })
             )
@@ -89,9 +89,9 @@ export function OncoPlotDialog({
       </Checkbox> */}
       <Checkbox
         checked={displayProps.removeEmptySamples}
-        onCheckedChange={v => {
+        onCheckedChange={(v) => {
           setDisplayProps(
-            produce(displayProps, draft => {
+            produce(displayProps, (draft) => {
               draft.removeEmptySamples = v as boolean
             })
           )

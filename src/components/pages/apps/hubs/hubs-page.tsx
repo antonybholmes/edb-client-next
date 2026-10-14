@@ -12,6 +12,7 @@ import { HubsPropsPanel } from './hubs-props-panel'
 
 import { useHubs, type IDataset } from './hubs-store'
 
+import { ClientLayout } from '@/app/client-layout'
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AssemblySelect } from '@/components/edb/assembly-select'
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
@@ -26,13 +27,12 @@ import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { ClientLayout } from '@/app/client-layout'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 import { useQuery } from '@tanstack/react-query'
 import APP_INFO from './manifest.json'
 

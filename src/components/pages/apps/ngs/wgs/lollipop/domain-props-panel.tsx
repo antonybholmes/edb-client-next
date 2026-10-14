@@ -14,10 +14,10 @@ import { downloadJson } from '@/lib/download-utils'
 import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 
-import { PopoverTrigger } from '@/components/shadcn/ui/themed/v2/popover'
+import { PopoverTrigger } from '@/components/shadcn/ui/themed/baseui/popover'
 import { SortableItem } from '@/components/sortable-item'
 import { ThreeColorMenu } from '@/components/three-color-menu'
 import type { IDivProps } from '@/interfaces/div-props'
@@ -37,8 +37,8 @@ import {
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
@@ -98,7 +98,7 @@ function DomainElem({ domain, setDelDomain, index }: IDomainProps) {
             title="Delete domain"
             //className="hover:text-destructive focus-visible:text-destructive trans-color"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }

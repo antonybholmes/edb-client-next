@@ -2,7 +2,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 
 import { MarginIcon } from '@/components/icons/margin-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'

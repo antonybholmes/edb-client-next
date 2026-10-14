@@ -12,7 +12,7 @@ import {
 
 import { useEffect, useState } from 'react'
 
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import {
   euclidean as euclideanDist,
@@ -32,8 +32,8 @@ import {
   stdevFilter,
 } from '@/lib/dataframe/dataframe-utils'
 import { makeUuid } from '@/lib/id'
+import { Checkbox } from '@/themed/baseui/check-box'
 import { NumericalInput } from '@/themed/numerical-input'
-import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 
 import {
@@ -42,8 +42,8 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import {
   useCurrentGroups,
   useCurrentSheets,

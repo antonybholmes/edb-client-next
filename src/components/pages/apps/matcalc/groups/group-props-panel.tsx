@@ -11,7 +11,7 @@ import {
   type IClusterGroup,
 } from '@/lib/cluster-group'
 
-import { TEXT_CLEAR, TEXT_OK } from '@/consts'
+import { TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 
@@ -45,9 +45,8 @@ import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
-import { OutlineCheckbox } from '@/components/shadcn/ui/themed/v2/outline-check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -244,7 +243,7 @@ function GroupRowItem({
 
             title={`Delete ${group.name} group`}
           >
-            <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
+            <TrashIcon className={DRAG_ICON_ANIM_CLS} />
           </button>
         </VCenterRow>
 
@@ -316,18 +315,15 @@ function GroupItem({
               },
             })
           }
-          className={cn(
-            DRAG_HANDLE_APPEAR_CLS,
-            'stroke-foreground/50 hover:stroke-destructive focus-visible:stroke-destructive trans-color'
-          )}
+          className={cn(DRAG_HANDLE_APPEAR_CLS)}
 
           title={`Delete ${group.name} group`}
         >
-          <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
+          <TrashIcon />
         </button>
       }
     >
-      <OutlineCheckbox
+      <Checkbox
         checked={group.show}
         onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })
@@ -506,10 +502,10 @@ export function GroupPropsPanel() {
               }}
               title="New Group Set"
             >
-              <LayersPlus size={20} strokeWidth={1.5} />
+              <LayersPlus size={18} strokeWidth={1.5} />
             </ToolbarIconButton>
           </VCenterRow>
-          <LinkButton
+          <button
             onClick={() =>
               openDialog({
                 type: 'warning',
@@ -524,10 +520,10 @@ export function GroupPropsPanel() {
               })
             }
             title="Clear all groups"
-            className="text-xs"
+            className="text-xs group"
           >
-            {TEXT_CLEAR}
-          </LinkButton>
+            <TrashIcon />
+          </button>
         </StretchRow>
 
         <FileDropZonePanel

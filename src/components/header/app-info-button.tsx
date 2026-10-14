@@ -1,10 +1,11 @@
 import { cn } from '@/lib/shadcn-utils'
-import { type IButtonProps } from '@/themed/v2/button'
+import { type IButtonProps } from '@/themed/baseui/button'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { IS_DEV_MODE } from '@/consts'
 import { HeaderButton } from '@/layouts/header-button'
 import { present } from '@/lib/dom-utils'
+import { capitalCase } from '@/lib/text/capital-case'
 import { formatString } from '@/lib/text/format-string'
 import { format } from 'date-fns'
 import { useState } from 'react'
@@ -20,7 +21,7 @@ export function AppInfoContent() {
   return (
     <>
       {appInfo?.description && (
-        <p className="font-medium">{appInfo.description}</p>
+        <p className="font-medium">{capitalCase(appInfo.description)}</p>
       )}
 
       <p>

@@ -3,7 +3,7 @@ import {
   useEdbSettings,
   type ToolbarStyle,
 } from '@/components/edb/edb-settings'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { capitalCase } from '@/lib/text/capital-case'
 import {
   Select,
@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
 import { produce } from 'immer'
 import { PropRow } from '../prop-row'
 

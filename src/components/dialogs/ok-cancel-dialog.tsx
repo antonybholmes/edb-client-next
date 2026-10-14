@@ -1,5 +1,5 @@
 import { BaseCol } from '@/layout/base-col'
-import { Button, type IButtonProps } from '@/themed/v2/button'
+import { Button, type IButtonProps } from '@/themed/baseui/button'
 
 import {
   contentVariants,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   overlayVariants,
-} from '@/themed/v2/dialog'
+} from '@/themed/baseui/dialog'
 //import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { TEXT_CANCEL, TEXT_CLOSE, TEXT_OK } from '@/consts'

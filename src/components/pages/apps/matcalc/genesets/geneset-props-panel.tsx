@@ -4,7 +4,7 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { TEXT_CLEAR, TEXT_OK } from '@/consts'
+import { TEXT_OK } from '@/consts'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { downloadJson } from '@/lib/download-utils'
@@ -37,7 +37,6 @@ import { BaseCol } from '@/components/layout/base-col'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -299,7 +298,7 @@ export function GenesetPropsPanel() {
               <PlusIcon />
             </IconButton>
           </VCenterRow>
-          <LinkButton
+          <button
             onClick={() =>
               openDialog({
                 type: 'warning',
@@ -315,10 +314,10 @@ export function GenesetPropsPanel() {
               })
             }
             title="Clear all groups"
-            className="text-xs"
+            className="text-xs group"
           >
-            {TEXT_CLEAR}
-          </LinkButton>
+            <TrashIcon />
+          </button>
         </StretchRow>
         <FileDropZonePanel
           className="grow h-full"

@@ -8,8 +8,11 @@ import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'

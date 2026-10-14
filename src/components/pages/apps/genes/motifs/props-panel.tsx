@@ -3,7 +3,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/components/shadcn/ui/themed/v2/tabs'
+} from '@/components/shadcn/ui/themed/baseui/tabs'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsTrackPropsPanel } from './motifs-track-props-panel'
 

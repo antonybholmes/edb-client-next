@@ -35,7 +35,7 @@ import {
   DropdownMenuTrigger,
   DropdownSortOrderGroup,
   MenuSeparator,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
 import { FileIcon } from '@/icons/file-icon'
@@ -66,7 +66,7 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { ArrowUpDown } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'

@@ -2,7 +2,7 @@ import {
   SelectItem,
   SelectList,
   triggerVariants,
-} from '@/components/shadcn/ui/themed/v2/select'
+} from '@/components/shadcn/ui/themed/baseui/select'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import type { VariantProps } from 'class-variance-authority'
 

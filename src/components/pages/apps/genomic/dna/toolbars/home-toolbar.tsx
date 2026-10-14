@@ -6,11 +6,11 @@ import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'

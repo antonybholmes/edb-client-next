@@ -1,4 +1,7 @@
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { RadiusScaleMode } from '../svg/cell-svg'
 
 const ITEMS = [

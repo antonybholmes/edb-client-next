@@ -3,7 +3,7 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { PropsPanel } from '@/components/props-panel'
 import { TEXT_NAME } from '@/consts'
 import { downloadJson } from '@/lib/download-utils'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 
 import { SortableItem } from '@/components/sortable-item'
 import { IconButton } from '@/themed/icon-button'
@@ -18,7 +18,7 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { move } from '@dnd-kit/helpers'

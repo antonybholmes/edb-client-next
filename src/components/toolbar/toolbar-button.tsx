@@ -1,4 +1,4 @@
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 import type { ComponentProps } from 'react'
 
 export function ToolbarButton({

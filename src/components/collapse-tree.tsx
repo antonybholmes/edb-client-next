@@ -3,7 +3,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IClassProps } from '@/interfaces/class-props'
@@ -28,7 +28,7 @@ import { Ellipsis, File, Folder, FolderOpen } from 'lucide-react'
 import { useDialogs } from './dialogs/dialogs'
 import { CenterCol } from './layout/center-col'
 import { VCenterRow } from './layout/v-center-row'
-import { Checkbox } from './shadcn/ui/themed/v2/check-box'
+import { Checkbox } from './shadcn/ui/themed/baseui/check-box'
 import { getTabName, type ITab, type OpenState } from './tabs/tab-provider'
 
 const DURATION_S = 0.2

@@ -4,7 +4,7 @@ import { WarningIcon } from '@/icons/warning-icon'
 import { VCenterCol } from '@/layout/v-center-col'
 import { VCenterRow } from '@/layout/v-center-row'
 import { toast as sonnerToast } from 'sonner'
-import { Button } from '../v2/button'
+import { Button } from '../baseui/button'
 import { toastVariants, type IToast } from './toast'
 
 /** I recommend abstracting the toast function
@@ -17,7 +17,7 @@ export function toast({
   durationMs = 30000,
 }: Omit<IToast, 'id'>) {
   return sonnerToast.custom(
-    id => (
+    (id) => (
       <Toast
         variant={variant}
         id={id}

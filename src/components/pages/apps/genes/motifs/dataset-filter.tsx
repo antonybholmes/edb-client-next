@@ -1,10 +1,10 @@
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { SortableItem } from '@/components/sortable-item'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TruncateSpan } from '@/components/truncate-span'

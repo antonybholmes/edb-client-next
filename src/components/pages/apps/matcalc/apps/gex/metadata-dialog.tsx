@@ -15,7 +15,7 @@ import { queryClient } from '@/qcp'
 
 import { TEXT_OK } from '@/consts'
 import { BaseCol } from '@/layout/base-col'
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { useQuery } from '@tanstack/react-query'

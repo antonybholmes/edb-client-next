@@ -2,7 +2,11 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { HamburgerIcon } from '../icons/hamburger-icon'
 import { VCenterRow } from '../layout/v-center-row'
-import { Sheet, SheetContent, SheetTrigger } from '../shadcn/ui/themed/v2/sheet'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '../shadcn/ui/themed/baseui/sheet'
 import { HelpTreeNode, type ITopicTree } from './help-tree-node'
 
 export function HelpMenu({

@@ -1,7 +1,7 @@
 import { DialogButtons, DialogToolbar } from '@/dialogs/ok-cancel-dialog'
 import { Children, type ReactNode } from 'react'
 
-import { DialogFooter, DialogTitle } from '@/themed/v2/dialog'
+import { DialogFooter, DialogTitle } from '@/themed/baseui/dialog'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 import {

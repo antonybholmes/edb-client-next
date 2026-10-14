@@ -35,18 +35,18 @@ import {
 } from '@/components/toggle-buttons'
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
-import { Input } from '@/themed/v2/input'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
+import { Input } from '@/themed/baseui/input'
 
 import { Textarea } from '@/themed/textarea'
 
+import { ClientLayout } from '@/app/client-layout'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { dnaToJson } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { ClientLayout } from '@/app/client-layout'
 import { produce } from 'immer'
 import { useDNA } from './dna-store'
 import APP_INFO from './manifest.json'

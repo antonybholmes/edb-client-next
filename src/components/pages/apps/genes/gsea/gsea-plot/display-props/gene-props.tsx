@@ -3,15 +3,18 @@ import { PropRow } from '@/dialogs/prop-row'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { ColorMapMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { useGseaSettings } from '../gsea-settings-store'
 

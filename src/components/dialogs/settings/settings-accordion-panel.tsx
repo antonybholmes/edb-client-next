@@ -1,4 +1,4 @@
-import { Accordion } from '@/components/shadcn/ui/themed/v2/accordion'
+import { Accordion } from '@/components/shadcn/ui/themed/baseui/accordion'
 import { getTabName, ITab, renderTab } from '@/components/tabs/tab-provider'
 import { getAccordionId, SettingsAccordionItem } from './settings-dialog'
 

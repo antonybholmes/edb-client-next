@@ -2,13 +2,13 @@ import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
-import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
+import { LabelContainer } from '@/components/shadcn/ui/themed/baseui/label'
 import { TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
 import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
+import { Input } from '@/themed/baseui/input'
 import { NumericalInput } from '@/themed/numerical-input'
-import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import type {

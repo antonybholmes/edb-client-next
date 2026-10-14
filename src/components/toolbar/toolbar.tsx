@@ -23,11 +23,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   MenuSeparator,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import { SplitIcon } from '@/icons/split-icon'
 import { VCenterRow } from '@/layout/v-center-row'
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import { produce } from 'immer'
 
@@ -35,8 +35,8 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 
 import { SidebarCloseIcon, SidebarOpenIcon } from 'lucide-react'
 import { BaseCol } from '../layout/base-col'
+import { TabContentPanels } from '../shadcn/ui/themed/baseui/tabs'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
-import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowH } from '../tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
 
@@ -57,7 +57,7 @@ export function ShowOptionsButton({
       ref={ref}
       variant="flat"
       rounded="md"
-      size="icon-sm"
+      size="icon-xs"
       // ripple={false}
       aria-label="Show options"
       name="Show options"
@@ -292,7 +292,7 @@ export function ToolbarPanel({
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <ToolbarIconButton title="More Options" size="icon-sm">
+                <ToolbarIconButton title="More Options" size="icon-xs">
                   <ChevronRightIcon className="rotate-90" />
                 </ToolbarIconButton>
               }
@@ -382,7 +382,7 @@ export function ToolbarPanel({
             render={
               <IconButton
                 variant="flat"
-                size="icon-sm"
+                size="icon-xs"
                 // ripple={false}
                 title="Show Pane"
                 checked={showDropdown}

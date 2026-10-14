@@ -1,4 +1,7 @@
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { produce } from 'immer'
 import { ComponentProps } from 'react'
 import { useGseaSettings } from '../gsea-settings-store'

@@ -2,7 +2,7 @@ import { TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import { produce } from 'immer'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 

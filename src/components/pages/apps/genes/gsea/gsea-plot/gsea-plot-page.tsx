@@ -10,7 +10,7 @@ import {
 
 import { OpenIcon } from '@/icons/open-icon'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import {
@@ -27,7 +27,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 
 import { ClientLayout } from '@/app/client-layout'
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
@@ -54,11 +54,11 @@ import { useToolbarTabs } from '@/components/tabs/tab-provider'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { HCenterRow } from '@/components/layout/h-center-row'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'

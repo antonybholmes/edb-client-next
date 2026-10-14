@@ -1,6 +1,6 @@
 import { PropsPanel } from '@/components/props-panel'
 import type { IClusterFrame } from '@/lib/math/hcluster'
-import { ScrollAccordion } from '@/themed/v2/accordion'
+import { ScrollAccordion } from '@/themed/baseui/accordion'
 
 import { useState } from 'react'
 
@@ -14,6 +14,8 @@ import { LinkButton } from '@/themed/link-button'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 
+import { CollapseIcon } from '@/components/icons/collapse-icon'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import APP_INFO from '../../../manifest.json'
@@ -29,17 +31,33 @@ import { PlotSettingsPanel } from './plot-settings'
 import { RowLabelsSettingsPanel } from './row-labels-settings'
 import { TreeSettingsPanel } from './tree-settings'
 
+const TABS = [
+  'plot',
+  'cells',
+  'gaps',
+  'legend',
+  'dot-legend',
+  'colormap',
+  'tree',
+  'row-labels',
+  'column-labels',
+  'column-groups',
+]
+
 export function HeatmapPropsPanel() {
   const { updatePlot } = useHistory()
-
+  const [openTabs, setOpenTabs] = useState<string[]>(['plot'])
   const { open: openDialog } = useDialogs()
-
+  const [collapsed, setCollapsed] = useState(false)
   const { plot } = useHeatmapContext()
+
+  if (!plot) {
+    return <span>No plot available.</span>
+  }
 
   const cf = plot?.dataframes['main'] as IClusterFrame
 
   const displayProps: IHeatMapSettings = plot.props
-  const [openTabs, setOpenTabs] = useState<string[]>(['plot'])
 
   function reset() {
     const props: IHeatMapSettings = {
@@ -57,7 +75,18 @@ export function HeatmapPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2 text-xs">
-      <SideBarHeader>
+      <SideBarHeader className="gap-x-2">
+        <IconButton
+          size="icon-xs"
+
+          onClick={() => {
+            setOpenTabs(collapsed ? TABS : [])
+            setCollapsed(!collapsed)
+          }}
+          title={collapsed ? 'Expand' : 'Collapse'}
+        >
+          <CollapseIcon collapsed={collapsed} size={14} />
+        </IconButton>
         <LinkButton
           onClick={() => {
             openDialog({
@@ -79,6 +108,7 @@ export function HeatmapPropsPanel() {
           {TEXT_RESET}
         </LinkButton>
       </SideBarHeader>
+
       <ScrollAccordion
         value={openTabs}
         onValueChange={(v) => setOpenTabs(v as string[])}

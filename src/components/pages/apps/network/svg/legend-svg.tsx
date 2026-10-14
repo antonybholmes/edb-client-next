@@ -29,7 +29,7 @@ export function LegendSvg() {
     settings.plot.legend.dot.radius * 2 + 5
   )
 
-  const groupsHeight = (groups.length + 2) * blockHeight
+  const groupsHeight = (groups.groups.length + 2) * blockHeight
 
   let {
     ticks: sizeTicks,
@@ -163,7 +163,7 @@ export function Size2Svg({
         font={settings.plot.nodes.labels.text}
         fontWeight="bold"
       >
-        {getSize2Label(headings, settings)}
+        {getColorMetricLabel(headings, settings)}
       </SvgText>
       <SvgG pos={{ x: 0, y: blockHeight }}>
         <SvgVColorBar ax={cax} cmap={cmap} />
@@ -293,7 +293,7 @@ export function SizesSvg({
         //fill={COLOR_BLACK}
         fontWeight="bold"
       >
-        {getSizeLabel(headings, settings)}
+        {getSizeMetricLabel(headings, settings)}
       </SvgText>
       <SvgG pos={{ x: maxRadius, y: blockHeight * 0.5 }}>{elems}</SvgG>
     </SvgG>
@@ -314,13 +314,13 @@ export function GroupsSvg({ blockHeight }: { blockHeight: number }) {
         //fill={COLOR_BLACK}
         fontWeight="bold"
       >
-        Groups
+        {capitalCase(groups.field)}
       </SvgText>
       <SvgG
         pos={{ x: settings.plot.legend.dot.radius, y: blockHeight * 0.5 }}
         id="groups"
       >
-        {groups.map((group, gi) => (
+        {groups.groups.map((group, gi) => (
           <SvgG
             key={group.id}
             pos={{
@@ -377,20 +377,20 @@ export function GroupsSvg({ blockHeight }: { blockHeight: number }) {
  * @param settings The network settings object.
  * @returns The formatted size label based on the settings.
  */
-export function getSizeLabel(
-  headings: { metric1: string },
+export function getSizeMetricLabel(
+  headings: { sizeMetric: string },
   settings: INetworkSettings
 ): string {
-  return settings.data.applyMinusLog10ToMetric1
-    ? `-log10(${capitalCase(headings.metric1)})`
-    : capitalCase(headings.metric1)
+  return settings.data.metrics.size.applyMinusLog10
+    ? `-log10(${capitalCase(headings.sizeMetric)})`
+    : capitalCase(headings.sizeMetric)
 }
 
-export function getSize2Label(
-  headings: { metric2: string },
+export function getColorMetricLabel(
+  headings: { colorMetric: string },
   settings: INetworkSettings
 ): string {
-  return settings.data.applyMinusLog10ToMetric2
-    ? `-log10(${capitalCase(headings.metric2)})`
-    : capitalCase(headings.metric2)
+  return settings.data.metrics.color.applyMinusLog10
+    ? `-log10(${capitalCase(headings.colorMetric)})`
+    : capitalCase(headings.colorMetric)
 }

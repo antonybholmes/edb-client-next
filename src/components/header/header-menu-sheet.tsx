@@ -10,7 +10,7 @@ import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
 import { HEADER_LINKS } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
-import { BASE_FLAT_BUTTON_CLS, Button } from '@/themed/v2/button'
+import { BASE_FLAT_BUTTON_CLS, Button } from '@/themed/baseui/button'
 //import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { HeaderIconButton } from '@/layouts/header-icon-button'
 import { useState } from 'react'
@@ -19,7 +19,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../shadcn/ui/themed/v2/popover'
+} from '../shadcn/ui/themed/baseui/popover'
 import type { IHeaderLinksProps } from './header-menu'
 
 export function ModuleButtonLink({
@@ -44,9 +44,9 @@ export function ModuleButtonLink({
 
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.apps.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()

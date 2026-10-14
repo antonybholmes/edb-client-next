@@ -2,8 +2,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import type { IClusterFrame } from '@/lib/math/hcluster'
 import { produce } from 'immer'
 
@@ -25,7 +25,7 @@ export function GapSettingsPanel() {
   const rowNames = rowLeaves.map((leaf) => df.rowNames[leaf].toLowerCase())
 
   return (
-    <AccordionItem value="gap">
+    <AccordionItem value="gaps">
       <AccordionTrigger>Gaps</AccordionTrigger>
       <AccordionContent>
         <PropRow title="Rows">

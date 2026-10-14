@@ -7,7 +7,10 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'

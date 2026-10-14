@@ -6,7 +6,7 @@ import { H2_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
-import { InfoHoverCard } from '../shadcn/ui/themed/v2/hover-card'
+import { InfoHoverCard } from '../shadcn/ui/themed/baseui/hover-card'
 import { DialogCardInfo } from './card/dialog-card'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
@@ -83,6 +83,8 @@ export function PropRow({
   tooltip,
   htmlTooltip,
   className,
+  leftChildren,
+
   children,
 }: IProps) {
   return (
@@ -99,9 +101,13 @@ export function PropRow({
         })}
       >
         {side === 'right' && (
-          <label className={cn({ 'font-medium': info })} title={htmlTooltip}>
-            {title}
-          </label>
+          <VCenterRow className="gap-x-1">
+            {/* {leftChildren && leftChildren} */}
+            <label className={cn({ 'font-medium': info })} title={htmlTooltip}>
+              {title}
+            </label>
+            {leftChildren && leftChildren}
+          </VCenterRow>
         )}
         <VCenterRow
           className={cn(

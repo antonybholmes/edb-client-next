@@ -4,7 +4,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
 import type { VariantProps } from 'class-variance-authority'
 import { VCenterRow } from '../layout/v-center-row'
-import { Input, type IInputProps } from '../shadcn/ui/themed/v2/input'
+import { Input, type IInputProps } from '../shadcn/ui/themed/baseui/input'
 import { labelVariants, PropRow } from './prop-row'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')

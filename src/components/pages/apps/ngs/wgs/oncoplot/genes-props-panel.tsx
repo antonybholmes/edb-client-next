@@ -5,7 +5,7 @@ import { TEXT_NAME, TEXT_OK } from '@/consts'
 import { PlusIcon } from '@/icons/plus-icon'
 import { downloadJson } from '@/lib/download-utils'
 import { makeUuid } from '@/lib/id'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 
 import { SortableItem } from '@/components/sortable-item'
 import type { IDivProps } from '@/interfaces/div-props'
@@ -23,8 +23,8 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { randomHexColor } from '@/lib/color/color'
@@ -74,7 +74,7 @@ function SortableGeneElem({ gene, index }: IGeneElemProps) {
             }}
             title="Delete gene"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }

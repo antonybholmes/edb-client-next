@@ -9,7 +9,7 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { createGeneConvTable, type Species } from '@/lib/gene/geneconv'
 import { produce } from 'immer'

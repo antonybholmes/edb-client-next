@@ -1,7 +1,10 @@
-import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
+import {
+  ActionCheckRow,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   RunningIndicator,
   useRunning,
@@ -9,7 +12,7 @@ import {
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
@@ -42,17 +45,17 @@ function findLabelCol(df: BaseDataFrame) {
   return cols[0]
 }
 
-function findNameCol(df: BaseDataFrame) {
+function findIdCol(df: BaseDataFrame) {
   if (!df) {
-    return 'Name'
+    return 'ID'
   }
 
   const cols = df.columns.filter((c) =>
-    c.toLowerCase().match(/.*(gene_set|name).*/)
+    c.toLowerCase().match(/.*(id|gene_set|name).*/)
   )
 
   if (cols.length === 0) {
-    return 'Name'
+    return 'ID'
   }
 
   return cols[0]
@@ -160,10 +163,11 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   //   const groupCol = findCol(dfNodes, 'collection')
 
   const [labelCol, setLabelCol] = useState<string>('')
-  const [nameCol, setNameCol] = useState<string>('')
+  const [idCol, setIdCol] = useState<string>('')
   const [groupCol, setGroupCol] = useState<string>('')
   const [sizeCol, setSizeCol] = useState<string>('')
-  const [metric2Col, setMetric2Col] = useState<string>('<none>')
+  const [useColor, setUseColor] = useState<boolean>(false)
+  const [colorMetricCol, setColorMetricCol] = useState<string>('<none>')
 
   const [sourceCol, setSourceCol] = useState<string>('')
   const [targetCol, setTargetCol] = useState<string>('')
@@ -187,7 +191,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
   useEffect(() => {
     setLabelCol(findLabelCol(dfNode))
-    setNameCol(findNameCol(dfNode))
+    setIdCol(findIdCol(dfNode))
     setGroupCol(findGroupCol(dfNode))
     setSizeCol(findSizeCol(dfNode))
     //setMetric2Col(findSizeCol(dfNode))
@@ -212,7 +216,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       !dfNode ||
       !dfEdge ||
       !labelCol ||
-      !nameCol ||
+      !idCol ||
       !sizeCol ||
       !groupCol ||
       !sourceCol ||
@@ -223,14 +227,14 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       return
     }
 
-    const { network, groups, nodeDataTypes } = dataframesToNetwork(
+    const { network, groups, nodes } = dataframesToNetwork(
       dfNode,
       dfEdge,
+      idCol,
       labelCol,
-      nameCol,
       groupCol,
       sizeCol,
-      metric2Col,
+      colorMetricCol,
       sourceCol,
       targetCol,
       strengthCol,
@@ -240,18 +244,19 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
     updateSettings(
       produce(settings, (draft) => {
-        draft.plot.nodes.color.mode = metric2Col !== '<none>' ? 'auto' : 'group'
+        draft.plot.nodes.color.mode =
+          useColor && colorMetricCol !== '<none>' ? 'auto' : 'group'
       })
     )
 
     setNetwork(
       network,
+      nodes,
       groups,
-      nodeDataTypes,
-      labelCol,
+
       strengthCol,
       sizeCol,
-      metric2Col
+      colorMetricCol
     )
 
     setMessage('Creating graph...')
@@ -282,8 +287,8 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       leftFooterChildren={<RunningIndicator id="network"></RunningIndicator>}
     >
       <strong>Nodes</strong>
-      <ActionDialogRow title="Label">
-        <SelectList onValueChange={setLabelCol} value={labelCol} w="lg">
+      <ActionDialogRow title="ID">
+        <SelectList onValueChange={setIdCol} value={idCol} w="lg">
           {dfNode?.columns
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
@@ -295,8 +300,8 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
         </SelectList>
       </ActionDialogRow>
 
-      <ActionDialogRow title="Name">
-        <SelectList onValueChange={setNameCol} value={nameCol} w="lg">
+      <ActionDialogRow title="Label">
+        <SelectList onValueChange={setLabelCol} value={labelCol} w="lg">
           {dfNode?.columns
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
@@ -332,14 +337,12 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
               </SelectItem>
             ))}
         </SelectList>
-      </ActionDialogRow>
-      <ActionDialogRow>
         <Checkbox
-          checked={settings.data.applyMinusLog10ToMetric1}
+          checked={settings.data.metrics.size.applyMinusLog10}
           onCheckedChange={(checked) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.data.applyMinusLog10ToMetric1 = checked
+                draft.data.metrics.size.applyMinusLog10 = checked
               })
             )
           }
@@ -350,45 +353,42 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
       <LineSeparator />
 
-      <ActionDialogRow
-        // title={
-        //   <Checkbox
-        //     checked={settings.plot.nodes.color.mode === 'auto'}
-        //     onCheckedChange={(checked) =>
-        //       updateSettings(
-        //         produce(settings, (draft) => {
-        //           draft.plot.nodes.color.mode = checked ? 'auto' : 'group'
-        //         })
-        //       )
-        //     }
-        //   >
-        //     Color
-        //   </Checkbox>
-        // }
+      <ActionCheckRow
         title="Color"
-      >
-        <SelectList onValueChange={setMetric2Col} value={metric2Col} w="lg">
-          {colorCols.map((name, ni) => (
-            <SelectItem value={name} key={ni}>
-              {name}
-            </SelectItem>
-          ))}
-        </SelectList>
-      </ActionDialogRow>
-      <ActionDialogRow>
-        <Checkbox
-          checked={settings.data.applyMinusLog10ToMetric2}
-          onCheckedChange={(checked) =>
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.data.applyMinusLog10ToMetric2 = checked
-              })
-            )
-          }
-        >
-          Apply -log10
-        </Checkbox>
-      </ActionDialogRow>
+        text="Color Nodes By Value"
+        checked={useColor}
+        onCheckedChange={setUseColor}
+      />
+
+      {useColor && (
+        <>
+          <ActionDialogRow title="Field">
+            <SelectList
+              onValueChange={setColorMetricCol}
+              value={colorMetricCol}
+              w="lg"
+            >
+              {colorCols.map((name, ni) => (
+                <SelectItem value={name} key={ni}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectList>
+            <Checkbox
+              checked={settings.data.metrics.color.applyMinusLog10}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.data.metrics.color.applyMinusLog10 = checked
+                  })
+                )
+              }
+            >
+              Apply -log10
+            </Checkbox>
+          </ActionDialogRow>
+        </>
+      )}
 
       <strong className="mt-2">Edges</strong>
       <ActionDialogRow title="Source">

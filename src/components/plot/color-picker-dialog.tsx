@@ -20,8 +20,8 @@ import { useEdbSettings } from '../edb/edb-settings'
 import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { CenterRow } from '../layout/center-row'
+import { inputVariants } from '../shadcn/ui/themed/baseui/input'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
-import { inputVariants } from '../shadcn/ui/themed/v2/input'
 import { ColorButton, ColorIcon } from './color-picker-button'
 import {
   IColorChangeProps,

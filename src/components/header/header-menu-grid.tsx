@@ -15,7 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../shadcn/ui/themed/v2/popover'
+} from '../shadcn/ui/themed/baseui/popover'
 
 import { DOCS_URL } from '@/consts'
 import {
@@ -30,10 +30,9 @@ import { CenterCol } from '../layout/center-col'
 import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
-import { Button } from '../shadcn/ui/themed/v2/button'
+import { Button } from '../shadcn/ui/themed/baseui/button'
 import { VScrollPanel } from '../v-scroll-panel'
 
-import { present } from '@/lib/dom-utils'
 import { APP_ICON_CLS, AppIcon } from '../icons/app-icon'
 import type { IHeaderLinksProps } from './header-menu'
 
@@ -50,11 +49,10 @@ export const BASE_MUTED_THEME_CLS = cn(
   //'transition duration-300 ease-in-out'
 )
 
-const MODULE_BG_CLS = cn(
-  'absolute rounded-xl w-full h-full duration-300 ease-out transition-all bg-background',
-  'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  'data-hover:bg-muted/50 scale-95 data-hover:scale-100'
-)
+// const MODULE_BG_CLS = cn(
+//   'absolute rounded-xl w-full h-full duration-300 ease-out transition-all bg-background',
+//   'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+// )
 
 export function ModuleButtonLink({
   className,
@@ -65,15 +63,12 @@ export function ModuleButtonLink({
 
   return (
     <BaseLink
-      className={cn(BASE_MUTED_THEME_CLS, className)}
+      className={cn('flex flex-col aspect-10/9', className)}
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       {...props}
     >
-      <span className={MODULE_BG_CLS} data-hover={present(hover)} />
-      <CenterCol className="grow w-full h-full z-10 relative gap-2">
-        {children}
-      </CenterCol>
+      <CenterCol className="grow relative">{children}</CenterCol>
     </BaseLink>
   )
 }
@@ -113,7 +108,6 @@ export function HeaderLinks({
             title={module.description}
           >
             <AppIcon appInfo={module} />
-
             <p className="text-[0.7rem] text-center truncate">{module.name}</p>
           </ModuleButtonLink>
         </li>
@@ -200,7 +194,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
   const [open, setOpen] = useState(false)
   const { settings } = useEdbSettings()
   //const windowSize = useWindowSize()
-  const width = `${5 * 5.5}rem`
+  const width = `${5 * 5.25}rem`
   const [search, setSearch] = useState('')
 
   const searchRef = useRef<HTMLDivElement>(null)
@@ -294,7 +288,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
           </HeaderIconButton>
         }
       />
-      {/* </SimpleTooltip> */}
+
       <PopoverContent
         className="flex flex-col gap-y-3 py-4 text-sm"
         variant="none"
@@ -312,7 +306,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
         <VCenterCol className="relative overflow-hidden">
           <VCenterCol ref={gridRef} className="gap-y-4 px-4">
             <ul
-              className={'grid grid-cols-5'}
+              className={'grid grid-cols-5 gap-2'}
               style={{ width, minHeight: '6rem' }}
             >
               <HeaderLinks

@@ -3,19 +3,22 @@ import { PropRow } from '@/components/dialogs/prop-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
-import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
-import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'

@@ -1,6 +1,6 @@
 import * as LabelPrimitive from '@radix-ui/react-label'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import { useStableId } from '@/hooks/stable-id'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'

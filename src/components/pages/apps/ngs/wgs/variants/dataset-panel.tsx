@@ -4,19 +4,19 @@ import { VCenterRow } from '@/layout/v-center-row'
 
 import { CollapseTree, makeFoldersRootNode } from '@/components/collapse-tree'
 import { MultiSelectIcon } from '@/components/icons/multi-select-icon'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownSortOrderGroup,
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { SkeletonRows } from '@/components/shadcn/ui/themed/baseui/skeleton'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
   ResizablePanel,
   ResizablePanelGroup,
   ThinVResizeHandle,
 } from '@/components/shadcn/ui/themed/resizable'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownSortOrderGroup,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@/components/v-scroll-panel'

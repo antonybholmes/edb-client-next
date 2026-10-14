@@ -1,5 +1,5 @@
 import { BaseCol } from '@/components/layout/base-col'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../matcalc/data/outlook-tabs'

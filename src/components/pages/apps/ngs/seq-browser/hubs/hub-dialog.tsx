@@ -1,6 +1,6 @@
 import { IS_DEV_MODE, TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 import { useEffect, useState } from 'react'
 
 import {
@@ -9,7 +9,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
 
 import { IHub } from './hub-store'
 

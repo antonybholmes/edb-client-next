@@ -105,11 +105,13 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         mode="fill"
       />
 
-      <TitleText
-        vennList={vennListsInUse[0]}
-        center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
-        textAnchor="end"
-      />
+      {settings.fonts.title.show && (
+        <TitleText
+          vennList={vennListsInUse[0]}
+          center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
+          textAnchor="end"
+        />
+      )}
 
       {/* Circle B */}
       <Ellipse
@@ -121,10 +123,12 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         mode="fill"
       />
 
-      <TitleText
-        vennList={vennListsInUse[1]}
-        center={[center[0] - radius2 / 2, center[1] - radius2]}
-      />
+      {settings.fonts.title.show && (
+        <TitleText
+          vennList={vennListsInUse[1]}
+          center={[center[0] - radius2 / 2, center[1] - radius2]}
+        />
+      )}
 
       {/* Circle C */}
       <Ellipse
@@ -136,10 +140,12 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         mode="fill"
       />
 
-      <TitleText
-        vennList={vennListsInUse[2]}
-        center={[center[0] + radius2 / 2, center[1] - radius2]}
-      />
+      {settings.fonts.title.show && (
+        <TitleText
+          vennList={vennListsInUse[2]}
+          center={[center[0] + radius2 / 2, center[1] - radius2]}
+        />
+      )}
 
       {/* Circle 4 */}
 
@@ -152,11 +158,13 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         mode="fill"
       />
 
-      <TitleText
-        vennList={vennListsInUse[3]}
-        center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
-        textAnchor="start"
-      />
+      {settings.fonts.title.show && (
+        <TitleText
+          vennList={vennListsInUse[3]}
+          center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
+          textAnchor="start"
+        />
+      )}
 
       {/* Lists */}
 

@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 import { useState } from 'react'
 
@@ -23,8 +23,8 @@ import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'

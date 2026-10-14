@@ -1,10 +1,10 @@
 {
   "name": "Venn",
-  "description": "Make Venn diagrams.",
+  "description": "Venn diagrams and overlap heatmaps.",
   "color": "#00008B",
-  "version": "26.6.8",
+  "version": "26.8.2",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-10-08T22:08:23.385Z",
-  "hash": "febfe841cb996e228462a597cc0f7d9f9637733f0b6305f347071b856468397f",
-  "build": 968
+  "modified": "2026-10-14T13:33:58.772Z",
+  "hash": "74046303e2587e2fd8c0ce1e6165cfe1f1608d4d280fb18553ff8cd4d41ea862",
+  "build": 986
 }

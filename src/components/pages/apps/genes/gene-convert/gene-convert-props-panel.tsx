@@ -1,5 +1,5 @@
 import { PropsPanel } from '@/components/props-panel'
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import {
   ToggleButtonTriggers,
   ToggleButtons,
@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 export interface IProps extends IDivProps {
   fromSpecies: string

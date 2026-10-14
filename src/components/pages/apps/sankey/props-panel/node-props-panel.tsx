@@ -4,7 +4,7 @@ import { VCenterCol } from '@/layout/v-center-col'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { DragDropProvider } from '@dnd-kit/react'

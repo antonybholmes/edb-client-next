@@ -5,11 +5,11 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { OutlookTabs } from '@/components/pages/apps/matcalc/data/outlook-tabs'
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { UndefStr } from '@/lib/text/text'
 import { useEffect, type ReactNode } from 'react'

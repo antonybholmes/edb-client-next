@@ -3,7 +3,7 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { type IDistFunc } from '@/lib/math/hcluster'
 import { useState } from 'react'
 
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import {
   euclidean as euclideanDist,

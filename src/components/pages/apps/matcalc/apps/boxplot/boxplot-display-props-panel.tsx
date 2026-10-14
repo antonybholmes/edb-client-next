@@ -2,13 +2,13 @@ import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { PropsPanel } from '@/components/props-panel'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 
 import { useHistory } from '../../history/history-provider/history-provider'

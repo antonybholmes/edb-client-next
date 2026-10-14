@@ -5,11 +5,11 @@ import {
   ActionSwitchRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { TEXT_OK } from '@/consts'
 import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { produce } from 'immer'

@@ -5,7 +5,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './shadcn/ui/themed/v2/collapsible'
+} from './shadcn/ui/themed/baseui/collapsible'
 
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from './layout/v-center-row'

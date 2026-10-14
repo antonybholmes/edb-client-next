@@ -12,7 +12,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { StretchRow } from '@/layout/stretch-row'
@@ -43,7 +43,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
         checked={group.show}
         onCheckedChange={(checked) => {
           setGroups(
-            produce(groups, (draft) => {
+            produce(groups.groups, (draft) => {
               const g = draft.find((x) => x.id === group.id)
               if (g) {
                 g.show = checked
@@ -68,7 +68,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
             allowNoColor: false,
             onColorChange: ({ color }) => {
               setGroups(
-                produce(groups, (draft) => {
+                produce(groups.groups, (draft) => {
                   const g = draft.find((x) => x.id === group.id)
                   if (g) {
                     g.color = color
@@ -145,13 +145,13 @@ export function GroupPropsPanel() {
         <VScrollPanel className="grow">
           <DragDropProvider
             onDragEnd={(event) => {
-              const newOrder = move(groups, event)
+              const newOrder = move(groups.groups, event)
 
               setGroups(newOrder)
             }}
           >
             <ul className="flex flex-col gap-y-1">
-              {groups.map((gr, gri) => {
+              {groups.groups.map((gr, gri) => {
                 return <GroupItem index={gri} group={gr} key={gr.id} />
               })}
             </ul>

@@ -5,13 +5,13 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
@@ -20,13 +20,13 @@ import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { Percent } from '@/components/percent'
-import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
+import { Slider } from '@/components/shadcn/ui/themed/baseui/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/v2/small-switch'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 

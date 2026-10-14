@@ -10,10 +10,13 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { ITEM_REGEX, TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
@@ -98,7 +101,7 @@ export function HomeToolbar() {
             Z-score
             <SelectList
               variant="toolbar"
-              w="sm"
+              w="xs"
               value={settings.heatmap.cluster.zscore}
               items={[
                 { value: 'row', label: 'Row' },
@@ -135,6 +138,7 @@ export function HomeToolbar() {
                   })
                 )
               }}
+              h="toolbar"
             />
           </ToolbarRow>
         </ToolbarCol>
@@ -175,6 +179,7 @@ export function HomeToolbar() {
               )
             }}
             w="md"
+            h="toolbar"
           />
         </ToolbarRow>
       </ToolbarTabGroup>

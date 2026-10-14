@@ -2,7 +2,7 @@ import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
 import { BaseCol } from '../layout/base-col'
-import { Label } from '../shadcn/ui/themed/v2/label'
+import { Label } from '../shadcn/ui/themed/baseui/label'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-1')
 

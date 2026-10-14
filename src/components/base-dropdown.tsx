@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './shadcn/ui/themed/v2/dropdown-menu'
+} from './shadcn/ui/themed/baseui/dropdown-menu'
 
 export const DROPDOWN_CLS = 'left-0'
 

@@ -1,5 +1,5 @@
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 import { produce } from 'immer'
 
 import {
@@ -8,7 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
 import { useEffect, useState } from 'react'
 
 import {

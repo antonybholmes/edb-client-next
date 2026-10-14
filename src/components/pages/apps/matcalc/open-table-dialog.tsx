@@ -15,16 +15,16 @@ import {
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { VCenterRow } from '@/layout/v-center-row'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { useMatcalcSettings } from './settings/matcalc-settings'
 

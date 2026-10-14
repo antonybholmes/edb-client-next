@@ -1,7 +1,10 @@
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { TEXT_OPTIONS } from '@/consts'
@@ -51,7 +54,7 @@ export function HeatmapToolbar() {
             variant="toolbar"
             w="sm"
             value={settings.heatmap.metric}
-            format={(v) => capitalCase(v)}
+            format={(v) => capitalCase(v as string)}
             onValueChange={(value) => {
               updateSettings(
                 produce(settings, (draft) => {

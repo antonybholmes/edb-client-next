@@ -8,20 +8,20 @@ import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
 import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { StrikeThroughMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { StrikeThroughMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   Form,
   FormField,
   FormItem,
-} from '@/components/shadcn/ui/themed/v2/form'
+} from '@/components/shadcn/ui/themed/baseui/form'
 import { TEXT_SIGN_IN } from '@/consts'
 import { supabase } from '@/lib/auth/supabase'
 import { makeUuid } from '@/lib/id'
 import { Card, CardHeader, CardTitle } from '@/themed/card'
 
 import { config } from '@/config'
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 import { Toast } from '@base-ui/react/toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Provider, Session } from '@supabase/supabase-js'

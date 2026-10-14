@@ -1,9 +1,9 @@
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { HeaderIconButton } from '@/layouts/header-icon-button'
 import { DatabaseCheck } from 'lucide-react'
 import { useState } from 'react'

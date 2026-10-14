@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { BaseLink } from './base-link'
 
-import { buttonVariants } from '@/themed/v2/button'
+import { buttonVariants } from '@/themed/baseui/button'
 import type { VariantProps } from 'class-variance-authority'
 
 export interface IButtonLinkProps

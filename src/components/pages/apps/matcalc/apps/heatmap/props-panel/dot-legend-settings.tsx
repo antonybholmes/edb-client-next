@@ -2,8 +2,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
-import { Input } from '@/components/shadcn/ui/themed/v2/input'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { TEXT_TITLE } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { produce } from 'immer'

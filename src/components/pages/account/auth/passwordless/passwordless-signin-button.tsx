@@ -2,11 +2,11 @@
 
 import { SESSION_AUTH_SIGNIN_URL } from '@/components/edb/edb'
 
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import { TEXT_SIGN_IN } from '@/consts'
 import { BaseCol } from '@/layout/base-col'
-import { Input } from '@/themed/v2/input'
+import { Input } from '@/themed/baseui/input'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 

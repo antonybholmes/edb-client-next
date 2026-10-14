@@ -1,18 +1,18 @@
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
 import { TEXT_RESET } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { VCenterRow } from '@/layout/v-center-row'
 import { capitalCase } from '@/lib/text/capital-case'
-import { LinkButton } from '@/themed/link-button'
-import { NumericalInput } from '@/themed/numerical-input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
+import { LinkButton } from '@/themed/link-button'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import {
   DEFAULT_TRACKS_DISPLAY_PROPS,

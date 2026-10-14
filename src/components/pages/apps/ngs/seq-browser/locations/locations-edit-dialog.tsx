@@ -1,4 +1,4 @@
-import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
+import { LabelContainer } from '@/components/shadcn/ui/themed/baseui/label'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { locStr } from '@/lib/genomic/genomic'

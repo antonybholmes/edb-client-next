@@ -3300,10 +3300,63 @@
         {
           "msg": "Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches",
           "date": "2026-10-04T15:45:14.345Z"
+        },
+        {
+          "msg": "Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.",
+          "date": "2026-10-08T22:08:24.470Z"
+        },
+        {
+          "msg": "Heatmap settings now checks if plot exists before rendering",
+          "date": "2026-10-09T02:12:58.449Z"
+        },
+        {
+          "msg": "Venn lists revised to remove accordions and use enter key to update to make lots of lists more performant",
+          "date": "2026-10-09T15:36:06.228Z"
+        },
+        {
+          "msg": "Venn list ui tweaked.",
+          "date": "2026-10-09T15:50:31.483Z"
+        },
+        {
+          "msg": "Dot rendering in heatmap now correctly accounts for space occupied by grid lines",
+          "date": "2026-10-09T19:44:14.721Z"
+        },
+        {
+          "msg": "Dot plots now have animation effects",
+          "date": "2026-10-09T20:52:40.383Z"
+        },
+        {
+          "msg": "Venn view toggle now in header to save vertical space",
+          "date": "2026-10-09T21:22:17.634Z"
+        },
+        {
+          "msg": "Standardized collapse icon. Venn settings now supports collapse",
+          "date": "2026-10-09T21:38:28.940Z"
+        },
+        {
+          "msg": "AppIcon now has separate animated version",
+          "date": "2026-10-12T12:40:22.806Z"
+        },
+        {
+          "msg": "Added dataframe created by copilot. might integrate some designs into anndataframe",
+          "date": "2026-10-13T21:36:53.036Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-10-03T04:46:43.479Z"
+  },
+  {
+    "version": "91.8.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "v2 now called baseui",
+          "date": "2026-10-14T13:33:59.714Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-14T13:33:59.714Z"
   }
 ]

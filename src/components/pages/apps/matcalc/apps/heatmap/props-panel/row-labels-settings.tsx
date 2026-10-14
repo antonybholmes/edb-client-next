@@ -1,14 +1,14 @@
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/shadcn/ui/themed/v2/accordion'
+} from '@/components/shadcn/ui/themed/baseui/accordion'
 import {
   RadioGroup,
   SideRadioGroupItem,
-} from '@/components/shadcn/ui/themed/v2/radio-group'
+} from '@/components/shadcn/ui/themed/baseui/radio-group'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import type { LeftRightPos } from '@/components/side'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'

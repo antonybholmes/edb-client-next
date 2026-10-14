@@ -9,7 +9,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import { HEADER_LINKS } from '@/menus'
 
 import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
@@ -42,9 +42,9 @@ export function ModuleButtonLink({
 
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.apps.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()

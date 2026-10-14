@@ -5,7 +5,7 @@ import { SearchIcon } from '@/icons/search-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 
-import { Dialog, DialogContent } from '@/themed/v2/dialog'
+import { Dialog, DialogContent } from '@/themed/baseui/dialog'
 import type { VariantProps } from 'class-variance-authority'
 import { Check } from 'lucide-react'
 import {
@@ -16,8 +16,8 @@ import {
   type ComponentRef,
   type HTMLAttributes,
 } from 'react'
-import { DROPDOWN_MENU_ICON_CONTAINER_CLS } from './v2/button'
-import { dropdownMenuItemVariants } from './v2/dropdown-menu'
+import { DROPDOWN_MENU_ICON_CONTAINER_CLS } from './baseui/button'
+import { dropdownMenuItemVariants } from './baseui/dropdown-menu'
 
 const Command = forwardRef<
   ComponentRef<typeof CommandPrimitive>,

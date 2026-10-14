@@ -1,9 +1,26 @@
 # Changelog
 
+## 91.8.0 (Oct, 2026)
+
+### Changed
+
+- Refined app icons. Simplifying network dialog.
+- v2 now called baseui.
+
+
 ## 91.6.0 (Oct, 2026)
 
 ### Changed
 
+- Added dataframe created by copilot. might integrate some designs into anndataframe.
+- AppIcon now has separate animated version.
+- Standardized collapse icon. Venn settings now supports collapse.
+- Venn view toggle now in header to save vertical space.
+- Dot plots now have animation effects.
+- Dot rendering in heatmap now correctly accounts for space occupied by grid lines.
+- Venn list ui tweaked.
+- Venn lists revised to remove accordions and use enter key to update to make lots of lists more performant.
+- Heatmap settings now checks if plot exists before rendering.
 - Venn now supports much larger sets. Fixed trying to generate too many combinations above 4 samples.
 - Text now has cut,copy,paste toolbar. Accordions revised. Use of checkboxes in accordions to reduce UI clutter of seeing switches.
 - Switch animations tweaked.

@@ -29,7 +29,7 @@ import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import {
   ToggleButtons,

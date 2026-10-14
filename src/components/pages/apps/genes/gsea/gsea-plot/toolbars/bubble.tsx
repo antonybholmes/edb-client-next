@@ -1,7 +1,10 @@
 import { ColorMapMenu } from '@/components/pages/apps/matcalc/color-map-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'

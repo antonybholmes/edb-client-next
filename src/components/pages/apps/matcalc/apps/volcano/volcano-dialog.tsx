@@ -1,8 +1,8 @@
-import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
+import { Form, FormField } from '@/components/shadcn/ui/themed/baseui/form'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import { DataFrame } from '@/lib/dataframe/dataframe'
 import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
@@ -252,7 +252,8 @@ export function VolcanoDialog({
             name="applyLog2ToFoldChange"
             render={({ field }) => (
               <ActionCheckRow
-                title="Apply log2 to fold change"
+                title="Fold change"
+                text="Apply log2"
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
@@ -264,7 +265,8 @@ export function VolcanoDialog({
             name="applyLog10ToPValue"
             render={({ field }) => (
               <ActionCheckRow
-                title="Apply -log10(p-value)"
+                title="P-value"
+                text="Apply -log10"
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />

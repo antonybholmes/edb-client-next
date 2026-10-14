@@ -20,7 +20,7 @@ import { PlusIcon } from '@/components/icons/plus-icon'
 import {
   DropdownMenuItem,
   MenuSeparator,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { DropdownButton } from '@/components/toolbar/dropdown-button'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { makeUuid } from '@/lib/id'
@@ -76,7 +76,7 @@ function PlotItem({ geneset, index }: { geneset: IGeneSet; index: number }) {
             className="stroke-foreground/50 hover:stroke-destructive"
             title="Delete location"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }

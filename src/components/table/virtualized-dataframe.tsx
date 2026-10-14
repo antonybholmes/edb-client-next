@@ -15,7 +15,7 @@
 // import { BaseCol } from '../layout/base-col'
 // import { BaseRow } from '../layout/base-row'
 // import { VCenterRow } from '../layout/v-center-row'
-// import { Input } from '../shadcn/ui/themed/v2/input'
+// import { Input } from '../shadcn/ui/themed/baseui/input'
 
 // // Sample data
 // // const data = [

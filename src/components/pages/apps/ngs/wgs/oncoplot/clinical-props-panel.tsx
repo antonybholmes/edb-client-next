@@ -1,9 +1,9 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import {
   DRAG_HANDLE_APPEAR_CLS,
   SortableItem,

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { SunIcon } from '@/components/icons/sun-icon'
 import { ComputerIcon } from '@/icons/computer'
 import { MoonIcon } from '@/icons/moon-icon'
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import { useTheme, type Theme } from '@/components/edb/theme'
 import {
@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../shadcn/ui/themed/v2/dropdown-menu'
+} from '../shadcn/ui/themed/baseui/dropdown-menu'
 
 export function ThemeMenu() {
   const [open, setOpen] = useState(false)

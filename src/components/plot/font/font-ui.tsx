@@ -3,9 +3,12 @@ import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import type { IFontProps, ITextProps } from '@/components/plot/svg-props'
+import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import {
+  SelectItem,
+  SelectList,
+} from '@/components/shadcn/ui/themed/baseui/select'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TEXT_SHOW } from '@/consts'
 import type { UndefStr } from '@/lib/text/text'
@@ -22,11 +25,11 @@ import {
   Underline,
 } from 'lucide-react'
 import { SwitchPropRow } from '../../dialogs/switch-prop-row'
-import { Switch } from '../../shadcn/ui/themed/v2/switch'
+import { Switch } from '../../shadcn/ui/themed/baseui/switch'
 import {
   GroupToggle,
   ToggleGroup,
-} from '../../shadcn/ui/themed/v2/toggle-group'
+} from '../../shadcn/ui/themed/baseui/toggle-group'
 import { ToolbarSeparator } from '../../toolbar/toolbar-separator'
 import { FillDropdownMenu } from '../fill-dropdown-menu'
 import { FONTS } from '../svg-base'

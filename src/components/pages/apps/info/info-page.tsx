@@ -5,7 +5,7 @@ import { BaseCol } from '@/layout/base-col'
 
 import LINKS from '@/about-links.json'
 import { AutoRowCol } from '@/components/layout/auto-row-col'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import { ClientLayout } from '@/app/client-layout'
 import { API_ABOUT_URL } from '@/components/edb/edb'

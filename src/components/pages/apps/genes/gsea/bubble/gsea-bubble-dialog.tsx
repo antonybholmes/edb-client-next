@@ -1,7 +1,7 @@
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { SelectItem, SelectList } from '@/themed/v2/select'
+import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'

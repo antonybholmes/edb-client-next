@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import {} from '@/components/edb/auth/edb-signin'
 import {

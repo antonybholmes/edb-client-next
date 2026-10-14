@@ -10,8 +10,8 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { FileIcon } from '@/components/icons/file-icon'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { Textarea } from '@/components/shadcn/ui/themed/textarea'
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { ITab, useToolbarTabs } from '@/components/tabs/tab-provider'
 import {
   Toolbar,

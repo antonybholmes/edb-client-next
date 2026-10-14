@@ -21,7 +21,7 @@ import { appsConfig } from '@/config/apps'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { BoolSearchQuery } from '@/lib/search'
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
@@ -32,23 +32,23 @@ import {
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   getAccordionId,
   SideAccordionItem,
 } from '@/dialogs/settings/settings-dialog'
-import { ScrollAccordion } from '@/themed/v2/accordion'
+import { ScrollAccordion } from '@/themed/baseui/accordion'
 
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 import { IconButton } from '@/themed/icon-button'
 
 import { API_BEDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 import {
@@ -553,7 +553,7 @@ function CartItems({
                       }}
                       title={TEXT_REMOVE_FROM_CART}
                     >
-                      <TrashIcon stroke="" />
+                      <TrashIcon />
                     </button>
                   </li>
                 )

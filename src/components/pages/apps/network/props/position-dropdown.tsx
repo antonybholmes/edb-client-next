@@ -3,7 +3,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
 import { Move } from 'lucide-react'

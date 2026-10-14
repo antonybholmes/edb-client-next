@@ -6,7 +6,7 @@ import {
   type ComponentPropsWithoutRef,
   type ComponentRef,
 } from 'react'
-import { dropdownContentVariants } from '../v2/dropdown-menu'
+import { dropdownContentVariants } from '../baseui/dropdown-menu'
 
 const Popover = PopoverPrimitive.Root
 

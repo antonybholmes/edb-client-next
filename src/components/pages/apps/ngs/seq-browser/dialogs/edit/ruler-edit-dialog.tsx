@@ -1,4 +1,4 @@
-import { Accordion } from '@/components/shadcn/ui/themed/v2/accordion'
+import { Accordion } from '@/components/shadcn/ui/themed/baseui/accordion'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
@@ -25,8 +25,8 @@ export function RulerEditDialog({ onResponse }: IModalProps) {
             title="Auto size (bp)"
             side="right"
             checked={settings.tracks.ruler.autoSize}
-            onCheckedChange={v => {
-              const newOptions = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newOptions = produce(settings, (draft) => {
                 draft.tracks.ruler.autoSize = v
               })
 
@@ -41,8 +41,8 @@ export function RulerEditDialog({ onResponse }: IModalProps) {
               placeholder="BP"
               className="rounded-theme"
               w="lg"
-              onNumChanged={v => {
-                const newOptions = produce(settings, draft => {
+              onNumChanged={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.tracks.ruler.bp = v
                 })
 

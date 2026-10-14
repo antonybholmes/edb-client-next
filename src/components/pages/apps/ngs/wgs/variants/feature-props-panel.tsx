@@ -1,4 +1,4 @@
-import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { useTabs } from '@/components/tabs/tab-provider'

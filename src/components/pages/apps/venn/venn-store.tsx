@@ -145,6 +145,7 @@ const DEFAULT_SETTINGS: IVennOptions = {
 export interface IVennStore extends IVennOptions {
   addList: () => void
   removeList: (id: string) => void
+  removeLists: () => void
   setSelectedItems: (name: string, items: string[]) => void
   setVennLists: (vennLists: IVennList[]) => void
   setVennListName: (id: string, name: string) => void
@@ -241,6 +242,18 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       }
     })
   },
+  removeLists: () => {
+    set((state) => {
+      const vennLists: IVennList[] = []
+
+      return {
+        vennLists,
+        vennElemMap: makeVennElemMap(vennLists),
+        combinationNames: makeCombNames(vennLists),
+        updateCounter: state.updateCounter + 1,
+      }
+    })
+  },
   setVennLists: (vennLists: IVennList[]) => {
     const originalNames = Object.fromEntries(
       vennLists
@@ -314,6 +327,7 @@ export function useVenn(): IVennStore & {
 
   const addList = useVennStore((state) => state.addList)
   const removeList = useVennStore((state) => state.removeList)
+  const removeLists = useVennStore((state) => state.removeLists)
   const selectedItems = useVennStore((state) => state.selectedItems)
   const setSelectedItems = useVennStore((state) => state.setSelectedItems)
   const originalNames = useVennStore((state) => state.originalNames)
@@ -613,6 +627,7 @@ export function useVenn(): IVennStore & {
     updateCounter,
     addList,
     removeList,
+    removeLists,
     setSelectedItems,
     setVennLists,
     setVennListName,

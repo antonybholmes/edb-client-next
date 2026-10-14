@@ -5,14 +5,14 @@ import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 import { useState } from 'react'
 
-import { Checkbox } from '@/themed/v2/check-box'
+import { Checkbox } from '@/themed/baseui/check-box'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/themed/v2/select'
+} from '@/themed/baseui/select'
 import type { MultiMode } from '../oncoplot/oncoplot-utils'
 
 export type OncoplotType = 'loconcoplot' | 'oncoplot'
@@ -42,7 +42,7 @@ export function LollipopDialog({ open, type, onPlot, onCancel }: IProps) {
     <OKCancelDialog
       open={open}
       title="Oncoplot"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onCancel?.()
         } else {
@@ -56,7 +56,7 @@ export function LollipopDialog({ open, type, onPlot, onCancel }: IProps) {
           <span>Multi-mode</span>
           <Select
             defaultValue={multi}
-            onValueChange={value => setMulti(value as MultiMode)}
+            onValueChange={(value) => setMulti(value as MultiMode)}
           >
             <SelectTrigger className="w-40">
               <SelectValue data-placeholder="Select a mode" />

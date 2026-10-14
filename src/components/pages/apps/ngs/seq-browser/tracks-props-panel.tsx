@@ -186,7 +186,7 @@ export function TracksPropsPanel() {
               }}
               className="stroke-foreground/50 hover:stroke-destructive trans-color"
             >
-              <TrashIcon stroke="" />
+              <TrashIcon />
             </button>
           </>
         }

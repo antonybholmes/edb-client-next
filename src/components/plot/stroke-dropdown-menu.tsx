@@ -1,5 +1,5 @@
 import { BaseCol } from '@/layout/base-col'
-import { type IButtonProps } from '@/themed/v2/button'
+import { type IButtonProps } from '@/themed/baseui/button'
 
 import { addAlphaToHex } from '@/lib/color/color'
 import { CircleSlash, Palette, Pencil } from 'lucide-react'
@@ -16,7 +16,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   MenuSeparator,
-} from '../shadcn/ui/themed/v2/dropdown-menu'
+} from '../shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarIconButton } from '../toolbar/toolbar-icon-button'
 
 import { ReactNode } from 'react'
@@ -359,8 +359,6 @@ export function StandardColors({
 export function MoreColors({ cp }: { cp: IColorPickerProps }) {
   const { open: openDialog } = useDialogs()
   const { addCustomColor } = useEdbSettings()
-
-  console.log('cp', cp)
 
   return (
     <DropdownMenuItem

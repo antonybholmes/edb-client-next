@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from '@/themed/card'
 
-import { Button } from '@/themed/v2/button'
+import { Button } from '@/themed/baseui/button'
 
 import { BaseCol } from '@/components/layout/base-col'
 

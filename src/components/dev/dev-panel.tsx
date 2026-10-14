@@ -9,7 +9,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '../shadcn/ui/themed/v2/tabs'
+} from '../shadcn/ui/themed/baseui/tabs'
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import {
   TabIndicatorProvider,

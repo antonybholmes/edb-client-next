@@ -8,10 +8,10 @@ import {
 } from '@/components/dialogs/card/action-dialog-card'
 import type { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
 import { textToLines } from '@/lib/text/lines'
+import { Input } from '@/themed/baseui/input'
 import { Textarea } from '@/themed/textarea'
-import { Input } from '@/themed/v2/input'
 import { useEffect, useState } from 'react'
 
 export interface IProps extends IModalProps<IGeneSet> {

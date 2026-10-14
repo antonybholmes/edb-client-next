@@ -14,7 +14,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   MenuSeparator,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
 import { renderTab, type ITab } from '@/components/tabs/tab-provider'
 import { TEXT_FILE, TEXT_OPTIONS, TEXT_SETTINGS } from '@/consts'
@@ -24,6 +24,7 @@ import { CookieIcon } from '../icons/cookie-icon'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { present } from '@/lib/dom-utils'
+import { capitalCase } from '@/lib/text/capital-case'
 import { format } from 'date-fns'
 import { Globe } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -35,8 +36,8 @@ import { OptionsIcon } from '../icons/options-icon'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 import { BLANK_TARGET } from '../link/base-link'
+import { Button } from '../shadcn/ui/themed/baseui/button'
 import { LinkButton } from '../shadcn/ui/themed/link-button'
-import { Button } from '../shadcn/ui/themed/v2/button'
 
 export const SIDE_OVERLAY_CLS = cn(
   'fixed inset-0 z-(--z-overlay) bg-overlay/30 backdrop-blur-xs duration-500 ease-in-out',
@@ -80,7 +81,7 @@ function AppInfo() {
         </VCenterRow>
 
         <BaseCol className="gap-y-1">
-          <p>{appInfo?.description}</p>
+          <p>{capitalCase(appInfo?.description)}</p>
           <p>
             Build {appInfo.version}.{appInfo.build}
           </p>

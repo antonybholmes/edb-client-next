@@ -169,16 +169,18 @@ export function NetworkD3SvgContent() {
       // since we have lots of mouse events, only react when the current node changes
       if (!node) {
         if (currentNode) {
-          gsap.timeline().to(
-            `#node-circle-${currentNode.id}`,
-            {
+          const currentCircle = document.getElementById(
+            `node-circle-${currentNode.id}`
+          )
+
+          if (currentCircle instanceof SVGCircleElement) {
+            gsap.to(currentCircle, {
               scale: 1,
               transformOrigin: 'center',
               duration: 0.3,
               ease: 'power2.out',
-            },
-            0
-          )
+            })
+          }
 
           setCurrentNode(null)
         }
@@ -193,16 +195,16 @@ export function NetworkD3SvgContent() {
 
       setCurrentNode(node)
 
-      gsap.timeline().to(
-        `#node-circle-${node.id}`,
-        {
+      const nextCircle = document.getElementById(`node-circle-${node.id}`)
+
+      if (nextCircle instanceof SVGCircleElement) {
+        gsap.to(nextCircle, {
           scale: 1.2,
           transformOrigin: 'center',
           duration: 0.3,
           ease: 'power2.out',
-        },
-        0
-      )
+        })
+      }
 
       const plotNodePos = { x: node.x, y: node.y }
 
@@ -260,14 +262,14 @@ export function NetworkD3SvgContent() {
         updateUserData(
           produce(userData, (draft) => {
             draft.labels.ids = userData.labels.ids.filter(
-              (id) => id !== currentNode.id2
+              (id) => id !== currentNode.nodeId
             )
           })
         )
       } else {
         updateUserData(
           produce(userData, (draft) => {
-            draft.labels.ids = [...userData.labels.ids, currentNode.id2]
+            draft.labels.ids = [...userData.labels.ids, currentNode.nodeId]
           })
         )
       }
@@ -359,7 +361,7 @@ export function NetworkD3SvgContent() {
     let rightMargin = settings.plot.margin.right
 
     if (settings.plot.legend.show && settings.plot.legend.autoMargin) {
-      const maxChars = max(groups.map((g) => g.name.length))
+      const maxChars = max(groups.groups.map((g) => g.name.length))
 
       rightMargin +=
         (maxChars * settings.plot.nodes.labels.text.font.fontSize) / 2

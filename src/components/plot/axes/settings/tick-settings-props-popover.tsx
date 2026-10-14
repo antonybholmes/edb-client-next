@@ -3,12 +3,12 @@ import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AxisType } from '@/components/plot/axes/svg-axis-props'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'

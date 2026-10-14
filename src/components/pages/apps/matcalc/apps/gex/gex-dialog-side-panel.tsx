@@ -4,11 +4,11 @@ import {
   PopoverContent,
   PopoverSpeechArrow,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+} from '@/components/shadcn/ui/themed/baseui/popover'
 import {
   GroupToggle,
   ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 
 import { produce } from 'immer'
 
@@ -19,8 +19,8 @@ import { CenterRow } from '@/components/layout/center-row'
 import {
   RadioGroup,
   RadioGroupItem,
-} from '@/components/shadcn/ui/themed/v2/radio-group'
-import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
+} from '@/components/shadcn/ui/themed/baseui/radio-group'
+import { SkeletonRows } from '@/components/shadcn/ui/themed/baseui/skeleton'
 import { ITab } from '@/components/tabs/tab-provider'
 import { HardDrive } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'

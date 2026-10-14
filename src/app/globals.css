@@ -160,6 +160,7 @@
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 
+  --size-button-xs: 1rem;
   --size-button-md: 2rem;
   --size-button-sm: 1.5rem;
   --size-button-lg: 2.25rem;
@@ -186,8 +187,6 @@
   --edb-faint: oklch(0.44 0 0);
   --edb-muted: oklch(0.44 0 0);
 
-  --edb-destructive: rgb(239 68 68);
-  --edb-destructive-foreground: white;
   --edb-overlay: rgb(2 6 23);
   --edb-border: rgb(115 115 115);
   --edb-border-light: rgb(51 65 85);

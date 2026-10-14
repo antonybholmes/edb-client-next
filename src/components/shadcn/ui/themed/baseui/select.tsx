@@ -1,5 +1,5 @@
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_XS_H_CLS } from '@/theme'
+
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 
 import { TruncateSpan } from '@/components/truncate-span'
@@ -9,13 +9,13 @@ import { ReactNode, useMemo, type ComponentProps } from 'react'
 import {
   BASE_FLAT_BUTTON_CLS,
   DROPDOWN_MENU_ICON_CONTAINER_CLS,
-} from '../v2/button'
+} from '../baseui/button'
 import {
   dropdownContentVariants,
   dropdownMenuItemVariants,
   POPOVER_CLS,
   POSITIONER_CLS,
-} from '../v2/dropdown-menu'
+} from '../baseui/dropdown-menu'
 
 export const Select = SelectPrimitive.Root
 
@@ -44,7 +44,7 @@ export const triggerVariants = cva(
         ),
         button: cn(BASE_FLAT_BUTTON_CLS, 'h-button rounded-theme'),
 
-        footer: cn(BASE_FLAT_BUTTON_CLS, BUTTON_XS_H_CLS),
+        footer: cn(BASE_FLAT_BUTTON_CLS, 'h-button-xs'),
         header: cn(BASE_FLAT_BUTTON_CLS, 'h-button-lg px-2 pl-3 rounded-theme'),
         glass: '',
       },
@@ -280,7 +280,7 @@ interface ISelectListProps
   extends ComponentProps<typeof Select>, VariantProps<typeof triggerVariants> {
   title?: string
   className?: string
-  format?: (value: any) => string
+  format?: (value: unknown) => string
 }
 
 export function SelectList({
@@ -290,7 +290,7 @@ export function SelectList({
   multiple = false,
   title,
   items,
-  format = (value: any) => value,
+  format = (value: unknown) => String(value),
   className = '',
   children,
   ...props
@@ -313,7 +313,7 @@ export function SelectList({
     }
 
     const key = value.toString()
-    return itemMap[key] ?? format(value)
+    return itemMap[key] ?? format(key)
   }, [itemMap, value, format])
 
   return (

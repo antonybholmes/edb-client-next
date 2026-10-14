@@ -5,9 +5,9 @@ import {
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@/themed/v2/accordion'
+} from '@/themed/baseui/accordion'
 
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { LinkButton } from '@/themed/link-button'
@@ -19,7 +19,7 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { produce } from 'immer'
 
 import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
-import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { useGseaSettings } from '../gsea-settings-store'
 import APP_INFO from '../manifest.json'
 import { GeneProps } from './gene-props'

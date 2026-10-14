@@ -85,7 +85,7 @@ function TrackItem({
             className="stroke-foreground/50 hover:stroke-destructive"
             title="Delete location"
           >
-            <TrashIcon stroke="" />
+            <TrashIcon />
           </button>
         </VCenterRow>
       }

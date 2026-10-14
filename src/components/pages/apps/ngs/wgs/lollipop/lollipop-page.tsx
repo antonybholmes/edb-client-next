@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 import { range } from '@/lib/math/range'
 

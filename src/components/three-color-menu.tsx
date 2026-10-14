@@ -8,13 +8,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from './shadcn/ui/themed/v2/popover'
+} from './shadcn/ui/themed/baseui/popover'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from './shadcn/ui/themed/v2/tabs'
+} from './shadcn/ui/themed/baseui/tabs'
 
 interface IColorChange {
   tooltip: string

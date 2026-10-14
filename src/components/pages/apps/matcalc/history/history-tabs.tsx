@@ -4,7 +4,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from '@/components/shadcn/ui/themed/v2/tabs'
+} from '@/components/shadcn/ui/themed/baseui/tabs'
 import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import {
   TabIndicatorProvider,

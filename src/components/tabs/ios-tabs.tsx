@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/baseui/tabs'
 
 import { getTabName, useTabs, type ITab } from './tab-provider'
 
@@ -9,7 +9,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { truncate } from '@/lib/text/text'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { VariantProps } from 'class-variance-authority'
-import { toggleGroupVariants } from '../shadcn/ui/themed/v2/toggle-group'
+import { toggleGroupVariants } from '../shadcn/ui/themed/baseui/toggle-group'
 import { TabIndicatorIosSelected } from './tab-indicator-ios-selected'
 import {
   TabIndicatorProvider,

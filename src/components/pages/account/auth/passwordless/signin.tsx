@@ -1,4 +1,4 @@
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 
 import {
   Card,
@@ -37,10 +37,10 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from '@/components/shadcn/ui/themed/v2/form'
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
-import { Button } from '@/themed/v2/button'
-import { Input } from '@/themed/v2/input'
+} from '@/components/shadcn/ui/themed/baseui/form'
+import { Label } from '@/components/shadcn/ui/themed/baseui/label'
+import { Button } from '@/themed/baseui/button'
+import { Input } from '@/themed/baseui/input'
 
 import type { IDivProps } from '@/interfaces/div-props'
 

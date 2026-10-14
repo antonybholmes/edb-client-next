@@ -7,7 +7,7 @@ import {
   useTabs,
 } from '@/components/tabs/tab-provider'
 import { EMPTY_RECT } from '@/interfaces/rect'
-import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/baseui/tabs'
 
 import { TabIndicatorFollowV } from './tab-indicator-follow-v'
 import { TabIndicatorSelectedV } from './tab-indicator-selected-v'
