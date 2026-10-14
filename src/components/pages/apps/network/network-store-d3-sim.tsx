@@ -456,16 +456,18 @@ export function useNetworkD3Sim() {
             : networkSettings.plot.nodes.view.translucent.opacity
         })
         .attr('stroke-width', (d) => {
-          return Math.min(
-            networkSettings.plot.edges.minWidth,
+          return (
             d.strength *
-              networkSettings.plot.edges.scale *
-              (networkSettings.plot.edges.highlight &&
-              highlightedEdges.has(d.id)
-                ? 3
-                : 1)
+            networkSettings.plot.edges.scale *
+            (networkSettings.plot.edges.highlight && highlightedEdges.has(d.id)
+              ? 3
+              : 1)
           )
         })
+        .attr(
+          'stroke-dasharray',
+          (d) => networkSettings.plot.edges.line.dasharray
+        )
         .attr('visibility', (d) => {
           return highlightedEdges.has(d.id)
             ? 'visible'

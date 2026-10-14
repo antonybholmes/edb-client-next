@@ -478,7 +478,7 @@ export function NetworkDisplayPropsPanel() {
             <PropRow title="Scale">
               <NumSlider
                 min={0}
-                max={20}
+                max={5}
                 step={0.01}
                 dp={2}
                 value={settings.plot.edges.scale}
@@ -500,12 +500,13 @@ export function NetworkDisplayPropsPanel() {
                     color: settings.plot.edges.line.value,
                     opacity: settings.plot.edges.line.opacity,
                     show: settings.plot.edges.line.show,
-                    onColorChange: ({ color, opacity, show }) =>
+                    onColorChange: ({ color, opacity, dasharray, show }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.plot.edges.line.value = color
                           draft.plot.edges.line.show = show
                           draft.plot.edges.line.opacity = opacity
+                          draft.plot.edges.line.dasharray = dasharray
                         })
                       ),
                   },
@@ -514,6 +515,7 @@ export function NetworkDisplayPropsPanel() {
             </PropRow>
             <CheckPropRow
               title="Highlight"
+              tooltip="Highlight edges connected to nodes"
               checked={settings.plot.edges.highlight}
               onCheckedChange={(value) =>
                 updateSettings(
