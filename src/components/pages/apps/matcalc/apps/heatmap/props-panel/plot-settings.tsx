@@ -41,7 +41,7 @@ export function PlotSettingsPanel() {
     <AccordionItem value="plot">
       <AccordionTrigger>Plot</AccordionTrigger>
       <AccordionContent>
-        <PropRow title="Title" labelW="xs">
+        <PropRow title="Title" contentCls="gap-x-2">
           <FontPopover
             fonts={[
               {

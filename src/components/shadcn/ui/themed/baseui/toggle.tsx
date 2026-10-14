@@ -30,7 +30,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       flat: 'data-pressed:font-medium data-pressed:bg-background data-pressed:shadow-sm',
     },
     size: {
-      xs: 'h-button-xs',
+      xs: 'h-button-sm',
       sm: 'h-7.5',
       md: 'h-button-md',
       lg: 'h-9',

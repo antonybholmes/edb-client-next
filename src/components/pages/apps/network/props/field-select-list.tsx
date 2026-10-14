@@ -22,14 +22,8 @@ export function FieldSelectList({
       w="sm"
       variant={variant}
       title="Text That Appears in Node Labels"
-      items={[
-        ...nodes.label.fields.map((field) => {
-          return { value: field, label: field }
-        }),
-        { value: 'group', label: 'Group' },
-        { value: 'id', label: 'id' },
-        { value: 'id2', label: 'id2' },
-      ]}
+
+      //format={(label) => capitalCase(label as string)}
     >
       {nodes.label.fields.map((field) => (
         <SelectItem key={field} value={field}>
@@ -41,10 +35,10 @@ export function FieldSelectList({
         Group
       </SelectItem>
       <SelectItem key="id" value="id">
-        id
+        ID
       </SelectItem>
-      <SelectItem key="id2" value="id2">
-        id2
+      <SelectItem key="nodeId" value="nodeId">
+        Node ID
       </SelectItem>
     </SelectList>
   )

@@ -27,7 +27,7 @@ const APP_BG_CLS = cn(
 
 export function AppTile({
   module,
-  size = 3,
+  size = 4,
 }: {
   module: IAppHeaderLink
   size?: number
@@ -46,51 +46,52 @@ export function AppTile({
   )
 }
 
-export function AnimatedAppIcon({
-  appInfo,
-  size = 2,
-}: IDivProps & {
-  size?: number
-  appInfo: IAppInfo | IAppHeaderLink
-}) {
-  const ref = useRef<HTMLSpanElement>(null)
+// export function AnimatedAppIcon({
+//   appInfo,
+//   size = 2,
+// }: IDivProps & {
+//   size?: number
+//   appInfo: IAppInfo | IAppHeaderLink
+// }) {
+//   const ref = useRef<HTMLSpanElement>(null)
 
-  const [hover, setHover] = useState(false)
+//   const [hover, setHover] = useState(false)
 
-  useUpdateEffect(() => {
-    gsap.to(ref.current, {
-      opacity: hover ? 0.2 : 0.1,
-      scale: hover ? 1.2 : 1,
-      //borderRadius: hover ? '2rem' : '1.5rem',
-      duration: 0.8,
-      ease: 'back.out',
-    })
-  }, [hover])
+//   useUpdateEffect(() => {
+//     gsap.to(ref.current, {
+//       opacity: hover ? 0.2 : 0.1,
+//       scale: hover ? 1.2 : 1,
+//       //borderRadius: hover ? '2rem' : '1.5rem',
+//       duration: 0.8,
+//       ease: 'back.out',
+//     })
+//   }, [hover])
 
-  return (
-    <AppIcon
-      setHover={setHover}
-      appInfo={appInfo}
-      size={size}
-      animate={true}
-      className="relative w-full aspect-square"
-    >
-      <span
-        ref={ref}
-        className={cn(APP_BG_CLS, 'z-0 opacity-10')}
-        style={{
-          width: `${size + 1.2}rem`,
-          height: `${size + 1.2}rem`,
-          backgroundColor: appInfo.color,
-        }}
-      />
-    </AppIcon>
-  )
-}
+//   return (
+//     <AppIcon
+//       setHover={setHover}
+//       appInfo={appInfo}
+//       size={size}
+//       animate={true}
+//       className="relative w-full aspect-square"
+//     >
+//       <span
+//         ref={ref}
+//         className={cn(APP_BG_CLS, 'z-0 opacity-10')}
+//         style={{
+//           width: `${size + 1.2}rem`,
+//           height: `${size + 1.2}rem`,
+//           backgroundColor: appInfo.color,
+//         }}
+//       />
+//     </AppIcon>
+//   )
+// }
 
 export function AppIcon({
   appInfo,
-  size = 2,
+  size = 3,
+  borderSize = 1,
   setHover,
   animate = false,
   className,
@@ -98,6 +99,7 @@ export function AppIcon({
   ...props
 }: IDivProps & {
   size?: number
+  borderSize?: number
   appInfo: IAppInfo | IAppHeaderLink
   setHover?: (hover: boolean) => void
   animate?: boolean
@@ -152,6 +154,8 @@ export function AppIcon({
     setHover?.(hover)
   }
 
+  const innerSize = size - borderSize
+
   return (
     <CenterCol
       {...props}
@@ -178,8 +182,8 @@ export function AppIcon({
         ref={bgRef}
         className={cn(APP_BG_CLS, 'z-0 opacity-10')}
         style={{
-          width: `${size + 1}rem`,
-          height: `${size + 1}rem`,
+          width: `${size}rem`,
+          height: `${size}rem`,
           backgroundColor: appInfo.color,
         }}
       />
@@ -190,8 +194,8 @@ export function AppIcon({
 
         style={
           {
-            width: `${size}rem`,
-            height: `${size}rem`,
+            width: `${innerSize}rem`,
+            height: `${innerSize}rem`,
             '--base-color': appInfo.color ?? 'lightslategray',
           } as CSSProperties
         }

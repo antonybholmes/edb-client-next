@@ -107,7 +107,7 @@ export function HeaderLinks({
             }
             title={module.description}
           >
-            <AppIcon appInfo={module} size={2.4} />
+            <AppIcon appInfo={module} />
             <p className="text-[0.7rem] text-center truncate">{module.name}</p>
           </ModuleButtonLink>
         </li>

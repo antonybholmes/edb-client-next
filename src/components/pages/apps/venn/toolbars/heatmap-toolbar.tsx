@@ -54,7 +54,7 @@ export function HeatmapToolbar() {
             variant="toolbar"
             w="sm"
             value={settings.heatmap.metric}
-            format={(v) => capitalCase(v)}
+            format={(v) => capitalCase(v as string)}
             onValueChange={(value) => {
               updateSettings(
                 produce(settings, (draft) => {

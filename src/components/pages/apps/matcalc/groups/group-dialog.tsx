@@ -1,4 +1,3 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import { IS_DEV_MODE, TEXT_CANCEL, TEXT_OK } from '@/consts'
@@ -161,10 +160,13 @@ export function GroupDialog({ group, onResponse }: IProps) {
                 )
               }}
             >
-              Exact match
+              Exact Match
             </Checkbox>
           </ActionDialogRow>
           <ActionDialogRow>
+            <Input value={cols.join(', ')} readOnly />
+          </ActionDialogRow>
+          {/* <ActionDialogRow>
             <VCenterRow className="col-span-4 text-xs text-alt-foreground flex-wrap gap-1.5">
               {cols.map((c) => (
                 <span key={c} className="bg-muted/50 p-1 px-2 rounded-full">
@@ -172,7 +174,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
                 </span>
               ))}
             </VCenterRow>
-          </ActionDialogRow>
+          </ActionDialogRow> */}
         </ActionDialogCardContent>
       </ActionDialogCard>
 

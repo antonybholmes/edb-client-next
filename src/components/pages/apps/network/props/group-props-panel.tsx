@@ -43,7 +43,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
         checked={group.show}
         onCheckedChange={(checked) => {
           setGroups(
-            produce(groups, (draft) => {
+            produce(groups.groups, (draft) => {
               const g = draft.find((x) => x.id === group.id)
               if (g) {
                 g.show = checked
@@ -68,7 +68,7 @@ export function GroupItem({ index, group }: { index: number; group: IGroup }) {
             allowNoColor: false,
             onColorChange: ({ color }) => {
               setGroups(
-                produce(groups, (draft) => {
+                produce(groups.groups, (draft) => {
                   const g = draft.find((x) => x.id === group.id)
                   if (g) {
                     g.color = color
@@ -145,13 +145,13 @@ export function GroupPropsPanel() {
         <VScrollPanel className="grow">
           <DragDropProvider
             onDragEnd={(event) => {
-              const newOrder = move(groups, event)
+              const newOrder = move(groups.groups, event)
 
               setGroups(newOrder)
             }}
           >
             <ul className="flex flex-col gap-y-1">
-              {groups.map((gr, gri) => {
+              {groups.groups.map((gr, gri) => {
                 return <GroupItem index={gri} group={gr} key={gr.id} />
               })}
             </ul>

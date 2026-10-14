@@ -31,7 +31,7 @@ export interface INode {
   /**
    * Secondary id e.g. group::name
    */
-  id2: string
+  nodeId: string
 
   groupId: string
 
@@ -127,8 +127,8 @@ function fixName(name: string): string {
 export function dataframesToNetwork(
   dfNodes: BaseDataFrame,
   dfEdges: BaseDataFrame,
+  idCol: string,
   labelCol: string,
-  nameCol: string,
   groupCol: string,
   sizeCol: string,
   colorCol: string,
@@ -138,8 +138,10 @@ export function dataframesToNetwork(
   settings: INetworkSettings,
   userData: IUserDataSettings
 ) {
+  const nodeIds = dfNodes.col(idCol).strs
+
   const labels = dfNodes.col(labelCol).strs
-  const names = dfNodes.col(nameCol).strs
+
   let sizes = dfNodes.col(sizeCol).nums
   let sizes2 = []
 
@@ -157,7 +159,7 @@ export function dataframesToNetwork(
   const pFloor = minNonZeroP * 0.1
 
   sizes = sizes.map((size) =>
-    settings.data.applyMinusLog10ToMetric1
+    settings.data.metrics.size.applyMinusLog10
       ? -Math.log10(size === 0 ? pFloor : size)
       : size
   )
@@ -173,7 +175,7 @@ export function dataframesToNetwork(
   const pFloor2 = minNonZeroP2 * 0.1
 
   sizes2 = sizes2.map((size) =>
-    settings.data.applyMinusLog10ToMetric2
+    settings.data.metrics.color.applyMinusLog10
       ? -Math.log10(size === 0 ? pFloor2 : size)
       : size
   )
@@ -190,9 +192,8 @@ export function dataframesToNetwork(
   const nodes: INode[] = labels.map((label, i) => {
     const node = {
       id: makeUuid(),
-      id2: groups[i].trim() + '::' + names[i].trim(),
+      nodeId: nodeIds[i].trim(), // + '::' + groups[i].trim() + '::' + names[i].trim(),
       label,
-      name: names[i].trim(),
       size: sizes[i],
       size2: sizes2?.[i] ?? 0,
       groupId: '',
@@ -212,10 +213,10 @@ export function dataframesToNetwork(
   const used = new Set<string>()
 
   for (const node of nodes) {
-    const id2 = fixName(node.id2) //.group + '::' + node.name)
+    const nodeId = fixName(node.nodeId) //.group + '::' + node.name)
 
-    nodeMap.set(id2, node)
-    used.add(id2)
+    nodeMap.set(nodeId, node)
+    used.add(nodeId)
   }
 
   const sources = dfEdges.col(sourceCol).strs
@@ -231,14 +232,16 @@ export function dataframesToNetwork(
     }
   })
 
-  const uniqueGroups = [...new Set(groups)].sort().map((g, index) => ({
-    id: makeUuid(),
-    name: g,
-    show: true,
-    color:
-      userData.groups.colors[g.toLowerCase()] ??
-      TAB10_PALETTE[index % TAB10_PALETTE.length],
-  }))
+  const uniqueGroups: IGroup[] = [...new Set(groups)]
+    .sort()
+    .map((g, index) => ({
+      id: makeUuid(),
+      name: g,
+      show: true,
+      color:
+        userData.groups.colors[g.toLowerCase()] ??
+        TAB10_PALETTE[index % TAB10_PALETTE.length],
+    }))
 
   const groupToIdMap = new Map(
     uniqueGroups.map((g) => [g.name.toLowerCase(), g.id])
@@ -258,8 +261,14 @@ export function dataframesToNetwork(
       nodeMap: idNodeMap,
       edges,
     },
-    nodeDataTypes: colNames,
-    groups: uniqueGroups,
+    nodes: {
+      field: labelCol,
+      fields: colNames,
+    },
+    groups: {
+      field: groupCol,
+      groups: uniqueGroups,
+    },
   }
 
   console.log(network)
@@ -292,19 +301,19 @@ export interface INetworkStore {
   }
   headings: {
     score: string
-    metric1: string
-    metric2: string
+    sizeMetric: string
+    colorMetric: string
   }
-  groups: IGroup[]
+  groups: { field: string; groups: IGroup[] }
 
   coordinateMap: Record<string, IPos>
   size: IDim
 
   setNetwork: (
     settings: Omit<INetwork, 'id'>,
-    groups: IGroup[],
-    nodeDataTypes: string[],
-    labelField: string,
+    nodes: { field: string; fields: string[] },
+    groups: { field: string; groups: IGroup[] },
+
     scoreName: string,
     sizeName: string,
     size2Name: string
@@ -332,10 +341,10 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
   },
   headings: {
     score: 'Score',
-    metric1: 'Size',
-    metric2: 'Size2',
+    sizeMetric: 'Size',
+    colorMetric: 'Size',
   },
-  groups: [],
+  groups: { field: '', groups: [] },
   tree: null,
 
   coordinateMap: {},
@@ -343,12 +352,12 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
 
   setNetwork: (
     network: Omit<INetwork, 'id'>,
-    groups: IGroup[],
-    nodeLabelFields: string[],
-    labelField: string,
+    nodes: { field: string; fields: string[] },
+    groups: { field: string; groups: IGroup[] },
+
     scoreName: string,
-    sizeName: string,
-    size2Name: string
+    sizeMetricName: string,
+    colorMetricName: string
   ) => {
     // set metric limits for the primary metric (size) of the nodes
     // set max to a min of 1 so that we dont get divide by zero errors
@@ -407,8 +416,8 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
         metricLim2,
         stepSize,
         label: {
-          field: labelField,
-          fields: [...new Set(nodeLabelFields)].sort(),
+          fields: [...new Set(nodes.fields)].sort(),
+          field: nodes.field,
         },
       },
       edges: {
@@ -417,8 +426,8 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
       },
       headings: {
         score: scoreName,
-        metric1: sizeName,
-        metric2: size2Name,
+        sizeMetric: sizeMetricName,
+        colorMetric: colorMetricName,
       },
       coordinateMap: {},
       groups,
@@ -437,7 +446,7 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
   },
   setGroups: (groups: IGroup[]) => {
     set({
-      groups,
+      groups: { ...get().groups, groups },
     })
   },
   updateCoordinates: (coordinateMap: Record<string, IPos>, size: IDim) => {
@@ -469,7 +478,8 @@ export function useNetwork() {
   const setGroups = useNetworkStore((state) => state.setGroups)
 
   const groupMap = useMemo(
-    () => new Map<string, IGroup>(groups.map((group) => [group.id, group])),
+    () =>
+      new Map<string, IGroup>(groups.groups.map((group) => [group.id, group])),
     [groups]
   )
 
@@ -781,8 +791,8 @@ export function getNodeText(
   switch (field) {
     case 'id':
       return node.id
-    case 'id2':
-      return node.id2
+    case 'nodeId':
+      return node.nodeId
     case 'group':
       return groupMap.get(node.groupId)?.name ?? ''
     default:
@@ -818,7 +828,7 @@ export function getIsNodeLabelled(
 export function labelsInNodeIds(node: INode, labelSet: Set<string>): boolean {
   return (
     inLabelSet(node.id, labelSet, 'exact') ||
-    inLabelSet(node.id2, labelSet, 'exact')
+    inLabelSet(node.nodeId, labelSet, 'exact')
   )
 }
 
@@ -865,8 +875,6 @@ export function inLabelSet(
 //       return node.size.toString()
 //     case 'id':
 //       return node.id
-//     case 'id2':
-//       return node.id2
 //     default:
 //       return ''
 //   }

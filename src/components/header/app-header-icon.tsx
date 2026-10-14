@@ -30,7 +30,12 @@ export function AppHeaderIcon() {
           'aspect-square justify-center group relative'
         )}
       >
-        <AppIcon appInfo={appInfo} className={ICON_TRANSITION_FROM_CLS} />
+        <AppIcon
+          appInfo={appInfo}
+          className={ICON_TRANSITION_FROM_CLS}
+          size={2}
+          borderSize={0}
+        />
 
         <HomeIcon
           className={ICON_TRANSITION_TO_CLS}

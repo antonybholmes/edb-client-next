@@ -146,7 +146,7 @@ export function NodesDisplayPropsPanel() {
 
             <IconButton
               //variant="app-theme"
-              size="xs"
+              size="icon-xs"
 
               onClick={() =>
                 openDialog({
@@ -251,13 +251,13 @@ export function NodesDisplayPropsPanel() {
           <VScrollPanel className="grow">
             <DragDropProvider
               onDragEnd={(event) => {
-                const newOrder = move(groups, event)
+                const newOrder = move(groups.groups, event)
 
                 setGroups(newOrder)
               }}
             >
               <ul className="flex flex-col gap-y-1">
-                {groups.map((gr, gri) => {
+                {groups.groups.map((gr, gri) => {
                   return <GroupItem index={gri} group={gr} key={gr.id} />
                 })}
               </ul>

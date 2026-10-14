@@ -262,14 +262,14 @@ export function NetworkD3SvgContent() {
         updateUserData(
           produce(userData, (draft) => {
             draft.labels.ids = userData.labels.ids.filter(
-              (id) => id !== currentNode.id2
+              (id) => id !== currentNode.nodeId
             )
           })
         )
       } else {
         updateUserData(
           produce(userData, (draft) => {
-            draft.labels.ids = [...userData.labels.ids, currentNode.id2]
+            draft.labels.ids = [...userData.labels.ids, currentNode.nodeId]
           })
         )
       }
@@ -361,7 +361,7 @@ export function NetworkD3SvgContent() {
     let rightMargin = settings.plot.margin.right
 
     if (settings.plot.legend.show && settings.plot.legend.autoMargin) {
-      const maxChars = max(groups.map((g) => g.name.length))
+      const maxChars = max(groups.groups.map((g) => g.name.length))
 
       rightMargin +=
         (maxChars * settings.plot.nodes.labels.text.font.fontSize) / 2

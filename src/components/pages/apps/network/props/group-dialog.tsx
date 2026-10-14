@@ -47,7 +47,7 @@ export function GroupDialog({
       onResponse={(r) => {
         if (r === TEXT_OK) {
           setGroups(
-            produce(groups, (draft) => {
+            produce(groups.groups, (draft) => {
               const g = draft.find((x) => x.id === group.id)
               if (g) {
                 g.name = name

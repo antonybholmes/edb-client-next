@@ -252,7 +252,8 @@ export function VolcanoDialog({
             name="applyLog2ToFoldChange"
             render={({ field }) => (
               <ActionCheckRow
-                title="Apply log2 to fold change"
+                title="Fold change"
+                text="Apply log2"
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
@@ -264,7 +265,8 @@ export function VolcanoDialog({
             name="applyLog10ToPValue"
             render={({ field }) => (
               <ActionCheckRow
-                title="Apply -log10(p-value)"
+                title="P-value"
+                text="Apply -log10"
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />

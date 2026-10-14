@@ -360,8 +360,6 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
   const { open: openDialog } = useDialogs()
   const { addCustomColor } = useEdbSettings()
 
-  console.log('cp', cp)
-
   return (
     <DropdownMenuItem
       onClick={() => {

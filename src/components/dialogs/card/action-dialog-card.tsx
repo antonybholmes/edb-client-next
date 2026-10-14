@@ -17,23 +17,24 @@ export function ActionDialogCard({ className, children, ...props }: IDivProps) {
 export function ActionDialogRow({
   title,
   items = 'center',
-  justify = 'between',
+  justify = 'start',
   className,
   children,
   ...props
 }: Omit<IDivProps, 'title'> & {
   title?: ReactNode
+  text?: ReactNode
   items?: 'start' | 'center' | 'end'
   justify?: 'start' | 'center' | 'end' | 'between'
 }) {
   return (
     <div
-      className={cn('grid grid-cols-20 gap-x-3 gap-y-2', className)}
+      className={cn('grid grid-cols-4 gap-x-3 gap-y-2', className)}
       {...props}
     >
       <BaseRow
         className={cn(
-          'text-alt-foreground text-right text-sm justify-end col-span-5',
+          'text-alt-foreground text-right text-sm justify-end ',
           items === 'start' && 'items-start',
           items === 'center' && 'items-center',
           items === 'end' && 'items-end'
@@ -43,7 +44,7 @@ export function ActionDialogRow({
       </BaseRow>
       <BaseRow
         className={cn(
-          'col-span-10 gap-x-2',
+          'col-span-3 gap-x-2',
           justify === 'start' && 'justify-start',
           justify === 'center' && 'justify-center',
           justify === 'end' && 'justify-end',
@@ -81,6 +82,7 @@ export function ActionDialogCardContent({
 
 export function ActionCheckRow({
   title = '',
+  text = '',
   tooltip = '',
   checked = false,
   justify,
@@ -90,7 +92,7 @@ export function ActionCheckRow({
 }: ComponentProps<typeof ActionDialogRow> &
   ComponentProps<typeof Checkbox> & { info?: ReactNode }) {
   return (
-    <ActionDialogRow justify={justify}>
+    <ActionDialogRow justify={justify} title={title}>
       <Checkbox
         checked={checked}
         onCheckedChange={onCheckedChange}
@@ -98,7 +100,7 @@ export function ActionCheckRow({
 
         title={tooltip}
       >
-        {title}
+        {text}
       </Checkbox>
       {children}
     </ActionDialogRow>
@@ -107,6 +109,7 @@ export function ActionCheckRow({
 
 export function ActionSwitchRow({
   title = '',
+  text = '',
   tooltip = '',
   checked = false,
   justify,
@@ -117,7 +120,7 @@ export function ActionSwitchRow({
 }: ComponentProps<typeof ActionDialogRow> &
   ComponentProps<typeof Checkbox> & { info?: ReactNode; switchCls?: string }) {
   return (
-    <ActionDialogRow justify={justify}>
+    <ActionDialogRow justify={justify} title={title}>
       <Switch
         checked={checked}
         onCheckedChange={onCheckedChange}
@@ -126,7 +129,7 @@ export function ActionSwitchRow({
         title={tooltip}
         className={switchCls}
       >
-        {title}
+        {text}
       </Switch>
       {children}
     </ActionDialogRow>

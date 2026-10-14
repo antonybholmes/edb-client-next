@@ -15,7 +15,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v12`
+const SETTINGS_KEY = `${config.appId}:app:network:v14`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -31,8 +31,6 @@ export const POSITIONS: { label: string; value: LabelPosition }[] = [
   { label: 'Above', value: 'above' },
 ]
 
-//type LabelType = 'label' | 'name' | 'group' | 'size' | 'id' | 'id2'
-
 // export const LABEL_TYPES: {
 //   label: string
 //   value: LabelType
@@ -42,7 +40,6 @@ export const POSITIONS: { label: string; value: LabelPosition }[] = [
 //   { label: 'Group', value: 'group' },
 //   { label: 'Size', value: 'size' },
 //   { label: 'ID', value: 'id' },
-//   { label: 'ID 2', value: 'id2' },
 //   // { label: 'None', value: 'none' },
 // ]
 
@@ -53,8 +50,14 @@ export interface INetworkSettings {
     useStrength: boolean
   }
   data: {
-    applyMinusLog10ToMetric1: boolean
-    applyMinusLog10ToMetric2: boolean
+    metrics: {
+      size: {
+        applyMinusLog10: boolean
+      }
+      color: {
+        applyMinusLog10: boolean
+      }
+    }
   }
   plot: {
     size: IDim
@@ -163,7 +166,16 @@ const DEFAULT_SETTINGS: INetworkSettings = {
     linkDistance: 100,
     useStrength: false,
   },
-  data: { applyMinusLog10ToMetric1: false, applyMinusLog10ToMetric2: false },
+  data: {
+    metrics: {
+      size: {
+        applyMinusLog10: false,
+      },
+      color: {
+        applyMinusLog10: false,
+      },
+    },
+  },
   plot: {
     size: { w: 2000, h: 2000 },
     margin: { ...PLOT_MARGIN },

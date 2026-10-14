@@ -77,11 +77,11 @@ export const SM_ICON_BUTTON_CLS = cn(
   'w-button-sm h-button-sm'
 )
 
-export const XS_ICON_BUTTON_CLS = cn(
-  BASE_ICON_BUTTON_CLS,
-  CENTERED_ROW_CLS,
-  'w-button-xs h-button-xs'
-)
+// export const XS_ICON_BUTTON_CLS = cn(
+//   BASE_ICON_BUTTON_CLS,
+//   CENTERED_ROW_CLS,
+//   'w-button-xs h-button-xs'
+// )
 
 //export const SMALL_BUTTON_CLS = cn(BUTTON_SM_H_CLS, 'px-2')
 

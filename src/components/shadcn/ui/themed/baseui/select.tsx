@@ -280,7 +280,7 @@ interface ISelectListProps
   extends ComponentProps<typeof Select>, VariantProps<typeof triggerVariants> {
   title?: string
   className?: string
-  format?: (value: any) => string
+  format?: (value: unknown) => string
 }
 
 export function SelectList({
@@ -290,7 +290,7 @@ export function SelectList({
   multiple = false,
   title,
   items,
-  format = (value: any) => value,
+  format = (value: unknown) => String(value),
   className = '',
   children,
   ...props
@@ -313,7 +313,7 @@ export function SelectList({
     }
 
     const key = value.toString()
-    return itemMap[key] ?? format(value)
+    return itemMap[key] ?? format(key)
   }, [itemMap, value, format])
 
   return (

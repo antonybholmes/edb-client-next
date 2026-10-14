@@ -210,7 +210,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       end: 'justify-end',
     },
     size: {
-      xs: 'h-button-xs',
+      xs: 'h-button-sm',
       //sm: BUTTON_SM_H_CLS,
       md: 'h-button-md',
       toolbar: 'h-toolbar-button',
