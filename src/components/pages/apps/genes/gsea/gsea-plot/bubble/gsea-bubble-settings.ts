@@ -115,7 +115,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   },
   groups: {
     show: true,
-    font: { ...DEFAULT_TEXT_PROPS, rotation: -90 },
+    font: { ...DEFAULT_TEXT_PROPS, rotation: 270 },
     width: 5,
     colored: true,
     split: {
