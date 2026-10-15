@@ -119,12 +119,9 @@ export function NetworkPage() {
   }, [
     network,
     radiusMap,
-
     settings.plot.autoFit,
     settings.plot.margin,
-    settings.layout.chargeStrength,
-    settings.layout.linkDistance,
-    settings.layout.useStrength,
+    settings.layout,
     settings.plot.crosshair.search.radius,
     updateTree,
   ])

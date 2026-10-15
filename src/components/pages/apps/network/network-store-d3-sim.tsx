@@ -1,6 +1,7 @@
 import { IPos } from '@/interfaces/pos'
 import {
   forceCenter,
+  forceCollide,
   forceLink,
   forceManyBody,
   forceSimulation,
@@ -76,6 +77,7 @@ export function useNetworkD3Sim() {
     renderNodeMap,
     renderEdgeMap,
     nodeEdgeMap,
+    groups,
     groupMap,
     maxStrength,
     userLabelSet,
@@ -84,6 +86,7 @@ export function useNetworkD3Sim() {
   const simNodes = useNetworkD3SimStore((state) => state.simNodes)
   const status = useNetworkD3SimStore((state) => state.status)
   const tree = useNetworkD3SimStore((state) => state.tree)
+
   const updateStatus = useNetworkD3SimStore((state) => state.updateStatus)
   const updateSimNodes = useNetworkD3SimStore((state) => state.updateSimNodes)
   const updateTree = useNetworkD3SimStore((state) => state.updateTree)
@@ -187,7 +190,20 @@ export function useNetworkD3Sim() {
 
     const linkForce = forceLink<INode, IRenderEdge>(edges)
       .id((d: INode) => d.id)
-      .distance(networkSettings.layout.linkDistance)
+      .distance((edge) => {
+        const sourceNode = renderNodeMap.get((edge.source as INode).id)
+        const targetNode = renderNodeMap.get((edge.target as INode).id)
+
+        const incStrength =
+          sourceNode.data[groups.field] === targetNode.data[groups.field]
+
+        //console.log(sourceNode.id, targetNode.id, incStrength)
+
+        return (
+          networkSettings.layout.link.distance /
+          (incStrength ? networkSettings.layout.link.sameGroupFactor : 1)
+        )
+      })
 
     // if (networkSettings.layout.useStrength) {
     //   const max = d3.max(edges, (e) => e.strength) || 1
@@ -219,7 +235,7 @@ export function useNetworkD3Sim() {
     // }
 
     // 3. Initialize the D3 Force Engine
-    const simulation = forceSimulation(nodes)
+    let simulation = forceSimulation(nodes)
       //.alphaDecay(0.05)
       .force(
         'charge',
@@ -233,6 +249,17 @@ export function useNetworkD3Sim() {
         )
       )
       .force('link', linkForce)
+
+    if (networkSettings.layout.collision.on) {
+      simulation = simulation.force(
+        'collision',
+        forceCollide(
+          (d: INode) =>
+            (radiusMap.get(d.id) ?? 0) +
+            networkSettings.layout.collision.padding
+        )
+      )
+    }
 
     const drag = d3
       .drag<SVGGElement, IRenderNode>()
@@ -316,19 +343,6 @@ export function useNetworkD3Sim() {
     updateSimNodes,
     updateStatus,
   ])
-
-  // useEffect(() => {
-  //   runSim()
-  // }, [
-  //   network,
-  //   radiusMap,
-  //   settings.plot.autoFit,
-  //   settings.plot.margin,
-  //   settings.layout.chargeStrength,
-  //   settings.layout.linkDistance,
-  //   settings.plot.crosshair.search.radius,
-  //   setTree,
-  // ])
 
   const autoFit = useCallback(() => {
     if (!ref.current) {

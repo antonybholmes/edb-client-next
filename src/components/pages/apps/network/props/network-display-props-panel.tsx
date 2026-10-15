@@ -3,6 +3,7 @@ import { PropRow } from '@/components/dialogs/prop-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
 import {
@@ -32,6 +33,7 @@ export function NetworkDisplayPropsPanel() {
 
   const [values, setValues] = useState([
     'layout',
+    'distance',
     'plot',
     'nodes',
     'labels',
@@ -43,38 +45,8 @@ export function NetworkDisplayPropsPanel() {
     <PropsPanel>
       <ScrollAccordion value={values} onValueChange={setValues}>
         <AccordionItem value="layout">
-          <AccordionTrigger
-          // rightChildren={
-          //   <button
-          //     onClick={() => {
-          //       setMessage('Creating graph...')
-          //       run(network, () => clearMessage())
-          //     }}
-          //     aria-label="Recalculate network layout"
-          //     title="Recalculate network layout"
-          //   >
-          //     <RotateCw size={16} />
-          //   </button>
-          // }
-          >
-            Layout
-          </AccordionTrigger>
+          <AccordionTrigger>Layout</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Distance">
-              <NumSlider
-                min={0}
-                max={200}
-
-                value={settings.layout.linkDistance}
-                onNumChanged={(value) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.layout.linkDistance = value
-                    })
-                  )
-                }
-              />
-            </PropRow>
             <PropRow title="Charge">
               <NumSlider
                 min={-100}
@@ -90,6 +62,7 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
+
             {/* <CheckPropRow
               title="Use Edge Strength"
               tooltip="Use edge strength in graph calculations. It is normally better to leave this off."
@@ -102,8 +75,67 @@ export function NetworkDisplayPropsPanel() {
                 )
               }
             /> */}
+
+            <LineSeparator />
+            <PropRow title="Distance">
+              <NumSlider
+                min={0}
+                max={200}
+
+                value={settings.layout.link.distance}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.layout.link.distance = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+            <PropRow title="Group Factor">
+              <NumSlider
+                min={1}
+                max={100}
+                value={settings.layout.link.sameGroupFactor}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.layout.link.sameGroupFactor = value
+                    })
+                  )
+                }
+              />
+            </PropRow>
+
+            <LineSeparator />
+            <CheckPropRow
+              checked={settings.layout.collision.on}
+              onCheckedChange={(checked) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.layout.collision.on = checked
+                  })
+                )
+              }
+              title="Collision Padding"
+            >
+              <NumSlider
+                min={0}
+                max={100}
+
+                value={settings.layout.collision.padding}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.layout.collision.padding = value
+                    })
+                  )
+                }
+              />
+            </CheckPropRow>
           </AccordionContent>
         </AccordionItem>
+
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
