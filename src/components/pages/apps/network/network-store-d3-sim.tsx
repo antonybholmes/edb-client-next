@@ -194,13 +194,14 @@ export function useNetworkD3Sim() {
         const sourceNode = renderNodeMap.get((edge.source as INode).id)
         const targetNode = renderNodeMap.get((edge.target as INode).id)
 
+        // nodes of a different group should be pushed apart
         const incStrength =
-          sourceNode.data[groups.field] === targetNode.data[groups.field]
+          sourceNode.data[groups.field] !== targetNode.data[groups.field]
 
         //console.log(sourceNode.id, targetNode.id, incStrength)
 
         return (
-          networkSettings.layout.link.distance /
+          networkSettings.layout.link.distance *
           (incStrength ? networkSettings.layout.link.sameGroupFactor : 1)
         )
       })
