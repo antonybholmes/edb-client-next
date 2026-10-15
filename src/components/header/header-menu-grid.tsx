@@ -17,7 +17,6 @@ import {
   PopoverTrigger,
 } from '../shadcn/ui/themed/baseui/popover'
 
-import { DOCS_URL } from '@/consts'
 import {
   ICON_TRANSITION_FROM_CLS,
   ICON_TRANSITION_TO_CLS,
@@ -25,15 +24,14 @@ import {
 
 import { HeaderIconButton } from '@/layouts/header-icon-button'
 import gsap from 'gsap'
-import { HelpCircle, Info, LayoutGrid } from 'lucide-react'
+import { LayoutGrid } from 'lucide-react'
 import { CenterCol } from '../layout/center-col'
 import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
-import { Button } from '../shadcn/ui/themed/baseui/button'
 import { VScrollPanel } from '../v-scroll-panel'
 
-import { APP_ICON_CLS, AppIcon } from '../icons/app-icon'
+import { AppIcon } from '../icons/app-icon'
 import type { IHeaderLinksProps } from './header-menu'
 
 export const SIDE_OVERLAY_CLS = cn(
@@ -315,7 +313,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                 width={width}
               />
 
-              <li>
+              {/* <li>
                 <Button
                   variant="flat"
                   flow="column"
@@ -342,9 +340,9 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
 
                   <p className="text-[0.7rem] text-center truncate">Help</p>
                 </Button>
-              </li>
+              </li> */}
 
-              <li>
+              {/* <li>
                 <ButtonLink
                   variant="flat"
                   flow="column"
@@ -366,7 +364,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
 
                   <p className="text-[0.7rem] text-center truncate">About</p>
                 </ButtonLink>
-              </li>
+              </li> */}
             </ul>
           </VCenterCol>
           <SearchHeaderLinks

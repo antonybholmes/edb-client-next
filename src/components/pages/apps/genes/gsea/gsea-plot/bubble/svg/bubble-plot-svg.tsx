@@ -67,11 +67,13 @@ export function BubblePlotSvg({
 
   const groupElems: ReactNode[] = []
 
+  const groups = plotInfo.plot.groups.filter((g) => g.show)
+
   // only add group colors if there is more than 1 group
-  if (settings.groups.show && plotInfo.plot.groups.length > 1) {
+  if (settings.groups.show && groups.length > 1) {
     let y = settings.axes.y.rowHeight / 2
 
-    for (const gr of plotInfo.plot.groups.filter((g) => g.show)) {
+    for (const gr of groups) {
       const y2 = y + gr.genesets.length * settings.axes.y.rowHeight
       const h = y2 - y
 
@@ -83,29 +85,55 @@ export function BubblePlotSvg({
             y: y,
           }}
         >
-          <SvgRect
-            shapeRendering={SVG_CRISP_EDGES}
-            width={settings.groups.width}
-            height={h}
-            stroke="none"
-            fill={gr.color}
-          />
           <SvgG
+            key={gr.id}
             pos={{
-              x: 15,
-              y: h / 2,
+              x: 5,
+              y: 0,
             }}
           >
-            <SvgText
-              textAnchor={
-                GROUP_TEXT_ALIGN[settings.groups.font.rotation] || 'start'
-              }
-              font={settings.groups.font}
-              fill={settings.groups.colored ? gr.color : undefined}
+            <SvgRect
+              shapeRendering={SVG_CRISP_EDGES}
+              width={settings.groups.width}
+              height={h}
+              stroke="none"
+              fill={gr.color}
+            />
+            <SvgG
+              pos={{
+                x: 15,
+                y: h / 2,
+              }}
             >
-              {gr.name}
-            </SvgText>
+              <SvgText
+                textAnchor={
+                  GROUP_TEXT_ALIGN[settings.groups.font.rotation] || 'start'
+                }
+                font={settings.groups.font}
+                fill={settings.groups.colored ? gr.color : undefined}
+              >
+                {gr.name}
+              </SvgText>
+            </SvgG>
           </SvgG>
+
+          {settings.groups.border.separate.on && (
+            <SvgG
+              pos={{
+                x: 0,
+                y: -settings.groups.border.padding,
+              }}
+            >
+              <SvgRect
+                shapeRendering={SVG_CRISP_EDGES}
+                //rx={settings.groups.border.rounding}
+
+                width={innerPlotWidth}
+                height={h + 2 * settings.groups.border.padding}
+                sp={settings.groups.border}
+              />
+            </SvgG>
+          )}
         </SvgG>
       )
 
@@ -115,6 +143,19 @@ export function BubblePlotSvg({
 
   return (
     <SvgMargin margin={settings.plot.margin}>
+      {edbSettings.plots.axes.x.style.show && (
+        <AxisBottomSvg
+          ax={xax}
+
+          pos={{
+            x: 0,
+            y: innerPlotHeight,
+          }}
+
+          //title={info.plot.nes.label}
+        />
+      )}
+
       {plotInfo.points.map((point, xi) => {
         const x1 = xPoints[xi]
         const y1 = point.y * settings.axes.y.rowHeight
@@ -157,20 +198,19 @@ export function BubblePlotSvg({
         })}
       </SvgG>
 
-      <SvgG id="groups" pos={{ x: 5, y: 0 }}>
-        {groupElems}
-      </SvgG>
+      <SvgG id="groups">{groupElems}</SvgG>
 
-      {settings.border.show && (
-        <SvgRect
-          shapeRendering={SVG_CRISP_EDGES}
-          width={innerPlotWidth}
-          height={innerPlotHeight}
-          stroke={settings.border.value}
-          strokeWidth={settings.border.width}
-          fill="none"
-        />
-      )}
+      {(!settings.groups.border.separate.on || groups.length < 2) &&
+        settings.border.show && (
+          <SvgRect
+            shapeRendering={SVG_CRISP_EDGES}
+            width={innerPlotWidth}
+            height={innerPlotHeight}
+            stroke={settings.border.value}
+            strokeWidth={settings.border.width}
+            fill="none"
+          />
+        )}
 
       {settings.title.show && plotInfo.plot.name && (
         <SvgG
@@ -183,19 +223,6 @@ export function BubblePlotSvg({
             {plotInfo.plot.name}
           </SvgText>
         </SvgG>
-      )}
-
-      {edbSettings.plots.axes.x.style.show && (
-        <AxisBottomSvg
-          ax={xax}
-
-          pos={{
-            x: 0,
-            y: innerPlotHeight,
-          }}
-
-          //title={info.plot.nes.label}
-        />
       )}
     </SvgMargin>
   )

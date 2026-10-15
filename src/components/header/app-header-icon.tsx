@@ -8,6 +8,7 @@ import {
 import { cn } from '@/lib/shadcn-utils'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
+import { useReducedMotion } from '@/hooks/reduced-motion'
 import { AppIcon } from '../icons/app-icon'
 import { HomeIcon } from '../icons/home-icon'
 import { VCenterRow } from '../layout/v-center-row'
@@ -15,6 +16,7 @@ import { BaseLink } from '../link/base-link'
 
 export function AppHeaderIcon() {
   const { appInfo } = useAppInfo()
+  const { reducedMotion } = useReducedMotion()
 
   if (!appInfo) {
     return null
@@ -32,20 +34,21 @@ export function AppHeaderIcon() {
       >
         <AppIcon
           appInfo={appInfo}
-          className={ICON_TRANSITION_FROM_CLS}
+          className={!reducedMotion && ICON_TRANSITION_FROM_CLS}
           size={2}
           borderSize={0}
         />
 
-        <HomeIcon
-          className={ICON_TRANSITION_TO_CLS}
-          stroke=""
-          //strokeWidth={0}
-          style={{
-            fill: appInfo.color ?? 'lightslategray',
-            stroke: appInfo.color ?? 'lightslategray',
-          }}
-        />
+        {!reducedMotion && (
+          <HomeIcon
+            className={ICON_TRANSITION_TO_CLS}
+            stroke=""
+            style={{
+              fill: appInfo.color ?? 'lightslategray',
+              stroke: appInfo.color ?? 'lightslategray',
+            }}
+          />
+        )}
       </VCenterRow>
     </BaseLink>
   )

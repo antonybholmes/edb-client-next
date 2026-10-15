@@ -18,7 +18,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v32`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v34`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
@@ -50,6 +50,11 @@ export interface IGseaBubbleSettings {
     colored: boolean
     split: {
       on: boolean
+    }
+    border: IStrokeProps & {
+      padding: number
+      rounding: number
+      separate: { on: boolean }
     }
   }
   phenotypes: {
@@ -115,11 +120,17 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   },
   groups: {
     show: true,
-    font: { ...DEFAULT_TEXT_PROPS, rotation: 270 },
+    font: { ...DEFAULT_TEXT_PROPS, rotation: 270, show: false },
     width: 5,
     colored: true,
     split: {
-      on: false,
+      on: true,
+    },
+    border: {
+      ...DEFAULT_STROKE_PROPS,
+      padding: 5,
+      rounding: 5,
+      separate: { on: true },
     },
   },
   scale: {
