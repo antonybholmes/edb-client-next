@@ -41,7 +41,7 @@ export function useNetworkSim(): {
       // 1. Initialize the Link Force first so we can conditionally configure it
       const linkForce = forceLink<INode, IEdge>(edges)
         .id((d: INode) => d.id)
-        .distance(settings.layout.linkDistance)
+        .distance(settings.layout.link.distance)
 
       // Conditionally apply custom strength or let D3 use its default internal formula
       // Seems better if we use d3's internal default for strength so
