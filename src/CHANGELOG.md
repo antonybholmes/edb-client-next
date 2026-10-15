@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added hook support for reduced motion.
 - Bubble plot has full support for groups.
 - Bubble plot supports groups.
 - Adding support for split groups to gsea bubble.

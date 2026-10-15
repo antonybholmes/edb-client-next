@@ -1,5 +1,6 @@
 'use client'
 
+import { useReducedMotion } from '@/hooks/reduced-motion'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import type { IDivProps } from '@/interfaces/div-props'
 import type { IAppInfo } from '@/lib/app-info'
@@ -91,7 +92,7 @@ export function AppTile({
 export function AppIcon({
   appInfo,
   size = 3,
-  borderSize = 1,
+  borderSize = 1.2,
   setHover,
   animate = false,
   className,
@@ -107,9 +108,10 @@ export function AppIcon({
   const [hover, _setHover] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
   const bgRef = useRef<HTMLSpanElement>(null)
+  const { reducedMotion } = useReducedMotion()
 
   useUpdateEffect(() => {
-    if (!animate) {
+    if (!animate || reducedMotion) {
       return
     }
 
@@ -120,7 +122,7 @@ export function AppIcon({
         bgRef.current,
         {
           opacity: hover ? 0.2 : 0.1,
-          scale: hover ? 1.2 : 1,
+          //scale: hover ? 1.2 : 1,
           //borderRadius: hover ? '2rem' : '1.5rem',
           duration: 0.8,
           ease: 'back.out',
@@ -131,7 +133,7 @@ export function AppIcon({
         ref.current,
         {
           opacity: hover ? 1 : 0.7,
-          scale: hover ? 1.1 : 1,
+          scale: hover ? borderSize : 1,
           //borderRadius: hover ? '2rem' : '1.5rem',
           duration: 0.5,
           ease: 'power1.out',
@@ -154,7 +156,7 @@ export function AppIcon({
     setHover?.(hover)
   }
 
-  const innerSize = size - borderSize
+  const innerSize = size / borderSize
 
   return (
     <CenterCol

@@ -39,7 +39,7 @@ export function GroupItem({
   plot: IGseaBubblePlot
   group: IGseaTableResultGroup
 }) {
-  const { settings: userData, setGroups } = useGseaBubbleUserSettings()
+  const { setGroups } = useGseaBubbleUserSettings()
   const { openCustom: openCustomDialog } = useDialogs()
   const { updatePlot } = useHistory()
 
@@ -160,7 +160,7 @@ export function GroupPropsPanel() {
         <FontPopover
           fonts={[
             {
-              title: 'Font',
+              title: 'Labels',
               textProps: settings.groups.font,
               showRotation: true,
               update: (textProps) =>
