@@ -111,7 +111,7 @@ export function AppIcon({
   const { reducedMotion } = useReducedMotion()
 
   useUpdateEffect(() => {
-    if (!animate || reducedMotion) {
+    if (!animate || reducedMotion || !ref.current || !bgRef.current) {
       return
     }
 
@@ -191,7 +191,7 @@ export function AppIcon({
       />
 
       <span
-        //ref={ref}
+        ref={ref}
         className={cn(APP_BG_CLS, 'app-icon opacity-70 z-10')}
 
         style={

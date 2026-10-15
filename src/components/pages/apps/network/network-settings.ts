@@ -15,7 +15,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:app:network:v14`
+const SETTINGS_KEY = `${config.appId}:app:network:v16`
 
 const PLOT_MARGIN = { top: 100, right: 400, bottom: 100, left: 100 }
 
@@ -46,8 +46,15 @@ export const POSITIONS: { label: string; value: LabelPosition }[] = [
 export interface INetworkSettings {
   layout: {
     chargeStrength: number
-    linkDistance: number
+    link: {
+      distance: number
+      sameGroupFactor: number
+    }
     useStrength: boolean
+    collision: {
+      on: boolean
+      padding: number
+    }
   }
   data: {
     metrics: {
@@ -163,8 +170,15 @@ export interface INetworkSettings {
 const DEFAULT_SETTINGS: INetworkSettings = {
   layout: {
     chargeStrength: -30,
-    linkDistance: 100,
+    link: {
+      distance: 100,
+      sameGroupFactor: 1,
+    },
     useStrength: false,
+    collision: {
+      on: false,
+      padding: 5,
+    },
   },
   data: {
     metrics: {
