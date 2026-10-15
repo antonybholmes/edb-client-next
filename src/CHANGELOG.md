@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bubble plot now supports borders per group.
 - More support for reduced motion. Fixed Bubble toolbar being wrong height.
 - Added hook support for reduced motion.
 - Bubble plot has full support for groups.

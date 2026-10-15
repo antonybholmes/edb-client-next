@@ -14,7 +14,6 @@ import { CollapseIcon } from '@/components/icons/collapse-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
-import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
@@ -149,17 +148,21 @@ export function GseaBubbleDisplayPropsPanel() {
             /> */}
 
             <PropRow title="Layout">
-              <FillButton
+              <StrokeButton
                 title="Border"
                 colors={[
                   {
                     color: settings.border.value,
                     show: settings.border.show,
-                    onColorChange: ({ color, show }) =>
+                    width: settings.border.width,
+                    dasharray: settings.border.dasharray,
+                    onColorChange: ({ color, show, width, dasharray }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.border.value = color
                           draft.border.show = show
+                          draft.border.width = width
+                          draft.border.dasharray = dasharray
                         })
                       ),
                   },
@@ -532,7 +535,19 @@ export function GseaBubbleDisplayPropsPanel() {
           >
             Groups
           </AccordionTrigger>
-          <AccordionContent></AccordionContent>
+          <AccordionContent>
+            <CheckPropRow
+              title="Separate Borders"
+              checked={settings.groups.border.separate.on}
+              onCheckedChange={(state) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.groups.border.separate.on = state
+                  })
+                )
+              }
+            />
+          </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>
     </>

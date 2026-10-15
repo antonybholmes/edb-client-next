@@ -90,9 +90,13 @@ export function StrokeButton({
 
 function OutlineIcon({ cp }: { cp: IColorPickerProps }) {
   return (
-    <CenterRow className="flex flex-row items-center justify-center  relative h-6 w-5 grow-0 shrink-0">
-      <Pencil size={16} strokeWidth={1.5} className="z-10 fill-white" />
-      <span className="absolute top-1.5 left-0.5 h-2.25 w-3/5 z-0 border border-foreground rounded-xs"></span>
+    <CenterRow className="flex flex-row items-start justify-center relative h-5  w-5 grow-0 shrink-0 ">
+      <Pencil
+        size={16}
+        strokeWidth={1.5}
+        className="z-10 ml-0.5 mt-0.5 fill-white"
+      />
+      <span className="absolute top-1 left-px h-2.5 w-3/5 z-0 border border-foreground rounded-xs"></span>
 
       <span
         className="absolute bottom-0 h-1.25 w-9/10 z-0 border border-foreground rounded-xs"

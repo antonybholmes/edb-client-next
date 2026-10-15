@@ -3381,6 +3381,10 @@
         {
           "msg": "Added hook support for reduced motion",
           "date": "2026-10-15T15:15:18.555Z"
+        },
+        {
+          "msg": "More support for reduced motion. Fixed Bubble toolbar being wrong height.",
+          "date": "2026-10-15T15:28:01.276Z"
         }
       ]
     },

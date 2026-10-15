@@ -17,6 +17,7 @@ import { Settings2 } from 'lucide-react'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   DRAG_HANDLE_APPEAR_CLS,
@@ -190,6 +191,61 @@ export function GroupPropsPanel() {
           ]}
         />
       </CheckPropRow>
+      <CheckPropRow
+        title="Labels"
+
+        checked={settings.groups.font.show}
+        onCheckedChange={(state) =>
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.groups.font.show = state
+            })
+          )
+        }
+      />
+      <CheckPropRow
+        title="Separate Borders"
+        checked={settings.groups.border.separate.on}
+        onCheckedChange={(state) =>
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.groups.border.separate.on = state
+            })
+          )
+        }
+      >
+        <StrokeButton
+          colors={[
+            {
+              color: settings.groups.border.value,
+              show: settings.groups.border.show,
+              width: settings.groups.border.width,
+              dasharray: settings.groups.border.dasharray,
+              onColorChange: ({ color, width, show, dasharray }) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.groups.border.value = color
+                    draft.groups.border.show = show
+                    draft.groups.border.width = width
+                    draft.groups.border.dasharray = dasharray
+                  })
+                ),
+            },
+          ]}
+        />
+      </CheckPropRow>
+      {/* <CheckPropRow
+        title="Auto-color"
+
+        checked={settings.groups.colored}
+        onCheckedChange={(state) =>
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.groups.colored = state
+            })
+          )
+        }
+      /> */}
       <LineSeparator />
       <VScrollPanel className="grow">
         {plots.map((plot) => (
