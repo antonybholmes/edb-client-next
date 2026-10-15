@@ -94,8 +94,10 @@ export function NetworkDisplayPropsPanel() {
             </PropRow>
             <PropRow title="Group Factor">
               <NumSlider
-                min={1}
-                max={100}
+                min={0}
+                max={20}
+                step={0.1}
+                dp={1}
                 value={settings.layout.link.sameGroupFactor}
                 onNumChanged={(value) =>
                   updateSettings(
