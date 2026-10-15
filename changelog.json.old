@@ -3377,6 +3377,10 @@
         {
           "msg": "Bubble plot has full support for groups",
           "date": "2026-10-15T14:30:47.486Z"
+        },
+        {
+          "msg": "Added hook support for reduced motion",
+          "date": "2026-10-15T15:15:18.555Z"
         }
       ]
     },

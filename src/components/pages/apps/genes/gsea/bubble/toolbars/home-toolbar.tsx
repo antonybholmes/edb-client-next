@@ -14,7 +14,7 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
-import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
@@ -71,7 +71,7 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Bubble">
-        <ToolbarColButton
+        <ToolbarColSmallButton
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}
           onClick={() => {
@@ -89,13 +89,13 @@ export function HomeToolbar() {
         >
           <PlayIcon variant="app-theme" />
           {TEXT_PLOT}
-        </ToolbarColButton>
+        </ToolbarColSmallButton>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
         <ToolbarRow title="Width">
           <NumericalInput
-            h="md"
+            h="toolbar"
             value={settings.axes.x.length}
             placeholder="Width"
             limit={[1, 1000]}
@@ -111,7 +111,7 @@ export function HomeToolbar() {
         </ToolbarRow>
         <ToolbarRow title="Row Height">
           <NumericalInput
-            h="md"
+            h="toolbar"
             value={settings.axes.y.rowHeight}
             placeholder="Row Height"
             limit={[1, 1000]}
@@ -140,6 +140,7 @@ export function HomeToolbar() {
               }
               value={settings.sortBy}
               w="sm"
+              variant="toolbar"
             >
               {SORT_BY_ITEMS.map((item) => (
                 <SelectItem value={item.value} key={item.value}>
