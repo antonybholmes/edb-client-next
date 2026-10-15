@@ -38,11 +38,11 @@ export interface IBubblePoint {
 }
 
 export interface IGseaBubblePropsContext {
-  plots: IGseaBubble[]
+  plots: IGseaBubblePlot[]
   points: IBubblePoint[][]
   xlims: ILim[]
   globalXLim: ILim
-  setPlots(plots: IGseaBubble[]): void
+  setPlots(plots: IGseaBubblePlot[]): void
 }
 
 export const GseaBubbleContext = createContext<
@@ -138,10 +138,10 @@ export function GseaBubbleProvider({
   plots = [],
   children,
 }: {
-  plots?: IGseaBubble[]
+  plots?: IGseaBubblePlot[]
   children: ReactNode
 }) {
-  const [_plots, setPlots] = useState<IGseaBubble[]>(plots)
+  const [_plots, setPlots] = useState<IGseaBubblePlot[]>(plots)
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
@@ -180,7 +180,7 @@ export function GseaBubbleProvider({
 
       const bubbles: IBubblePoint[] = []
 
-      for (const gr of plot.groups) {
+      for (const gr of plot.groups.filter((g) => g.show)) {
         const genesets = gr.genesets
 
         let names = genesets.map((gs) => gs.name)
@@ -237,7 +237,7 @@ export function GseaBubbleProvider({
           y += 1
         }
 
-        y += 1
+        y += settings.groups.show ? 1 : 0
       }
 
       return bubbles

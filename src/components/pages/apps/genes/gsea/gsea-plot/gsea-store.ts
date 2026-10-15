@@ -25,8 +25,8 @@ export interface IGseaTableResult extends IDBEntity {
 }
 
 export interface IGseaTableResultGroup extends IDBEntity {
+  show: boolean
   color: string
-
   genesets: IGseaTableResult[]
 }
 

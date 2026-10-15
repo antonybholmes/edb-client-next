@@ -68,7 +68,7 @@ import { useAllPlots } from '../../../matcalc/history/history-provider/history-h
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../../matcalc/hooks/save'
 import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
-import { GseaBubbleDisplayPropsPanel } from '../gsea-plot/bubble/gsea-bubble-display-props-panel'
+import { GseaBubblePropsPanel } from '../gsea-plot/bubble/props/gsea-bubble-props-panel'
 import { GseaBubblePlotsSvg } from '../gsea-plot/bubble/svg/gsea-bubble-plots-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
@@ -305,7 +305,7 @@ export function GseaBubblePage() {
             </ResizablePanel>
           </ResizablePanelGroup>
 
-          <GseaBubbleDisplayPropsPanel />
+          <GseaBubblePropsPanel />
         </ResizableSidebar>
 
         <FooterPortal className="justify-between">

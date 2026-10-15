@@ -79,9 +79,17 @@ export function GseaBubblePlotsContent() {
     let innerPlotHeight = 0
 
     for (const p of plots) {
+      let pih = 1
+
       for (const gr of p.groups) {
-        innerPlotHeight += gr.genesets.length + 1
+        pih += gr.genesets.length
       }
+
+      if (settings.groups.show) {
+        pih += p.groups.length - 1
+      }
+
+      innerPlotHeight = Math.max(innerPlotHeight, pih)
     }
 
     innerPlotHeight *= settings.axes.y.rowHeight

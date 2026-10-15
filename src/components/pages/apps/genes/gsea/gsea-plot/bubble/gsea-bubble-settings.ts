@@ -2,7 +2,6 @@ import { RadiusScaleMode } from '@/components/pages/apps/matcalc/apps/heatmap/sv
 import { IDisplayAxis } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import {
   ColorBarPos,
-  DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
   DEFAULT_TEXT_PROPS,
@@ -45,6 +44,7 @@ export interface IGseaBubbleSettings {
     maxSize: number
   }
   groups: {
+    show: boolean
     font: ITextProps
     width: number
     colored: boolean
@@ -80,7 +80,7 @@ export interface IGseaBubbleSettings {
     position: ColorBarPos
   }
   legend: {
-    font: ITextProps
+    //font: ITextProps
     bubbles: {
       n: number
       sizes: number[]
@@ -114,6 +114,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     },
   },
   groups: {
+    show: true,
     font: { ...DEFAULT_TEXT_PROPS, rotation: -90 },
     width: 5,
     colored: true,
@@ -153,7 +154,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     showMinorTicks: true,
   },
   legend: {
-    font: { ...DEFAULT_BOLD_TEXT_PROPS },
+    //font: { ...DEFAULT_BOLD_TEXT_PROPS },
     bubbles: {
       n: 3,
       sizes: [25, 50, 75, 100],

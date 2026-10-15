@@ -220,6 +220,7 @@ export function GseaBubbleDialog({
 
           const group = {
             id: makeUuid(),
+            show: true,
             name: groupName,
             color,
             genesets: [],
@@ -236,6 +237,7 @@ export function GseaBubbleDialog({
     } else {
       groups.push({
         id: makeUuid(),
+        show: true,
         name: 'default',
         color: TAB10_PALETTE[0],
         genesets,

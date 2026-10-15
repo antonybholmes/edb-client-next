@@ -22,6 +22,13 @@ import gsap from 'gsap'
 import { IGseaBubble, IGseaTableResult } from '../../gsea-store'
 import { IBubblePoint } from '../gsea-bubble-provider'
 
+const GROUP_TEXT_ALIGN = {
+  0: 'start',
+  90: 'middle',
+  180: 'end',
+  270: 'middle',
+}
+
 export interface IPlotInfo {
   plot: IGseaBubble
   points: IBubblePoint[]
@@ -60,44 +67,50 @@ export function BubblePlotSvg({
 
   const groupElems: ReactNode[] = []
 
-  let y = settings.axes.y.rowHeight / 2
-  for (const gr of plotInfo.plot.groups) {
-    const y2 = y + gr.genesets.length * settings.axes.y.rowHeight
-    const h = y2 - y
+  // only add group colors if there is more than 1 group
+  if (settings.groups.show && plotInfo.plot.groups.length > 1) {
+    let y = settings.axes.y.rowHeight / 2
 
-    groupElems.push(
-      <SvgG
-        key={gr.id}
-        pos={{
-          x: 0,
-          y: y,
-        }}
-      >
-        <SvgRect
-          shapeRendering={SVG_CRISP_EDGES}
-          width={settings.groups.width}
-          height={h}
-          stroke="none"
-          fill={gr.color}
-        />
+    for (const gr of plotInfo.plot.groups.filter((g) => g.show)) {
+      const y2 = y + gr.genesets.length * settings.axes.y.rowHeight
+      const h = y2 - y
+
+      groupElems.push(
         <SvgG
+          key={gr.id}
           pos={{
-            x: 15,
-            y: h / 2,
+            x: 0,
+            y: y,
           }}
         >
-          <SvgText
-            textAnchor="middle"
-            font={settings.groups.font}
-            fill={settings.groups.colored ? gr.color : undefined}
+          <SvgRect
+            shapeRendering={SVG_CRISP_EDGES}
+            width={settings.groups.width}
+            height={h}
+            stroke="none"
+            fill={gr.color}
+          />
+          <SvgG
+            pos={{
+              x: 15,
+              y: h / 2,
+            }}
           >
-            {gr.name}
-          </SvgText>
+            <SvgText
+              textAnchor={
+                GROUP_TEXT_ALIGN[settings.groups.font.rotation] || 'start'
+              }
+              font={settings.groups.font}
+              fill={settings.groups.colored ? gr.color : undefined}
+            >
+              {gr.name}
+            </SvgText>
+          </SvgG>
         </SvgG>
-      </SvgG>
-    )
+      )
 
-    y += h + settings.axes.y.rowHeight
+      y += h + settings.axes.y.rowHeight
+    }
   }
 
   return (

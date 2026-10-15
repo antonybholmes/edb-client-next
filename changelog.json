@@ -3373,6 +3373,10 @@
         {
           "msg": "Bubble plot supports groups",
           "date": "2026-10-15T02:31:03.913Z"
+        },
+        {
+          "msg": "Bubble plot has full support for groups",
+          "date": "2026-10-15T14:30:47.486Z"
         }
       ]
     },

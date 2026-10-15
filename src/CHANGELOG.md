@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bubble plot has full support for groups.
 - Bubble plot supports groups.
 - Adding support for split groups to gsea bubble.
 - Make more readonly arrays to strengthen api design.

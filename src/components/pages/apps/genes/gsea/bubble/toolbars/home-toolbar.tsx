@@ -81,7 +81,7 @@ export function HomeToolbar() {
                 callback: (plot) => {
                   console.log('GSEA Bubble dialog returned plot', plot)
 
-                  addPlots([plot])
+                  addPlots([plot], { mode: 'set' })
                 },
               },
             })
