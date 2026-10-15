@@ -14,15 +14,20 @@ import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
+import { FontPopover } from '@/components/plot/font/font-popover'
+import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   DRAG_HANDLE_APPEAR_CLS,
   DRAG_ICON_ANIM_CLS,
   SortableItem,
 } from '@/components/sortable-item'
+import { TEXT_SHOW } from '@/consts'
 import { IGseaTableResultGroup } from '../../gsea-store'
 import { GroupDialog } from '../group-dialog'
 import { IGseaBubblePlot, useGseaBubbleContext } from '../gsea-bubble-provider'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 import { useGseaBubbleUserSettings } from '../gsea-bubble-user-settings'
 
 export function GroupItem({
@@ -122,6 +127,7 @@ export interface IGroupCallback {
 export function GroupPropsPanel() {
   const { plots } = useGseaBubbleContext()
   const { updatePlot } = useHistory()
+  const { settings, updateSettings } = useGseaBubbleSettings()
 
   // const sensors = useSensors(
   //   useSensor(PointerSensor),
@@ -139,29 +145,73 @@ export function GroupPropsPanel() {
   // }, [groupState.groups])
 
   return (
-    <>
-      <PropsPanel className="gap-y-1">
-        <VScrollPanel className="grow">
-          {plots.map((plot) => (
-            <DragDropProvider
-              key={plot.id}
-              onDragEnd={(event) => {
-                const newOrder = move(plot.groups, event)
+    <PropsPanel className="gap-y-1">
+      <CheckPropRow
+        title={TEXT_SHOW}
+        checked={settings.groups.show}
+        onCheckedChange={(state) =>
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.groups.show = state
+            })
+          )
+        }
+      >
+        <FontPopover
+          fonts={[
+            {
+              title: 'Font',
+              textProps: settings.groups.font,
+              showRotation: true,
+              update: (textProps) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.groups.font = Object.assign(
+                      { ...draft.groups.font },
+                      textProps
+                    )
+                  })
+                ),
+              ext: (
+                <CheckPropRow
+                  title="Auto-color"
 
-                const newPlot = { ...plot, groups: newOrder }
+                  checked={settings.groups.colored}
+                  onCheckedChange={(state) =>
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.groups.colored = state
+                      })
+                    )
+                  }
+                />
+              ),
+            },
+          ]}
+        />
+      </CheckPropRow>
+      <LineSeparator />
+      <VScrollPanel className="grow">
+        {plots.map((plot) => (
+          <DragDropProvider
+            key={plot.id}
+            onDragEnd={(event) => {
+              const newOrder = move(plot.groups, event)
 
-                updatePlot(newPlot)
-              }}
-            >
-              <ul className="flex flex-col gap-y-1">
-                {plot.groups.map((gr, gri) => {
-                  return (
-                    <GroupItem index={gri} plot={plot} group={gr} key={gr.id} />
-                  )
-                })}
-              </ul>
+              const newPlot = { ...plot, groups: newOrder }
 
-              {/* <DragOverlay>
+              updatePlot(newPlot)
+            }}
+          >
+            <ul className="flex flex-col gap-y-1">
+              {plot.groups.map((gr, gri) => {
+                return (
+                  <GroupItem index={gri} plot={plot} group={gr} key={gr.id} />
+                )
+              })}
+            </ul>
+
+            {/* <DragOverlay>
               {activeId ? (
                 <GroupItem
                   group={groups.find(group => group.id === activeId)!.group}
@@ -169,10 +219,9 @@ export function GroupPropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-            </DragDropProvider>
-          ))}
-        </VScrollPanel>
-      </PropsPanel>
-    </>
+          </DragDropProvider>
+        ))}
+      </VScrollPanel>
+    </PropsPanel>
   )
 }

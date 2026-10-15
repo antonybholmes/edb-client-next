@@ -11,6 +11,7 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { CollapseIcon } from '@/components/icons/collapse-icon'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
@@ -24,7 +25,6 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_SORT } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
@@ -76,7 +76,7 @@ export function GseaBubbleDisplayPropsPanel() {
 
   return (
     <>
-      <SideBarHeader className="gap-x-2">
+      <VCenterRow className="gap-x-2 justify-end">
         <IconButton
           size="icon-xs"
 
@@ -84,11 +84,11 @@ export function GseaBubbleDisplayPropsPanel() {
             setOpenTabs(collapsed ? TABS : [])
             setCollapsed(!collapsed)
           }}
-          title={collapsed ? 'Expand' : 'Collapse'}
+          title={collapsed ? 'Expand All' : 'Collapse All'}
         >
           <CollapseIcon collapsed={collapsed} size={14} />
         </IconButton>
-      </SideBarHeader>
+      </VCenterRow>
       <ScrollAccordion value={openTabs} onValueChange={setOpenTabs}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
