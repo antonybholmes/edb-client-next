@@ -3369,6 +3369,10 @@
         {
           "msg": "Adding support for split groups to gsea bubble",
           "date": "2026-10-14T23:11:53.074Z"
+        },
+        {
+          "msg": "Bubble plot supports groups",
+          "date": "2026-10-15T02:31:03.913Z"
         }
       ]
     },
