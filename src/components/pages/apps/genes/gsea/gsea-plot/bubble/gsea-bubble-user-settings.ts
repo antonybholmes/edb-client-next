@@ -1,13 +1,14 @@
 import { config } from '@/config'
-import { IDBEntity } from '@/interfaces/db-entity'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+const MAX_GROUPS = 100
 
 const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:user:v2`
 
-interface IGroup extends IDBEntity {
+interface IGroup {
+  name: string
   color: string
 }
 
@@ -21,17 +22,28 @@ const DEFAULT_SETTINGS: IGseaBubbleUserSettings = {
 
 export interface IGseaBubbleUserSettingsStore extends IGseaBubbleUserSettings {
   updateSettings: (settings: IGseaBubbleUserSettings) => void
+  setgroups: (groups: IGroup[]) => void
 }
 
 export const useGseaBubbleUserSettingsStore =
   create<IGseaBubbleUserSettingsStore>()(
     persist(
-      (set) => ({
+      (set, get) => ({
         ...DEFAULT_SETTINGS,
 
         updateSettings: (settings: IGseaBubbleUserSettings) => {
           set({
             ...settings,
+          })
+        },
+        setgroups: (groups: IGroup[]) => {
+          const ids = new Set(groups.map((g) => g.name))
+
+          set({
+            groups: [
+              ...get().groups.filter((g) => !ids.has(g.name)),
+              ...groups,
+            ].slice(-MAX_GROUPS),
           })
         },
       }),
@@ -44,10 +56,20 @@ export const useGseaBubbleUserSettingsStore =
 
 export function useGseaBubbleUserSettings(): {
   settings: IGseaBubbleUserSettings
+  groupColors: Map<string, string>
   updateSettings: (settings: IGseaBubbleUserSettings) => void
+  setGroups: (groups: IGroup[]) => void
   resetSettings: () => void
 } {
   const settings = useGseaBubbleUserSettingsStore((state) => state)
+  const groups = useGseaBubbleUserSettingsStore((state) => state.groups)
+
+  const groupColors = useMemo(
+    () => new Map(groups.map((g) => [g.name, g.color])),
+    [groups]
+  )
+
+  const setGroups = useGseaBubbleUserSettingsStore((state) => state.setgroups)
   const updateSettings = useGseaBubbleUserSettingsStore(
     (state) => state.updateSettings
   )
@@ -58,7 +80,9 @@ export function useGseaBubbleUserSettings(): {
 
   return {
     settings,
+    groupColors,
     updateSettings,
+    setGroups,
     resetSettings,
   }
 }

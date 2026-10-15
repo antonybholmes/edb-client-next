@@ -70,6 +70,7 @@ export function GseaBubbleLegendSvg() {
                 x={edbSettings.plots.colorbar.size.h / 2}
                 y={0}
                 textAnchor="middle"
+                font={settings.legend.font}
               >
                 {label}
               </SvgText>
@@ -89,6 +90,7 @@ export function GseaBubbleLegendSvg() {
                 x={edbSettings.plots.colorbar.size.h / 2}
                 y={0}
                 textAnchor="middle"
+                font={settings.legend.font}
               >
                 {plot.size.label}
               </SvgText>

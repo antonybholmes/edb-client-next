@@ -14,7 +14,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
 import { SvgG } from '@/components/plot/svg-g'
 import { useCrosshair } from '@/providers/crosshair-provider'
@@ -58,6 +58,48 @@ export function BubblePlotSvg({
     plotInfo.points.map((p) => p.x)
   )
 
+  const groupElems: ReactNode[] = []
+
+  let y = settings.axes.y.rowHeight / 2
+  for (const gr of plotInfo.plot.groups) {
+    const y2 = y + gr.genesets.length * settings.axes.y.rowHeight
+    const h = y2 - y
+
+    groupElems.push(
+      <SvgG
+        key={gr.id}
+        pos={{
+          x: 0,
+          y: y,
+        }}
+      >
+        <SvgRect
+          shapeRendering={SVG_CRISP_EDGES}
+          width={settings.groups.width}
+          height={h}
+          stroke="none"
+          fill={gr.color}
+        />
+        <SvgG
+          pos={{
+            x: 15,
+            y: h / 2,
+          }}
+        >
+          <SvgText
+            textAnchor="middle"
+            font={settings.groups.font}
+            fill={settings.groups.colored ? gr.color : undefined}
+          >
+            {gr.name}
+          </SvgText>
+        </SvgG>
+      </SvgG>
+    )
+
+    y += h + settings.axes.y.rowHeight
+  }
+
   return (
     <SvgMargin margin={settings.plot.margin}>
       {plotInfo.points.map((point, xi) => {
@@ -100,6 +142,10 @@ export function BubblePlotSvg({
             </SvgText>
           )
         })}
+      </SvgG>
+
+      <SvgG id="groups" pos={{ x: 5, y: 0 }}>
+        {groupElems}
       </SvgG>
 
       {settings.border.show && (

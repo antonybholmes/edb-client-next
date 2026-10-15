@@ -1,3 +1,4 @@
+import { TAB10_PALETTE } from '@/lib/color/palette'
 import { makeUuid } from '@/lib/id'
 import { textJoin } from '@/lib/text/text'
 import { useEffect } from 'react'
@@ -19,20 +20,38 @@ export function GseaBubbleTabPanel() {
         const bubble: IGseaBubble = {
           id: makeUuid(),
           name: phen,
-          genesets,
+          groups: [
+            {
+              id: makeUuid(),
+              name: 'default',
+              color: TAB10_PALETTE[0],
+              genesets,
+            },
+          ],
+
           nes: { label: 'NES' },
           size: { label: 'Size' },
           log10q: { label: 'FDR q-val' },
         }
         return bubble
       })
-      .filter((bubble) => bubble.genesets.length > 0)
+      .filter((bubble) => bubble.groups.flatMap((g) => g.genesets).length > 0)
 
     if (settings.phenotypes.merge) {
       const mergedBubble: IGseaBubble = {
         id: makeUuid(),
         name: textJoin(inUsePhenotypes),
-        genesets: plots.flatMap((bubble) => bubble.genesets),
+        groups: [
+          {
+            id: makeUuid(),
+            name: 'default',
+            color: TAB10_PALETTE[0],
+            genesets: plots.flatMap((bubble) =>
+              bubble.groups.flatMap((g) => g.genesets)
+            ),
+          },
+        ],
+
         nes: { label: 'NES' },
         size: { label: 'Size' },
         log10q: { label: 'FDR q-val' },

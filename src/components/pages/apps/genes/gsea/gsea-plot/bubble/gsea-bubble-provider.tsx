@@ -175,62 +175,72 @@ export function GseaBubbleProvider({
 
     const colorMap = getColorMap(settings.scale.cmap)
 
-    return _plots.map((plot, pi) => {
-      const genesets = plot.groups.flatMap((gr) => gr.genesets)
+    return _plots.map((plot) => {
+      let y = 1
 
-      let names = genesets.map((gs) => gs.name)
-      let nes = genesets.map((gs) => gs.nes)
-      let sizes = genesets.map((gs) => gs.size)
-      let log10pvalues = genesets.map((gs) => gs.log10q)
+      const bubbles: IBubblePoint[] = []
 
-      //const xlim = xlims[pi]
+      for (const gr of plot.groups) {
+        const genesets = gr.genesets
 
-      let idx: number[] = []
+        let names = genesets.map((gs) => gs.name)
+        let nes = genesets.map((gs) => gs.nes)
+        let sizes = genesets.map((gs) => gs.size)
+        let log10pvalues = genesets.map((gs) => gs.log10q)
 
-      switch (settings.sortBy) {
-        case 'nes':
-          idx = argsort(nes, { reverse: true })
+        let idx: number[] = []
 
-          break
-        case 'size':
-          idx = argsort(sizes, { reverse: true })
-          break
-        case 'pvalue':
-          idx = argsort(log10pvalues, { reverse: true })
-          break
+        switch (settings.sortBy) {
+          case 'nes':
+            idx = argsort(nes, { reverse: true })
 
-        default:
-          break
-      }
+            break
+          case 'size':
+            idx = argsort(sizes, { reverse: true })
+            break
+          case 'pvalue':
+            idx = argsort(log10pvalues, { reverse: true })
+            break
 
-      if (idx.length > 0) {
-        nes = idx.map((i) => nes[i])
-        sizes = idx.map((i) => sizes[i])
-        log10pvalues = idx.map((i) => log10pvalues[i])
-        names = idx.map((i) => names[i])
-      }
-
-      return nes.map((score, i) => {
-        const size = sizes[i]!
-        const normSize = Math.min(size / settings.size.maxSize, 1)
-        const p = log10pvalues[i]!
-        const color =
-          settings.scale.mode === 'p'
-            ? getColor(log10pvalues[i]!, settings.scale.p.range, colorMap)
-            : getColor(nes[i]!, globalXLim, colorMap)
-
-        return {
-          x: score,
-          y: i + 1,
-          nes: score,
-          p,
-          color,
-          size: normSize,
-          r: radiusScale(normSize), //normSize * settings.bubbles.size,
-          label: names[i]!,
-          geneset: genesets[i]!,
+          default:
+            break
         }
-      })
+
+        if (idx.length > 0) {
+          nes = idx.map((i) => nes[i])
+          sizes = idx.map((i) => sizes[i])
+          log10pvalues = idx.map((i) => log10pvalues[i])
+          names = idx.map((i) => names[i])
+        }
+
+        for (const [i, score] of nes.entries()) {
+          const size = sizes[nes.indexOf(score)]!
+          const normSize = Math.min(size / settings.size.maxSize, 1)
+          const p = log10pvalues[i]!
+          const color =
+            settings.scale.mode === 'p'
+              ? getColor(log10pvalues[i]!, settings.scale.p.range, colorMap)
+              : getColor(nes[i]!, globalXLim, colorMap)
+
+          bubbles.push({
+            x: score,
+            y,
+            nes: score,
+            p,
+            color,
+            size: normSize,
+            r: radiusScale(normSize), //normSize * settings.bubbles.size,
+            label: names[i]!,
+            geneset: genesets[i]!,
+          })
+
+          y += 1
+        }
+
+        y += 1
+      }
+
+      return bubbles
     })
   }, [_plots, globalXLim, settings])
 

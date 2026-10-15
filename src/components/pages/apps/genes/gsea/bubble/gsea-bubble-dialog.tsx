@@ -15,6 +15,7 @@ import { produce } from 'immer'
 import { HistoryPlot } from '../../../matcalc/history/history-provider/history-types'
 import { newGseaBubblePlot } from '../gsea-plot/bubble/gsea-bubble-provider'
 import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings'
+import { useGseaBubbleUserSettings } from '../gsea-plot/bubble/gsea-bubble-user-settings'
 import {
   getGseaLog10q,
   IGseaBubble,
@@ -75,15 +76,17 @@ function findPValueCol(df: BaseDataFrame | null) {
   return cols[0]
 }
 
-function findIdCol(df: BaseDataFrame | null) {
+function findGroupCol(df: BaseDataFrame | null) {
   if (!df) {
-    return 'Name'
+    return 'Group'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase().includes('name'))
+  const cols = df.columns.filter((c) =>
+    c.toLowerCase().match(/.*(group|cluster).*/)
+  )
 
   if (cols.length === 0) {
-    return 'Name'
+    return 'Group'
   }
 
   return cols[0]
@@ -103,6 +106,7 @@ export function GseaBubbleDialog({
 }: IProps) {
   const { sheets } = useCurrentSheets()
   const { settings, updateSettings } = useGseaBubbleSettings()
+  const { groupColors, setGroups } = useGseaBubbleUserSettings()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
@@ -117,6 +121,7 @@ export function GseaBubbleDialog({
     setNESCol(findNESCol(df))
     setSizeCol(findSizeCol(df))
     setPValueCol(findPValueCol(df))
+    setGroupCol(findGroupCol(df))
   }, [df])
 
   async function submit() {
@@ -209,12 +214,20 @@ export function GseaBubbleDialog({
 
         // If it's a new group, create it
         if (idx === -1) {
-          groups.push({
+          const color =
+            groupColors.get(groupName) ??
+            TAB10_PALETTE[groups.length % TAB10_PALETTE.length]
+
+          const group = {
             id: makeUuid(),
             name: groupName,
-            color: TAB10_PALETTE[groups.length % TAB10_PALETTE.length],
+            color,
             genesets: [],
-          })
+          }
+
+          groups.push(group)
+
+          setGroups([group])
 
           idx = groups.findIndex((gr) => gr.name === groupName)
         }
@@ -312,18 +325,16 @@ export function GseaBubbleDialog({
         </SelectList>
 
         <Checkbox
-          title="Split"
-
           checked={settings.groups.split.on}
           onCheckedChange={(v) =>
             updateSettings(
               produce(settings, (draft) => {
-                draft.groups.split.on = v as boolean
+                draft.groups.split.on = v
               })
             )
           }
         >
-          Split
+          Split Mode
         </Checkbox>
       </ActionDialogRow>
 
