@@ -5,17 +5,17 @@ import { API_MOTIF_TO_GENES_URL } from '../../../../../edb/edb'
 const PAGE_SIZE = 100
 
 export interface IMotifsToGenesWorkerMessage {
-  ids: string[]
+  ids: readonly string[]
   pageSize?: number
 }
 
 export interface IMotifToGene {
   q: string
-  genes: string[]
+  genes: readonly string[]
 }
 
 export interface IMotifsToGenesResults {
-  genes: IMotifToGene[]
+  genes: readonly IMotifToGene[]
 }
 
 self.onmessage = async function (e: MessageEvent<IMotifsToGenesWorkerMessage>) {

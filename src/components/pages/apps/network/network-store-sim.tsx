@@ -44,6 +44,8 @@ export function useNetworkSim(): {
         .distance(settings.layout.linkDistance)
 
       // Conditionally apply custom strength or let D3 use its default internal formula
+      // Seems better if we use d3's internal default for strength so
+      // this is turned off by default
       if (settings.layout.useStrength) {
         linkForce.strength((d: IEdge) => d.strength)
       }

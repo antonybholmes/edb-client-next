@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 
@@ -72,20 +72,33 @@ export function GseaBubblePlotsContent() {
   // }, [hideTooltip])
 
   const { svg, width, height } = useMemo(() => {
-    //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
-
     const cols = Math.min(settings.page.grid.cols, plots.length)
     const rows = Math.ceil(plots.length / cols)
 
     // inner height is determined by the size of the largest bubble plot
-    const innerPlotHeight =
-      settings.axes.y.rowHeight *
-      (Math.max(...plots.map((p) => p.genesets.length)) + 1)
+    let innerPlotHeight = 0
+
+    for (const p of plots) {
+      let pih = 1
+
+      for (const gr of p.groups) {
+        pih += gr.genesets.length
+      }
+
+      if (settings.groups.show) {
+        pih += p.groups.length - 1
+      }
+
+      innerPlotHeight = Math.max(innerPlotHeight, pih)
+    }
+
+    innerPlotHeight *= settings.axes.y.rowHeight
 
     const innerPlotWidth = settings.axes.x.length
 
     const plotWidth =
       innerPlotWidth + settings.plot.margin.left + settings.plot.margin.right
+
     const plotHeight =
       innerPlotHeight + settings.plot.margin.top + settings.plot.margin.bottom
 
@@ -110,6 +123,7 @@ export function GseaBubblePlotsContent() {
         xlim: ILim
         pos: IPos
       }[] = []
+
       let x = 0
       for (let ci = 0; ci < cols; ci++) {
         const pi = ri * cols + ci
@@ -124,7 +138,9 @@ export function GseaBubblePlotsContent() {
 
         x += plotWidth
       }
+
       plotGrid.push(row)
+
       y += plotHeight
     }
 

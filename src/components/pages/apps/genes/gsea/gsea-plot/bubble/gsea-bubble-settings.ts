@@ -4,9 +4,11 @@ import {
   ColorBarPos,
   DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
+  DEFAULT_TEXT_PROPS,
   IMarginProps,
   IPaintProps,
   IStrokeProps,
+  ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { ColorMapName } from '@/lib/color/colormap'
@@ -16,7 +18,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v28`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v30`
 
 const MARGIN = { top: 20, right: 200, bottom: 10, left: 10 }
 
@@ -40,6 +42,15 @@ export interface IGseaBubbleSettings {
   size: {
     label: string
     maxSize: number
+  }
+  groups: {
+    show: boolean
+    font: ITextProps
+    width: number
+    colored: boolean
+    split: {
+      on: boolean
+    }
   }
   phenotypes: {
     merge: boolean
@@ -69,6 +80,7 @@ export interface IGseaBubbleSettings {
     position: ColorBarPos
   }
   legend: {
+    //font: ITextProps
     bubbles: {
       n: number
       sizes: number[]
@@ -89,7 +101,6 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   axes: {
     x: {
       name: 'Log2 fold change',
-
       domain: [-2, 2],
       length: 300,
       ticks: [],
@@ -102,7 +113,15 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
       rowHeight: 24,
     },
   },
-
+  groups: {
+    show: true,
+    font: { ...DEFAULT_TEXT_PROPS, rotation: -90 },
+    width: 5,
+    colored: true,
+    split: {
+      on: false,
+    },
+  },
   scale: {
     mode: 'p',
     p: { range: [0, 10] },
@@ -110,7 +129,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     cmap: 'bwr-v2',
   },
   phenotypes: {
-    merge: false,
+    merge: true,
   },
   size: {
     label: 'Size',
@@ -135,6 +154,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
     showMinorTicks: true,
   },
   legend: {
+    //font: { ...DEFAULT_BOLD_TEXT_PROPS },
     bubbles: {
       n: 3,
       sizes: [25, 50, 75, 100],

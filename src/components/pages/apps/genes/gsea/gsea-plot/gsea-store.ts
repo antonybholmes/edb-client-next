@@ -24,8 +24,14 @@ export interface IGseaTableResult extends IDBEntity {
   maxRank: number
 }
 
-export interface IGseaBubble extends IDBEntity {
+export interface IGseaTableResultGroup extends IDBEntity {
+  show: boolean
+  color: string
   genesets: IGseaTableResult[]
+}
+
+export interface IGseaBubble extends IDBEntity {
+  groups: IGseaTableResultGroup[]
   nes: { label: string }
   size: { label: string }
   log10q: { label: string }

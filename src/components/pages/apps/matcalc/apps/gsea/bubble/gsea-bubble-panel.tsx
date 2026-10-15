@@ -13,7 +13,7 @@ import { MESSAGE_CHANNEL } from '../../../data/data-panel'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSVG } from '@/providers/svg-provider'
-import { GseaBubbleDisplayPropsPanel } from '../../../../genes/gsea/gsea-plot/bubble/gsea-bubble-display-props-panel'
+import { GseaBubbleDisplayPropsPanel } from '../../../../genes/gsea/gsea-plot/bubble/props/gsea-bubble-display-props-panel'
 import { GseaBubblePlotsSvg } from '../../../../genes/gsea/gsea-plot/bubble/svg/gsea-bubble-plots-svg'
 
 export function GseaBubblePanel() {

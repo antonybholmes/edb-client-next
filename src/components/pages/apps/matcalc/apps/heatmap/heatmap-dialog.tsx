@@ -23,6 +23,7 @@ import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/matcalc/apps/heat
 import { HelpButton } from '@/help/help-button'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+
 import {
   getColIdxFromGroup,
   log,

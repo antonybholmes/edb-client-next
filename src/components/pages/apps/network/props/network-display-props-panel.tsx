@@ -92,6 +92,7 @@ export function NetworkDisplayPropsPanel() {
             </PropRow>
             {/* <CheckPropRow
               title="Use Edge Strength"
+              tooltip="Use edge strength in graph calculations. It is normally better to leave this off."
               checked={settings.layout.useStrength}
               onCheckedChange={(checked) =>
                 updateSettings(
@@ -475,10 +476,10 @@ export function NetworkDisplayPropsPanel() {
         <AccordionItem value="edges">
           <AccordionTrigger>Edges</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Scale">
+            <PropRow title="Thickness Scale">
               <NumSlider
                 min={0}
-                max={20}
+                max={10}
                 step={0.01}
                 dp={2}
                 value={settings.plot.edges.scale}
@@ -492,6 +493,19 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
 
+            {/* <PropRow title="Opacity">
+              <PercentSlider
+                value={settings.plot.edges.line.opacity}
+                onNumChanged={(value) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.edges.line.opacity = value
+                    })
+                  )
+                }
+              />
+            </PropRow> */}
+
             <PropRow title="Line">
               <StrokeButton
                 title="Line Color"
@@ -500,12 +514,13 @@ export function NetworkDisplayPropsPanel() {
                     color: settings.plot.edges.line.value,
                     opacity: settings.plot.edges.line.opacity,
                     show: settings.plot.edges.line.show,
-                    onColorChange: ({ color, opacity, show }) =>
+                    onColorChange: ({ color, opacity, dasharray, show }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.plot.edges.line.value = color
                           draft.plot.edges.line.show = show
                           draft.plot.edges.line.opacity = opacity
+                          draft.plot.edges.line.dasharray = dasharray
                         })
                       ),
                   },
@@ -514,6 +529,7 @@ export function NetworkDisplayPropsPanel() {
             </PropRow>
             <CheckPropRow
               title="Highlight"
+              tooltip="Highlight edges connected to nodes"
               checked={settings.plot.edges.highlight}
               onCheckedChange={(value) =>
                 updateSettings(

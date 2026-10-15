@@ -31,7 +31,7 @@ import { produce } from 'immer'
 import {
   SortBy,
   useGseaBubbleSettings,
-} from '../../gsea-plot/bubble/gsea-bubble-settings-store'
+} from '../../gsea-plot/bubble/gsea-bubble-settings'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
 
 export function HomeToolbar() {
@@ -81,7 +81,7 @@ export function HomeToolbar() {
                 callback: (plot) => {
                   console.log('GSEA Bubble dialog returned plot', plot)
 
-                  addPlots([plot])
+                  addPlots([plot], { mode: 'set' })
                 },
               },
             })

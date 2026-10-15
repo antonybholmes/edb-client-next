@@ -113,9 +113,9 @@ export async function createDNATable(
   //   assemblyCol = findCol(df, 'genome')
   // }
 
-  const header: string[] = df.columns.concat(['DNA'])
+  const header: readonly string[] = df.columns.concat(['DNA'])
 
-  const locs: string[] = df.col(locCol).strs
+  const locs: readonly string[] = df.col(locCol).strs
 
   //.map(v => parseLocation(v.toString()))
   //.map(v => v!.toJson())

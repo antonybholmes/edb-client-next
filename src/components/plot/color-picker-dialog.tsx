@@ -104,7 +104,6 @@ export function ColorPickerDialog({
         <HexAlphaColorPicker
           color={color.toHex8String()}
           onChange={(v) => {
-            console.log('new color', color.toHex8String(), v)
             const newColor = tinycolor(v)
             setColor(newColor)
             setOpacity(newColor.getAlpha())
@@ -115,7 +114,6 @@ export function ColorPickerDialog({
         <HexColorPicker
           color={color.toHexString()}
           onChange={(v) => {
-            console.log('new color2', v)
             setColor(tinycolor(v))
           }}
           style={{ height: '15rem' }}

@@ -57,7 +57,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
 
     setIndicatorMessage('Converting motifs to genes...')
 
-    let ids: string[] = df.col(col)!.strs
+    let ids: readonly string[] = df.col(col)!.strs
 
     runMotifsToGenes({ ids }, (result) => {
       const { genes } = result
@@ -65,7 +65,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
       const table: SeriesData[][] = []
 
       for (const [ri, row] of df.values.entries()) {
-        table.push([...row, genes[ri]!.genes.sort().join(',')])
+        table.push([...row, genes[ri]!.genes.toSorted().join(',')])
       }
 
       const header: string[] = [...df.columns, 'Motif to gene']

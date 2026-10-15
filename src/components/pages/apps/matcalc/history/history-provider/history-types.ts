@@ -38,10 +38,10 @@ export interface IHeatMapPlot extends IBasePlot {
 }
 
 export interface IVolcano {
-  ids: string[]
-  log2foldChanges: number[]
-  logpvalues: number[]
-  sizes?: number[]
+  ids: readonly string[]
+  log2foldChanges: readonly number[]
+  logpvalues: readonly number[]
+  sizes?: readonly number[]
 }
 
 export interface IVolcanoPlot extends IBasePlot {

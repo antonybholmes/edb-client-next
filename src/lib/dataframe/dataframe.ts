@@ -1,6 +1,7 @@
 import { range } from '@/lib/math/range'
 import {
   BaseDataFrame,
+  DataFrameInput,
   findCol,
   findCols,
   findRow,
@@ -27,7 +28,7 @@ import {
 import type { IndexId, SeriesData } from './series-data'
 
 export interface IDataFrameOptions extends ISeriesOptions {
-  data?: BaseSeries | BaseSeries[] | SeriesData[] | SeriesData[][]
+  data?: DataFrameInput
   columns?: IndexFromType | undefined
   indexName?: string
 }
@@ -39,7 +40,7 @@ export class DataFrame extends BaseDataFrame {
 
   constructor(options: IDataFrameOptions = {}) {
     const { name = '', data = [], index, indexName, columns } = options
-    super(name)
+    super(shape(data), { name })
 
     const isDf = data instanceof BaseDataFrame
 
@@ -143,7 +144,7 @@ export class DataFrame extends BaseDataFrame {
     const v = this._data.map((row) => row[idx]!) //this.colValues(idx)
 
     return new DataSeries(v, {
-      name: this._columns.get(idx) as string,
+      name: this._columns.at(idx) as string,
       index: this._index,
     })
   }
@@ -268,7 +269,7 @@ export class DataFrame extends BaseDataFrame {
   //   return this._columns
   // }
 
-  override get columns(): string[] {
+  override get columns(): readonly string[] {
     return this._columns.strs
   }
 
@@ -295,7 +296,7 @@ export class DataFrame extends BaseDataFrame {
         new DataSeries(
           this._data.map((row) => row[c]!),
           {
-            name: this._columns.get(c) as string,
+            name: this._columns.at(c) as string,
           }
         )
     )
@@ -407,9 +408,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override replace(
-    data: SeriesData[] | SeriesData[][] | BaseSeries
-  ): BaseDataFrame {
+  override replace(data: DataFrameInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

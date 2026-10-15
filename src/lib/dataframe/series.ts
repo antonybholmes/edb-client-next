@@ -74,7 +74,7 @@ export class DataSeries extends BaseSeries {
     return [...this._data]
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return this._data[index]!
   }
 
@@ -89,7 +89,7 @@ export class DataSeries extends BaseSeries {
 
   override filter(idx: number[]): BaseSeries {
     return new DataSeries(
-      idx.map(i => this._data[i]!),
+      idx.map((i) => this._data[i]!),
       { name: this._name, index: this._index.filter(idx) }
     )
   }

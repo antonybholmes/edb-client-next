@@ -18,8 +18,8 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 import { nodeRadiusFunc } from '@/components/pages/apps/matcalc/apps/heatmap/svg/cell-svg'
 import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
-import { IGseaBubble } from '../gsea-store'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { IGseaBubble, IGseaTableResult } from '../gsea-store'
+import { useGseaBubbleSettings } from './gsea-bubble-settings'
 
 export interface IGseaBubblePlot extends IBasePlot, IGseaBubble {
   style: 'gsea-bubble-plot'
@@ -34,14 +34,15 @@ export interface IBubblePoint {
   size: number
   r: number
   label: string
+  geneset: IGseaTableResult
 }
 
 export interface IGseaBubblePropsContext {
-  plots: IGseaBubble[]
+  plots: IGseaBubblePlot[]
   points: IBubblePoint[][]
   xlims: ILim[]
   globalXLim: ILim
-  setPlots(plots: IGseaBubble[]): void
+  setPlots(plots: IGseaBubblePlot[]): void
 }
 
 export const GseaBubbleContext = createContext<
@@ -58,8 +59,16 @@ export function useGseaBubbleContext() {
   return ctx
 }
 
+/**
+ * Find the xlim to accommotate all genesets in the plot
+ * @param gseaBubble
+ * @returns
+ */
 function getXLim(gseaBubble: IGseaBubble): ILim {
-  const posNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v >= 0)
+  const posNes = gseaBubble.groups
+    .flatMap((gr) => gr.genesets)
+    .map((gs) => gs.nes)
+    .filter((v) => v >= 0)
 
   let maxNes = 0
 
@@ -76,7 +85,10 @@ function getXLim(gseaBubble: IGseaBubble): ILim {
     maxNes = ceilNes
   }
 
-  const negNes = gseaBubble.genesets.map((gs) => gs.nes).filter((v) => v < 0)
+  const negNes = gseaBubble.groups
+    .flatMap((gr) => gr.genesets)
+    .map((gs) => gs.nes)
+    .filter((v) => v < 0)
 
   let minNes = 0
 
@@ -126,10 +138,10 @@ export function GseaBubbleProvider({
   plots = [],
   children,
 }: {
-  plots?: IGseaBubble[]
+  plots?: IGseaBubblePlot[]
   children: ReactNode
 }) {
-  const [_plots, setPlots] = useState<IGseaBubble[]>(plots)
+  const [_plots, setPlots] = useState<IGseaBubblePlot[]>(plots)
   const { settings } = useGseaBubbleSettings()
   const { settings: edbSettings } = useEdbSettings()
 
@@ -163,59 +175,72 @@ export function GseaBubbleProvider({
 
     const colorMap = getColorMap(settings.scale.cmap)
 
-    return _plots.map((plot, pi) => {
-      let names = plot.genesets.map((gs) => gs.name)
-      let nes = plot.genesets.map((gs) => gs.nes)
-      let sizes = plot.genesets.map((gs) => gs.size)
-      let log10pvalues = plot.genesets.map((gs) => gs.log10q)
+    return _plots.map((plot) => {
+      let y = 1
 
-      //const xlim = xlims[pi]
+      const bubbles: IBubblePoint[] = []
 
-      let idx: number[] = []
+      for (const gr of plot.groups.filter((g) => g.show)) {
+        const genesets = gr.genesets
 
-      switch (settings.sortBy) {
-        case 'nes':
-          idx = argsort(nes, { reverse: true })
+        let names = genesets.map((gs) => gs.name)
+        let nes = genesets.map((gs) => gs.nes)
+        let sizes = genesets.map((gs) => gs.size)
+        let log10pvalues = genesets.map((gs) => gs.log10q)
 
-          break
-        case 'size':
-          idx = argsort(sizes, { reverse: true })
-          break
-        case 'pvalue':
-          idx = argsort(log10pvalues, { reverse: true })
-          break
+        let idx: number[] = []
 
-        default:
-          break
-      }
+        switch (settings.sortBy) {
+          case 'nes':
+            idx = argsort(nes, { reverse: true })
 
-      if (idx.length > 0) {
-        nes = idx.map((i) => nes[i])
-        sizes = idx.map((i) => sizes[i])
-        log10pvalues = idx.map((i) => log10pvalues[i])
-        names = idx.map((i) => names[i])
-      }
+            break
+          case 'size':
+            idx = argsort(sizes, { reverse: true })
+            break
+          case 'pvalue':
+            idx = argsort(log10pvalues, { reverse: true })
+            break
 
-      return nes.map((score, i) => {
-        const size = sizes[i]!
-        const normSize = Math.min(size / settings.size.maxSize, 1)
-        const p = log10pvalues[i]!
-        const color =
-          settings.scale.mode === 'p'
-            ? getColor(log10pvalues[i]!, settings.scale.p.range, colorMap)
-            : getColor(nes[i]!, globalXLim, colorMap)
-
-        return {
-          x: score,
-          y: i + 1,
-          nes: score,
-          p,
-          color,
-          size: normSize,
-          r: radiusScale(normSize), //normSize * settings.bubbles.size,
-          label: names[i]!,
+          default:
+            break
         }
-      })
+
+        if (idx.length > 0) {
+          nes = idx.map((i) => nes[i])
+          sizes = idx.map((i) => sizes[i])
+          log10pvalues = idx.map((i) => log10pvalues[i])
+          names = idx.map((i) => names[i])
+        }
+
+        for (const [i, score] of nes.entries()) {
+          const size = sizes[nes.indexOf(score)]!
+          const normSize = Math.min(size / settings.size.maxSize, 1)
+          const p = log10pvalues[i]!
+          const color =
+            settings.scale.mode === 'p'
+              ? getColor(log10pvalues[i]!, settings.scale.p.range, colorMap)
+              : getColor(nes[i]!, globalXLim, colorMap)
+
+          bubbles.push({
+            x: score,
+            y,
+            nes: score,
+            p,
+            color,
+            size: normSize,
+            r: radiusScale(normSize), //normSize * settings.bubbles.size,
+            label: names[i]!,
+            geneset: genesets[i]!,
+          })
+
+          y += 1
+        }
+
+        y += settings.groups.show ? 1 : 0
+      }
+
+      return bubbles
     })
   }, [_plots, globalXLim, settings])
 

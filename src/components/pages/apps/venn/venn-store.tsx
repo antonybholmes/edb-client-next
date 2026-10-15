@@ -76,21 +76,21 @@ export interface IVennList {
   listId: string
   name: string
   //text: string
-  items: string[]
+  items: readonly string[]
   uniqueItems: Map<string, string>
 }
 
 export function makeVennList(
   id: string,
   name: string,
-  items: string | string[] = []
+  items: string | readonly string[] = []
 ): IVennList {
-  let _items: string[] = []
+  let _items: readonly string[] = []
 
   if (Array.isArray(items)) {
     _items = items
   } else {
-    _items = getItems(items)
+    _items = getItems(items as string)
   }
 
   return {

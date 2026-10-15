@@ -3357,6 +3357,26 @@
         {
           "msg": "Refined app icons. Simplifying network dialog",
           "date": "2026-10-14T13:58:29.871Z"
+        },
+        {
+          "msg": "network edge no longer restricted by min. Edges now support dashed array",
+          "date": "2026-10-14T16:51:04.241Z"
+        },
+        {
+          "msg": "Make more readonly arrays to strengthen api design",
+          "date": "2026-10-14T21:43:05.164Z"
+        },
+        {
+          "msg": "Adding support for split groups to gsea bubble",
+          "date": "2026-10-14T23:11:53.074Z"
+        },
+        {
+          "msg": "Bubble plot supports groups",
+          "date": "2026-10-15T02:31:03.913Z"
+        },
+        {
+          "msg": "Bubble plot has full support for groups",
+          "date": "2026-10-15T14:30:47.486Z"
         }
       ]
     },

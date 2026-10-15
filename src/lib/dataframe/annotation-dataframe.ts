@@ -1,5 +1,6 @@
 import {
   BaseDataFrame,
+  DataFrameInput,
   DEFAULT_COLUMN_INDEX_NAME,
   DEFAULT_SHEET_NAME,
   findCol,
@@ -25,8 +26,8 @@ import {
 } from './index'
 import {
   BaseSeries,
-  DEFAULT_INDEX_NAME,
   DataSeries,
+  DEFAULT_INDEX_NAME,
   type SeriesFromType,
 } from './series'
 import type { IndexId, SeriesData } from './series-data'
@@ -42,9 +43,17 @@ export class AnnotationDataFrame extends BaseDataFrame {
   _colVars: BaseDataFrame
 
   constructor(options: IAnnotationDataFrameOptions = {}) {
-    const { name = '', index, indexName, columns, rowObs, colVars } = options
+    const {
+      name = '',
+      data,
+      index,
+      indexName,
+      columns,
+      rowObs,
+      colVars,
+    } = options
 
-    super(name)
+    super(shape(data), { name })
 
     this._data = new ColFrame(options) // DataFrame(options)
 
@@ -201,7 +210,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
 
     df._data.setIndexName(name, true)
 
-    const cols = df._rowObs.columns
+    const cols = [...df._rowObs.columns]
     cols[0] = name
     df._rowObs.setColNames(cols, true)
 
@@ -222,7 +231,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): BaseSeries[] {
+  override get cols(): readonly BaseSeries[] {
     return this._data.cols
   }
 
@@ -337,9 +346,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override replace(
-    data: SeriesData[] | SeriesData[][] | BaseSeries
-  ): BaseDataFrame {
+  override replace(data: DataFrameInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

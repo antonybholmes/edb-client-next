@@ -12,7 +12,7 @@ export interface IBasePlot extends IDBEntity {
     y?: IAxis | undefined
     colorbar?: IAxis | undefined
   }
-  groupRows?: IClusterGroupRow[] | undefined
-  actions?: string[] | undefined
+  groupRows?: readonly IClusterGroupRow[] | undefined
+  actions?: readonly string[] | undefined
   type: 'plot'
 }

@@ -11,9 +11,11 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { CollapseIcon } from '@/components/icons/collapse-icon'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { RadiusScaleModeSelectList } from '@/components/pages/apps/matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
@@ -21,26 +23,26 @@ import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_SORT } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
-import { SORT_BY_ITEMS } from '../../bubble/gsea-bubble-dialog'
-import { MarginPopover } from '../../bubble/margin-popover'
-import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { ColorMapMenu } from '../../../../../matcalc/color-map-menu'
+import { SORT_BY_ITEMS } from '../../../bubble/gsea-bubble-dialog'
+import { MarginPopover } from '../../../bubble/margin-popover'
+import { useGseaBubbleContext } from '../gsea-bubble-provider'
 import {
   Mode,
   MODE_ITEMS,
   SortBy,
   useGseaBubbleSettings,
-} from './gsea-bubble-settings-store'
+} from '../gsea-bubble-settings'
 
-const TABS = ['plot', 'style', 'statistics', 'bubbles', 'size']
+const TABS = ['plot', 'style', 'statistics', 'bubbles', 'size', 'groups']
 
 export function GseaBubbleDisplayPropsPanel() {
   const { settings, updateSettings } = useGseaBubbleSettings()
@@ -74,7 +76,7 @@ export function GseaBubbleDisplayPropsPanel() {
 
   return (
     <>
-      <SideBarHeader className="gap-x-2">
+      <VCenterRow className="gap-x-2 justify-end">
         <IconButton
           size="icon-xs"
 
@@ -82,11 +84,11 @@ export function GseaBubbleDisplayPropsPanel() {
             setOpenTabs(collapsed ? TABS : [])
             setCollapsed(!collapsed)
           }}
-          title={collapsed ? 'Expand' : 'Collapse'}
+          title={collapsed ? 'Expand All' : 'Collapse All'}
         >
           <CollapseIcon collapsed={collapsed} size={14} />
         </IconButton>
-      </SideBarHeader>
+      </VCenterRow>
       <ScrollAccordion value={openTabs} onValueChange={setOpenTabs}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
@@ -477,6 +479,60 @@ export function GseaBubbleDisplayPropsPanel() {
               </RadioGroup>
             </PropRow> */}
           </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="groups">
+          <AccordionTrigger
+            leftChildren={
+              <SmallSwitch
+                title="Show"
+                checked={settings.groups.show}
+                onCheckedChange={(state) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.groups.show = state
+                    })
+                  )
+                }
+              />
+            }
+            rightChildren={
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Font',
+                    textProps: settings.groups.font,
+                    showRotation: true,
+                    update: (textProps) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.groups.font = Object.assign(
+                            { ...draft.groups.font },
+                            textProps
+                          )
+                        })
+                      ),
+                    ext: (
+                      <CheckPropRow
+                        title="Auto-color"
+
+                        checked={settings.groups.colored}
+                        onCheckedChange={(state) =>
+                          updateSettings(
+                            produce(settings, (draft) => {
+                              draft.groups.colored = state
+                            })
+                          )
+                        }
+                      />
+                    ),
+                  },
+                ]}
+              />
+            }
+          >
+            Groups
+          </AccordionTrigger>
+          <AccordionContent></AccordionContent>
         </AccordionItem>
       </ScrollAccordion>
     </>

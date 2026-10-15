@@ -7,7 +7,7 @@ import type { SeriesData } from './series-data'
 
 export type Shape = [number, number]
 
-export type IndexFromType = Index | SeriesData[]
+export type IndexFromType = Index | readonly SeriesData[]
 
 export function shapesEqual(s1: Shape, s2: Shape): boolean {
   return s1[0] === s2[0] && s1[1] === s2[1]
@@ -57,7 +57,7 @@ export abstract class InfIndex extends Index {
     this._length = length
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return index
   }
 
@@ -67,7 +67,7 @@ export abstract class InfIndex extends Index {
 
   override filter(idx: number[]): Index {
     return new DataIndex(
-      idx.map(i => this.get(i)),
+      idx.map((i) => this.at(i)),
       { name: this._name }
     )
   }
@@ -96,7 +96,7 @@ export class NumInfIndex extends InfIndex {
     return index + 1
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return this.num(index)
   }
 
@@ -117,7 +117,7 @@ export class DataIndex extends Index {
   _data: SeriesData[]
   _map: Map<SeriesData, number> | null = null
 
-  constructor(data: SeriesData[], options: IIndexOptions = {}) {
+  constructor(data: readonly SeriesData[], options: IIndexOptions = {}) {
     const { name = '' } = options
 
     super(name)
@@ -129,7 +129,7 @@ export class DataIndex extends Index {
     return [...this._data]
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return this._data[index] ?? NaN
   }
 
@@ -139,7 +139,7 @@ export class DataIndex extends Index {
 
   override filter(idx: number[]): Index {
     return new DataIndex(
-      idx.map(i => this._data[i]!),
+      idx.map((i) => this._data[i]!),
       { name: this._name }
     )
   }
@@ -235,10 +235,10 @@ export class ExcelIndex extends InfIndex {
   }
 
   override get values(): SeriesData[] {
-    return range(this.length).map(i => getExcelColName(i))
+    return range(this.length).map((i) => getExcelColName(i))
   }
 
-  override get(index: number): SeriesData {
+  override at(index: number): SeriesData {
     return getExcelColName(index)
   }
 
@@ -322,7 +322,7 @@ export function makeColumns(
  * @param index
  * @returns
  */
-export function indexAsValues(index: IndexFromType): SeriesData[] {
+export function indexAsValues(index: IndexFromType): readonly SeriesData[] {
   if (index instanceof Index) {
     return index.values
   } else {
@@ -331,17 +331,17 @@ export function indexAsValues(index: IndexFromType): SeriesData[] {
 }
 
 export function strs(data: SeriesData[]): string[] {
-  return data.map(d => d.toString())
+  return data.map((d) => d.toString())
 }
 
 export function nums(data: SeriesData[]): number[] {
-  return data.map(d => (typeof d === 'number' ? d : NaN))
+  return data.map((d) => (typeof d === 'number' ? d : NaN))
 }
 
 export function bools(data: SeriesData[]): boolean[] {
-  return data.map(d => (typeof d === 'boolean' ? d : Boolean(d)))
+  return data.map((d) => (typeof d === 'boolean' ? d : Boolean(d)))
 }
 
 export function dates(data: SeriesData[]): Date[] {
-  return data.map(d => (d instanceof Date ? d : new Date(NaN)))
+  return data.map((d) => (d instanceof Date ? d : new Date(NaN)))
 }

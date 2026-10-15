@@ -7,15 +7,20 @@ import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
 
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { TAB10_PALETTE } from '@/lib/color/palette'
 import { makeUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
+import { produce } from 'immer'
 import { HistoryPlot } from '../../../matcalc/history/history-provider/history-types'
 import { newGseaBubblePlot } from '../gsea-plot/bubble/gsea-bubble-provider'
-import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings'
+import { useGseaBubbleUserSettings } from '../gsea-plot/bubble/gsea-bubble-user-settings'
 import {
   getGseaLog10q,
   IGseaBubble,
   IGseaTableResult,
+  IGseaTableResultGroup,
 } from '../gsea-plot/gsea-store'
 
 const MAX_COLS = 10
@@ -71,15 +76,17 @@ function findPValueCol(df: BaseDataFrame | null) {
   return cols[0]
 }
 
-function findIdCol(df: BaseDataFrame | null) {
+function findGroupCol(df: BaseDataFrame | null) {
   if (!df) {
-    return 'Name'
+    return 'Group'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase().includes('name'))
+  const cols = df.columns.filter((c) =>
+    c.toLowerCase().match(/.*(group|cluster).*/)
+  )
 
   if (cols.length === 0) {
-    return 'Name'
+    return 'Group'
   }
 
   return cols[0]
@@ -99,6 +106,7 @@ export function GseaBubbleDialog({
 }: IProps) {
   const { sheets } = useCurrentSheets()
   const { settings, updateSettings } = useGseaBubbleSettings()
+  const { groupColors, setGroups } = useGseaBubbleUserSettings()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
@@ -107,11 +115,13 @@ export function GseaBubbleDialog({
   const [nesCol, setNESCol] = useState<string>('')
   const [sizeCol, setSizeCol] = useState<string>('')
   const [pValueCol, setPValueCol] = useState<string>('')
+  const [groupCol, setGroupCol] = useState<string>('')
 
   useEffect(() => {
     setNESCol(findNESCol(df))
     setSizeCol(findSizeCol(df))
     setPValueCol(findPValueCol(df))
+    setGroupCol(findGroupCol(df))
   }, [df])
 
   async function submit() {
@@ -122,7 +132,7 @@ export function GseaBubbleDialog({
       return
     }
 
-    let nes: number[] = df.col(idx[0]!)!.nums
+    let nes: readonly number[] = df.col(idx[0]!)!.nums
 
     idx = findCols(df, sizeCol)
 
@@ -131,7 +141,7 @@ export function GseaBubbleDialog({
       return
     }
 
-    let sizes: number[] = df.col(idx[0]!)!.nums
+    let sizes: readonly number[] = df.col(idx[0]!)!.nums
 
     idx = findCols(df, pValueCol)
 
@@ -140,7 +150,9 @@ export function GseaBubbleDialog({
       return
     }
 
-    let log10q: number[] = df.col(idx[0]!)!.nums.map((v) => getGseaLog10q(v))
+    let log10q: readonly number[] = df
+      .col(idx[0]!)!
+      .nums.map((v) => getGseaLog10q(v))
 
     let names = df.index.strs
 
@@ -182,10 +194,60 @@ export function GseaBubbleDialog({
       }
     })
 
+    const split = settings.groups.split.on && groupCol !== ''
+
+    const groups: IGseaTableResultGroup[] = []
+
+    if (split) {
+      idx = findCols(df, groupCol)
+
+      if (idx.length === 0) {
+        console.error(`Group column "${groupCol}" not found in the dataframe.`)
+        return
+      }
+
+      const groupNames = df.col(idx[0]!)!.strs
+
+      for (const [gsi, g] of genesets.entries()) {
+        const groupName = groupNames[gsi]!
+        let idx = groups.findIndex((gr) => gr.name === groupName)
+
+        // If it's a new group, create it
+        if (idx === -1) {
+          const color =
+            groupColors.get(groupName) ??
+            TAB10_PALETTE[groups.length % TAB10_PALETTE.length]
+
+          const group = {
+            id: makeUuid(),
+            show: true,
+            name: groupName,
+            color,
+            genesets: [],
+          }
+
+          groups.push(group)
+
+          setGroups([group])
+
+          idx = groups.findIndex((gr) => gr.name === groupName)
+        }
+        groups[idx]!.genesets.push(g)
+      }
+    } else {
+      groups.push({
+        id: makeUuid(),
+        show: true,
+        name: 'default',
+        color: TAB10_PALETTE[0],
+        genesets,
+      })
+    }
+
     const bubblePlot: IGseaBubble = {
       id: makeUuid(),
       name: 'GSEA Bubble',
-      genesets,
+      groups,
       nes: { label: nesCol },
       size: { label: sizeCol },
       log10q: { label: pValueCol },
@@ -245,6 +307,37 @@ export function GseaBubbleDialog({
               </SelectItem>
             ))}
         </SelectList>
+      </ActionDialogRow>
+
+      <ActionDialogRow title="Group">
+        <SelectList
+          onValueChange={setGroupCol}
+          value={groupCol}
+          w="lg"
+          format={(v) => v as string}
+        >
+          {df?.columns
+            .filter((name) => name !== '')
+            .slice(0, MAX_COLS)
+            .map((name, ni) => (
+              <SelectItem value={name} key={ni}>
+                {name}
+              </SelectItem>
+            ))}
+        </SelectList>
+
+        <Checkbox
+          checked={settings.groups.split.on}
+          onCheckedChange={(v) =>
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.groups.split.on = v
+              })
+            )
+          }
+        >
+          Split Mode
+        </Checkbox>
       </ActionDialogRow>
 
       {/* <ActionDialogSeparator />

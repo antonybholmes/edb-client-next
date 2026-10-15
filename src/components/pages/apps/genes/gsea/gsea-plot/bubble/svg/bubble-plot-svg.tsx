@@ -1,4 +1,4 @@
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 
 import { AxisBottomSvg } from '../../../../../../../plot/axes/svg-axis'
 
@@ -14,13 +14,20 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { useSVG } from '@/providers/svg-provider'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
 import { SvgG } from '@/components/plot/svg-g'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import gsap from 'gsap'
-import { IGseaBubble } from '../../gsea-store'
+import { IGseaBubble, IGseaTableResult } from '../../gsea-store'
 import { IBubblePoint } from '../gsea-bubble-provider'
+
+const GROUP_TEXT_ALIGN = {
+  0: 'start',
+  90: 'middle',
+  180: 'end',
+  270: 'middle',
+}
 
 export interface IPlotInfo {
   plot: IGseaBubble
@@ -57,6 +64,54 @@ export function BubblePlotSvg({
     xax,
     plotInfo.points.map((p) => p.x)
   )
+
+  const groupElems: ReactNode[] = []
+
+  // only add group colors if there is more than 1 group
+  if (settings.groups.show && plotInfo.plot.groups.length > 1) {
+    let y = settings.axes.y.rowHeight / 2
+
+    for (const gr of plotInfo.plot.groups.filter((g) => g.show)) {
+      const y2 = y + gr.genesets.length * settings.axes.y.rowHeight
+      const h = y2 - y
+
+      groupElems.push(
+        <SvgG
+          key={gr.id}
+          pos={{
+            x: 0,
+            y: y,
+          }}
+        >
+          <SvgRect
+            shapeRendering={SVG_CRISP_EDGES}
+            width={settings.groups.width}
+            height={h}
+            stroke="none"
+            fill={gr.color}
+          />
+          <SvgG
+            pos={{
+              x: 15,
+              y: h / 2,
+            }}
+          >
+            <SvgText
+              textAnchor={
+                GROUP_TEXT_ALIGN[settings.groups.font.rotation] || 'start'
+              }
+              font={settings.groups.font}
+              fill={settings.groups.colored ? gr.color : undefined}
+            >
+              {gr.name}
+            </SvgText>
+          </SvgG>
+        </SvgG>
+      )
+
+      y += h + settings.axes.y.rowHeight
+    }
+  }
 
   return (
     <SvgMargin margin={settings.plot.margin}>
@@ -100,6 +155,10 @@ export function BubblePlotSvg({
             </SvgText>
           )
         })}
+      </SvgG>
+
+      <SvgG id="groups" pos={{ x: 5, y: 0 }}>
+        {groupElems}
       </SvgG>
 
       {settings.border.show && (
@@ -148,6 +207,7 @@ function Node({
   point,
   xi,
   plotInfo,
+
   plotPos,
 }: {
   x1: number
@@ -155,6 +215,7 @@ function Node({
   point: IBubblePoint
   xi: number
   plotInfo: IPlotInfo
+
   plotPos: IPos
 }) {
   const ref = useRef<SVGCircleElement>(null)
@@ -180,7 +241,7 @@ function Node({
   }, [hover])
 
   const handleVariantEnter = useCallback(
-    (plot: IGseaBubble, row: number, p: IPos) => {
+    (plot: IGseaBubble, geneset: IGseaTableResult, row: number, p: IPos) => {
       const { relativeP, screenP } = svgPointToScreen(svgRef.current, p)
 
       showCrosshair({
@@ -188,10 +249,10 @@ function Node({
         screenPos: screenP,
         content: (
           <>
-            <p className="font-semibold">{`${plot.genesets[row]!.name}`}</p>
-            <p>{`${plot.nes.label}: ${plot.genesets[row]!.nes.toFixed(2)}`}</p>
-            <p>{`-log10(${plot.log10q.label}): ${plot.genesets[row]!.log10q.toFixed(2)}`}</p>
-            <p>{`${plot.size.label}: ${plot.genesets[row]!.size}`}</p>
+            <p className="font-semibold">{`${geneset.name}`}</p>
+            <p>{`${plot.nes.label}: ${geneset.nes.toFixed(2)}`}</p>
+            <p>{`-log10(${plot.log10q.label}): ${geneset.log10q.toFixed(2)}`}</p>
+            <p>{`${plot.size.label}: ${geneset.size}`}</p>
           </>
         ),
       })
@@ -231,7 +292,7 @@ function Node({
       }}
       onPointerEnter={() => {
         setHover(true)
-        handleVariantEnter(plotInfo.plot, xi, {
+        handleVariantEnter(plotInfo.plot, point.geneset, xi, {
           x: x1 + plotPos.x,
           y: y1 + plotPos.y,
         })

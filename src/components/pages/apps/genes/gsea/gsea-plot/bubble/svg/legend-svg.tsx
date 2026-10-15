@@ -1,4 +1,4 @@
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from '../gsea-bubble-settings'
 
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgVColorBar } from '@/components/plot/svg-color-bar'
@@ -70,6 +70,7 @@ export function GseaBubbleLegendSvg() {
                 x={edbSettings.plots.colorbar.size.h / 2}
                 y={0}
                 textAnchor="middle"
+                font={cax.style.title}
               >
                 {label}
               </SvgText>
@@ -89,6 +90,7 @@ export function GseaBubbleLegendSvg() {
                 x={edbSettings.plots.colorbar.size.h / 2}
                 y={0}
                 textAnchor="middle"
+                font={cax.style.title}
               >
                 {plot.size.label}
               </SvgText>
