@@ -7,8 +7,12 @@ import { Index, type IndexFromType, type Shape } from '.'
 import { cellStr } from './cell'
 
 import { makeUuid } from '../id'
-import { whereMatches, whereStartsWith, whereStrExact } from '../math/where'
-import { Annotations, ColAnnotations } from './annotations'
+import {
+  whereStrExact,
+  whereStrMatches,
+  whereStrStartsWith,
+} from '../math/where'
+import { Annotations, ColAnnotations, DEFAULT_NAME } from './annotations'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
 
@@ -45,13 +49,20 @@ export abstract class BaseDataFrame {
   private _rowIndex: Annotations
   private _colIndex: Annotations
 
-  constructor(shape: Shape, opts: { name?: string } = {}) {
+  constructor(
+    shape: Shape,
+    index: IndexFromType,
+    columns: IndexFromType,
+    opts: { name?: string } = {}
+  ) {
     const { name } = opts
     this._id = makeUuid()
     this._name = name
     this._shape = shape
     this._rowIndex = new Annotations(shape[0])
     this._colIndex = new ColAnnotations(shape[1])
+    this._rowIndex.set(DEFAULT_NAME, index)
+    this._colIndex.set(DEFAULT_NAME, columns)
   }
 
   get id(): string {
@@ -94,10 +105,11 @@ export abstract class BaseDataFrame {
     return this.col(c).values
   }
 
-  setCol(col: IndexId, data: SeriesFromType, inplace: boolean): BaseDataFrame {
-    this._colIndex.set
-    return this
-  }
+  abstract setCol(
+    col: IndexId,
+    data: SeriesFromType,
+    inplace: boolean
+  ): BaseDataFrame
 
   abstract get(row: IndexId, col: IndexId): SeriesData
 
@@ -181,9 +193,13 @@ export abstract class BaseDataFrame {
     return this._shape
   }
 
-  get size(): number {
+  get length(): number {
     const s = this.shape
     return s[0] * s[1]
+  }
+
+  get size(): number {
+    return this.length
   }
 
   /**
@@ -322,14 +338,14 @@ function dfToStr(df: BaseDataFrame, options: IDFToStrOpts = {}): string {
 export function findRows(
   df: BaseDataFrame,
   row: IndexId,
-  caseInsensitive: boolean = true
+  opts: { caseInsensitive?: boolean } = {}
 ): number[] {
   //console.log('find row', row, df.shape, caseInsensitive)
   if (typeof row === 'number') {
     return row > -1 && row < df.shape[0] ? [row] : []
   }
 
-  return df.index.find(row.toString(), caseInsensitive) //    whereStartsWith(df.index.strs, row.toString(), lc)
+  return df.index.indexOf(row.toString(), opts) //    whereStartsWith(df.index.strs, row.toString(), lc)
 
   // let s = row.toString()
 
@@ -367,21 +383,21 @@ export function findRows(
 export function findCols(
   df: BaseDataFrame,
   col: IndexId | RegExp,
-  options: { caseInsensitive?: boolean; exact?: boolean } = {}
+  opts: { caseInsensitive?: boolean; exact?: boolean } = {}
 ): number[] {
-  const { caseInsensitive = true, exact = false } = options
+  const { caseInsensitive = true, exact = false } = opts
 
   if (typeof col === 'number') {
     return col > -1 && col < df.shape[1] ? [col] : []
   }
 
   if (col instanceof RegExp) {
-    return whereMatches(df.columns, col, caseInsensitive)
+    return whereStrMatches(df.columns, col, caseInsensitive)
   }
 
   return exact
-    ? whereStrExact(df.columns, col.toString(), caseInsensitive)
-    : whereStartsWith(df.columns, col.toString(), caseInsensitive)
+    ? whereStrExact(df.columns, col.toString(), opts)
+    : whereStrStartsWith(df.columns, col.toString(), opts)
 }
 
 /**
@@ -396,13 +412,13 @@ export function findCols(
 export function findInSeries(
   series: BaseSeries,
   row: IndexId,
-  caseInsensitive: boolean = true
+  opts: { caseInsensitive?: boolean } = {}
 ): number[] {
   if (typeof row === 'number') {
     return row > -1 && row < series.values.length ? [row] : []
   }
 
-  return whereStartsWith(series.strs, row.toString(), caseInsensitive)
+  return whereStrStartsWith(series.strs, row.toString(), opts)
 
   // let s = row.toString()
 
@@ -440,9 +456,9 @@ export function findInSeries(
 export function findRow(
   df: BaseDataFrame,
   row: IndexId,
-  caseInsensitive: boolean = true
+  opts: { caseInsensitive?: boolean } = {}
 ): number {
-  const idx = findRows(df, row, caseInsensitive)
+  const idx = findRows(df, row, opts)
 
   return idx.length > 0 ? idx[0]! : -1
 }

@@ -16,32 +16,21 @@ export function shapesEqual(s1: Shape, s2: Shape): boolean {
 export type IndexMapFunc<T> = (v: SeriesData, i: number) => T
 
 export abstract class Index extends BaseIndex {
-  _name: string
-
   constructor(name: string = '') {
-    super()
-
-    this._name = name
-  }
-
-  setName(name: string): BaseIndex {
-    this._name = name
-    return this
-  }
-
-  override get name(): string {
-    return this._name
+    super(name)
   }
 
   abstract filter(idx: number[]): Index
 
-  find(s: string, caseInsensitive: boolean = true): number[] {
-    return whereStr(this.strs, s, caseInsensitive)
+  indexOf(s: string, opts: { caseInsensitive?: boolean } = {}): number[] {
+    return whereStr(this.strs, s, opts)
   }
 
   abstract entries(): IterableIterator<[number, SeriesData]>
 
   abstract copy(): Index
+
+  abstract [Symbol.iterator](): IterableIterator<SeriesData>
 }
 
 export interface IIndexOptions {
@@ -65,14 +54,14 @@ export abstract class InfIndex extends Index {
     // do nothing for now
   }
 
-  override get size(): number {
+  override get length(): number {
     return this._length
   }
 
   override filter(idx: number[]): Index {
     return new DataIndex(
       idx.map((i) => this.at(i)),
-      { name: this._name }
+      { name: this.name }
     )
   }
 
@@ -108,13 +97,13 @@ export class NumInfIndex extends InfIndex {
     // do nothing for now
   }
 
-  *[Symbol.iterator]() {
+  override *[Symbol.iterator]() {
     for (let i = 0; i < this.length; i++) {
       yield i + 1
     }
   }
 
-  *entries(): IterableIterator<[number, SeriesData]> {
+  override *entries(): IterableIterator<[number, SeriesData]> {
     for (let i = 0; i < this.length; i++) {
       yield [i, i + 1]
     }
@@ -145,18 +134,18 @@ export class DataIndex extends Index {
     this._data[index] = value
   }
 
-  override get size(): number {
+  override get length(): number {
     return this._data.length
   }
 
   override filter(idx: number[]): Index {
     return new DataIndex(
       idx.map((i) => this._data[i]!),
-      { name: this._name }
+      { name: this.name }
     )
   }
 
-  override find(t: string): number[] {
+  override indexOf(t: string): number[] {
     const lt = t.toLowerCase()
 
     // lazy initialize the map for faster lookups if not already done
@@ -170,19 +159,15 @@ export class DataIndex extends Index {
   }
 
   override copy(): Index {
-    return new DataIndex([...this._data], { name: this._name })
+    return new DataIndex([...this._data], { name: this.name })
   }
 
-  *[Symbol.iterator]() {
-    for (const x of this._data) {
-      yield x
-    }
+  override [Symbol.iterator]() {
+    return this._data[Symbol.iterator]()
   }
 
-  *entries(): IterableIterator<[number, SeriesData]> {
-    for (let i = 0; i < this._data.length; i++) {
-      yield [i, this._data[i]!]
-    }
+  override entries(): IterableIterator<[number, SeriesData]> {
+    return this._data.entries()
   }
 }
 

@@ -7,6 +7,10 @@ export type SeriesFromType = BaseSeries | IndexFromType
 export const DEFAULT_INDEX_NAME = 'Index'
 
 export abstract class BaseSeries extends BaseIndex {
+  constructor(name: string = '') {
+    super(name)
+  }
+
   /**
    * Returns the index associated with this series
    */
@@ -17,8 +21,6 @@ export abstract class BaseSeries extends BaseIndex {
   get uniq(): SeriesData[] {
     return [...new Set(this.values)].sort()
   }
-
-  abstract setName(name: string): BaseSeries
 
   abstract set(index: number, v: SeriesData): void
 
@@ -33,26 +35,15 @@ export interface ISeriesOptions extends IIndexOptions {
 
 export class DataSeries extends BaseSeries {
   _data: SeriesData[]
-  _name: string
+
   _index: Index
 
-  constructor(data: SeriesData[], options: ISeriesOptions = {}) {
-    super()
-
+  constructor(data: SeriesFromType, options: ISeriesOptions = {}) {
     const { index, name = '' } = options
+    super(name)
 
-    this._name = name
     this._data = [...data]
     this._index = makeIndex(index, data.length)
-  }
-
-  setName(name: string): BaseSeries {
-    this._name = name
-    return this
-  }
-
-  override get name(): string {
-    return this._name
   }
 
   override get index(): Index {
@@ -90,15 +81,19 @@ export class DataSeries extends BaseSeries {
   override filter(idx: number[]): BaseSeries {
     return new DataSeries(
       idx.map((i) => this._data[i]!),
-      { name: this._name, index: this._index.filter(idx) }
+      { name: this.name, index: this._index.filter(idx) }
     )
   }
 
   override copy(): BaseSeries {
     return new DataSeries([...this._data], {
-      name: this._name,
+      name: this.name,
       index: this._index.copy(),
     })
+  }
+
+  override [Symbol.iterator](): Iterator<SeriesData> {
+    return this._data[Symbol.iterator]()
   }
 }
 

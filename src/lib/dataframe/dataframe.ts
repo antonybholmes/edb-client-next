@@ -40,7 +40,7 @@ export class DataFrame extends BaseDataFrame {
 
   constructor(options: IDataFrameOptions = {}) {
     const { name = '', data = [], index, indexName, columns } = options
-    super(shape(data), { name })
+    super(shape(data), index, columns, { name })
 
     const isDf = data instanceof BaseDataFrame
 
@@ -309,7 +309,7 @@ export class DataFrame extends BaseDataFrame {
     ]
   }
 
-  override get size(): number {
+  override get length(): number {
     return this.shape[0] * this.shape[1]
   }
 
@@ -519,7 +519,7 @@ function _iloc(
         s = row as string
 
         if (!s.includes(':')) {
-          rowIdx = rowIdx.concat(df.index.find(s))
+          rowIdx = rowIdx.concat(df.index.indexOf(s))
         } else {
           let si = 0
           // last row index
@@ -534,7 +534,7 @@ function _iloc(
               if (Number.isInteger(s)) {
                 ei = i
               } else {
-                const indices = df.index.find(s)
+                const indices = df.index.indexOf(s)
                 if (indices.length > 0) {
                   ei = indices[0]!
                 }
@@ -548,7 +548,7 @@ function _iloc(
               if (Number.isInteger(s)) {
                 si = i
               } else {
-                const indices = df.index.find(s)
+                const indices = df.index.indexOf(s)
                 if (indices.length > 0) {
                   si = indices[0]!
                 }

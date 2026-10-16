@@ -1,8 +1,13 @@
 import type { IndexMapFunc, Shape } from '.'
 import { cellNum, cellStr } from './cell'
+import { Fields } from './fields'
 import type { SeriesData } from './series-data'
 
-export abstract class BaseIndex {
+export abstract class BaseIndex extends Fields {
+  constructor(name: string = '') {
+    super(name)
+  }
+
   /**
    * Returns all values in the index.
    */
@@ -34,25 +39,20 @@ export abstract class BaseIndex {
     return this.values.map((v) => cellStr(v))
   }
 
-  /**
-   * Returns the name of the index.
-   */
-  abstract get name(): string
-
-  abstract get size(): number
+  abstract get length(): number
 
   /**
-   * Synonym for size
+   * Synonym for length
    */
-  get length(): number {
-    return this.size
+  get size(): number {
+    return this.length
   }
 
   /**
    * Returns the shape of the index, typically n x 1
    */
   get shape(): Shape {
-    return [this.size, 1] as Shape
+    return [this.length, 1] as Shape
   }
 
   /**
@@ -88,6 +88,8 @@ export abstract class BaseIndex {
   get numsNoNA(): number[] {
     return this.nums.filter((v) => !isNaN(v))
   }
+
+  abstract [Symbol.iterator](): Iterator<SeriesData>
 }
 
 function _map<T>(index: BaseIndex, f: IndexMapFunc<T>): T[] {
