@@ -41,7 +41,6 @@ import { useSVG } from '@/providers/svg-provider'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
-import { useRunning } from '@/components/toolbar/running-indicator'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
@@ -62,8 +61,6 @@ export function NetworkPage() {
   const { setAppInfo } = useAppInfo()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
-
-  const { message } = useRunning('network')
 
   const { addIndicator, remove } = useFooter()
 

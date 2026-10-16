@@ -1,9 +1,10 @@
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
 import {
@@ -12,7 +13,9 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import {
   AccordionContent,
@@ -24,12 +27,14 @@ import { produce } from 'immer'
 import { useState } from 'react'
 import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
+import APP_INFO from '../manifest.json'
 import { POSITIONS, useNetworkSettings } from '../network-settings'
 import { FieldSelectList } from './field-select-list'
 import { MarginPopover } from './margin-popover'
 
 export function NetworkDisplayPropsPanel() {
-  const { settings, updateSettings } = useNetworkSettings()
+  const { settings, updateSettings, resetSettings } = useNetworkSettings()
+  const { open: openDialog } = useDialogs()
 
   const [values, setValues] = useState([
     'layout',
@@ -43,11 +48,36 @@ export function NetworkDisplayPropsPanel() {
 
   return (
     <PropsPanel>
+      <VCenterRow className="justify-end">
+        <LinkButton
+          onClick={() => {
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: APP_INFO.name,
+
+                content: 'Are you sure you want to reset all settings?',
+                callback: (response) => {
+                  if (response === TEXT_OK) {
+                    resetSettings()
+                  }
+                },
+              },
+            })
+          }}
+          title="Reset settings to default"
+        >
+          {TEXT_RESET}
+        </LinkButton>
+      </VCenterRow>
       <ScrollAccordion value={values} onValueChange={setValues}>
         <AccordionItem value="layout">
           <AccordionTrigger>Layout</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Charge">
+            <PropRow
+              title="Charge"
+              tooltip="How strongly nodes repel each other. A negative value causes nodes to repel each other, a positive value attracts them."
+            >
               <NumSlider
                 min={-100}
                 max={100}
@@ -76,8 +106,11 @@ export function NetworkDisplayPropsPanel() {
               }
             /> */}
 
-            <LineSeparator />
-            <PropRow title="Distance">
+            {/* <LineSeparator /> */}
+            <PropRow
+              title="Distance"
+              tooltip="The target distance between nodes."
+            >
               <NumSlider
                 min={0}
                 max={200}
@@ -92,7 +125,10 @@ export function NetworkDisplayPropsPanel() {
                 }
               />
             </PropRow>
-            <PropRow title="Group Factor">
+            <PropRow
+              title="Group Repulsion"
+              tooltip="How much nodes of different groups will repel each other"
+            >
               <NumSlider
                 min={0}
                 max={20}
@@ -109,7 +145,7 @@ export function NetworkDisplayPropsPanel() {
               />
             </PropRow>
 
-            <LineSeparator />
+            {/* <LineSeparator /> */}
             <CheckPropRow
               checked={settings.layout.collision.on}
               onCheckedChange={(checked) =>

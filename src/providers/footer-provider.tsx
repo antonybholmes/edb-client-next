@@ -15,9 +15,9 @@ type FooterContextValue = {
   left: ITab | undefined
   center: ITab | undefined
   right: ITab | undefined
-  add: (slot: FooterSlot, entry: ITab) => void
+  add: (entry: ITab, opts?: { slot?: FooterSlot }) => void
   remove: (id: string, opt?: { slot?: FooterSlot }) => void
-  set: (slot: FooterSlot, entry: ITab) => void
+  set: (entry: ITab, opts?: { slot?: FooterSlot }) => void
   /**
    * Adds a running indicator to the left slot of the footer.
    * The indicator displays a message (default: 'Running...') and returns a unique ID.
@@ -64,14 +64,18 @@ export function FooterProvider({ children }: IChildrenProps) {
     }
   }, [stack, defaults])
 
-  const set = useCallback((slot: FooterSlot, entry: ITab) => {
+  const set = useCallback((entry: ITab, opts: { slot?: FooterSlot } = {}) => {
+    const { slot = 'left' } = opts
+
     setDefaults((prev) => ({
       ...prev,
       [slot]: entry,
     }))
   }, [])
 
-  const add = useCallback((slot: FooterSlot, entry: ITab) => {
+  const add = useCallback((entry: ITab, opts: { slot?: FooterSlot } = {}) => {
+    const { slot = 'left' } = opts
+
     setStack((prev) => ({
       ...prev,
       [slot]: [...prev[slot], entry],
@@ -80,6 +84,7 @@ export function FooterProvider({ children }: IChildrenProps) {
 
   const remove = useCallback((id: string, opts: { slot?: FooterSlot } = {}) => {
     const { slot = 'left' } = opts
+
     setStack((prev) => ({
       ...prev,
       [slot]: prev[slot].filter((e) => e.id !== id),
@@ -95,7 +100,7 @@ export function FooterProvider({ children }: IChildrenProps) {
 
       const id = makeUuid()
 
-      add(slot, { id, render: <RunningIndicator message={message} /> })
+      add({ id, render: <RunningIndicator message={message} /> }, { slot })
 
       return id
     },
@@ -105,7 +110,7 @@ export function FooterProvider({ children }: IChildrenProps) {
   const addDFSize = useCallback(() => {
     const id = makeUuid()
 
-    add('left', { id, component: FooterDFSize })
+    add({ id, component: FooterDFSize }, { slot: 'left' })
 
     return id
   }, [])

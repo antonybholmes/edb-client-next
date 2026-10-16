@@ -3389,6 +3389,10 @@
         {
           "msg": "Bubble plot now supports borders per group",
           "date": "2026-10-15T20:14:55.738Z"
+        },
+        {
+          "msg": "Refined footer control. Network dialog hides immediately and now indicator shows when simulation is running",
+          "date": "2026-10-16T13:46:50.942Z"
         }
       ]
     },

@@ -130,11 +130,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.8.4",
+    "version": "50.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-15T14:30:46.493Z",
-    "hash": "d6db201527f6972926aabb06fa53bdf5da4c62a8dff44e10955259b6fed8a1f1",
-    "build": 2158
+    "modified": "2026-10-16T17:30:33.890Z",
+    "hash": "7f963d0e76546bff753c063d642066ca65df2421e577b00bf081c8d9efebc5f4",
+    "build": 2160
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.4.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-16T13:46:50.019Z",
-    "hash": "32c9e3f041d41d8aae52ec4c64850d5a6209fda460858b9fc1ccf327e5e9b69b",
-    "build": 146
+    "modified": "2026-10-16T17:30:33.891Z",
+    "hash": "2b33df855e6281aa023a33a61ee9c6b2bd7850da7751a5980592adada2b018ca",
+    "build": 148
   },
   {
     "name": "Oncoplot",
