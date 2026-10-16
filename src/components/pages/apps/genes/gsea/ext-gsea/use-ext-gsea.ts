@@ -83,7 +83,7 @@ export function useExtGsea() {
           }),
         }
 
-        removeFooter('left', id)
+        removeFooter(id)
         clearMessage()
 
         callback(plot)

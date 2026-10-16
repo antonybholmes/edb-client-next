@@ -46,7 +46,7 @@ export class ColFrame extends BaseDataFrame {
   constructor(options: IDataFrameOptions = {}) {
     let { name = '', index, indexName, data = [], columns } = options
 
-    super(shape(data), { name })
+    super(shape(data), index, columns, { name })
 
     if (data.length === 0) {
       throw new Error('data must be a non empty array or array of series')
@@ -66,7 +66,7 @@ export class ColFrame extends BaseDataFrame {
     // }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
-    const isSeries = data.some((d) => d instanceof BaseSeries)
+    const isSeries = data.some((d: unknown) => d instanceof BaseSeries)
 
     if (isSeries && !data.every((d) => d instanceof BaseSeries)) {
       throw new Error(
@@ -78,10 +78,12 @@ export class ColFrame extends BaseDataFrame {
       // array of series to be made column wise
 
       if (!columns) {
-        columns = new StringIndex(data.map((c) => (c as BaseSeries).name))
+        columns = new StringIndex(
+          data.map((c: unknown) => (c as BaseSeries).name)
+        )
       }
 
-      this._data = data.map((c) => (c as BaseSeries).values)
+      this._data = data.map((c: unknown) => (c as BaseSeries).values)
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -602,7 +604,7 @@ function _ilocDim(index: Index, rows: LocType = ':'): number[] {
             }
           }
         } else {
-          rowIdx = [...rowIdx, ...index.find(s)]
+          rowIdx = [...rowIdx, ...index.indexOf(s)]
         }
 
         break

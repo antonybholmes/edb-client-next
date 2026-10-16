@@ -266,7 +266,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
     //   close()
     // })
 
-    //close()
+    close()
   }
 
   const colorCols = [

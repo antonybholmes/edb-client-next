@@ -100,7 +100,7 @@ export function useViper() {
         // we've finished so get rid of the animations
         //closeToast(id)
 
-        removeFooter('left', id)
+        removeFooter(id)
 
         clearMessage()
         callback?.()

@@ -53,7 +53,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
       colVars,
     } = options
 
-    super(shape(data), { name })
+    super(shape(data), index, columns, { name })
 
     this._data = new ColFrame(options) // DataFrame(options)
 
@@ -259,8 +259,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.shape
   }
 
-  override get size(): number {
-    return this._data.size
+  override get length(): number {
+    return this._data.length
   }
 
   override get values(): SeriesData[][] {

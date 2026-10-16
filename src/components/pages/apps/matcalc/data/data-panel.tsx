@@ -69,7 +69,7 @@ export function DataPanel() {
   // }, [dfTabs])
 
   useEffect(() => {
-    setFooter('left', { id: makeUuid(), component: FooterDFSize })
+    setFooter({ id: makeUuid(), component: FooterDFSize })
   }, [setFooter])
 
   useEffect(() => {

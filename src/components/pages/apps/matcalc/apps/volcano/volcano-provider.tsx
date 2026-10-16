@@ -88,23 +88,20 @@ export function VolcanoProvider({
 
   const highlightedLabels = useMemo(() => {
     const idx = new Set(
-      range(volcano.ids.length).filter((i) =>
-        getShouldLabel(volcano.log2foldChanges[i]!, volcano.logpvalues[i]!)
+      range(volcano.entries.length).filter((i) =>
+        getShouldLabel(
+          volcano.entries[i]!.log2foldChange,
+          volcano.entries[i]!.logpvalue
+        )
       )
     )
 
-    const values = volcano.ids
+    const values = volcano.entries
       .filter((_v, i) => idx.has(i))
-      .map((l) => l.toString())
+      .map((l) => l.id.toString())
 
     return values
-  }, [
-    volcano.log2foldChanges,
-    volcano.logpvalues,
-    displayOptions,
-    volcano.ids,
-    thresholdLogP,
-  ])
+  }, [volcano.entries, displayOptions, thresholdLogP])
 
   useEffect(() => {
     const xax = createAxis({

@@ -66,7 +66,7 @@ export function HomeToolbar() {
           })
         }
 
-        removeFooter('left', id)
+        removeFooter(id)
       }
     )
   }

@@ -15,15 +15,15 @@ type FooterContextValue = {
   left: ITab | undefined
   center: ITab | undefined
   right: ITab | undefined
-  add: (slot: FooterSlot, entry: ITab) => void
-  remove: (slot: FooterSlot, id: string) => void
-  set: (slot: FooterSlot, entry: ITab) => void
+  add: (entry: ITab, opts?: { slot?: FooterSlot }) => void
+  remove: (id: string, opt?: { slot?: FooterSlot }) => void
+  set: (entry: ITab, opts?: { slot?: FooterSlot }) => void
   /**
    * Adds a running indicator to the left slot of the footer.
    * The indicator displays a message (default: 'Running...') and returns a unique ID.
    * This ID can be used to remove the indicator later.
    */
-  addIndicator: (message?: string) => string
+  addIndicator: (message?: string, opts?: { slot?: FooterSlot }) => string
   addDFSize: () => string
 }
 
@@ -64,39 +64,53 @@ export function FooterProvider({ children }: IChildrenProps) {
     }
   }, [stack, defaults])
 
-  const set = useCallback((slot: FooterSlot, entry: ITab) => {
+  const set = useCallback((entry: ITab, opts: { slot?: FooterSlot } = {}) => {
+    const { slot = 'left' } = opts
+
     setDefaults((prev) => ({
       ...prev,
       [slot]: entry,
     }))
   }, [])
 
-  const add = useCallback((slot: FooterSlot, entry: ITab) => {
+  const add = useCallback((entry: ITab, opts: { slot?: FooterSlot } = {}) => {
+    const { slot = 'left' } = opts
+
     setStack((prev) => ({
       ...prev,
       [slot]: [...prev[slot], entry],
     }))
   }, [])
 
-  const remove = useCallback((slot: FooterSlot, id: string) => {
+  const remove = useCallback((id: string, opts: { slot?: FooterSlot } = {}) => {
+    const { slot = 'left' } = opts
+
     setStack((prev) => ({
       ...prev,
       [slot]: prev[slot].filter((e) => e.id !== id),
     }))
   }, [])
 
-  const addIndicator = useCallback((message: string = 'Running...') => {
-    const id = makeUuid()
+  const addIndicator = useCallback(
+    (
+      message: string = 'Running...',
+      opts: { slot?: FooterSlot } = { slot: 'left' }
+    ) => {
+      const { slot = 'left' } = opts
 
-    add('left', { id, render: <RunningIndicator message={message} /> })
+      const id = makeUuid()
 
-    return id
-  }, [])
+      add({ id, render: <RunningIndicator message={message} /> }, { slot })
+
+      return id
+    },
+    []
+  )
 
   const addDFSize = useCallback(() => {
     const id = makeUuid()
 
-    add('left', { id, component: FooterDFSize })
+    add({ id, component: FooterDFSize }, { slot: 'left' })
 
     return id
   }, [])

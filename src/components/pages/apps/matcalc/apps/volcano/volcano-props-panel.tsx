@@ -1,4 +1,3 @@
-import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
 
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
@@ -19,6 +18,9 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
@@ -58,6 +60,164 @@ export function VolcanoPropsPanel() {
       setText(displayLabels.join('\n'))
     }
   }, [settings.labels.auto, displayLabels])
+
+  function declutter({ iterations = 50, padding = 1 } = {}) {
+    const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
+
+    const labelIdx = plot.volcano.entries
+      ?.map((v, vi) => ({ index: vi, value: v.id }))
+      .filter((v) => labelSet.has((v.value as string).toLowerCase()))
+      .map((v) => v.index)
+
+    const svgLabels = labelIdx.map((i) =>
+      document.querySelector(`#label-text-${i}`)
+    )
+    const svgLines = labelIdx.map((i) =>
+      document.querySelector(`#label-line-${i}`)
+    )
+
+    // labels: array of SVG <text> elements
+    // remember each label's anchor so we can draw leader lines later
+    const items = svgLabels.map((el) => {
+      const x = +el.getAttribute('x')
+      const y = +el.getAttribute('y')
+      return { el, ax: x, ay: y, x, y }
+    })
+
+    const box = (it: {
+      el: SVGTextElement
+      ax: number
+      ay: number
+      x: number
+      y: number
+    }) => {
+      const b = it.el.getBBox() // size only; position comes from it.x / it.y
+      return {
+        w: b.width + padding * 2,
+        h: b.height + padding * 2,
+        // bbox relative to the label's current x/y
+        dx: b.x - +it.el.getAttribute('x'),
+        dy: b.y - +it.el.getAttribute('y'),
+      }
+    }
+
+    const sizes = items.map(box)
+
+    for (let n = 0; n < iterations; n++) {
+      let moved = false
+
+      for (let [i, a] of items.entries()) {
+        for (let j = i + 1; j < items.length; j++) {
+          const b = items[j]
+          const sa = sizes[i]
+          const sb = sizes[j]
+
+          const ax = a.x + sa.dx,
+            ay = a.y + sa.dy
+
+          const bx = b.x + sb.dx,
+            by = b.y + sb.dy
+
+          const overlapX = Math.min(ax + sa.w, bx + sb.w) - Math.max(ax, bx)
+          const overlapY = Math.min(ay + sa.h, by + sb.h) - Math.max(ay, by)
+
+          if (overlapX > 0 && overlapY > 0) {
+            moved = true
+            // push apart along the axis with the smaller overlap
+            if (overlapX < overlapY) {
+              const push = overlapX / 2 + 0.5
+              const dir = ax + sa.w / 2 < bx + sb.w / 2 ? -1 : 1
+              a.x += dir * push
+              b.x -= dir * push
+            } else {
+              const push = overlapY / 2 + 0.5
+              const dir = ay + sa.h / 2 < by + sb.h / 2 ? -1 : 1
+              a.y += dir * push
+              //b.y -= dir * push
+            }
+          }
+        }
+      }
+
+      if (!moved) break
+    }
+
+    // apply positions
+    items.forEach((it) => {
+      it.el.setAttribute('x', it.x.toString())
+      it.el.setAttribute('y', it.y.toString())
+    })
+
+    // move x2 of lines
+    for (const [i, it] of items.entries()) {
+      // update x2 of lines connected to this label
+      svgLines[i].setAttribute('x2', it.x.toString())
+      svgLines[i].setAttribute('y2', it.y.toString())
+    }
+
+    return items // includes ax/ay (anchor) vs x/y (final) for leader lines
+  }
+
+  function declutterY({ padding = 0, gap = 0.1 } = {}) {
+    const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
+
+    const labelIdx = plot.volcano.entries
+      ?.map((v, vi) => ({ index: vi, value: v.id }))
+      .filter((v) => labelSet.has((v.value as string).toLowerCase()))
+      .map((v) => v.index)
+
+    const svgLabels: SVGGraphicsElement[] = labelIdx.map((i) =>
+      document.querySelector(`#label-text-${i}`)
+    )
+    const svgLines = labelIdx.map((i) =>
+      document.querySelector(`#label-line-${i}`)
+    )
+
+    const items = svgLabels.map((el) => {
+      const x = +el.getAttribute('x')
+      const y = +el.getAttribute('y')
+      const b = el.getBBox()
+      return {
+        el,
+        ax: x,
+        ay: y,
+        x,
+        y,
+        w: b.width + padding * 2,
+        h: b.height + padding * 2,
+        dx: b.x - x - padding,
+        dy: b.y - y - padding,
+      }
+    })
+    console.log(items)
+
+    const left = (it) => it.x + it.dx
+    const top = (it) => it.y + it.dy
+    const overlaps = (a, b) =>
+      left(a) < left(b) + b.w &&
+      left(b) < left(a) + a.w &&
+      top(a) < top(b) + b.h &&
+      top(b) < top(a) + a.h
+
+    const placed = []
+    for (const it of [...items].sort((a, b) => b.ay - a.ay)) {
+      let hit
+      while ((hit = placed.find((p) => overlaps(it, p)))) {
+        it.y = top(hit) - it.h - it.dy - gap // land clearly above, never exactly touching
+      }
+      placed.push(it)
+    }
+    items.forEach((it) => it.el.setAttribute('y', it.y.toString()))
+
+    // move x2 of lines
+    for (const [i, it] of items.entries()) {
+      // update x2 of lines connected to this label
+      svgLines[i].setAttribute('x2', it.x.toString())
+      svgLines[i].setAttribute('y2', it.y.toString())
+    }
+
+    return items // ax/ay = original anchor, x/y = final position
+  }
 
   return (
     <PropsPanel>
@@ -345,11 +505,10 @@ export function VolcanoPropsPanel() {
         </AccordionItem>
 
         <AccordionItem value="labels">
-          <AccordionTrigger>Labels</AccordionTrigger>
-          <AccordionContent>
-            <BaseCol className="gap-y-1">
-              <CheckPropRow
-                title="Auto label"
+          <AccordionTrigger
+            rightChildren={
+              <Checkbox
+                className="font-normal"
                 checked={settings.labels.auto}
                 onCheckedChange={(v) => {
                   updateSettings(
@@ -358,39 +517,74 @@ export function VolcanoPropsPanel() {
                     })
                   )
                 }}
+              >
+                Auto Label
+              </Checkbox>
+            }
+          >
+            Labels
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="x-offset">
+              <NumSlider
+                value={settings.labels.offset.x}
+                min={0}
+                max={100}
+                onNumChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.labels.offset.x = v
+                    })
+                  )
+                }}
               />
-              <Textarea
-                id="labels"
-                aria-label="Labels"
-                value={text}
-                onTextChange={(v) => setText(v)}
-                placeholder="Label points on plot..."
-                className="h-48"
-                //disabled={settings.volcano.labels.auto}
+            </PropRow>
+            <PropRow title="y-offset">
+              <NumSlider
+                value={settings.labels.offset.y}
+                min={0}
+                max={100}
+                onNumChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.labels.offset.y = v
+                    })
+                  )
+                }}
               />
+            </PropRow>
+            <VCenterRow className="justify-end">
+              <LinkButton
+                onClick={() => {
+                  setText('')
 
-              <VCenterRow className="justify-between">
-                <Button
-                  variant="app-theme"
-                  aria-label="Add labels to plot"
-                  onClick={() => addLabels()}
-                >
-                  Add labels to plot
-                </Button>
+                  setLabels([])
+                }}
+              >
+                {TEXT_CLEAR}
+              </LinkButton>
+            </VCenterRow>
+            <Textarea
+              id="labels"
+              aria-label="Labels"
+              value={text}
+              onTextChange={(v) => setText(v)}
+              placeholder="Label points on plot..."
+              className="h-48"
+              //disabled={settings.volcano.labels.auto}
+            />
 
-                <Button
-                  variant="link"
-                  //size="sm"
-                  onClick={() => {
-                    setText('')
+            <Button
+              variant="app-theme"
+              aria-label="Add labels to plot"
+              onClick={() => addLabels()}
+            >
+              Add Labels
+            </Button>
 
-                    setLabels([])
-                  }}
-                >
-                  {TEXT_CLEAR}
-                </Button>
-              </VCenterRow>
-            </BaseCol>
+            <Button variant="secondary" onClick={() => declutterY()}>
+              Organize Labels
+            </Button>
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

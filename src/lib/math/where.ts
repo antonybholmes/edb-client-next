@@ -40,8 +40,14 @@ export function where<T>(
 export function whereStr(
   data: readonly string[],
   search: string,
-  caseInsensitive: boolean = true
+  opts: { caseInsensitive?: boolean; exact?: boolean } = {}
 ): number[] {
+  const { caseInsensitive = true, exact = false } = opts
+
+  if (exact) {
+    return whereStrExact(data, search, opts)
+  }
+
   const s = caseInsensitive ? search.toLowerCase() : search
 
   return where(data, (x) =>
@@ -58,11 +64,12 @@ export function whereStr(
  * @param caseInsensitive        Case insensitive matching.
  * @returns                      The indices of strings beginning with search.
  */
-export function whereStartsWith(
+export function whereStrStartsWith(
   data: readonly string[],
   search: string,
-  caseInsensitive: boolean = true
+  opts: { caseInsensitive?: boolean } = {}
 ): number[] {
+  const { caseInsensitive = true } = opts
   const s = caseInsensitive ? search.toLowerCase() : search
 
   return where(data, (x) =>
@@ -70,17 +77,29 @@ export function whereStartsWith(
   )
 }
 
+/**
+ * Exact string match for strings in an array.
+ */
 export function whereStrExact(
   data: readonly string[],
   search: string,
-  caseInsensitive: boolean = true
+  opts: { caseInsensitive?: boolean } = {}
 ): number[] {
+  const { caseInsensitive = true } = opts
   const s = caseInsensitive ? search.toLowerCase() : search
 
   return where(data, (x) => (caseInsensitive ? x.toLowerCase() === s : x === s))
 }
 
-export function whereMatches(
+/**
+ * A regex version of where.
+ *
+ * @param data A list of strings to search.
+ * @param regex The regular expression to match.
+ * @param caseInsensitive Case insensitive matching.
+ * @returns The indices of strings matching the regex.
+ */
+export function whereStrMatches(
   data: readonly string[],
   regex: RegExp,
   caseInsensitive: boolean = true

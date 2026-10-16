@@ -1,7 +1,9 @@
-import { DataIndex, Index, NumInfIndex } from '.'
+import { DataIndex, ExcelIndex, Index, IndexFromType, NumInfIndex } from '.'
 import { BaseIndex } from './base-index'
 import { cellStr } from './cell'
 import { SeriesData } from './series-data'
+
+export const DEFAULT_NAME = 'index'
 
 /**
  * Holds named annotations for rows or columns so we can add
@@ -53,18 +55,18 @@ export class Annotations {
   }
 
   /** Adds or replaces an annotation. Missing trailing values are set to `fill`. */
-  set(
-    name: string,
-    values: readonly SeriesData[],
-    fill: SeriesData = ''
-  ): void {
+  set(name: string, values: IndexFromType, fill: SeriesData = ''): void {
+    if (!values) {
+      return
+    }
+
     if (values.length > this._size) {
       throw new Error(
         `annotation "${name}" has ${values.length} values, expected ${this._size}`
       )
     }
 
-    const padded = values.slice()
+    const padded = [...values]
 
     while (padded.length < this._size) {
       padded.push(fill)
@@ -115,11 +117,11 @@ export class Annotations {
   // }
 
   /** All annotation values for a single position. */
-  record(i: number): Record<string, SeriesData> {
-    const ret: Record<string, SeriesData> = {}
+  record(i: number): { name: string; value: SeriesData }[] {
+    const ret: { name: string; value: SeriesData }[] = []
 
-    for (const [name, values] of this._fieldMap) {
-      ret[name] = values[i]!
+    for (const name of this.names) {
+      ret.push({ name, value: this._get(name).at(i) })
     }
 
     return ret
@@ -173,5 +175,13 @@ export class Annotations {
     const values = this._fieldMap.get(name)
 
     return values
+  }
+}
+
+export class ColAnnotations extends Annotations {
+  constructor(size: number) {
+    super(size, {
+      indexCreator: () => new ExcelIndex(),
+    })
   }
 }

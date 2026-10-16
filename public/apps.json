@@ -5,9 +5,9 @@
     "color": "#FA8072",
     "version": "20.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-14T21:43:04.127Z",
-    "hash": "ddc9d2fb8ab89f9eb371bc442f40d01cd84e5f323a412be12c0ce432325c4dcf",
-    "build": 864
+    "modified": "2026-10-16T13:46:50.016Z",
+    "hash": "42da6011a6d647610889a23aa299276ba8e8695b15b9f3ce65adaa8fcb0732c3",
+    "build": 866
   },
   {
     "name": "Bio Draw",
@@ -45,9 +45,9 @@
     "color": "#006666",
     "version": "2.4.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-14T13:33:58.765Z",
-    "hash": "51f95a7ee05fc5877bfdf18ab12141fe49618c0d8fe55a5d3798b41348c98b8b",
-    "build": 1054
+    "modified": "2026-10-16T13:46:50.015Z",
+    "hash": "96de5999384d51bfb6e27b1f62381b64427cc0ea0530cc4f0f28d6ed567f88a2",
+    "build": 1056
   },
   {
     "name": "Get DNA",
@@ -130,11 +130,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "50.8.4",
+    "version": "50.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-15T14:30:46.493Z",
-    "hash": "d6db201527f6972926aabb06fa53bdf5da4c62a8dff44e10955259b6fed8a1f1",
-    "build": 2158
+    "modified": "2026-10-16T20:45:58.685Z",
+    "hash": "7a138d35161c7271ac51b9ecd124288c6118a01458a58a093e84b4c7de26d8e8",
+    "build": 2162
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.4.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-14T21:43:04.130Z",
-    "hash": "385dc230880c31b26884b62cb833db92f7659901f4cdedbfa2acb11896737375",
-    "build": 144
+    "modified": "2026-10-16T17:30:33.891Z",
+    "hash": "2b33df855e6281aa023a33a61ee9c6b2bd7850da7751a5980592adada2b018ca",
+    "build": 148
   },
   {
     "name": "Oncoplot",
@@ -182,9 +182,9 @@
     "color": "#6495ED",
     "version": "36.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-14T13:33:58.766Z",
-    "hash": "6dcd2f9e7d35f1844940a5760b8820c0e6f5ce687f5689ecf79e54f95d7d416c",
-    "build": 910
+    "modified": "2026-10-16T13:46:50.016Z",
+    "hash": "cf8c890184e464d0daac769b2ea5390352f289ca9d96a45858825d1b958cfd10",
+    "build": 912
   },
   {
     "name": "Rev Comp",

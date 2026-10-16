@@ -2,12 +2,12 @@
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
-import { FooterPortal } from '@/components/toolbar/footer-portal'
+import { FooterSlotPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'
@@ -62,6 +62,8 @@ export function NetworkPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
+  const { addIndicator, remove } = useFooter()
+
   const { settings: edbSettings } = useEdbSettings()
 
   const { openFile } = useHistory()
@@ -73,7 +75,9 @@ export function NetworkPage() {
   const { addDFSize } = useFooter()
   const { settings } = useNetworkSettings()
   const { network, radiusMap } = useNetwork()
-  const { runSim, updateTree } = useNetworkD3Sim()
+  const { status, runSim, updateTree } = useNetworkD3Sim()
+
+  const messageId = useRef<string>('')
 
   useEffect(() => {
     addDFSize()
@@ -125,6 +129,16 @@ export function NetworkPage() {
     settings.plot.crosshair.search.radius,
     updateTree,
   ])
+
+  useEffect(() => {
+    if (status === 'running') {
+      messageId.current = addIndicator('Simulation running')
+    } else {
+      if (messageId.current) {
+        remove(messageId.current)
+      }
+    }
+  }, [status, addIndicator, remove])
 
   // // sync local query state when the global search query changes
   // useEffect(() => {
@@ -297,11 +311,9 @@ export function NetworkPage() {
           <NetworkPropsPanel />
         </ResizableSidebar>
 
-        <FooterPortal className="justify-between">
-          <></>
-          <></>
+        <FooterSlotPortal slot="footer-right">
           <ZoomSlider />
-        </FooterPortal>
+        </FooterSlotPortal>
       </ShortcutLayout>
     </>
   )

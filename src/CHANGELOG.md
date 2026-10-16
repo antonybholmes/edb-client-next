@@ -4,6 +4,10 @@
 
 ### Changed
 
+- Added extendible fields to indexes.
+- More refinements to dataframes with prep to remove annotationdataframe.
+- Network now has reset settings button.
+- Refined footer control. Network dialog hides immediately and now indicator shows when simulation is running.
 - Bubble plot now supports borders per group.
 - More support for reduced motion. Fixed Bubble toolbar being wrong height.
 - Added hook support for reduced motion.

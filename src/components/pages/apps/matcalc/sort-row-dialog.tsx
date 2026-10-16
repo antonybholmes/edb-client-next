@@ -69,7 +69,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
           sortDf = df.iloc({ cols: idx }) as BaseDataFrame
 
           // get the row ids of the gene(s) of interest
-          const rowIdx = ids.map((id) => sortDf.index.find(id)).flat()
+          const rowIdx = ids.map((id) => sortDf.index.indexOf(id)).flat()
 
           sortDf = sortDf.iloc({ rows: rowIdx }) as BaseDataFrame
 
@@ -96,7 +96,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
 
       onResponse?.(TEXT_OK, ret)
     } else {
-      idx = ids.map((id) => df.index.find(id)).flat()
+      idx = ids.map((id) => df.index.indexOf(id)).flat()
 
       // get col means
       const sortDf = df.iloc({ rows: idx }) as BaseDataFrame
