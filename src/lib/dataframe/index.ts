@@ -61,7 +61,11 @@ export abstract class InfIndex extends Index {
     return index
   }
 
-  override get length(): number {
+  override set(_index: number, _value: SeriesData): void {
+    // do nothing for now
+  }
+
+  override get size(): number {
     return this._length
   }
 
@@ -85,7 +89,7 @@ export class NumInfIndex extends InfIndex {
   }
 
   override get nums(): number[] {
-    return range(1, this.length + 1)
+    return range(1, this.size + 1)
   }
 
   override get values(): SeriesData[] {
@@ -98,6 +102,10 @@ export class NumInfIndex extends InfIndex {
 
   override at(index: number): SeriesData {
     return this.num(index)
+  }
+
+  override set(_index: number, _value: SeriesData): void {
+    // do nothing for now
   }
 
   *[Symbol.iterator]() {
@@ -133,7 +141,11 @@ export class DataIndex extends Index {
     return this._data[index] ?? NaN
   }
 
-  override get length(): number {
+  override set(index: number, value: SeriesData): void {
+    this._data[index] = value
+  }
+
+  override get size(): number {
     return this._data.length
   }
 

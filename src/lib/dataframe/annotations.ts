@@ -1,4 +1,4 @@
-import { DataIndex, Index, NumInfIndex } from '.'
+import { DataIndex, ExcelIndex, Index, NumInfIndex } from '.'
 import { BaseIndex } from './base-index'
 import { cellStr } from './cell'
 import { SeriesData } from './series-data'
@@ -173,5 +173,13 @@ export class Annotations {
     const values = this._fieldMap.get(name)
 
     return values
+  }
+}
+
+export class ColAnnotations extends Annotations {
+  constructor(size: number) {
+    super(size, {
+      indexCreator: () => new ExcelIndex(),
+    })
   }
 }

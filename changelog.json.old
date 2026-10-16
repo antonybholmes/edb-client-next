@@ -3393,6 +3393,10 @@
         {
           "msg": "Refined footer control. Network dialog hides immediately and now indicator shows when simulation is running",
           "date": "2026-10-16T13:46:50.942Z"
+        },
+        {
+          "msg": "Network now has reset settings button",
+          "date": "2026-10-16T17:30:34.788Z"
         }
       ]
     },

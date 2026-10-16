@@ -10,9 +10,18 @@ export abstract class BaseIndex {
 
   /**
    * Returns the value at a given position in the index.
-   * @param index
+   *
+   * @param index the position to get
    */
   abstract at(index: number): SeriesData
+
+  /**
+   * Sets the value at a given position in the index.
+   *
+   * @param index the position to set
+   * @param value the value to set
+   */
+  abstract set(index: number, value: SeriesData): void
 
   map<T>(f: IndexMapFunc<T>): T[] {
     return _map(this, f)
@@ -25,18 +34,25 @@ export abstract class BaseIndex {
     return this.values.map((v) => cellStr(v))
   }
 
+  /**
+   * Returns the name of the index.
+   */
   abstract get name(): string
+
+  abstract get size(): number
 
   /**
    * Synonym for size
    */
-  abstract get length(): number
+  get length(): number {
+    return this.size
+  }
 
   /**
    * Returns the shape of the index, typically n x 1
    */
   get shape(): Shape {
-    return [this.length, 1] as Shape
+    return [this.size, 1] as Shape
   }
 
   /**

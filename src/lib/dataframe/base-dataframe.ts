@@ -2,13 +2,13 @@
 
 import { range, rangeMap } from '@/lib/math/range'
 
-import { ExcelIndex, Index, type IndexFromType, type Shape } from '.'
+import { Index, type IndexFromType, type Shape } from '.'
 
 import { cellStr } from './cell'
 
 import { makeUuid } from '../id'
 import { whereMatches, whereStartsWith, whereStrExact } from '../math/where'
-import { Annotations } from './annotations'
+import { Annotations, ColAnnotations } from './annotations'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
 
@@ -42,18 +42,16 @@ export abstract class BaseDataFrame {
   protected _name: string
   private _id: string
   private _shape: Shape
-  private _indexAnn: Annotations
-  private _colAnn: Annotations
+  private _rowIndex: Annotations
+  private _colIndex: Annotations
 
   constructor(shape: Shape, opts: { name?: string } = {}) {
     const { name } = opts
     this._id = makeUuid()
     this._name = name
     this._shape = shape
-    this._indexAnn = new Annotations(shape[0])
-    this._colAnn = new Annotations(shape[1], {
-      indexCreator: () => new ExcelIndex(),
-    })
+    this._rowIndex = new Annotations(shape[0])
+    this._colIndex = new ColAnnotations(shape[1])
   }
 
   get id(): string {
@@ -96,11 +94,10 @@ export abstract class BaseDataFrame {
     return this.col(c).values
   }
 
-  abstract setCol(
-    col: IndexId,
-    data: SeriesFromType,
-    inplace: boolean
-  ): BaseDataFrame
+  setCol(col: IndexId, data: SeriesFromType, inplace: boolean): BaseDataFrame {
+    this._colIndex.set
+    return this
+  }
 
   abstract get(row: IndexId, col: IndexId): SeriesData
 
@@ -150,7 +147,7 @@ export abstract class BaseDataFrame {
   // }
 
   get index(): Index {
-    return this._indexAnn.get('index')
+    return this._rowIndex.get('index')
   }
 
   rowName(index: number): string {
@@ -164,7 +161,7 @@ export abstract class BaseDataFrame {
   abstract get cols(): readonly BaseSeries[]
 
   get colIndex(): Index {
-    return this._colAnn.get('index')
+    return this._colIndex.get('index')
   }
 
   colName(index: number): string {
