@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined footer control. Network dialog hides immediately and now indicator shows when simulation is running.
 - Bubble plot now supports borders per group.
 - More support for reduced motion. Fixed Bubble toolbar being wrong height.
 - Added hook support for reduced motion.
