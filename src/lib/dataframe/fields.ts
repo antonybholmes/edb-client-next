@@ -33,14 +33,18 @@ export class Fields {
    * Returns the list of fields in the index.
    */
   get fields(): string[] {
-    return [...this._fields]
+    // return fields in reverse order so that name
+    // appears last since in a table view, name
+    // is typically closest to the data e.g. in an index
+    // or looking at column names
+    return this._fields.toReversed()
   }
 
   /**
    * Returns field-value pairs in the index in order.
    */
   record(): { name: string; value: SeriesData }[] {
-    return this._fields.map((f) => ({
+    return this.fields.map((f) => ({
       name: f,
       value: this._fieldMap.get(f) ?? '',
     }))

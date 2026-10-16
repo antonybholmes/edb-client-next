@@ -171,9 +171,17 @@ export function VolcanoDialog({
     )
 
     const plot = newVolcanoPlot('Volcano', {
-      ids,
-      log2foldChanges,
-      logpvalues,
+      // ids,
+      // log2foldChanges,
+      // logpvalues,
+
+      entries: zip(ids, log2foldChanges, logpvalues).map(
+        ([id, log2fc, logp]) => ({
+          id: id as string,
+          log2foldChange: log2fc as number,
+          logpvalue: logp as number,
+        })
+      ),
     })
 
     //addPlots([plot])

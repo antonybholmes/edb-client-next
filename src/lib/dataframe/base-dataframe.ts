@@ -154,10 +154,6 @@ export abstract class BaseDataFrame {
 
   abstract setIndexName(name: string, inplace: boolean): BaseDataFrame
 
-  // setCols(columns: IndexFromType): BaseDataFrame {
-  //   return this
-  // }
-
   get index(): Index {
     return this._rowIndex.get('index')
   }
@@ -198,6 +194,9 @@ export abstract class BaseDataFrame {
     return s[0] * s[1]
   }
 
+  /**
+   * Synonym for length
+   */
   get size(): number {
     return this.length
   }

@@ -13,7 +13,6 @@ import {
 
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
-import type { SeriesData } from '@/lib/dataframe/series-data'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
@@ -69,7 +68,7 @@ export interface IScatterDisplayOptions {
 
   labels: {
     color: string
-    offset: number
+    //offset: number
     line: IStrokeProps
     values: string[]
     //auto: boolean
@@ -91,7 +90,7 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
   //scale: 1,
   labels: {
     color: COLOR_BLACK,
-    offset: 15,
+    //offset: 15,
     line: { ...DEFAULT_STROKE_PROPS, opacity: 0.25 },
     values: [''],
     //auto: false,
@@ -209,7 +208,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
   // },
   labels: {
     color: COLOR_BLACK,
-    offset: 15,
+
     line: {
       ...DEFAULT_STROKE_PROPS,
       opacity: 0.25,
@@ -289,7 +288,7 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
       pos: screenP,
       content: (
         <>
-          <p className="font-semibold">{`${plot.volcano.ids[row]!}`}</p>
+          <p className="font-semibold">{`${plot.volcano.entries[row]!.id}`}</p>
           <p>{`x: ${cellStr(points[row]!.x)}, y: ${cellStr(
             points[row]!.y
           )}`}</p>
@@ -300,11 +299,11 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
 
   const points = useMemo(
     () =>
-      plot.volcano.log2foldChanges.map((x, i) => ({
-        x,
-        y: plot.volcano.logpvalues[i]!,
+      plot.volcano.entries.map((e, i) => ({
+        x: e.log2foldChange,
+        y: e.logpvalue,
       })),
-    [plot.volcano.log2foldChanges, plot.volcano.logpvalues]
+    [plot.volcano.entries]
   )
 
   const { svg, width, height } = useMemo(() => {
@@ -320,10 +319,11 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
 
     // matching is case insensitive
     const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
-    const labelIdx = plot.volcano.ids
-      .map((v, vi) => [v, vi] as [SeriesData, number])
-      .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
-      .map((v) => v[1])
+
+    const labelIdx = plot.volcano.entries
+      ?.map((v, vi) => ({ index: vi, value: v.id }))
+      .filter((v) => labelSet.has((v.value as string).toLowerCase()))
+      .map((v) => v.index)
 
     const xaf = axisDomainToRangeFunc(xax!)
     const yaf = axisDomainToRangeFunc(yax!)
@@ -336,8 +336,8 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
           {points.map((p, xi) => {
             const x1 = xaf(p.x)
             const y1 = yaf(p.y)
-            const r = plot.volcano.sizes
-              ? sizeFunc(plot.volcano.sizes[xi]!)
+            const r = plot.volcano.entries[xi]!.size
+              ? sizeFunc(plot.volcano.entries[xi]!.size)
               : displayOptions.dots.size
 
             const color = getColor(p.x, p.y, displayOptions)
@@ -368,36 +368,38 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
             const p = points[i]!
             const x1 = xaf(p.x)
             const y1 = yaf(p.y)
-            const r = plot.volcano.sizes
-              ? sizeFunc(plot.volcano.sizes[i]!)
+            const r = plot.volcano.entries[i]!.size
+              ? sizeFunc(plot.volcano.entries[i]!.size)
               : displayOptions.dots.size
 
             return (
               <g key={i}>
                 <SvgLine
+                  id={`label-line-${i}`}
                   x1={x1 + (p.x >= 0 ? r + 1 : -(r + 1))}
                   y1={y1 - r - 1}
                   x2={
                     x1 +
                     (p.x >= 0
-                      ? r + displayOptions.labels.offset - 1
-                      : -(r + displayOptions.labels.offset - 1))
+                      ? r + settings.labels.offset.x - 1
+                      : -(r + settings.labels.offset.x - 1))
                   }
-                  y2={y1 - r - displayOptions.labels.offset + 1}
+                  y2={y1 - r - settings.labels.offset.y + 1}
                   s={displayOptions.labels.line}
                 />
                 <text
+                  id={`label-text-${i}`}
                   x={
                     x1 +
                     (p.x >= 0
-                      ? r + displayOptions.labels.offset
-                      : -(r + displayOptions.labels.offset))
+                      ? r + settings.labels.offset.x
+                      : -(r + settings.labels.offset.x))
                   }
-                  y={y1 - r - displayOptions.labels.offset}
+                  y={y1 - r - settings.labels.offset.y}
                   fill={displayOptions.labels.color}
                   textAnchor={p.x >= 0 ? 'start' : 'end'}
                 >
-                  {plot.volcano.ids[i]!}
+                  {plot.volcano.entries[i]!.id}
                 </text>
               </g>
             )
