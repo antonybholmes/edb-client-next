@@ -3417,6 +3417,10 @@
         {
           "msg": "Revised auto label on volcano. Items sort. Double click on circles to label",
           "date": "2026-10-17T04:34:19.283Z"
+        },
+        {
+          "msg": "Added deepmerge to handle migrating localstorage setting updates. Added more test cases and fixed some that failed.",
+          "date": "2026-10-17T14:05:43.963Z"
         }
       ]
     },

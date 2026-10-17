@@ -3,7 +3,7 @@ import { cellNum, cellStr } from './cell'
 import { Fields } from './fields'
 import type { SeriesData } from './series-data'
 
-export abstract class BaseIndex extends Fields {
+export abstract class BaseIndex<T extends SeriesData> extends Fields {
   constructor(name: string = '') {
     super(name)
   }
@@ -11,14 +11,14 @@ export abstract class BaseIndex extends Fields {
   /**
    * Returns all values in the index.
    */
-  abstract get values(): SeriesData[]
+  abstract get values(): T[]
 
   /**
    * Returns the value at a given position in the index.
    *
    * @param index the position to get
    */
-  abstract at(index: number): SeriesData
+  abstract at(index: number): T
 
   /**
    * Sets the value at a given position in the index.
@@ -26,7 +26,7 @@ export abstract class BaseIndex extends Fields {
    * @param index the position to set
    * @param value the value to set
    */
-  abstract set(index: number, value: SeriesData): void
+  abstract set(index: number, value: T): void
 
   map<T>(f: IndexMapFunc<T>): T[] {
     return _map(this, f)
@@ -89,9 +89,9 @@ export abstract class BaseIndex extends Fields {
     return this.nums.filter((v) => !isNaN(v))
   }
 
-  abstract [Symbol.iterator](): Iterator<SeriesData>
+  abstract [Symbol.iterator](): Iterator<T>
 }
 
-function _map<T>(index: BaseIndex, f: IndexMapFunc<T>): T[] {
+function _map<T>(index: BaseIndex<SeriesData>, f: IndexMapFunc<T>): T[] {
   return index.values.map((x, i) => f(x, i))
 }

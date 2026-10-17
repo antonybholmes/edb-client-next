@@ -1,6 +1,7 @@
 import { DataIndex, ExcelIndex, Index, IndexFromType, NumInfIndex } from '.'
 import { BaseIndex } from './base-index'
 import { cellStr } from './cell'
+import { FieldRecord } from './fields'
 import { SeriesData } from './series-data'
 
 export const DEFAULT_NAME = 'index'
@@ -12,10 +13,13 @@ export const DEFAULT_NAME = 'index'
 export class Annotations {
   private _size: number
   private _fields: string[] = []
-  private _fieldMap = new Map<string, Index>()
-  private _indexCreator: () => Index
+  private _fieldMap = new Map<string, Index<SeriesData>>()
+  private _indexCreator: () => Index<SeriesData>
 
-  constructor(size: number, opts: { indexCreator?: () => Index } = {}) {
+  constructor(
+    size: number,
+    opts: { indexCreator?: () => Index<SeriesData> } = {}
+  ) {
     const { indexCreator = () => new NumInfIndex() } = opts
     this._size = size
     this._indexCreator = indexCreator
@@ -33,7 +37,7 @@ export class Annotations {
     return this._fieldMap.has(name)
   }
 
-  _get(name: string): Index {
+  _get(name: string): Index<SeriesData> {
     if (!this._fieldMap.has(name)) {
       this._fieldMap.set(name, this._indexCreator())
     }
@@ -41,7 +45,7 @@ export class Annotations {
     return this._fieldMap.get(name)!
   }
 
-  get(name: string): Index {
+  get(name: string): Index<SeriesData> {
     return this._get(name)
   }
 
@@ -117,8 +121,8 @@ export class Annotations {
   // }
 
   /** All annotation values for a single position. */
-  record(i: number): { name: string; value: SeriesData }[] {
-    const ret: { name: string; value: SeriesData }[] = []
+  record(i: number): FieldRecord[] {
+    const ret: FieldRecord[] = []
 
     for (const name of this.names) {
       ret.push({ name, value: this._get(name).at(i) })
@@ -167,7 +171,7 @@ export class Annotations {
     return ret
   }
 
-  private field(name: string): BaseIndex {
+  private field(name: string): BaseIndex<SeriesData> {
     if (!this._fieldMap.has(name)) {
       throw new Error(`annotation "${name}" not found`)
     }

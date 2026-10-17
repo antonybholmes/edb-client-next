@@ -1,4 +1,7 @@
 import type { SeriesData } from './series-data'
+
+export type FieldRecord = { name: string; value: SeriesData }
+
 /**
  * Various components such as indexes or columns can have
  * multiple annotations attached to them.
@@ -43,7 +46,7 @@ export class Fields {
   /**
    * Returns field-value pairs in the index in order.
    */
-  record(): { name: string; value: SeriesData }[] {
+  record(): FieldRecord[] {
     return this.fields.map((f) => ({
       name: f,
       value: this._fieldMap.get(f) ?? '',
