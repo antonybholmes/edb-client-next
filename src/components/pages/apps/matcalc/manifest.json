@@ -1,6 +1,6 @@
 {
   "name": "Matcalc",
-  "description": "Tabular data analysis.",
+  "description": "Scientific graphing and statistics.",
   "color": "#40bf80",
   "version": "50.8.6",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
