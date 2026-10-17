@@ -11,6 +11,7 @@ import { COLOR_BLACK, COLOR_GRAY } from '@/lib/color/color'
 import { ICmap } from '@/lib/color/colormap'
 import { useCallback } from 'react'
 
+import { deepMerge } from '@/lib/deepmerge'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
@@ -282,6 +283,10 @@ export const useNetworkSettingsStore = create<INetworkSettingsStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      merge: (persisted, current) =>
+        // conform saved settings to the current shape: saved values win where
+        // key and type still match, defaults fill missing or invalid values
+        deepMerge(current, persisted),
     }
   )
 )

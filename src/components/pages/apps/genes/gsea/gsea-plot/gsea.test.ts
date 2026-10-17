@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('../math/shuffle', () => ({
+vi.mock('../../../../../../lib/math/random', () => ({
   fisherYatesShuffle: <T>(arr: T[]) => [...arr],
 }))
 
@@ -33,7 +33,7 @@ describe('gsea', () => {
     expect(result!.nes).toBeCloseTo(1)
     expect(result!.pvalue).toBe(1)
     expect(result!.fdr).toBe(1)
-    expect(result!.leadingEdge).toEqual(['A', 'B'])
+    expect(result!.leadingEdge).toEqual(rankedGenes.slice(0, 2))
   })
 
   it('returns zero enrichment for a gene set with no overlap', () => {
