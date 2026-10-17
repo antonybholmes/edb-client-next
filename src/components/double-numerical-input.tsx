@@ -7,7 +7,7 @@ import type { IInputProps } from './shadcn/ui/themed/baseui/input'
 import { NumericalInput } from './shadcn/ui/themed/numerical-input'
 
 export const CONTAINER_CLS = cn(
-  'flex flex-row gap-x-1 justify-between disabled:cursor-not-allowed disabled:opacity-50'
+  'flex flex-row gap-x-0.5 justify-between disabled:cursor-not-allowed disabled:opacity-50'
 )
 
 export const INPUT_CLS = cn(

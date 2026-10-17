@@ -3401,6 +3401,10 @@
         {
           "msg": "More refinements to dataframes with prep to remove annotationdataframe",
           "date": "2026-10-16T18:03:41.334Z"
+        },
+        {
+          "msg": "Added extendible fields to indexes",
+          "date": "2026-10-16T20:45:59.641Z"
         }
       ]
     },

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added reset to volcano plot settings.
 - Added extendible fields to indexes.
 - More refinements to dataframes with prep to remove annotationdataframe.
 - Network now has reset settings button.

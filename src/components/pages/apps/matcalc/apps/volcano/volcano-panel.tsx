@@ -4,7 +4,7 @@ import {
   type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 
-import { FooterPortal } from '@/components/toolbar/footer-portal'
+import { FooterSlotPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -118,11 +118,9 @@ export function VolcanoPanel() {
         <VolcanoPropsPanel />
       </ResizableSidebar>
 
-      <FooterPortal className="shrink-0 grow-0 justify-end">
-        <></>
-        <></>
+      <FooterSlotPortal slot="footer-right">
         <ZoomSlider />
-      </FooterPortal>
+      </FooterSlotPortal>
     </>
   )
 }

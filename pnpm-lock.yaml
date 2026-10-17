@@ -270,8 +270,8 @@ importers:
         specifier: ^2.0.8
         version: 2.0.8(@types/react@19.2.17)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       svg-path-properties:
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.2.0
+        version: 2.2.0
       tailwind-merge:
         specifier: ^3.7.0
         version: 3.7.0
@@ -4827,8 +4827,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svg-path-properties@2.1.0:
-    resolution: {integrity: sha512-Zp8IvhMTfQDeVqC8wczQQXJiF7HrafV/SFkRzjYcagchNh/FL+o/Ljbe++6vOfimkZp/bVHFJXb/V2dk51YgwA==}
+  svg-path-properties@2.2.0:
+    resolution: {integrity: sha512-sHyCQCJXfPXbxG6Nj3eWZ6gUsRpkjRia+3hPwy8iWt0AIdnLRacY5SnGxLnjWtsPhE0ICS8fY7xOUNl+90yLSw==}
     engines: {node: '>=22.0.0'}
 
   swr@2.4.2:
@@ -10103,7 +10103,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svg-path-properties@2.1.0: {}
+  svg-path-properties@2.2.0: {}
 
   swr@2.4.2(react@19.3.1):
     dependencies:

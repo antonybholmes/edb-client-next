@@ -7,7 +7,7 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/popover'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Move3d } from 'lucide-react'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { AxisPlotPropsPopover } from './axis-plot-props-popover'
 
 export interface IDisplayAxis {
@@ -21,24 +21,50 @@ export interface IDisplayPlot extends IDisplayAxis {
   })[]
 }
 
-export function AxesDisplayPropsPopover({ plots }: { plots: IDisplayPlot[] }) {
+export function AxesDisplayPropsPopover({
+  plots,
+  button = 'simple',
+}: {
+  plots: IDisplayPlot[]
+  button?: 'flat' | 'simple'
+}) {
   const [open, setOpen] = useState(false)
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
+  const trigger: ReactNode =
+    button === 'flat' ? (
       <PopoverTrigger
-        className="text-foreground/70 hover:text-foreground data-pressed:text-foreground"
-        title="Axes Properties"
         render={
-          <ToolbarIconButton className="relative">
+          <ToolbarIconButton
+            title="Axes Properties"
+            className="group"
+            data-open={open}
+          >
             <Move3d
               size={18}
               strokeWidth={1.5}
-              className="relative z-0 opacity-50"
+              className="relative z-0 opacity-70 group-hover:opacity-100 group-data-[open=true]:opacity-100 trans-opacity"
             />
           </ToolbarIconButton>
         }
       />
+    ) : (
+      <PopoverTrigger
+        title="Axes Properties"
+        className="group"
+        data-open={open}
+      >
+        <Move3d
+          size={18}
+          strokeWidth={1.5}
+
+          className="relative z-0 opacity-70 group-hover:opacity-100 group-data-[open=true]:opacity-100 trans-opacity"
+        />
+      </PopoverTrigger>
+    )
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      {trigger}
 
       <PopoverContent className="gap-y-1 w-60 flex flex-col">
         {plots.map(({ id: plotId, groups: groups }) => {
@@ -47,11 +73,10 @@ export function AxesDisplayPropsPopover({ plots }: { plots: IDisplayPlot[] }) {
               {groups.map(({ id: groupId, title: groupTitle, axes: axes }) => (
                 <VCenterRow key={groupId} className="justify-between">
                   <strong>{groupTitle}</strong>
-                  <VCenterRow>
+                  <VCenterRow className="gap-x-1">
                     {axes.map(({ id: axisId, title }) => (
                       <AxisPlotPropsPopover
                         key={axisId}
-                        //axis={axis}
                         title={title}
                         plotAddress={{ plotId, groupId, axisId }}
                       />

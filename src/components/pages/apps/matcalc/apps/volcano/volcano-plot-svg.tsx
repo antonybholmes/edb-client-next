@@ -16,6 +16,7 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { ILim } from '@/lib/math/math'
@@ -420,12 +421,11 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
 
         {displayOptions.border.show && (
           <SvgMargin margin={MARGIN}>
-            <rect
+            <SvgRect
               width={innerWidth}
               height={innerHeight}
-              stroke={displayOptions.border.value}
-              strokeWidth={displayOptions.border.width}
-              fill="none"
+
+              sp={displayOptions.border}
             />
           </SvgMargin>
         )}

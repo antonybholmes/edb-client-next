@@ -104,7 +104,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "sonner": "^2.0.8",
-    "svg-path-properties": "^2.1.0",
+    "svg-path-properties": "^2.2.0",
     "tailwind-merge": "^3.7.0",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",

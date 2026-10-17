@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { FooterPortal } from '@/components/toolbar/footer-portal'
+import { FooterSlotPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -64,12 +64,9 @@ export function HeatmapPanel() {
         <HeatmapPropsPanel />
       </ResizableSidebar>
 
-      <FooterPortal className="shrink-0 grow-0 ">
-        <></>
-        <></>
-
+      <FooterSlotPortal slot="footer-right">
         <ZoomSlider />
-      </FooterPortal>
+      </FooterSlotPortal>
     </>
   )
 }
