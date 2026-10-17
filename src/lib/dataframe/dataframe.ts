@@ -1,15 +1,8 @@
 import { range } from '@/lib/math/range'
-import {
-  BaseDataFrame,
-  DataFrameInput,
-  findCol,
-  findCols,
-  findRow,
-  shape,
-  type LocType,
-} from './base-dataframe'
+import { BaseDataFrame, findCol, findCols, findRow } from './base-dataframe'
 import { makeCell } from './cell'
 
+import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
 import {
   DataIndex,
   Index,
@@ -19,24 +12,13 @@ import {
   type IndexFromType,
   type Shape,
 } from './index'
-import {
-  BaseSeries,
-  DataSeries,
-  type ISeriesOptions,
-  type SeriesFromType,
-} from './series'
+import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
 
-export interface IDataFrameOptions extends ISeriesOptions {
-  data?: DataFrameInput
-  columns?: IndexFromType | undefined
-  indexName?: string
-}
-
 export class DataFrame extends BaseDataFrame {
-  _index: Index
+  _index: Index<SeriesData>
   _data: SeriesData[][]
-  _columns: Index
+  _columns: Index<SeriesData>
 
   constructor(options: IDataFrameOptions = {}) {
     const { name = '', data = [], index, indexName, columns } = options
@@ -134,7 +116,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries {
+  override col(c: IndexId): BaseSeries<SeriesData> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -173,7 +155,7 @@ export class DataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries {
+  override row(row: IndexId): BaseSeries<SeriesData> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -188,7 +170,7 @@ export class DataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: SeriesData[] | BaseSeries,
+    data: SeriesData[] | BaseSeries<SeriesData>,
     inplace = true
   ): BaseDataFrame {
     const d = data instanceof BaseSeries ? data.values : data
@@ -256,12 +238,12 @@ export class DataFrame extends BaseDataFrame {
   override setIndexName(name: string, inplace: boolean = true): BaseDataFrame {
     const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
 
-    df._index.setName(name)
+    df._index.name = name
 
     return df
   }
 
-  override get index(): Index {
+  override get index(): Index<SeriesData> {
     return this._index
   }
 
@@ -269,8 +251,8 @@ export class DataFrame extends BaseDataFrame {
   //   return this._columns
   // }
 
-  override get columns(): readonly string[] {
-    return this._columns.strs
+  override get columns(): Index<SeriesData> {
+    return this._columns
   }
 
   override setColNames(
@@ -290,7 +272,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): BaseSeries[] {
+  override get cols(): BaseSeries<SeriesData>[] {
     return range(this.shape[1]).map(
       (c: number) =>
         new DataSeries(

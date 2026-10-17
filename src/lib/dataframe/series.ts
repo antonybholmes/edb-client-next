@@ -7,8 +7,8 @@ export type SeriesFromType = BaseSeries<SeriesData> | IndexFromType
 export const DEFAULT_INDEX_NAME = 'Index'
 
 export abstract class BaseSeries<T extends SeriesData> extends BaseIndex<T> {
-  constructor(name: string = '') {
-    super(name)
+  constructor(opts: IIndexOptions = {}) {
+    super(opts)
   }
 
   /**
@@ -39,8 +39,8 @@ export class DataSeries<T extends SeriesData> extends BaseSeries<T> {
   _index: Index<T>
 
   constructor(data: SeriesFromType, options: ISeriesOptions = {}) {
-    const { index, name = '' } = options
-    super(name)
+    const { index } = options
+    super(options)
 
     this._data = [...data] as T[]
     this._index = makeIndex(index, data.length) as Index<T>

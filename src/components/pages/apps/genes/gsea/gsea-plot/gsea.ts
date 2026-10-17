@@ -27,10 +27,10 @@ export function snrRankGenes(
   epsilon: number = 1e-100
 ): IRankedGene[] {
   // split table for each group
-  const tables = [group1, group2].map((group) => {
+  const tables: BaseDataFrame[] = [group1, group2].map((group) => {
     const colIdx = getColIdxFromGroup(df, group)
 
-    return df.iloc({ cols: colIdx })
+    return df.iloc({ cols: colIdx }) as BaseDataFrame
   })
 
   const names = df.index.strs

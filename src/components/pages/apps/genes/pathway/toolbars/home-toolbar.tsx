@@ -23,7 +23,8 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_RUN, TEXT_SAVE_TABLE } from '@/consts'
 import { randomHexColor } from '@/lib/color/color'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { DEFAULT_SHEET_NAME } from '@/lib/dataframe/base-dataframe'
+
+import { DEFAULT_SHEET_NAME } from '@/lib/dataframe/base-table'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'
 import { range } from '@/lib/math/range'
@@ -212,7 +213,7 @@ export function HomeToolbar() {
         addSheets([dfOut], { message: 'Pathway' })
 
         // we've finished so get rid of the animations
-        removeFooter(  iid)
+        removeFooter(iid)
       }
     )
   }

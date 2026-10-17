@@ -190,7 +190,7 @@ export function DotPlotDialog({
     }
 
     if (settings.heatmap.cluster.cols && dfZ.shape[1] < MAX_CLUSTER_ITEMS) {
-      colC = hc.run(dfZ.t)
+      colC = hc.run(dfZ.t as BaseDataFrame)
     }
 
     const cf: IClusterFrame = {
@@ -298,7 +298,7 @@ export function DotPlotDialog({
     }
 
     if (settings.heatmap.cluster.cols && dfZ.shape[1] < MAX_CLUSTER_ITEMS) {
-      colC = hc.run(dfZ.t)
+      colC = hc.run(dfZ.t as BaseDataFrame)
     }
 
     const cf: IClusterFrame = {

@@ -23,9 +23,9 @@ export function oneWayFromDataframes(
 
   const overlapTables = dataFrames.slice(1)
 
-  let ret = dataFrames[0]!.copy()
+  let ret = dataFrames[0]!.copy() as BaseDataFrame
 
-  ret = ret.setName(`${ret.name} one way overlap`)
+  ret = ret.setName(`${ret.name} one way overlap`) as BaseDataFrame
 
   let locs: IGenomicLocation[] = []
 

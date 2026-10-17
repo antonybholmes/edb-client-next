@@ -1,37 +1,20 @@
 import { range } from '@/lib/math/range'
-import {
-  BaseDataFrame,
-  DataFrameInput,
-  findCol,
-  findRow,
-  shape,
-  type LocType,
-} from './base-dataframe'
-import { makeCell } from './cell'
-import type { IDataFrameOptions } from './dataframe'
 
+import { makeCell } from './cell'
+
+import { BaseDataFrame, findCol, findRow } from './base-dataframe'
+import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
 import {
   Index,
   makeColumns,
   makeIndex,
+  Shape,
   shapesEqual,
   StringIndex,
   type IndexFromType,
 } from './index'
-import {
-  BaseSeries,
-  DataSeries,
-  type ISeriesOptions,
-  type SeriesFromType,
-} from './series'
+import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
-
-export interface IColFrameOptions extends ISeriesOptions {
-  index?: Index
-  data?: SeriesData[] | SeriesData[][] | BaseSeries | BaseSeries[]
-  columns?: IndexFromType
-  indexName?: string
-}
 
 /**
  * A column oriented dataframe where the data is stored as a map of column name to series.
@@ -39,8 +22,8 @@ export interface IColFrameOptions extends ISeriesOptions {
  * compared to a row oriented dataframe.
  */
 export class ColFrame extends BaseDataFrame {
-  _index: Index
-  _columns: Index
+  _index: Index<SeriesData>
+  _columns: Index<SeriesData>
   _data: SeriesData[][]
 
   constructor(options: IDataFrameOptions = {}) {
@@ -79,11 +62,13 @@ export class ColFrame extends BaseDataFrame {
 
       if (!columns) {
         columns = new StringIndex(
-          data.map((c: unknown) => (c as BaseSeries).name)
+          data.map((c: unknown) => (c as BaseSeries<SeriesData>).name)
         )
       }
 
-      this._data = data.map((c: unknown) => (c as BaseSeries).values)
+      this._data = data.map(
+        (c: unknown) => (c as BaseSeries<SeriesData>).values
+      )
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -185,7 +170,7 @@ export class ColFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries {
+  override col(c: IndexId): BaseSeries<SeriesData> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -221,7 +206,7 @@ export class ColFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries {
+  override row(row: IndexId): BaseSeries<SeriesData> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -244,9 +229,9 @@ export class ColFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: SeriesData[] | BaseSeries,
+    data: SeriesData[] | BaseSeries<SeriesData>,
     inplace = true
-  ): BaseDataFrame {
+  ): ColFrame {
     const d = data instanceof BaseSeries ? data.values : data
 
     if (d.length !== this.shape[1]) {
@@ -315,20 +300,27 @@ export class ColFrame extends BaseDataFrame {
   override setIndexName(name: string, inplace: boolean = true): BaseDataFrame {
     const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
 
-    df._index.setName(name)
+    df._index.name = name
 
     return df
   }
 
-  override get index(): Index {
+  override get shape(): Shape {
+    return [
+      this._index.length,
+      this._columns.length, // ._data.length > 0 ? this._data[0]!.length : 0,
+    ]
+  }
+
+  override get index(): Index<SeriesData> {
     return this._index
   }
 
-  override get columns(): readonly string[] {
-    return this._columns.strs
+  override get columns(): Index<SeriesData> {
+    return this._columns
   }
 
-  override get cols(): BaseSeries[] {
+  override get cols(): BaseSeries<SeriesData>[] {
     const colNames = this._columns.strs
 
     return colNames.map(
@@ -553,7 +545,7 @@ export class ColFrame extends BaseDataFrame {
   }
 }
 
-function _ilocDim(index: Index, rows: LocType = ':'): number[] {
+function _ilocDim(index: Index<SeriesData>, rows: LocType = ':'): number[] {
   let rowIdx: number[] = []
 
   // if (Array.isArray(rows)) {

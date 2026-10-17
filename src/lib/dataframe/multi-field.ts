@@ -6,7 +6,7 @@ export type FieldRecord = { name: string; value: SeriesData }
  * Various components such as indexes or columns can have
  * multiple annotations attached to them.
  */
-export class Fields {
+export class MultiField {
   private _fieldMap: Map<string, SeriesData>
   private _fields: string[]
 
@@ -18,7 +18,7 @@ export class Fields {
     this._fieldMap.set('name', name)
   }
 
-  setName(name: string): Fields {
+  setName(name: string): MultiField {
     this._fieldMap.set('name', name)
 
     return this
@@ -35,7 +35,7 @@ export class Fields {
   /**
    * Returns the list of fields in the index.
    */
-  get fields(): string[] {
+  get names(): string[] {
     // return fields in reverse order so that name
     // appears last since in a table view, name
     // is typically closest to the data e.g. in an index
@@ -46,8 +46,8 @@ export class Fields {
   /**
    * Returns field-value pairs in the index in order.
    */
-  record(): FieldRecord[] {
-    return this.fields.map((f) => ({
+  get record(): FieldRecord[] {
+    return this.names.map((f) => ({
       name: f,
       value: this._fieldMap.get(f) ?? '',
     }))
@@ -55,5 +55,39 @@ export class Fields {
 
   get name(): string {
     return (this._fieldMap.get('name') as string) ?? ''
+  }
+
+  get values(): SeriesData[] {
+    return this.names.map((f) => this._fieldMap.get(f) ?? '')
+  }
+
+  /**
+   * Retrieves the value of the first/default field in the list of fields.
+   *
+   * @returns the value of the first field, or an empty string if it does not exist
+   */
+  get value(): SeriesData {
+    return this.at(0)
+  }
+
+  /**
+   * Retrieves the value of a specific field by its name.
+   *
+   * @param field the name of the field to retrieve
+   * @returns the value of the specified field, or an empty string if it does not exist
+   */
+  get(field: string): SeriesData {
+    return this._fieldMap.get(field) ?? ''
+  }
+
+  /**
+   * Retrieves the value of a specific field by its position in the list of fields.
+   *
+   * @param index the position of the field to retrieve
+   * @returns the value of the field at the specified position, or an empty string if it does not exist
+   */
+  at(index: number): SeriesData {
+    const field = this.names[index]
+    return this._fieldMap.get(field) ?? ''
   }
 }

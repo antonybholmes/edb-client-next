@@ -1,19 +1,17 @@
+import { vfill, vfill2d } from '../fill'
+import { BaseDataFrame, findCol, findRow } from './base-dataframe'
 import {
-  BaseDataFrame,
+  BaseTable,
   DataFrameInput,
   DEFAULT_COLUMN_INDEX_NAME,
   DEFAULT_SHEET_NAME,
-  findCol,
   findInSeries,
-  findRow,
+  IDataFrameOptions,
+  LocType,
   shape,
-  type LocType,
-} from './base-dataframe'
-
-import { vfill, vfill2d } from '../fill'
+} from './base-table'
 import { getExcelColName } from './cell'
 import { ColFrame } from './col-frame'
-import { type IDataFrameOptions } from './dataframe'
 
 import {
   DataIndex,
@@ -38,9 +36,9 @@ export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
 }
 
 export class AnnotationDataFrame extends BaseDataFrame {
-  _data: BaseDataFrame
-  _rowObs: BaseDataFrame
-  _colVars: BaseDataFrame
+  _data: BaseTable
+  _rowObs: BaseTable
+  _colVars: BaseTable
 
   constructor(options: IAnnotationDataFrameOptions = {}) {
     const {
@@ -76,11 +74,11 @@ export class AnnotationDataFrame extends BaseDataFrame {
     }
   }
 
-  get rowObs(): BaseDataFrame {
+  get rowObs(): BaseTable {
     return this._rowObs
   }
 
-  get colVars(): BaseDataFrame {
+  get colVars(): BaseTable {
     return this._colVars
   }
 
@@ -112,7 +110,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(col: IndexId): BaseSeries {
+  override col(col: IndexId): BaseSeries<SeriesData> {
     const colData = this._colVars.col(DEFAULT_COLUMN_INDEX_NAME)
 
     const colIdx = findInSeries(colData, col)
@@ -146,7 +144,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.get(rowIdx, colIdx)
   }
 
-  override row(row: IndexId): BaseSeries {
+  override row(row: IndexId): BaseSeries<SeriesData> {
     // col 0 of row meta data is always the index label
     // so we can use that to find the row index
     // then we can just return the row from the main dataframe
@@ -185,7 +183,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     col: IndexId,
     v: SeriesData,
     inplace: boolean = true
-  ): BaseDataFrame {
+  ): BaseTable {
     return this._data.at(row, col, v, inplace)
   }
 
@@ -197,8 +195,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
       ? this
       : (this.copy() as AnnotationDataFrame)
 
-    df._data.setIndex(index, true)
-    df._rowObs.setCol(0, df.index.values, true)
+    //df._data.setIndex(index, true)
+    df._rowObs.setCol(0, index, true)
 
     return df
   }
@@ -208,7 +206,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
       ? this
       : (this.copy() as AnnotationDataFrame)
 
-    df._data.setIndexName(name, true)
+    //df._data.setIndexName(name, true)
 
     const cols = [...df._rowObs.columns]
     cols[0] = name
@@ -225,13 +223,13 @@ export class AnnotationDataFrame extends BaseDataFrame {
       ? this
       : (this.copy() as AnnotationDataFrame)
 
-    //df.setColNames(index, true)
+    df._data.setColNames(index, true)
     df.colVars.setCol(0, index, true)
 
     return df
   }
 
-  override get cols(): readonly BaseSeries[] {
+  override get cols(): readonly BaseSeries<SeriesData>[] {
     return this._data.cols
   }
 
@@ -241,7 +239,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   //   })
   // }
 
-  override get index(): Index {
+  override get index(): Index<SeriesData> {
     return new DataIndex(this._rowObs.col(0).values as SeriesData[], {
       name: this._rowObs.colName(0),
     })
@@ -278,7 +276,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
     const df = this._data.iloc({ rows, cols }) as BaseDataFrame
 
-    const ret = new AnnotationDataFrame({
+    const ret: AnnotationDataFrame = new AnnotationDataFrame({
       name: this.name,
       data: df.cols,
       //columns: df.columns,
@@ -294,7 +292,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
 
   override rowApply(
     f: (row: SeriesData[], index: number) => SeriesData
-  ): BaseSeries {
+  ): BaseSeries<SeriesData> {
     return this._data.rowApply(f)
   }
 
@@ -365,7 +363,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }
 }
 
-function setMetadataRow(metadata: BaseDataFrame, rowIdx: number, row: IndexId) {
+function setMetadataRow(metadata: BaseTable, rowIdx: number, row: IndexId) {
   if (rowIdx === -1) {
     // we only update the meta data to add new info
     // we fill in the missing annotation by assuming the first

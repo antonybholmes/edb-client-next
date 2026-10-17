@@ -346,10 +346,12 @@ export function convertDataFrameToLocationFiles(
 ): ILocationFile[] {
   let location: GenLoc
 
-  const ret: { fid: string; locations: GenLoc[] }[] = df.columns.map((col) => ({
-    fid: col,
-    locations: [],
-  }))
+  const ret: { fid: string; locations: GenLoc[] }[] = df.columns.strs.map(
+    (col) => ({
+      fid: col,
+      locations: [],
+    })
+  )
 
   for (const coli of range(df.shape[1])) {
     for (const v of df.col(coli).values) {

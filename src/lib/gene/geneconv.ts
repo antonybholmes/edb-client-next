@@ -101,7 +101,7 @@ export async function createGeneConvTable(
 
   const speciesHeader = capitalCase(toSpecies)
 
-  const header: string[] = df.columns.concat([
+  const header: string[] = df.columns.strs.concat([
     `${speciesHeader} Gene Symbol`,
     `${speciesHeader} Entrez`,
     `${speciesHeader} Ensembl`,

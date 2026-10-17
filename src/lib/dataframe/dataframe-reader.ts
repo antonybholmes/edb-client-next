@@ -1,6 +1,6 @@
 import { range } from '@/lib/math/range'
 import { AnnotationDataFrame } from './annotation-dataframe'
-import { DEFAULT_COLUMN_INDEX_NAME } from './base-dataframe'
+import { DEFAULT_COLUMN_INDEX_NAME } from './base-table'
 import { makeCell } from './cell'
 import { DataFrame } from './dataframe'
 

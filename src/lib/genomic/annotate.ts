@@ -130,7 +130,7 @@ export async function createAnnotationTable(
     table.push(newRow)
   }
 
-  let header: string[] = df.columns.concat([
+  let header: string[] = df.columns.strs.concat([
     'Assembly',
     'Gene Id',
     'Gene Symbol',

@@ -38,7 +38,7 @@ function findFoldChangeCol(df: BaseDataFrame) {
     return 'Log2 Fold Change'
   }
 
-  const cols = df.columns.filter((c) => FOLD_REGEX.test(c.toLowerCase()))
+  const cols = df.columns.strs.filter((c) => FOLD_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'Log2 Fold Change'
@@ -52,7 +52,7 @@ function findPValueCol(df: BaseDataFrame | null) {
     return 'FDR'
   }
 
-  const cols = df.columns.filter((c) => P_REGEX.test(c.toLowerCase()))
+  const cols = df.columns.strs.filter((c) => P_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'FDR'
@@ -219,7 +219,7 @@ export function VolcanoDialog({
                   value={field.value}
                   w="lg"
                 >
-                  {df?.columns
+                  {df?.columns.strs
                     .filter((name) => name !== '')
                     .slice(0, MAX_COLS)
                     .map((name, ni) => (
@@ -242,7 +242,7 @@ export function VolcanoDialog({
                   value={field.value}
                   w="lg"
                 >
-                  {df?.columns
+                  {df?.columns.strs
                     .filter((name) => name !== '')
                     .slice(0, MAX_COLS)
                     .map((name, ni) => (

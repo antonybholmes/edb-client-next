@@ -12,6 +12,7 @@ import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_DOWNLOAD, TEXT_FILE } from '@/consts'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { capitalizeFirstWord } from '@/lib/text/capital-case'
 import { useFooter } from '@/providers/footer-provider'
@@ -43,8 +44,8 @@ export function HomeToolbar() {
     runAnnotate(
       {
         id: makeUuid(),
-        df: (sheets[0] as AnnotationDataFrame).values,
-        columns: (sheets[0] as AnnotationDataFrame).columns,
+        df: (sheets[0] as BaseDataFrame).values,
+        columns: (sheets[0] as BaseDataFrame).columns.strs,
         assembly: gtf.assembly,
         closest: settings.closest,
         tss: settings.tss,

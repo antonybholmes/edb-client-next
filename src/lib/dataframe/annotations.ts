@@ -1,7 +1,7 @@
 import { DataIndex, ExcelIndex, Index, IndexFromType, NumInfIndex } from '.'
 import { BaseIndex } from './base-index'
 import { cellStr } from './cell'
-import { FieldRecord } from './fields'
+import { FieldRecord } from './multi-field'
 import { SeriesData } from './series-data'
 
 export const DEFAULT_NAME = 'index'

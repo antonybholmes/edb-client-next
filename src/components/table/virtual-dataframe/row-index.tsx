@@ -153,7 +153,7 @@ export function RowIndexContainer() {
           height: headerHeight,
         }}
       >
-        {df.rowObs.columns.map((colName, col) => {
+        {df.rowObs.columns.strs.map((colName, col) => {
           return (
             <CenterRow
               key={col}

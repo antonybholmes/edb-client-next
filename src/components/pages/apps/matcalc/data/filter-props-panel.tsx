@@ -97,13 +97,13 @@ export function FilterPropsPanel() {
         caseSensitive: settings.rows.caseSensitive,
         matchEntireCell: settings.rows.matchEntireCell,
         keepOrder: settings.rows.keepOrder,
-      }).setName('Row Filter')
+      }).setName('Row Filter') as BaseDataFrame
     } else {
       df = findCols(sheets[0] as BaseDataFrame, queries, {
         caseSensitive: settings.cols.caseSensitive,
         matchEntireCell: settings.cols.matchEntireCell,
         keepOrder: settings.cols.keepOrder,
-      }).setName('Col Filter')
+      }).setName('Col Filter') as BaseDataFrame
     }
 
     if (df.size > 0) {

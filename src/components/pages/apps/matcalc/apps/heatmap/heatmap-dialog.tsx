@@ -128,7 +128,7 @@ export function HeatMapDialog({
 
       // if user has chosen to ignore unselected groups, we need to remove them from the dataframe before filtering/clustering
       // which will affect analysis. Hide will just hide them from the plot without affecting analysis.
-      dfToPlot = dfToPlot.iloc({ cols: idx })
+      dfToPlot = dfToPlot.iloc({ cols: idx }) as AnnotationDataFrame
     }
 
     if (settings.heatmap.filters.rows.apply) {
@@ -137,20 +137,29 @@ export function HeatMapDialog({
           //dfMean(df, historyDispatch)
 
           //df = dfMeanFilter(df, historyDispatch, settings.heatmap.topRows)
-          dfToPlot = meanFilter(dfToPlot, settings.heatmap.filters.rows.top)
+          dfToPlot = meanFilter(
+            dfToPlot,
+            settings.heatmap.filters.rows.top
+          ) as AnnotationDataFrame
           break
         case 'Median':
           //dfMedian(df, historyDispatch)
 
           //df = dfMedianFilter(df, historyDispatch, settings.heatmap.topRows)
-          dfToPlot = medianFilter(dfToPlot, settings.heatmap.filters.rows.top)
+          dfToPlot = medianFilter(
+            dfToPlot,
+            settings.heatmap.filters.rows.top
+          ) as AnnotationDataFrame
           break
         default:
           // stdev
           //dfStdev(df, historyDispatch)
 
           //df = dfStdevFilter(df, historyDispatch, settings.heatmap.topRows)
-          dfToPlot = stdevFilter(dfToPlot, settings.heatmap.filters.rows.top)
+          dfToPlot = stdevFilter(
+            dfToPlot,
+            settings.heatmap.filters.rows.top
+          ) as AnnotationDataFrame
           break
       }
 
@@ -208,7 +217,7 @@ export function HeatMapDialog({
       settings.heatmap.transforms.apply &&
       settings.heatmap.transforms.transpose
     ) {
-      dfToPlot = dfToPlot!.t //dfTranspose(df, historyDispatch)
+      dfToPlot = dfToPlot!.t as AnnotationDataFrame //dfTranspose(df, historyDispatch)
       actions.push('Transpose')
     }
 
@@ -232,7 +241,7 @@ export function HeatMapDialog({
     }
 
     if (settings.heatmap.cluster.cols && df.shape[1] <= MAX_CLUSTER_ITEMS) {
-      colC = hc.run(dfToPlot.t)
+      colC = hc.run(dfToPlot.t as AnnotationDataFrame)
       actions.push('Cluster columns')
     }
 

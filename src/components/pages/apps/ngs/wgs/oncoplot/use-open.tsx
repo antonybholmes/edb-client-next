@@ -61,7 +61,9 @@ export function useOpen() {
     )
 
     // show sheet in UI
-    addSheets([clinicalTable.setName('Clinical')], { mode: 'append' })
+    addSheets([clinicalTable.setName('Clinical') as BaseDataFrame], {
+      mode: 'append',
+    })
   }
 
   function parseFiles(message: string, files: ITextFileOpen[]) {

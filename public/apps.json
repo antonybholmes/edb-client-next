@@ -5,9 +5,9 @@
     "color": "#FA8072",
     "version": "20.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-16T13:46:50.016Z",
-    "hash": "42da6011a6d647610889a23aa299276ba8e8695b15b9f3ce65adaa8fcb0732c3",
-    "build": 866
+    "modified": "2026-10-17T22:58:52.475Z",
+    "hash": "a8ffa021e83a1e6339c252f8cf9a79bc3b5f35ca267eeae4824f2133798c711c",
+    "build": 868
   },
   {
     "name": "Bio Draw",
@@ -64,9 +64,9 @@
     "color": "#4169E1",
     "version": "1.2.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-15T15:28:00.391Z",
-    "hash": "6b2b4b834c794c9453d3af87155e25c08796a954e59aecf0b75940ba97619806",
-    "build": 90
+    "modified": "2026-10-17T22:58:52.464Z",
+    "hash": "5a9a2a0ae2fac6ddd2b4c09b2d8e8415a900f171d847efac653d228fdf750855",
+    "build": 92
   },
   {
     "name": "GSEA Plot",
@@ -74,9 +74,9 @@
     "color": "#ffb366",
     "version": "23.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-17T14:05:42.104Z",
-    "hash": "06d89cd787705c01f899465506d21c292205fb75c8e7392335ffb2af99b8b684",
-    "build": 1040
+    "modified": "2026-10-17T22:58:52.470Z",
+    "hash": "5bb015573e76de8a181c30d8ec221cba178219526bbacd127dffa82a5e4a5cfc",
+    "build": 1042
   },
   {
     "name": "GSEA Web",
@@ -130,11 +130,11 @@
     "name": "Matcalc",
     "description": "Scientific graphing and statistics.",
     "color": "#40bf80",
-    "version": "50.8.6",
+    "version": "50.8.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-17T04:34:17.273Z",
-    "hash": "b81123e64ac9362b81c5af2fdd1299e1f1c36254518a350dc91f5b95e4a8de41",
-    "build": 2168
+    "modified": "2026-10-17T22:58:52.491Z",
+    "hash": "8d071a545cd2f71a41faac557e8a5407cbfbfbbb6d24d73fc7ecb74d6d36bc5d",
+    "build": 2170
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.6.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-17T14:05:42.121Z",
-    "hash": "dfe9b18cfd09044e95be785f836526bfd38baf4a8a120cb369e5b75e9da78920",
-    "build": 150
+    "modified": "2026-10-17T22:58:52.492Z",
+    "hash": "0f1315013f142a821485f20ed35e4c959138ac3030e60bd8aef00f89f89a1a07",
+    "build": 152
   },
   {
     "name": "Oncoplot",
@@ -162,19 +162,19 @@
     "color": "#ff99cc",
     "version": "30.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-14T13:33:58.771Z",
-    "hash": "d2e82da25c01d4253c4bcddc0de8a73a5b7c0f98d86cc85ff42dc4de8320b116",
-    "build": 1162
+    "modified": "2026-10-17T22:58:52.497Z",
+    "hash": "dc070394864cab2047471094aad93d1103672ce031c28d6c40b503aeb8358557",
+    "build": 1164
   },
   {
     "name": "Overlap",
     "description": "Overlap sets of genomic coordinates.",
     "color": "#008080",
-    "version": "18.6.8",
+    "version": "18.8.0",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-10-14T13:33:58.766Z",
-    "hash": "4381e067236802cfbcb78e780c775fb79ed16874daf3640a49daa1e462678d4c",
-    "build": 558
+    "modified": "2026-10-17T22:58:52.478Z",
+    "hash": "140f191d4aeb6434bf9189efcea0a5adfb02ac9b533c72b0f42d65d2e14b73be",
+    "build": 560
   },
   {
     "name": "Pathway",
@@ -182,9 +182,9 @@
     "color": "#6495ED",
     "version": "36.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-16T13:46:50.016Z",
-    "hash": "cf8c890184e464d0daac769b2ea5390352f289ca9d96a45858825d1b958cfd10",
-    "build": 912
+    "modified": "2026-10-17T22:58:52.474Z",
+    "hash": "e43b1ccabfca1780e87157a3000436d67d787455397cc924e9bf86e5ab27b864",
+    "build": 914
   },
   {
     "name": "Rev Comp",

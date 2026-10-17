@@ -1,11 +1,27 @@
 import type { IndexMapFunc, Shape } from '.'
 import { cellNum, cellStr } from './cell'
-import { Fields } from './fields'
 import type { SeriesData } from './series-data'
 
-export abstract class BaseIndex<T extends SeriesData> extends Fields {
-  constructor(name: string = '') {
-    super(name)
+export abstract class BaseIndex<T extends SeriesData> {
+  private _name: string
+
+  constructor(opts: { name?: string } = {}) {
+    const { name = '' } = opts
+    this._name = name
+  }
+
+  /**
+   * Returns the name of the index.
+   */
+  get name(): string {
+    return this._name
+  }
+
+  /**
+   * Sets the name of the index.
+   */
+  set name(name: string) {
+    this._name = name
   }
 
   /**

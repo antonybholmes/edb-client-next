@@ -1,9 +1,7 @@
 import { API_XLSX_TO_JSON_URL } from '@/components/edb/edb'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import {
-  BaseDataFrame,
-  DEFAULT_COLUMN_INDEX_NAME,
-} from '@/lib/dataframe/base-dataframe'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { DEFAULT_COLUMN_INDEX_NAME } from '@/lib/dataframe/base-table'
 import { makeCell } from '@/lib/dataframe/cell'
 import { DataFrame } from '@/lib/dataframe/dataframe'
 import {

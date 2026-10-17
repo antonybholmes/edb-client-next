@@ -187,7 +187,7 @@ export function dataframesToNetwork(
 
   //sizes2 = sizes2.map((size) => size / sizeLim2.max)
 
-  const colNames = dfNodes.columns
+  const colNames = dfNodes.columns.strs
 
   const nodes: INode[] = labels.map((label, i) => {
     const node = {

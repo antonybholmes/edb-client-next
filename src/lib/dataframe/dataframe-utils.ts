@@ -21,6 +21,7 @@ import { DataFrame } from './dataframe'
 import { DataIndex, strs } from '.'
 import { vfill } from '../fill'
 import { where } from '../math/where'
+import { BaseTable } from './base-table'
 import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
 import type { IndexId, SeriesData } from './series-data'
 
@@ -34,7 +35,7 @@ export interface ILineFile {
 export type IApplyFunc = (x: number) => number
 
 export function add(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((x) => (x as number) + a)
+  return df.apply((x) => (x as number) + a) as BaseDataFrame
 }
 
 export function getNumCol(df: BaseDataFrame, col: IndexId = 0): number[] {
@@ -85,7 +86,7 @@ export function zip(
  * @returns The indices of the array to make it sorted
  */
 
-export function rowSums(df: BaseDataFrame): number[] {
+export function rowSums(df: BaseTable): number[] {
   return df.rowMap((row: number[]) =>
     row.reduce((a: number, b: number) => a + b, 0)
   )
@@ -209,9 +210,9 @@ export function findCols(
   ids: string[],
   options: IMatchOptions
 ): BaseDataFrame {
-  const idx = findIndices(df.columns, ids, options)
+  const idx = findIndices(df.columns.strs, ids, options)
 
-  return df.iloc({ cols: idx })
+  return df.iloc({ cols: idx }) as BaseDataFrame
 }
 
 export function findRows(
@@ -221,7 +222,7 @@ export function findRows(
 ): BaseDataFrame {
   const idx = findIndices(df.index.strs, ids, options)
 
-  return df.iloc({ rows: idx })
+  return df.iloc({ rows: idx }) as BaseDataFrame
 }
 
 function findIndices(
@@ -337,12 +338,12 @@ export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
   )
 
   // get the ids in order from first table
-  const orderedIds = dataFrames[0]!.columns.filter((c) => ids.has(c))
+  const orderedIds = dataFrames[0]!.columns.strs.filter((c) => ids.has(c))
 
   // sort other tables using these ids
   dataFrames = dataFrames.map((df) => {
     const indexMap = Object.fromEntries(
-      df.columns.map((colId, ci) => [colId, ci])
+      df.columns.strs.map((colId, ci) => [colId, ci])
     )
 
     const indices = orderedIds.map((id) => indexMap[id]!)
@@ -352,7 +353,7 @@ export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
 
   return new DataFrame({
     data: dataFrames.map((df) => df._data).flat(),
-    columns: dataFrames[0]!.columns,
+    columns: dataFrames[0]!.columns.strs,
     index: new DataIndex(dataFrames.map((df) => df._index.values).flat()),
   })
 }
@@ -391,7 +392,7 @@ export function colJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
       dataFrames.map((df) => df._data[r]!).flat()
     ),
     index: dataFrames[0]!.index,
-    columns: new DataIndex(dataFrames.map((df) => df.columns).flat()),
+    columns: new DataIndex(dataFrames.map((df) => df.columns.strs).flat()),
   })
 }
 
@@ -447,15 +448,15 @@ export function log(
 }
 
 export function log2(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((v) => Math.log2((v as number) + a))
+  return df.apply((v) => Math.log2((v as number) + a)) as BaseDataFrame
 }
 
 export function log10(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((v) => Math.log10((v as number) + a))
+  return df.apply((v) => Math.log10((v as number) + a)) as BaseDataFrame
 }
 
 export function ln(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((v) => Math.log((v as number) + a))
+  return df.apply((v) => Math.log((v as number) + a)) as BaseDataFrame
 }
 
 export function rowStdev(df: BaseDataFrame): number[] {
@@ -510,7 +511,7 @@ export function meanFilter(df: BaseDataFrame, top = 1000) {
     .setName(`Filter rows using mean, top ${top}`, true)
 }
 
-export function medianFilter(df: BaseDataFrame, top = 1000) {
+export function medianFilter(df: BaseDataFrame, top = 1000): BaseDataFrame {
   const sd = rowMedian(df)
 
   // order from greatest std to smallest
@@ -522,7 +523,7 @@ export function medianFilter(df: BaseDataFrame, top = 1000) {
   // return a filtered matrix
   return df
     .iloc({ rows: topIdx })
-    .setName(`Filter rows using median, top ${top}`, true)
+    .setName(`Filter rows using median, top ${top}`, true) as BaseDataFrame
 }
 
 export function xInY(
@@ -539,13 +540,15 @@ export function xInY(
   // return a filtered matrix
   return df
     .iloc({ rows: idx })
-    .setName(`Exp ${exp} in ${samples} samples`, true)
+    .setName(`Exp ${exp} in ${samples} samples`, true) as BaseDataFrame
 }
 
 export function zscore(df: BaseDataFrame): BaseDataFrame {
   const z = new ZScore().fit(df.values.flat() as number[])
 
-  return df.replace(df.values.map((row) => z.transform(row as number[])))
+  return df.replace(
+    df.values.map((row) => z.transform(row as number[]))
+  ) as BaseDataFrame
 
   // return new AnnotationDataFrame({
   //   name: 'Row Z-score',
@@ -558,7 +561,7 @@ export function zscore(df: BaseDataFrame): BaseDataFrame {
 export function rowZScore(df: BaseDataFrame): BaseDataFrame {
   const z = df.values.map((row) => new ZScore().fitTransform(row as number[]))
 
-  const ret = df.replace(z)
+  const ret = df.replace(z) as BaseDataFrame
 
   //const name = df.name ? df.name + ', ' : ''
 
@@ -575,7 +578,7 @@ export function rowZScore(df: BaseDataFrame): BaseDataFrame {
 export function colZScore(df: BaseDataFrame): BaseDataFrame {
   // do not generate a new motif for the second transpose since
   // me made a clone for the first
-  return rowZScore(df.t).t
+  return rowZScore(df.t as BaseDataFrame).t as BaseDataFrame
 }
 
 export function makeGCT(df: BaseDataFrame): BaseDataFrame {
@@ -587,7 +590,7 @@ export function makeGCT(df: BaseDataFrame): BaseDataFrame {
   l2[0] = s[0].toString()
   l2[1] = s[1].toString()
 
-  const l3 = ['Name', 'Description'].concat(df.columns)
+  const l3 = ['Name', 'Description'].concat(df.columns.strs)
 
   const d: string[][] = df.rowMap((row: SeriesData[], index: number) => {
     const n = df.index.str(index)
@@ -603,6 +606,8 @@ export function makeGCT(df: BaseDataFrame): BaseDataFrame {
   return new AnnotationDataFrame({
     name: 'GCT',
     data: [l1, l2, l3].concat(d),
+    columns: df.columns.strs,
+    index: df.index.strs,
   })
 }
 
@@ -697,7 +702,7 @@ export function getColIdxFromGroup(
     ? g.search
     : g.search.map((s) => s.toLowerCase())
 
-  const cols = df.columns
+  const cols = df.columns.strs
     .map((col, ci) => ({ col: ci, name: col.toLowerCase() }))
     .filter((c) => {
       if (g.columns && g.columns.length > 0) {

@@ -16,8 +16,8 @@ export function shapesEqual(s1: Shape, s2: Shape): boolean {
 export type IndexMapFunc<T> = (v: SeriesData, i: number) => T
 
 export abstract class Index<T extends SeriesData> extends BaseIndex<T> {
-  constructor(name: string = '') {
-    super(name)
+  constructor(opts: { name?: string } = {}) {
+    super(opts)
   }
 
   abstract filter(idx: number[]): Index<T>
@@ -41,8 +41,7 @@ export abstract class InfIndex<T extends SeriesData> extends Index<T> {
   private _length: number
 
   constructor(length: number = 0, opts: IIndexOptions = {}) {
-    const { name = '' } = opts
-    super(name)
+    super(opts)
     this._length = length
   }
 
@@ -110,10 +109,8 @@ export class DataIndex<T extends SeriesData> extends Index<T> {
   _data: T[]
   _map: Map<string, number> | null = null
 
-  constructor(data: readonly T[], options: IIndexOptions = {}) {
-    const { name = '' } = options
-
-    super(name)
+  constructor(data: readonly T[], opts: IIndexOptions = {}) {
+    super(opts)
 
     this._data = [...data]
   }
@@ -287,7 +284,7 @@ export function makeIndex(
   }
 
   if (name) {
-    ret.setName(name)
+    ret.name = name
   }
 
   return ret

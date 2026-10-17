@@ -60,16 +60,16 @@ export function TopRowsPanel({
 
     switch (method) {
       case 'Mean':
-        df = meanFilter(df, topRows)
+        df = meanFilter(df, topRows) as BaseDataFrame
 
         break
       case 'Median':
-        df = medianFilter(df, topRows)
+        df = medianFilter(df, topRows) as BaseDataFrame
         break
       default:
         // stdev
 
-        df = stdevFilter(df, topRows)
+        df = stdevFilter(df, topRows) as BaseDataFrame
         break
     }
 
