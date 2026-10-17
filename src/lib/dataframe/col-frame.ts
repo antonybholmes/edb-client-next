@@ -163,7 +163,7 @@ export class ColFrame extends BaseDataFrame {
     } else {
       // not in columns, add to end of columns and column map
       const colName = col.toString()
-      df._columns = new StringIndex([...df._columns.strs, colName])
+      df._columns = new StringIndex([...df.colNames, colName])
       df._data.push(d)
     }
 
@@ -213,7 +213,7 @@ export class ColFrame extends BaseDataFrame {
       throw new Error('invalid row')
     }
 
-    const colNames = this._columns.strs
+    const colNames = this.colNames
 
     const data = new Array(colNames.length) as SeriesData[]
 
@@ -242,7 +242,7 @@ export class ColFrame extends BaseDataFrame {
 
     const rowIdx: number = findRow(df, row)
 
-    const colNames = df._columns.strs
+    const colNames = df.colNames
 
     if (rowIdx !== -1) {
       for (let col = 0; col < colNames.length; col++) {
@@ -321,7 +321,7 @@ export class ColFrame extends BaseDataFrame {
   }
 
   override get cols(): BaseSeries<SeriesData>[] {
-    const colNames = this._columns.strs
+    const colNames = this.colNames
 
     return colNames.map(
       (c, ci) =>

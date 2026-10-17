@@ -24,7 +24,7 @@ export function DFColSelect({
   limit?: number
   onChange?: ({ value, index }: { value: string; index: number }) => void
 } & VariantProps<typeof triggerVariants>) {
-  const cols = limit > -1 ? df.columns.strs.slice(0, limit) : df.columns.strs
+  const cols = limit > -1 ? df.colNames.slice(0, limit) : df.colNames
 
   const colMap = new Map(cols.map((c, i) => [c, i]))
 

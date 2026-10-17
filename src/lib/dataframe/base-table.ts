@@ -153,10 +153,17 @@ export abstract class BaseTable {
   }
 
   /**
-   * Get the names of the columns
+   * Get the names of the columns as an index.
    */
   get columns(): Index<SeriesData> {
     return new DataIndex(range(this.shape[1]).map((c) => this.colName(c)))
+  }
+
+  /**
+   * Get the names of the columns as an array of strings.
+   */
+  get colNames(): readonly string[] {
+    return this.columns.strs
   }
 
   abstract setColNames(index: IndexFromType, inplace: boolean): BaseTable
@@ -283,7 +290,7 @@ function dfToStr(df: BaseTable, options: IDFToStrOpts = {}): string {
 
   // add header if required
   if (header) {
-    ret = [df.columns.strs.join(sep)].concat(ret)
+    ret = [df.colNames.join(sep)].concat(ret)
   }
 
   return ret.join('\n')

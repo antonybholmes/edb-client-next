@@ -21,6 +21,7 @@ import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Textarea } from '@/themed/textarea'
@@ -300,13 +301,12 @@ export function VolcanoDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Dots">
+            <PropRow title="Dots" contentCls="gap-x-2">
               <NumericalInput
                 id="size"
                 value={displayProps.dots.size}
                 placeholder="Size..."
                 dp={0}
-                className="w-16 rounded-theme"
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -384,7 +384,7 @@ export function VolcanoDisplayPropsPanel() {
                 value={settings.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
                 dp={2}
                 placeholder="Max..."
-                className="w-16 rounded-theme"
+
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -395,7 +395,7 @@ export function VolcanoDisplayPropsPanel() {
               />
             </CheckPropRow>
 
-            <PropRow title="Highlight">
+            <PropRow title="Highlight" contentCls="gap-x-2">
               <FillButton
                 colors={[
                   {
@@ -445,14 +445,30 @@ export function VolcanoDisplayPropsPanel() {
                 )
               }}
             >
-              <NumericalInput
+              <PercentSlider
+                min={0.0000000001}
+                dp={1}
+                step={0.001}
+                //inputW="sm"
+
+                value={settings.pvalue.threshold}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.pvalue.threshold = v
+                    })
+                  )
+                }}
+              />
+
+              {/* <NumericalInput
                 id="max"
                 value={settings.pvalue.threshold} //Math.pow(10, -displayProps.logP.threshold)}
                 dp={3}
                 step={0.001}
                 limit={[0, 1]}
                 placeholder="Max..."
-                className="w-16 rounded-theme"
+
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -460,7 +476,7 @@ export function VolcanoDisplayPropsPanel() {
                     })
                   )
                 }}
-              />
+              /> */}
 
               {/* <SelectList
                 value={displayProps.pvalue.threshold.toString()}

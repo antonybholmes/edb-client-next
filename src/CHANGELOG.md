@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined volcano ui.
 - Refining dataframe api for consistency and transition to better version of annotation dataframe.
 - Added types to indexes and series.
 - Added deepmerge to handle migrating localstorage setting updates. Added more test cases and fixed some that failed.

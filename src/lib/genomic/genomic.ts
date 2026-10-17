@@ -346,7 +346,7 @@ export function convertDataFrameToLocationFiles(
 ): ILocationFile[] {
   let location: GenLoc
 
-  const ret: { fid: string; locations: GenLoc[] }[] = df.columns.strs.map(
+  const ret: { fid: string; locations: GenLoc[] }[] = df.colNames.map(
     (col) => ({
       fid: col,
       locations: [],

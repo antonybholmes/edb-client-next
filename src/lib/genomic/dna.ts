@@ -113,7 +113,7 @@ export async function createDNATable(
   //   assemblyCol = findCol(df, 'genome')
   // }
 
-  const header: readonly string[] = df.columns.strs.concat(['DNA'])
+  const header: readonly string[] = df.colNames.concat(['DNA'])
 
   const locs: readonly string[] = df.col(locCol).strs
 

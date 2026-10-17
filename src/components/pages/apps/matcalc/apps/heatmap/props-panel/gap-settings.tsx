@@ -21,7 +21,7 @@ export function GapSettingsPanel() {
   const cf = plot.dataframes['main'] as IClusterFrame
   const df = cf.df
 
-  const colNames = colLeaves.map((leaf) => df.columns[leaf].toLowerCase())
+  const colNames = colLeaves.map((leaf) => df.colNames[leaf].toLowerCase())
   const rowNames = rowLeaves.map((leaf) => df.rowNames[leaf].toLowerCase())
 
   return (

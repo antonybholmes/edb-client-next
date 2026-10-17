@@ -288,17 +288,21 @@ export class ColTable extends BaseTable {
     ]
   }
 
-  override get columns(): Index<SeriesData> {
-    return new DataIndex(this._data.map((col) => col.name))
-  }
-
   override get cols(): BaseSeries<SeriesData>[] {
-    return this.columns.strs.map(
+    return this.colNames.map(
       (c, ci) =>
         new DataSeries(this._data[ci]!, {
           name: c,
         })
     )
+  }
+
+  override get columns(): Index<SeriesData> {
+    return new DataIndex(this.colNames)
+  }
+
+  override get colNames(): readonly string[] {
+    return this._data.map((col) => col.name)
   }
 
   override setColNames(

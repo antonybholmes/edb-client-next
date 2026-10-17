@@ -3425,6 +3425,10 @@
         {
           "msg": "Added types to indexes and series",
           "date": "2026-10-17T18:04:07.980Z"
+        },
+        {
+          "msg": "Refining dataframe api for consistency and transition to better version of annotation dataframe",
+          "date": "2026-10-17T22:58:54.601Z"
         }
       ]
     },

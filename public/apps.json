@@ -3,11 +3,11 @@
     "name": "Annotate",
     "description": "Annotate genomic coordinates.",
     "color": "#FA8072",
-    "version": "20.8.0",
+    "version": "20.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-17T22:58:52.475Z",
-    "hash": "a8ffa021e83a1e6339c252f8cf9a79bc3b5f35ca267eeae4824f2133798c711c",
-    "build": 868
+    "modified": "2026-10-17T23:38:32.431Z",
+    "hash": "3d15e7eb46da86c99de26cc07e698c222d6e61312c14f3f9ba2be241813ba0ca",
+    "build": 870
   },
   {
     "name": "Bio Draw",
@@ -64,9 +64,9 @@
     "color": "#4169E1",
     "version": "1.2.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-17T22:58:52.464Z",
-    "hash": "5a9a2a0ae2fac6ddd2b4c09b2d8e8415a900f171d847efac653d228fdf750855",
-    "build": 92
+    "modified": "2026-10-17T23:38:32.420Z",
+    "hash": "18f4c7ba38495d5df29a1446bd288d5f3fbab00e1bd39ae2e8b2b758a2bac5da",
+    "build": 94
   },
   {
     "name": "GSEA Plot",
@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.8.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-17T22:58:52.491Z",
-    "hash": "8d071a545cd2f71a41faac557e8a5407cbfbfbbb6d24d73fc7ecb74d6d36bc5d",
-    "build": 2170
+    "modified": "2026-10-17T23:38:32.455Z",
+    "hash": "d1b096fabe329fde5063022120611cf408c1c691d9dff2da515c73c5f8098a03",
+    "build": 2172
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.6.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-17T22:58:52.492Z",
-    "hash": "0f1315013f142a821485f20ed35e4c959138ac3030e60bd8aef00f89f89a1a07",
-    "build": 152
+    "modified": "2026-10-17T23:38:32.460Z",
+    "hash": "7d935fdc4878061828f00e543c41ca730ac3b3976a383587d2e889b7da7cc516",
+    "build": 154
   },
   {
     "name": "Oncoplot",
@@ -162,9 +162,9 @@
     "color": "#ff99cc",
     "version": "30.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-17T22:58:52.497Z",
-    "hash": "dc070394864cab2047471094aad93d1103672ce031c28d6c40b503aeb8358557",
-    "build": 1164
+    "modified": "2026-10-17T23:38:32.467Z",
+    "hash": "a91acf065c8be78d3dd55b01bdb92afa960554fa6864c5aa5f63b00744b16fe7",
+    "build": 1166
   },
   {
     "name": "Overlap",

@@ -98,8 +98,8 @@ export class DataFrameWriter {
     // add header if required
     if (this._header) {
       const h = this._index
-        ? [''].concat(df.columns.strs).join(this._sep)
-        : df.columns.strs.join(this._sep)
+        ? [''].concat(df.colNames).join(this._sep)
+        : df.colNames.join(this._sep)
       ret = [h].concat(ret)
     }
 
@@ -148,7 +148,7 @@ export class DataFrameWriter {
         headers[headers.length - 1]!.splice(
           0,
           df.rowObs.columns.length,
-          ...df.rowObs.columns.strs
+          ...df.rowObs.colNames
         )
       } else {
         headers = range(colMetaN).map((mi) => [...df.colVars.col(mi).strs])

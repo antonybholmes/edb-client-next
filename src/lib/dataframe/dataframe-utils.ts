@@ -210,7 +210,7 @@ export function findCols(
   ids: string[],
   options: IMatchOptions
 ): BaseDataFrame {
-  const idx = findIndices(df.columns.strs, ids, options)
+  const idx = findIndices(df.colNames, ids, options)
 
   return df.iloc({ cols: idx }) as BaseDataFrame
 }
@@ -338,12 +338,12 @@ export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
   )
 
   // get the ids in order from first table
-  const orderedIds = dataFrames[0]!.columns.strs.filter((c) => ids.has(c))
+  const orderedIds = dataFrames[0]!.colNames.filter((c) => ids.has(c))
 
   // sort other tables using these ids
   dataFrames = dataFrames.map((df) => {
     const indexMap = Object.fromEntries(
-      df.columns.strs.map((colId, ci) => [colId, ci])
+      df.colNames.map((colId, ci) => [colId, ci])
     )
 
     const indices = orderedIds.map((id) => indexMap[id]!)
@@ -353,7 +353,7 @@ export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
 
   return new DataFrame({
     data: dataFrames.map((df) => df._data).flat(),
-    columns: dataFrames[0]!.columns.strs,
+    columns: dataFrames[0]!.colNames,
     index: new DataIndex(dataFrames.map((df) => df._index.values).flat()),
   })
 }
@@ -392,7 +392,7 @@ export function colJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
       dataFrames.map((df) => df._data[r]!).flat()
     ),
     index: dataFrames[0]!.index,
-    columns: new DataIndex(dataFrames.map((df) => df.columns.strs).flat()),
+    columns: new DataIndex(dataFrames.map((df) => df.colNames).flat()),
   })
 }
 
@@ -590,7 +590,7 @@ export function makeGCT(df: BaseDataFrame): BaseDataFrame {
   l2[0] = s[0].toString()
   l2[1] = s[1].toString()
 
-  const l3 = ['Name', 'Description'].concat(df.columns.strs)
+  const l3 = ['Name', 'Description'].concat(df.colNames)
 
   const d: string[][] = df.rowMap((row: SeriesData[], index: number) => {
     const n = df.index.str(index)
@@ -606,7 +606,7 @@ export function makeGCT(df: BaseDataFrame): BaseDataFrame {
   return new AnnotationDataFrame({
     name: 'GCT',
     data: [l1, l2, l3].concat(d),
-    columns: df.columns.strs,
+    columns: df.colNames,
     index: df.index.strs,
   })
 }
@@ -702,7 +702,7 @@ export function getColIdxFromGroup(
     ? g.search
     : g.search.map((s) => s.toLowerCase())
 
-  const cols = df.columns.strs
+  const cols = df.colNames
     .map((col, ci) => ({ col: ci, name: col.toLowerCase() }))
     .filter((c) => {
       if (g.columns && g.columns.length > 0) {

@@ -97,7 +97,7 @@ function dfToStr(df: BaseDataFrame, options: IDFToStrOpts = {}): string {
 
   // add header if required
   if (header) {
-    ret = [df.columns.strs.join(sep)].concat(ret)
+    ret = [df.colNames.join(sep)].concat(ret)
   }
 
   return ret.join('\n')
@@ -167,12 +167,12 @@ export function findCols(
   }
 
   if (col instanceof RegExp) {
-    return whereStrMatches(df.columns.strs, col, caseInsensitive)
+    return whereStrMatches(df.colNames, col, caseInsensitive)
   }
 
   return exact
-    ? whereStrExact(df.columns.strs, col.toString(), opts)
-    : whereStrStartsWith(df.columns.strs, col.toString(), opts)
+    ? whereStrExact(df.colNames, col.toString(), opts)
+    : whereStrStartsWith(df.colNames, col.toString(), opts)
 }
 
 /**

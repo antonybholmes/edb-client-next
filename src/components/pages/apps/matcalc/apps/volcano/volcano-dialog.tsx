@@ -8,10 +8,8 @@ import { DataFrame } from '@/lib/dataframe/dataframe'
 import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 
-import {
-  ActionCheckRow,
-  ActionDialogRow,
-} from '@/components/dialogs/card/action-dialog-card'
+import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -38,7 +36,7 @@ function findFoldChangeCol(df: BaseDataFrame) {
     return 'Log2 Fold Change'
   }
 
-  const cols = df.columns.strs.filter((c) => FOLD_REGEX.test(c.toLowerCase()))
+  const cols = df.colNames.filter((c) => FOLD_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'Log2 Fold Change'
@@ -52,7 +50,7 @@ function findPValueCol(df: BaseDataFrame | null) {
     return 'FDR'
   }
 
-  const cols = df.columns.strs.filter((c) => P_REGEX.test(c.toLowerCase()))
+  const cols = df.colNames.filter((c) => P_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'FDR'
@@ -209,17 +207,18 @@ export function VolcanoDialog({
           className="flex flex-col gap-y-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <FormField
-            control={form.control}
-            name="foldChangeCol"
-            render={({ field }) => (
-              <ActionDialogRow title="Fold Change">
+          {' '}
+          <ActionDialogRow title="Fold Change">
+            <FormField
+              control={form.control}
+              name="foldChangeCol"
+              render={({ field }) => (
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
                   w="lg"
                 >
-                  {df?.columns.strs
+                  {df?.colNames
                     .filter((name) => name !== '')
                     .slice(0, MAX_COLS)
                     .map((name, ni) => (
@@ -228,21 +227,34 @@ export function VolcanoDialog({
                       </SelectItem>
                     ))}
                 </SelectList>
-              </ActionDialogRow>
-            )}
-          />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="applyLog2ToFoldChange"
+              render={({ field }) => (
+                <Checkbox
+                  title="Fold change"
 
-          <FormField
-            control={form.control}
-            name="pValueCol"
-            render={({ field }) => (
-              <ActionDialogRow title="P-value">
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                >
+                  Apply log2
+                </Checkbox>
+              )}
+            />{' '}
+          </ActionDialogRow>
+          <ActionDialogRow title="P-value">
+            <FormField
+              control={form.control}
+              name="pValueCol"
+              render={({ field }) => (
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
                   w="lg"
                 >
-                  {df?.columns.strs
+                  {df?.colNames
                     .filter((name) => name !== '')
                     .slice(0, MAX_COLS)
                     .map((name, ni) => (
@@ -251,36 +263,23 @@ export function VolcanoDialog({
                       </SelectItem>
                     ))}
                 </SelectList>
-              </ActionDialogRow>
-            )}
-          />
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="applyLog2ToFoldChange"
-            render={({ field }) => (
-              <ActionCheckRow
-                title="Fold change"
-                text="Apply log2"
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="applyLog10ToPValue"
-            render={({ field }) => (
-              <ActionCheckRow
-                title="P-value"
-                text="Apply -log10"
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
-            )}
-          />
-
+            <FormField
+              control={form.control}
+              name="applyLog10ToPValue"
+              render={({ field }) => (
+                <Checkbox
+                  title="P-value"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                >
+                  Apply -log10
+                </Checkbox>
+              )}
+            />
+          </ActionDialogRow>
           <button ref={btnRef} type="submit" className="hidden" />
         </form>
       </Form>

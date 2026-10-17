@@ -45,7 +45,7 @@ export function HomeToolbar() {
       {
         id: makeUuid(),
         df: (sheets[0] as BaseDataFrame).values,
-        columns: (sheets[0] as BaseDataFrame).columns.strs,
+        columns: (sheets[0] as BaseDataFrame).colNames,
         assembly: gtf.assembly,
         closest: settings.closest,
         tss: settings.tss,

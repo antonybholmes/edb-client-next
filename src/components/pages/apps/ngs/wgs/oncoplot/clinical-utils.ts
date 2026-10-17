@@ -161,112 +161,110 @@ export function makeClinicalTracks(
 
   const tracksProps: Record<string, IClinicalTrackProps> = {}
 
-  const tracks: ClinicalDataTrack[] = df.columns.strs
-    .slice(1)
-    .map((header, hi) => {
-      //const matcher = header.match(/^([^\(\)]+)(?:\((.+)\))?/)
+  const tracks: ClinicalDataTrack[] = df.colNames.slice(1).map((header, hi) => {
+    //const matcher = header.match(/^([^\(\)]+)(?:\((.+)\))?/)
 
-      const tokens = header.split(':')
+    const tokens = header.split(':')
 
-      const name: string = tokens[0]!.trim()
+    const name: string = tokens[0]!.trim()
 
-      let type: ClinicalDataType = 'category'
-      const opts: Record<string, string> = {}
+    let type: ClinicalDataType = 'category'
+    const opts: Record<string, string> = {}
 
-      if (tokens.length > 1) {
-        const typeInfo = tokens[1]!.trim().slice(1, -1).split(',')
+    if (tokens.length > 1) {
+      const typeInfo = tokens[1]!.trim().slice(1, -1).split(',')
 
-        for (const kv of typeInfo) {
-          let [key, value] = kv.split('=')
+      for (const kv of typeInfo) {
+        let [key, value] = kv.split('=')
 
-          key = key!.trim().toLowerCase()
+        key = key!.trim().toLowerCase()
 
-          //console.log(`Clinical track ${name} key=${key} value=${value}`)
+        //console.log(`Clinical track ${name} key=${key} value=${value}`)
 
-          if (key === 'type') {
-            type = value!.trim() as ClinicalDataType
-          } else {
-            opts[key] = value!.trim()
-          }
+        if (key === 'type') {
+          type = value!.trim() as ClinicalDataType
+        } else {
+          opts[key] = value!.trim()
         }
       }
+    }
 
-      // default medium seagreen
+    // default medium seagreen
 
-      const categories: IClinicalCategory[] = []
+    const categories: IClinicalCategory[] = []
 
-      // see if we are using multi option or not. The multi option groups
-      // multiple dist groups as one rather than separating them.
-      const multi =
-        'multi' in opts &&
-        (opts['multi'].toLowerCase().startsWith('t') || opts['multi'] === '1')
+    // see if we are using multi option or not. The multi option groups
+    // multiple dist groups as one rather than separating them.
+    const multi =
+      'multi' in opts &&
+      (opts['multi'].toLowerCase().startsWith('t') || opts['multi'] === '1')
 
-      //const colorMap: Record<string, string> = {}
+    //const colorMap: Record<string, string> = {}
 
-      //events = [name]
+    //events = [name]
 
-      // medium seagreen
-      const color = opts['color'] ?? '#3cb371'
+    // medium seagreen
+    const color = opts['color'] ?? '#3cb371'
 
-      // Add track name with color if specified, this can be used
-      // to set the color of number tracks, but will not affect
-      // dist or labelled tracks unless the title of the track
-      // is the same as a value in the track data, in which case
-      // the color of the track will be used, rather than the event
-      //colorMap[name] = color
+    // Add track name with color if specified, this can be used
+    // to set the color of number tracks, but will not affect
+    // dist or labelled tracks unless the title of the track
+    // is the same as a value in the track data, in which case
+    // the color of the track will be used, rather than the event
+    //colorMap[name] = color
 
-      switch (type) {
-        case 'dist':
-          if (!multi) {
-            for (const [ci, label] of (
-              opts['labels']?.split(LABEL_SEP_REGEX) ?? []
-            ).entries()) {
-              const lt = label.split(':')
-              const event: string = lt[0]!
+    switch (type) {
+      case 'dist':
+        if (!multi) {
+          for (const [ci, label] of (
+            opts['labels']?.split(LABEL_SEP_REGEX) ?? []
+          ).entries()) {
+            const lt = label.split(':')
+            const event: string = lt[0]!
 
-              const color =
-                lt.length > 1 && COLOR_REGEX.test(lt[1]!)
-                  ? lt[1]!
-                  : COLOR_PALETTE[ci % COLOR_PALETTE.length]!
+            const color =
+              lt.length > 1 && COLOR_REGEX.test(lt[1]!)
+                ? lt[1]!
+                : COLOR_PALETTE[ci % COLOR_PALETTE.length]!
 
-              categories.push({ name: event, color: color })
-            }
+            categories.push({ name: event, color: color })
           }
+        }
 
-          break
-        case 'category':
-          // categorial track, extract all unique values from the column
-          categories.push(
-            ...[...new Set<string>(df.col(hi + 1).strs)]
-              .sort()
-              .map((category, ci) => {
-                return {
-                  name: category,
-                  color: COLOR_PALETTE[ci % COLOR_PALETTE.length]!,
-                }
-              })
-          )
+        break
+      case 'category':
+        // categorial track, extract all unique values from the column
+        categories.push(
+          ...[...new Set<string>(df.col(hi + 1).strs)]
+            .sort()
+            .map((category, ci) => {
+              return {
+                name: category,
+                color: COLOR_PALETTE[ci % COLOR_PALETTE.length]!,
+              }
+            })
+        )
 
-          break
-        default:
-          break
-      }
+        break
+      default:
+        break
+    }
 
-      tracksProps[name] = {
-        show: true,
-        color: color,
-        categoryColors: Object.fromEntries(
-          categories.map((c) => [c.name.toLowerCase(), c.color])
-        ),
-        name: name,
-      }
+    tracksProps[name] = {
+      show: true,
+      color: color,
+      categoryColors: Object.fromEntries(
+        categories.map((c) => [c.name.toLowerCase(), c.color])
+      ),
+      name: name,
+    }
 
-      return new ClinicalDataTrack(
-        type,
-        name,
-        categories.map((c) => c.name)
-      )
-    })
+    return new ClinicalDataTrack(
+      type,
+      name,
+      categories.map((c) => c.name)
+    )
+  })
 
   // load some values
 

@@ -28,6 +28,7 @@ export function PercentSlider({
   max = 1,
   step = 0.01,
   dp = 0,
+  inputW = 'xs',
   ...props
 }: ComponentProps<typeof NumSlider>) {
   const f = useCallback((v: number) => formatAsPercent(v, dp), [dp])
@@ -39,7 +40,7 @@ export function PercentSlider({
       max={max}
       step={step}
       format={f}
-      inputW="xs"
+      inputW={inputW}
       parser={parsePercent}
       {...props}
     />
