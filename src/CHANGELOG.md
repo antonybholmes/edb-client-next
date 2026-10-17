@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Revised auto label on volcano. Items sort. Double click on circles to label.
 - Bug fixes and updates.
 - Added reset to volcano plot settings.
 - Added extendible fields to indexes.

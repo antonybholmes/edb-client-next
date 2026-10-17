@@ -21,15 +21,16 @@ import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
+import { BetweenHorizonalStart, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
 import APP_INFO from '../../manifest.json'
 import { useVolcanoContext } from './volcano-provider'
-import { useVolcanoSettings } from './volcano-settings-store'
+import { useVolcanoSettings } from './volcano-settings'
 
 export function VolcanoDisplayPropsPanel() {
   const { open: openDialog } = useDialogs()
@@ -43,7 +44,8 @@ export function VolcanoDisplayPropsPanel() {
 
   const { updatePlot } = useHistory()
 
-  const { plot, displayLabels, setLabels } = useVolcanoContext()
+  const { plot, displayLabels, highlightedLabels, setLabels } =
+    useVolcanoContext()
   const { settings, updateSettings, resetSettings } = useVolcanoSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
@@ -55,15 +57,18 @@ export function VolcanoDisplayPropsPanel() {
   function addLabels() {
     const values: string[] = textToLines(text, { trim: true })
 
-    //console.log(values)
-    setLabels(values)
+    setLabels(values.sort())
+
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.labels.auto = false
+      })
+    )
   }
 
   useEffect(() => {
-    if (settings.labels.auto) {
-      setText(displayLabels.join('\n'))
-    }
-  }, [settings.labels.auto, displayLabels])
+    setText(displayLabels.join('\n'))
+  }, [displayLabels])
 
   // function declutter({ iterations = 50, padding = 1 } = {}) {
   //   const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
@@ -488,25 +493,37 @@ export function VolcanoDisplayPropsPanel() {
 
         <AccordionItem value="labels">
           <AccordionTrigger
-            rightChildren={
-              <SmallSwitch
-                className="font-normal"
-                checked={settings.labels.auto}
-                onCheckedChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.labels.auto = v
-                    })
-                  )
-                }}
-              >
-                Auto Label
-              </SmallSwitch>
-            }
+          // rightChildren={
+          //   <SmallSwitch
+          //     className="font-normal"
+          //     checked={settings.labels.auto}
+          //     onCheckedChange={(v) => {
+          //       updateSettings(
+          //         produce(settings, (draft) => {
+          //           draft.labels.auto = v
+          //         })
+          //       )
+          //     }}
+          //   >
+          //     Auto Label
+          //   </SmallSwitch>
+          // }
           >
             Labels
           </AccordionTrigger>
           <AccordionContent>
+            <CheckPropRow
+              title="Only Color Labels"
+              checked={settings.labels.color.on}
+              onCheckedChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.labels.color.on = v
+                  })
+                )
+              }}
+              tooltip="Only color labeled points"
+            />
             <PropRow title="X-offset">
               <NumSlider
                 value={settings.labels.offset.x}
@@ -554,9 +571,21 @@ export function VolcanoDisplayPropsPanel() {
                 >
                   Add Labels
                 </Button>
-                <Button variant="secondary" onClick={() => declutterY()}>
-                  Organize Labels
-                </Button>
+                <IconButton
+                  title="Auto Label"
+                  onClick={() => {
+                    setText(highlightedLabels.join('\n'))
+                    setLabels(highlightedLabels)
+                  }}
+                >
+                  <Tags size={18} />
+                </IconButton>
+                <IconButton
+                  title="Organize Labels"
+                  onClick={() => declutterY()}
+                >
+                  <BetweenHorizonalStart size={18} />
+                </IconButton>
               </VCenterRow>
 
               <LinkButton

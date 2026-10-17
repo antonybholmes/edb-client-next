@@ -35,6 +35,7 @@ export function Checkbox({
   checked = false,
   onCheckedChange = () => {},
   disabled = false,
+  title,
   children,
   className,
   ...props
@@ -62,7 +63,7 @@ export function Checkbox({
 
   if (children) {
     ret = (
-      <Field.Root className={className}>
+      <Field.Root className={className} title={title}>
         <Field.Label className="flex flex-row items-center gap-x-1">
           {ret}
           {children}

@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useVolcanoSettings } from './volcano-settings-store'
+import { useVolcanoSettings } from './volcano-settings'
 
 import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
@@ -99,6 +99,7 @@ export function VolcanoProvider({
     const values = volcano.entries
       .filter((_v, i) => idx.has(i))
       .map((l) => l.id.toString())
+      .sort()
 
     return values
   }, [volcano.entries, displayOptions, thresholdLogP])
@@ -140,11 +141,6 @@ export function VolcanoProvider({
   )
 
   const setLabels = (labels: string[]) => {
-    if (settings.labels.auto) {
-      return
-    }
-
-    console.log(labels)
     setManualLabels(labels)
   }
 

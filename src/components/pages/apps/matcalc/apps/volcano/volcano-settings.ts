@@ -11,7 +11,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v8`
+const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v12`
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
@@ -43,6 +43,7 @@ export interface IVolcanoSettings {
   }
   labels: {
     auto: boolean
+    color: { on: boolean }
     offset: { x: number; y: number }
   }
 }
@@ -73,6 +74,7 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
   },
   labels: {
     auto: true,
+    color: { on: false },
     offset: { x: 20, y: 20 },
   },
 }

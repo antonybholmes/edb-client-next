@@ -19,7 +19,7 @@ import { useCurrentSheets } from '../../history/history-provider/history-context
 import { newVolcanoPlot } from '../../history/history-provider/history-factories'
 import { HistoryPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { useVolcanoSettings } from './volcano-settings-store'
+import { useVolcanoSettings } from './volcano-settings'
 
 const MAX_COLS = 10
 const FOLD_REGEX = /fold/
