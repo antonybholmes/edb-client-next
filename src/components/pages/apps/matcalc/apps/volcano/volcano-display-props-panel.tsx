@@ -17,7 +17,6 @@ import { NumericalInput } from '@/themed/numerical-input'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { BaseCol } from '@/components/layout/base-col'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -536,7 +535,30 @@ export function VolcanoDisplayPropsPanel() {
                 }}
               />
             </PropRow>
-            <VCenterRow className="justify-end">
+
+            <Textarea
+              id="labels"
+              aria-label="Labels"
+              value={text}
+              onTextChange={(v) => setText(v)}
+              placeholder="Label points on plot..."
+              className="mt-1 h-48"
+            />
+
+            <VCenterRow className="justify-between">
+              <VCenterRow className="gap-x-1 mt-1">
+                <Button
+                  variant="app-theme"
+                  aria-label="Add labels to plot"
+                  onClick={() => addLabels()}
+                >
+                  Add Labels
+                </Button>
+                <Button variant="secondary" onClick={() => declutterY()}>
+                  Organize Labels
+                </Button>
+              </VCenterRow>
+
               <LinkButton
                 onClick={() => {
                   openDialog({
@@ -557,29 +579,6 @@ export function VolcanoDisplayPropsPanel() {
                 {TEXT_CLEAR}
               </LinkButton>
             </VCenterRow>
-            <Textarea
-              id="labels"
-              aria-label="Labels"
-              value={text}
-              onTextChange={(v) => setText(v)}
-              placeholder="Label points on plot..."
-              className="mt-1 h-48"
-              //disabled={settings.volcano.labels.auto}
-            />
-
-            <BaseCol className="mt-2 gap-y-1">
-              <Button
-                variant="app-theme"
-                aria-label="Add labels to plot"
-                onClick={() => addLabels()}
-              >
-                Add Labels
-              </Button>
-
-              <Button variant="secondary" onClick={() => declutterY()}>
-                Organize Labels
-              </Button>
-            </BaseCol>
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

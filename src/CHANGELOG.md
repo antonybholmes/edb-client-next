@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added reset to volcano plot settings.
 - Added extendible fields to indexes.
 - More refinements to dataframes with prep to remove annotationdataframe.

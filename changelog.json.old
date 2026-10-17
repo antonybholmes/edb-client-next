@@ -3405,6 +3405,10 @@
         {
           "msg": "Added extendible fields to indexes",
           "date": "2026-10-16T20:45:59.641Z"
+        },
+        {
+          "msg": "Added reset to volcano plot settings",
+          "date": "2026-10-17T01:32:57.059Z"
         }
       ]
     },

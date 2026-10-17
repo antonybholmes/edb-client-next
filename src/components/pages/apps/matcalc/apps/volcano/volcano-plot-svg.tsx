@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
@@ -17,8 +17,10 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { SvgRect } from '@/components/plot/svg-rect'
+import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
+import { makeUuid } from '@/lib/id'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
@@ -180,33 +182,6 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
     color: '#d9d9d9',
     opacity: 0.75,
   },
-  // pvalue: {
-  //   threshold: 0.05, // p-0.05
-  //   show: true,
-  //   line: {
-  //     ...DEFAULT_STROKE_PROPS,
-  //     show: true,
-
-  //     dasharray: '4',
-  //   },
-  // neg: {
-  //   color: '#3366cc',
-  // },
-  // pos: {
-  //   color: '#e62e00',
-  // },
-  //},
-
-  // logFc: {
-  //   threshold: 1,
-  //   show: true,
-  //   neg: {
-  //     color: '#3366cc',
-  //   },
-  //   pos: {
-  //     color: '#e62e00',
-  //   },
-  // },
   labels: {
     color: COLOR_BLACK,
 
@@ -230,11 +205,14 @@ interface IProps {
 export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   const { plot, displayLabels } = useVolcanoContext()
 
+  const renderId = useRef(makeUuid())
+
   const { axis: xax } = useAxis({
     plotId: plot.id,
     groupId: 'volcano',
     axisId: 'x',
   })
+
   const { axis: yax } = useAxis({
     plotId: plot.id,
     groupId: 'volcano',
@@ -311,8 +289,6 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
     //const sizedata = size ? getNumCol(sheet, findCol(sheet, size)) : []
 
-    console.log(xax, yax, displayOptions.axes.yaxis.length)
-
     const innerWidth = axisLength(xax)
     const innerHeight = axisLength(yax)
     const width = innerWidth + MARGIN.left + MARGIN.right
@@ -330,6 +306,8 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
     const yaf = axisDomainToRangeFunc(yax!)
 
     const yThreshold = yaf(thresholdLogP)
+
+    renderId.current = makeUuid()
 
     const svg = (
       <>
@@ -374,7 +352,7 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
               : displayOptions.dots.size
 
             return (
-              <g key={i}>
+              <g key={`label-group-${i}-${renderId.current}`}>
                 <SvgLine
                   id={`label-line-${i}`}
                   x1={x1 + (p.x >= 0 ? r + 1 : -(r + 1))}
@@ -388,7 +366,7 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
                   y2={y1 - r - settings.labels.offset.y + 1}
                   s={displayOptions.labels.line}
                 />
-                <text
+                <SvgText
                   id={`label-text-${i}`}
                   x={
                     x1 +
@@ -401,7 +379,7 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
                   textAnchor={p.x >= 0 ? 'start' : 'end'}
                 >
                   {plot.volcano.entries[i]!.id}
-                </text>
+                </SvgText>
               </g>
             )
           })}
