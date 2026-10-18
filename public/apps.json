@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.8.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-18T01:53:33.363Z",
-    "hash": "4782059b68840c2e13e11e4a1757a3e8b78f718c5bd979b39038f4df41b888b8",
-    "build": 2174
+    "modified": "2026-10-18T02:07:11.773Z",
+    "hash": "90c98624403d917233487a9079f08558d19869dafb939b9db5bacae83fe3f6b4",
+    "build": 2176
   },
   {
     "name": "Motifs",
@@ -152,9 +152,9 @@
     "color": "#4169E1",
     "version": "1.6.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-18T01:53:33.364Z",
-    "hash": "9ddd2a333658c0237b4b6bd9be653393fd2a66b87445cab978c18f9b671ab2cf",
-    "build": 156
+    "modified": "2026-10-18T02:07:11.774Z",
+    "hash": "e1843328e3a0ada6b49ba350b6b4c4dc75b5da09e4838744648a1ebcbb3501ef",
+    "build": 158
   },
   {
     "name": "Oncoplot",
@@ -278,11 +278,11 @@
   {
     "name": "Volcano",
     "description": "Volcano plots.",
-    "color": "#4169E1",
+    "color": "#ff0000",
     "version": "2.0.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-18T01:53:47.553Z",
-    "hash": "e3faa87b3342ad9b2f8a628c35d2371ec5af6f38e5ab7a53a32f4227459cde33",
-    "build": 6
+    "modified": "2026-10-18T02:07:11.782Z",
+    "hash": "d01f565be391a0227975fc865e62007e3b6112363d1699a722030f9d57c60a78",
+    "build": 8
   }
 ]

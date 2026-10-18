@@ -222,11 +222,6 @@ export const DotsSvg = memo(function DotsSvg({
       return
     }
 
-    // const { screenP } = svgPointToScreen(ref.current, {
-    //   x: cell.col.x + blockSize.w + margin.left,
-    //   y: cell.row.x + blockSize.h + margin.top,
-    // })
-
     const { relativeP, screenP } = svgPointToScreen(ref.current, {
       x: cell.col.x + blockSize.w / 2 + margin.left,
       y: cell.row.x + blockSize.h / 2 + margin.top,

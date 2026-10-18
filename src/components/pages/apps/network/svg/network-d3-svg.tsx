@@ -19,10 +19,10 @@ import {
   IRenderNode,
   labelsInNodeIds,
   useNetwork,
-  useNetworkSettings,
-} from '../network-settings'
+} from '../network'
 
 import { max } from '@/lib/math/math'
+import { useNetworkSettings } from '../network-settings'
 import { useNetworkD3Sim } from '../network-store-d3-sim'
 import { useUserData } from '../network-user-data'
 import { LegendSvg } from './legend-svg'

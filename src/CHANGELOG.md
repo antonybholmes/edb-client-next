@@ -1,5 +1,12 @@
 # Changelog
 
+## 93.0.0 (Oct, 2026)
+
+### Changed
+
+- Volcano now uses crosshair.
+
+
 ## 91.8.0 (Oct, 2026)
 
 ### Changed

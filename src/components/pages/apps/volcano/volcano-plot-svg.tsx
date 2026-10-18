@@ -22,8 +22,8 @@ import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { makeUuid } from '@/lib/id'
 import { ILim } from '@/lib/math/math'
+import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useTooltip } from '@/providers/tooltip-provider'
 import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings'
@@ -202,7 +202,7 @@ interface IProps {
   //displayOptions?: IVolcanoDisplayOptions
 }
 
-export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
+export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
   const { plot, displayLabels, setLabels } = useVolcanoContext()
 
   const renderId = useRef(makeUuid())
@@ -227,7 +227,7 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
     ? (plot! as IVolcanoPlot).props
     : DEFAULT_VOLCANO_PROPS
 
-  const { showTooltip, hideTooltip } = useTooltip()
+  const { showCrosshair, hideCrosshair } = useCrosshair()
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
     ? -Math.log10(settings.pvalue.threshold)
@@ -276,10 +276,11 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   }
 
   function handleVariantEnter(row: number, p: IPos) {
-    const { screenP } = svgPointToScreen(svgRef.current, p)
+    const { relativeP, screenP } = svgPointToScreen(svgRef.current, p)
 
-    showTooltip({
-      pos: screenP,
+    showCrosshair({
+      pos: relativeP,
+      screenPos: screenP,
       content: (
         <>
           <p className="font-semibold">{`${plot.volcano.entries[row]!.id}`}</p>
@@ -353,11 +354,11 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
 
                 onPointerEnter={() =>
                   handleVariantEnter(xi, {
-                    x: x1 + MARGIN.left + TOOLTIP_OFFSET,
-                    y: y1 + MARGIN.top + TOOLTIP_OFFSET,
+                    x: x1 + MARGIN.left,
+                    y: y1 + MARGIN.top,
                   })
                 }
-                onPointerLeave={hideTooltip}
+                onPointerLeave={hideCrosshair}
                 onDoubleClick={() => {
                   const label = plot.volcano.entries[xi]!.id
                   if (
@@ -483,5 +484,13 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
     >
       {svg}
     </SvgZoomCanvas>
+  )
+}
+
+export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
+  return (
+    <CrosshairProvider>
+      <VolcanoPlotContent sizeFunc={sizeFunc} />
+    </CrosshairProvider>
   )
 }
