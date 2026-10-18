@@ -27,9 +27,9 @@ export class ColFrame extends BaseDataFrame {
   _data: SeriesData[][]
 
   constructor(options: IDataFrameOptions = {}) {
-    let { name = '', index, indexName, data = [], columns } = options
+    let { name = '', index, data = [], columns } = options
 
-    super(shape(data), index, columns, { name })
+    super({ name })
 
     if (data.length === 0) {
       throw new Error('data must be a non empty array or array of series')
@@ -118,7 +118,7 @@ export class ColFrame extends BaseDataFrame {
       // }
     }
 
-    this._index = makeIndex(index, this._data[0]!.length, indexName)
+    this._index = makeIndex(index, this._data[0]!.length)
 
     if (this._index.length !== this._data[0]!.length) {
       throw new Error('index length must match the number of rows in data')
@@ -330,17 +330,6 @@ export class ColFrame extends BaseDataFrame {
         })
     )
   }
-
-  // override get shape(): Shape {
-  //   return [
-  //     this._index.length,
-  //     this._columns.length, // ._data.length > 0 ? this._data[0]!.length : 0,
-  //   ]
-  // }
-
-  // override get size(): number {
-  //   return this.shape[0] * this.shape[1]
-  // }
 
   override rowName(index: number): string {
     return this.index.str(index)

@@ -1,6 +1,6 @@
 import { range } from '@/lib/math/range'
 
-import { cellStr, makeCell } from './cell'
+import { makeCell } from './cell'
 
 import {
   whereStrExact,
@@ -21,7 +21,6 @@ import {
   Shape,
   shapesEqual,
   StringIndex,
-  type IndexFromType,
 } from './index'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
 import type { IndexId, SeriesData } from './series-data'
@@ -46,7 +45,7 @@ export class ColTable extends BaseTable {
   _data: Index<SeriesData>[]
 
   constructor(options: IDataFrameOptions = {}) {
-    let { name = '', index, indexName, data = [], columns } = options
+    let { name = '', data = [], columns } = options
 
     super({ name })
 
@@ -121,28 +120,12 @@ export class ColTable extends BaseTable {
 
         this._data[col] = new DataIndex(d)
       }
-      // } else {
-      //   // 1d array of values to be made a single column
-      //   if (!cols) {
-      //     cols = new ExcelIndex(1)
-      //   }
-
-      //   if (cols.length !== 1) {
-      //     throw new Error('columns must have length 1 when data is 1d')
-      //   }
-
-      //   this._data = [[...(data[0] as SeriesData[])]]
-      // }
     }
   }
 
-  // override setName(name: string, inplace = true): BaseDataFrame {
-  //   const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
-
-  //   df._name = name
-
-  //   return df
-  // }
+  override get cols(): BaseSeries<SeriesData>[] {
+    return this._data.map((c) => new DataSeries(c))
+  }
 
   override setCol(
     col: IndexId,
@@ -213,15 +196,13 @@ export class ColTable extends BaseTable {
       throw new Error('invalid row')
     }
 
-    const data = new Array(this.columns.length) as SeriesData[]
+    const data = new Array(this.shape[1]) as SeriesData[]
 
-    for (let col = 0; col < this.columns.length; col++) {
+    for (let col = 0; col < this.shape[1]; col++) {
       data[col] = this._data[col]![row]!
     }
 
-    return new DataSeries(data, {
-      index: this.columns,
-    })
+    return new DataSeries(data)
   }
 
   override setRow(
@@ -242,11 +223,11 @@ export class ColTable extends BaseTable {
     const df: ColTable = inplace ? this : (this.copy() as ColTable)
 
     if (row < this.shape[0]) {
-      for (let col = 0; col < this.columns.length; col++) {
+      for (let col = 0; col < this.shape[1]; col++) {
         df._data[col]![row] = d[col]!
       }
     } else {
-      for (let col = 0; col < this.columns.length; col++) {
+      for (let col = 0; col < this.shape[1]; col++) {
         df._data[col] = new DataIndex([...df._data[col]!.values, d[col]!])
       }
     }
@@ -286,42 +267,6 @@ export class ColTable extends BaseTable {
       this._data[0]!.length,
       this._data.length, // ._data.length > 0 ? this._data[0]!.length : 0,
     ]
-  }
-
-  override get cols(): BaseSeries<SeriesData>[] {
-    return this.colNames.map(
-      (c, ci) =>
-        new DataSeries(this._data[ci]!, {
-          name: c,
-        })
-    )
-  }
-
-  override get columns(): Index<SeriesData> {
-    return new DataIndex(this.colNames)
-  }
-
-  override get colNames(): readonly string[] {
-    return this._data.map((col) => col.name)
-  }
-
-  override setColNames(
-    index: IndexFromType,
-    inplace: boolean = true
-  ): BaseTable {
-    if (index.length !== this._data.length) {
-      throw new Error('columns length must match the number of columns in data')
-    }
-
-    const df: ColTable = inplace ? this : (this.copy() as ColTable)
-
-    const names = [...index]
-
-    for (let [ci, c] of df._data.entries()) {
-      c.name = cellStr(names[ci])
-    }
-
-    return df
   }
 
   override get values(): SeriesData[][] {
@@ -376,7 +321,7 @@ export class ColTable extends BaseTable {
     cols,
   }: { rows?: LocType; cols?: LocType } = {}): BaseTable {
     let rowIdx = _ilocDim(new NumInfIndex(this.shape[0]), rows)
-    let colIdx = _ilocDim(this.columns, cols)
+    let colIdx = _ilocDim(new NumInfIndex(this.shape[1]), cols)
 
     const data = new Array(rowIdx.length) as SeriesData[][]
 

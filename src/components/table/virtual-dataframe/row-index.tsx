@@ -126,7 +126,6 @@ export function RowIndexContainer() {
     df,
     scaledCell,
     rowVirtualizer,
-
     headerHeight,
     indexWidth,
     scrollOffset,

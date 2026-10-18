@@ -3442,5 +3442,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-10-14T13:33:59.714Z"
+  },
+  {
+    "version": "93.0.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Volcano now uses crosshair",
+          "date": "2026-10-18T02:07:13.797Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-18T02:07:13.797Z"
   }
 ]

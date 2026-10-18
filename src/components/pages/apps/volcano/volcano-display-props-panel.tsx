@@ -13,7 +13,6 @@ import {
   AccordionTrigger,
   ScrollAccordion,
 } from '@/themed/baseui/accordion'
-import { Button } from '@/themed/baseui/button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
@@ -23,8 +22,9 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { BetweenHorizonalStart, Tags } from 'lucide-react'
@@ -487,6 +487,62 @@ export function VolcanoDisplayPropsPanel() {
         <AccordionItem value="labels">
           <AccordionTrigger>Labels</AccordionTrigger>
           <AccordionContent>
+            <VCenterRow className="justify-between">
+              <VCenterRow className="gap-x-0.5">
+                <ToolbarButton
+                  variant="app-theme"
+                  aria-label="Add labels to plot"
+                  onClick={() => addLabels()}
+                >
+                  Add Labels
+                </ToolbarButton>
+                <ToolbarIconButton
+                  title="Auto Label"
+                  onClick={() => {
+                    setText(highlightedLabels.join('\n'))
+                    setLabels(highlightedLabels)
+                  }}
+                >
+                  <Tags size={18} />
+                </ToolbarIconButton>
+                <ToolbarIconButton
+                  title="Organize Labels"
+                  onClick={() => declutterY()}
+                >
+                  <BetweenHorizonalStart size={18} />
+                </ToolbarIconButton>
+              </VCenterRow>
+
+              <LinkButton
+                onClick={() => {
+                  openDialog({
+                    type: 'warning',
+                    payload: {
+                      title: APP_INFO.name,
+                      content: 'Are you sure you want to reset all settings?',
+                      callback: (response) => {
+                        if (response === TEXT_OK) {
+                          setText('')
+                          setLabels([])
+                        }
+                      },
+                    },
+                  })
+                }}
+              >
+                {TEXT_CLEAR}
+              </LinkButton>
+            </VCenterRow>
+
+            <Textarea
+              id="labels"
+              aria-label="Labels"
+              value={text}
+              onTextChange={(v) => setText(v)}
+              placeholder="Label points on plot..."
+              className="mt-1 h-40"
+            />
+
             <CheckPropRow
               title="Only Color Labels"
               checked={settings.labels.color.on}
@@ -527,62 +583,6 @@ export function VolcanoDisplayPropsPanel() {
                 }}
               />
             </PropRow>
-
-            <Textarea
-              id="labels"
-              aria-label="Labels"
-              value={text}
-              onTextChange={(v) => setText(v)}
-              placeholder="Label points on plot..."
-              className="mt-1 h-48"
-            />
-
-            <VCenterRow className="justify-between">
-              <VCenterRow className="gap-x-1 mt-1">
-                <Button
-                  variant="app-theme"
-                  aria-label="Add labels to plot"
-                  onClick={() => addLabels()}
-                >
-                  Add Labels
-                </Button>
-                <IconButton
-                  title="Auto Label"
-                  onClick={() => {
-                    setText(highlightedLabels.join('\n'))
-                    setLabels(highlightedLabels)
-                  }}
-                >
-                  <Tags size={18} />
-                </IconButton>
-                <IconButton
-                  title="Organize Labels"
-                  onClick={() => declutterY()}
-                >
-                  <BetweenHorizonalStart size={18} />
-                </IconButton>
-              </VCenterRow>
-
-              <LinkButton
-                onClick={() => {
-                  openDialog({
-                    type: 'warning',
-                    payload: {
-                      title: APP_INFO.name,
-                      content: 'Are you sure you want to reset all settings?',
-                      callback: (response) => {
-                        if (response === TEXT_OK) {
-                          setText('')
-                          setLabels([])
-                        }
-                      },
-                    },
-                  })
-                }}
-              >
-                {TEXT_CLEAR}
-              </LinkButton>
-            </VCenterRow>
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

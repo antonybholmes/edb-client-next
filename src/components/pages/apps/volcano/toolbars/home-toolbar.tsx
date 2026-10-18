@@ -52,7 +52,7 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Network">
+      <ToolbarTabGroup title="Volcano">
         <ToolbarColSmallButton
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}

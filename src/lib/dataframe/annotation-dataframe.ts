@@ -3,7 +3,7 @@ import { BaseDataFrame, findCol, findRow } from './base-dataframe'
 import {
   BaseTable,
   DataFrameInput,
-  DEFAULT_COLUMN_INDEX_NAME,
+  DEFAULT_COLUMN_NAMES,
   DEFAULT_SHEET_NAME,
   findInSeries,
   IDataFrameOptions,
@@ -11,7 +11,7 @@ import {
   shape,
 } from './base-table'
 import { getExcelColName } from './cell'
-import { ColFrame } from './col-frame'
+import { ColDataFrame } from './col-dataframe'
 
 import {
   DataIndex,
@@ -36,49 +36,41 @@ export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
 }
 
 export class AnnotationDataFrame extends BaseDataFrame {
-  _data: BaseTable
-  _rowObs: BaseTable
-  _colVars: BaseTable
+  _data: BaseDataFrame
+  _rowObs: BaseDataFrame
+  _colVars: BaseDataFrame
 
   constructor(options: IAnnotationDataFrameOptions = {}) {
-    const {
-      name = '',
-      data,
-      index,
-      indexName,
-      columns,
-      rowObs,
-      colVars,
-    } = options
+    const { name = '', index, columns, rowObs, colVars } = options
 
-    super(shape(data), index, columns, { name })
+    super({ name })
 
-    this._data = new ColFrame(options) // DataFrame(options)
+    this._data = new ColDataFrame(options) // new ColFrame(options) // DataFrame(options)
 
     if (rowObs) {
       this._rowObs = rowObs
     } else {
-      this._rowObs = new ColFrame({
-        data: makeIndex(index, this._data.shape[0]).map((v) => [v]),
-        columns: [indexName ?? DEFAULT_INDEX_NAME],
+      this._rowObs = new ColDataFrame({
+        data: [makeIndex(index, this._data.shape[0])],
+        columns: [DEFAULT_INDEX_NAME],
       })
     }
 
     if (colVars) {
       this._colVars = colVars
     } else {
-      this._colVars = new ColFrame({
-        data: makeColumns(columns, this._data.shape[1]).map((v) => [v]),
-        columns: [DEFAULT_COLUMN_INDEX_NAME],
+      this._colVars = new ColDataFrame({
+        data: [makeColumns(columns, this._data.shape[1])],
+        columns: [DEFAULT_COLUMN_NAMES],
       })
     }
   }
 
-  get rowObs(): BaseTable {
+  get rowObs(): BaseDataFrame {
     return this._rowObs
   }
 
-  get colVars(): BaseTable {
+  get colVars(): BaseDataFrame {
     return this._colVars
   }
 
@@ -111,7 +103,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }
 
   override col(col: IndexId): BaseSeries<SeriesData> {
-    const colData = this._colVars.col(DEFAULT_COLUMN_INDEX_NAME)
+    const colData = this._colVars.col(DEFAULT_COLUMN_NAMES)
 
     const colIdx = findInSeries(colData, col)
 
@@ -233,14 +225,14 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.cols
   }
 
-  // override get columns(): Index {
-  //   return new DataIndex(this._colMetaData.col(0).values as SeriesData[], {
-  //     name: this._colMetaData.colName(0),
-  //   })
-  // }
+  override get columns(): Index<SeriesData> {
+    return new DataIndex(this._colVars.col(0).values, {
+      name: this._colVars.colName(0),
+    })
+  }
 
   override get index(): Index<SeriesData> {
-    return new DataIndex(this._rowObs.col(0).values as SeriesData[], {
+    return new DataIndex(this._rowObs.col(0).values, {
       name: this._rowObs.colName(0),
     })
   }
@@ -284,8 +276,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
 
     // both are row oriented so we slice col meta data the same way as rows and row meta data the same way as rows
-    ret._rowObs = this._rowObs.iloc({ rows })
-    ret._colVars = this._colVars.iloc({ rows: cols })
+    ret._rowObs = this._rowObs.iloc({ rows }) as BaseDataFrame
+    ret._colVars = this._colVars.iloc({ rows: cols }) as BaseDataFrame
 
     return ret
   }
@@ -304,10 +296,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.colMap(f)
   }
 
-  // override isin(rows: LocType = ':', cols: LocType = ':'): BaseDataFrame {
-  //   return this._dataframe.isin(rows, cols)
-  // }
-
   override min(): number {
     return this._data.min()
   }
@@ -320,8 +308,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.t.values,
-      //columns: df.columns,
-      //index: df.index,
     })
 
     ret._rowObs = this._colVars
@@ -334,12 +320,10 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.values,
-      //index: this._dataframe.index.copy(),
-      //columns: this._dataframe.columns.copy(),
     })
 
-    ret._rowObs = this._rowObs.copy()
-    ret._colVars = this._colVars.copy()
+    ret._rowObs = this._rowObs.copy() as BaseDataFrame
+    ret._colVars = this._colVars.copy() as BaseDataFrame
 
     return ret
   }
@@ -352,12 +336,10 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data,
-      //index: this._dataframe.index.copy(),
-      //columns: this._dataframe.columns.copy(),
     })
 
-    ret._rowObs = this._rowObs.copy()
-    ret._colVars = this._colVars.copy()
+    ret._rowObs = this._rowObs.copy() as BaseDataFrame
+    ret._colVars = this._colVars.copy() as BaseDataFrame
 
     return ret
   }

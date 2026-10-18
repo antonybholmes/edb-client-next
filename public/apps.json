@@ -132,9 +132,9 @@
     "color": "#40bf80",
     "version": "50.8.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-18T02:07:11.773Z",
-    "hash": "90c98624403d917233487a9079f08558d19869dafb939b9db5bacae83fe3f6b4",
-    "build": 2176
+    "modified": "2026-10-18T20:38:29.544Z",
+    "hash": "90646bfc0b5b2bf2642ab84aa07823aac82e2cf5a3ecf163a9412e645e479a27",
+    "build": 2178
   },
   {
     "name": "Motifs",
@@ -277,12 +277,13 @@
   },
   {
     "name": "Volcano",
+    "abbr": "Vol",
     "description": "Volcano plots.",
     "color": "#ff0000",
-    "version": "2.0.0",
+    "version": "2.0.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-18T02:07:11.782Z",
-    "hash": "d01f565be391a0227975fc865e62007e3b6112363d1699a722030f9d57c60a78",
-    "build": 8
+    "modified": "2026-10-18T20:38:29.553Z",
+    "hash": "fdf088abe1140d1ec2b750f97102be692290912b24341e7071e705d3c291c774",
+    "build": 10
   }
 ]

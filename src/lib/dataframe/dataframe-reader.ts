@@ -1,6 +1,6 @@
 import { range } from '@/lib/math/range'
 import { AnnotationDataFrame } from './annotation-dataframe'
-import { DEFAULT_COLUMN_INDEX_NAME } from './base-table'
+import { DEFAULT_COLUMN_NAMES } from './base-table'
 import { makeCell } from './cell'
 import { DataFrame } from './dataframe'
 
@@ -220,7 +220,7 @@ export class DataFrameReader {
       colNames.length > 0
         ? new DataFrame({
             data: colNames.map((v) => [v]),
-            columns: [DEFAULT_COLUMN_INDEX_NAME],
+            columns: [DEFAULT_COLUMN_NAMES],
           })
         : undefined
 

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { range } from '@/lib/math/range'
-
-import { DataIndex, Index, type IndexFromType, type Shape } from '.'
+import { Index, type IndexFromType, type Shape } from '.'
 
 import { cellStr } from './cell'
 
@@ -21,7 +19,7 @@ import type { IndexId, SeriesData } from './series-data'
 export const DEFAULT_SHEET_NAME = 'Sheet 1'
 //export const DEFAULT_TABLE_NAME = 'Table 1'
 
-export const DEFAULT_COLUMN_INDEX_NAME = 'Column Names'
+export const DEFAULT_COLUMN_NAMES = 'Column Names'
 
 // For specifying a location in the dataframe
 export type LocType = string | number | (number | string)[]
@@ -37,7 +35,7 @@ export type DataFrameInput =
 export interface IDataFrameOptions extends ISeriesOptions {
   data?: DataFrameInput
   columns?: IndexFromType | undefined
-  indexName?: string
+  //indexName?: string
 }
 
 export const NO_SHAPE: Shape = [-1, -1]
@@ -147,26 +145,6 @@ export abstract class BaseTable {
   ): BaseTable
 
   abstract get cols(): readonly BaseSeries<SeriesData>[]
-
-  colName(index: number): string {
-    return this.cols[index].name
-  }
-
-  /**
-   * Get the names of the columns as an index.
-   */
-  get columns(): Index<SeriesData> {
-    return new DataIndex(range(this.shape[1]).map((c) => this.colName(c)))
-  }
-
-  /**
-   * Get the names of the columns as an array of strings.
-   */
-  get colNames(): readonly string[] {
-    return this.columns.strs
-  }
-
-  abstract setColNames(index: IndexFromType, inplace: boolean): BaseTable
 
   abstract get shape(): Shape
 
@@ -286,11 +264,6 @@ function dfToStr(df: BaseTable, options: IDFToStrOpts = {}): string {
       .row(i)!
       .values.map((v) => cellStr(v, { dp }))
       .join(sep)
-  }
-
-  // add header if required
-  if (header) {
-    ret = [df.colNames.join(sep)].concat(ret)
   }
 
   return ret.join('\n')

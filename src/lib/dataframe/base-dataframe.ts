@@ -2,7 +2,7 @@
 
 import { rangeMap } from '@/lib/math/range'
 
-import { Index, type IndexFromType, type Shape } from '.'
+import { Index, type IndexFromType } from '.'
 
 import { cellStr } from './cell'
 
@@ -11,46 +11,42 @@ import {
   whereStrMatches,
   whereStrStartsWith,
 } from '../math/where'
-import { Annotations, ColAnnotations, DEFAULT_NAME } from './annotations'
 import { BaseTable, IDFToStrOpts } from './base-table'
 import { BaseSeries } from './series'
 import type { IndexId, SeriesData } from './series-data'
 
 export abstract class BaseDataFrame extends BaseTable {
-  private _shape: Shape
-  private _rowIndex: Annotations
-  private _colIndex: Annotations
-
-  constructor(
-    shape: Shape,
-    index: IndexFromType,
-    columns: IndexFromType,
-    opts: { name?: string } = {}
-  ) {
+  constructor(opts: { name?: string } = {}) {
     super(opts)
-
-    this._shape = shape
-    this._rowIndex = new Annotations(shape[0])
-    this._colIndex = new ColAnnotations(shape[1])
-    this._rowIndex.set(DEFAULT_NAME, index)
-    this._colIndex.set(DEFAULT_NAME, columns)
   }
 
   override get type(): string {
     return 'dataframe'
   }
 
-  override get shape(): Shape {
-    return this._shape
+  colName(index: number): string {
+    return this.cols[index].name
   }
+
+  /**
+   * Get the names of the columns as an index.
+   */
+  abstract get columns(): Index<SeriesData>
+
+  /**
+   * Get the names of the columns as an array of strings.
+   */
+  get colNames(): readonly string[] {
+    return this.columns.strs
+  }
+
+  abstract setColNames(index: IndexFromType, inplace: boolean): BaseTable
 
   abstract setIndex(index: IndexFromType, inplace: boolean): BaseDataFrame
 
   abstract setIndexName(name: string, inplace: boolean): BaseDataFrame
 
-  get index(): Index<SeriesData> {
-    return this._rowIndex.get('index')
-  }
+  abstract get index(): Index<SeriesData>
 
   rowName(index: number): string {
     return cellStr(this.index.at(index))
@@ -84,16 +80,6 @@ function dfToStr(df: BaseDataFrame, options: IDFToStrOpts = {}): string {
       ...df.row(i)!.values.map((v) => cellStr(v, { dp })),
     ].join(sep)
   }
-  // } else {
-  //   ret = rangeMap(
-  //     ri =>
-  //       df
-  //         .row(ri)!
-  //         .values.map(v => cellStr(v))
-  //         .join(sep),
-  //     df.shape[0]
-  //   )
-  // }
 
   // add header if required
   if (header) {
@@ -104,7 +90,8 @@ function dfToStr(df: BaseDataFrame, options: IDFToStrOpts = {}): string {
 }
 
 /**
- * Finds the index of a row by
+ * Finds the index of a row by.
+ *
  * @param df
  * @param row
  * @param lc
@@ -115,44 +102,11 @@ export function findRows(
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {
-  //console.log('find row', row, df.shape, caseInsensitive)
   if (typeof row === 'number') {
     return row > -1 && row < df.shape[0] ? [row] : []
   }
 
-  return df.index.indexOf(row.toString(), opts) //    whereStartsWith(df.index.strs, row.toString(), lc)
-
-  // let s = row.toString()
-
-  // if (lc) {
-  //   s = s.toLowerCase()
-  // }
-
-  // return where(df.rowNames, x =>
-  //   lc ? x.toString().toLowerCase().startsWith(s) : x.toString().startsWith(s)
-  // )
-
-  // const ret: number[] = []
-
-  // let s = row.toString()
-
-  // if (lc) {
-  //   s = s.toLowerCase()
-
-  //   for (const [ci, c] of df.rowNames.entries()) {
-  //     if (c.toLowerCase().startsWith(s)) {
-  //       ret.push(ci)
-  //     }
-  //   }
-  // } else {
-  //   for (const [ci, c] of df.rowNames.entries()) {
-  //     if (c.startsWith(s)) {
-  //       ret.push(ci)
-  //     }
-  //   }
-  // }
-
-  // return ret
+  return df.index.indexOf(row.toString(), opts)
 }
 
 export function findCols(
@@ -194,38 +148,6 @@ export function findInSeries(
   }
 
   return whereStrStartsWith(series.strs, row.toString(), opts)
-
-  // let s = row.toString()
-
-  // if (lc) {
-  //   s = s.toLowerCase()
-  // }
-
-  // return where(series.values, x =>
-  //   lc ? x.toString().toLowerCase().startsWith(s) : x.toString().startsWith(s)
-  // )
-
-  // const ret: number[] = []
-
-  // let s = row.toString()
-
-  // if (lc) {
-  //   s = s.toLowerCase()
-
-  //   for (const [ci, c] of series.values.entries()) {
-  //     if (c.toString().toLowerCase().startsWith(s)) {
-  //       ret.push(ci)
-  //     }
-  //   }
-  // } else {
-  //   for (const [ci, c] of series.values.entries()) {
-  //     if (c.toString().startsWith(s)) {
-  //       ret.push(ci)
-  //     }
-  //   }
-  // }
-
-  // return ret
 }
 
 export function findRow(

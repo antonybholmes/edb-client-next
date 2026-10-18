@@ -21,8 +21,9 @@ export class DataFrame extends BaseDataFrame {
   _columns: Index<SeriesData>
 
   constructor(options: IDataFrameOptions = {}) {
-    const { name = '', data = [], index, indexName, columns } = options
-    super(shape(data), index, columns, { name })
+    const { name = '', data = [], index, columns } = options
+
+    super({ name })
 
     const isDf = data instanceof BaseDataFrame
 
@@ -52,7 +53,7 @@ export class DataFrame extends BaseDataFrame {
     //   throw new Error('index length does not match the number of rows')
     // }
 
-    this._index = makeIndex(_index, this._data.length, indexName)
+    this._index = makeIndex(_index, this._data.length)
 
     // Allow support for tables with no rows
     this._columns = makeColumns(
@@ -123,7 +124,7 @@ export class DataFrame extends BaseDataFrame {
       throw new Error(`${c} is an invalid column`)
     }
 
-    const v = this._data.map((row) => row[idx]!) //this.colValues(idx)
+    const v = this._data.map((row) => row[idx]!)
 
     return new DataSeries(v, {
       name: this._columns.at(idx) as string,
@@ -246,10 +247,6 @@ export class DataFrame extends BaseDataFrame {
   override get index(): Index<SeriesData> {
     return this._index
   }
-
-  // override get columns(): Index {
-  //   return this._columns
-  // }
 
   override get columns(): Index<SeriesData> {
     return this._columns

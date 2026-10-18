@@ -266,7 +266,7 @@ export function makeIndex(
   index: IndexFromType | null | undefined,
   length: number,
   name?: string
-) {
+): Index<SeriesData> {
   if (!index) {
     return new NumInfIndex(length)
   }

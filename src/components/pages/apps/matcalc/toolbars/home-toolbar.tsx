@@ -124,7 +124,10 @@ export function HomeToolbar() {
             title="Create Volcano Plot from Table"
             onClick={() => {
               openCustomDialog(VolcanoDialog, {
-                callback: (plot) => _addPlots([plot]),
+                callback: (plot) => {
+                  console.log('Volcano dialog returned plot', plot)
+                  _addPlots([plot])
+                },
               })
 
               // openMatcalcDialog({
