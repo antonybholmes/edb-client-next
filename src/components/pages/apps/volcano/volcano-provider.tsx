@@ -145,7 +145,6 @@ export function VolcanoProvider({
       value={{
         displayProps: plot?.props,
         plot,
-
         highlightedLabels,
         displayLabels,
         setLabels,
