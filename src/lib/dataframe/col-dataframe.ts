@@ -21,7 +21,6 @@ import {
   NumInfIndex,
   Shape,
   shapesEqual,
-  StringIndex,
   type IndexFromType,
 } from './index'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
@@ -65,12 +64,6 @@ export class ColDataFrame extends BaseDataFrame {
     if (isSeries) {
       // array of series to be made column wise
 
-      if (!columns) {
-        columns = new StringIndex(
-          data.map((c: unknown) => (c as BaseSeries<SeriesData>).name)
-        )
-      }
-
       this._data = (data as BaseSeries<SeriesData>[]).map(
         (c: BaseSeries<SeriesData>) => c.index
       )
@@ -102,9 +95,24 @@ export class ColDataFrame extends BaseDataFrame {
     }
 
     if (index) {
+      console.log('Using provided index:', index)
       this._index = index instanceof Index ? index : new DataIndex(index)
     } else {
       this._index = new NumInfIndex(this._data[0]!.length)
+    }
+
+    if (columns) {
+      for (const [i, colName] of columns.entries()) {
+        if (this._data[i]) {
+          this._data[i]!.name = colName.toString()
+        }
+      }
+    }
+
+    console.log(this._data, this._index)
+
+    if (this._index.length !== this._data[0]!.length) {
+      throw new Error('Index length must match the number of rows in the data')
     }
   }
 
@@ -271,10 +279,7 @@ export class ColDataFrame extends BaseDataFrame {
   }
 
   override get shape(): Shape {
-    return [
-      this._data[0]!.length,
-      this._data.length, // ._data.length > 0 ? this._data[0]!.length : 0,
-    ]
+    return [this._data[0]!.length, this._data.length]
   }
 
   override get cols(): BaseSeries<SeriesData>[] {
@@ -322,7 +327,7 @@ export class ColDataFrame extends BaseDataFrame {
       const d = new Array(this._data.length) as SeriesData[]
 
       for (let col = 0; col < this._data.length; col++) {
-        d[col] = this._data[col]![row]!
+        d[col] = this._data[col].at(row)
       }
 
       data[row] = d
@@ -351,7 +356,7 @@ export class ColDataFrame extends BaseDataFrame {
       const d = new Array(this.shape[1]) as T[]
 
       for (let col = 0; col < this.shape[1]; col++) {
-        d[col] = f(this._data[col]![row]!, row, col)
+        d[col] = f(this._data[col].at(row), row, col)
       }
 
       ret[row] = d
@@ -426,21 +431,22 @@ export class ColDataFrame extends BaseDataFrame {
     const rows = this.shape[0]
     const cols = this.shape[1]
 
-    const data = new Array(cols) as SeriesData[][]
+    const data = new Array(rows) as Index<SeriesData>[]
 
-    for (let col = 0; col < cols; col++) {
-      const d = new Array(rows) as SeriesData[]
+    for (let row = 0; row < rows; row++) {
+      const d = new Array(cols) as SeriesData[]
 
-      for (let row = 0; row < rows; row++) {
-        d[row] = this._data[col]![row]!
+      for (let col = 0; col < cols; col++) {
+        d[col] = this._data[col]!.at(row)
       }
 
-      data[col] = d
+      data[row] = new DataIndex(d, { name: this.rowName(row) })
     }
 
     const ret = new ColDataFrame({
       name: this.name,
       data,
+      index: this.columns,
     })
 
     return ret

@@ -45,7 +45,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
 
     super({ name })
 
-    this._data = new ColDataFrame(options) // new ColFrame(options) // DataFrame(options)
+    this._data = new ColDataFrame(options)
 
     if (rowObs) {
       this._rowObs = rowObs

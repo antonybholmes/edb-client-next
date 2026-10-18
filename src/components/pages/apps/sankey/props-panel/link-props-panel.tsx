@@ -1,6 +1,5 @@
 import { type IClusterGroup } from '@/lib/cluster-group'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
@@ -37,9 +36,13 @@ function LinkItem({ link, index }: { link: IOutputLink; index: number }) {
         className={SIMPLE_COLOR_EXT_CLS}
         title="Set color"
       />
-      <VCenterRow className="overflow-hidden grow gap-x-2">
-        {link.source.label} <MoveRight size={16} /> {link.target.label}
-      </VCenterRow>
+      <div className="overflow-hidden grid grid-cols-5 grow">
+        <span className="col-span-2 text-right">{link.source.label}</span>
+        <span className="flex justify-center">
+          <MoveRight size={16} />
+        </span>
+        <span className="col-span-2 text-left">{link.target.label}</span>
+      </div>
     </SortableItem>
   )
 }

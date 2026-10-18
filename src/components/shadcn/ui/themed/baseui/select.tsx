@@ -35,7 +35,7 @@ export const triggerVariants = cva(
     variants: {
       variant: {
         default: cn(
-          'bg-background pl-2 pr-1 stroke-foreground border border-border/50 hover:border-app-theme/50',
+          'bg-background pl-1.5 pr-0.5 stroke-foreground border border-border/50 hover:border-app-theme/50',
           'data-[popup-open]:border-app-theme/50 placeholder:text-foreground/50 rounded-theme min-h-8'
         ),
         toolbar: cn(
@@ -104,7 +104,6 @@ export function SelectTrigger({
       className={triggerVariants({
         variant,
         w,
-        //h,
         className: cn('shrink-0', className),
       })}
       title={title}

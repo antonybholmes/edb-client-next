@@ -149,9 +149,11 @@ export class DataFrameReader {
       colNames = tokens.slice(this._indexCols)
     }
 
-    const index: string[][] = []
+    const indexData: string[][] = []
     const data: SeriesData[][] = []
     const defaultCellValue = makeCell('', this._keepDefaultNA)
+
+    console.log('indexcols', this._indexCols)
 
     let indexNames =
       this._colNames > 0
@@ -174,18 +176,8 @@ export class DataFrameReader {
 
         if (tokens.length > 0) {
           if (this._indexCols > 0) {
-            index.push(tokens.slice(0, this._indexCols))
+            indexData.push(tokens.slice(0, this._indexCols))
           }
-
-          // tokens.slice(this._indexCols).forEach((token, ci) => {
-          //   // data has to be col centric so add new col first
-          //   // time we process a row
-          //   if (ci === data.length) {
-          //     data.push([])
-          //   }
-
-          //   data[ci].push(makeCell(token))
-          // })
 
           // each row must be the have the same number of rows
           const cells = vfill(defaultCellValue, columns) //Array(columns).fill(defaultCellValue) --- IGNORE ---
@@ -204,9 +196,9 @@ export class DataFrameReader {
     }
 
     const rowIndex =
-      index.length > 0
+      indexData.length > 0
         ? new DataFrame({
-            data: index,
+            data: indexData,
             columns:
               indexNames.length > 0
                 ? indexNames
@@ -224,8 +216,17 @@ export class DataFrameReader {
           })
         : undefined
 
+    // Extract the first column of the index data to use as the
+    // index values for the annotation dataframe. If there is no
+    // index column, the index values will be undefined and a
+    // default index will be used instead.
+    const indexValues =
+      indexData.length > 0 ? indexData.map((row) => row[0]!) : undefined
+
     const ret = new AnnotationDataFrame({
       data,
+      columns: colNames,
+      index: indexValues,
       rowObs: rowIndex,
       colVars: colIndex,
     })

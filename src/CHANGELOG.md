@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined coldataframe.
 - Col-dataframe now properly uses columns of data rather than a 2D array.
 - Volcano now uses crosshair.
 

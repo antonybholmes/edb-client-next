@@ -46,10 +46,6 @@ export function FillButton({
     return null
   }
 
-  // if (!ariaLabel) {
-  //   ariaLabel = tooltip
-  // }
-
   if (!ariaLabel) {
     ariaLabel = 'Choose color'
   }

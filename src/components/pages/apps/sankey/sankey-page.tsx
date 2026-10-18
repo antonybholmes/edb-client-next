@@ -62,7 +62,6 @@ import { textToLines } from '@/lib/text/lines'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'
 import { SankeyProvider } from './sankey-provider'
-import { useSankeySettings } from './sankey-settings-store'
 import { SankeySvg } from './sankey-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
@@ -72,8 +71,6 @@ export function SankeyPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const { open: openDialog } = useDialogs()
-
-  const { settings, updateSettings } = useSankeySettings()
 
   const { settings: edbSettings } = useEdbSettings()
 
@@ -90,22 +87,6 @@ export function SankeyPage() {
     addDFSize()
   }, [addDFSize])
 
-  // useEffect(() => {
-  //   openFile('Motifs')
-  // }, [openFile])
-
-  // useEffect(() => {
-  //   if (dfTab?.id) {
-  //     //goto({ file, sheet: dfTab.id }) //, 'sheet')
-  //   }
-  // }, [dfTab?.id])
-
-  // useEffect(() => {
-  //   if (sheet.id) {
-  //     setDFTab(sheet.id)
-  //   }
-  // }, [sheet.id, setDFTab])
-
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
@@ -118,32 +99,6 @@ export function SankeyPage() {
       },
     ])
   }, [setToolbarTabs])
-
-  // // sync local query state when the global search query changes
-  // useEffect(() => {
-  //   setQ(search.query)
-  // }, [search.query])
-
-  // // periodically trigger a search when the debounced query changes
-  // useEffect(() => {
-  //   updateSearch(
-  //     produce(search, draft => {
-  //       draft.query = debouncedQ
-  //     })
-  //   )
-  // }, [debouncedQ])
-
-  // useHydratedUpdateEffect(
-  //   () => {
-  //     updateSettings(
-  //       produce(settings, (draft) => {
-  //         draft.scale = zoom
-  //       })
-  //     )
-  //   },
-  //   [zoom],
-  //   hasHydrated
-  // )
 
   const fileMenuTabs: ITab[] = [
     {
