@@ -2,7 +2,7 @@ import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import type {
   HeatmapMode,
   IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+} from '@/components/pages/apps/heatmap/heatmap-settings'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import {
   AccordionContent,
@@ -22,8 +22,8 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { Circle, Square } from 'lucide-react'
-import { useHistory } from '../../../history/history-provider/history-provider'
-import { IHeatMapPlot } from '../../../history/history-provider/history-types'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { IHeatMapPlot } from '../../matcalc/history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export interface PlotSettingsPanelProps {

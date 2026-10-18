@@ -19,7 +19,7 @@ import {
   pearsond as pearsonDist,
 } from '@/lib/math/distance'
 
-import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { HelpButton } from '@/help/help-button'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -48,13 +48,13 @@ import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import {
   useCurrentGroups,
   useCurrentSheets,
-} from '../../history/history-provider/history-contexts'
-import { newHeatMapPlot } from '../../history/history-provider/history-factories'
+} from '../matcalc/history/history-provider/history-contexts'
+import { newHeatMapPlot } from '../matcalc/history/history-provider/history-factories'
 import {
   DataFrameType,
   HistoryPlot,
-} from '../../history/history-provider/history-types'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
+} from '../matcalc/history/history-provider/history-types'
+import { useMatcalcSettings } from '../matcalc/settings/matcalc-settings'
 
 export const MAX_HEATMAP_DIM = 10000
 
@@ -81,12 +81,9 @@ export function HeatMapDialog({
   isClusterMap = false,
   onResponse,
 }: IProps) {
-  //const file = useFile()
-
   const { groupRows } = useCurrentGroups()
   const { sheets } = useCurrentSheets()
 
-  //const [topRows, setTopRows] = useState(1000)
   const [error, setError] = useState('')
 
   let df = (sheet ?? sheets[0]) as BaseDataFrame
@@ -153,9 +150,7 @@ export function HeatMapDialog({
           break
         default:
           // stdev
-          //dfStdev(df, historyDispatch)
 
-          //df = dfStdevFilter(df, historyDispatch, settings.heatmap.topRows)
           dfToPlot = stdevFilter(
             dfToPlot,
             settings.heatmap.filters.rows.top
@@ -209,6 +204,8 @@ export function HeatMapDialog({
       settings.heatmap.transforms.apply &&
       settings.heatmap.transforms.rowZscore
     ) {
+      console.log('Applying row Z-score transform', dfToPlot)
+
       dfToPlot = rowZScore(dfToPlot!) //dfRowZScore(df, historyDispatch)
       actions.push('Row z-score')
     }

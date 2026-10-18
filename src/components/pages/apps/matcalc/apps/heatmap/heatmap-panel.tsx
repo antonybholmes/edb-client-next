@@ -13,9 +13,9 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSVG } from '@/providers/svg-provider'
-import { useHeatmapContext } from './heatmap-provider'
-import { HeatmapPropsPanel } from './props-panel/heatmap-props-panel'
-import { HeatMapSvg } from './svg/heatmap-svg'
+import { useHeatmapContext } from '../../../heatmap/heatmap-provider'
+import { HeatmapPropsPanel } from '../../../heatmap/props-panel/heatmap-props-panel'
+import { HeatMapSvg } from '../../../heatmap/svg/heatmap-svg'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 

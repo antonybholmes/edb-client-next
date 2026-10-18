@@ -1,4 +1,4 @@
-import type { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+import type { IHeatMapSettings } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
@@ -11,7 +11,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { IHeatMapPlot } from '../../history/history-provider/history-types'
+import { IHeatMapPlot } from '../matcalc/history/history-provider/history-types'
 
 export interface HeatmapPropsContextType {
   displayProps?: IHeatMapSettings | undefined

@@ -1,4 +1,10 @@
-import { Index, makeIndex, type IIndexOptions, type IndexFromType } from '.'
+import {
+  DataIndex,
+  Index,
+  makeIndex,
+  type IIndexOptions,
+  type IndexFromType,
+} from '.'
 import { BaseIndex } from './base-index'
 import type { SeriesData } from './series-data'
 
@@ -101,29 +107,14 @@ export class DataSeries<T extends SeriesData> extends BaseSeries<T> {
 
 export const EMPTY_SERIES = new DataSeries([])
 
-// export class InfSeries extends BaseSeries {
+export function indexToSeries(
+  index: BaseIndex<SeriesData>
+): DataSeries<SeriesData> {
+  return new DataSeries(index.values, { name: index.name })
+}
 
-//   protected _defaultValue: SeriesData
-//   protected _length: number
-
-//   constructor(length: number = 1000000, defaultValue: SeriesData = NaN) {
-//     super()
-//     this._defaultValue = defaultValue
-//     this._length = length
-//     this
-//   }
-
-//   get defaultValue() {
-//     return this._defaultValue
-//   }
-
-//   setDefaultValue(v: SeriesData): BaseSeries {
-//     this._defaultValue = v
-
-//     return this
-//   }
-
-//   override get length(): number {
-//     return this._length
-//   }
-// }
+export function seriesToIndex(
+  series: BaseSeries<SeriesData>
+): Index<SeriesData> {
+  return new DataIndex(series.values, { name: series.name })
+}

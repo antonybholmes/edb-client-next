@@ -1,4 +1,5 @@
 import { FontPopover } from '@/components/plot/font/font-popover'
+import type { TopBottomPos } from '@/components/plot/svg-props'
 import {
   AccordionContent,
   AccordionItem,
@@ -9,31 +10,29 @@ import {
   SideRadioGroupItem,
 } from '@/components/shadcn/ui/themed/baseui/radio-group'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import type { LeftRightPos } from '@/components/side'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
-export function RowLabelsSettingsPanel() {
+export function ColLabelsSettingsPanel() {
   const { displayProps, plot } = useHeatmapContext()
   const { updatePlot } = useHistory()
-
   return (
-    <AccordionItem value="row-labels">
+    <AccordionItem value="column-labels">
       <AccordionTrigger
         rightChildren={
           <>
             {/* <ColorPickerButton
               align="end"
-              color={displayProps.rowLabels.font.color}
-              disabled={!displayProps.rowLabels.font.show}
+              color={displayProps.colLabels.font.color}
+              disabled={!displayProps.colLabels.font.show}
               onColorChange={v =>
                 updatePlot(
                   produce(plot, draft => {
-                    draft.props.rowLabels.font.color = v
+                    draft.props.colLabels.font.color = v
                   }),
                   { file: plotAddr }
                 )
@@ -41,13 +40,13 @@ export function RowLabelsSettingsPanel() {
               className={SIMPLE_COLOR_EXT_CLS}
               title="Change text color"
             />
-
             <Switch
-              checked={displayProps.rowLabels.font.show}
+              title={TEXT_SHOW}
+              checked={displayProps.colLabels.font.show}
               onCheckedChange={v => {
                 updatePlot(
                   produce(plot, draft => {
-                    draft.props.rowLabels.font.show = v
+                    draft.props.colLabels.font.show = v
                   }),
                   { file: plotAddr }
                 )
@@ -58,12 +57,12 @@ export function RowLabelsSettingsPanel() {
               fonts={[
                 {
                   title: 'Font',
-                  textProps: displayProps.labels.row,
+                  textProps: displayProps.labels.col,
                   update: (f) => {
                     updatePlot(
                       produce(plot, (draft) => {
-                        draft.props.labels.row.font = f.font
-                        draft.props.labels.row.show = f.show
+                        draft.props.labels.col.font = f.font
+                        draft.props.labels.col.show = f.show
                       })
                     )
                   },
@@ -73,49 +72,32 @@ export function RowLabelsSettingsPanel() {
           </>
         }
       >
-        Row Labels
+        Column Labels
       </AccordionTrigger>
       <AccordionContent>
-        <CheckPropRow
-          title="Metadata"
-          checked={displayProps.labels.row.showMetadata}
-          onCheckedChange={(v) => {
-            updatePlot(
-              produce(plot, (draft) => {
-                draft.props.labels.row.showMetadata = v
-              })
-            )
-          }}
-        />
-
         <PropRow title="Position">
           <RadioGroup
-            value={displayProps.labels.row.position}
-            disabled={!displayProps.labels.row.show}
+            value={displayProps.labels.col.position}
+            disabled={!displayProps.labels.col.show}
             onValueChange={(v) =>
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.labels.row.position = v as LeftRightPos
+                  draft.props.labels.col.position = v as TopBottomPos
                 })
               )
             }
             className="flex flex-row justify-start gap-x-1"
           >
-            {/* <SideRadioGroupItem
-                      value="Off"
-                      currentValue={displayProps.rowLabels.position}
-                      className="w-5"
-                    /> */}
             <SideRadioGroupItem
-              disabled={!displayProps.labels.row.show}
-              value="left"
-              currentValue={displayProps.labels.row.position}
+              disabled={!displayProps.labels.col.show}
+              value="top"
+              currentValue={displayProps.labels.col.position}
               className="w-5.5"
             />
             <SideRadioGroupItem
-              disabled={!displayProps.labels.row.show}
-              value="right"
-              currentValue={displayProps.labels.row.position}
+              disabled={!displayProps.labels.col.show}
+              value="bottom"
+              currentValue={displayProps.labels.col.position}
               className="w-5.5"
             />
           </RadioGroup>
@@ -123,21 +105,34 @@ export function RowLabelsSettingsPanel() {
 
         <PropRow title="Width">
           <NumericalInput
-            id="row-label-size"
-            value={displayProps.labels.row.width}
-            disabled={!displayProps.labels.row.show}
+            id="col-label-size"
+            value={displayProps.labels.col.width}
+            disabled={!displayProps.labels.col.show}
             limit={[1, 200]}
-            placeholder="Row label size..."
+            placeholder="Column label size..."
             className="rounded-theme"
             onNumChanged={(v) => {
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.labels.row.width = v
+                  draft.props.labels.col.width = v
                 })
               )
             }}
           />
         </PropRow>
+
+        <CheckPropRow
+          title="Color By Group"
+          disabled={!displayProps.labels.col.show}
+          checked={displayProps.labels.col.isColored}
+          onCheckedChange={(v) =>
+            updatePlot(
+              produce(plot, (draft) => {
+                draft.props.labels.col.isColored = v
+              })
+            )
+          }
+        />
       </AccordionContent>
     </AccordionItem>
   )

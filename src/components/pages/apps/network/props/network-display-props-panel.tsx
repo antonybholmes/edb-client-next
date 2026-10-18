@@ -25,7 +25,7 @@ import {
 } from '@/themed/baseui/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
+import { RadiusScaleModeSelectList } from '../../heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import APP_INFO from '../manifest.json'
 import { POSITIONS, useNetworkSettings } from '../network-settings'

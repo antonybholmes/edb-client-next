@@ -268,12 +268,16 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
     const df = this._data.iloc({ rows, cols }) as BaseDataFrame
 
+    console.log('hmm', df)
+
     const ret: AnnotationDataFrame = new AnnotationDataFrame({
       name: this.name,
       data: df.cols,
-      //columns: df.columns,
-      //index: df.index,
     })
+
+    console.log('xxx', df.cols)
+
+    console.log('plop', ret)
 
     // both are row oriented so we slice col meta data the same way as rows and row meta data the same way as rows
     ret._rowObs = this._rowObs.iloc({ rows }) as BaseDataFrame

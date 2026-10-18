@@ -12,7 +12,7 @@ import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { produce } from 'immer'
 
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColTreeSettingsPanel() {

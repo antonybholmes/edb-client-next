@@ -12,7 +12,7 @@ import { produce } from 'immer'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function CellSettingsPanel() {

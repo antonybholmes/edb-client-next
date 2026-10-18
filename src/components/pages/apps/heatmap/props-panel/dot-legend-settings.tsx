@@ -9,7 +9,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { produce } from 'immer'
 
 import { PropRow } from '@/components/dialogs/prop-row'
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 import { RadiusScaleModeSelectList } from './radius-scale-mode-selectlist'
 

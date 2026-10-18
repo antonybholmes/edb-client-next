@@ -15,12 +15,12 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
-import { ColorMapMenu } from '../../../color-map-menu'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
 
 import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColormapSettingsPanel() {

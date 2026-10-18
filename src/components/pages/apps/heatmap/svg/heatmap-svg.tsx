@@ -6,7 +6,7 @@ import { type IClusterFrame } from '@/lib/math/hcluster'
 import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+} from '@/components/pages/apps/heatmap/heatmap-settings'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
@@ -24,7 +24,7 @@ import type { IMarginProps } from '@/components/plot/svg-props'
 import { getColorMapFromCmap } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { sum } from '@/lib/math/sum'
-import { SvgTitle } from '../../../../../../plot/svg-title'
+import { SvgTitle } from '../../../../plot/svg-title'
 import { ActionListSvg } from '../action-list-svg'
 import { useHeatmapContext } from '../heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from '../legend-svg'

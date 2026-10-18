@@ -9,6 +9,7 @@ import ANNOTATE_APP from './components/pages/apps/genomic/annotate/manifest.json
 import DNA_APP from './components/pages/apps/genomic/dna/manifest.json'
 import OVERLAP_APP from './components/pages/apps/genomic/overlap/manifest.json'
 import REV_COMP_APP from './components/pages/apps/genomic/rev-comp/manifest.json'
+import HEATMAP_APP from './components/pages/apps/heatmap/manifest.json'
 import HUBS_APP from './components/pages/apps/hubs/manifest.json'
 import MATCALC_APP from './components/pages/apps/matcalc/manifest.json'
 import NETWORK_APP from './components/pages/apps/network/manifest.json'
@@ -42,6 +43,11 @@ export const HEADER_LINKS: IHeaderLink[] = [
       {
         ...MATCALC_APP,
         slug: '/apps/matcalc',
+        mode: 'prod',
+      },
+      {
+        ...HEATMAP_APP,
+        slug: '/apps/heatmap',
         mode: 'prod',
       },
       {

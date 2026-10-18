@@ -11,7 +11,7 @@ import { PropRow } from '@/components/dialogs/prop-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ITEM_REGEX } from '@/consts'
 import { numSort } from '@/lib/math/math'
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function GapSettingsPanel() {

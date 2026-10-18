@@ -11,7 +11,7 @@ import { sum } from '@/lib/math/sum'
 import { capitalCase } from '@/lib/text/capital-case'
 
 import { ReactElement } from 'react'
-import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
+import { nodeRadiusFunc } from '../../heatmap/svg/cell-svg'
 import {
   INetworkSettings,
   useNetwork,

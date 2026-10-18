@@ -3,7 +3,7 @@ import {
   DOT_PLOT_PERCENT_TABLE,
   type DotPlotMode,
   type IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+} from '@/components/pages/apps/heatmap/heatmap-settings'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
@@ -48,10 +48,10 @@ import { Group, PencilRuler } from 'lucide-react'
 import {
   useCurrentGroups,
   useCurrentSheets,
-} from '../../history/history-provider/history-contexts'
-import { newHeatMapPlot } from '../../history/history-provider/history-factories'
-import { HistoryPlot } from '../../history/history-provider/history-types'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
+} from '../matcalc/history/history-provider/history-contexts'
+import { newHeatMapPlot } from '../matcalc/history/history-provider/history-factories'
+import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
+import { useMatcalcSettings } from '../matcalc/settings/matcalc-settings'
 import { MAX_CLUSTER_ITEMS, MAX_HEATMAP_DIM } from './heatmap-dialog'
 
 const TABS = [

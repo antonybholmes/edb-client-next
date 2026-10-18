@@ -153,8 +153,6 @@ export class DataFrameReader {
     const data: SeriesData[][] = []
     const defaultCellValue = makeCell('', this._keepDefaultNA)
 
-    console.log('indexcols', this._indexCols)
-
     let indexNames =
       this._colNames > 0
         ? this._parseLine(lines[this._skipRows + this._colNames - 1]!).slice(

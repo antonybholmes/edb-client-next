@@ -1,7 +1,7 @@
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import type { IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
 
-import { useHeatmapContext } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-provider'
+import { useHeatmapContext } from '@/components/pages/apps/heatmap/heatmap-provider'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_WHITE } from '@/lib/color/color'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'

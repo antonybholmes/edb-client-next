@@ -7,7 +7,7 @@ import { useState } from 'react'
 import {
   DEFAULT_HEATMAP_PROPS,
   type IHeatMapSettings,
-} from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+} from '@/components/pages/apps/heatmap/heatmap-settings'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
 
@@ -17,8 +17,8 @@ import { produce } from 'immer'
 import { CollapseIcon } from '@/components/icons/collapse-icon'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
-import { useHistory } from '../../../history/history-provider/history-provider'
-import APP_INFO from '../../../manifest.json'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import APP_INFO from '../../matcalc/manifest.json'
 import { useHeatmapContext } from '../heatmap-provider'
 import { CellSettingsPanel } from './cell-settings'
 import { ColGroupsSettingsPanel } from './col-group-settings'

@@ -6,7 +6,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { nodeRadiusFunc } from '@/components/pages/apps/matcalc/apps/heatmap/svg/cell-svg'
+import { nodeRadiusFunc } from '@/components/pages/apps/heatmap/svg/cell-svg'
 import { useAxis } from '@/components/plot/axes/axes-store'
 import { useGseaBubbleContext } from '../gsea-bubble-provider'
 

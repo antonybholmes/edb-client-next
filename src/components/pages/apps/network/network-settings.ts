@@ -14,7 +14,7 @@ import { useCallback } from 'react'
 import { deepMerge } from '@/lib/deepmerge'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
+import { RadiusScaleMode } from '../heatmap/svg/cell-svg'
 
 const SETTINGS_KEY = `${config.appId}:app:network:v16`
 

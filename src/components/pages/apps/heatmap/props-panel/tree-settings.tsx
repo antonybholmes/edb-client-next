@@ -14,7 +14,7 @@ import { produce } from 'immer'
 
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { IClusterFrame } from '@/lib/math/hcluster'
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function TreeSettingsPanel() {

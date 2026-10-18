@@ -1,4 +1,4 @@
-import { useHeatmapContext } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-provider'
+import { useHeatmapContext } from '@/components/pages/apps/heatmap/heatmap-provider'
 import type { LeftRightPos } from '@/components/side'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'

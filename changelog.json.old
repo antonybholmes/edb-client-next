@@ -3454,6 +3454,10 @@
         {
           "msg": "Col-dataframe now properly uses columns of data rather than a 2D array",
           "date": "2026-10-18T20:38:31.456Z"
+        },
+        {
+          "msg": "Refined coldataframe",
+          "date": "2026-10-18T22:42:49.236Z"
         }
       ]
     },

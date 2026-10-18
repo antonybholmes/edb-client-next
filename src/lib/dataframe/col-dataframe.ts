@@ -23,7 +23,12 @@ import {
   shapesEqual,
   type IndexFromType,
 } from './index'
-import { BaseSeries, DataSeries, type SeriesFromType } from './series'
+import {
+  BaseSeries,
+  DataSeries,
+  seriesToIndex,
+  type SeriesFromType,
+} from './series'
 import type { IndexId, SeriesData } from './series-data'
 
 /**
@@ -65,7 +70,7 @@ export class ColDataFrame extends BaseDataFrame {
       // array of series to be made column wise
 
       this._data = (data as BaseSeries<SeriesData>[]).map(
-        (c: BaseSeries<SeriesData>) => c.index
+        (s: BaseSeries<SeriesData>) => seriesToIndex(s)
       )
     } else if (isIndex) {
       // array of series to be made column wise
@@ -95,7 +100,6 @@ export class ColDataFrame extends BaseDataFrame {
     }
 
     if (index) {
-      console.log('Using provided index:', index)
       this._index = index instanceof Index ? index : new DataIndex(index)
     } else {
       this._index = new NumInfIndex(this._data[0]!.length)
@@ -108,8 +112,6 @@ export class ColDataFrame extends BaseDataFrame {
         }
       }
     }
-
-    console.log(this._data, this._index)
 
     if (this._index.length !== this._data[0]!.length) {
       throw new Error('Index length must match the number of rows in the data')
@@ -382,16 +384,20 @@ export class ColDataFrame extends BaseDataFrame {
       for (let j = 0; j < colIdx.length; j++) {
         const c = colIdx[j]!
 
-        d[j] = this._data[c]![r]!
+        d[j] = this._data[c]!.at(r)
       }
 
       data[i] = d
     }
 
+    console.log('iloc data:', data)
+
     const ret = new ColDataFrame({
       data,
       name: this.name,
     })
+
+    console.log('iloc ret:', ret)
 
     return ret
   }

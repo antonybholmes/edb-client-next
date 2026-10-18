@@ -1,4 +1,4 @@
-import { RadiusScaleMode } from '@/components/pages/apps/matcalc/apps/heatmap/svg/cell-svg'
+import { RadiusScaleMode } from '@/components/pages/apps/heatmap/svg/cell-svg'
 import { IDisplayAxis } from '@/components/pages/apps/volcano/volcano-plot-svg'
 import {
   ColorBarPos,

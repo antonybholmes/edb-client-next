@@ -13,7 +13,7 @@ import { min } from '@/lib/math/math'
 import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
-import { nodeRadiusFunc } from '../matcalc/apps/heatmap/svg/cell-svg'
+import { nodeRadiusFunc } from '../heatmap/svg/cell-svg'
 import {
   INetworkSettings,
   NodeViewMode,

@@ -11,7 +11,7 @@ import { produce } from 'immer'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
-import { useHistory } from '../../../history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColGroupsSettingsPanel() {

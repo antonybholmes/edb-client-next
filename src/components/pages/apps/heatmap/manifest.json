@@ -1,0 +1,10 @@
+{
+  "name": "Heatmap",
+  "description": "Heatmaps.",
+  "color": "#ff0000",
+  "version": "20.0.0",
+  "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
+  "modified": "2026-10-18T23:43:18.483Z",
+  "hash": "8055ebc3ee3522c7271a90db0bc7e25df7cbf9522a16564a8e23435f3dd8a9d7",
+  "build": 4
+}
