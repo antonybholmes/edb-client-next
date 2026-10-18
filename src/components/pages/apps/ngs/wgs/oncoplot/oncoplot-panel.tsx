@@ -131,23 +131,3 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
     </>
   )
 }
-
-//interface IOncoplotPanelWrapperProps extends IPlotState, IOncoplotPanelProps {}
-
-// export function OncoplotPanelWrapper({
-//   panelId,
-//   mutationFrame,
-//   clinicalTracks,
-//   displayProps,
-//   oncoProps,
-// }: IOncoplotPanelWrapperProps) {
-//   return (
-//     <PlotProvider
-//       mutationFrame={mutationFrame}
-//       clinicalTracks={clinicalTracks}
-//       displayProps={displayProps}
-//     >
-//       <OncoplotPanel panelId={panelId} oncoProps={oncoProps} />
-//     </PlotProvider>
-//   )
-// }

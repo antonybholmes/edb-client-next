@@ -27,8 +27,7 @@ export function SankeyPanel() {
 
   const { autoSave, saveAs } = useSVG()
 
-  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
-
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
 

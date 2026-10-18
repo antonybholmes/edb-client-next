@@ -3,7 +3,7 @@ import { useMemo, useRef } from 'react'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
 
-import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axes/svg-axis'
+import { AxisBottomSvg, AxisLeftSvg } from '../../../plot/axes/svg-axis'
 
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import {
@@ -24,7 +24,7 @@ import { makeUuid } from '@/lib/id'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
 import { useTooltip } from '@/providers/tooltip-provider'
-import { IVolcanoPlot } from '../../history/history-provider/history-types'
+import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings'
 
@@ -208,13 +208,13 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
   const renderId = useRef(makeUuid())
 
   const { axis: xax } = useAxis({
-    plotId: plot.id,
+    plotId: plot?.id ?? '',
     groupId: 'volcano',
     axisId: 'x',
   })
 
   const { axis: yax } = useAxis({
-    plotId: plot.id,
+    plotId: plot?.id ?? '',
     groupId: 'volcano',
     axisId: 'y',
   })
@@ -223,7 +223,9 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
 
   const { settings } = useVolcanoSettings()
 
-  const displayOptions: IVolcanoDisplayOptions = (plot! as IVolcanoPlot).props
+  const displayOptions: IVolcanoDisplayOptions = plot
+    ? (plot! as IVolcanoPlot).props
+    : DEFAULT_VOLCANO_PROPS
 
   const { showTooltip, hideTooltip } = useTooltip()
 
@@ -291,16 +293,17 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
 
   const points = useMemo(
     () =>
-      plot.volcano.entries.map((e, i) => ({
+      (plot?.volcano.entries ?? []).map((e, i) => ({
         x: e.log2foldChange,
         y: e.logpvalue,
       })),
-    [plot.volcano.entries]
+    [plot?.volcano.entries]
   )
 
   const { svg, width, height } = useMemo(() => {
-    //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
-    //const sizedata = size ? getNumCol(sheet, findCol(sheet, size)) : []
+    if (!plot || !xax || !yax) {
+      return { svg: null, width: 0, height: 0 }
+    }
 
     const innerWidth = axisLength(xax)
     const innerHeight = axisLength(yax)
@@ -310,8 +313,8 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
     // matching is case insensitive
     const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
 
-    const labelIdx = plot.volcano.entries
-      ?.map((v, vi) => ({ index: vi, value: v.id.toLowerCase() }))
+    const labelIdx = (plot?.volcano.entries ?? [])
+      .map((v, vi) => ({ index: vi, value: v.id.toLowerCase() }))
       .filter((v) => labelSet.has(v.value))
       .map((v) => v.index)
 

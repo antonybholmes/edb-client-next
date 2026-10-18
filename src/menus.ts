@@ -19,6 +19,7 @@ import ONCOPLOT_APP from './components/pages/apps/ngs/wgs/oncoplot/manifest.json
 import VARIANTS_APP from './components/pages/apps/ngs/wgs/variants/manifest.json'
 import SANKEY_APP from './components/pages/apps/sankey/manifest.json'
 import VENN_APP from './components/pages/apps/venn/manifest.json'
+import VOLCANO_APP from './components/pages/apps/volcano/manifest.json'
 
 export interface IAppHeaderLink {
   name: string
@@ -78,6 +79,11 @@ export const HEADER_LINKS: IHeaderLink[] = [
       {
         ...NETWORK_APP,
         slug: '/apps/network',
+        mode: 'prod',
+      },
+      {
+        ...VOLCANO_APP,
+        slug: '/apps/volcano',
         mode: 'prod',
       },
     ],

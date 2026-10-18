@@ -436,9 +436,7 @@ export function BioDrawPage() {
 export function BioDrawQueryPage() {
   return (
     <ClientLayout>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <BioDrawPage />
-      {/* </HistoryProvider> */}
     </ClientLayout>
   )
 }

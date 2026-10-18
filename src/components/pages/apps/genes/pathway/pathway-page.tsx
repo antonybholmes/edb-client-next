@@ -328,9 +328,7 @@ export function PathwayPage() {
 export function PathwayQueryPage() {
   return (
     <ClientLayout>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <PathwayPage />
-      {/* </HistoryProvider> */}
     </ClientLayout>
   )
 }

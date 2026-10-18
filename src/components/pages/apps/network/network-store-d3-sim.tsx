@@ -25,8 +25,8 @@ import {
   IRenderEdge,
   IRenderNode,
   useNetwork,
-} from './network-store'
-import { useUserData } from './network-user-data-store'
+} from './network'
+import { useUserData } from './network-user-data'
 
 type SimulationStatus = 'idle' | 'running' | 'finished'
 

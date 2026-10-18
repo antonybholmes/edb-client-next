@@ -13,18 +13,18 @@ import { useSVG } from '@/providers/svg-provider'
 import * as d3 from 'd3'
 import { gsap } from 'gsap'
 import { produce } from 'immer'
-import { useNetworkSettings } from '../network-settings'
 import {
   INode,
   IRenderEdge,
   IRenderNode,
   labelsInNodeIds,
   useNetwork,
-} from '../network-store'
+  useNetworkSettings,
+} from '../network-settings'
 
 import { max } from '@/lib/math/math'
 import { useNetworkD3Sim } from '../network-store-d3-sim'
-import { useUserData } from '../network-user-data-store'
+import { useUserData } from '../network-user-data'
 import { LegendSvg } from './legend-svg'
 
 export function NetworkD3SvgContent() {

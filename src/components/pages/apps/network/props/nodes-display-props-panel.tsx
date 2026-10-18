@@ -18,8 +18,8 @@ import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
 import { Broom, RotateCw, SearchCheck, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useNetwork } from '../network-store'
-import { useUserData } from '../network-user-data-store'
+import { useNetwork } from '../network'
+import { useUserData } from '../network-user-data'
 import { GroupItem } from './group-props-panel'
 
 export function NodesDisplayPropsPanel() {

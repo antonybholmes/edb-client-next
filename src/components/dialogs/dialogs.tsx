@@ -116,16 +116,6 @@ export interface IDialogCloser {
   close: () => void
 }
 
-//  interface IPayloadDialog<
-//   T extends keyof DialogTypeMap,
-// > extends IBasicDialog {
-//   type: T
-//   payload: DialogTypeMap[T]
-// }
-
-// export interface ISaveImageDialog extends IPayloadDialog<'save-image'> {}
-// export interface ISaveTxtDialog extends IPayloadDialog<save> {}
-
 interface IDialogStore {
   stack: Dialog[]
   open: (d: InputDialog) => IDialogCloser
@@ -137,13 +127,6 @@ interface IDialogStore {
   close: ApplyToDialog
   clear: () => void
 }
-
-// Helper to construct the correct dialog type
-// function updateDialogTime<T extends keyof DialogTypeMap>(
-//   dialog: Omit<IDialog<T>, 'time'>
-// ): IDialog<T> {
-//   return { ...dialog, time: Date.now() } as IDialog<T>
-// }
 
 export const useDialogStore = create<IDialogStore>((set) => {
   function openCustom<T>(

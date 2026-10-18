@@ -11,11 +11,11 @@ import { useVolcanoSettings } from './volcano-settings'
 import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
 import { range } from '@/lib/math/range'
-import { IVolcanoPlot } from '../../history/history-provider/history-types'
+import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
 
 export interface VolcanoPropsContextType {
-  displayProps: IVolcanoDisplayOptions
+  displayProps: IVolcanoDisplayOptions | null
   plot: IVolcanoPlot
 
   highlightedLabels: string[]
@@ -41,13 +41,13 @@ export function VolcanoProvider({
   plot,
   children,
 }: {
-  plot: IVolcanoPlot
+  plot: IVolcanoPlot | null
   children: ReactNode
 }) {
   const [manualLabels, setManualLabels] = useState<string[]>([])
 
-  const volcano = plot.volcano
-  const displayOptions = useMemo(() => plot.props, [plot.props])
+  const volcano = plot?.volcano
+  const displayOptions = useMemo(() => plot?.props, [plot?.props])
   const { settings } = useVolcanoSettings()
   const { addAxes } = useAxes()
 
@@ -88,52 +88,48 @@ export function VolcanoProvider({
 
   const highlightedLabels = useMemo(() => {
     const idx = new Set(
-      range(volcano.entries.length).filter((i) =>
+      range(volcano?.entries.length ?? 0).filter((i) =>
         getShouldLabel(
-          volcano.entries[i]!.log2foldChange,
-          volcano.entries[i]!.logpvalue
+          volcano?.entries[i]!.log2foldChange ?? 0,
+          volcano?.entries[i]!.logpvalue ?? 0
         )
       )
     )
 
-    const values = volcano.entries
-      .filter((_v, i) => idx.has(i))
-      .map((l) => l.id.toString())
-      .sort()
+    const values =
+      volcano?.entries
+        .filter((_v, i) => idx.has(i))
+        .map((l) => l.id.toString())
+        .sort() ?? []
 
     return values
-  }, [volcano.entries, displayOptions, thresholdLogP])
+  }, [volcano?.entries, displayOptions, thresholdLogP])
 
   useEffect(() => {
     const xax = createAxis({
       id: 'x',
-      title: displayOptions.axes.xaxis.name,
-      length: displayOptions.axes.xaxis.length,
-      autoDomain: displayOptions.axes.xaxis.domain,
+      title: displayOptions?.axes.xaxis.name,
+      length: displayOptions?.axes.xaxis.length,
+      autoDomain: displayOptions?.axes.xaxis.domain,
     })
 
     const yax = createAxis({
       id: 'y',
-      title: displayOptions.axes.yaxis.name,
+      title: displayOptions?.axes.yaxis.name,
       direction: 'y',
-      length: displayOptions.axes.yaxis.length,
-      autoDomain: displayOptions.axes.yaxis.domain,
+      length: displayOptions?.axes.yaxis.length,
+      autoDomain: displayOptions?.axes.yaxis.domain,
     })
 
     addAxes([
       {
-        plotId: plot.id,
+        plotId: plot?.id ?? '',
         groupId: 'volcano',
         axisIds: ['x', 'y'],
         axes: { x: xax, y: yax },
       },
     ])
-  }, [
-    displayOptions.axes.xaxis.length,
-    displayOptions.axes.xaxis.domain,
-    displayOptions.axes.yaxis.length,
-    displayOptions.axes.yaxis.domain,
-  ])
+  }, [displayOptions?.axes])
 
   const displayLabels = useMemo(
     () => (settings.labels.auto ? highlightedLabels : manualLabels),
@@ -147,7 +143,7 @@ export function VolcanoProvider({
   return (
     <VolcanoContext.Provider
       value={{
-        displayProps: plot.props,
+        displayProps: plot?.props,
         plot,
 
         highlightedLabels,

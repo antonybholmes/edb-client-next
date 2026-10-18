@@ -49,8 +49,8 @@ import { textToLines } from '@/lib/text/lines'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { MatcalcDialogsRoot } from '../matcalc/matcalc-dialogs'
+import { useNetwork } from './network'
 import { useNetworkSettings } from './network-settings'
-import { useNetwork } from './network-store'
 import { useNetworkD3Sim } from './network-store-d3-sim'
 import { NetworkPropsPanel } from './props/network-props-panel'
 import { NetworkD3Svg } from './svg/network-d3-svg'
@@ -82,22 +82,6 @@ export function NetworkPage() {
   useEffect(() => {
     addDFSize()
   }, [addDFSize])
-
-  // useEffect(() => {
-  //   openFile('Motifs')
-  // }, [openFile])
-
-  // useEffect(() => {
-  //   if (dfTab?.id) {
-  //     //goto({ file, sheet: dfTab.id }) //, 'sheet')
-  //   }
-  // }, [dfTab?.id])
-
-  // useEffect(() => {
-  //   if (sheet.id) {
-  //     setDFTab(sheet.id)
-  //   }
-  // }, [sheet.id, setDFTab])
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -286,19 +270,11 @@ export function NetworkPage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                {/* <RunningIndicator
-                  id="network"
-                  className="w-full p-4"
-                >
-                  <NetworkSvg />
-                </RunningIndicator> */}
-
                 <NetworkD3Svg />
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel
-              //className="flex flex-col text-sm"
               id="output"
               defaultSize="30%"
               minSize="0%"

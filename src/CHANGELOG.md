@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Volcano now has its own app.
 - Refined volcano ui.
 - Refining dataframe api for consistency and transition to better version of annotation dataframe.
 - Added types to indexes and series.

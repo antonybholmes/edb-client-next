@@ -9,14 +9,14 @@ import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
+import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import { useCurrentSheets } from '../../history/history-provider/history-contexts'
-import { newVolcanoPlot } from '../../history/history-provider/history-factories'
-import { HistoryPlot } from '../../history/history-provider/history-types'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
+import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
+import { newVolcanoPlot } from '../matcalc/history/history-provider/history-factories'
+import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
 import { useVolcanoSettings } from './volcano-settings'
 
 const MAX_COLS = 10
@@ -61,19 +61,16 @@ function findPValueCol(df: BaseDataFrame | null) {
 
 export interface IProps extends IModalProps<HistoryPlot> {
   open?: boolean
-  //df: BaseDataFrame
 
   minThreshold?: number
 }
 
 export function VolcanoDialog({
-  open = true,
-  //df,
-  onResponse,
-}: IProps) {
+  payload: { callback },
+  close,
+}: ICustomDialogProps<{ callback: (plot: HistoryPlot) => void }>) {
   const { settings, updateSettings } = useVolcanoSettings() // Assuming there is a custom hook for volcano settings
-  const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
-    useMatcalcSettings()
+
   const { sheets } = useCurrentSheets()
 
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -155,12 +152,6 @@ export function VolcanoDialog({
       columns: ['Log2 fold change', '-log10 p-value', 'Label'],
     })
 
-    // historyDispatch({
-    //   type: 'add-step',
-    //   description: 'Volcano',
-    //   sheets: [vdf],
-    // })
-
     updateSettings(
       produce(settings, (draft) => {
         draft.preprocess.applyLog2FC = data.applyLog2ToFoldChange
@@ -169,10 +160,6 @@ export function VolcanoDialog({
     )
 
     const plot = newVolcanoPlot('Volcano', {
-      // ids,
-      // log2foldChanges,
-      // logpvalues,
-
       entries: zip(ids, log2foldChanges, logpvalues).map(
         ([id, log2fc, logp]) => ({
           id: id as string,
@@ -182,32 +169,27 @@ export function VolcanoDialog({
       ),
     })
 
-    //addPlots([plot])
+    callback?.(plot)
 
-    // plotsDispatch({ type: 'add', customProps:plots: [plot] })
-
-    onResponse?.(TEXT_OK, plot)
+    close()
   }
 
   return (
     <OKCancelDialog
-      open={open}
       title="Volcano Plot"
       onResponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
-          onResponse?.(r, undefined)
+          close()
         }
       }}
-      //contentVariant="glass"
     >
       <Form {...form}>
         <form
           className="flex flex-col gap-y-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          {' '}
           <ActionDialogRow title="Fold Change">
             <FormField
               control={form.control}
@@ -242,7 +224,7 @@ export function VolcanoDialog({
                   Apply log2
                 </Checkbox>
               )}
-            />{' '}
+            />
           </ActionDialogRow>
           <ActionDialogRow title="P-value">
             <FormField

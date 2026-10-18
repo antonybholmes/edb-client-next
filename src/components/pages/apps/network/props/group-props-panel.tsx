@@ -20,8 +20,8 @@ import { cn } from '@/lib/shadcn-utils'
 import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
-import { IGroup, useNetwork } from '../network-store'
-import { useUserData } from '../network-user-data-store'
+import { IGroup, useNetwork } from '../network'
+import { useUserData } from '../network-user-data'
 import { GroupDialog } from './group-dialog'
 
 export function GroupItem({ index, group }: { index: number; group: IGroup }) {

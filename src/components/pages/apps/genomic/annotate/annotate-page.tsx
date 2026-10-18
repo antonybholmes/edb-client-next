@@ -240,9 +240,7 @@ export function AnnotationPage() {
 export function AnnotationQueryPage() {
   return (
     <ClientLayout>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <AnnotationPage />
-      {/* </HistoryProvider> */}
     </ClientLayout>
   )
 }

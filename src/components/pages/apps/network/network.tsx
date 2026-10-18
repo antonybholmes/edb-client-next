@@ -19,7 +19,7 @@ import {
   NodeViewMode,
   useNetworkSettings,
 } from './network-settings'
-import { IUserDataSettings, useUserData } from './network-user-data-store'
+import { IUserDataSettings, useUserData } from './network-user-data'
 
 export interface IGroup extends IDBEntity {
   color: string

@@ -5,7 +5,7 @@ import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from '../../apps/boxplot/boxplot-plot-svg'
 
-import { DEFAULT_VOLCANO_PROPS } from '../../apps/volcano/volcano-plot-svg'
+import { DEFAULT_VOLCANO_PROPS } from '../../../volcano/volcano-plot-svg'
 import {
   BoxPlot,
   DataFrameType,

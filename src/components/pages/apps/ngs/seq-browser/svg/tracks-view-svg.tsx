@@ -547,11 +547,7 @@ export function TracksViewSvg({ style }: ISVGProps) {
       //   setMousePos({ x, y })
       // }}
     >
-      <SvgMargin margin={settings.margin}>
-        {/* <MouseEventProvider value={mouseEventValue}>*/}
-        {locationSvg}
-        {/* </MouseEventProvider> */}
-      </SvgMargin>
+      <SvgMargin margin={settings.margin}>{locationSvg}</SvgMargin>
 
       <g opacity="0" ref={selectionGroupRef}>
         <rect

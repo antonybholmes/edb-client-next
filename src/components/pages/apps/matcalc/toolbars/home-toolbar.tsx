@@ -18,6 +18,8 @@ import { useFiles } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { VolcanoDialog } from '../../volcano/volcano-dialog'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useOpenFiles } from '../hooks/open'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
@@ -26,6 +28,7 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 export function HomeToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
+  const { openCustom: openCustomDialog } = useDialogs()
   const { file } = useFiles()
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
 
@@ -120,12 +123,16 @@ export function HomeToolbar() {
           <ToolbarButton
             title="Create Volcano Plot from Table"
             onClick={() => {
-              openMatcalcDialog({
-                type: 'volcano-plot',
-                payload: {
-                  callback: (plot) => _addPlots([plot]),
-                },
+              openCustomDialog(VolcanoDialog, {
+                callback: (plot) => _addPlots([plot]),
               })
+
+              // openMatcalcDialog({
+              //   type: 'volcano-plot',
+              //   payload: {
+              //     callback: (plot) => _addPlots([plot]),
+              //   },
+              // })
             }}
           >
             Volcano

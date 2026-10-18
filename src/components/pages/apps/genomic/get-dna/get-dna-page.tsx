@@ -273,9 +273,7 @@ export function GetDNAPage() {
 export function GetDNAQueryPage() {
   return (
     <ClientLayout>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <GetDNAPage />
-      {/* </HistoryProvider> */}
     </ClientLayout>
   )
 }

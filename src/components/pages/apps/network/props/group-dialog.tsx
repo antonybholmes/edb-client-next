@@ -13,7 +13,7 @@ import {
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
-import { IGroup, useNetwork } from '../network-store'
+import { IGroup, useNetwork } from '../network'
 
 export function GroupDialog({
   payload,

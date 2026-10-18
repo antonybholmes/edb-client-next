@@ -2,8 +2,8 @@ import { IPos } from '@/interfaces/pos'
 import { forceLink, forceManyBody, forceSimulation } from 'd3-force'
 
 import { useCallback } from 'react'
+import { IEdge, INetwork, INode, useNetworkStore } from './network'
 import { useNetworkSettings } from './network-settings'
-import { IEdge, INetwork, INode, useNetworkStore } from './network-store'
 
 export function useNetworkSim(): {
   run: (network: INetwork, onFinished?: () => void) => void

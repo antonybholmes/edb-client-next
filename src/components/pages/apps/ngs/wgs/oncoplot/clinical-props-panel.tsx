@@ -165,17 +165,6 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
               )
             })}
           </ul>
-
-          {/* <DragOverlay>
-          {activeId ? (
-            <TrackItem
-              index={-1}
-              location={locations.filter(l => l.loc === activeId)[0]!}
-              key={activeId}
-              active={activeId}
-            />
-          ) : null}
-        </DragOverlay> */}
         </DragDropProvider>
       </VScrollPanel>
     </PropsPanel>

@@ -20,7 +20,7 @@ import {
   DEFAULT_SCATTER_PROPS,
   IDisplayAxis,
   IScatterDisplayOptions,
-} from '../../matcalc/apps/volcano/volcano-plot-svg'
+} from '../../volcano/volcano-plot-svg'
 import APP_INFO from './manifest.json'
 
 interface IGenome {

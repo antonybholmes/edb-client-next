@@ -13,7 +13,7 @@ import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 
 import { IExtGseaPlot } from '../../../genes/gsea/ext-gsea/ext-gsea-provider'
-import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
+import { IVolcanoDisplayOptions } from '../../../volcano/volcano-plot-svg'
 import { IUndoState } from './history-manager'
 import { IBasePlot } from './plot'
 

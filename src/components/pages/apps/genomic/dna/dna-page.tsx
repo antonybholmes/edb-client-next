@@ -255,9 +255,7 @@ export function DNAPage() {
 export function DNAQueryPage() {
   return (
     <ClientLayout>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <DNAPage />
-      {/* </HistoryProvider> */}
     </ClientLayout>
   )
 }

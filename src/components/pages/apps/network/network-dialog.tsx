@@ -17,10 +17,10 @@ import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
+import { dataframesToNetwork, useNetwork } from './network'
 import { useNetworkSettings } from './network-settings'
-import { dataframesToNetwork, useNetwork } from './network-store'
 import { useNetworkD3Sim } from './network-store-d3-sim'
-import { useUserData } from './network-user-data-store'
+import { useUserData } from './network-user-data'
 
 const MAX_COLS = 10
 
@@ -158,10 +158,6 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
   const [dfEdge, setDfEdge] = useState<BaseDataFrame | null>(null)
 
-  // const labelCol = findCol(dfNodes, 'label')
-  //   const sizeCol = findCol(dfNodes, 'size', { exact: true })
-  //   const groupCol = findCol(dfNodes, 'collection')
-
   const [labelCol, setLabelCol] = useState<string>('')
   const [idCol, setIdCol] = useState<string>('')
   const [groupCol, setGroupCol] = useState<string>('')
@@ -249,22 +245,9 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       })
     )
 
-    setNetwork(
-      network,
-      nodes,
-      groups,
-
-      strengthCol,
-      sizeCol,
-      colorMetricCol
-    )
+    setNetwork(network, nodes, groups, strengthCol, sizeCol, colorMetricCol)
 
     setMessage('Creating graph...')
-
-    // runSim(() => {
-    //   setMessage(null)
-    //   close()
-    // })
 
     close()
   }

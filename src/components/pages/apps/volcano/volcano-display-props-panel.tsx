@@ -1,7 +1,8 @@
 import { VCenterRow } from '@/layout/v-center-row'
+import { DEFAULT_VOLCANO_PROPS } from './volcano-plot-svg'
 
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { type IVolcanoDisplayOptions } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
+import { type IVolcanoDisplayOptions } from '@/components/pages/apps/volcano/volcano-plot-svg'
 import { PropsPanel } from '@/components/props-panel'
 import { TEXT_CLEAR, TEXT_OK, TEXT_RESET } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
@@ -28,8 +29,8 @@ import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { BetweenHorizonalStart, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useHistory } from '../../history/history-provider/history-provider'
-import APP_INFO from '../../manifest.json'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
+import APP_INFO from '../matcalc/manifest.json'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings'
 
@@ -49,7 +50,9 @@ export function VolcanoDisplayPropsPanel() {
     useVolcanoContext()
   const { settings, updateSettings, resetSettings } = useVolcanoSettings()
 
-  const displayProps: IVolcanoDisplayOptions = plot.props
+  const displayProps: IVolcanoDisplayOptions = plot?.props ?? {
+    ...DEFAULT_VOLCANO_PROPS,
+  }
 
   const [text, setText] = useState<string>(
     displayProps.labels.values.join('\n')
@@ -171,8 +174,8 @@ export function VolcanoDisplayPropsPanel() {
   function declutterY({ padding = 0, gap = 0.1 } = {}) {
     const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
 
-    const labelIdx = plot.volcano.entries
-      ?.map((v, vi) => ({ index: vi, value: v.id }))
+    const labelIdx = (plot?.volcano.entries ?? [])
+      .map((v, vi) => ({ index: vi, value: v.id }))
       .filter((v) => labelSet.has((v.value as string).toLowerCase()))
       .map((v) => v.index)
 
@@ -259,6 +262,7 @@ export function VolcanoDisplayPropsPanel() {
           <AccordionContent>
             <PropRow title="Size">
               <DoubleNumericalInput
+                h="toolbar"
                 v1={displayProps.axes.xaxis.length}
                 v2={displayProps.axes.yaxis.length}
                 limit={[1, 1000]}
@@ -281,41 +285,30 @@ export function VolcanoDisplayPropsPanel() {
             </PropRow>
 
             <PropRow title="Axes">
-              <AxesDisplayPropsPopover
-                plots={[
-                  {
-                    id: plot.id,
-                    title: 'Volcano Plot',
-                    groups: [
-                      {
-                        id: 'volcano',
-                        title: 'Volcano',
-                        axes: [
-                          { id: 'x', title: 'X-axis' },
-                          { id: 'y', title: 'Y-axis' },
-                        ],
-                      },
-                    ],
-                  },
-                ]}
-              />
+              {plot && (
+                <AxesDisplayPropsPopover
+                  plots={[
+                    {
+                      id: plot.id,
+                      title: 'Volcano Plot',
+                      groups: [
+                        {
+                          id: 'volcano',
+                          title: 'Volcano',
+                          axes: [
+                            { id: 'x', title: 'X-axis' },
+                            { id: 'y', title: 'Y-axis' },
+                          ],
+                        },
+                      ],
+                    },
+                  ]}
+                />
+              )}
             </PropRow>
 
             <PropRow title="Dots" contentCls="gap-x-2">
-              <NumericalInput
-                id="size"
-                value={displayProps.dots.size}
-                placeholder="Size..."
-                dp={0}
-                onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.dots.size = v
-                    })
-                  )
-                }}
-              />
-
+              {' '}
               <FillButton
                 colors={[
                   {
@@ -328,6 +321,20 @@ export function VolcanoDisplayPropsPanel() {
                       ),
                   },
                 ]}
+              />
+              <NumericalInput
+                h="toolbar"
+                id="size"
+                value={displayProps.dots.size}
+                placeholder="Size..."
+                dp={0}
+                onNumChanged={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.dots.size = v
+                    })
+                  )
+                }}
               />
             </PropRow>
 
@@ -381,7 +388,8 @@ export function VolcanoDisplayPropsPanel() {
             >
               <NumericalInput
                 id="max"
-                value={settings.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
+                h="toolbar"
+                value={settings.logFc.threshold}
                 dp={2}
                 placeholder="Max..."
 
@@ -460,37 +468,6 @@ export function VolcanoDisplayPropsPanel() {
                   )
                 }}
               />
-
-              {/* <NumericalInput
-                id="max"
-                value={settings.pvalue.threshold} //Math.pow(10, -displayProps.logP.threshold)}
-                dp={3}
-                step={0.001}
-                limit={[0, 1]}
-                placeholder="Max..."
-
-                onNumChanged={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.pvalue.threshold = v // -Math.log10(v)
-                    })
-                  )
-                }}
-              /> */}
-
-              {/* <SelectList
-                value={displayProps.pvalue.threshold.toString()}
-                onValueChange={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.pvalue.threshold = parseInt(v as string)
-                    })
-                  )
-                }}
-                w="lg"
-              >
-                <SelectItem value={5}>5%</SelectItem>
-              </SelectList> */}
             </CheckPropRow>
 
             <CheckPropRow
@@ -508,25 +485,7 @@ export function VolcanoDisplayPropsPanel() {
         </AccordionItem>
 
         <AccordionItem value="labels">
-          <AccordionTrigger
-          // rightChildren={
-          //   <SmallSwitch
-          //     className="font-normal"
-          //     checked={settings.labels.auto}
-          //     onCheckedChange={(v) => {
-          //       updateSettings(
-          //         produce(settings, (draft) => {
-          //           draft.labels.auto = v
-          //         })
-          //       )
-          //     }}
-          //   >
-          //     Auto Label
-          //   </SmallSwitch>
-          // }
-          >
-            Labels
-          </AccordionTrigger>
+          <AccordionTrigger>Labels</AccordionTrigger>
           <AccordionContent>
             <CheckPropRow
               title="Only Color Labels"

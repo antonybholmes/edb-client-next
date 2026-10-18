@@ -12,8 +12,11 @@ import { capitalCase } from '@/lib/text/capital-case'
 
 import { ReactElement } from 'react'
 import { nodeRadiusFunc } from '../../matcalc/apps/heatmap/svg/cell-svg'
-import { INetworkSettings, useNetworkSettings } from '../network-settings'
-import { useNetwork } from '../network-store'
+import {
+  INetworkSettings,
+  useNetwork,
+  useNetworkSettings,
+} from '../network-settings'
 
 export function LegendSvg() {
   const { settings } = useNetworkSettings()
