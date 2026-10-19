@@ -13,7 +13,7 @@ import {
   type IndexFromType,
   type Shape,
 } from './index'
-import { BaseSeries, DataSeries, type SeriesFromType } from './series'
+import { DataSeries, Series, type SeriesFromType } from './series'
 
 export class DataFrame extends BaseDataFrame {
   _index: Index<Cell>
@@ -29,7 +29,7 @@ export class DataFrame extends BaseDataFrame {
 
     if (isDf) {
       this._data = data.values
-    } else if (data instanceof BaseSeries) {
+    } else if (data instanceof Series) {
       this._data = data.values.map((v) => [v])
     } else {
       //data is a regular array. If a 2d array, use as.
@@ -76,7 +76,7 @@ export class DataFrame extends BaseDataFrame {
     inplace = true
   ): BaseDataFrame {
     const d =
-      data instanceof BaseSeries || data instanceof Index ? data.values : data
+      data instanceof Series || data instanceof Index ? data.values : data
 
     if (d.length !== this.shape[0]) {
       throw new Error('length of column data must equal the number of rows')
@@ -117,7 +117,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries<Cell> {
+  override col(c: IndexId): Series<Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -156,7 +156,7 @@ export class DataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries<Cell> {
+  override row(row: IndexId): Series<Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -171,10 +171,10 @@ export class DataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | BaseSeries<Cell>,
+    data: Cell[] | Series<Cell>,
     inplace = true
   ): BaseDataFrame {
-    const d = data instanceof BaseSeries ? data.values : data
+    const d = data instanceof Series ? data.values : data
 
     if (d.length !== this.shape[1]) {
       throw new Error('length of row data must equal the number of columns')
@@ -269,7 +269,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): BaseSeries<Cell>[] {
+  override get cols(): Series<Cell>[] {
     return range(this.shape[1]).map(
       (c: number) =>
         new DataSeries(
@@ -387,7 +387,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override replace(data: DataFrameInput): BaseDataFrame {
+  override replaceData(data: DataFrameInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

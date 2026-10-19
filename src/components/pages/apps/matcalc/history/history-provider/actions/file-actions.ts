@@ -1,4 +1,4 @@
-import { getFormattedShapeSmall } from '@/lib/dataframe/dataframe-utils'
+import { getFormattedShapeSmall } from '@/lib/dataframe/utils/dataframe-utils'
 import { DEFAULT_FILE } from '../history-init'
 import { IHistoryData, IHistoryState, PathId } from '../history-types'
 import { HistoryAction } from './action-types'

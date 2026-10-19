@@ -13,7 +13,7 @@ import {
 } from '../math/where'
 import { BaseTable, IDFToStrOpts } from './base-table'
 import type { Cell, IndexId } from './cell'
-import { BaseSeries } from './series'
+import { Series } from './series'
 
 export abstract class BaseDataFrame extends BaseTable {
   constructor(opts: { name?: string } = {}) {
@@ -24,23 +24,11 @@ export abstract class BaseDataFrame extends BaseTable {
     return 'dataframe'
   }
 
-  colName(index: number): string {
-    return this.cols[index].name
-  }
-
   /**
-   * Get the names of the columns as an index.
+   * Return a copy of the dataframe. This redefines
+   * the copy method from BaseTable to return a BaseDataFrame.
    */
-  abstract get columns(): Index<Cell>
-
-  /**
-   * Get the names of the columns as an array of strings.
-   */
-  get colNames(): readonly string[] {
-    return this.columns.strs
-  }
-
-  abstract setColNames(index: IndexFromType, inplace: boolean): BaseTable
+  abstract copy(): BaseDataFrame
 
   abstract setIndex(index: IndexFromType, inplace: boolean): BaseDataFrame
 
@@ -139,7 +127,7 @@ export function findCols(
  * @returns
  */
 export function findInSeries(
-  series: BaseSeries<Cell>,
+  series: Series<Cell>,
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {

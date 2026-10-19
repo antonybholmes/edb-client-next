@@ -2,7 +2,6 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   kmeans,
-  log,
   meanFilter,
   medianFilter,
   rowMean,
@@ -10,7 +9,8 @@ import {
   rowStdev,
   rowZScore,
   stdevFilter,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
+import { log } from '@/lib/dataframe/utils/log'
 type HistoryAddStep = (description: string, sheets: BaseDataFrame[]) => void
 
 export function dfKmeans(

@@ -25,8 +25,8 @@ import {
   type IndexFromType,
 } from './index'
 import {
-  BaseSeries,
   DataSeries,
+  Series,
   seriesToIndex,
   type SeriesFromType,
 } from './series'
@@ -50,9 +50,9 @@ export class ColDataFrame extends BaseDataFrame {
     }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
-    const isSeries = data.some((d: unknown) => d instanceof BaseSeries)
+    const isSeries = data.some((d: unknown) => d instanceof Series)
 
-    if (isSeries && !data.every((d) => d instanceof BaseSeries)) {
+    if (isSeries && !data.every((d) => d instanceof Series)) {
       throw new Error(
         'All columns must be a series if the first column is a series'
       )
@@ -69,7 +69,7 @@ export class ColDataFrame extends BaseDataFrame {
     if (isSeries) {
       // array of series to be made column wise
 
-      this._data = (data as BaseSeries<Cell>[]).map((s: BaseSeries<Cell>) =>
+      this._data = (data as Series<Cell>[]).map((s: Series<Cell>) =>
         seriesToIndex(s)
       )
     } else if (isIndex) {
@@ -149,9 +149,7 @@ export class ColDataFrame extends BaseDataFrame {
     inplace = true
   ): BaseTable {
     const d =
-      data instanceof BaseSeries || data instanceof Index
-        ? data.values
-        : [...data]
+      data instanceof Series || data instanceof Index ? data.values : [...data]
 
     if (d.length !== this.shape[0]) {
       throw new Error('length of column data must equal the number of rows')
@@ -173,7 +171,7 @@ export class ColDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries<Cell> {
+  override col(c: IndexId): Series<Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -207,7 +205,7 @@ export class ColDataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries<Cell> {
+  override row(row: IndexId): Series<Cell> {
     if (typeof row === 'string') {
       throw new Error('invalid row')
     }
@@ -225,14 +223,14 @@ export class ColDataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | BaseSeries<Cell>,
+    data: Cell[] | Series<Cell>,
     inplace = true
   ): ColDataFrame {
     if (typeof row === 'string') {
       throw new Error('invalid row')
     }
 
-    const d = data instanceof BaseSeries ? data.values : data
+    const d = data instanceof Series ? data.values : data
 
     if (d.length !== this.shape[1]) {
       throw new Error('length of row data must equal the number of columns')
@@ -284,7 +282,7 @@ export class ColDataFrame extends BaseDataFrame {
     return [this._data[0]!.length, this._data.length]
   }
 
-  override get cols(): BaseSeries<Cell>[] {
+  override get cols(): Series<Cell>[] {
     return this.colNames.map(
       (c, ci) =>
         new DataSeries(this._data[ci]!, {
@@ -294,12 +292,12 @@ export class ColDataFrame extends BaseDataFrame {
     )
   }
 
-  override get columns(): Index<Cell> {
-    return new DataIndex(this.colNames)
-  }
-
   override get colNames(): readonly string[] {
     return this._data.map((col) => col.name)
+  }
+
+  override get columns(): Index<Cell> {
+    return new DataIndex(this.colNames)
   }
 
   override setColNames(
@@ -457,20 +455,21 @@ export class ColDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copy(): BaseTable {
+  override copy(): BaseDataFrame {
     return new ColDataFrame({
       name: this.name,
       data: this.cols.map((c) => c.copy()),
     })
   }
 
-  override replace(data: DataFrameInput): BaseTable {
+  override replaceData(data: DataFrameInput): ColDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
 
     return new ColDataFrame({
       name: this.name,
+      index: this.index,
       data,
     })
   }

@@ -8,11 +8,11 @@ import {
 import { BaseIndex } from './base-index'
 import type { Cell } from './cell'
 
-export type SeriesFromType = BaseSeries<Cell> | IndexFromType
+export type SeriesFromType = Series<Cell> | IndexFromType
 
 export const DEFAULT_INDEX_NAME = 'Index'
 
-export abstract class BaseSeries<T extends Cell> extends BaseIndex<T> {
+export abstract class Series<T extends Cell> extends BaseIndex<T> {
   constructor(opts: IIndexOptions = {}) {
     super(opts)
   }
@@ -30,16 +30,16 @@ export abstract class BaseSeries<T extends Cell> extends BaseIndex<T> {
 
   abstract set(index: number, v: T): DataSeries<T>
 
-  abstract filter(idx: number[]): BaseSeries<T>
+  abstract filter(idx: number[]): Series<T>
 
-  abstract copy(): BaseSeries<T>
+  abstract copy(): Series<T>
 }
 
 export interface ISeriesOptions extends IIndexOptions {
   index?: IndexFromType
 }
 
-export class DataSeries<T extends Cell> extends BaseSeries<T> {
+export class DataSeries<T extends Cell> extends Series<T> {
   _data: T[]
 
   _index: Index<T>
@@ -86,22 +86,26 @@ export class DataSeries<T extends Cell> extends BaseSeries<T> {
     return this._data.length
   }
 
-  override filter(idx: number[]): BaseSeries<T> {
+  override filter(idx: number[]): Series<T> {
     return new DataSeries(
       idx.map((i) => this._data[i]!),
       { name: this.name, index: this._index.filter(idx) }
     )
   }
 
-  override copy(): BaseSeries<T> {
+  override copy(): Series<T> {
     return new DataSeries([...this._data], {
       name: this.name,
       index: this._index.copy(),
     })
   }
 
-  override [Symbol.iterator](): Iterator<T> {
+  override [Symbol.iterator](): IterableIterator<T> {
     return this._data[Symbol.iterator]()
+  }
+
+  override entries(): IterableIterator<[number, T]> {
+    return this._data.entries()
   }
 }
 
@@ -111,6 +115,6 @@ export function indexToSeries(index: BaseIndex<Cell>): DataSeries<Cell> {
   return new DataSeries(index.values, { name: index.name })
 }
 
-export function seriesToIndex(series: BaseSeries<Cell>): Index<Cell> {
+export function seriesToIndex(series: Series<Cell>): Index<Cell> {
   return new DataIndex(series.values, { name: series.name })
 }

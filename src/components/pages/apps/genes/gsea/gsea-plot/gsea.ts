@@ -9,7 +9,7 @@ import {
   getColIdxFromGroup,
   rowMean,
   rowStdev,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
 import { add, sub } from '@/lib/math/add'
 import { argsort } from '@/lib/math/argsort'
 import { div } from '@/lib/math/multiply'

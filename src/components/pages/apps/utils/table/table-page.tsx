@@ -6,7 +6,7 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { downloadDataFrame } from '@/lib/dataframe/utils/dataframe-utils'
 
 import { useEffect, useState } from 'react'
 

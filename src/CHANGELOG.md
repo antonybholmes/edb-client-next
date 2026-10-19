@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added power dialog to matcalc to complement log.
 - Col-dataframe now adds index to series in cols(). Moved SeriesData to cell and renamed Cell.
 - Bug fixes and updates.
 - Refined coldataframe.

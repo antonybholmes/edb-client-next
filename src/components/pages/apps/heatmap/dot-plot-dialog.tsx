@@ -10,10 +10,9 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   getColIdxFromGroup,
-  log2,
   rowMean,
   rowZScore,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
 import {
   HCluster,
   type IClusterFrame,
@@ -44,6 +43,7 @@ import {
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { useStableId } from '@/hooks/stable-id'
+import { log2 } from '@/lib/dataframe/utils/log'
 import { Group, PencilRuler } from 'lucide-react'
 import {
   useCurrentGroups,

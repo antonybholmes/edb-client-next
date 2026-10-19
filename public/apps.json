@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.8.2",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-10-18T01:53:33.333Z",
-    "hash": "127e42f84586caa7dfc1dddf2b54ced30f98903e4806c3e0fc3ecb012593d684",
-    "build": 564
+    "modified": "2026-10-19T14:51:41.482Z",
+    "hash": "ee67e6d0fbe727f29bb8dd8d64451aee89d760af841b9981fd43e5b35f75644f",
+    "build": 566
   },
   {
     "name": "Convert",
@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-14T13:33:58.755Z",
-    "hash": "957cfaee5844cadd2feda8c9cf14927709034fc3c2105a04db9e3ab4fcab174b",
-    "build": 820
+    "modified": "2026-10-19T14:51:41.483Z",
+    "hash": "84d89124df2cb9db3947bc9177eb807a1920dcbafd7e97b24187ed314baff3e3",
+    "build": 822
   },
   {
     "name": "DNA",
@@ -74,9 +74,9 @@
     "color": "#ffb366",
     "version": "23.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-18T23:43:18.478Z",
-    "hash": "c89d845d54790431387ddc249c9736b551986f00e1ada20906e5526a42ec574e",
-    "build": 1046
+    "modified": "2026-10-19T14:51:41.485Z",
+    "hash": "b5a44b52df90d75bbfa39637c2f60dfb1c8a0c00b2fa64b2777e1f32abaf3438",
+    "build": 1048
   },
   {
     "name": "GSEA Web",
@@ -94,9 +94,9 @@
     "color": "#ff0000",
     "version": "20.0.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-18T23:43:18.483Z",
-    "hash": "8055ebc3ee3522c7271a90db0bc7e25df7cbf9522a16564a8e23435f3dd8a9d7",
-    "build": 4
+    "modified": "2026-10-19T14:51:41.486Z",
+    "hash": "aa910d4734f5c6e9df43f4e8ea80f9685607826c2bddb9cfc277d098a9ac051e",
+    "build": 6
   },
   {
     "name": "History Viewer",
@@ -142,9 +142,9 @@
     "color": "#40bf80",
     "version": "52.0.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-19T13:42:45.565Z",
-    "hash": "71d0f8bd10d9133987624edc8e159b0a1639468b9eb086b55209b5cd8c14f548",
-    "build": 2182
+    "modified": "2026-10-19T14:51:41.488Z",
+    "hash": "584394ba63a7985a210db51908f0d664ccba4cd507b210cae4387bf9c4b1db7c",
+    "build": 2184
   },
   {
     "name": "Motifs",
@@ -182,9 +182,9 @@
     "color": "#008080",
     "version": "18.8.0",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-10-17T22:58:52.478Z",
-    "hash": "140f191d4aeb6434bf9189efcea0a5adfb02ac9b533c72b0f42d65d2e14b73be",
-    "build": 560
+    "modified": "2026-10-19T14:51:41.486Z",
+    "hash": "7e823ccc7178695b6d632f24668aade29eb49430c1327657059f6995d63e3b4c",
+    "build": 562
   },
   {
     "name": "Pathway",
@@ -239,12 +239,12 @@
   {
     "name": "Table",
     "description": "A basic viewer for tabular data.",
-    "version": "14.8.0",
+    "version": "14.8.2",
     "color": "#000000",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-14T13:33:58.772Z",
-    "hash": "bdf0d2f040ffc689b524c86538b24de7c9ba068e0a1597c48b2f691ff7bf1fda",
-    "build": 488
+    "modified": "2026-10-19T14:51:41.490Z",
+    "hash": "2b6fc746fafdd31a65699bca29a80340471b053ebb2de2f77601e60fb35ee14b",
+    "build": 490
   },
   {
     "name": "Text",
@@ -281,9 +281,9 @@
     "color": "#00008B",
     "version": "26.8.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-18T23:43:18.495Z",
-    "hash": "64cc9b0d3e798a964f5899364c210401ef34f8b96372bb6ab933d0a5a40554e0",
-    "build": 992
+    "modified": "2026-10-19T14:51:41.491Z",
+    "hash": "0f00efe00880677112683d32e2636f98d9a25e328d180741a53c64ee2ed8ea6e",
+    "build": 994
   },
   {
     "name": "Volcano",
@@ -292,8 +292,8 @@
     "color": "#ff0000",
     "version": "2.0.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-18T20:38:29.553Z",
-    "hash": "fdf088abe1140d1ec2b750f97102be692290912b24341e7071e705d3c291c774",
-    "build": 10
+    "modified": "2026-10-19T14:51:41.491Z",
+    "hash": "bf1c50d4e46cda4a8e9358e7bde50bdbf1c0625ebc4d85f62f386d8dfe38873b",
+    "build": 12
   }
 ]

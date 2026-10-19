@@ -7,23 +7,23 @@ import { mean } from '@/lib/math/mean'
 import { median } from '@/lib/math/median'
 import { range } from '@/lib/math/range'
 import { populationStd } from '@/lib/math/stats'
-import { BaseDataFrame } from './base-dataframe'
+import { BaseDataFrame } from '../base-dataframe'
 
 import { download } from '@/lib/download-utils'
-import type { IClusterGroup } from '../cluster-group'
-import { cellNum, cellStr } from './cell'
+import type { IClusterGroup } from '../../cluster-group'
+import { cellNum, cellStr } from '../cell'
 
-import { euclidean, type DistFunc, type Point } from '../math/distance'
-import { KMeans } from '../math/kmeans'
-import { AnnotationDataFrame } from './annotation-dataframe'
-import { DataFrame } from './dataframe'
+import { euclidean, type DistFunc, type Point } from '../../math/distance'
+import { KMeans } from '../../math/kmeans'
+import { AnnotationDataFrame } from '../annotation-dataframe'
+import { DataFrame } from '../dataframe'
 
-import { DataIndex, strs } from '.'
-import { vfill } from '../fill'
-import { where } from '../math/where'
-import { BaseTable } from './base-table'
-import type { Cell, IndexId } from './cell'
-import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
+import { DataIndex, strs } from '..'
+import { vfill } from '../../fill'
+import { where } from '../../math/where'
+import { BaseTable } from '../base-table'
+import type { Cell, IndexId } from '../cell'
+import { DataFrameWriter, type IDataFrameWriterOpts } from '../dataframe-writer'
 
 export type AxisDim = 0 | 1
 
@@ -424,37 +424,6 @@ export function kmeans(
   return [ret, assignments]
 }
 
-export function log(
-  df: BaseDataFrame,
-  base: 2 | 10 | 'ln',
-  add: number = 0
-): BaseDataFrame {
-  //const name = df.name ? df.name + ', ' : ''
-
-  switch (base) {
-    case 2:
-      return log2(df, add) //.setName( add > 0 ? name + `Log2(x+${add})` : name + `Log2(x)`)
-
-    case 10:
-      return log10(df, add) //.setName(add > 0 ? name + `Log10(x+${add})` : name + `Log10(x)`)
-
-    default:
-      return ln(df, add) //.setName(add > 0 ? name + `Ln(x+${add})` : name + `Ln(x)`)
-  }
-}
-
-export function log2(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((v) => Math.log2((v as number) + a)) as BaseDataFrame
-}
-
-export function log10(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((v) => Math.log10((v as number) + a)) as BaseDataFrame
-}
-
-export function ln(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply((v) => Math.log((v as number) + a)) as BaseDataFrame
-}
-
 export function rowStdev(df: BaseDataFrame): number[] {
   return df.rowMap((row) => populationStd(row as number[]))
 }
@@ -542,7 +511,7 @@ export function xInY(
 export function zscore(df: BaseDataFrame): BaseDataFrame {
   const z = new ZScore().fit(df.values.flat() as number[])
 
-  return df.replace(
+  return df.replaceData(
     df.values.map((row) => z.transform(row as number[]))
   ) as BaseDataFrame
 
@@ -557,7 +526,7 @@ export function zscore(df: BaseDataFrame): BaseDataFrame {
 export function rowZScore(df: BaseDataFrame): BaseDataFrame {
   const z = df.values.map((row) => new ZScore().fitTransform(row as number[]))
 
-  const ret = df.replace(z) as BaseDataFrame
+  const ret = df.replaceData(z) as BaseDataFrame
 
   //const name = df.name ? df.name + ', ' : ''
 

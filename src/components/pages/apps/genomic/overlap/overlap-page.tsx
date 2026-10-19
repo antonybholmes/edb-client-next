@@ -40,7 +40,7 @@ import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
 import { DeleteIcon } from '@/icons/delete-icon'
 import { FileIcon } from '@/icons/file-icon'
-import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
+import { getFormattedShape } from '@/lib/dataframe/utils/dataframe-utils'
 
 import { ClientLayout } from '@/app/client-layout'
 import { useDialogs } from '@/components/dialogs/dialogs'

@@ -8,7 +8,7 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
-import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
+import { getDataFrameInfo } from '@/lib/dataframe/utils/dataframe-utils'
 
 import { useEffect, useState } from 'react'
 

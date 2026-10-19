@@ -1,21 +1,26 @@
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { DataSortIcon } from '@/components/icons/data-sort-icon'
 import { FilterIcon } from '@/components/icons/filter-icon'
+import { PowerIcon } from '@/components/icons/power-icon'
 import { TransposeIcon } from '@/components/icons/transpose-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarDropdownButton } from '@/components/toolbar/toolbar-dropdown-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOptionalDropdownButton } from '@/components/toolbar/toolbar-optional-dropdown-button'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   colZScore,
-  log,
   rowStdev,
   rowZScore,
   zscore,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
+import { log } from '@/lib/dataframe/utils/log'
+import { pow } from '@/lib/dataframe/utils/pow'
 import { logrankExample } from '@/lib/math/logrank'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
@@ -27,10 +32,12 @@ import {
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
+import { PowerDialog } from '../power-dialog'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 export function DataToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
+  const { openCustom: openCustomDialog } = useDialogs()
   const { file } = useFiles()
   const { sheets } = useCurrentSheets()
   const { addSheets, addPlots } = useHistory()
@@ -60,77 +67,133 @@ export function DataToolbar() {
           <TransposeIcon />
         </ToolbarIconButton>
 
-        <ToolbarOptionalDropdownButton
-          //size="md"
-          icon="Log2(x)"
-          onMainClick={() => {
-            addSheets(
-              [log(sheets[0] as AnnotationDataFrame, 2, 1)],
-
-              {
-                message: 'Log2(x+1)',
-              }
-            )
-          }}
-        >
-          <DropdownMenuItem
-            aria-label="Log2(x)"
-            onClick={() =>
+        <ToolbarCol>
+          <ToolbarOptionalDropdownButton
+            //size="md"
+            icon="Log2(x)"
+            onMainClick={() => {
               addSheets(
-                [log(sheets[0] as AnnotationDataFrame, 2, 0)],
-
-                {
-                  message: 'Log2(x)',
-                }
-              )
-            }
-          >
-            Log2(x)
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            aria-label="Log2(x+1)"
-            onClick={() =>
-              addSheets(
-                [log(sheets[0] as AnnotationDataFrame, 2, 1)],
+                [log(sheets[0] as BaseDataFrame, 2, 1)],
 
                 {
                   message: 'Log2(x+1)',
                 }
               )
-            }
+            }}
           >
-            Log2(x+1)
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            aria-label="Log10(x)"
-            onClick={() =>
-              addSheets(
-                [log(sheets[0] as AnnotationDataFrame, 10, 0)],
+            <DropdownMenuItem
+              aria-label="Log2(x)"
+              onClick={() =>
+                addSheets(
+                  [log(sheets[0] as BaseDataFrame, 2, 0)],
 
-                {
-                  message: 'Log10(x)',
-                }
-              )
-            }
+                  {
+                    message: 'Log2(x)',
+                  }
+                )
+              }
+            >
+              Log2(x)
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              aria-label="Log2(x+1)"
+              onClick={() =>
+                addSheets(
+                  [log(sheets[0] as BaseDataFrame, 2, 1)],
+
+                  {
+                    message: 'Log2(x+1)',
+                  }
+                )
+              }
+            >
+              Log2(x+1)
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              aria-label="Log10(x)"
+              onClick={() =>
+                addSheets(
+                  [log(sheets[0] as BaseDataFrame, 10, 0)],
+
+                  {
+                    message: 'Log10(x)',
+                  }
+                )
+              }
+            >
+              Log10(x)
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              aria-label="Log10(x+1)"
+              onClick={() =>
+                addSheets(
+                  [log(sheets[0] as BaseDataFrame, 10, 1)],
+
+                  {
+                    message: 'Log10(x+1)',
+                  }
+                )
+              }
+            >
+              Log10(x+1)
+            </DropdownMenuItem>
+          </ToolbarOptionalDropdownButton>
+
+          <ToolbarOptionalDropdownButton
+            title="Raise to Power"
+            icon={<PowerIcon n={'n'} />}
+            onMainClick={() => {
+              openCustomDialog(PowerDialog, {})
+            }}
           >
-            Log10(x)
-          </DropdownMenuItem>
+            <DropdownMenuItem
+              title="Raise to Power 2"
+              onClick={() =>
+                addSheets(
+                  [pow(sheets[0] as BaseDataFrame, 2)],
 
-          <DropdownMenuItem
-            aria-label="Log10(x+1)"
-            onClick={() =>
-              addSheets(
-                [log(sheets[0] as AnnotationDataFrame, 10, 1)],
+                  {
+                    message: 'Power(x, 2)',
+                  }
+                )
+              }
+            >
+              <PowerIcon n={2} />
+              <span>Raise to Power 2</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              title="Raise to Power 10"
+              onClick={() =>
+                addSheets(
+                  [pow(sheets[0] as BaseDataFrame, 10)],
 
-                {
-                  message: 'Log10(x+1)',
-                }
-              )
-            }
-          >
-            Log10(x+1)
-          </DropdownMenuItem>
-        </ToolbarOptionalDropdownButton>
+                  {
+                    message: 'Power(x, 10)',
+                  }
+                )
+              }
+            >
+              <PowerIcon n={10} />
+              <span>Raise to Power 10</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              title="Raise to Power e"
+              onClick={() =>
+                addSheets(
+                  [pow(sheets[0] as BaseDataFrame, 'e')],
+
+                  {
+                    message: 'Power(x, e)',
+                  }
+                )
+              }
+            >
+              <PowerIcon n={'e'} />
+              <span>Raise to Power e</span>
+            </DropdownMenuItem>
+          </ToolbarOptionalDropdownButton>
+        </ToolbarCol>
 
         <ToolbarDropdownButton icon="Z-score">
           <DropdownMenuItem

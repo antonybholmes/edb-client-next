@@ -26,7 +26,7 @@ import { VCenterCol } from '@/layout/v-center-col'
 import {
   getColIdxFromGroup,
   getColNamesFromGroup,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
 import { IconButton } from '@/themed/icon-button'
 import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 

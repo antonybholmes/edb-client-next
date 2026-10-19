@@ -51,7 +51,7 @@ import { useToolbarTabs, type ITab } from '@/components/tabs/tab-provider'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { downloadDataFrame } from '@/lib/dataframe/utils/dataframe-utils'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
 

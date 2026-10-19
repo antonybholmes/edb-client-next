@@ -26,11 +26,7 @@ export abstract class Index<T extends Cell> extends BaseIndex<T> {
     return whereStr(this.strs, s, opts)
   }
 
-  abstract entries(): IterableIterator<[number, T]>
-
   abstract copy(): Index<T>
-
-  abstract [Symbol.iterator](): IterableIterator<T>
 }
 
 export interface IIndexOptions {

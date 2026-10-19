@@ -15,7 +15,7 @@ import {
 
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { findCols, findRows } from '@/lib/dataframe/dataframe-utils'
+import { findCols, findRows } from '@/lib/dataframe/utils/dataframe-utils'
 import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { useSearchFilters } from '@/stores/search-filter-store'

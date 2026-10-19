@@ -26,12 +26,11 @@ import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import {
   getColIdxFromGroup,
-  log,
   meanFilter,
   medianFilter,
   rowZScore,
   stdevFilter,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
 import { makeUuid } from '@/lib/id'
 import { Checkbox } from '@/themed/baseui/check-box'
 import { NumericalInput } from '@/themed/numerical-input'
@@ -45,6 +44,7 @@ import {
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { log } from '@/lib/dataframe/utils/log'
 import {
   useCurrentGroups,
   useCurrentSheets,

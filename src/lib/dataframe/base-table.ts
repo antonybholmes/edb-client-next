@@ -6,9 +6,9 @@ import { makeUuid } from '../id'
 import { whereStrStartsWith } from '../math/where'
 import { Cell, cellStr, IndexId } from './cell'
 import {
-  BaseSeries,
   DataSeries,
   ISeriesOptions,
+  Series,
   type SeriesFromType,
 } from './series'
 
@@ -26,7 +26,7 @@ export type SheetId = string | number
 
 export type DataFrameInput =
   | readonly Index<Cell>[]
-  | readonly BaseSeries<Cell>[]
+  | readonly Series<Cell>[]
   | readonly Cell[]
   | readonly Cell[][]
 
@@ -85,9 +85,27 @@ export abstract class BaseTable {
    * @param data
    * @returns
    */
-  abstract replace(data: DataFrameInput): BaseTable
+  abstract replaceData(data: DataFrameInput): BaseTable
 
-  abstract col(col: IndexId): BaseSeries<Cell>
+  colName(index: number): string {
+    return this.cols[index].name
+  }
+
+  /**
+   * Get the names of the columns as an index.
+   */
+  abstract get columns(): Index<Cell>
+
+  /**
+   * Get the names of the columns as an array of strings.
+   */
+  get colNames(): readonly string[] {
+    return this.columns.strs
+  }
+
+  abstract setColNames(index: IndexFromType, inplace: boolean): BaseTable
+
+  abstract col(col: IndexId): Series<Cell>
 
   colValues(c: IndexId): Cell[] {
     return this.col(c).values
@@ -107,7 +125,7 @@ export abstract class BaseTable {
 
   abstract get values(): Cell[][]
 
-  abstract row(row: IndexId): BaseSeries<Cell>
+  abstract row(row: IndexId): Series<Cell>
 
   rowValues(c: IndexId): Cell[] {
     return this.row(c).values
@@ -133,7 +151,7 @@ export abstract class BaseTable {
    */
   abstract at(row: IndexId, col: IndexId, v: Cell, inplace: boolean): BaseTable
 
-  abstract get cols(): readonly BaseSeries<Cell>[]
+  abstract get cols(): readonly Series<Cell>[]
 
   abstract get shape(): Shape
 
@@ -159,13 +177,14 @@ export abstract class BaseTable {
 
   /**
    *  Apply a function to all data values in the matrix and return a new dataframe.
+   *
    * @param f
    * @returns
    */
   apply(f: (v: Cell, row: number, col: number) => Cell): BaseTable {
     const data = this.map(f)
 
-    return this.replace(data)
+    return this.replaceData(data)
   }
 
   /**
@@ -178,21 +197,11 @@ export abstract class BaseTable {
     return this.values.map((row, ri) => f(row, ri))
   }
 
-  rowApply(f: ApplyRowFunc): BaseSeries<Cell> {
+  rowApply(f: ApplyRowFunc): Series<Cell> {
     const data = this.rowMap(f)
 
     return new DataSeries(data)
   }
-
-  /**
-   * Apply a function to each
-   * @param f
-   * @returns
-   */
-
-  // colApply(f: (row: SeriesType[], index: number) => SeriesType): BaseDataFrame {
-  //   return this
-  // }
 
   /**
    * Apply a function to each column to transform them.
@@ -214,10 +223,6 @@ export abstract class BaseTable {
   abstract max(): number
 
   abstract min(): number
-
-  // isin(_rows: LocType = ':', _cols: LocType = ':'): BaseDataFrame {
-  //   return this
-  // }
 
   toString(): string {
     return this.toCsv()
@@ -268,7 +273,7 @@ function dfToStr(df: BaseTable, options: IDFToStrOpts = {}): string {
  * @returns
  */
 export function findInSeries(
-  series: BaseSeries<Cell>,
+  series: Series<Cell>,
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {
@@ -286,16 +291,16 @@ export function findInSeries(
  * @returns
  */
 export function shape(data: DataFrameInput): Shape {
-  const isSeries = data[0] instanceof BaseSeries
+  const isSeries = data[0] instanceof Series
 
   if (isSeries) {
-    if (!data.every((d) => d instanceof BaseSeries)) {
+    if (!data.every((d) => d instanceof Series)) {
       throw new Error(
         'All columns must be a series if the first column is a series'
       )
     }
 
-    return [(data[0] as BaseSeries<Cell>).length, data.length]
+    return [(data[0] as Series<Cell>).length, data.length]
   }
 
   // single seriesdata

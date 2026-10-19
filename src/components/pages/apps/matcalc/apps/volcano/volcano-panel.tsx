@@ -6,7 +6,7 @@ import {
 
 import { FooterSlotPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { getNumCol } from '@/lib/dataframe/dataframe-utils'
+import { getNumCol } from '@/lib/dataframe/utils/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useEffect } from 'react'
 

@@ -14,7 +14,7 @@ import {
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
 
-import { makeGCT } from '@/lib/dataframe/dataframe-utils'
+import { makeGCT } from '@/lib/dataframe/utils/dataframe-utils'
 
 import { useExtGsea } from '../../genes/gsea/ext-gsea/use-ext-gsea'
 import { pathJoin } from '../history/history-provider/history-actions'

@@ -11,7 +11,7 @@ import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { GridSvg } from './cell-svg'
 import { ColGroupsSvg, ColLabelsSvg, ColTreeTopSvg } from './col-svg'
 
-import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
+import { getColIdxFromGroup } from '@/lib/dataframe/utils/dataframe-utils'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
 import { useMemo } from 'react'
 import { RowLabelsSvg, RowTreeSvg } from './row-svg'

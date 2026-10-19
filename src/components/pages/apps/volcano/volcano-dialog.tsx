@@ -5,7 +5,7 @@ import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/baseui/select'
 
 import { DataFrame } from '@/lib/dataframe/dataframe'
-import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
+import { filterNA, subset, zip } from '@/lib/dataframe/utils/dataframe-utils'
 import { range } from '@/lib/math/range'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'

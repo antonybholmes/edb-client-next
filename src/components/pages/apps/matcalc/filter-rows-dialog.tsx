@@ -17,7 +17,7 @@ import {
   medianFilter,
   stdevFilter,
   xInY,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
 import { SelectItem, SelectList } from '@/themed/baseui/select'
 import { Blend, ListFilterPlus } from 'lucide-react'
 import {

@@ -1,6 +1,6 @@
 import { range } from '@/lib/math/range'
 
-import { makeCell } from './cell'
+import { cellStr, makeCell } from './cell'
 
 import {
   whereStrExact,
@@ -18,12 +18,13 @@ import type { Cell, IndexId } from './cell'
 import {
   DataIndex,
   Index,
+  IndexFromType,
   NumInfIndex,
   Shape,
   shapesEqual,
   StringIndex,
 } from './index'
-import { BaseSeries, DataSeries, type SeriesFromType } from './series'
+import { DataSeries, Series, type SeriesFromType } from './series'
 
 // export interface IColTableOptions extends ISeriesOptions {
 //   index?: Index<SeriesData>
@@ -67,9 +68,9 @@ export class ColTable extends BaseTable {
     // }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
-    const isSeries = data.some((d: unknown) => d instanceof BaseSeries)
+    const isSeries = data.some((d: unknown) => d instanceof Series)
 
-    if (isSeries && !data.every((d) => d instanceof BaseSeries)) {
+    if (isSeries && !data.every((d) => d instanceof Series)) {
       throw new Error(
         'All columns must be a series if the first column is a series'
       )
@@ -88,13 +89,11 @@ export class ColTable extends BaseTable {
 
       if (!columns) {
         columns = new StringIndex(
-          data.map((c: unknown) => (c as BaseSeries<Cell>).name)
+          data.map((c: unknown) => (c as Series<Cell>).name)
         )
       }
 
-      this._data = (data as BaseSeries<Cell>[]).map(
-        (c: BaseSeries<Cell>) => c.index
-      )
+      this._data = (data as Series<Cell>[]).map((c: Series<Cell>) => c.index)
     } else if (isIndex) {
       // array of series to be made column wise
 
@@ -123,7 +122,7 @@ export class ColTable extends BaseTable {
     }
   }
 
-  override get cols(): BaseSeries<Cell>[] {
+  override get cols(): Series<Cell>[] {
     return this._data.map((c) => new DataSeries(c))
   }
 
@@ -133,9 +132,7 @@ export class ColTable extends BaseTable {
     inplace = true
   ): BaseTable {
     const d =
-      data instanceof BaseSeries || data instanceof Index
-        ? data.values
-        : [...data]
+      data instanceof Series || data instanceof Index ? data.values : [...data]
 
     if (d.length !== this.shape[0]) {
       throw new Error('length of column data must equal the number of rows')
@@ -157,7 +154,7 @@ export class ColTable extends BaseTable {
     return df
   }
 
-  override col(c: IndexId): BaseSeries<Cell> {
+  override col(c: IndexId): Series<Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -169,6 +166,33 @@ export class ColTable extends BaseTable {
     return new DataSeries(col, {
       name: col.name,
     })
+  }
+
+  override get colNames(): readonly string[] {
+    return this._data.map((col) => col.name)
+  }
+
+  override get columns(): Index<Cell> {
+    return new DataIndex(this.colNames)
+  }
+
+  override setColNames(
+    index: IndexFromType,
+    inplace: boolean = true
+  ): BaseTable {
+    if (index.length !== this._data.length) {
+      throw new Error('columns length must match the number of columns in data')
+    }
+
+    const df: ColTable = inplace ? this : (this.copy() as ColTable)
+
+    const names = [...index]
+
+    for (let [ci, c] of df._data.entries()) {
+      c.name = cellStr(names[ci])
+    }
+
+    return df
   }
 
   override get(row: IndexId, col: IndexId): Cell {
@@ -191,7 +215,7 @@ export class ColTable extends BaseTable {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries<Cell> {
+  override row(row: IndexId): Series<Cell> {
     if (typeof row === 'string') {
       throw new Error('invalid row')
     }
@@ -207,14 +231,14 @@ export class ColTable extends BaseTable {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | BaseSeries<Cell>,
+    data: Cell[] | Series<Cell>,
     inplace = true
   ): ColTable {
     if (typeof row === 'string') {
       throw new Error('invalid row')
     }
 
-    const d = data instanceof BaseSeries ? data.values : data
+    const d = data instanceof Series ? data.values : data
 
     if (d.length !== this.shape[1]) {
       throw new Error('length of row data must equal the number of columns')
@@ -407,7 +431,7 @@ export class ColTable extends BaseTable {
     })
   }
 
-  override replace(data: DataFrameInput): BaseTable {
+  override replaceData(data: DataFrameInput): BaseTable {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

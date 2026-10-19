@@ -24,9 +24,9 @@ import {
   type Shape,
 } from './index'
 import {
-  BaseSeries,
   DataSeries,
   DEFAULT_INDEX_NAME,
+  Series,
   type SeriesFromType,
 } from './series'
 
@@ -102,7 +102,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(col: IndexId): BaseSeries<Cell> {
+  override col(col: IndexId): Series<Cell> {
     const colData = this._colVars.col(DEFAULT_COLUMN_NAMES)
 
     const colIdx = findInSeries(colData, col)
@@ -136,7 +136,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.get(rowIdx, colIdx)
   }
 
-  override row(row: IndexId): BaseSeries<Cell> {
+  override row(row: IndexId): Series<Cell> {
     // col 0 of row meta data is always the index label
     // so we can use that to find the row index
     // then we can just return the row from the main dataframe
@@ -221,7 +221,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): readonly BaseSeries<Cell>[] {
+  override get cols(): readonly Series<Cell>[] {
     return this._data.cols
   }
 
@@ -275,10 +275,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
       data: df.cols,
     })
 
-    console.log('xxx', df.cols)
-
-    console.log('plop', ret)
-
     // both are row oriented so we slice col meta data the same way as rows and row meta data the same way as rows
     ret._rowObs = this._rowObs.iloc({ rows }) as BaseDataFrame
     ret._colVars = this._colVars.iloc({ rows: cols }) as BaseDataFrame
@@ -286,7 +282,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override rowApply(f: (row: Cell[], index: number) => Cell): BaseSeries<Cell> {
+  override rowApply(f: (row: Cell[], index: number) => Cell): Series<Cell> {
     return this._data.rowApply(f)
   }
 
@@ -330,7 +326,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override replace(data: DataFrameInput): BaseDataFrame {
+  override replaceData(data: DataFrameInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
