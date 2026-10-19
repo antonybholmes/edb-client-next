@@ -482,7 +482,7 @@ export function TableData() {
       const v = e.currentTarget.value
 
       if (editable) {
-        df.at(currentCell.row, currentCell.col, v)
+        df.set(currentCell.row, currentCell.col, v)
       }
 
       const newCell = {

@@ -10,6 +10,7 @@ import { range } from '@/lib/math/range'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
+import { LogSpan } from '@/components/log-span'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
@@ -221,7 +222,10 @@ export function VolcanoDialog({
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 >
-                  Apply log2
+                  Apply{' '}
+                  <LogSpan base={2} minus={true}>
+                    fold change
+                  </LogSpan>
                 </Checkbox>
               )}
             />
@@ -257,7 +261,10 @@ export function VolcanoDialog({
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 >
-                  Apply -log10
+                  Apply{' '}
+                  <LogSpan base={10} minus={true}>
+                    p-value
+                  </LogSpan>
                 </Checkbox>
               )}
             />

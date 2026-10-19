@@ -1,6 +1,6 @@
 import type { IHeatMapSettings } from '@/components/pages/apps/heatmap/heatmap-settings'
-import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
+import { useAxes } from '@/components/plot/axes/plot-axes'
 import { getColIdxFromGroup } from '@/lib/dataframe/utils/dataframe-utils'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { range } from '@/lib/math/range'

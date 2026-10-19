@@ -16,8 +16,8 @@ import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { nodeRadiusFunc } from '@/components/pages/apps/heatmap/svg/cell-svg'
-import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/plot-axes'
 import { IGseaBubble, IGseaTableResult } from '../gsea-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings'
 

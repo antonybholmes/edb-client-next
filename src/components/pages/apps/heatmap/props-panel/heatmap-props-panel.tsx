@@ -52,7 +52,7 @@ export function HeatmapPropsPanel() {
   const { plot } = useHeatmapContext()
 
   if (!plot) {
-    return <span>No plot available.</span>
+    return null //<span>No plot available.</span>
   }
 
   const cf = plot?.dataframes['main'] as IClusterFrame

@@ -8,8 +8,8 @@ import {
 } from 'react'
 import { useVolcanoSettings } from './volcano-settings'
 
-import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
+import { useAxes } from '@/components/plot/axes/plot-axes'
 import { range } from '@/lib/math/range'
 import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import type { IVolcanoDisplayOptions } from './volcano-plot-svg'

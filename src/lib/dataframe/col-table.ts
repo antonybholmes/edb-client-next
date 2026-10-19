@@ -129,8 +129,8 @@ export class ColTable extends BaseTable {
   override setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace = true
-  ): BaseTable {
+    opts: { inplace?: boolean } = {}
+  ): ColTable {
     const d =
       data instanceof Series || data instanceof Index ? data.values : [...data]
 
@@ -138,7 +138,8 @@ export class ColTable extends BaseTable {
       throw new Error('length of column data must equal the number of rows')
     }
 
-    const df: ColTable = inplace ? this : (this.copy() as ColTable)
+    const { inplace = true } = opts
+    const df: ColTable = inplace ? this : this.copy()
 
     const colIdx: number = findCol(df, col)
 
@@ -178,13 +179,14 @@ export class ColTable extends BaseTable {
 
   override setColNames(
     index: IndexFromType,
-    inplace: boolean = true
-  ): BaseTable {
+    opts: { inplace?: boolean } = {}
+  ): ColTable {
     if (index.length !== this._data.length) {
       throw new Error('columns length must match the number of columns in data')
     }
 
-    const df: ColTable = inplace ? this : (this.copy() as ColTable)
+    const { inplace = true } = opts
+    const df: ColTable = inplace ? this : this.copy()
 
     const names = [...index]
 
@@ -232,7 +234,7 @@ export class ColTable extends BaseTable {
   override setRow(
     row: IndexId,
     data: Cell[] | Series<Cell>,
-    inplace = true
+    opts: { inplace?: boolean } = {}
   ): ColTable {
     if (typeof row === 'string') {
       throw new Error('invalid row')
@@ -244,7 +246,8 @@ export class ColTable extends BaseTable {
       throw new Error('length of row data must equal the number of columns')
     }
 
-    const df: ColTable = inplace ? this : (this.copy() as ColTable)
+    const { inplace = true } = opts
+    const df: ColTable = inplace ? this : this.copy()
 
     if (row < this.shape[0]) {
       for (let col = 0; col < this.shape[1]; col++) {
@@ -259,11 +262,11 @@ export class ColTable extends BaseTable {
     return df
   }
 
-  override at(
+  override set(
     row: IndexId,
     col: IndexId,
     v: Cell,
-    inplace: boolean = true
+    opts: { inplace?: boolean } = {}
   ): BaseTable {
     if (typeof row === 'string' || row < 0 || row >= this.shape[0]) {
       throw new Error(`${row} is an invalid row`)
@@ -273,7 +276,8 @@ export class ColTable extends BaseTable {
       throw new Error(`${row} is an invalid row`)
     }
 
-    const df: ColTable = inplace ? this : (this.copy() as ColTable)
+    const { inplace = true } = opts
+    const df: ColTable = inplace ? this : this.copy()
 
     const colIdx: number = findCol(df, col)
 
@@ -424,14 +428,14 @@ export class ColTable extends BaseTable {
     return ret
   }
 
-  override copy(): BaseTable {
+  override copy(): ColTable {
     return new ColTable({
       name: this.name,
       data: this.cols.map((c) => c.copy()),
     })
   }
 
-  override replaceData(data: DataFrameInput): BaseTable {
+  override copyReplaceData(data: DataFrameInput): ColTable {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

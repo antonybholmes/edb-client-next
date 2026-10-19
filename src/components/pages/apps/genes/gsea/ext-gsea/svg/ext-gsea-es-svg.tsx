@@ -5,7 +5,7 @@ import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axes/svg-axis'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useAxis } from '@/components/plot/axes/axes-store'
+import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { COLOR_BLACK } from '@/lib/color/color'

@@ -80,7 +80,7 @@ export function oneWayFromDataframes(
     }
 
     for (const [ci, colName] of colNames.entries()) {
-      ret.setCol(colName, newCols[ci]!, true)
+      ret.setCol(colName, newCols[ci]!)
     }
   }
 

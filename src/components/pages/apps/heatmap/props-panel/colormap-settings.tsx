@@ -17,7 +17,7 @@ import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 
-import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
+import { AxisPlotPropsPopover } from '@/components/plot/axes/props/axis-plot-props-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'

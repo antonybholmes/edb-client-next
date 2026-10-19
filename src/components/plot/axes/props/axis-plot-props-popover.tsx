@@ -7,7 +7,7 @@ import {
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Move3d } from 'lucide-react'
 import { ReactNode, useState } from 'react'
-import { IPlotAddress } from '../axes-store'
+import { IPlotAddress } from '../plot-axes'
 import { AxisPlotPropsPanel } from './axis-plot-props-panel'
 
 export function AxisPlotPropsPopover({

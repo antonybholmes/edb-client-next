@@ -2,10 +2,15 @@
   "name": "Volcano",
   "abbr": "Vc",
   "description": "Volcano plots",
-  "color": ["#ffa904", "#ee7b06", "#a12424", "#400b0b"],
+  "color": [
+    "#ffa904",
+    "#ee7b06",
+    "#a12424",
+    "#400b0b"
+  ],
   "version": "2.0.2",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-19T16:03:38.118Z",
-  "hash": "8f1248614729746c46de6c708679fc5bc68a72c081f04e5dcd3c6fb391671bf4",
-  "build": 14
+  "modified": "2026-10-19T18:11:39.115Z",
+  "hash": "115658f250c45902365f34e5880a416c7ef68d5f033ce07704d726f1a9660792",
+  "build": 16
 }

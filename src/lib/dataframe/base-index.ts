@@ -105,6 +105,8 @@ export abstract class BaseIndex<T extends Cell> {
     return this.nums.filter((v) => !isNaN(v))
   }
 
+  abstract copy(): BaseIndex<T>
+
   abstract entries(): IterableIterator<[number, T]>
 
   abstract [Symbol.iterator](): IterableIterator<T>

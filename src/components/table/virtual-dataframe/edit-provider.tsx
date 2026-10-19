@@ -64,7 +64,7 @@ export function EditProvider({ children }: IChildrenProps) {
     switch (e.code) {
       case 'Enter':
         if (selection.rows && selection.cols) {
-          df.at(selection.rows.start, selection.cols.start, editText)
+          df.set(selection.rows.start, selection.cols.start, editText)
         }
 
         // updateSelection({

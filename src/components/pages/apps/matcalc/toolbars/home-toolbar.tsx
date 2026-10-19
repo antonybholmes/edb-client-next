@@ -14,6 +14,7 @@ import { useMessages } from '@/providers/message-provider'
 import { produce } from 'immer'
 import {
   ChartNoAxesCombined,
+  ChevronDown,
   DecimalsArrowLeft,
   DecimalsArrowRight,
 } from 'lucide-react'
@@ -126,6 +127,10 @@ export function HomeToolbar() {
               >
                 <ChartNoAxesCombined size={22} />
                 <span>Chart</span>
+                <ChevronDown
+                  size={12}
+                  className="absolute bottom-0 opacity-50 left-1/2 -translate-x-1/2"
+                />
               </ToolbarColSmallButton>
             }
           />

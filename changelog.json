@@ -3474,6 +3474,10 @@
         {
           "msg": "Icons now support full color gradients",
           "date": "2026-10-19T16:03:39.046Z"
+        },
+        {
+          "msg": "Simplified dataframe ui with better typing and use of opt args",
+          "date": "2026-10-19T18:11:40.071Z"
         }
       ]
     },

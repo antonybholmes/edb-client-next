@@ -118,8 +118,10 @@ export class ColDataFrame extends BaseDataFrame {
     }
   }
 
-  override setIndex(index: IndexFromType, inplace = true) {
+  override setIndex(index: IndexFromType, opts: { inplace?: boolean } = {}) {
     const idx = index instanceof Index ? index : new DataIndex(index)
+
+    const { inplace = true } = opts
 
     if (inplace) {
       this._index = idx
@@ -131,7 +133,12 @@ export class ColDataFrame extends BaseDataFrame {
     }
   }
 
-  override setIndexName(name: string, inplace = true): BaseDataFrame {
+  override setIndexName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): BaseDataFrame {
+    const { inplace = true } = opts
+
     const df: ColDataFrame = inplace ? this : (this.copy() as ColDataFrame)
 
     df._index.name = name
@@ -146,8 +153,9 @@ export class ColDataFrame extends BaseDataFrame {
   override setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace = true
-  ): BaseTable {
+    opts: { inplace?: boolean } = {}
+  ): ColDataFrame {
+    const { inplace = true } = opts
     const d =
       data instanceof Series || data instanceof Index ? data.values : [...data]
 
@@ -224,7 +232,7 @@ export class ColDataFrame extends BaseDataFrame {
   override setRow(
     row: IndexId,
     data: Cell[] | Series<Cell>,
-    inplace = true
+    opts: { inplace?: boolean } = {}
   ): ColDataFrame {
     if (typeof row === 'string') {
       throw new Error('invalid row')
@@ -236,27 +244,33 @@ export class ColDataFrame extends BaseDataFrame {
       throw new Error('length of row data must equal the number of columns')
     }
 
-    const df: ColDataFrame = inplace ? this : (this.copy() as ColDataFrame)
+    const { inplace = true } = opts
+    const df: ColDataFrame = inplace ? this : this.copy()
 
     if (row < this.shape[0]) {
       for (let col = 0; col < this.columns.length; col++) {
-        df._data[col]![row] = d[col]!
+        df._data[col]!.set(row, makeCell(d[col]!))
       }
     } else {
       for (let col = 0; col < this.columns.length; col++) {
-        df._data[col] = new DataIndex([...df._data[col]!.values, d[col]!])
+        df._data[col] = new DataIndex([
+          ...df._data[col]!.values,
+          makeCell(d[col]!),
+        ])
       }
+
+      df._index = new DataIndex([...df._index.values, makeCell(row)])
     }
 
     return df
   }
 
-  override at(
+  override set(
     row: IndexId,
     col: IndexId,
     v: Cell,
-    inplace: boolean = true
-  ): BaseTable {
+    opts: { inplace?: boolean } = {}
+  ): ColDataFrame {
     if (typeof row === 'string' || row < 0 || row >= this.shape[0]) {
       throw new Error(`${row} is an invalid row`)
     }
@@ -265,6 +279,7 @@ export class ColDataFrame extends BaseDataFrame {
       throw new Error(`${row} is an invalid row`)
     }
 
+    const { inplace = true } = opts
     const df: ColDataFrame = inplace ? this : (this.copy() as ColDataFrame)
 
     const colIdx: number = findCol(df, col)
@@ -302,13 +317,14 @@ export class ColDataFrame extends BaseDataFrame {
 
   override setColNames(
     index: IndexFromType,
-    inplace: boolean = true
-  ): BaseTable {
+    opts?: { inplace?: boolean }
+  ): ColDataFrame {
     if (index.length !== this._data.length) {
       throw new Error('columns length must match the number of columns in data')
     }
 
-    const df: ColDataFrame = inplace ? this : (this.copy() as ColDataFrame)
+    const { inplace = true } = opts
+    const df: ColDataFrame = inplace ? this : this.copy()
 
     const names = [...index]
 
@@ -367,7 +383,7 @@ export class ColDataFrame extends BaseDataFrame {
   override iloc({
     rows,
     cols,
-  }: { rows?: LocType; cols?: LocType } = {}): BaseTable {
+  }: { rows?: LocType; cols?: LocType } = {}): ColDataFrame {
     let rowIdx = _ilocDim(new NumInfIndex(this.shape[0]), rows)
     let colIdx = _ilocDim(this.columns, cols)
 
@@ -430,7 +446,7 @@ export class ColDataFrame extends BaseDataFrame {
   //   return _isin(this, rows, cols)
   // }
 
-  override get t(): BaseTable {
+  override get t(): ColDataFrame {
     const rows = this.shape[0]
     const cols = this.shape[1]
 
@@ -455,14 +471,14 @@ export class ColDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copy(): BaseDataFrame {
+  override copy(): ColDataFrame {
     return new ColDataFrame({
       name: this.name,
       data: this.cols.map((c) => c.copy()),
     })
   }
 
-  override replaceData(data: DataFrameInput): ColDataFrame {
+  override copyReplaceData(data: DataFrameInput): ColDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

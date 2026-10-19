@@ -8,7 +8,7 @@ import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
 import type { IBlock } from '@/components/pages/apps/heatmap/heatmap-settings'
-import { useAxis } from '@/components/plot/axes/axes-store'
+import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'

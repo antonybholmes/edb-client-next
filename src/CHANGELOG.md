@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Simplified dataframe ui with better typing and use of opt args.
 - Icons now support full color gradients.
 - Added power dialog to matcalc to complement log.
 - Col-dataframe now adds index to series in cols(). Moved SeriesData to cell and renamed Cell.

@@ -255,7 +255,7 @@ export function MotifsPage() {
         columns: ['A', 'C', 'G', 'T'],
       }).t
 
-      df.setIndexName('Base', true)
+      df.setIndexName('Base')
 
       return df
     })

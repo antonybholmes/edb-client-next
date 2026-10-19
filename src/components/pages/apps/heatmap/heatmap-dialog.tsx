@@ -42,6 +42,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
+import { LogSpan } from '@/components/log-span'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { log } from '@/lib/dataframe/utils/log'
@@ -395,7 +396,7 @@ export function HeatMapDialog({
                 updateSettings(newSettings)
               }}
             >
-              Log2(data+1)
+              Apply <LogSpan base={2}>data + 1</LogSpan>
             </Checkbox>
           </ActionDialogRow>
           <ActionDialogRow>

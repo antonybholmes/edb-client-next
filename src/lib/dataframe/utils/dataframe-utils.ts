@@ -417,8 +417,7 @@ export function kmeans(
   // we use use clusters starting from 1
   ret.rowObs.setCol(
     'Cluster',
-    assignments.map((c) => `c${c + 1}`),
-    true
+    assignments.map((c) => `c${c + 1}`)
   )
 
   return [ret, assignments]
@@ -458,7 +457,7 @@ export function stdevFilter(df: BaseDataFrame, top = 1000) {
   // return a filtered matrix
   return df
     .iloc({ rows: topIdx })
-    .setName(`Filter rows using stdev, top ${top}`, true)
+    .setName(`Filter rows using stdev, top ${top}`)
 }
 
 export function meanFilter(df: BaseDataFrame, top = 1000) {
@@ -471,9 +470,7 @@ export function meanFilter(df: BaseDataFrame, top = 1000) {
   const topIdx = idx.slice(0, top)
 
   // return a filtered matrix
-  return df
-    .iloc({ rows: topIdx })
-    .setName(`Filter rows using mean, top ${top}`, true)
+  return df.iloc({ rows: topIdx }).setName(`Filter rows using mean, top ${top}`)
 }
 
 export function medianFilter(df: BaseDataFrame, top = 1000): BaseDataFrame {
@@ -488,7 +485,7 @@ export function medianFilter(df: BaseDataFrame, top = 1000): BaseDataFrame {
   // return a filtered matrix
   return df
     .iloc({ rows: topIdx })
-    .setName(`Filter rows using median, top ${top}`, true) as BaseDataFrame
+    .setName(`Filter rows using median, top ${top}`) as BaseDataFrame
 }
 
 export function xInY(
@@ -505,13 +502,13 @@ export function xInY(
   // return a filtered matrix
   return df
     .iloc({ rows: idx })
-    .setName(`Exp ${exp} in ${samples} samples`, true) as BaseDataFrame
+    .setName(`Exp ${exp} in ${samples} samples`) as BaseDataFrame
 }
 
 export function zscore(df: BaseDataFrame): BaseDataFrame {
   const z = new ZScore().fit(df.values.flat() as number[])
 
-  return df.replaceData(
+  return df.copyReplaceData(
     df.values.map((row) => z.transform(row as number[]))
   ) as BaseDataFrame
 
@@ -526,7 +523,7 @@ export function zscore(df: BaseDataFrame): BaseDataFrame {
 export function rowZScore(df: BaseDataFrame): BaseDataFrame {
   const z = df.values.map((row) => new ZScore().fitTransform(row as number[]))
 
-  const ret = df.replaceData(z) as BaseDataFrame
+  const ret = df.copyReplaceData(z) as BaseDataFrame
 
   //const name = df.name ? df.name + ', ' : ''
 

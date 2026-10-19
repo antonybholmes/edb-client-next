@@ -69,7 +69,7 @@ export function DataToolbar() {
 
         <ToolbarCol>
           <ToolbarOptionalDropdownButton
-            //size="md"
+            title="Log Transform Table"
             icon="Log2(x)"
             onMainClick={() => {
               addSheets(
@@ -306,7 +306,7 @@ export function DataToolbar() {
             const df = (
               sheets[0] as AnnotationDataFrame
             ).copy() as AnnotationDataFrame
-            df.rowObs.setCol('Row Stdev', sd, true)
+            df.rowObs.setCol('Row Stdev', sd)
 
             //df.setCol('Row Stdev', sd, true)
 

@@ -92,7 +92,7 @@ export function dfStdev(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   df = df.copy() as AnnotationDataFrame
 
-  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd, true)
+  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd,  )
 
   //df.setCol('Row Stdev', sd, true)
 
@@ -121,7 +121,7 @@ export function dfMean(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowMean(df)
 
-  df = df.copy().setCol('Row Mean', sd, true) as BaseDataFrame
+  df = df.copy().setCol('Row Mean', sd,  ) as BaseDataFrame
 
   addStep(df.name, [df])
 }
@@ -149,7 +149,7 @@ export function dfMedian(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowMedian(df)
 
-  df = df.copy().setCol('Row Median', sd, true) as BaseDataFrame
+  df = df.copy().setCol('Row Median', sd,  ) as BaseDataFrame
 
   addStep(df.name, [df])
 }

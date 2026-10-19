@@ -8,8 +8,8 @@ import {
   IRankedGene,
   sortRankedGenes,
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc } from '@/components/plot/axes/axis'
+import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { IDim } from '@/interfaces/dim'

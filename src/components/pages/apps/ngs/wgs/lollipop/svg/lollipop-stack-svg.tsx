@@ -15,7 +15,7 @@ import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import type { IRect } from '@/interfaces/rect'
 import { COLOR_WHITE } from '@/lib/color/color'
 
-import { useAxis } from '@/components/plot/axes/axes-store'
+import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'

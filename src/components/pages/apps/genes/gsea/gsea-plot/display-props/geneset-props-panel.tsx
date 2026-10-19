@@ -6,7 +6,8 @@ import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
+
+import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
 import { SelectAll } from '@/components/select-all'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { move } from '@dnd-kit/helpers'

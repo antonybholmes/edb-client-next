@@ -73,6 +73,15 @@ export function makeCell(v: Cell, keepDefaultNA: boolean = true): Cell {
     return d
   }
 
+  // try as a boolean
+  if (v.toLowerCase() === 'true') {
+    return true
+  }
+
+  if (v.toLowerCase() === 'false') {
+    return false
+  }
+
   // treat it as an actual string
   return v
 }

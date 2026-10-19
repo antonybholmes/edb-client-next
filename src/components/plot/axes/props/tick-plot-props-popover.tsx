@@ -16,8 +16,8 @@ import { capitalCase } from '@/lib/text/capital-case'
 import { produce } from 'immer'
 import { MoveRight, MoveUp } from 'lucide-react'
 import { useState } from 'react'
-import { IPlotAddress, useAxes, useAxis } from '../axes-store'
 import { getAxisFormatter, getAxisTicks, IAxis } from '../axis'
+import { IPlotAddress, useAxes, useAxis } from '../plot-axes'
 import { ITickItem } from '../svg-axis-props'
 
 const RANGE_REGEX = /^(\d+|start)-(-?\d+|end)$/

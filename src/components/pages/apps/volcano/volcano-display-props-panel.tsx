@@ -17,7 +17,8 @@ import { NumericalInput } from '@/themed/numerical-input'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { AxesDisplayPropsPopover } from '@/components/plot/axes/plot/axes-groups-popover'
+
+import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'

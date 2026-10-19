@@ -30,9 +30,15 @@ export abstract class BaseDataFrame extends BaseTable {
    */
   abstract copy(): BaseDataFrame
 
-  abstract setIndex(index: IndexFromType, inplace: boolean): BaseDataFrame
+  abstract setIndex(
+    index: IndexFromType,
+    opts?: { inplace?: boolean }
+  ): BaseDataFrame
 
-  abstract setIndexName(name: string, inplace: boolean): BaseDataFrame
+  abstract setIndexName(
+    name: string,
+    opts?: { inplace?: boolean }
+  ): BaseDataFrame
 
   abstract get index(): Index<Cell>
 

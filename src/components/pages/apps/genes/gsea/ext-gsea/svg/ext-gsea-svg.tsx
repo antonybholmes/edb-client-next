@@ -1,7 +1,7 @@
 import { memo, ReactElement, useMemo } from 'react'
 
-import { useAxis } from '@/components/plot/axes/axes-store'
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
+import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMargin } from '@/components/plot/svg-margin'

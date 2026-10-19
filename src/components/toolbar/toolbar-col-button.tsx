@@ -2,7 +2,7 @@ import { useEdbSettings } from '@/components/edb/edb-settings'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { Button } from '@/themed/baseui/button'
-import type { ComponentProps, ReactNode } from 'react'
+import { Children, type ComponentProps, type ReactNode } from 'react'
 import { HCenterCol } from '../layout/h-center-col'
 import { HCenterRow } from '../layout/h-center-row'
 
@@ -12,10 +12,9 @@ interface IToolbarColButtonProps extends ComponentProps<typeof Button> {
 }
 
 //group-data-[ribbon=single]:w-toolbar-button
-const TOOLBAR_COL_BUTTON_CLS = `
+const TOOLBAR_COL_BUTTON_CLS = `relative flex gap-y-1
   group-data-[ribbon=single]:h-toolbar-button
   group-data-[ribbon=classic]:flex-col 
-  group-data-[ribbon=classic]:gap-y-1.5
   group-data-[ribbon=classic]:w-large-toolbar-button-width 
   group-data-[ribbon=classic]:h-large-toolbar-button-height`
 
@@ -29,6 +28,8 @@ export function ToolbarColButton({
   const { settings } = useEdbSettings()
   const ribbon = settings.toolbars.ribbon.style
 
+  const c = Children.toArray(children)
+
   return (
     <Button
       //variant="flat"
@@ -39,7 +40,15 @@ export function ToolbarColButton({
       // ripple={ripple}
       {...props}
     >
-      {ribbon === 'single' && icon ? icon : children}
+      {ribbon === 'single' && icon ? (
+        icon
+      ) : (
+        <>
+          <HCenterRow className="h-1/2 items-end">{c[0]}</HCenterRow>
+          <HCenterRow className="h-1/2">{c[1]}</HCenterRow>
+          {c.slice(2)}
+        </>
+      )}
     </Button>
   )
 }
@@ -52,6 +61,8 @@ export function ToolbarColSmallButton({
 }: IToolbarColButtonProps) {
   const { settings } = useEdbSettings()
   const ribbon = settings.toolbars.ribbon.style
+
+  const c = Children.toArray(children)
 
   return (
     <Button
@@ -67,7 +78,15 @@ export function ToolbarColSmallButton({
       // ripple={ripple}
       {...props}
     >
-      {ribbon === 'single' && icon ? icon : children}
+      {ribbon === 'single' && icon ? (
+        icon
+      ) : (
+        <>
+          <HCenterRow className="h-1/2 items-end">{c[0]}</HCenterRow>
+          <HCenterRow className="h-1/2">{c[1]}</HCenterRow>
+          {c.slice(2)}
+        </>
+      )}
     </Button>
   )
 }

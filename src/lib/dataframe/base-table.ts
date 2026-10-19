@@ -65,7 +65,8 @@ export abstract class BaseTable {
     return 'table'
   }
 
-  setName(name: string, inplace: boolean = true): BaseTable {
+  setName(name: string, opts: { inplace?: boolean } = {}): BaseTable {
+    const { inplace = true } = opts
     const df = inplace ? this : this.copy()
     df._name = name
     return df
@@ -85,7 +86,7 @@ export abstract class BaseTable {
    * @param data
    * @returns
    */
-  abstract replaceData(data: DataFrameInput): BaseTable
+  abstract copyReplaceData(data: DataFrameInput): BaseTable
 
   colName(index: number): string {
     return this.cols[index].name
@@ -103,7 +104,10 @@ export abstract class BaseTable {
     return this.columns.strs
   }
 
-  abstract setColNames(index: IndexFromType, inplace: boolean): BaseTable
+  abstract setColNames(
+    index: IndexFromType,
+    opts?: { inplace?: boolean }
+  ): BaseTable
 
   abstract col(col: IndexId): Series<Cell>
 
@@ -114,7 +118,7 @@ export abstract class BaseTable {
   abstract setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace: boolean
+    opts?: { inplace?: boolean }
   ): BaseTable
 
   abstract get(row: IndexId, col: IndexId): Cell
@@ -134,7 +138,7 @@ export abstract class BaseTable {
   abstract setRow(
     row: IndexId,
     data: SeriesFromType,
-    inplace: boolean
+    opts?: { inplace?: boolean }
   ): BaseTable
 
   /**
@@ -149,7 +153,12 @@ export abstract class BaseTable {
    *                with the update. This is true by default to reduce memory usage
    *                when doing multiple updates in a row.
    */
-  abstract at(row: IndexId, col: IndexId, v: Cell, inplace: boolean): BaseTable
+  abstract set(
+    row: IndexId,
+    col: IndexId,
+    v: Cell,
+    opts?: { inplace?: boolean }
+  ): BaseTable
 
   abstract get cols(): readonly Series<Cell>[]
 
@@ -184,7 +193,7 @@ export abstract class BaseTable {
   apply(f: (v: Cell, row: number, col: number) => Cell): BaseTable {
     const data = this.map(f)
 
-    return this.replaceData(data)
+    return this.copyReplaceData(data)
   }
 
   /**

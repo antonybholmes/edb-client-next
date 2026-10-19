@@ -141,8 +141,10 @@ export class ColFrame extends BaseDataFrame {
   override setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace = true
-  ): BaseDataFrame {
+    opts: { inplace?: boolean } = {}
+  ): ColFrame {
+    const { inplace = true } = opts
+
     const d =
       data instanceof Series || data instanceof Index ? data.values : [...data]
 
@@ -150,7 +152,7 @@ export class ColFrame extends BaseDataFrame {
       throw new Error('length of column data must equal the number of rows')
     }
 
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+    const df: ColFrame = inplace ? this : this.copy()
 
     const colIdx: number = findCol(df, col)
 
@@ -226,7 +228,7 @@ export class ColFrame extends BaseDataFrame {
   override setRow(
     row: IndexId,
     data: Cell[] | Series<Cell>,
-    inplace = true
+    opts: { inplace?: boolean } = {}
   ): ColFrame {
     const d = data instanceof Series ? data.values : data
 
@@ -234,7 +236,9 @@ export class ColFrame extends BaseDataFrame {
       throw new Error('length of row data must equal the number of columns')
     }
 
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+    const { inplace = true } = opts
+
+    const df: ColFrame = inplace ? this : this.copy()
 
     const rowIdx: number = findRow(df, row)
 
@@ -253,13 +257,15 @@ export class ColFrame extends BaseDataFrame {
     return df
   }
 
-  override at(
+  override set(
     row: IndexId,
     col: IndexId,
     v: Cell,
-    inplace: boolean = true
+    opts: { inplace?: boolean } = {}
   ): BaseDataFrame {
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+    const { inplace = true } = opts
+
+    const df: ColFrame = inplace ? this : this.copy()
 
     const rowIdx: number = findRow(df, row)
 
@@ -280,21 +286,28 @@ export class ColFrame extends BaseDataFrame {
 
   override setIndex(
     index: IndexFromType,
-    inplace: boolean = true
+    opts: { inplace?: boolean } = {}
   ): BaseDataFrame {
     if (index.length !== this._index.length) {
       throw new Error('index length must match the number of rows in data')
     }
 
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+    const { inplace = true } = opts
+
+    const df: ColFrame = inplace ? this : this.copy()
 
     df._index = makeIndex(index, df.shape[0])
 
     return df
   }
 
-  override setIndexName(name: string, inplace: boolean = true): BaseDataFrame {
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+  override setIndexName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): BaseDataFrame {
+    const { inplace = true } = opts
+
+    const df: ColFrame = inplace ? this : this.copy()
 
     df._index.name = name
 
@@ -337,13 +350,15 @@ export class ColFrame extends BaseDataFrame {
 
   override setColNames(
     index: IndexFromType,
-    inplace: boolean = true
+    opts: { inplace?: boolean } = {}
   ): BaseDataFrame {
     if (index.length !== this._columns.length) {
       throw new Error('columns length must match the number of columns in data')
     }
 
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+    const { inplace = true } = opts
+
+    const df: ColFrame = inplace ? this : this.copy()
 
     df._columns = makeColumns(index, this._columns.length) //new StringIndex(index.map(i => i.toString()))
 
@@ -507,7 +522,7 @@ export class ColFrame extends BaseDataFrame {
     return ret
   }
 
-  override copy(): BaseDataFrame {
+  override copy(): ColFrame {
     return new ColFrame({
       name: this.name,
       data: this.cols.map((c) => c.copy()),
@@ -516,7 +531,7 @@ export class ColFrame extends BaseDataFrame {
     })
   }
 
-  override replaceData(data: DataFrameInput): BaseDataFrame {
+  override copyReplaceData(data: DataFrameInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

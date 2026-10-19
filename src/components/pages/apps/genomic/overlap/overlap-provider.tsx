@@ -90,13 +90,10 @@ export function OverlapProvider({ children }: IChildrenProps) {
           .setName(name)
 
         if (isBed) {
-          table = table.setColNames(
-            [
-              ...['chr', 'start', 'end'],
-              ...range(table.shape[1] - 3).map((i) => `data ${i + 1}`),
-            ],
-            false
-          ) as AnnotationDataFrame
+          table.setColNames([
+            ...['chr', 'start', 'end'],
+            ...range(table.shape[1] - 3).map((i) => `data ${i + 1}`),
+          ]) as AnnotationDataFrame
         }
 
         tables.push(table)

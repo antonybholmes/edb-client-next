@@ -6,7 +6,7 @@ import { CenterRow } from '../layout/center-row'
 
 export function PowerIcon({ n }: { n: number | string }) {
   return (
-    <CenterRow className={cn(ICON_CLS)}>
+    <CenterRow className={cn(ICON_CLS, 'text-base')}>
       <span>&#x1D465;</span>
       <sup className="italic" style={{ fontFamily: 'serif' }}>
         {n}

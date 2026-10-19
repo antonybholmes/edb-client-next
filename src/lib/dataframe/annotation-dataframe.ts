@@ -74,10 +74,14 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._colVars
   }
 
-  override setName(name: string, inplace = true): BaseDataFrame {
-    const df = (inplace ? this : this.copy()) as AnnotationDataFrame
+  override setName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
+    const df = inplace ? this : this.copy()
 
-    df._data.setName(name, true)
+    df._data.setName(name)
 
     return df
   }
@@ -89,15 +93,16 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
-    const df = inplace ? this : (this.copy() as AnnotationDataFrame)
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
+    const df = inplace ? this : this.copy()
 
     const colIdx = findCol(df, col)
 
-    df._data.setCol(colIdx, data, true)
+    df._data.setCol(colIdx, data)
 
-    setMetadataRow(this._colVars, colIdx, col)
+    setObsTableData(this._colVars, colIdx, col)
 
     return df
   }
@@ -157,66 +162,76 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override setRow(
     row: IndexId,
     data: SeriesFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
     const df = inplace ? this : this.copy()
 
     const rowIdx = findRow(df, row)
 
-    df.setRow(rowIdx, data, true)
+    df._data.setRow(rowIdx, data)
 
-    setMetadataRow(this._rowObs, rowIdx, row)
+    setObsTableData(df._rowObs, rowIdx, row)
 
     return df
   }
 
-  override at(
+  override set(
     row: IndexId,
     col: IndexId,
     v: Cell,
-    inplace: boolean = true
-  ): BaseTable {
-    return this._data.at(row, col, v, inplace)
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
+
+    const df = inplace ? this : this.copy()
+
+    // Always set inplace to true on the underlying data to ensure the changes are applied to df
+    df._data.set(row, col, v)
+
+    return df
   }
 
   override setIndex(
     index: IndexFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
     const df: AnnotationDataFrame = inplace
       ? this
       : (this.copy() as AnnotationDataFrame)
 
     //df._data.setIndex(index, true)
-    df._rowObs.setCol(0, index, true)
+    df._rowObs.setCol(0, index)
 
     return df
   }
 
-  override setIndexName(name: string, inplace: boolean = true): BaseDataFrame {
-    const df: AnnotationDataFrame = inplace
-      ? this
-      : (this.copy() as AnnotationDataFrame)
+  override setIndexName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
 
-    //df._data.setIndexName(name, true)
+    const df = inplace ? this : this.copy()
 
     const cols = [...df._rowObs.columns]
     cols[0] = name
-    df._rowObs.setColNames(cols, true)
+    df._rowObs.setColNames(cols)
 
     return df
   }
 
   override setColNames(
     index: IndexFromType,
-    inplace: boolean = true
+    opts: { inplace?: boolean } = {}
   ): BaseDataFrame {
-    const df: AnnotationDataFrame = inplace
-      ? this
-      : (this.copy() as AnnotationDataFrame)
+    const { inplace = true } = opts
 
-    df._data.setColNames(index, true)
-    df.colVars.setCol(0, index, true)
+    const df = inplace ? this : this.copy()
+
+    df._data.setColNames(index)
+    df.colVars.setCol(0, index)
 
     return df
   }
@@ -268,8 +283,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
     const df = this._data.iloc({ rows, cols }) as BaseDataFrame
 
-    console.log('hmm', df)
-
     const ret: AnnotationDataFrame = new AnnotationDataFrame({
       name: this.name,
       data: df.cols,
@@ -314,19 +327,19 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copy(): BaseDataFrame {
+  override copy(): AnnotationDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.values,
     })
 
-    ret._rowObs = this._rowObs.copy() as BaseDataFrame
-    ret._colVars = this._colVars.copy() as BaseDataFrame
+    ret._rowObs = this._rowObs.copy() as ColDataFrame
+    ret._colVars = this._colVars.copy() as ColDataFrame
 
     return ret
   }
 
-  override replaceData(data: DataFrameInput): BaseDataFrame {
+  override copyReplaceData(data: DataFrameInput): AnnotationDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
@@ -343,13 +356,13 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }
 }
 
-function setMetadataRow(metadata: BaseTable, rowIdx: number, row: IndexId) {
+function setObsTableData(t: BaseTable, rowIdx: number, row: IndexId) {
   if (rowIdx === -1) {
     // we only update the meta data to add new info
     // we fill in the missing annotation by assuming the first
     // meta column is the index label and anything else is
     // extra annotation which we set to the empty string
-    metadata.setRow(rowIdx, [row, ...vfill('', metadata.shape[1] - 1)], true)
+    t.setRow(rowIdx, [row, ...vfill('', t.shape[1] - 1)])
   }
 }
 

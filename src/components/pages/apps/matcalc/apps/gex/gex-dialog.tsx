@@ -514,7 +514,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           )
           .flat()
 
-        df.colVars.setCol(datatype, labels, true)
+        df.colVars.setCol(datatype, labels)
       }
 
       let groups: IClusterGroup[] = []

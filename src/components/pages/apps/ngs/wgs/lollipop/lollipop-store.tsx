@@ -2,12 +2,12 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { range } from '@/lib/math/range'
 import { create } from 'zustand'
 
-import { useAxes } from '@/components/plot/axes/axes-store'
 import {
   createAxis,
   getAxisTicks,
   setAxisTicks,
 } from '@/components/plot/axes/axis'
+import { useAxes } from '@/components/plot/axes/plot-axes'
 import { ITickItem } from '@/components/plot/axes/svg-axis-props'
 import { makeUuid } from '@/lib/id'
 import { useEffect } from 'react'

@@ -1,6 +1,6 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { AxisPlotPropsPopover } from '@/components/plot/axes/plot/axis-plot-props-popover'
+
 import { PropsPanel } from '@/components/props-panel'
 import { SortableItem } from '@/components/sortable-item'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
@@ -8,6 +8,7 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { DragDropProvider } from '@dnd-kit/react'
 import { Fragment } from 'react/jsx-runtime'
 import { IDisplayPlot } from './axes-groups-popover'
+import { AxisPlotPropsPopover } from './axis-plot-props-popover'
 
 export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
   return (
@@ -27,7 +28,7 @@ export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
                             {gi > 0 && <ToolbarSeparator />}
                             <VCenterRow key={groupId} className="gap-x-1">
                               <span>{groupTitle}</span>
-                              <VCenterRow>
+                              <VCenterRow className="gap-x-1">
                                 {axes.map(({ id: axisId, title }) => (
                                   <AxisPlotPropsPopover
                                     key={axisId}

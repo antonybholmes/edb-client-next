@@ -3,7 +3,7 @@ import { ReactNode, useCallback, useEffect } from 'react'
 import { create } from 'zustand'
 import { IAxis } from './axis'
 
-export interface IAxesPlots {
+export interface IPlotsAxes {
   plotIds: string[]
   plots: Record<string, IPlotAxesGroups>
 }
@@ -21,20 +21,26 @@ export interface IPlotAxes {
   axes: Record<string, IAxis>
 }
 
+/**
+ * Represents the address of a specific axis within a plot and group.
+ * An axis belongs to a group of axes which belong to a specific plot.
+ * Ids should be unique but do not have to be uuids themselves to make
+ * design easier.
+ */
 export interface IPlotAddress {
   plotId: string
   groupId: string
   axisId: string
 }
 
-interface IAxesStore extends IAxesPlots {
+interface IAxesStore extends IPlotsAxes {
   updateAxis: (address: IPlotAddress, patch: Partial<IAxis>) => void
   addAxes: (plots: IPlotAxes[]) => void
   addAxis: (plotId: string, groupId: string, axis: IAxis) => void
   removeAxis: (address: IPlotAddress) => void
 }
 
-const DEFAULT_AXES_PLOTS: IAxesPlots = {
+const DEFAULT_AXES_PLOTS: IPlotsAxes = {
   plotIds: [],
   plots: {},
 }
@@ -161,48 +167,48 @@ export function useAxis(address: IPlotAddress): {
   return { axis, updateAxis: _updateAxis }
 }
 
-function updatePlots(newPlots: IPlotAxes[], current: IAxesPlots): IAxesPlots {
+function updatePlots(axes: IPlotAxes[], current: IPlotsAxes): IPlotsAxes {
   return produce(current, (draft) => {
-    for (const plot of newPlots) {
-      if (!draft.plots[plot.plotId]) {
-        draft.plots[plot.plotId] = {
-          plotId: plot.plotId,
+    for (const axis of axes) {
+      if (!draft.plots[axis.plotId]) {
+        draft.plots[axis.plotId] = {
+          plotId: axis.plotId,
           groupIds: [],
           groups: {},
         }
       }
 
-      const plotGroups = draft.plots[plot.plotId]
+      const plotGroups = draft.plots[axis.plotId]
 
-      if (!plotGroups.groups[plot.groupId]) {
-        plotGroups.groups[plot.groupId] = {
-          plotId: plot.plotId,
-          groupId: plot.groupId,
+      if (!plotGroups.groups[axis.groupId]) {
+        plotGroups.groups[axis.groupId] = {
+          plotId: axis.plotId,
+          groupId: axis.groupId,
           axisIds: [],
           axes: {},
         }
       }
 
-      if (!draft.plotIds.includes(plot.plotId)) {
-        draft.plotIds.push(plot.plotId)
+      if (!draft.plotIds.includes(axis.plotId)) {
+        draft.plotIds.push(axis.plotId)
       }
 
-      if (!plotGroups.groupIds.includes(plot.groupId)) {
-        plotGroups.groupIds.push(plot.groupId)
+      if (!plotGroups.groupIds.includes(axis.groupId)) {
+        plotGroups.groupIds.push(axis.groupId)
       }
 
-      const axes = plotGroups.groups[plot.groupId]
-      for (const axisId of plot.axisIds) {
+      const axes = plotGroups.groups[axis.groupId]
+      for (const axisId of axis.axisIds) {
         if (!axes.axisIds.includes(axisId)) {
           axes.axisIds.push(axisId)
         }
-        axes.axes[axisId] = plot.axes[axisId]
+        axes.axes[axisId] = axis.axes[axisId]
       }
     }
   })
 }
 
-export function AxesPlotProvider({
+export function PlotAxesProvider({
   plots: initialPlots,
   children,
 }: {
