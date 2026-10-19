@@ -4,10 +4,7 @@ import type { ITextFileOpen } from '@/components/pages/open-files'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import {
-  AnnotationDataFrame,
-  DATAFRAME_100x26,
-} from '@/lib/dataframe/annotation-dataframe'
+import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import { createContext, useState } from 'react'
@@ -93,7 +90,7 @@ export function OverlapProvider({ children }: IChildrenProps) {
           table.setColNames([
             ...['chr', 'start', 'end'],
             ...range(table.shape[1] - 3).map((i) => `data ${i + 1}`),
-          ]) as AnnotationDataFrame
+          ])
         }
 
         tables.push(table)

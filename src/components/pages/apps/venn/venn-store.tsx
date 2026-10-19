@@ -1,11 +1,7 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import {
-  colZScore,
-  rowZScore,
-  zscore,
-} from '@/lib/dataframe/utils/dataframe-utils'
+import { colZScore, rowZScore, zscore } from '@/lib/dataframe/utils/zscore'
 import { vfill, vfill2d } from '@/lib/fill'
 import { makeUuid } from '@/lib/id'
 import { HCluster, IClusterFrame, IClusterTree } from '@/lib/math/hcluster'

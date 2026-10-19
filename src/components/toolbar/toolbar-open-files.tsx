@@ -15,7 +15,7 @@ export function ToolbarOpenFile({
 }: ComponentProps<'button'>) {
   return (
     <ToolbarColSmallButton icon={<UploadIcon />} title={title} {...props}>
-      <UploadIcon size={24} strokeWidth={1} />
+      <UploadIcon size={22} strokeWidth={1} />
       {TEXT_OPEN}
     </ToolbarColSmallButton>
   )

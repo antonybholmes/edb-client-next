@@ -11,7 +11,7 @@ import {
   whereStrMatches,
   whereStrStartsWith,
 } from '../math/where'
-import { BaseTable, IDFToStrOpts } from './base-table'
+import { BaseTable, IDFToStrOpts, LocType } from './base-table'
 import type { Cell, IndexId } from './cell'
 import { Series } from './series'
 
@@ -29,6 +29,13 @@ export abstract class BaseDataFrame extends BaseTable {
    * the copy method from BaseTable to return a BaseDataFrame.
    */
   abstract copy(): BaseDataFrame
+
+  override iloc({
+    rows,
+    cols,
+  }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
+    return this
+  }
 
   abstract setIndex(
     index: IndexFromType,

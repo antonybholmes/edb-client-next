@@ -27,7 +27,7 @@ export abstract class BaseIndex<T extends Cell> {
   /**
    * Returns all values in the index.
    */
-  abstract get values(): T[]
+  abstract get values(): readonly T[]
 
   /**
    * Returns the value at a given position in the index.

@@ -33,7 +33,7 @@ export function result<T>(f: () => T | null | undefined) {
   }
 }
 
-export function zip<T = unknown>(...cols: T[][]): T[][] {
+export function zip<T = unknown>(...cols: readonly (readonly T[])[]): T[][] {
   return rangeMap(
     (i) => range(cols.length).map((j) => cols[j]![i]!),
     cols[0]!.length

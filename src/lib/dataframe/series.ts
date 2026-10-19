@@ -22,13 +22,13 @@ export abstract class Series<T extends Cell> extends BaseIndex<T> {
    */
   abstract get index(): Index<T>
 
-  abstract setIndex(index: IndexFromType, inplace: boolean): DataSeries<T>
+  abstract setIndex(index: IndexFromType, inplace: boolean): Series<T>
 
   get uniq(): T[] {
     return [...new Set(this.values)].sort()
   }
 
-  abstract set(index: number, v: T): DataSeries<T>
+  abstract set(index: number, v: T): Series<T>
 
   abstract filter(idx: number[]): Series<T>
 
@@ -86,14 +86,14 @@ export class DataSeries<T extends Cell> extends Series<T> {
     return this._data.length
   }
 
-  override filter(idx: number[]): Series<T> {
+  override filter(idx: number[]): DataSeries<T> {
     return new DataSeries(
       idx.map((i) => this._data[i]!),
       { name: this.name, index: this._index.filter(idx) }
     )
   }
 
-  override copy(): Series<T> {
+  override copy(): DataSeries<T> {
     return new DataSeries([...this._data], {
       name: this.name,
       index: this._index.copy(),

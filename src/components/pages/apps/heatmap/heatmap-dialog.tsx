@@ -28,7 +28,6 @@ import {
   getColIdxFromGroup,
   meanFilter,
   medianFilter,
-  rowZScore,
   stdevFilter,
 } from '@/lib/dataframe/utils/dataframe-utils'
 import { makeUuid } from '@/lib/id'
@@ -46,6 +45,7 @@ import { LogSpan } from '@/components/log-span'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { log } from '@/lib/dataframe/utils/log'
+import { rowZScore } from '@/lib/dataframe/utils/zscore'
 import {
   useCurrentGroups,
   useCurrentSheets,

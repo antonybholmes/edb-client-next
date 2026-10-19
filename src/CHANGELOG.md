@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added log dialog.
 - Simplified dataframe ui with better typing and use of opt args.
 - Icons now support full color gradients.
 - Added power dialog to matcalc to complement log.

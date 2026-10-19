@@ -28,7 +28,7 @@ export class DataFrame extends BaseDataFrame {
     const isDf = data instanceof BaseDataFrame
 
     if (isDf) {
-      this._data = data.values
+      this._data = [...data.values]
     } else if (data instanceof Series) {
       this._data = data.values.map((v) => [v])
     } else {
@@ -180,7 +180,7 @@ export class DataFrame extends BaseDataFrame {
   ): DataFrame {
     const { inplace = true } = opts
 
-    const d = data instanceof Series ? data.values : data
+    const d = [...(data instanceof Series ? data.values : data)]
 
     if (d.length !== this.shape[1]) {
       throw new Error('length of row data must equal the number of columns')

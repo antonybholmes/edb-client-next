@@ -121,7 +121,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
   }
 
-  override colValues(col: IndexId): Cell[] {
+  override colValues(col: IndexId): readonly Cell[] {
     return this._data.colValues(col)
   }
 
@@ -155,7 +155,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
   }
 
-  override rowValues(row: IndexId): Cell[] {
+  override rowValues(row: IndexId): readonly Cell[] {
     return this._data.rowValues(row)
   }
 
@@ -225,7 +225,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override setColNames(
     index: IndexFromType,
     opts: { inplace?: boolean } = {}
-  ): BaseDataFrame {
+  ): AnnotationDataFrame {
     const { inplace = true } = opts
 
     const df = inplace ? this : this.copy()
@@ -268,7 +268,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.length
   }
 
-  override get values(): Cell[][] {
+  override get values(): readonly Cell[][] {
     // return copy as we want dataframe to be immutable
     return this._data.values
   }
@@ -280,8 +280,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override iloc({
     rows,
     cols,
-  }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
-    const df = this._data.iloc({ rows, cols }) as BaseDataFrame
+  }: { rows?: LocType; cols?: LocType } = {}): AnnotationDataFrame {
+    const df = this._data.iloc({ rows, cols })
 
     const ret: AnnotationDataFrame = new AnnotationDataFrame({
       name: this.name,
@@ -289,8 +289,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
 
     // both are row oriented so we slice col meta data the same way as rows and row meta data the same way as rows
-    ret._rowObs = this._rowObs.iloc({ rows }) as BaseDataFrame
-    ret._colVars = this._colVars.iloc({ rows: cols }) as BaseDataFrame
+    ret._rowObs = this._rowObs.iloc({ rows })
+    ret._colVars = this._colVars.iloc({ rows: cols })
 
     return ret
   }
@@ -333,8 +333,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
       data: this._data.values,
     })
 
-    ret._rowObs = this._rowObs.copy() as ColDataFrame
-    ret._colVars = this._colVars.copy() as ColDataFrame
+    ret._rowObs = this._rowObs.copy()
+    ret._colVars = this._colVars.copy()
 
     return ret
   }
@@ -349,8 +349,8 @@ export class AnnotationDataFrame extends BaseDataFrame {
       data,
     })
 
-    ret._rowObs = this._rowObs.copy() as BaseDataFrame
-    ret._colVars = this._colVars.copy() as BaseDataFrame
+    ret._rowObs = this._rowObs.copy()
+    ret._colVars = this._colVars.copy()
 
     return ret
   }

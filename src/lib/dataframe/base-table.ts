@@ -65,6 +65,15 @@ export abstract class BaseTable {
     return 'table'
   }
 
+  /**
+   * Set the name of the table.
+   *
+   * @param name  the new name of the table
+   * @param opts  options for setting the name:
+   *              { inplace?: boolean }, where `inplace` determines if the change
+   *              should be applied to the current table or a copy.
+   * @returns     the table with the updated name
+   */
   setName(name: string, opts: { inplace?: boolean } = {}): BaseTable {
     const { inplace = true } = opts
     const df = inplace ? this : this.copy()
@@ -77,6 +86,12 @@ export abstract class BaseTable {
    */
   abstract get t(): BaseTable
 
+  /**
+   * Return a copy of the table. Tables are designed to be immutable,
+   * so this allows for safe modifications without affecting
+   * the original instance. Note that some methods do allow inplace
+   * modifications to reduce memory usage.
+   */
   abstract copy(): BaseTable
 
   /**
@@ -111,7 +126,7 @@ export abstract class BaseTable {
 
   abstract col(col: IndexId): Series<Cell>
 
-  colValues(c: IndexId): Cell[] {
+  colValues(c: IndexId): readonly Cell[] {
     return this.col(c).values
   }
 
@@ -127,11 +142,11 @@ export abstract class BaseTable {
     return cellStr(this.get(row, col))
   }
 
-  abstract get values(): Cell[][]
+  abstract get values(): readonly Cell[][]
 
   abstract row(row: IndexId): Series<Cell>
 
-  rowValues(c: IndexId): Cell[] {
+  rowValues(c: IndexId): readonly Cell[] {
     return this.row(c).values
   }
 
@@ -223,8 +238,8 @@ export abstract class BaseTable {
   }
 
   iloc({}: {
-    rows?: LocType | undefined
-    cols?: LocType | undefined
+    rows?: LocType
+    cols?: LocType
   } = {}): BaseTable {
     return this
   }

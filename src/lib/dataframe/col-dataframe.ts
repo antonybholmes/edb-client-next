@@ -8,13 +8,7 @@ import {
   whereStrStartsWith,
 } from '../math/where'
 import { BaseDataFrame } from './base-dataframe'
-import {
-  BaseTable,
-  DataFrameInput,
-  IDataFrameOptions,
-  LocType,
-  shape,
-} from './base-table'
+import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
 import type { Cell, IndexId } from './cell'
 import {
   DataIndex,
@@ -118,7 +112,10 @@ export class ColDataFrame extends BaseDataFrame {
     }
   }
 
-  override setIndex(index: IndexFromType, opts: { inplace?: boolean } = {}) {
+  override setIndex(
+    index: IndexFromType,
+    opts: { inplace?: boolean } = {}
+  ): ColDataFrame {
     const idx = index instanceof Index ? index : new DataIndex(index)
 
     const { inplace = true } = opts
@@ -127,7 +124,7 @@ export class ColDataFrame extends BaseDataFrame {
       this._index = idx
       return this
     } else {
-      const df: ColDataFrame = this.copy() as ColDataFrame
+      const df = this.copy()
       df._index = idx
       return df
     }
@@ -136,10 +133,10 @@ export class ColDataFrame extends BaseDataFrame {
   override setIndexName(
     name: string,
     opts: { inplace?: boolean } = {}
-  ): BaseDataFrame {
+  ): ColDataFrame {
     const { inplace = true } = opts
 
-    const df: ColDataFrame = inplace ? this : (this.copy() as ColDataFrame)
+    const df = inplace ? this : this.copy()
 
     df._index.name = name
 
@@ -163,7 +160,7 @@ export class ColDataFrame extends BaseDataFrame {
       throw new Error('length of column data must equal the number of rows')
     }
 
-    const df: ColDataFrame = inplace ? this : (this.copy() as ColDataFrame)
+    const df = inplace ? this : this.copy()
 
     const colIdx: number = findCol(df, col)
 
@@ -353,12 +350,10 @@ export class ColDataFrame extends BaseDataFrame {
     return data
   }
 
-  override apply(f: (v: Cell, row: number, col: number) => Cell): BaseTable {
-    const data = this.map(f)
-
+  override apply(f: (v: Cell, row: number, col: number) => Cell): ColDataFrame {
     const ret = new ColDataFrame({
       name: this.name,
-      data,
+      data: this.map(f),
     })
 
     return ret

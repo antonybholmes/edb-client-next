@@ -66,7 +66,7 @@ export class ColFrame extends BaseDataFrame {
         )
       }
 
-      this._data = data.map((c: unknown) => (c as Series<Cell>).values)
+      this._data = data.map((c: unknown) => [...(c as Series<Cell>).values])
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -145,8 +145,9 @@ export class ColFrame extends BaseDataFrame {
   ): ColFrame {
     const { inplace = true } = opts
 
-    const d =
-      data instanceof Series || data instanceof Index ? data.values : [...data]
+    const d = [
+      ...(data instanceof Series || data instanceof Index ? data.values : data),
+    ]
 
     if (d.length !== this.shape[0]) {
       throw new Error('length of column data must equal the number of rows')

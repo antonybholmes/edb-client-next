@@ -15,7 +15,6 @@ import {
   kmeans,
   meanFilter,
   medianFilter,
-  rowZScore,
   stdevFilter,
 } from '@/lib/dataframe/utils/dataframe-utils'
 import { argsort } from '@/lib/math/argsort'
@@ -33,6 +32,7 @@ import {
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
 import { log } from '@/lib/dataframe/utils/log'
+import { rowZScore } from '@/lib/dataframe/utils/zscore'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'

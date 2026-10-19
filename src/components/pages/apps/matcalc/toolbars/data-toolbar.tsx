@@ -6,21 +6,19 @@ import { DataSortIcon } from '@/components/icons/data-sort-icon'
 import { FilterIcon } from '@/components/icons/filter-icon'
 import { PowerIcon } from '@/components/icons/power-icon'
 import { TransposeIcon } from '@/components/icons/transpose-icon'
+import { LogSpan } from '@/components/log-span'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarDropdownButton } from '@/components/toolbar/toolbar-dropdown-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOptionalDropdownButton } from '@/components/toolbar/toolbar-optional-dropdown-button'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import {
-  colZScore,
-  rowStdev,
-  rowZScore,
-  zscore,
-} from '@/lib/dataframe/utils/dataframe-utils'
+import { rowStdev } from '@/lib/dataframe/utils/dataframe-utils'
 import { log } from '@/lib/dataframe/utils/log'
 import { pow } from '@/lib/dataframe/utils/pow'
+import { colZScore, rowZScore, zscore } from '@/lib/dataframe/utils/zscore'
 import { logrankExample } from '@/lib/math/logrank'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
@@ -31,6 +29,7 @@ import {
 } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
+import { LogDialog } from '../log-dialog'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { PowerDialog } from '../power-dialog'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
@@ -63,22 +62,20 @@ export function DataToolbar() {
   return (
     <>
       <ToolbarTabGroup title="Transform">
-        <ToolbarIconButton title="Transpose Table" onClick={() => transpose()}>
-          <TransposeIcon />
-        </ToolbarIconButton>
+        <ToolbarColSmallButton
+          title="Transpose Table"
+          onClick={() => transpose()}
+          icon={<TransposeIcon />}
+        >
+          <TransposeIcon size={22} />
+        </ToolbarColSmallButton>
 
         <ToolbarCol>
           <ToolbarOptionalDropdownButton
             title="Log Transform Table"
-            icon="Log2(x)"
+            icon={<LogSpan />}
             onMainClick={() => {
-              addSheets(
-                [log(sheets[0] as BaseDataFrame, 2, 1)],
-
-                {
-                  message: 'Log2(x+1)',
-                }
-              )
+              openCustomDialog(LogDialog, {})
             }}
           >
             <DropdownMenuItem
@@ -93,7 +90,9 @@ export function DataToolbar() {
                 )
               }
             >
-              Log2(x)
+              <span>
+                Apply <LogSpan />
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               aria-label="Log2(x+1)"
@@ -107,7 +106,9 @@ export function DataToolbar() {
                 )
               }
             >
-              Log2(x+1)
+              <span>
+                Apply <LogSpan>x+1</LogSpan>
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               aria-label="Log10(x)"
@@ -121,7 +122,9 @@ export function DataToolbar() {
                 )
               }
             >
-              Log10(x)
+              <span>
+                Apply <LogSpan base={10}>x</LogSpan>
+              </span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -136,7 +139,9 @@ export function DataToolbar() {
                 )
               }
             >
-              Log10(x+1)
+              <span>
+                Apply <LogSpan base={10}>x+1</LogSpan>
+              </span>
             </DropdownMenuItem>
           </ToolbarOptionalDropdownButton>
 

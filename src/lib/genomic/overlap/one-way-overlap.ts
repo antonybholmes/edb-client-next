@@ -40,7 +40,7 @@ export function oneWayFromDataframes(
   }
 
   for (const table of overlapTables) {
-    const blockSearch = new BlockSearch<Cell[]>()
+    const blockSearch = new BlockSearch<readonly Cell[]>()
 
     const colNames = table.columns.map((name) => `${table.name} ${name}`)
 

@@ -82,8 +82,10 @@ export function ToolbarColSmallButton({
         icon
       ) : (
         <>
-          <HCenterRow className="h-1/2 items-end">{c[0]}</HCenterRow>
-          <HCenterRow className="h-1/2">{c[1]}</HCenterRow>
+          <HCenterRow className={cn(c.length > 1 && 'h-1/2 items-end')}>
+            {c[0]}
+          </HCenterRow>
+          {c.length > 1 && <HCenterRow className="h-1/2">{c[1]}</HCenterRow>}
           {c.slice(2)}
         </>
       )}

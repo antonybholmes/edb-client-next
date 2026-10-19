@@ -11,7 +11,6 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   getColIdxFromGroup,
   rowMean,
-  rowZScore,
 } from '@/lib/dataframe/utils/dataframe-utils'
 import {
   HCluster,
@@ -45,6 +44,7 @@ import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { useStableId } from '@/hooks/stable-id'
 import { log2 } from '@/lib/dataframe/utils/log'
+import { rowZScore } from '@/lib/dataframe/utils/zscore'
 import { Group, PencilRuler } from 'lucide-react'
 import {
   useCurrentGroups,

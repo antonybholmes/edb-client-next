@@ -49,14 +49,14 @@ export abstract class InfIndex<T extends Cell> extends Index<T> {
     return this._length
   }
 
-  override filter(idx: number[]): Index<T> {
+  override filter(idx: number[]): DataIndex<T> {
     return new DataIndex<T>(
       idx.map((i) => this.at(i)),
       { name: this.name }
     )
   }
 
-  override copy(): Index<T> {
+  override copy(): InfIndex<T> {
     return this
   }
 }
@@ -132,7 +132,7 @@ export class DataIndex<T extends Cell> extends Index<T> {
     return this._data.length
   }
 
-  override filter(idx: number[]): Index<T> {
+  override filter(idx: number[]): DataIndex<T> {
     return new DataIndex<T>(
       idx.map((i) => this._data[i]!),
       { name: this.name }
@@ -152,7 +152,7 @@ export class DataIndex<T extends Cell> extends Index<T> {
     return this._map.has(lt) ? [this._map.get(lt)!] : []
   }
 
-  override copy(): Index<T> {
+  override copy(): DataIndex<T> {
     return new DataIndex<T>([...this._data], { name: this.name })
   }
 

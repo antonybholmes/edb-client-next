@@ -7,10 +7,10 @@ import {
   rowMean,
   rowMedian,
   rowStdev,
-  rowZScore,
   stdevFilter,
 } from '@/lib/dataframe/utils/dataframe-utils'
 import { log } from '@/lib/dataframe/utils/log'
+import { rowZScore } from '@/lib/dataframe/utils/zscore'
 type HistoryAddStep = (description: string, sheets: BaseDataFrame[]) => void
 
 export function dfKmeans(
@@ -92,7 +92,7 @@ export function dfStdev(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   df = df.copy() as AnnotationDataFrame
 
-  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd,  )
+  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd)
 
   //df.setCol('Row Stdev', sd, true)
 
@@ -121,7 +121,7 @@ export function dfMean(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowMean(df)
 
-  df = df.copy().setCol('Row Mean', sd,  ) as BaseDataFrame
+  df = df.copy().setCol('Row Mean', sd) as BaseDataFrame
 
   addStep(df.name, [df])
 }
@@ -149,7 +149,7 @@ export function dfMedian(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowMedian(df)
 
-  df = df.copy().setCol('Row Median', sd,  ) as BaseDataFrame
+  df = df.copy().setCol('Row Median', sd) as BaseDataFrame
 
   addStep(df.name, [df])
 }

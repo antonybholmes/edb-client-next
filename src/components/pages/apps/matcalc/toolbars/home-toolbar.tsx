@@ -125,7 +125,7 @@ export function HomeToolbar() {
                 title="Create Chart"
                 icon={<ChartNoAxesCombined size={18} />}
               >
-                <ChartNoAxesCombined size={22} />
+                <ChartNoAxesCombined size={20} />
                 <span>Chart</span>
                 <ChevronDown
                   size={12}

@@ -97,9 +97,9 @@
     ],
     "version": "20.0.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-19T18:11:39.109Z",
-    "hash": "31f49a6eff772c90c314986c8fa09663cbfa3fa8381895a2bf8b64bbe6947f83",
-    "build": 10
+    "modified": "2026-10-19T20:29:30.163Z",
+    "hash": "7619627e4978f4eaa2388311917d9e800631e8423cf03b31bd1deced23623ae1",
+    "build": 12
   },
   {
     "name": "History Viewer",
@@ -143,11 +143,11 @@
     "name": "Matcalc",
     "description": "Scientific graphing and statistics.",
     "color": "#40bf80",
-    "version": "52.0.0",
+    "version": "52.0.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-19T18:11:39.111Z",
-    "hash": "6da5e53bab40983d5e3519eb588ab726efe0066ce5abcded2e5e84f4aaa25c75",
-    "build": 2188
+    "modified": "2026-10-19T20:29:30.165Z",
+    "hash": "788f37a69159e9964b61eb855075668212e98e243a349e4b903f354289fefc94",
+    "build": 2190
   },
   {
     "name": "Motifs",
@@ -185,9 +185,9 @@
     "color": "#008080",
     "version": "18.8.0",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-10-19T18:11:39.108Z",
-    "hash": "ae51a93fffd8632d90497e7ccdfe117bb18b33002be645fd62f6513a8fa2e909",
-    "build": 564
+    "modified": "2026-10-19T20:29:30.162Z",
+    "hash": "98bd38c611e05da91be8eabcb85fb9f372dfd26241c0b39557a85857d66fcb70",
+    "build": 566
   },
   {
     "name": "Pathway",
@@ -284,9 +284,9 @@
     "color": "#00008B",
     "version": "26.8.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-19T14:51:41.491Z",
-    "hash": "0f00efe00880677112683d32e2636f98d9a25e328d180741a53c64ee2ed8ea6e",
-    "build": 994
+    "modified": "2026-10-19T20:29:30.168Z",
+    "hash": "9adee3078ffb58abd3b4660b04a9d7ff97c49744eacdc53be09da75eb455a3ba",
+    "build": 996
   },
   {
     "name": "Volcano",
