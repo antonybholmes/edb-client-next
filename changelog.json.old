@@ -3482,6 +3482,10 @@
         {
           "msg": "Added log dialog",
           "date": "2026-10-19T20:29:31.128Z"
+        },
+        {
+          "msg": "Fixing italics etc in some math notation in icons and labels",
+          "date": "2026-10-19T20:55:00.479Z"
         }
       ]
     },
