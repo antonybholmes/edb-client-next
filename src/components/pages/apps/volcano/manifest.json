@@ -1,14 +1,8 @@
 {
   "name": "Volcano",
-  "abbr": "Vol",
-  "description": "Volcano plots.",
-  "color": [
-    "#400b0b",
-    "#a12424",
-    "#ee7b06",
-    "#ffa904",
-    "#ffdb00"
-  ],
+  "abbr": "Vc",
+  "description": "Volcano plots",
+  "color": ["#ffa904", "#ee7b06", "#a12424", "#400b0b"],
   "version": "2.0.2",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
   "modified": "2026-10-19T16:03:38.118Z",

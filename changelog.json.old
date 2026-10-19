@@ -3470,6 +3470,10 @@
         {
           "msg": "Added power dialog to matcalc to complement log",
           "date": "2026-10-19T14:51:42.684Z"
+        },
+        {
+          "msg": "Icons now support full color gradients",
+          "date": "2026-10-19T16:03:39.046Z"
         }
       ]
     },

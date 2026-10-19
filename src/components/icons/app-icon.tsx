@@ -184,7 +184,7 @@ export function AppIcon({
         width: `${size}rem`,
         height: `${size}rem`,
       }}
-      className={cn('relative w-full aspect-square', className)}
+      className={cn('relative w-full aspect-square shrink-0 grow-0', className)}
 
       onPointerEnter={() => {
         onHover(true)

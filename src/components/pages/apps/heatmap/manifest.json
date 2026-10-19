@@ -1,10 +1,7 @@
 {
   "name": "Heatmap",
-  "description": "Heatmaps.",
-  "color": [
-    "#ff5050",
-    "#0000ff"
-  ],
+  "description": "Create heatmaps of tabular data",
+  "color": ["#ff5050", "#0000ff"],
   "version": "20.0.0",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
   "modified": "2026-10-19T16:03:38.112Z",
