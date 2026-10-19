@@ -1,10 +1,13 @@
 {
   "name": "Heatmap",
   "description": "Heatmaps.",
-  "color": "#ff0000",
+  "color": [
+    "#ff5050",
+    "#0000ff"
+  ],
   "version": "20.0.0",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-19T14:51:41.486Z",
-  "hash": "aa910d4734f5c6e9df43f4e8ea80f9685607826c2bddb9cfc277d098a9ac051e",
-  "build": 6
+  "modified": "2026-10-19T16:03:38.112Z",
+  "hash": "0e58305b9790a34e196983fb3cc0a9c10a5a3617f9e1d0c4e127a2811d889778",
+  "build": 8
 }

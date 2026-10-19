@@ -30,8 +30,6 @@ import { useVolcanoSettings } from './volcano-settings'
 
 const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
 
-const TOOLTIP_OFFSET = 5
-
 export interface IDisplayAxis {
   name: string
   domain: ILim
@@ -283,10 +281,9 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
       screenPos: screenP,
       content: (
         <>
-          <p className="font-semibold">{`${plot.volcano.entries[row]!.id}`}</p>
-          <p>{`x: ${cellStr(points[row]!.x)}, y: ${cellStr(
-            points[row]!.y
-          )}`}</p>
+          <span className="font-semibold">{`${plot.volcano.entries[row]!.id}`}</span>
+          <span>{`${xax.title}: ${cellStr(points[row]!.x)}`}</span>
+          <span>{`${yax.title}: ${cellStr(points[row]!.y)}`}</span>
         </>
       ),
     })

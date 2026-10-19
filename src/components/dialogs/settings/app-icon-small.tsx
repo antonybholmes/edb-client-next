@@ -18,13 +18,17 @@ export function AppIconSmall({
 
   abbr = `${words[0]![0]!.toUpperCase()}` //${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
 
+  const color = Array.isArray(appInfo.color)
+    ? appInfo.color[0]
+    : (appInfo.color ?? 'lightslategray')
+
   return (
     <div
       className={cn(ICON_CLS, className)}
       style={{
         //color: appInfo.color ?? 'lightslategray',
         //borderColor: appInfo.color ?? 'lightslategray',
-        backgroundColor: appInfo.color ?? 'lightslategray',
+        backgroundColor: color,
         //backgroundColor: `${appInfo.color}cc`
       }}
     >

@@ -12,18 +12,30 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { useMessages } from '@/providers/message-provider'
 import { produce } from 'immer'
-import { DecimalsArrowLeft, DecimalsArrowRight } from 'lucide-react'
+import {
+  ChartNoAxesCombined,
+  DecimalsArrowLeft,
+  DecimalsArrowRight,
+} from 'lucide-react'
 import { MESSAGE_CHANNEL } from '../data/data-panel'
 import { useFiles } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  MenuSeparator,
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
 import { VolcanoDialog } from '../../volcano/volcano-dialog'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useOpenFiles } from '../hooks/open'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
-import { TEXT_DOT_PLOT, TEXT_HEATMAP } from '../matcalc-page'
+import { TEXT_HEATMAP } from '../matcalc-page'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 export function HomeToolbar() {
@@ -105,6 +117,82 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot" className="items-start">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <ToolbarColSmallButton
+                title="Create Chart"
+                icon={<ChartNoAxesCombined size={18} />}
+              >
+                <ChartNoAxesCombined size={22} />
+                <span>Chart</span>
+              </ToolbarColSmallButton>
+            }
+          />
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => makeClusterMap(false)}>
+              Heatmap
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => makeDotPlot(false)}>
+              Dot Heatmap
+            </DropdownMenuItem>
+            <MenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                openCustomDialog(VolcanoDialog, {
+                  callback: (plot) => {
+                    _addPlots([plot])
+                  },
+                })
+              }}
+            >
+              Volcano
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                openMatcalcDialog({
+                  type: 'box-whiskers',
+                  payload: {
+                    callback: (plot) => _addPlots([plot]),
+                  },
+                })
+              }}
+            >
+              Box
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                console.log('Opening Sankey Dialog')
+                openMatcalcDialog({
+                  type: 'sankey-plot',
+                  payload: {
+                    callback: (plot) => {
+                      console.log('Sankey dialog returned plot', plot)
+                      _addPlots([plot])
+                    },
+                  },
+                })
+              }}
+            >
+              Sankey
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                openMatcalcDialog({
+                  type: 'gsea-bubble-plot',
+                  payload: {
+                    callback: (plot) => _addPlots([plot]),
+                  },
+                })
+              }}
+            >
+              GSEA Bubble
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <ToolbarCol>
           <ToolbarButton
             onClick={() => makeClusterMap(false)}
@@ -112,14 +200,14 @@ export function HomeToolbar() {
           >
             {TEXT_HEATMAP}
           </ToolbarButton>
-          <ToolbarButton
+          {/* <ToolbarButton
             onClick={() => makeDotPlot(false)}
             aria-label={TEXT_DOT_PLOT}
           >
             Dot
-          </ToolbarButton>
+          </ToolbarButton> */}
         </ToolbarCol>
-        <ToolbarCol>
+        {/* <ToolbarCol>
           <ToolbarButton
             title="Create Volcano Plot from Table"
             onClick={() => {
@@ -129,13 +217,6 @@ export function HomeToolbar() {
                   _addPlots([plot])
                 },
               })
-
-              // openMatcalcDialog({
-              //   type: 'volcano-plot',
-              //   payload: {
-              //     callback: (plot) => _addPlots([plot]),
-              //   },
-              // })
             }}
           >
             Volcano
@@ -187,7 +268,7 @@ export function HomeToolbar() {
           >
             GSEA Bubble
           </ToolbarButton>
-        </ToolbarCol>
+        </ToolbarCol> */}
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Gene Expression">

@@ -329,7 +329,10 @@ export function AppInfoProvider({ children }: IChildrenProps) {
 
       if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
         // Set the CSS variable for the app theme color
-        root.style.setProperty('--edb-app-theme', appInfo.color)
+        root.style.setProperty(
+          '--edb-app-theme',
+          Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
+        )
       } else {
         // reset to default theme color if no app color is provided
         // or accent colors are disabled

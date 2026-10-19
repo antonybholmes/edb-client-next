@@ -22,6 +22,8 @@ export function AppHeaderIcon() {
     return null
   }
 
+  const color = Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
+
   return (
     <BaseLink href="/" title={`${config.name} Home`}>
       <VCenterRow
@@ -44,8 +46,8 @@ export function AppHeaderIcon() {
             className={ICON_TRANSITION_TO_CLS}
             stroke=""
             style={{
-              fill: appInfo.color ?? 'lightslategray',
-              stroke: appInfo.color ?? 'lightslategray',
+              fill: color ?? 'lightslategray',
+              stroke: color ?? 'lightslategray',
             }}
           />
         )}

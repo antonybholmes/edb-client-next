@@ -11,7 +11,6 @@ import { History } from 'lucide-react'
 import { useState } from 'react'
 
 import { useHistory } from './history-provider/history-provider'
-import { HistoryTabs } from './history-tabs'
 
 export function HistoryDrawer() {
   const { open: openDialog } = useDialogs()
@@ -55,9 +54,7 @@ export function HistoryDrawer() {
 
       <Tabs value={tab} className="flex flex-col grow">
         <TabsContent value="list">
-          <VScrollPanel className="grow">
-            <HistoryTabs />
-          </VScrollPanel>
+          <VScrollPanel className="grow"></VScrollPanel>
         </TabsContent>
       </Tabs>
     </Drawer>

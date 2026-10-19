@@ -58,6 +58,10 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
         abbr = `${module.name[0]!.toUpperCase()}${module.name[1]!.toLowerCase()}`
       }
 
+      const color = Array.isArray(module.color)
+        ? module.color[0]
+        : (module.color ?? 'lightslategray')
+
       return (
         <li key={moduleIndex}>
           <ModuleButtonLink
@@ -72,7 +76,7 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
             <div
               className="flex h-6 w-6 shrink-0 flex-row items-center justify-center rounded-full text-sm text-white/95 opacity-75 group-hover:opacity-100 group-focus:opacity-100 trans-opacity"
               style={{
-                backgroundColor: module.color ?? 'lightslategray',
+                backgroundColor: color,
               }}
             >
               <span className="font-bold">{abbr[0]!.toUpperCase()}</span>

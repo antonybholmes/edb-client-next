@@ -3466,6 +3466,10 @@
         {
           "msg": "Col-dataframe now adds index to series in cols(). Moved SeriesData to cell and renamed Cell.",
           "date": "2026-10-19T13:42:46.798Z"
+        },
+        {
+          "msg": "Added power dialog to matcalc to complement log",
+          "date": "2026-10-19T14:51:42.684Z"
         }
       ]
     },

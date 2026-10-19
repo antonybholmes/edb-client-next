@@ -28,7 +28,8 @@ export interface IAppHeaderLink {
   description: string
   slug?: string
   mode?: string
-  color?: string
+  color?: string | string[]
+  color2?: string
 }
 
 export interface IHeaderLink {

@@ -4,7 +4,7 @@ import { DEFAULT_VOLCANO_PROPS } from './volcano-plot-svg'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { type IVolcanoDisplayOptions } from '@/components/pages/apps/volcano/volcano-plot-svg'
 import { PropsPanel } from '@/components/props-panel'
-import { TEXT_CLEAR, TEXT_OK, TEXT_RESET } from '@/consts'
+import { TEXT_CLEAR, TEXT_OK, TEXT_RESET, TEXT_SHOW } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { textToLines } from '@/lib/text/lines'
 import {
@@ -494,7 +494,7 @@ export function VolcanoDisplayPropsPanel() {
                   aria-label="Add labels to plot"
                   onClick={() => addLabels()}
                 >
-                  Add Labels
+                  {TEXT_SHOW}
                 </ToolbarButton>
                 <ToolbarIconButton
                   title="Auto Label"

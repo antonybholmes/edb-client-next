@@ -1,4 +1,3 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import {
@@ -12,6 +11,7 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useMatcalcDialogs } from '../../matcalc/matcalc-dialogs'
 
@@ -46,7 +46,7 @@ export function HomeToolbar() {
             saveAs('volcano')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

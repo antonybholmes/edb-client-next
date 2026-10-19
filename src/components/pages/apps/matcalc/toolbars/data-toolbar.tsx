@@ -62,7 +62,7 @@ export function DataToolbar() {
 
   return (
     <>
-      <ToolbarTabGroup title="Matrix">
+      <ToolbarTabGroup title="Transform">
         <ToolbarIconButton title="Transpose Table" onClick={() => transpose()}>
           <TransposeIcon />
         </ToolbarIconButton>
@@ -269,34 +269,35 @@ export function DataToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Rows">
-        <ToolbarIconButton
-          title="Filter Rows"
-          onClick={() => {
-            openMatcalcDialog({
-              type: 'filter-rows',
-              payload: {},
-            })
-          }}
-        >
-          <FilterIcon />
-        </ToolbarIconButton>
-
-        <ToolbarIconButton
-          title="Sort Columns by Specific Rows"
-          onClick={() => {
-            if (selection) {
+        <ToolbarCol>
+          <ToolbarIconButton
+            title="Filter Rows"
+            onClick={() => {
               openMatcalcDialog({
-                type: 'sort-rows',
-                payload: {
-                  selection,
-                },
+                type: 'filter-rows',
+                payload: {},
               })
-            }
-          }}
-        >
-          <DataSortIcon />
-        </ToolbarIconButton>
+            }}
+          >
+            <FilterIcon />
+          </ToolbarIconButton>
 
+          <ToolbarIconButton
+            title="Sort Columns by Specific Rows"
+            onClick={() => {
+              if (selection) {
+                openMatcalcDialog({
+                  type: 'sort-rows',
+                  payload: {
+                    selection,
+                  },
+                })
+              }
+            }}
+          >
+            <DataSortIcon />
+          </ToolbarIconButton>
+        </ToolbarCol>
         <ToolbarButton
           title="Add Row Standard Deviation Column"
           onClick={() => {

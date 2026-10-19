@@ -76,7 +76,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
             <ul className="mt-1 grid grid-cols-2 gap-2">
               {section.apps
                 .filter(
-                  module =>
+                  (module) =>
                     module.mode !== 'dev' ||
                     process.env.NODE_ENV !== 'production'
                 )
@@ -88,6 +88,10 @@ export function HeaderLinks({ onClick, className }: IProps) {
                   } else {
                     abbr = `${module.name[0]!.toUpperCase()}${module.name[1]!.toLowerCase()}`
                   }
+
+                  const color = Array.isArray(module.color)
+                    ? module.color[0]
+                    : module.color
 
                   return (
                     <li key={moduleIndex}>
@@ -102,7 +106,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
                         <div
                           className="flex h-7 w-7 shrink-0 flex-row items-center justify-center rounded-full text-sm text-white/95"
                           style={{
-                            backgroundColor: module.color ?? 'lightslategray',
+                            backgroundColor: color ?? 'lightslategray',
                           }}
                         >
                           <span className="font-bold">

@@ -1,35 +1,23 @@
 import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
+import { VariantProps } from 'class-variance-authority'
 import { ImageDown } from 'lucide-react'
+import { variants } from './download-icon'
 
 export function DownloadImageIcon({
-  size = 'w-5 h-5',
-  stroke = 'stroke-foreground',
+  size = 20,
+  variant,
   className,
   strokeWidth = 1.5,
-}: IIconProps) {
+}: IIconProps & VariantProps<typeof variants>) {
   return (
-    // <svg
-    //   xmlns="http://www.w3.org/2000/svg"
-    //   viewBox="0 0 24 24"
-    //   className={cn(ICON_CLS, stroke, fill, size, className)}
-    //   style={{
-    //     strokeLinecap: 'round',
-    //     strokeLinejoin: 'round',
-    //     fill: 'none',
-    //     ...style,
-    //   }}
-    //   {...props}
-    // >
-    //   <path d="M 12 2 L 12 14" />
-    //   <path d="M 6 10 L 12 16 L 18 10" />
-    //   <path d="M 2 20 L 22 20" />
-    // </svg>
-
     <ImageDown
-      className={cn(ICON_CLS, stroke, size, className)}
+      className={variants({
+        variant,
+        className: cn(ICON_CLS, className),
+      })}
       strokeWidth={strokeWidth}
-      stroke=""
+      size={size}
     />
   )
 }

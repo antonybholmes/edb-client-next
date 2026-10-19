@@ -91,12 +91,15 @@
   {
     "name": "Heatmap",
     "description": "Heatmaps.",
-    "color": "#ff0000",
+    "color": [
+      "#ff5050",
+      "#0000ff"
+    ],
     "version": "20.0.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-19T14:51:41.486Z",
-    "hash": "aa910d4734f5c6e9df43f4e8ea80f9685607826c2bddb9cfc277d098a9ac051e",
-    "build": 6
+    "modified": "2026-10-19T16:03:38.112Z",
+    "hash": "0e58305b9790a34e196983fb3cc0a9c10a5a3617f9e1d0c4e127a2811d889778",
+    "build": 8
   },
   {
     "name": "History Viewer",
@@ -142,9 +145,9 @@
     "color": "#40bf80",
     "version": "52.0.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-19T14:51:41.488Z",
-    "hash": "584394ba63a7985a210db51908f0d664ccba4cd507b210cae4387bf9c4b1db7c",
-    "build": 2184
+    "modified": "2026-10-19T16:03:38.114Z",
+    "hash": "6677c80f4ccb762a2e8a3250c249c1151ffa362cfa76efcd247da34387a63054",
+    "build": 2186
   },
   {
     "name": "Motifs",
@@ -289,11 +292,17 @@
     "name": "Volcano",
     "abbr": "Vol",
     "description": "Volcano plots.",
-    "color": "#ff0000",
+    "color": [
+      "#400b0b",
+      "#a12424",
+      "#ee7b06",
+      "#ffa904",
+      "#ffdb00"
+    ],
     "version": "2.0.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-19T14:51:41.491Z",
-    "hash": "bf1c50d4e46cda4a8e9358e7bde50bdbf1c0625ebc4d85f62f386d8dfe38873b",
-    "build": 12
+    "modified": "2026-10-19T16:03:38.118Z",
+    "hash": "8f1248614729746c46de6c708679fc5bc68a72c081f04e5dcd3c6fb391671bf4",
+    "build": 14
   }
 ]
