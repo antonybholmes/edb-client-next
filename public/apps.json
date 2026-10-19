@@ -97,9 +97,9 @@
     ],
     "version": "20.0.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-19T20:29:30.163Z",
-    "hash": "7619627e4978f4eaa2388311917d9e800631e8423cf03b31bd1deced23623ae1",
-    "build": 12
+    "modified": "2026-10-19T20:54:59.544Z",
+    "hash": "1e988611041b44aa3651ab40002fd0d8e6db1a6357fdd994533d55d4c0319a90",
+    "build": 14
   },
   {
     "name": "History Viewer",
@@ -145,9 +145,9 @@
     "color": "#40bf80",
     "version": "52.0.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-19T20:29:30.165Z",
-    "hash": "788f37a69159e9964b61eb855075668212e98e243a349e4b903f354289fefc94",
-    "build": 2190
+    "modified": "2026-10-19T20:54:59.546Z",
+    "hash": "0b2c78568b1427775443454895816d1ffe3311b819c9fbb7c72c895110f17dcc",
+    "build": 2192
   },
   {
     "name": "Motifs",

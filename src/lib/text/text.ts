@@ -5,6 +5,8 @@ export type UndefStr = string | undefined
 export type NullStr = string | null
 export type UndefNullStr = string | undefined | null
 
+export const REGEX_IS_LETTER = /^[A-Za-z]$/
+
 // export function capitalizeSentence(text: string): string {
 //   return text
 //     .trim()

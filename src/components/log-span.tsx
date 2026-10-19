@@ -1,3 +1,4 @@
+import { REGEX_IS_LETTER } from '@/lib/text/text'
 import { ComponentProps } from 'react'
 
 export function LogSpan({
@@ -10,10 +11,22 @@ export function LogSpan({
   base?: string | number
   minus?: boolean
 }) {
+  const chars = String(children).split(/([+\-*/ ])/)
+
+  const formattedChildren = chars.map((c, i) => {
+    c = c.trim()
+    return REGEX_IS_LETTER.test(c) ? (
+      <i key={i}>{c}</i>
+    ) : (
+      <span key={i}>{c}</span>
+    )
+  })
+
   return (
-    <span className="italic" style={{ fontFamily: 'serif', fontSize }}>
+    <span style={{ fontFamily: 'serif', fontSize }}>
       {minus ? '-' : ''}log
-      <sub style={{ fontSize: fontSize * 0.75 }}>{base}</sub>({children})
+      <sub style={{ fontSize: fontSize * 0.75 }}>{base}</sub>(
+      {formattedChildren})
     </span>
   )
 }

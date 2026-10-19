@@ -416,7 +416,7 @@ export function DotPlotDialog({
                 updateSettings(newSettings)
               }}
             >
-              Apply <LogSpan base={2}>data + 1</LogSpan>
+              Apply <LogSpan base={2}>data+1</LogSpan>
             </Checkbox>
           </ActionDialogRow>
           <ActionDialogRow>

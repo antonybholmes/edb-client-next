@@ -7,7 +7,10 @@ import { FilterIcon } from '@/components/icons/filter-icon'
 import { PowerIcon } from '@/components/icons/power-icon'
 import { TransposeIcon } from '@/components/icons/transpose-icon'
 import { LogSpan } from '@/components/log-span'
-import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import {
+  DropdownMenuItem,
+  MenuSeparator,
+} from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarDropdownButton } from '@/components/toolbar/toolbar-dropdown-button'
@@ -146,14 +149,14 @@ export function DataToolbar() {
           </ToolbarOptionalDropdownButton>
 
           <ToolbarOptionalDropdownButton
-            title="Raise to Power"
+            title="Raise Table To Power"
             icon={<PowerIcon n={'n'} />}
             onMainClick={() => {
               openCustomDialog(PowerDialog, {})
             }}
           >
             <DropdownMenuItem
-              title="Raise to Power 2"
+              title="Raise Table to Power 2"
               onClick={() =>
                 addSheets(
                   [pow(sheets[0] as BaseDataFrame, 2)],
@@ -165,10 +168,10 @@ export function DataToolbar() {
               }
             >
               <PowerIcon n={2} />
-              <span>Raise to Power 2</span>
+              <span>Raise Table To Power 2</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              title="Raise to Power 10"
+              title="Raise Table To Power 10"
               onClick={() =>
                 addSheets(
                   [pow(sheets[0] as BaseDataFrame, 10)],
@@ -180,10 +183,11 @@ export function DataToolbar() {
               }
             >
               <PowerIcon n={10} />
-              <span>Raise to Power 10</span>
+              <span>Raise Table To Power 10</span>
             </DropdownMenuItem>
+            <MenuSeparator />
             <DropdownMenuItem
-              title="Raise to Power e"
+              title="Raise Table To Power e"
               onClick={() =>
                 addSheets(
                   [pow(sheets[0] as BaseDataFrame, 'e')],
@@ -195,7 +199,7 @@ export function DataToolbar() {
               }
             >
               <PowerIcon n={'e'} />
-              <span>Raise to Power e</span>
+              <span>Raise Table To Power e</span>
             </DropdownMenuItem>
           </ToolbarOptionalDropdownButton>
         </ToolbarCol>
