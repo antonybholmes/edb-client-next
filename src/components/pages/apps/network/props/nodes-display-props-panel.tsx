@@ -209,7 +209,7 @@ export function NodesDisplayPropsPanel() {
               className="flex flex-col gap-y-1.5"
               collapsible={true}
             >
-              <span>Current Node:</span>
+              <span>Current Node</span>
               <Textarea value={currentNodeText} readOnly className="h-1" />
             </ResizablePanel>
           </ResizablePanelGroup>
