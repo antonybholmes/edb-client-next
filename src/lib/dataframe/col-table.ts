@@ -278,7 +278,7 @@ export class ColTable extends BaseTable {
       const d = new Array(this._data.length) as SeriesData[]
 
       for (let col = 0; col < this._data.length; col++) {
-        d[col] = this._data[col]![row]!
+        d[col] = this._data[col]!.at(row)
       }
 
       data[row] = d
@@ -388,7 +388,7 @@ export class ColTable extends BaseTable {
       const d = new Array(rows) as SeriesData[]
 
       for (let row = 0; row < rows; row++) {
-        d[row] = this._data[col]![row]!
+        d[row] = this._data[col]!.at(row)
       }
 
       data[col] = d

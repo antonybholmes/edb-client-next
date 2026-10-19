@@ -215,7 +215,7 @@ export class ColDataFrame extends BaseDataFrame {
     const data = new Array(this.columns.length) as SeriesData[]
 
     for (let col = 0; col < this.columns.length; col++) {
-      data[col] = this._data[col]![row]!
+      data[col] = this._data[col]!.at(row)
     }
 
     return new DataSeries(data, {
