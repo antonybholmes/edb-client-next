@@ -5,7 +5,7 @@ import { range } from '@/lib/math/range'
 import { NA } from '@/lib/text/text'
 import { zip } from '@/lib/utils'
 
-import type { SeriesData } from '@/lib/dataframe/series-data'
+import type { Cell } from '@/lib/dataframe/cell'
 import {
   LOC_REGEX,
   newGenomicLocation,
@@ -40,7 +40,7 @@ export function oneWayFromDataframes(
   }
 
   for (const table of overlapTables) {
-    const blockSearch = new BlockSearch<SeriesData[]>()
+    const blockSearch = new BlockSearch<Cell[]>()
 
     const colNames = table.columns.map((name) => `${table.name} ${name}`)
 

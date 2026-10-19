@@ -1,8 +1,8 @@
 import type { IndexMapFunc, Shape } from '.'
-import { cellNum, cellStr } from './cell'
-import type { SeriesData } from './series-data'
 
-export abstract class BaseIndex<T extends SeriesData> {
+import { Cell, cellNum, cellStr } from './cell'
+
+export abstract class BaseIndex<T extends Cell> {
   private _name: string
 
   constructor(opts: { name?: string } = {}) {
@@ -49,7 +49,7 @@ export abstract class BaseIndex<T extends SeriesData> {
   }
 
   /**
-   * Return the values as strings
+   * Return the values of the index as strings
    */
   get strs(): readonly string[] {
     return this.values.map((v) => cellStr(v))
@@ -108,6 +108,6 @@ export abstract class BaseIndex<T extends SeriesData> {
   abstract [Symbol.iterator](): Iterator<T>
 }
 
-function _map<T>(index: BaseIndex<SeriesData>, f: IndexMapFunc<T>): T[] {
+function _map<T>(index: BaseIndex<Cell>, f: IndexMapFunc<T>): T[] {
   return index.values.map((x, i) => f(x, i))
 }

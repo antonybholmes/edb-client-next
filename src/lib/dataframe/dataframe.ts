@@ -3,6 +3,7 @@ import { BaseDataFrame, findCol, findCols, findRow } from './base-dataframe'
 import { makeCell } from './cell'
 
 import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import type { Cell, IndexId } from './cell'
 import {
   DataIndex,
   Index,
@@ -13,12 +14,11 @@ import {
   type Shape,
 } from './index'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
-import type { IndexId, SeriesData } from './series-data'
 
 export class DataFrame extends BaseDataFrame {
-  _index: Index<SeriesData>
-  _data: SeriesData[][]
-  _columns: Index<SeriesData>
+  _index: Index<Cell>
+  _data: Cell[][]
+  _columns: Index<Cell>
 
   constructor(options: IDataFrameOptions = {}) {
     const { name = '', data = [], index, columns } = options
@@ -36,10 +36,10 @@ export class DataFrame extends BaseDataFrame {
       // If a 1d array, make, it a column
 
       if (data.length > 0 && Array.isArray(data[0])) {
-        this._data = data as SeriesData[][]
+        this._data = data as Cell[][]
       } else {
         // single array make into a column
-        this._data = data.map((v) => [v]) as SeriesData[][]
+        this._data = data.map((v) => [v]) as Cell[][]
       }
     }
 
@@ -88,7 +88,7 @@ export class DataFrame extends BaseDataFrame {
 
     if (colIdx !== -1) {
       // existing column so update each value
-      d.forEach((v: SeriesData, r: number) => {
+      d.forEach((v: Cell, r: number) => {
         df._data[r]![colIdx]! = v
       })
     } else {
@@ -98,7 +98,7 @@ export class DataFrame extends BaseDataFrame {
       } else {
         // since matrix is row wise, append new values to
         // end of each row
-        d.forEach((v: SeriesData, r: number) => {
+        d.forEach((v: Cell, r: number) => {
           df._data[r]!.push(v)
         })
       }
@@ -117,7 +117,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries<SeriesData> {
+  override col(c: IndexId): BaseSeries<Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -132,7 +132,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override get(row: IndexId, col: IndexId): SeriesData {
+  override get(row: IndexId, col: IndexId): Cell {
     const rowIdx = findRow(this, row)
 
     if (rowIdx === -1) {
@@ -156,7 +156,7 @@ export class DataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries<SeriesData> {
+  override row(row: IndexId): BaseSeries<Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -171,7 +171,7 @@ export class DataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: SeriesData[] | BaseSeries<SeriesData>,
+    data: Cell[] | BaseSeries<Cell>,
     inplace = true
   ): BaseDataFrame {
     const d = data instanceof BaseSeries ? data.values : data
@@ -207,7 +207,7 @@ export class DataFrame extends BaseDataFrame {
   override at(
     row: IndexId,
     col: IndexId,
-    v: SeriesData,
+    v: Cell,
     inplace = true
   ): BaseDataFrame {
     const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
@@ -244,11 +244,11 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override get index(): Index<SeriesData> {
+  override get index(): Index<Cell> {
     return this._index
   }
 
-  override get columns(): Index<SeriesData> {
+  override get columns(): Index<Cell> {
     return this._columns
   }
 
@@ -269,7 +269,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): BaseSeries<SeriesData>[] {
+  override get cols(): BaseSeries<Cell>[] {
     return range(this.shape[1]).map(
       (c: number) =>
         new DataSeries(
@@ -292,13 +292,13 @@ export class DataFrame extends BaseDataFrame {
     return this.shape[0] * this.shape[1]
   }
 
-  override get values(): SeriesData[][] {
+  override get values(): Cell[][] {
     // return copy as we want dataframe to be immutable
     return this._data.map((row) => row.slice())
   }
 
   override apply(
-    f: (v: SeriesData, row: number, col: number) => SeriesData
+    f: (v: Cell, row: number, col: number) => Cell
   ): BaseDataFrame {
     const data = this.map(f)
 
@@ -312,7 +312,7 @@ export class DataFrame extends BaseDataFrame {
     return ret
   }
 
-  override map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][] {
+  override map<T>(f: (v: Cell, row: number, col: number) => T): T[][] {
     return _map(this, f)
   }
 
@@ -322,7 +322,7 @@ export class DataFrame extends BaseDataFrame {
   //   return _rowApply(this, f)
   // }
 
-  override rowMap<T>(f: (row: SeriesData[], index: number) => T): T[] {
+  override rowMap<T>(f: (row: Cell[], index: number) => T): T[] {
     return _rowMap(this, f)
   }
 
@@ -330,7 +330,7 @@ export class DataFrame extends BaseDataFrame {
   //   return _colApply(this, f)
   // }
 
-  override colMap<T>(f: (col: SeriesData[], index: number) => T): T[] {
+  override colMap<T>(f: (col: Cell[], index: number) => T): T[] {
     return _colMap(this, f)
   }
 
@@ -401,7 +401,7 @@ export class DataFrame extends BaseDataFrame {
   }
 }
 
-export function _t(data: SeriesData[][]): SeriesData[][] {
+export function _t(data: Cell[][]): Cell[][] {
   return data[0]!.map((_, ci) => data.map((row) => row[ci]!))
 }
 
@@ -422,15 +422,12 @@ export function _t(data: SeriesData[][]): SeriesData[][] {
 
 function _map<T>(
   df: DataFrame,
-  f: (v: SeriesData, row: number, col: number) => T
+  f: (v: Cell, row: number, col: number) => T
 ): T[][] {
   return df._data.map((rowData, ri) => rowData.map((v, ci) => f(v, ri, ci)))
 }
 
-function _rowMap<T>(
-  df: DataFrame,
-  f: (row: SeriesData[], index: number) => T
-): T[] {
+function _rowMap<T>(df: DataFrame, f: (row: Cell[], index: number) => T): T[] {
   return df._data.map((row, ri) => f(row, ri))
 }
 
@@ -456,10 +453,7 @@ function _rowMap<T>(
  *            values in a column and index is the index of the column.
  * @returns   an m x 1 array of the output of f applied to each column.
  */
-function _colMap<T>(
-  df: DataFrame,
-  f: (col: SeriesData[], index: number) => T
-): T[] {
+function _colMap<T>(df: DataFrame, f: (col: Cell[], index: number) => T): T[] {
   return range(df._data[0]!.length).map((ci) => {
     const d = f(
       df._data.map((rowData) => rowData[ci]!),

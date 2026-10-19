@@ -4,6 +4,7 @@ import { makeCell } from './cell'
 
 import { BaseDataFrame, findCol, findRow } from './base-dataframe'
 import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import type { Cell, IndexId } from './cell'
 import {
   Index,
   makeColumns,
@@ -14,7 +15,6 @@ import {
   type IndexFromType,
 } from './index'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
-import type { IndexId, SeriesData } from './series-data'
 
 /**
  * A column oriented dataframe where the data is stored as a map of column name to series.
@@ -22,9 +22,9 @@ import type { IndexId, SeriesData } from './series-data'
  * compared to a row oriented dataframe.
  */
 export class ColFrame extends BaseDataFrame {
-  _index: Index<SeriesData>
-  _columns: Index<SeriesData>
-  _data: SeriesData[][]
+  _index: Index<Cell>
+  _columns: Index<Cell>
+  _data: Cell[][]
 
   constructor(options: IDataFrameOptions = {}) {
     let { name = '', index, data = [], columns } = options
@@ -62,13 +62,11 @@ export class ColFrame extends BaseDataFrame {
 
       if (!columns) {
         columns = new StringIndex(
-          data.map((c: unknown) => (c as BaseSeries<SeriesData>).name)
+          data.map((c: unknown) => (c as BaseSeries<Cell>).name)
         )
       }
 
-      this._data = data.map(
-        (c: unknown) => (c as BaseSeries<SeriesData>).values
-      )
+      this._data = data.map((c: unknown) => (c as BaseSeries<Cell>).values)
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -86,20 +84,20 @@ export class ColFrame extends BaseDataFrame {
     } else {
       // regular 2d array that is assumed row wise but will be stored column wise
 
-      const row1 = data[0]! as SeriesData[]
+      const row1 = data[0]! as Cell[]
       const colN = row1.length
 
       if (row1.length === 0) {
         throw new Error('data must be a non empty array')
       }
 
-      this._data = new Array(row1.length) as SeriesData[][]
+      this._data = new Array(row1.length) as Cell[][]
 
       for (let col = 0; col < colN; col++) {
-        const d = new Array(data.length) as SeriesData[]
+        const d = new Array(data.length) as Cell[]
 
         for (let row = 0; row < data.length; row++) {
-          d[row] = (data as SeriesData[][])[row]![col]!
+          d[row] = (data as Cell[][])[row]![col]!
         }
 
         this._data[col] = d
@@ -170,7 +168,7 @@ export class ColFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries<SeriesData> {
+  override col(c: IndexId): BaseSeries<Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -184,7 +182,7 @@ export class ColFrame extends BaseDataFrame {
     })
   }
 
-  override get(row: IndexId, col: IndexId): SeriesData {
+  override get(row: IndexId, col: IndexId): Cell {
     const colIdx = findCol(this, col)
 
     if (colIdx === -1) {
@@ -206,7 +204,7 @@ export class ColFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries<SeriesData> {
+  override row(row: IndexId): BaseSeries<Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -215,7 +213,7 @@ export class ColFrame extends BaseDataFrame {
 
     const colNames = this.colNames
 
-    const data = new Array(colNames.length) as SeriesData[]
+    const data = new Array(colNames.length) as Cell[]
 
     for (let col = 0; col < colNames.length; col++) {
       data[col] = this._data[col]![idx]!
@@ -229,7 +227,7 @@ export class ColFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: SeriesData[] | BaseSeries<SeriesData>,
+    data: Cell[] | BaseSeries<Cell>,
     inplace = true
   ): ColFrame {
     const d = data instanceof BaseSeries ? data.values : data
@@ -260,7 +258,7 @@ export class ColFrame extends BaseDataFrame {
   override at(
     row: IndexId,
     col: IndexId,
-    v: SeriesData,
+    v: Cell,
     inplace: boolean = true
   ): BaseDataFrame {
     const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
@@ -312,15 +310,15 @@ export class ColFrame extends BaseDataFrame {
     ]
   }
 
-  override get index(): Index<SeriesData> {
+  override get index(): Index<Cell> {
     return this._index
   }
 
-  override get columns(): Index<SeriesData> {
+  override get columns(): Index<Cell> {
     return this._columns
   }
 
-  override get cols(): BaseSeries<SeriesData>[] {
+  override get cols(): BaseSeries<Cell>[] {
     const colNames = this.colNames
 
     return colNames.map(
@@ -354,13 +352,13 @@ export class ColFrame extends BaseDataFrame {
     return df
   }
 
-  override get values(): SeriesData[][] {
+  override get values(): Cell[][] {
     // return copy as we want dataframe to be immutable
 
-    const data = new Array(this._index.length) as SeriesData[][]
+    const data = new Array(this._index.length) as Cell[][]
 
     for (let row = 0; row < this._index.length; row++) {
-      const d = new Array(this._columns.length) as SeriesData[]
+      const d = new Array(this._columns.length) as Cell[]
 
       for (let col = 0; col < this._columns.length; col++) {
         d[col] = this._data[col]![row]!
@@ -373,7 +371,7 @@ export class ColFrame extends BaseDataFrame {
   }
 
   override apply(
-    f: (v: SeriesData, row: number, col: number) => SeriesData
+    f: (v: Cell, row: number, col: number) => Cell
   ): BaseDataFrame {
     const data = this.map(f)
 
@@ -387,7 +385,7 @@ export class ColFrame extends BaseDataFrame {
     return ret
   }
 
-  override map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][] {
+  override map<T>(f: (v: Cell, row: number, col: number) => T): T[][] {
     const ret = new Array(this.shape[0]) as T[][]
 
     for (let row = 0; row < this.shape[0]; row++) {
@@ -428,12 +426,12 @@ export class ColFrame extends BaseDataFrame {
     let rowIdx = _ilocDim(this.index, rows)
     let colIdx = _ilocDim(this._columns, cols)
 
-    const data = new Array(rowIdx.length) as SeriesData[][]
+    const data = new Array(rowIdx.length) as Cell[][]
 
     for (let i = 0; i < rowIdx.length; i++) {
       const r = rowIdx[i]!
 
-      const d = new Array(colIdx.length) as SeriesData[]
+      const d = new Array(colIdx.length) as Cell[]
 
       for (let j = 0; j < colIdx.length; j++) {
         const c = colIdx[j]!
@@ -489,10 +487,10 @@ export class ColFrame extends BaseDataFrame {
     const rows = this.shape[0]
     const cols = this.shape[1]
 
-    const data = new Array(cols) as SeriesData[][]
+    const data = new Array(cols) as Cell[][]
 
     for (let col = 0; col < cols; col++) {
-      const d = new Array(rows) as SeriesData[]
+      const d = new Array(rows) as Cell[]
 
       for (let row = 0; row < rows; row++) {
         d[row] = this._data[col]![row]!
@@ -534,7 +532,7 @@ export class ColFrame extends BaseDataFrame {
   }
 }
 
-function _ilocDim(index: Index<SeriesData>, rows: LocType = ':'): number[] {
+function _ilocDim(index: Index<Cell>, rows: LocType = ':'): number[] {
   let rowIdx: number[] = []
 
   // if (Array.isArray(rows)) {

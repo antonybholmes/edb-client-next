@@ -6,7 +6,7 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeCell, makeCells } from '@/lib/dataframe/cell'
 import { DataFrame } from '@/lib/dataframe/dataframe'
 
-import type { SeriesData } from '@/lib/dataframe/series-data'
+import type { Cell } from '@/lib/dataframe/cell'
 import { range } from '@/lib/math/range'
 import {
   GenLoc,
@@ -367,7 +367,7 @@ export function createOverlapTable(
 
   header.push('Region')
 
-  const data: SeriesData[][] = []
+  const data: Cell[][] = []
 
   const coreLocations = [...locationCoreMap.keys()].sort()
 
@@ -379,7 +379,7 @@ export function createOverlapTable(
 
     const numOverlappingPeaks = locationCoreMap.get(coreLocation)!.size
 
-    const row: SeriesData[] = makeCells(coreLocation, overlap)
+    const row: Cell[] = makeCells(coreLocation, overlap)
 
     // for sid in sids:
     // 	if sid in locationCoreMap[coreLocation]:

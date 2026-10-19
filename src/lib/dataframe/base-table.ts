@@ -2,17 +2,15 @@
 
 import { Index, type IndexFromType, type Shape } from '.'
 
-import { cellStr } from './cell'
-
 import { makeUuid } from '../id'
 import { whereStrStartsWith } from '../math/where'
+import { Cell, cellStr, IndexId } from './cell'
 import {
   BaseSeries,
   DataSeries,
   ISeriesOptions,
   type SeriesFromType,
 } from './series'
-import type { IndexId, SeriesData } from './series-data'
 
 // The default name of a sheet and useful for checking if
 // table has been properly initialized with real data
@@ -27,10 +25,10 @@ export type LocType = string | number | (number | string)[]
 export type SheetId = string | number
 
 export type DataFrameInput =
-  | readonly Index<SeriesData>[]
-  | readonly BaseSeries<SeriesData>[]
-  | readonly SeriesData[]
-  | readonly SeriesData[][]
+  | readonly Index<Cell>[]
+  | readonly BaseSeries<Cell>[]
+  | readonly Cell[]
+  | readonly Cell[][]
 
 export interface IDataFrameOptions extends ISeriesOptions {
   data?: DataFrameInput
@@ -40,14 +38,10 @@ export interface IDataFrameOptions extends ISeriesOptions {
 
 export const NO_SHAPE: Shape = [-1, -1]
 
-export type ApplySeriesFunc = (
-  v: SeriesData,
-  row: number,
-  col: number
-) => SeriesData
-export type ApplyRowFunc = (v: SeriesData[], row: number) => SeriesData
+export type ApplySeriesFunc = (v: Cell, row: number, col: number) => Cell
+export type ApplyRowFunc = (v: Cell[], row: number) => Cell
 
-export type AxisMapFunc<T> = (data: SeriesData[], index: number) => T
+export type AxisMapFunc<T> = (data: Cell[], index: number) => T
 
 export abstract class BaseTable {
   protected _name: string
@@ -93,9 +87,9 @@ export abstract class BaseTable {
    */
   abstract replace(data: DataFrameInput): BaseTable
 
-  abstract col(col: IndexId): BaseSeries<SeriesData>
+  abstract col(col: IndexId): BaseSeries<Cell>
 
-  colValues(c: IndexId): SeriesData[] {
+  colValues(c: IndexId): Cell[] {
     return this.col(c).values
   }
 
@@ -105,17 +99,17 @@ export abstract class BaseTable {
     inplace: boolean
   ): BaseTable
 
-  abstract get(row: IndexId, col: IndexId): SeriesData
+  abstract get(row: IndexId, col: IndexId): Cell
 
   str(row: IndexId, col: IndexId): string {
     return cellStr(this.get(row, col))
   }
 
-  abstract get values(): SeriesData[][]
+  abstract get values(): Cell[][]
 
-  abstract row(row: IndexId): BaseSeries<SeriesData>
+  abstract row(row: IndexId): BaseSeries<Cell>
 
-  rowValues(c: IndexId): SeriesData[] {
+  rowValues(c: IndexId): Cell[] {
     return this.row(c).values
   }
 
@@ -137,14 +131,9 @@ export abstract class BaseTable {
    *                with the update. This is true by default to reduce memory usage
    *                when doing multiple updates in a row.
    */
-  abstract at(
-    row: IndexId,
-    col: IndexId,
-    v: SeriesData,
-    inplace: boolean
-  ): BaseTable
+  abstract at(row: IndexId, col: IndexId, v: Cell, inplace: boolean): BaseTable
 
-  abstract get cols(): readonly BaseSeries<SeriesData>[]
+  abstract get cols(): readonly BaseSeries<Cell>[]
 
   abstract get shape(): Shape
 
@@ -166,14 +155,14 @@ export abstract class BaseTable {
    * @param f
    * @returns
    */
-  abstract map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][]
+  abstract map<T>(f: (v: Cell, row: number, col: number) => T): T[][]
 
   /**
    *  Apply a function to all data values in the matrix and return a new dataframe.
    * @param f
    * @returns
    */
-  apply(f: (v: SeriesData, row: number, col: number) => SeriesData): BaseTable {
+  apply(f: (v: Cell, row: number, col: number) => Cell): BaseTable {
     const data = this.map(f)
 
     return this.replace(data)
@@ -189,7 +178,7 @@ export abstract class BaseTable {
     return this.values.map((row, ri) => f(row, ri))
   }
 
-  rowApply(f: ApplyRowFunc): BaseSeries<SeriesData> {
+  rowApply(f: ApplyRowFunc): BaseSeries<Cell> {
     const data = this.rowMap(f)
 
     return new DataSeries(data)
@@ -279,7 +268,7 @@ function dfToStr(df: BaseTable, options: IDFToStrOpts = {}): string {
  * @returns
  */
 export function findInSeries(
-  series: BaseSeries<SeriesData>,
+  series: BaseSeries<Cell>,
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {
@@ -306,7 +295,7 @@ export function shape(data: DataFrameInput): Shape {
       )
     }
 
-    return [(data[0] as BaseSeries<SeriesData>).length, data.length]
+    return [(data[0] as BaseSeries<Cell>).length, data.length]
   }
 
   // single seriesdata
@@ -315,5 +304,5 @@ export function shape(data: DataFrameInput): Shape {
   }
 
   // normal 2d data
-  return [data.length, (data[0] as SeriesData[]).length]
+  return [data.length, (data[0] as Cell[]).length]
 }

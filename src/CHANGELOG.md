@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Col-dataframe now adds index to series in cols(). Moved SeriesData to cell and renamed Cell.
 - Bug fixes and updates.
 - Refined coldataframe.
 - Col-dataframe now properly uses columns of data rather than a 2D array.

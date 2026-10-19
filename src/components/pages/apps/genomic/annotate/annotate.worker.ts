@@ -1,5 +1,5 @@
 // workers need relative paths to import modules
-import type { SeriesData } from '../../../../../lib/dataframe/series-data'
+import type { Cell } from '../../../../../lib/dataframe/cell'
 import { EDB_API_URL } from '../../../../edb/edb'
 
 import type { IGenomicFeature } from '../../../../../lib/genomic/genomic-feature'
@@ -12,7 +12,7 @@ const PAGE_SIZE = 100
 
 export interface IAnnotateWorkerMessage {
   id: string
-  df: readonly (readonly SeriesData[])[]
+  df: readonly (readonly Cell[])[]
   columns: readonly string[]
   closest?: number
   tss?: { prom5p: number; prom3p: number }
@@ -26,7 +26,7 @@ export interface IAnnotationResultSuccess {
   id: string
   error: null
   header: string[]
-  table: SeriesData[][]
+  table: Cell[][]
 }
 
 export interface IAnnotationResultError {
@@ -93,7 +93,7 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
       idx += data.length
     }
 
-    const table: SeriesData[][] = []
+    const table: Cell[][] = []
     let hasClosest = false
 
     for (const [ri, row] of df.entries()) {

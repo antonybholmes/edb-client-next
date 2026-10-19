@@ -2,20 +2,20 @@ import { range } from '../math/range'
 import { whereStr } from '../math/where'
 import type { UndefStr } from '../text/text'
 import { BaseIndex } from './base-index'
+import type { Cell } from './cell'
 import { getExcelColName } from './cell'
-import type { SeriesData } from './series-data'
 
 export type Shape = [number, number]
 
-export type IndexFromType = Index<SeriesData> | readonly SeriesData[]
+export type IndexFromType = Index<Cell> | readonly Cell[]
 
 export function shapesEqual(s1: Shape, s2: Shape): boolean {
   return s1[0] === s2[0] && s1[1] === s2[1]
 }
 
-export type IndexMapFunc<T> = (v: SeriesData, i: number) => T
+export type IndexMapFunc<T> = (v: Cell, i: number) => T
 
-export abstract class Index<T extends SeriesData> extends BaseIndex<T> {
+export abstract class Index<T extends Cell> extends BaseIndex<T> {
   constructor(opts: { name?: string } = {}) {
     super(opts)
   }
@@ -37,7 +37,7 @@ export interface IIndexOptions {
   name?: UndefStr
 }
 
-export abstract class InfIndex<T extends SeriesData> extends Index<T> {
+export abstract class InfIndex<T extends Cell> extends Index<T> {
   private _length: number
 
   constructor(length: number = 0, opts: IIndexOptions = {}) {
@@ -105,7 +105,7 @@ export class NumInfIndex extends InfIndex<number> {
   }
 }
 
-export class DataIndex<T extends SeriesData> extends Index<T> {
+export class DataIndex<T extends Cell> extends Index<T> {
   _data: T[]
   _map: Map<string, number> | null = null
 
@@ -266,7 +266,7 @@ export function makeIndex(
   index: IndexFromType | null | undefined,
   length: number,
   name?: string
-): Index<SeriesData> {
+): Index<Cell> {
   if (!index) {
     return new NumInfIndex(length)
   }
@@ -275,7 +275,7 @@ export function makeIndex(
     throw new Error('length of index does not match table rows')
   }
 
-  let ret: Index<SeriesData> | null = null
+  let ret: Index<Cell> | null = null
 
   if (index instanceof Index) {
     ret = index.copy()
@@ -293,7 +293,7 @@ export function makeIndex(
 export function makeColumns(
   index: IndexFromType | null | undefined,
   length: number
-): Index<SeriesData> {
+): Index<Cell> {
   if (!index) {
     return new ExcelIndex(length)
   }
@@ -317,7 +317,7 @@ export function makeColumns(
  * @param index
  * @returns
  */
-export function indexAsValues(index: IndexFromType): readonly SeriesData[] {
+export function indexAsValues(index: IndexFromType): readonly Cell[] {
   if (index instanceof Index) {
     return index.values
   } else {
@@ -325,18 +325,18 @@ export function indexAsValues(index: IndexFromType): readonly SeriesData[] {
   }
 }
 
-export function strs(data: SeriesData[]): string[] {
+export function strs(data: Cell[]): string[] {
   return data.map((d) => d.toString())
 }
 
-export function nums(data: SeriesData[]): number[] {
+export function nums(data: Cell[]): number[] {
   return data.map((d) => (typeof d === 'number' ? d : NaN))
 }
 
-export function bools(data: SeriesData[]): boolean[] {
+export function bools(data: Cell[]): boolean[] {
   return data.map((d) => (typeof d === 'boolean' ? d : Boolean(d)))
 }
 
-export function dates(data: SeriesData[]): Date[] {
+export function dates(data: Cell[]): Date[] {
   return data.map((d) => (d instanceof Date ? d : new Date(NaN)))
 }

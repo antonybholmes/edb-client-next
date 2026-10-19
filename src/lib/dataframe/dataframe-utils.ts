@@ -22,8 +22,8 @@ import { DataIndex, strs } from '.'
 import { vfill } from '../fill'
 import { where } from '../math/where'
 import { BaseTable } from './base-table'
+import type { Cell, IndexId } from './cell'
 import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
-import type { IndexId, SeriesData } from './series-data'
 
 export type AxisDim = 0 | 1
 
@@ -40,12 +40,12 @@ export function add(df: BaseDataFrame, a = 0): BaseDataFrame {
 
 export function getNumCol(df: BaseDataFrame, col: IndexId = 0): number[] {
   const c = df.col(col)
-  return c ? c.values.map((v: SeriesData) => cellNum(v)) : []
+  return c ? c.values.map((v: Cell) => cellNum(v)) : []
 }
 
 export function getStrCol(df: BaseDataFrame, col = 0): string[] {
   const c = df.col(col)
-  return c ? c.values.map((v: SeriesData) => cellStr(v)) : []
+  return c ? c.values.map((v: Cell) => cellStr(v)) : []
 }
 
 export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
@@ -57,23 +57,21 @@ export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
  * @param data
  * @returns
  */
-export function filterNA(data: readonly SeriesData[]): number[] {
+export function filterNA(data: readonly Cell[]): number[] {
   return data
-    .map((v, vi) => [v, vi] as [SeriesData, number])
+    .map((v, vi) => [v, vi] as [Cell, number])
     .filter((v) => typeof v[0] !== 'number' || !isNaN(v[0] as number))
     .map((v) => v[1])
 }
 
-export function subset<T = readonly SeriesData[] | readonly SeriesData[]>(
+export function subset<T = readonly Cell[] | readonly Cell[]>(
   data: readonly T[],
   idx: readonly number[]
 ): T[] {
   return idx.map((i) => data[i]!)
 }
 
-export function zip(
-  ...cols: readonly (readonly SeriesData[])[]
-): SeriesData[][] {
+export function zip(...cols: readonly (readonly Cell[])[]): Cell[][] {
   const colIdx = range(cols.length)
 
   return range(cols[0]!.length).map((i) => colIdx.map((j) => cols[j]![i]!))
@@ -97,9 +95,7 @@ export function rowSums(df: BaseTable): number[] {
 }
 
 export function rowDiv(df: BaseDataFrame, values: number[]): BaseDataFrame {
-  const data = df.map(
-    (v: SeriesData, row: number) => (v as number) / values[row]!
-  )
+  const data = df.map((v: Cell, row: number) => (v as number) / values[row]!)
 
   return new DataFrame({
     name: df.name,
@@ -592,7 +588,7 @@ export function makeGCT(df: BaseDataFrame): BaseDataFrame {
 
   const l3 = ['Name', 'Description'].concat(df.colNames)
 
-  const d: string[][] = df.rowMap((row: SeriesData[], index: number) => {
+  const d: string[][] = df.rowMap((row: Cell[], index: number) => {
     const n = df.index.str(index)
     return [n, n].concat(strs(row))
   })

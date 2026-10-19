@@ -5,8 +5,8 @@ import { makeCell } from './cell'
 import { DataFrame } from './dataframe'
 
 import { vfill } from '../fill'
+import type { Cell } from './cell'
 import { DEFAULT_INDEX_NAME } from './series'
-import type { SeriesData } from './series-data'
 
 export type Delimiter = '\t' | ',' | ' '
 
@@ -150,7 +150,7 @@ export class DataFrameReader {
     }
 
     const indexData: string[][] = []
-    const data: SeriesData[][] = []
+    const data: Cell[][] = []
     const defaultCellValue = makeCell('', this._keepDefaultNA)
 
     let indexNames =

@@ -4,7 +4,7 @@ import { range } from '@/lib/math/range'
 
 import { API_GENOME_URL } from '../../components/edb/genome'
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
-import type { SeriesData } from '../dataframe/series-data'
+import type { Cell } from '../dataframe/cell'
 import { httpFetch } from '../http/http-fetch'
 import type { IGenomicFeature } from './genomic-feature'
 
@@ -82,7 +82,7 @@ export async function createAnnotationTable(
     idx += data.length
   }
 
-  const table: SeriesData[][] = []
+  const table: Cell[][] = []
   let hasClosest = false
 
   for (const [ri, row] of df.values.entries()) {

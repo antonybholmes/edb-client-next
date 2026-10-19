@@ -10,7 +10,7 @@ import { RunningIndicator } from '@/components/toolbar/running-indicator'
 
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import type { SeriesData } from '@/lib/dataframe/series-data'
+import type { Cell } from '@/lib/dataframe/cell'
 import { DFColSelect } from '../../df-col-select'
 
 import {
@@ -62,7 +62,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
     runMotifsToGenes({ ids }, (result) => {
       const { genes } = result
 
-      const table: SeriesData[][] = []
+      const table: Cell[][] = []
 
       for (const [ri, row] of df.values.entries()) {
         table.push([...row, genes[ri]!.genes.toSorted().join(',')])

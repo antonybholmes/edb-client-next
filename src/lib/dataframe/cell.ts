@@ -7,7 +7,25 @@ import {
   NA,
   type IFormatNumOpts,
 } from '../text/text'
-import type { SeriesData } from './series-data'
+
+type CellByKind = {
+  number: number
+  string: string
+  date: Date
+  boolean: boolean
+}
+
+export type IndexId = CellByKind['number' | 'string']
+
+/**
+ * Represents the possible types of data that can be stored in a series
+ * or Dataframe.
+ */
+export type Cell = CellByKind[keyof CellByKind]
+
+export type CellArray = {
+  [Kind in keyof CellByKind]: CellByKind[Kind][]
+}[keyof CellByKind]
 
 //export const NA_REGEX = /^(NA|#?N\/A)$/i
 //export const NUMBER_REGEX = /^-?\d*\.?\d+([eE][-+]?\d+)?$/ ///^-?\d+\.?\d*$/
@@ -20,10 +38,7 @@ import type { SeriesData } from './series-data'
  * @param keepDefaultNA
  * @returns
  */
-export function makeCell(
-  v: SeriesData,
-  keepDefaultNA: boolean = true
-): SeriesData {
+export function makeCell(v: Cell, keepDefaultNA: boolean = true): Cell {
   // if empty return empty string
   if (!v) {
     return ''
@@ -62,7 +77,7 @@ export function makeCell(
   return v
 }
 
-export function makeCells(...args: SeriesData[]): SeriesData[] {
+export function makeCells(...args: Cell[]): Cell[] {
   return args.map((arg) => makeCell(arg))
 }
 
@@ -78,7 +93,7 @@ interface ICellStrOpts extends IFormatNumOpts {
  * @param options
  * @returns
  */
-export function cellStr(cell: SeriesData, options: ICellStrOpts = {}): string {
+export function cellStr(cell: Cell, options: ICellStrOpts = {}): string {
   const {
     commas = true,
     dp = 4,
@@ -106,7 +121,7 @@ export function cellStr(cell: SeriesData, options: ICellStrOpts = {}): string {
  * @param cell A cell value
  * @returns A number representation of the cell or NaN if the value is not a number.
  */
-export function cellNum(cell: SeriesData): number {
+export function cellNum(cell: Cell): number {
   const t = typeof cell
 
   let ret: number = NaN

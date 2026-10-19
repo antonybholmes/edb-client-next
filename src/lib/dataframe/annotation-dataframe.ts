@@ -13,6 +13,7 @@ import {
 import { getExcelColName } from './cell'
 import { ColDataFrame } from './col-dataframe'
 
+import type { Cell, IndexId } from './cell'
 import {
   DataIndex,
   Index,
@@ -28,7 +29,6 @@ import {
   DEFAULT_INDEX_NAME,
   type SeriesFromType,
 } from './series'
-import type { IndexId, SeriesData } from './series-data'
 
 export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
   rowObs?: BaseDataFrame | undefined
@@ -102,7 +102,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(col: IndexId): BaseSeries<SeriesData> {
+  override col(col: IndexId): BaseSeries<Cell> {
     const colData = this._colVars.col(DEFAULT_COLUMN_NAMES)
 
     const colIdx = findInSeries(colData, col)
@@ -116,11 +116,11 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
   }
 
-  override colValues(col: IndexId): SeriesData[] {
+  override colValues(col: IndexId): Cell[] {
     return this._data.colValues(col)
   }
 
-  override get(row: IndexId, col: IndexId): SeriesData {
+  override get(row: IndexId, col: IndexId): Cell {
     const colIdx = findCol(this, col)
 
     if (colIdx === -1) {
@@ -136,7 +136,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.get(rowIdx, colIdx)
   }
 
-  override row(row: IndexId): BaseSeries<SeriesData> {
+  override row(row: IndexId): BaseSeries<Cell> {
     // col 0 of row meta data is always the index label
     // so we can use that to find the row index
     // then we can just return the row from the main dataframe
@@ -150,7 +150,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
   }
 
-  override rowValues(row: IndexId): SeriesData[] {
+  override rowValues(row: IndexId): Cell[] {
     return this._data.rowValues(row)
   }
 
@@ -173,7 +173,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override at(
     row: IndexId,
     col: IndexId,
-    v: SeriesData,
+    v: Cell,
     inplace: boolean = true
   ): BaseTable {
     return this._data.at(row, col, v, inplace)
@@ -221,17 +221,17 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): readonly BaseSeries<SeriesData>[] {
+  override get cols(): readonly BaseSeries<Cell>[] {
     return this._data.cols
   }
 
-  override get columns(): Index<SeriesData> {
+  override get columns(): Index<Cell> {
     return new DataIndex(this._colVars.col(0).values, {
       name: this._colVars.colName(0),
     })
   }
 
-  override get index(): Index<SeriesData> {
+  override get index(): Index<Cell> {
     return new DataIndex(this._rowObs.col(0).values, {
       name: this._rowObs.colName(0),
     })
@@ -253,12 +253,12 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.length
   }
 
-  override get values(): SeriesData[][] {
+  override get values(): Cell[][] {
     // return copy as we want dataframe to be immutable
     return this._data.values
   }
 
-  override map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][] {
+  override map<T>(f: (v: Cell, row: number, col: number) => T): T[][] {
     return this._data.map(f)
   }
 
@@ -286,17 +286,15 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override rowApply(
-    f: (row: SeriesData[], index: number) => SeriesData
-  ): BaseSeries<SeriesData> {
+  override rowApply(f: (row: Cell[], index: number) => Cell): BaseSeries<Cell> {
     return this._data.rowApply(f)
   }
 
-  override rowMap<T>(f: (row: SeriesData[], index: number) => T): T[] {
+  override rowMap<T>(f: (row: Cell[], index: number) => T): T[] {
     return this._data.rowMap(f)
   }
 
-  override colMap<T>(f: (col: SeriesData[], index: number) => T): T[] {
+  override colMap<T>(f: (col: Cell[], index: number) => T): T[] {
     return this._data.colMap(f)
   }
 
@@ -392,8 +390,8 @@ export function create100x26Df() {
 export const DATAFRAME_100x26 = create100x26Df()
 
 export interface ISharedAnnotationDataFrame {
-  rowObs: { columns: string[]; data: SeriesData[][] }
-  colVars: { columns: string[]; data: SeriesData[][] }
-  data: SeriesData[][]
+  rowObs: { columns: string[]; data: Cell[][] }
+  colVars: { columns: string[]; data: Cell[][] }
+  data: Cell[][]
   name: string
 }

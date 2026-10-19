@@ -6,13 +6,13 @@ import {
   type IndexFromType,
 } from '.'
 import { BaseIndex } from './base-index'
-import type { SeriesData } from './series-data'
+import type { Cell } from './cell'
 
-export type SeriesFromType = BaseSeries<SeriesData> | IndexFromType
+export type SeriesFromType = BaseSeries<Cell> | IndexFromType
 
 export const DEFAULT_INDEX_NAME = 'Index'
 
-export abstract class BaseSeries<T extends SeriesData> extends BaseIndex<T> {
+export abstract class BaseSeries<T extends Cell> extends BaseIndex<T> {
   constructor(opts: IIndexOptions = {}) {
     super(opts)
   }
@@ -39,7 +39,7 @@ export interface ISeriesOptions extends IIndexOptions {
   index?: IndexFromType
 }
 
-export class DataSeries<T extends SeriesData> extends BaseSeries<T> {
+export class DataSeries<T extends Cell> extends BaseSeries<T> {
   _data: T[]
 
   _index: Index<T>
@@ -107,14 +107,10 @@ export class DataSeries<T extends SeriesData> extends BaseSeries<T> {
 
 export const EMPTY_SERIES = new DataSeries([])
 
-export function indexToSeries(
-  index: BaseIndex<SeriesData>
-): DataSeries<SeriesData> {
+export function indexToSeries(index: BaseIndex<Cell>): DataSeries<Cell> {
   return new DataSeries(index.values, { name: index.name })
 }
 
-export function seriesToIndex(
-  series: BaseSeries<SeriesData>
-): Index<SeriesData> {
+export function seriesToIndex(series: BaseSeries<Cell>): Index<Cell> {
   return new DataIndex(series.values, { name: series.name })
 }

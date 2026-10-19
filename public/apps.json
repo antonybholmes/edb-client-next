@@ -5,9 +5,9 @@
     "color": "#FA8072",
     "version": "20.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-18T01:53:33.348Z",
-    "hash": "0fb6a8c68b733de2a899b3a0aebbeb14d76cd17a6ede457519db20797cccdbb1",
-    "build": 872
+    "modified": "2026-10-19T13:42:45.562Z",
+    "hash": "79912171bce729a175ca34c1deffd6ae23b898e6d21de9defc95ccf6f1b3e10e",
+    "build": 874
   },
   {
     "name": "Bio Draw",
@@ -142,9 +142,9 @@
     "color": "#40bf80",
     "version": "52.0.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-18T23:43:18.487Z",
-    "hash": "1f32e4397aa140d02d914f9d6b98813f47f4252f0ce011f204e446fa91988671",
-    "build": 2180
+    "modified": "2026-10-19T13:42:45.565Z",
+    "hash": "71d0f8bd10d9133987624edc8e159b0a1639468b9eb086b55209b5cd8c14f548",
+    "build": 2182
   },
   {
     "name": "Motifs",
@@ -162,9 +162,9 @@
     "color": "#4169E1",
     "version": "1.6.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-18T23:43:18.488Z",
-    "hash": "d57217e744a5fa2f5c357c4d3c7dc5e1d56f74aee79d973fe3f2c32e377aed38",
-    "build": 160
+    "modified": "2026-10-19T13:42:45.565Z",
+    "hash": "c2488d8237baa84c5922fff35386a39241c4cf3e305622197d9979881ffca983",
+    "build": 162
   },
   {
     "name": "Oncoplot",
@@ -172,9 +172,9 @@
     "color": "#ff99cc",
     "version": "30.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-18T23:43:18.493Z",
-    "hash": "c760ec0c8a60283e53bf5003184c0690dd2b147b3959e7bcbed5bc575076a399",
-    "build": 1170
+    "modified": "2026-10-19T13:42:45.567Z",
+    "hash": "0084ed37a281bd50f7c27ec207d125a91eb09a304db3b08173d396210dc67744",
+    "build": 1172
   },
   {
     "name": "Overlap",
@@ -192,9 +192,9 @@
     "color": "#6495ED",
     "version": "36.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-18T01:53:33.347Z",
-    "hash": "e37b96d2747be46995c1ba3970b830ba1590857ab4c250aaed110b4f6d08a357",
-    "build": 916
+    "modified": "2026-10-19T13:42:45.561Z",
+    "hash": "dbdf0c55a5ed9ebe30d5086471488b186e05955fc527e20c13722e41b93daf68",
+    "build": 918
   },
   {
     "name": "Rev Comp",

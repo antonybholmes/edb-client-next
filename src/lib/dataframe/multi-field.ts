@@ -1,17 +1,17 @@
-import type { SeriesData } from './series-data'
+import type { Cell } from './cell'
 
-export type FieldRecord = { name: string; value: SeriesData }
+export type FieldRecord = { name: string; value: Cell }
 
 /**
  * Various components such as indexes or columns can have
  * multiple annotations attached to them.
  */
 export class MultiField {
-  private _fieldMap: Map<string, SeriesData>
+  private _fieldMap: Map<string, Cell>
   private _fields: string[]
 
   constructor(name: string = '') {
-    this._fieldMap = new Map<string, SeriesData>()
+    this._fieldMap = new Map<string, Cell>()
     // name must be first
     this._fields = ['name']
 
@@ -24,7 +24,7 @@ export class MultiField {
     return this
   }
 
-  setField(field: string, value: SeriesData): void {
+  setField(field: string, value: Cell): void {
     if (!this._fieldMap.has(field)) {
       this._fields.push(field)
     }
@@ -57,7 +57,7 @@ export class MultiField {
     return (this._fieldMap.get('name') as string) ?? ''
   }
 
-  get values(): SeriesData[] {
+  get values(): Cell[] {
     return this.names.map((f) => this._fieldMap.get(f) ?? '')
   }
 
@@ -66,7 +66,7 @@ export class MultiField {
    *
    * @returns the value of the first field, or an empty string if it does not exist
    */
-  get value(): SeriesData {
+  get value(): Cell {
     return this.at(0)
   }
 
@@ -76,7 +76,7 @@ export class MultiField {
    * @param field the name of the field to retrieve
    * @returns the value of the specified field, or an empty string if it does not exist
    */
-  get(field: string): SeriesData {
+  get(field: string): Cell {
     return this._fieldMap.get(field) ?? ''
   }
 
@@ -86,7 +86,7 @@ export class MultiField {
    * @param index the position of the field to retrieve
    * @returns the value of the field at the specified position, or an empty string if it does not exist
    */
-  at(index: number): SeriesData {
+  at(index: number): Cell {
     const field = this.names[index]
     return this._fieldMap.get(field) ?? ''
   }

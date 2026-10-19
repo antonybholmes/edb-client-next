@@ -12,8 +12,8 @@ import {
   whereStrStartsWith,
 } from '../math/where'
 import { BaseTable, IDFToStrOpts } from './base-table'
+import type { Cell, IndexId } from './cell'
 import { BaseSeries } from './series'
-import type { IndexId, SeriesData } from './series-data'
 
 export abstract class BaseDataFrame extends BaseTable {
   constructor(opts: { name?: string } = {}) {
@@ -31,7 +31,7 @@ export abstract class BaseDataFrame extends BaseTable {
   /**
    * Get the names of the columns as an index.
    */
-  abstract get columns(): Index<SeriesData>
+  abstract get columns(): Index<Cell>
 
   /**
    * Get the names of the columns as an array of strings.
@@ -46,7 +46,7 @@ export abstract class BaseDataFrame extends BaseTable {
 
   abstract setIndexName(name: string, inplace: boolean): BaseDataFrame
 
-  abstract get index(): Index<SeriesData>
+  abstract get index(): Index<Cell>
 
   rowName(index: number): string {
     return cellStr(this.index.at(index))
@@ -139,7 +139,7 @@ export function findCols(
  * @returns
  */
 export function findInSeries(
-  series: BaseSeries<SeriesData>,
+  series: BaseSeries<Cell>,
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {

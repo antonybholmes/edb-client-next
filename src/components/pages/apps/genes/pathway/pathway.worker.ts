@@ -1,4 +1,4 @@
-import type { SeriesData } from '../../../../../lib/dataframe/series-data'
+import type { Cell } from '../../../../../lib/dataframe/cell'
 import { PathwayOverlap } from '../../../../../lib/gene/pathway/pathway'
 import type { ICollection, IGeneSet } from '../gsea/gsea-plot/geneset'
 
@@ -9,7 +9,7 @@ export interface IPathwayWorkerMessage {
 }
 
 export interface IPathwayWorkerResult {
-  data: SeriesData[][]
+  data: Cell[][]
   columns: string[]
 }
 
