@@ -13,12 +13,10 @@ import {
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   kmeans,
-  log,
   meanFilter,
   medianFilter,
-  rowZScore,
   stdevFilter,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
 import { argsort } from '@/lib/math/argsort'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
@@ -33,6 +31,8 @@ import {
   DialogCardHeader,
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
+import { log } from '@/lib/dataframe/utils/log'
+import { rowZScore } from '@/lib/dataframe/utils/zscore'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'

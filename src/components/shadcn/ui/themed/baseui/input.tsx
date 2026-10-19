@@ -24,7 +24,7 @@ export const inputVariants = cva(CONTAINER_CLS, {
   variants: {
     variant: {
       default: 'bg-background border border-border/60 hover:border-border px-1',
-      flat: 'hover:bg-background border border-transparent hover:border-border/50 px-2 focus-within:bg-background focus-within:border-border/50',
+      flat: 'hover:bg-background border border-transparent hover:border-border/50 px-1 focus-within:bg-background focus-within:border-border/50',
       dialog: cn(
         'bg-background border border-border hover:border-ring shadow-sm px-3',
         FOCUS_INSET_RING_CLS

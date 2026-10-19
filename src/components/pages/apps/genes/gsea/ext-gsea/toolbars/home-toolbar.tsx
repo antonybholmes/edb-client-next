@@ -1,4 +1,3 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import {
   onTextFileChange,
@@ -14,6 +13,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,
@@ -59,7 +59,7 @@ export function HomeToolbar() {
             saveAs('ext-gsea')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

@@ -1,4 +1,4 @@
-import type { SeriesData } from '@/lib/dataframe/series-data'
+import type { Cell } from '@/lib/dataframe/cell'
 import { intersect1d } from '../../collections'
 
 import {
@@ -95,14 +95,14 @@ export class PathwayOverlap {
     return this._npathways
   }
 
-  test(genesets: IGeneSet[]): [SeriesData[][], string[]] {
-    let allData: SeriesData[][] = []
+  test(genesets: IGeneSet[]): [Cell[][], string[]] {
+    let allData: Cell[][] = []
 
     genesets.forEach((geneset) => {
       const genes = new Set<string>(geneSetNames(geneset))
       const K = genes.size
       let c = 0
-      const data: SeriesData[][] = []
+      const data: Cell[][] = []
 
       this._collections.forEach((collection) => {
         collection.genesets.forEach((pathway, pi) => {

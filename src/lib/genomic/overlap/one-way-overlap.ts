@@ -5,7 +5,7 @@ import { range } from '@/lib/math/range'
 import { NA } from '@/lib/text/text'
 import { zip } from '@/lib/utils'
 
-import type { SeriesData } from '@/lib/dataframe/series-data'
+import type { Cell } from '@/lib/dataframe/cell'
 import {
   LOC_REGEX,
   newGenomicLocation,
@@ -23,9 +23,9 @@ export function oneWayFromDataframes(
 
   const overlapTables = dataFrames.slice(1)
 
-  let ret = dataFrames[0]!.copy()
+  let ret = dataFrames[0]!.copy() as BaseDataFrame
 
-  ret = ret.setName(`${ret.name} one way overlap`)
+  ret = ret.setName(`${ret.name} one way overlap`) as BaseDataFrame
 
   let locs: IGenomicLocation[] = []
 
@@ -40,7 +40,7 @@ export function oneWayFromDataframes(
   }
 
   for (const table of overlapTables) {
-    const blockSearch = new BlockSearch<SeriesData[]>()
+    const blockSearch = new BlockSearch<readonly Cell[]>()
 
     const colNames = table.columns.map((name) => `${table.name} ${name}`)
 
@@ -80,7 +80,7 @@ export function oneWayFromDataframes(
     }
 
     for (const [ci, colName] of colNames.entries()) {
-      ret.setCol(colName, newCols[ci]!, true)
+      ret.setCol(colName, newCols[ci]!)
     }
   }
 

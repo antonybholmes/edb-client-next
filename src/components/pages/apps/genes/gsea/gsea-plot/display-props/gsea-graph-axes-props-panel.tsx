@@ -1,5 +1,5 @@
-import { IDisplayPlot } from '@/components/plot/axes/plot/axes-groups-popover'
-import { AxesDisplayPropsPanel } from '../../../../../../plot/axes/plot/axes-props-panel'
+import { IDisplayPlot } from '@/components/plot/axes/props/axes-groups-popover'
+import { AxesDisplayPropsPanel } from '@/components/plot/axes/props/axes-props-panel'
 import { useGseaPlot } from '../gsea-plot-provider'
 
 export function GseaGraphAxesPropsPanel() {

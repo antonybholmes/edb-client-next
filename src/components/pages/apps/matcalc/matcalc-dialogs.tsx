@@ -11,15 +11,14 @@ import { makeUuid } from '@/lib/id'
 import type { ISelectionRange } from '@/providers/selection-range-provider'
 import { create } from 'zustand'
 import type { IParseOptions, ITextFileOpen } from '../../open-files'
+import { DotPlotDialog } from '../heatmap/dot-plot-dialog'
+import { HeatMapDialog } from '../heatmap/heatmap-dialog'
 import { AnnotateDialog } from './apps/annotate/annotate-dialog'
 import { BoxWhiskersDialog } from './apps/boxplot/boxplot-dialog'
 import { GeneConvertDialog } from './apps/gene-convert/gene-convert-dialog'
 import { GexDialog } from './apps/gex/gex-dialog'
-import { DotPlotDialog } from './apps/heatmap/dot-plot-dialog'
-import { HeatMapDialog } from './apps/heatmap/heatmap-dialog'
 import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
 import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
-import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
 import { GseaBubbleDialog } from '../genes/gsea/bubble/gsea-bubble-dialog'
 import { SankeyDialog } from '../sankey/sankey-dialog'
@@ -44,9 +43,6 @@ type DialogTypeMap = {
   }
   'dot-plot': {
     isClusterMap?: boolean
-    callback: (plot: HistoryPlot) => void
-  }
-  'volcano-plot': {
     callback: (plot: HistoryPlot) => void
   }
   'gsea-bubble-plot': {
@@ -206,23 +202,6 @@ function DotPlotDialogRenderer({ dialog, close }: IDialogRenderer<'dot-plot'>) {
   return (
     <DotPlotDialog
       isClusterMap={isClusterMap}
-      onResponse={(response, data) => {
-        if (response === TEXT_OK && data) {
-          callback(data)
-        }
-        close(dialog.id)
-      }}
-    />
-  )
-}
-
-function VolcanoPlotDialogRenderer({
-  dialog,
-  close,
-}: IDialogRenderer<'volcano-plot'>) {
-  const { callback } = dialog.payload
-  return (
-    <VolcanoDialog
       onResponse={(response, data) => {
         if (response === TEXT_OK && data) {
           callback(data)
@@ -412,8 +391,7 @@ function DialogRenderer({
       return <HeatmapDialogRenderer dialog={dialog} close={close} />
     case 'dot-plot':
       return <DotPlotDialogRenderer dialog={dialog} close={close} />
-    case 'volcano-plot':
-      return <VolcanoPlotDialogRenderer dialog={dialog} close={close} />
+
     case 'gsea-bubble-plot':
       return <GseaBubblePlotDialogRenderer dialog={dialog} close={close} />
     case 'sankey-plot':

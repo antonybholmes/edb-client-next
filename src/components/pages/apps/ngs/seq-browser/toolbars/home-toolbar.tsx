@@ -1,6 +1,6 @@
 import { ArrowLeftRightIcon } from '@/components/icons/arrow-left-right-icon'
 import { ChevronRightIcon } from '@/components/icons/chevron-right-icon'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { ZoomInIcon } from '@/components/icons/zoom-in-icon'
 import { ZoomOutIcon } from '@/components/icons/zoom-out-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
@@ -58,7 +58,7 @@ export function HomeToolbar() {
             saveAs('tracks')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

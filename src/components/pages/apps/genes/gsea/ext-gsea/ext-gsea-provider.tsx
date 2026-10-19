@@ -18,8 +18,8 @@ import {
   IRankedGene,
   sortRankedGenes,
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
+import { useAxes } from '@/components/plot/axes/plot-axes'
 import { abs } from '@/lib/math/abs'
 import { range } from '@/lib/math/range'
 

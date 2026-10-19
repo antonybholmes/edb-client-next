@@ -4,6 +4,7 @@ import { useNetworkSettings } from '../network-settings'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { Button } from '@/components/shadcn/ui/themed/baseui/button'
 import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
@@ -16,10 +17,10 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
-import { Broom, RotateCw, SearchCheck, Tags } from 'lucide-react'
+import { Broom, SearchCheck, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useNetwork } from '../network-store'
-import { useUserData } from '../network-user-data-store'
+import { useNetwork } from '../network'
+import { useUserData } from '../network-user-data'
 import { GroupItem } from './group-props-panel'
 
 export function NodesDisplayPropsPanel() {
@@ -29,6 +30,7 @@ export function NodesDisplayPropsPanel() {
   const { open: openDialog } = useDialogs()
 
   const [text, setText] = useState('')
+  const [currentNodeText, setCurrentNodeText] = useState('')
 
   useEffect(() => {
     if (userData.labels.ids.length > 0) {
@@ -40,6 +42,22 @@ export function NodesDisplayPropsPanel() {
       )
     }
   }, [userData.labels])
+
+  useEffect(() => {
+    if (userData.currentNode) {
+      setCurrentNodeText(
+        [`Node: ${userData.currentNode.id}`]
+          .concat(
+            Object.entries(userData.currentNode.data)
+              .sort(([key1], [key2]) => key1.localeCompare(key2))
+              .map(([key, value]) => `${key}: ${value}`)
+          )
+          .join('\n')
+      )
+    } else {
+      setCurrentNodeText('')
+    }
+  }, [userData.currentNode])
 
   // const debounceText = useDebounce(text)
 
@@ -69,10 +87,11 @@ export function NodesDisplayPropsPanel() {
             className="text-sm"
             contentCls="text-xs gap-x-px"
             leftChildren={
-              <IconButton
-                //variant="app-theme"
-                size="icon-xs"
-
+              <Button
+                className="text-xs"
+                size="xs"
+                pad="sm"
+                variant="app-theme"
                 onClick={() =>
                   updateUserData(
                     produce(userData, (draft) => {
@@ -89,8 +108,9 @@ export function NodesDisplayPropsPanel() {
                 }
                 title="Update Graph"
               >
-                <RotateCw size={16} />
-              </IconButton>
+                {/* <RotateCw size={16} /> */}
+                Update
+              </Button>
             }
           >
             {/* <LinkButton
@@ -166,24 +186,34 @@ export function NodesDisplayPropsPanel() {
               <Broom size={16} />
             </IconButton>
           </PropRow>
-          {/* <SwitchPropRow
-            title="Show All Labels"
+          <ResizablePanelGroup orientation="vertical">
+            <ResizablePanel
+              id="node-labels"
+              defaultSize="70%"
+              minSize="0%"
+              className="flex flex-col gap-y-1.5"
+              collapsible={true}
+            >
+              <Textarea
+                title="Node Label"
+                value={text}
+                onTextChange={(value) => setText(value)}
+              />
+            </ResizablePanel>
+            <ThinVResizeHandle autoHide={false} />
 
-            className="text-xs font-normal"
-            checked={settings.plot.nodes.labels.showAll}
-            onCheckedChange={(v) =>
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.plot.nodes.labels.showAll = v
-                })
-              )
-            }
-          /> */}
-          <Textarea
-            title="Node Label"
-            value={text}
-            onTextChange={(value) => setText(value)}
-          />
+            <ResizablePanel
+              id="current-node"
+              defaultSize="30%"
+              minSize="0%"
+              className="flex flex-col gap-y-1.5"
+              collapsible={true}
+            >
+              <span>Current Node:</span>
+              <Textarea value={currentNodeText} readOnly className="h-1" />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+
           {/* <VCenterRow className="gap-x-3">
             <ToolbarButton
               variant="app-theme"

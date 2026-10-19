@@ -1,7 +1,7 @@
 import { DataIndex, ExcelIndex, Index, IndexFromType, NumInfIndex } from '.'
 import { BaseIndex } from './base-index'
-import { cellStr } from './cell'
-import { SeriesData } from './series-data'
+import { Cell, cellStr } from './cell'
+import { FieldRecord } from './multi-field'
 
 export const DEFAULT_NAME = 'index'
 
@@ -12,10 +12,10 @@ export const DEFAULT_NAME = 'index'
 export class Annotations {
   private _size: number
   private _fields: string[] = []
-  private _fieldMap = new Map<string, Index>()
-  private _indexCreator: () => Index
+  private _fieldMap = new Map<string, Index<Cell>>()
+  private _indexCreator: () => Index<Cell>
 
-  constructor(size: number, opts: { indexCreator?: () => Index } = {}) {
+  constructor(size: number, opts: { indexCreator?: () => Index<Cell> } = {}) {
     const { indexCreator = () => new NumInfIndex() } = opts
     this._size = size
     this._indexCreator = indexCreator
@@ -33,7 +33,7 @@ export class Annotations {
     return this._fieldMap.has(name)
   }
 
-  _get(name: string): Index {
+  _get(name: string): Index<Cell> {
     if (!this._fieldMap.has(name)) {
       this._fieldMap.set(name, this._indexCreator())
     }
@@ -41,11 +41,11 @@ export class Annotations {
     return this._fieldMap.get(name)!
   }
 
-  get(name: string): Index {
+  get(name: string): Index<Cell> {
     return this._get(name)
   }
 
-  values(name: string): readonly SeriesData[] {
+  values(name: string): readonly Cell[] {
     return this._get(name).values
   }
 
@@ -55,7 +55,7 @@ export class Annotations {
   }
 
   /** Adds or replaces an annotation. Missing trailing values are set to `fill`. */
-  set(name: string, values: IndexFromType, fill: SeriesData = ''): void {
+  set(name: string, values: IndexFromType, fill: Cell = ''): void {
     if (!values) {
       return
     }
@@ -108,7 +108,7 @@ export class Annotations {
     this._fields = this._fields.map((f) => (f === oldName ? newName : f))
   }
 
-  at(name: string, i: number): SeriesData {
+  at(name: string, i: number): Cell {
     return this.field(name).at(i)
   }
 
@@ -117,8 +117,8 @@ export class Annotations {
   // }
 
   /** All annotation values for a single position. */
-  record(i: number): { name: string; value: SeriesData }[] {
-    const ret: { name: string; value: SeriesData }[] = []
+  record(i: number): FieldRecord[] {
+    const ret: FieldRecord[] = []
 
     for (const name of this.names) {
       ret.push({ name, value: this._get(name).at(i) })
@@ -167,7 +167,7 @@ export class Annotations {
     return ret
   }
 
-  private field(name: string): BaseIndex {
+  private field(name: string): BaseIndex<Cell> {
     if (!this._fieldMap.has(name)) {
       throw new Error(`annotation "${name}" not found`)
     }

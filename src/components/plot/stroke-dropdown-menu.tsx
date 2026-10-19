@@ -8,6 +8,7 @@ import { useEdbSettings } from '../edb/edb-settings'
 import { CenterRow } from '../layout/center-row'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
@@ -90,7 +91,7 @@ export function StrokeButton({
 
 function OutlineIcon({ cp }: { cp: IColorPickerProps }) {
   return (
-    <CenterRow className="flex flex-row items-start justify-center relative h-5  w-5 grow-0 shrink-0 ">
+    <CenterRow className="flex flex-row items-start justify-center relative h-5 w-5 grow-0 shrink-0 ">
       <Pencil
         size={16}
         strokeWidth={1.5}
@@ -185,19 +186,21 @@ export function StrokeDropdownMenu({
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               {WEIGHTS.map(({ label, value }) => (
-                <DropdownMenuItem
+                <DropdownMenuCheckboxItem
                   key={value}
+                  checked={color0.width === value}
                   onClick={() => {
                     color0.onColorChange?.({
                       color: color0.color,
                       opacity,
                       width: value,
+                      dasharray: color0.dasharray,
                       show: true,
                     })
                   }}
                 >
                   <span>{label}</span>
-                </DropdownMenuItem>
+                </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuPortal>

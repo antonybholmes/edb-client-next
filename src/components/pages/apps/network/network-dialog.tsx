@@ -17,10 +17,10 @@ import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { HistoryPlot } from '../matcalc/history/history-provider/history-types'
+import { dataframesToNetwork, useNetwork } from './network'
 import { useNetworkSettings } from './network-settings'
-import { dataframesToNetwork, useNetwork } from './network-store'
 import { useNetworkD3Sim } from './network-store-d3-sim'
-import { useUserData } from './network-user-data-store'
+import { useUserData } from './network-user-data'
 
 const MAX_COLS = 10
 
@@ -36,7 +36,7 @@ function findLabelCol(df: BaseDataFrame) {
     return 'Label'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase().includes('label'))
+  const cols = df.colNames.filter((c) => c.toLowerCase().includes('label'))
 
   if (cols.length === 0) {
     return 'Label'
@@ -50,7 +50,7 @@ function findIdCol(df: BaseDataFrame) {
     return 'ID'
   }
 
-  const cols = df.columns.filter((c) =>
+  const cols = df.colNames.filter((c) =>
     c.toLowerCase().match(/.*(id|gene_set|name).*/)
   )
 
@@ -66,7 +66,7 @@ function findSizeCol(df: BaseDataFrame | null) {
     return 'Size'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase() === 'size')
+  const cols = df.colNames.filter((c) => c.toLowerCase() === 'size')
 
   if (cols.length === 0) {
     return 'Size'
@@ -80,7 +80,7 @@ function findGroupCol(df: BaseDataFrame | null) {
     return ''
   }
 
-  const cols = df.columns.filter((c) =>
+  const cols = df.colNames.filter((c) =>
     c.toLowerCase().match(/.*(group|collection).*/)
   )
 
@@ -96,7 +96,7 @@ function findSourceCol(df: BaseDataFrame | null) {
     return ''
   }
 
-  const cols = df.columns.filter((c) =>
+  const cols = df.colNames.filter((c) =>
     c.toLowerCase().match(/.*(source|from).*/)
   )
 
@@ -112,7 +112,7 @@ function findTargetCol(df: BaseDataFrame | null) {
     return ''
   }
 
-  const cols = df.columns.filter((c) =>
+  const cols = df.colNames.filter((c) =>
     c.toLowerCase().match(/.*(target|to).*/)
   )
 
@@ -128,7 +128,7 @@ function findStrengthCol(df: BaseDataFrame | null) {
     return ''
   }
 
-  const cols = df.columns.filter((c) =>
+  const cols = df.colNames.filter((c) =>
     c.toLowerCase().match(/.*(similarity).*/)
   )
 
@@ -157,10 +157,6 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
   const [dfNode, setDfNode] = useState<BaseDataFrame | null>(null)
   const [dfEdge, setDfEdge] = useState<BaseDataFrame | null>(null)
-
-  // const labelCol = findCol(dfNodes, 'label')
-  //   const sizeCol = findCol(dfNodes, 'size', { exact: true })
-  //   const groupCol = findCol(dfNodes, 'collection')
 
   const [labelCol, setLabelCol] = useState<string>('')
   const [idCol, setIdCol] = useState<string>('')
@@ -249,29 +245,17 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       })
     )
 
-    setNetwork(
-      network,
-      nodes,
-      groups,
-
-      strengthCol,
-      sizeCol,
-      colorMetricCol
-    )
+    setNetwork(network, nodes, groups, strengthCol, sizeCol, colorMetricCol)
 
     setMessage('Creating graph...')
-
-    // runSim(() => {
-    //   setMessage(null)
-    //   close()
-    // })
 
     close()
   }
 
   const colorCols = [
     '<none>',
-    ...(dfNode?.columns.filter((name) => name !== '').slice(0, MAX_COLS) ?? []),
+    ...(dfNode?.colNames.filter((name) => name !== '').slice(0, MAX_COLS) ??
+      []),
   ]
 
   return (
@@ -289,7 +273,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       <strong>Nodes</strong>
       <ActionDialogRow title="ID">
         <SelectList onValueChange={setIdCol} value={idCol} w="lg">
-          {dfNode?.columns
+          {dfNode?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -302,7 +286,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
       <ActionDialogRow title="Label">
         <SelectList onValueChange={setLabelCol} value={labelCol} w="lg">
-          {dfNode?.columns
+          {dfNode?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -315,7 +299,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
       <ActionDialogRow title="Group">
         <SelectList onValueChange={setGroupCol} value={groupCol} w="lg">
-          {dfNode?.columns
+          {dfNode?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -328,7 +312,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       <LineSeparator />
       <ActionDialogRow title="Size">
         <SelectList onValueChange={setSizeCol} value={sizeCol} w="lg">
-          {dfNode?.columns
+          {dfNode?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -393,7 +377,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
       <strong className="mt-2">Edges</strong>
       <ActionDialogRow title="Source">
         <SelectList onValueChange={setSourceCol} value={sourceCol} w="lg">
-          {dfEdge?.columns
+          {dfEdge?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -406,7 +390,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
       <ActionDialogRow title="Target">
         <SelectList onValueChange={setTargetCol} value={targetCol} w="lg">
-          {dfEdge?.columns
+          {dfEdge?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -419,7 +403,7 @@ export function NetworkDialog({ close }: ICustomDialogProps<unknown>) {
 
       <ActionDialogRow title="Strength">
         <SelectList onValueChange={setStrengthCol} value={strengthCol} w="lg">
-          {dfEdge?.columns
+          {dfEdge?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (

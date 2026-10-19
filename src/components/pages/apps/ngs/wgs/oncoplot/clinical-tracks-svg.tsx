@@ -1,4 +1,4 @@
-import type { IBlock } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+import type { IBlock } from '@/components/pages/apps/heatmap/heatmap-settings'
 import {
   axisDomainToRangeFunc,
   createAxis,

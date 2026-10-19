@@ -1,20 +1,19 @@
-import {
-  BaseDataFrame,
-  DataFrameInput,
-  DEFAULT_COLUMN_INDEX_NAME,
-  DEFAULT_SHEET_NAME,
-  findCol,
-  findInSeries,
-  findRow,
-  shape,
-  type LocType,
-} from './base-dataframe'
-
 import { vfill, vfill2d } from '../fill'
+import { BaseDataFrame, findCol, findRow } from './base-dataframe'
+import {
+  BaseTable,
+  DataFrameInput,
+  DEFAULT_COLUMN_NAMES,
+  DEFAULT_SHEET_NAME,
+  findInSeries,
+  IDataFrameOptions,
+  LocType,
+  shape,
+} from './base-table'
 import { getExcelColName } from './cell'
-import { ColFrame } from './col-frame'
-import { type IDataFrameOptions } from './dataframe'
+import { ColDataFrame } from './col-dataframe'
 
+import type { Cell, IndexId } from './cell'
 import {
   DataIndex,
   Index,
@@ -25,12 +24,11 @@ import {
   type Shape,
 } from './index'
 import {
-  BaseSeries,
   DataSeries,
   DEFAULT_INDEX_NAME,
+  Series,
   type SeriesFromType,
 } from './series'
-import type { IndexId, SeriesData } from './series-data'
 
 export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
   rowObs?: BaseDataFrame | undefined
@@ -43,35 +41,27 @@ export class AnnotationDataFrame extends BaseDataFrame {
   _colVars: BaseDataFrame
 
   constructor(options: IAnnotationDataFrameOptions = {}) {
-    const {
-      name = '',
-      data,
-      index,
-      indexName,
-      columns,
-      rowObs,
-      colVars,
-    } = options
+    const { name = '', index, columns, rowObs, colVars } = options
 
-    super(shape(data), index, columns, { name })
+    super({ name })
 
-    this._data = new ColFrame(options) // DataFrame(options)
+    this._data = new ColDataFrame(options)
 
     if (rowObs) {
       this._rowObs = rowObs
     } else {
-      this._rowObs = new ColFrame({
-        data: makeIndex(index, this._data.shape[0]).map((v) => [v]),
-        columns: [indexName ?? DEFAULT_INDEX_NAME],
+      this._rowObs = new ColDataFrame({
+        data: [makeIndex(index, this._data.shape[0])],
+        columns: [DEFAULT_INDEX_NAME],
       })
     }
 
     if (colVars) {
       this._colVars = colVars
     } else {
-      this._colVars = new ColFrame({
-        data: makeColumns(columns, this._data.shape[1]).map((v) => [v]),
-        columns: [DEFAULT_COLUMN_INDEX_NAME],
+      this._colVars = new ColDataFrame({
+        data: [makeColumns(columns, this._data.shape[1])],
+        columns: [DEFAULT_COLUMN_NAMES],
       })
     }
   }
@@ -84,10 +74,14 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._colVars
   }
 
-  override setName(name: string, inplace = true): BaseDataFrame {
-    const df = (inplace ? this : this.copy()) as AnnotationDataFrame
+  override setName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
+    const df = inplace ? this : this.copy()
 
-    df._data.setName(name, true)
+    df._data.setName(name)
 
     return df
   }
@@ -99,21 +93,22 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
-    const df = inplace ? this : (this.copy() as AnnotationDataFrame)
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
+    const df = inplace ? this : this.copy()
 
     const colIdx = findCol(df, col)
 
-    df._data.setCol(colIdx, data, true)
+    df._data.setCol(colIdx, data)
 
-    setMetadataRow(this._colVars, colIdx, col)
+    setObsTableData(this._colVars, colIdx, col)
 
     return df
   }
 
-  override col(col: IndexId): BaseSeries {
-    const colData = this._colVars.col(DEFAULT_COLUMN_INDEX_NAME)
+  override col(col: IndexId): Series<Cell> {
+    const colData = this._colVars.col(DEFAULT_COLUMN_NAMES)
 
     const colIdx = findInSeries(colData, col)
 
@@ -126,11 +121,11 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
   }
 
-  override colValues(col: IndexId): SeriesData[] {
+  override colValues(col: IndexId): readonly Cell[] {
     return this._data.colValues(col)
   }
 
-  override get(row: IndexId, col: IndexId): SeriesData {
+  override get(row: IndexId, col: IndexId): Cell {
     const colIdx = findCol(this, col)
 
     if (colIdx === -1) {
@@ -146,7 +141,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.get(rowIdx, colIdx)
   }
 
-  override row(row: IndexId): BaseSeries {
+  override row(row: IndexId): Series<Cell> {
     // col 0 of row meta data is always the index label
     // so we can use that to find the row index
     // then we can just return the row from the main dataframe
@@ -160,89 +155,99 @@ export class AnnotationDataFrame extends BaseDataFrame {
     })
   }
 
-  override rowValues(row: IndexId): SeriesData[] {
+  override rowValues(row: IndexId): readonly Cell[] {
     return this._data.rowValues(row)
   }
 
   override setRow(
     row: IndexId,
     data: SeriesFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
     const df = inplace ? this : this.copy()
 
     const rowIdx = findRow(df, row)
 
-    df.setRow(rowIdx, data, true)
+    df._data.setRow(rowIdx, data)
 
-    setMetadataRow(this._rowObs, rowIdx, row)
+    setObsTableData(df._rowObs, rowIdx, row)
 
     return df
   }
 
-  override at(
+  override set(
     row: IndexId,
     col: IndexId,
-    v: SeriesData,
-    inplace: boolean = true
-  ): BaseDataFrame {
-    return this._data.at(row, col, v, inplace)
+    v: Cell,
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
+
+    const df = inplace ? this : this.copy()
+
+    // Always set inplace to true on the underlying data to ensure the changes are applied to df
+    df._data.set(row, col, v)
+
+    return df
   }
 
   override setIndex(
     index: IndexFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
     const df: AnnotationDataFrame = inplace
       ? this
       : (this.copy() as AnnotationDataFrame)
 
-    df._data.setIndex(index, true)
-    df._rowObs.setCol(0, df.index.values, true)
+    //df._data.setIndex(index, true)
+    df._rowObs.setCol(0, index)
 
     return df
   }
 
-  override setIndexName(name: string, inplace: boolean = true): BaseDataFrame {
-    const df: AnnotationDataFrame = inplace
-      ? this
-      : (this.copy() as AnnotationDataFrame)
+  override setIndexName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
 
-    df._data.setIndexName(name, true)
+    const df = inplace ? this : this.copy()
 
     const cols = [...df._rowObs.columns]
     cols[0] = name
-    df._rowObs.setColNames(cols, true)
+    df._rowObs.setColNames(cols)
 
     return df
   }
 
   override setColNames(
     index: IndexFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
-    const df: AnnotationDataFrame = inplace
-      ? this
-      : (this.copy() as AnnotationDataFrame)
+    opts: { inplace?: boolean } = {}
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts
 
-    //df.setColNames(index, true)
-    df.colVars.setCol(0, index, true)
+    const df = inplace ? this : this.copy()
+
+    df._data.setColNames(index)
+    df.colVars.setCol(0, index)
 
     return df
   }
 
-  override get cols(): readonly BaseSeries[] {
+  override get cols(): readonly Series<Cell>[] {
     return this._data.cols
   }
 
-  // override get columns(): Index {
-  //   return new DataIndex(this._colMetaData.col(0).values as SeriesData[], {
-  //     name: this._colMetaData.colName(0),
-  //   })
-  // }
+  override get columns(): Index<Cell> {
+    return new DataIndex(this._colVars.col(0).values, {
+      name: this._colVars.colName(0),
+    })
+  }
 
-  override get index(): Index {
-    return new DataIndex(this._rowObs.col(0).values as SeriesData[], {
+  override get index(): Index<Cell> {
+    return new DataIndex(this._rowObs.col(0).values, {
       name: this._rowObs.colName(0),
     })
   }
@@ -263,26 +268,24 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.length
   }
 
-  override get values(): SeriesData[][] {
+  override get values(): readonly Cell[][] {
     // return copy as we want dataframe to be immutable
     return this._data.values
   }
 
-  override map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][] {
+  override map<T>(f: (v: Cell, row: number, col: number) => T): T[][] {
     return this._data.map(f)
   }
 
   override iloc({
     rows,
     cols,
-  }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
-    const df = this._data.iloc({ rows, cols }) as BaseDataFrame
+  }: { rows?: LocType; cols?: LocType } = {}): AnnotationDataFrame {
+    const df = this._data.iloc({ rows, cols })
 
-    const ret = new AnnotationDataFrame({
+    const ret: AnnotationDataFrame = new AnnotationDataFrame({
       name: this.name,
       data: df.cols,
-      //columns: df.columns,
-      //index: df.index,
     })
 
     // both are row oriented so we slice col meta data the same way as rows and row meta data the same way as rows
@@ -292,23 +295,17 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override rowApply(
-    f: (row: SeriesData[], index: number) => SeriesData
-  ): BaseSeries {
+  override rowApply(f: (row: Cell[], index: number) => Cell): Series<Cell> {
     return this._data.rowApply(f)
   }
 
-  override rowMap<T>(f: (row: SeriesData[], index: number) => T): T[] {
+  override rowMap<T>(f: (row: Cell[], index: number) => T): T[] {
     return this._data.rowMap(f)
   }
 
-  override colMap<T>(f: (col: SeriesData[], index: number) => T): T[] {
+  override colMap<T>(f: (col: Cell[], index: number) => T): T[] {
     return this._data.colMap(f)
   }
-
-  // override isin(rows: LocType = ':', cols: LocType = ':'): BaseDataFrame {
-  //   return this._dataframe.isin(rows, cols)
-  // }
 
   override min(): number {
     return this._data.min()
@@ -322,8 +319,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.t.values,
-      //columns: df.columns,
-      //index: df.index,
     })
 
     ret._rowObs = this._colVars
@@ -332,12 +327,10 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copy(): BaseDataFrame {
+  override copy(): AnnotationDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.values,
-      //index: this._dataframe.index.copy(),
-      //columns: this._dataframe.columns.copy(),
     })
 
     ret._rowObs = this._rowObs.copy()
@@ -346,7 +339,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override replace(data: DataFrameInput): BaseDataFrame {
+  override copyReplaceData(data: DataFrameInput): AnnotationDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
@@ -354,8 +347,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data,
-      //index: this._dataframe.index.copy(),
-      //columns: this._dataframe.columns.copy(),
     })
 
     ret._rowObs = this._rowObs.copy()
@@ -365,13 +356,13 @@ export class AnnotationDataFrame extends BaseDataFrame {
   }
 }
 
-function setMetadataRow(metadata: BaseDataFrame, rowIdx: number, row: IndexId) {
+function setObsTableData(t: BaseTable, rowIdx: number, row: IndexId) {
   if (rowIdx === -1) {
     // we only update the meta data to add new info
     // we fill in the missing annotation by assuming the first
     // meta column is the index label and anything else is
     // extra annotation which we set to the empty string
-    metadata.setRow(rowIdx, [row, ...vfill('', metadata.shape[1] - 1)], true)
+    t.setRow(rowIdx, [row, ...vfill('', t.shape[1] - 1)])
   }
 }
 
@@ -408,8 +399,8 @@ export function create100x26Df() {
 export const DATAFRAME_100x26 = create100x26Df()
 
 export interface ISharedAnnotationDataFrame {
-  rowObs: { columns: string[]; data: SeriesData[][] }
-  colVars: { columns: string[]; data: SeriesData[][] }
-  data: SeriesData[][]
+  rowObs: { columns: string[]; data: Cell[][] }
+  colVars: { columns: string[]; data: Cell[][] }
+  data: Cell[][]
   name: string
 }

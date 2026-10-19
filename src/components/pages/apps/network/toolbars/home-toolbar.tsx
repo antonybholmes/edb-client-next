@@ -1,4 +1,3 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import {
@@ -13,6 +12,7 @@ import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import {
   GroupToggle,
   ToggleGroup,
@@ -62,7 +62,7 @@ export function HomeToolbar() {
             saveAs('network')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

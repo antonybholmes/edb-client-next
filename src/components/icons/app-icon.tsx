@@ -4,6 +4,7 @@ import { useReducedMotion } from '@/hooks/reduced-motion'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import type { IDivProps } from '@/interfaces/div-props'
 import type { IAppInfo } from '@/lib/app-info'
+import { linspace } from '@/lib/math/linspace'
 import { cn } from '@/lib/shadcn-utils'
 import { capitalCase } from '@/lib/text/capital-case'
 import type { IAppHeaderLink } from '@/menus'
@@ -151,6 +152,24 @@ export function AppIcon({
     }
   }, [appInfo])
 
+  const bgColor = useMemo(() => {
+    return Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
+  }, [appInfo.color])
+
+  const bgImage = useMemo(() => {
+    if (!Array.isArray(appInfo.color)) {
+      return `linear-gradient(135deg, ${appInfo.color} 0%, color-mix(in srgb, ${appInfo.color}, transparent 60%) 100%)`
+    }
+
+    const stops = linspace(0, 100, appInfo.color.length)
+
+    const colorStops = appInfo.color.map(
+      (color, index) => `${color} ${stops[index]}%`
+    )
+
+    return `linear-gradient(135deg, ${colorStops.join(', ')})`
+  }, [appInfo.color])
+
   function onHover(hover: boolean) {
     _setHover(hover)
     setHover?.(hover)
@@ -165,7 +184,7 @@ export function AppIcon({
         width: `${size}rem`,
         height: `${size}rem`,
       }}
-      className={cn('relative w-full aspect-square', className)}
+      className={cn('relative w-full aspect-square shrink-0 grow-0', className)}
 
       onPointerEnter={() => {
         onHover(true)
@@ -186,19 +205,21 @@ export function AppIcon({
         style={{
           width: `${size}rem`,
           height: `${size}rem`,
-          backgroundColor: appInfo.color,
+          backgroundColor: bgColor,
         }}
       />
 
       <span
         ref={ref}
-        className={cn(APP_BG_CLS, 'app-icon opacity-70 z-10')}
+        className={cn(APP_BG_CLS, 'opacity-80 z-10')}
 
         style={
           {
             width: `${innerSize}rem`,
             height: `${innerSize}rem`,
-            '--base-color': appInfo.color ?? 'lightslategray',
+            //'--base-color': appInfo.color ?? 'lightslategray',
+
+            backgroundImage: bgImage,
           } as CSSProperties
         }
       ></span>

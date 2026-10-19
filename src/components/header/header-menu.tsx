@@ -73,6 +73,8 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
         abbr = `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
       }
 
+      const color = Array.isArray(module.color) ? module.color[0] : module.color
+
       return (
         <li key={moduleIndex}>
           <ModuleButtonLink
@@ -87,12 +89,12 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
             <div
               className={ICON_CLS}
               style={{
-                borderColor: module.color ?? 'lightslategray',
+                borderColor: color ?? 'lightslategray',
               }}
             >
               <div
                 style={{
-                  color: module.color ?? 'lightslategray',
+                  color: color ?? 'lightslategray',
                 }}
               >
                 <span className="font-bold">{abbr[0]!.toUpperCase()}</span>

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from 'react'
 
-import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
 import { createAxis } from '@/components/plot/axes/axis'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/plot-axes'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { ILim } from '@/lib/math/math'
 import { IRankedGene, sortRankedGenes } from './geneset'

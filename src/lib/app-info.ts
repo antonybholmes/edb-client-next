@@ -2,7 +2,8 @@ export interface IAppInfo {
   name: string
   description: string
   abbr?: string
-  color?: string
+  color?: string | string[]
+
   version: string
   build: number
   copyright: string

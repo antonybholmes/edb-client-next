@@ -4,7 +4,7 @@ import {
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
 import type { ComponentProps } from 'react'
-import { useNetwork } from '../network-store'
+import { useNetwork } from '../network'
 
 export function FieldSelectList({
   variant = 'toolbar',

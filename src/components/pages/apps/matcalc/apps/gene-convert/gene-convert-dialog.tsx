@@ -121,7 +121,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
 
       const outName = `${settings.apps.geneconv.fromSpecies} to ${settings.apps.geneconv.toSpecies}`
 
-      dfOut.setName(outName, true)
+      dfOut.setName(outName)
 
       // if (settings.apps.geneConvert.duplicateRows) {
       //   const d: SeriesData[][] = []

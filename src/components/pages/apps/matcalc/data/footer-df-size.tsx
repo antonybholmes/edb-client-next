@@ -1,5 +1,5 @@
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
+import { getFormattedShape } from '@/lib/dataframe/utils/dataframe-utils'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 
 /**

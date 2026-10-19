@@ -33,8 +33,8 @@ importers:
         specifier: ^11.3.2
         version: 11.3.2
       '@hookform/resolvers':
-        specifier: ^5.9.1
-        version: 5.9.1(react-hook-form@7.90.0(@types/react@19.2.17)(react@19.3.1))(zod@4.6.7)
+        specifier: ^6.0.0
+        version: 6.0.0(react-hook-form@7.90.0(@types/react@19.2.17)(react@19.3.1))(zod@4.6.7)
       '@mdx-js/loader':
         specifier: ^3.1.1
         version: 3.1.1
@@ -120,8 +120,8 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       '@tanstack/react-query':
-        specifier: ^5.104.3
-        version: 5.104.3(react@19.3.1)
+        specifier: ^5.104.4
+        version: 5.104.4(@types/react@19.2.17)(react@19.3.1)
       '@tanstack/react-table':
         specifier: ^9.3.1
         version: 9.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -207,8 +207,8 @@ importers:
         specifier: ^1.9.2
         version: 1.9.2
       lucide-react:
-        specifier: ^1.58.0
-        version: 1.58.0(@types/react@19.2.17)(react@19.3.1)
+        specifier: ^1.59.0
+        version: 1.59.0(@types/react@19.2.17)(react@19.3.1)
       nanoid:
         specifier: ^6.0.2
         version: 6.0.2
@@ -228,14 +228,14 @@ importers:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       react-dropzone:
-        specifier: ^20.1.3
-        version: 20.1.3(@types/react@19.2.17)(react@19.3.1)
+        specifier: ^20.1.4
+        version: 20.1.4(@types/react@19.2.17)(react@19.3.1)
       react-hook-form:
         specifier: ^7.90.0
         version: 7.90.0(@types/react@19.2.17)(react@19.3.1)
       react-resizable-panels:
-        specifier: ^4.14.5
-        version: 4.14.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^4.14.6
+        version: 4.14.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       reading-time:
         specifier: ^1.5.0
         version: 1.5.0
@@ -270,8 +270,8 @@ importers:
         specifier: ^2.0.8
         version: 2.0.8(@types/react@19.2.17)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       svg-path-properties:
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.2.0
+        version: 2.2.0
       tailwind-merge:
         specifier: ^3.7.0
         version: 3.7.0
@@ -685,8 +685,8 @@ packages:
   '@gmod/shared-read-cache@2.0.0':
     resolution: {integrity: sha512-nU4HPB+DlvZqRVJZvtIbJ3zS+kSKfOhibCu3Y7Sia9D4GwA1MotdBNH19hM8/gP/tYuHGaSdvpGhZ0FfJbw/Hg==}
 
-  '@hookform/resolvers@5.9.1':
-    resolution: {integrity: sha512-7b7vsbraJxKgjVSA1Nur9tLwj539WGJUBLA7QNvXnFoT2pM5Z7G+6rlukk4B2/QrTZy6huRtH6wKeESPKuIr6w==}
+  '@hookform/resolvers@6.0.0':
+    resolution: {integrity: sha512-6iBzQnB+YwAveVc8HUi6QYLITn5X+xNKRMFIcNXHZlvp2aTI7yWbj4n/JodXxirMCcBc4VCjb2aYAJh4x07mVw==}
     peerDependencies:
       '@sinclair/typebox': '>=0.25.24'
       '@standard-schema/spec': ^1.0.0
@@ -696,11 +696,11 @@ packages:
       ajv-errors: ^3.0.0
       ajv-formats: ^2.1.1
       arktype: ^2.0.0
-      ata-validator: ^1.2.0
+      ata-validator: ^1.23.0
       class-transformer: '>=0.4.0'
       class-validator: '>=0.12.0'
       computed-types: ^1.0.0
-      effect: ^3.10.3
+      effect: ^4.0.0
       fluentvalidation-ts: ^3.0.0
       fp-ts: ^2.7.0
       io-ts: ^2.0.0
@@ -1968,13 +1968,17 @@ packages:
   '@tanstack/query-core@5.104.1':
     resolution: {integrity: sha512-TiRghcrGkUTE+M4JBxvpPSpBhxvIzQairw+cksrHYGr+2uwC77yW1SY9nYxnYRYOppvucf8rEg6b5byoz4rTpw==}
 
-  '@tanstack/query-core@5.104.3':
-    resolution: {integrity: sha512-DZY9TuJAOgU3UyHUhXb4CcTYEHNZszlwkPg4VViIwTxOKzLprPUU+rbaPZQd3srqkGOtpaDdKpW972UV/LKlcg==}
+  '@tanstack/query-core@5.104.4':
+    resolution: {integrity: sha512-nU4Yrb8Sjn0DeVb7PKG9uiepNavys3yoxy1FX0hViY4/P6Ng/mBje2SMl7i9812rtyHKtHyqiaC/td6GkI8StA==}
 
-  '@tanstack/react-query@5.104.3':
-    resolution: {integrity: sha512-5Ts1ImwJKqoJgPkLxl9WrPQy1JEoEmti3MaaODCfBamHUGFk57IFrc+AIksPq+BAm10EsroX56qm398Z42LG7w==}
+  '@tanstack/react-query@5.104.4':
+    resolution: {integrity: sha512-YD5QkvUNy8Ey3LbOy2vwL97JjoYycwDv++cWAibTe+9BLYvl3c09XpYp5dZ2VcxcguwoDhGF+utYJYb79RB36w==}
     peerDependencies:
+      '@types/react': ^18 || ^19
       react: ^18 || ^19
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   '@tanstack/react-store@0.11.2':
     resolution: {integrity: sha512-oj5O5DmiMWE+ih+SioX2ayC1kbK7d3fpLx0B75fPJr9nY3zU+hoW010yr64qXsY/9fyiLVE2bn5mGNV3owm8RQ==}
@@ -3960,8 +3964,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@1.58.0:
-    resolution: {integrity: sha512-hXaFNm6mk6QVtBnDGBn1YAs8j2tGUk0A4s/CpclIcczfxeXiW1rdOLVo6zCsoIih9XXsGvDODQerl749a2n7bA==}
+  lucide-react@1.59.0:
+    resolution: {integrity: sha512-5qgMyyCPU6OvnKpLS2t693+ZtiqA8oaSweWoUows0BLFKFf6V75m4+CptpmohZHpD5IuOVIBXHBBiv2vpLJmtw==}
     peerDependencies:
       '@types/react': '*'
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -4457,8 +4461,8 @@ packages:
     peerDependencies:
       react: ^19.3.1
 
-  react-dropzone@20.1.3:
-    resolution: {integrity: sha512-84ilFcyPItmPIOEU0P2u976sb8UctgcMbbQHTDmAKo7+i9m1Im2Q9swEZnv3FWNg9xdbMhGG7eUMJk1l6Ltsgw==}
+  react-dropzone@20.1.4:
+    resolution: {integrity: sha512-LyjT9iQySNkJGC6yL+XTlmfTRxHhPx0eSoTh+WlR0Ge+W35rLcRH/oH7w5bzijfPHeCFcLnO9G7i+hX+LINAAA==}
     engines: {node: '>= 22'}
     peerDependencies:
       '@types/react': '*'
@@ -4503,8 +4507,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-resizable-panels@4.14.5:
-    resolution: {integrity: sha512-AoHgoq3sGOfciPn2ahddFrBCqsitZLse8cJIYWblvE3kQ9z39IrhdlHCjnVRrDL8XcWqvA0u/t9nLZTfWePJ5A==}
+  react-resizable-panels@4.14.6:
+    resolution: {integrity: sha512-YqkTuTDV1ncknnR5YN/iI8icpClippc9/10job9zJIppt2r8yUwaVfVxhzFNO+3DIxrnAwhcMMs1FdX5xt9C9A==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -4827,8 +4831,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svg-path-properties@2.1.0:
-    resolution: {integrity: sha512-Zp8IvhMTfQDeVqC8wczQQXJiF7HrafV/SFkRzjYcagchNh/FL+o/Ljbe++6vOfimkZp/bVHFJXb/V2dk51YgwA==}
+  svg-path-properties@2.2.0:
+    resolution: {integrity: sha512-sHyCQCJXfPXbxG6Nj3eWZ6gUsRpkjRia+3hPwy8iWt0AIdnLRacY5SnGxLnjWtsPhE0ICS8fY7xOUNl+90yLSw==}
     engines: {node: '>=22.0.0'}
 
   swr@2.4.2:
@@ -5609,7 +5613,7 @@ snapshots:
 
   '@gmod/shared-read-cache@2.0.0': {}
 
-  '@hookform/resolvers@5.9.1(react-hook-form@7.90.0(@types/react@19.2.17)(react@19.3.1))(zod@4.6.7)':
+  '@hookform/resolvers@6.0.0(react-hook-form@7.90.0(@types/react@19.2.17)(react@19.3.1))(zod@4.6.7)':
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.90.0(@types/react@19.2.17)(react@19.3.1)
@@ -6743,12 +6747,14 @@ snapshots:
 
   '@tanstack/query-core@5.104.1': {}
 
-  '@tanstack/query-core@5.104.3': {}
+  '@tanstack/query-core@5.104.4': {}
 
-  '@tanstack/react-query@5.104.3(react@19.3.1)':
+  '@tanstack/react-query@5.104.4(@types/react@19.2.17)(react@19.3.1)':
     dependencies:
-      '@tanstack/query-core': 5.104.3
+      '@tanstack/query-core': 5.104.4
       react: 19.3.1
+    optionalDependencies:
+      '@types/react': 19.2.17
 
   '@tanstack/react-store@0.11.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -8871,7 +8877,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@1.58.0(@types/react@19.2.17)(react@19.3.1):
+  lucide-react@1.59.0(@types/react@19.2.17)(react@19.3.1):
     dependencies:
       react: 19.3.1
     optionalDependencies:
@@ -9579,7 +9585,7 @@ snapshots:
       react: 19.3.1
       scheduler: 0.28.0
 
-  react-dropzone@20.1.3(@types/react@19.2.17)(react@19.3.1):
+  react-dropzone@20.1.4(@types/react@19.2.17)(react@19.3.1):
     dependencies:
       attr-accept: 4.0.0
       file-selector: 5.0.1
@@ -9616,7 +9622,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.17
 
-  react-resizable-panels@4.14.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
+  react-resizable-panels@4.14.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
@@ -10103,7 +10109,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svg-path-properties@2.1.0: {}
+  svg-path-properties@2.2.0: {}
 
   swr@2.4.2(react@19.3.1):
     dependencies:

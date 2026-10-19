@@ -213,7 +213,7 @@ export function PlotPropsPanel() {
         <AccordionItem value="links">
           <AccordionTrigger>Links</AccordionTrigger>
           <AccordionContent innerCls="gap-y-1">
-            <PropRow title="Color Mode">
+            <PropRow title="Color Mode" contentCls="gap-x-2">
               <FillButton
                 colors={[
                   {
@@ -251,7 +251,7 @@ export function PlotPropsPanel() {
                   )
                 }}
 
-                w="sm"
+                w="xs"
               >
                 <SelectItem value="gradient">Gradient</SelectItem>
                 <SelectItem value="static">Static</SelectItem>

@@ -87,7 +87,7 @@ export function BoxWhiskersDialog({
       // the name of the x col. That way we have a name for it when creating
       // the length rather than using a blank space
       hueOrder = [xCol]
-      xOrder = uniqueInOrder(df.columns)
+      xOrder = uniqueInOrder(df.colNames)
 
       const data = range(df.shape[0])
         .map((col) => df.col(col).numsNoNA.map((v) => [df.columns[col]!, v]))
@@ -161,7 +161,7 @@ export function BoxWhiskersDialog({
     onResponse?.(TEXT_OK, plot)
   }
 
-  const cols = df?.columns.slice(0, MAX_COLS)
+  const cols = df?.colNames.slice(0, MAX_COLS)
 
   return (
     <OKCancelDialog

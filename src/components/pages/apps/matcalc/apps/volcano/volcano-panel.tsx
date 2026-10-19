@@ -2,11 +2,11 @@ import {
   DEFAULT_VOLCANO_PROPS,
   VolcanoPlotSvg,
   type IVolcanoDisplayOptions,
-} from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
+} from '@/components/pages/apps/volcano/volcano-plot-svg'
 
-import { FooterPortal } from '@/components/toolbar/footer-portal'
+import { FooterSlotPortal } from '@/components/toolbar/footer-portal'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { getNumCol } from '@/lib/dataframe/dataframe-utils'
+import { getNumCol } from '@/lib/dataframe/utils/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useEffect } from 'react'
 
@@ -23,8 +23,7 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { ILim } from '@/lib/math/math'
 import { useSVG } from '@/providers/svg-provider'
-import { VolcanoPropsPanel } from './volcano-props-panel'
-import { useVolcanoContext } from './volcano-provider'
+import { VolcanoPropsPanel } from '../../../volcano/volcano-props-panel'
 
 export const VOLCANO_X = 'Log2 fold change'
 export const VOLCANO_Y = '-log10 p-value'
@@ -62,9 +61,7 @@ export function makeDefaultVolcanoProps(
 }
 
 export function VolcanoPanel() {
-  const { plot } = useVolcanoContext()
-
-  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
 
   const { autoSave, saveAs } = useSVG()
 
@@ -86,43 +83,16 @@ export function VolcanoPanel() {
 
   return (
     <>
-      {/* <TabSlideBar
-        side="right"
-        open={settings.sidebar.show}
-        onOpenChange={(v) => {
-          const newSettings = produce(settings, (draft) => {
-            draft.sidebar.show = v
-          })
-
-          updateSettings(newSettings)
-        }}
-      >
-        <Card variant="content" className="ml-2 mb-2 grow">
-          <div className={PLOT_CLS}>
-            <VolcanoPlotSvg
-              ref={svgRef}
-              //displayProps={displayOptions}
-              x={displayProps.axes.xaxis.name}
-              y={displayProps.axes.yaxis.name}
-            />
-          </div>
-        </Card>
-      </TabSlideBar> */}
-
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <VolcanoPlotSvg
-          //displayProps={displayOptions}
-          />
+          <VolcanoPlotSvg />
         </ExtScrollCard>
         <VolcanoPropsPanel />
       </ResizableSidebar>
 
-      <FooterPortal className="shrink-0 grow-0 justify-end">
-        <></>
-        <></>
+      <FooterSlotPortal slot="footer-right">
         <ZoomSlider />
-      </FooterPortal>
+      </FooterSlotPortal>
     </>
   )
 }

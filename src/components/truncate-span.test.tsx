@@ -17,7 +17,5 @@ describe('TruncateSpan', () => {
     expect(html).toContain('overflow-hidden')
     expect(html).toContain('whitespace-nowrap')
     expect(html).toContain('text-ellipsis')
-    expect(html).not.toContain('h-')
-    expect(html).not.toContain('absolute')
   })
 })

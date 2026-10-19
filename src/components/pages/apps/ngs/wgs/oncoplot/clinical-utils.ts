@@ -10,7 +10,7 @@ import {
 
 import { COLOR_REGEX } from '@/lib/color/color'
 
-import type { SeriesData } from '@/lib/dataframe/series-data'
+import type { Cell } from '@/lib/dataframe/cell'
 import { range } from '@/lib/math/range'
 
 const LABEL_SEP_REGEX = /[\/\|]/
@@ -161,7 +161,7 @@ export function makeClinicalTracks(
 
   const tracksProps: Record<string, IClinicalTrackProps> = {}
 
-  const tracks: ClinicalDataTrack[] = df.columns.slice(1).map((header, hi) => {
+  const tracks: ClinicalDataTrack[] = df.colNames.slice(1).map((header, hi) => {
     //const matcher = header.match(/^([^\(\)]+)(?:\((.+)\))?/)
 
     const tokens = header.split(':')
@@ -272,7 +272,7 @@ export function makeClinicalTracks(
     const multi = df.columns[ti + 1]!.toLowerCase().includes('multi=t')
 
     for (const row of range(df.shape[0])) {
-      const v: SeriesData = df.col(ti + 1).values[row]!
+      const v: Cell = df.col(ti + 1).values[row]!
 
       const sample: string = df.col(0).values[row]!.toString()
 

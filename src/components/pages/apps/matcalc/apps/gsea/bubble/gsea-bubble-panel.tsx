@@ -17,7 +17,7 @@ import { GseaBubbleDisplayPropsPanel } from '../../../../genes/gsea/gsea-plot/bu
 import { GseaBubblePlotsSvg } from '../../../../genes/gsea/gsea-plot/bubble/svg/gsea-bubble-plots-svg'
 
 export function GseaBubblePanel() {
-  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
 
   const { autoSave, saveAs } = useSVG()
 

@@ -1,4 +1,4 @@
-import { DEFAULT_COLORBAR_SIZE } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+import { DEFAULT_COLORBAR_SIZE } from '@/components/pages/apps/heatmap/heatmap-settings'
 
 import {
   DEFAULT_COLOR_PROPS,
@@ -20,7 +20,7 @@ import {
   DEFAULT_SCATTER_PROPS,
   IDisplayAxis,
   IScatterDisplayOptions,
-} from '../../matcalc/apps/volcano/volcano-plot-svg'
+} from '../../volcano/volcano-plot-svg'
 import APP_INFO from './manifest.json'
 
 interface IGenome {

@@ -62,7 +62,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
       {
         id: makeUuid(),
         df: df.values,
-        columns: df.columns,
+        columns: df.colNames,
         col,
         assembly: settings.genomic.assembly,
         closest: annotationSettings.closest,

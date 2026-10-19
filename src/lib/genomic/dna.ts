@@ -7,7 +7,7 @@ import { TIME_5_MINUTES_MS } from '@/consts'
 import { useQuery } from '@tanstack/react-query'
 
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
-import type { SeriesData } from '../dataframe/series-data'
+import type { Cell } from '../dataframe/cell'
 import { httpFetch } from '../http/http-fetch'
 import { GenLoc, locStr } from './genomic'
 import type { IGenomicLocation } from './genomic-location'
@@ -113,7 +113,7 @@ export async function createDNATable(
   //   assemblyCol = findCol(df, 'genome')
   // }
 
-  const header: readonly string[] = df.columns.concat(['DNA'])
+  const header: readonly string[] = df.colNames.concat(['DNA'])
 
   const locs: readonly string[] = df.col(locCol).strs
 
@@ -139,7 +139,7 @@ export async function createDNATable(
 
     const data = res.data
 
-    const table: SeriesData[][] = []
+    const table: Cell[][] = []
 
     for (const [ri, row] of df.values.entries()) {
       table.push(row.concat([data.seqs[ri]!.seq]))

@@ -8,7 +8,7 @@ import {
 import {
   DEFAULT_SCATTER_PROPS,
   IScatterDisplayOptions,
-} from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
+} from '@/components/pages/apps/volcano/volcano-plot-svg'
 import type { IPos } from '@/interfaces/pos'
 import { resizeAndScaleCanvas } from '@/lib/canvas'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'

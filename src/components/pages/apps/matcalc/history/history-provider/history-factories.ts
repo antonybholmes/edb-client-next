@@ -1,11 +1,11 @@
-import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from '../../apps/boxplot/boxplot-plot-svg'
 
-import { DEFAULT_VOLCANO_PROPS } from '../../apps/volcano/volcano-plot-svg'
+import { DEFAULT_VOLCANO_PROPS } from '../../../volcano/volcano-plot-svg'
 import {
   BoxPlot,
   DataFrameType,

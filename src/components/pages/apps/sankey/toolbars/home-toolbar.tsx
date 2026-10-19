@@ -11,13 +11,12 @@ import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { TEXT_DOWNLOAD } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { useOpenFiles } from '../../matcalc/hooks/open'
@@ -52,22 +51,22 @@ export function HomeToolbar() {
         />
         <ToolbarCol>
           <ToolbarRow>
-            <ToolbarColSmallButton
+            <ToolbarIconButton
               title="Download table to device"
               onClick={() => {
                 saveAs('sankey')
               }}
-              icon={<DownloadImageIcon />}
             >
-              {TEXT_DOWNLOAD}
-            </ToolbarColSmallButton>
+              <DownloadImageIcon />
+            </ToolbarIconButton>
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title-="Sankey">
-        <ToolbarButton
+        <ToolbarColSmallButton
           title="Sankey"
+          icon={<PlayIcon variant="app-theme" />}
           onClick={() => {
             openMatcalcDialog({
               type: 'sankey-plot',
@@ -80,8 +79,9 @@ export function HomeToolbar() {
             })
           }}
         >
-          <PlayIcon variant="app-theme" /> Plot
-        </ToolbarButton>
+          <PlayIcon variant="app-theme" />
+          <span>Plot</span>
+        </ToolbarColSmallButton>
       </ToolbarTabGroup>
       <ToolbarTabGroup title="Plot">
         <DoubleNumericalInput
@@ -108,51 +108,57 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Links">
-        <SelectList
-          variant="toolbar"
-          items={[
-            { value: 'gradient', label: 'Gradient' },
-            { value: 'static', label: 'Static' },
-            { value: 'source', label: 'Source' },
-            { value: 'target', label: 'Target' },
-          ]}
-          value={settings.links.colorMode}
-          onValueChange={(value) => {
-            const color = value as 'gradient' | 'static' | 'source' | 'target'
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.links.colorMode = color
-              })
-            )
-          }}
-
-          w="sm"
-        >
-          <SelectItem value="gradient">Gradient</SelectItem>
-          <SelectItem value="static">Static</SelectItem>
-          <SelectItem value="source">Source</SelectItem>
-          <SelectItem value="target">Target</SelectItem>
-        </SelectList>
-
-        <FillButton
-          colors={[
-            {
-              color: settings.links.fill.value,
-              opacity: settings.links.fill.opacity,
-              allowNoColor: false,
-              onColorChange: ({ color, opacity }) => {
+        <ToolbarCol>
+          <ToolbarRow>
+            <span>Color</span>
+            <SelectList
+              variant="toolbar"
+              items={[
+                { value: 'gradient', label: 'Gradient' },
+                { value: 'static', label: 'Static' },
+                { value: 'source', label: 'Source' },
+                { value: 'target', label: 'Target' },
+              ]}
+              value={settings.links.colorMode}
+              onValueChange={(value) => {
+                const color = value as
+                  'gradient' | 'static' | 'source' | 'target'
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.links.fill.value = color
-                    draft.links.fill.opacity = opacity ?? 1
+                    draft.links.colorMode = color
                   })
                 )
-              },
-            },
-          ]}
+              }}
 
-          title="Links Fill"
-        />
+              w="sm"
+            >
+              <SelectItem value="gradient">Gradient</SelectItem>
+              <SelectItem value="static">Static</SelectItem>
+              <SelectItem value="source">Source</SelectItem>
+              <SelectItem value="target">Target</SelectItem>
+            </SelectList>
+          </ToolbarRow>
+          <FillButton
+            button="flat"
+            colors={[
+              {
+                color: settings.links.fill.value,
+                opacity: settings.links.fill.opacity,
+                allowNoColor: false,
+                onColorChange: ({ color, opacity }) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.links.fill.value = color
+                      draft.links.fill.opacity = opacity ?? 1
+                    })
+                  )
+                },
+              },
+            ]}
+
+            title="Links Fill"
+          />
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

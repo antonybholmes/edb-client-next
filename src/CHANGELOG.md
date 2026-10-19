@@ -1,9 +1,33 @@
 # Changelog
 
+## 93.0.0 (Oct, 2026)
+
+### Changed
+
+- Fixing italics etc in some math notation in icons and labels.
+- Added log dialog.
+- Simplified dataframe ui with better typing and use of opt args.
+- Icons now support full color gradients.
+- Added power dialog to matcalc to complement log.
+- Col-dataframe now adds index to series in cols(). Moved SeriesData to cell and renamed Cell.
+- Bug fixes and updates.
+- Refined coldataframe.
+- Col-dataframe now properly uses columns of data rather than a 2D array.
+- Volcano now uses crosshair.
+
+
 ## 91.8.0 (Oct, 2026)
 
 ### Changed
 
+- Volcano now has its own app.
+- Refined volcano ui.
+- Refining dataframe api for consistency and transition to better version of annotation dataframe.
+- Added types to indexes and series.
+- Added deepmerge to handle migrating localstorage setting updates. Added more test cases and fixed some that failed.
+- Revised auto label on volcano. Items sort. Double click on circles to label.
+- Bug fixes and updates.
+- Added reset to volcano plot settings.
 - Added extendible fields to indexes.
 - More refinements to dataframes with prep to remove annotationdataframe.
 - Network now has reset settings button.

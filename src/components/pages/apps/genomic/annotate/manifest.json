@@ -2,9 +2,9 @@
   "name": "Annotate",
   "description": "Annotate genomic coordinates.",
   "color": "#FA8072",
-  "version": "20.8.0",
+  "version": "20.8.2",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-10-16T13:46:50.016Z",
-  "hash": "42da6011a6d647610889a23aa299276ba8e8695b15b9f3ce65adaa8fcb0732c3",
-  "build": 866
+  "modified": "2026-10-19T13:42:45.562Z",
+  "hash": "79912171bce729a175ca34c1deffd6ae23b898e6d21de9defc95ccf6f1b3e10e",
+  "build": 874
 }

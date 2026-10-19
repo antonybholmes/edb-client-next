@@ -2,55 +2,46 @@ import { range } from '../math/range'
 import { whereStr } from '../math/where'
 import type { UndefStr } from '../text/text'
 import { BaseIndex } from './base-index'
+import type { Cell } from './cell'
 import { getExcelColName } from './cell'
-import type { SeriesData } from './series-data'
 
 export type Shape = [number, number]
 
-export type IndexFromType = Index | readonly SeriesData[]
+export type IndexFromType = Index<Cell> | readonly Cell[]
 
 export function shapesEqual(s1: Shape, s2: Shape): boolean {
   return s1[0] === s2[0] && s1[1] === s2[1]
 }
 
-export type IndexMapFunc<T> = (v: SeriesData, i: number) => T
+export type IndexMapFunc<T> = (v: Cell, i: number) => T
 
-export abstract class Index extends BaseIndex {
-  constructor(name: string = '') {
-    super(name)
+export abstract class Index<T extends Cell> extends BaseIndex<T> {
+  constructor(opts: { name?: string } = {}) {
+    super(opts)
   }
 
-  abstract filter(idx: number[]): Index
+  abstract filter(idx: number[]): Index<T>
 
   indexOf(s: string, opts: { caseInsensitive?: boolean } = {}): number[] {
     return whereStr(this.strs, s, opts)
   }
 
-  abstract entries(): IterableIterator<[number, SeriesData]>
-
-  abstract copy(): Index
-
-  abstract [Symbol.iterator](): IterableIterator<SeriesData>
+  abstract copy(): Index<T>
 }
 
 export interface IIndexOptions {
   name?: UndefStr
 }
 
-export abstract class InfIndex extends Index {
+export abstract class InfIndex<T extends Cell> extends Index<T> {
   private _length: number
 
   constructor(length: number = 0, opts: IIndexOptions = {}) {
-    const { name = '' } = opts
-    super(name)
+    super(opts)
     this._length = length
   }
 
-  override at(index: number): SeriesData {
-    return index
-  }
-
-  override set(_index: number, _value: SeriesData): void {
+  override set(_index: number, _value: T): void {
     // do nothing for now
   }
 
@@ -58,19 +49,19 @@ export abstract class InfIndex extends Index {
     return this._length
   }
 
-  override filter(idx: number[]): Index {
-    return new DataIndex(
+  override filter(idx: number[]): DataIndex<T> {
+    return new DataIndex<T>(
       idx.map((i) => this.at(i)),
       { name: this.name }
     )
   }
 
-  override copy(): Index {
+  override copy(): InfIndex<T> {
     return this
   }
 }
 
-export class NumInfIndex extends InfIndex {
+export class NumInfIndex extends InfIndex<number> {
   constructor(length: number = 0, opts: IIndexOptions = {}) {
     const { name = 'Num Index' } = opts
 
@@ -81,7 +72,7 @@ export class NumInfIndex extends InfIndex {
     return range(1, this.size + 1)
   }
 
-  override get values(): SeriesData[] {
+  override get values(): number[] {
     return this.nums
   }
 
@@ -89,11 +80,11 @@ export class NumInfIndex extends InfIndex {
     return index + 1
   }
 
-  override at(index: number): SeriesData {
+  override at(index: number): number {
     return this.num(index)
   }
 
-  override set(_index: number, _value: SeriesData): void {
+  override set(_index: number, _value: number): void {
     // do nothing for now
   }
 
@@ -103,43 +94,46 @@ export class NumInfIndex extends InfIndex {
     }
   }
 
-  override *entries(): IterableIterator<[number, SeriesData]> {
+  override *entries(): IterableIterator<[number, number]> {
     for (let i = 0; i < this.length; i++) {
       yield [i, i + 1]
     }
   }
 }
 
-export class DataIndex extends Index {
-  _data: SeriesData[]
-  _map: Map<SeriesData, number> | null = null
+export class DataIndex<T extends Cell> extends Index<T> {
+  _data: T[]
+  _map: Map<string, number> | null = null
 
-  constructor(data: readonly SeriesData[], options: IIndexOptions = {}) {
-    const { name = '' } = options
-
-    super(name)
+  constructor(data: readonly T[], opts: IIndexOptions = {}) {
+    super(opts)
 
     this._data = [...data]
   }
 
-  override get values(): SeriesData[] {
+  override get values(): T[] {
     return [...this._data]
   }
 
-  override at(index: number): SeriesData {
-    return this._data[index] ?? NaN
+  override at(index: number): T {
+    if (index < 0 || index >= this._data.length) {
+      throw new Error(`Index out of bounds: ${index}`)
+    }
+
+    return this._data[index]
   }
 
-  override set(index: number, value: SeriesData): void {
+  override set(index: number, value: T): DataIndex<T> {
     this._data[index] = value
+    return this
   }
 
   override get length(): number {
     return this._data.length
   }
 
-  override filter(idx: number[]): Index {
-    return new DataIndex(
+  override filter(idx: number[]): DataIndex<T> {
+    return new DataIndex<T>(
       idx.map((i) => this._data[i]!),
       { name: this.name }
     )
@@ -158,20 +152,20 @@ export class DataIndex extends Index {
     return this._map.has(lt) ? [this._map.get(lt)!] : []
   }
 
-  override copy(): Index {
-    return new DataIndex([...this._data], { name: this.name })
+  override copy(): DataIndex<T> {
+    return new DataIndex<T>([...this._data], { name: this.name })
   }
 
   override [Symbol.iterator]() {
     return this._data[Symbol.iterator]()
   }
 
-  override entries(): IterableIterator<[number, SeriesData]> {
+  override entries(): IterableIterator<[number, T]> {
     return this._data.entries()
   }
 }
 
-export class StringIndex extends DataIndex {
+export class StringIndex extends DataIndex<string> {
   constructor(data: string[], options: IIndexOptions = {}) {
     super(data, options)
   }
@@ -184,12 +178,12 @@ export class StringIndex extends DataIndex {
     return this._data as string[]
   }
 
-  override get values(): SeriesData[] {
+  override get values(): string[] {
     return this.strs
   }
 }
 
-export class NumIndex extends DataIndex {
+export class NumIndex extends DataIndex<number> {
   constructor(data: number[], options: IIndexOptions = {}) {
     super(data, options)
   }
@@ -202,7 +196,7 @@ export class NumIndex extends DataIndex {
     return this._data as number[]
   }
 
-  override get values(): SeriesData[] {
+  override get values(): number[] {
     return this.nums
   }
 }
@@ -226,16 +220,16 @@ export class NumIndex extends DataIndex {
 //   }
 // }
 
-export class ExcelIndex extends InfIndex {
+export class ExcelIndex extends InfIndex<string> {
   constructor(length: number = 0, opts: IIndexOptions = {}) {
     super(length, opts)
   }
 
-  override get values(): SeriesData[] {
+  override get values(): string[] {
     return range(this.length).map((i) => getExcelColName(i))
   }
 
-  override at(index: number): SeriesData {
+  override at(index: number): string {
     return getExcelColName(index)
   }
 
@@ -245,7 +239,7 @@ export class ExcelIndex extends InfIndex {
     }
   }
 
-  *entries(): IterableIterator<[number, SeriesData]> {
+  *entries(): IterableIterator<[number, string]> {
     for (let i = 0; i < this.length; i++) {
       yield [i, getExcelColName(i)]
     }
@@ -268,7 +262,7 @@ export function makeIndex(
   index: IndexFromType | null | undefined,
   length: number,
   name?: string
-): Index {
+): Index<Cell> {
   if (!index) {
     return new NumInfIndex(length)
   }
@@ -277,7 +271,7 @@ export function makeIndex(
     throw new Error('length of index does not match table rows')
   }
 
-  let ret: Index | null = null
+  let ret: Index<Cell> | null = null
 
   if (index instanceof Index) {
     ret = index.copy()
@@ -286,7 +280,7 @@ export function makeIndex(
   }
 
   if (name) {
-    ret.setName(name)
+    ret.name = name
   }
 
   return ret
@@ -295,7 +289,7 @@ export function makeIndex(
 export function makeColumns(
   index: IndexFromType | null | undefined,
   length: number
-): Index {
+): Index<Cell> {
   if (!index) {
     return new ExcelIndex(length)
   }
@@ -319,7 +313,7 @@ export function makeColumns(
  * @param index
  * @returns
  */
-export function indexAsValues(index: IndexFromType): readonly SeriesData[] {
+export function indexAsValues(index: IndexFromType): readonly Cell[] {
   if (index instanceof Index) {
     return index.values
   } else {
@@ -327,18 +321,18 @@ export function indexAsValues(index: IndexFromType): readonly SeriesData[] {
   }
 }
 
-export function strs(data: SeriesData[]): string[] {
+export function strs(data: Cell[]): string[] {
   return data.map((d) => d.toString())
 }
 
-export function nums(data: SeriesData[]): number[] {
+export function nums(data: Cell[]): number[] {
   return data.map((d) => (typeof d === 'number' ? d : NaN))
 }
 
-export function bools(data: SeriesData[]): boolean[] {
+export function bools(data: Cell[]): boolean[] {
   return data.map((d) => (typeof d === 'boolean' ? d : Boolean(d)))
 }
 
-export function dates(data: SeriesData[]): Date[] {
+export function dates(data: Cell[]): Date[] {
   return data.map((d) => (d instanceof Date ? d : new Date(NaN)))
 }

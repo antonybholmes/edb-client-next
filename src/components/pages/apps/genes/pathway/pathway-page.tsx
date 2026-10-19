@@ -123,7 +123,9 @@ export function PathwayPage() {
       //resolve({ ...table, name: file.name })
 
       openFile(`Load ${table.name}`, {
-        sheets: [table.setName(truncate(table.name, { length: 16 }))],
+        sheets: [
+          table.setName(truncate(table.name, { length: 16 })) as BaseDataFrame,
+        ],
       })
     } catch {
       // do nothing
@@ -136,7 +138,9 @@ export function PathwayPage() {
     // }
 
     openFile(`Load ${table.name}`, {
-      sheets: [table.setName(truncate(table.name, { length: 16 }))],
+      sheets: [
+        table.setName(truncate(table.name, { length: 16 })) as BaseDataFrame,
+      ],
     })
   }
 
@@ -324,9 +328,7 @@ export function PathwayPage() {
 export function PathwayQueryPage() {
   return (
     <ClientLayout>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <PathwayPage />
-      {/* </HistoryProvider> */}
     </ClientLayout>
   )
 }

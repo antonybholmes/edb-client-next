@@ -1,12 +1,12 @@
 import { range } from '@/lib/math/range'
 import { AnnotationDataFrame } from './annotation-dataframe'
-import { DEFAULT_COLUMN_INDEX_NAME } from './base-dataframe'
+import { DEFAULT_COLUMN_NAMES } from './base-table'
 import { makeCell } from './cell'
 import { DataFrame } from './dataframe'
 
 import { vfill } from '../fill'
+import type { Cell } from './cell'
 import { DEFAULT_INDEX_NAME } from './series'
-import type { SeriesData } from './series-data'
 
 export type Delimiter = '\t' | ',' | ' '
 
@@ -149,8 +149,8 @@ export class DataFrameReader {
       colNames = tokens.slice(this._indexCols)
     }
 
-    const index: string[][] = []
-    const data: SeriesData[][] = []
+    const indexData: string[][] = []
+    const data: Cell[][] = []
     const defaultCellValue = makeCell('', this._keepDefaultNA)
 
     let indexNames =
@@ -174,18 +174,8 @@ export class DataFrameReader {
 
         if (tokens.length > 0) {
           if (this._indexCols > 0) {
-            index.push(tokens.slice(0, this._indexCols))
+            indexData.push(tokens.slice(0, this._indexCols))
           }
-
-          // tokens.slice(this._indexCols).forEach((token, ci) => {
-          //   // data has to be col centric so add new col first
-          //   // time we process a row
-          //   if (ci === data.length) {
-          //     data.push([])
-          //   }
-
-          //   data[ci].push(makeCell(token))
-          // })
 
           // each row must be the have the same number of rows
           const cells = vfill(defaultCellValue, columns) //Array(columns).fill(defaultCellValue) --- IGNORE ---
@@ -204,9 +194,9 @@ export class DataFrameReader {
     }
 
     const rowIndex =
-      index.length > 0
+      indexData.length > 0
         ? new DataFrame({
-            data: index,
+            data: indexData,
             columns:
               indexNames.length > 0
                 ? indexNames
@@ -220,12 +210,21 @@ export class DataFrameReader {
       colNames.length > 0
         ? new DataFrame({
             data: colNames.map((v) => [v]),
-            columns: [DEFAULT_COLUMN_INDEX_NAME],
+            columns: [DEFAULT_COLUMN_NAMES],
           })
         : undefined
 
+    // Extract the first column of the index data to use as the
+    // index values for the annotation dataframe. If there is no
+    // index column, the index values will be undefined and a
+    // default index will be used instead.
+    const indexValues =
+      indexData.length > 0 ? indexData.map((row) => row[0]!) : undefined
+
     const ret = new AnnotationDataFrame({
       data,
+      columns: colNames,
+      index: indexValues,
       rowObs: rowIndex,
       colVars: colIndex,
     })

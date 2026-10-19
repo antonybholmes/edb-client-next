@@ -15,9 +15,9 @@ import { ILim } from '@/lib/math/math'
 import { IBasePlot } from '../../../../matcalc/history/history-provider/plot'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { nodeRadiusFunc } from '@/components/pages/apps/matcalc/apps/heatmap/svg/cell-svg'
-import { IPlotAxes, useAxes } from '@/components/plot/axes/axes-store'
+import { nodeRadiusFunc } from '@/components/pages/apps/heatmap/svg/cell-svg'
 import { createAxis, setAxisTickParams } from '@/components/plot/axes/axis'
+import { IPlotAxes, useAxes } from '@/components/plot/axes/plot-axes'
 import { IGseaBubble, IGseaTableResult } from '../gsea-store'
 import { useGseaBubbleSettings } from './gsea-bubble-settings'
 

@@ -1,4 +1,4 @@
-import { AxesDisplayPropsPanel } from '@/components/plot/axes/plot/axes-props-panel'
+import { AxesDisplayPropsPanel } from '@/components/plot/axes/props/axes-props-panel'
 import { capitalCase } from '@/lib/text/capital-case'
 import { useMotifSettings } from './motifs-settings'
 import { useMotifs } from './motifs-store'

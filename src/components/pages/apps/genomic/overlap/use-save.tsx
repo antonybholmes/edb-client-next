@@ -1,5 +1,5 @@
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { downloadDataFrame } from '@/lib/dataframe/utils/dataframe-utils'
 import { where } from '@/lib/math/where'
 import { useContext } from 'react'
 import { OverlapContext } from './overlap-provider'

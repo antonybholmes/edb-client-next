@@ -25,7 +25,7 @@ import {
 } from '@/themed/baseui/accordion'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { RadiusScaleModeSelectList } from '../../matcalc/apps/heatmap/props-panel/radius-scale-mode-selectlist'
+import { RadiusScaleModeSelectList } from '../../heatmap/props-panel/radius-scale-mode-selectlist'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import APP_INFO from '../manifest.json'
 import { POSITIONS, useNetworkSettings } from '../network-settings'
@@ -196,6 +196,7 @@ export function NetworkDisplayPropsPanel() {
               <span className="w-3 text-center">H</span>
               <NumericalInput
                 w="xs"
+
                 value={settings.plot.size.h}
                 placeholder="Height"
                 limit={[1, 5000]}
@@ -231,115 +232,6 @@ export function NetworkDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            {/* <PropRow title="Bounds">
-              <Toggle
-                //variant="app-theme"
-                pad="md"
-                size="sm"
-                //rounded="full"
-                pressed={settings.plot.autoFit}
-                onPressedChange={(pressed) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.autoFit = pressed
-                    })
-                  )
-                }
-              >
-                Auto Fit
-              </Toggle>
-
-              <Toggle
-                //variant="app-theme"
-                pad="md"
-                size="sm"
-                //rounded="full"
-                pressed={settings.plot.nodes.clamp}
-                onPressedChange={(pressed) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.clamp = pressed
-                    })
-                  )
-                }
-              >
-                Clamp
-              </Toggle> */}
-
-            {/* <Toggle
-                pad="md"
-                size="sm"
-                pressed={settings.plot.nodes.clip}
-                onPressedChange={(pressed) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.clip = pressed
-                    })
-                  )
-                }
-              >
-                Clip
-              </Toggle> */}
-
-            {/* <Checkbox
-                title="Clamp"
-                tooltip="Nodes will be clamped within the plot boundaries."
-                checked={settings.plot.nodes.clamp}
-                onCheckedChange={(checked) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.clamp = checked
-                    })
-                  )
-                }
-              >
-                Clamp
-              </Checkbox> */}
-
-            {/* <Checkbox
-                title="Clip"
-                tooltip="Clip nodes at the plot boundaries."
-                checked={settings.plot.nodes.clip}
-                onCheckedChange={(checked) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.nodes.clip = checked
-                    })
-                  )
-                }
-              >
-                Clip
-              </Checkbox> */}
-
-            {/* <CheckPropRow
-              title="Auto Fit"
-              checked={settings.plot.autoFit}
-              onCheckedChange={(checked) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.autoFit = checked
-                  })
-                )
-              }
-            /> */}
-
-            {/* <PropRow title="Scale">
-              <NumSlider
-                min={0}
-                max={5}
-                step={0.1}
-                dp={1}
-
-                value={settings.plot.scale}
-                onNumChanged={(value) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.plot.scale = value
-                    })
-                  )
-                }
-              />
-            </PropRow> */}
           </AccordionContent>
         </AccordionItem>
 

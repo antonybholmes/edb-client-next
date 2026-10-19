@@ -1,15 +1,9 @@
 import { range } from '@/lib/math/range'
-import {
-  BaseDataFrame,
-  DataFrameInput,
-  findCol,
-  findCols,
-  findRow,
-  shape,
-  type LocType,
-} from './base-dataframe'
+import { BaseDataFrame, findCol, findCols, findRow } from './base-dataframe'
 import { makeCell } from './cell'
 
+import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import type { Cell, IndexId } from './cell'
 import {
   DataIndex,
   Index,
@@ -19,44 +13,33 @@ import {
   type IndexFromType,
   type Shape,
 } from './index'
-import {
-  BaseSeries,
-  DataSeries,
-  type ISeriesOptions,
-  type SeriesFromType,
-} from './series'
-import type { IndexId, SeriesData } from './series-data'
-
-export interface IDataFrameOptions extends ISeriesOptions {
-  data?: DataFrameInput
-  columns?: IndexFromType | undefined
-  indexName?: string
-}
+import { DataSeries, Series, type SeriesFromType } from './series'
 
 export class DataFrame extends BaseDataFrame {
-  _index: Index
-  _data: SeriesData[][]
-  _columns: Index
+  _index: Index<Cell>
+  _data: Cell[][]
+  _columns: Index<Cell>
 
   constructor(options: IDataFrameOptions = {}) {
-    const { name = '', data = [], index, indexName, columns } = options
-    super(shape(data), index, columns, { name })
+    const { name = '', data = [], index, columns } = options
+
+    super({ name })
 
     const isDf = data instanceof BaseDataFrame
 
     if (isDf) {
-      this._data = data.values
-    } else if (data instanceof BaseSeries) {
+      this._data = [...data.values]
+    } else if (data instanceof Series) {
       this._data = data.values.map((v) => [v])
     } else {
       //data is a regular array. If a 2d array, use as.
       // If a 1d array, make, it a column
 
       if (data.length > 0 && Array.isArray(data[0])) {
-        this._data = data as SeriesData[][]
+        this._data = data as Cell[][]
       } else {
         // single array make into a column
-        this._data = data.map((v) => [v]) as SeriesData[][]
+        this._data = data.map((v) => [v]) as Cell[][]
       }
     }
 
@@ -70,7 +53,7 @@ export class DataFrame extends BaseDataFrame {
     //   throw new Error('index length does not match the number of rows')
     // }
 
-    this._index = makeIndex(_index, this._data.length, indexName)
+    this._index = makeIndex(_index, this._data.length)
 
     // Allow support for tables with no rows
     this._columns = makeColumns(
@@ -79,8 +62,10 @@ export class DataFrame extends BaseDataFrame {
     )
   }
 
-  override setName(name: string, inplace = true): BaseDataFrame {
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+  override setName(name: string, opts: { inplace?: boolean } = {}): DataFrame {
+    const { inplace = true } = opts
+
+    const df = inplace ? this : this.copy()
 
     df._name = name
 
@@ -90,22 +75,24 @@ export class DataFrame extends BaseDataFrame {
   override setCol(
     col: IndexId,
     data: SeriesFromType,
-    inplace = true
-  ): BaseDataFrame {
+    opts: { inplace?: boolean } = {}
+  ): DataFrame {
     const d =
-      data instanceof BaseSeries || data instanceof Index ? data.values : data
+      data instanceof Series || data instanceof Index ? data.values : data
 
     if (d.length !== this.shape[0]) {
       throw new Error('length of column data must equal the number of rows')
     }
 
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+    const { inplace = true } = opts
+
+    const df = inplace ? this : this.copy()
 
     const colIdx: number = findCol(df, col)
 
     if (colIdx !== -1) {
       // existing column so update each value
-      d.forEach((v: SeriesData, r: number) => {
+      d.forEach((v: Cell, r: number) => {
         df._data[r]![colIdx]! = v
       })
     } else {
@@ -115,7 +102,7 @@ export class DataFrame extends BaseDataFrame {
       } else {
         // since matrix is row wise, append new values to
         // end of each row
-        d.forEach((v: SeriesData, r: number) => {
+        d.forEach((v: Cell, r: number) => {
           df._data[r]!.push(v)
         })
       }
@@ -134,14 +121,14 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): BaseSeries {
+  override col(c: IndexId): Series<Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
       throw new Error(`${c} is an invalid column`)
     }
 
-    const v = this._data.map((row) => row[idx]!) //this.colValues(idx)
+    const v = this._data.map((row) => row[idx]!)
 
     return new DataSeries(v, {
       name: this._columns.at(idx) as string,
@@ -149,7 +136,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override get(row: IndexId, col: IndexId): SeriesData {
+  override get(row: IndexId, col: IndexId): Cell {
     const rowIdx = findRow(this, row)
 
     if (rowIdx === -1) {
@@ -173,7 +160,7 @@ export class DataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): BaseSeries {
+  override row(row: IndexId): Series<Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -188,16 +175,18 @@ export class DataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: SeriesData[] | BaseSeries,
-    inplace = true
-  ): BaseDataFrame {
-    const d = data instanceof BaseSeries ? data.values : data
+    data: Cell[] | Series<Cell>,
+    opts: { inplace?: boolean } = {}
+  ): DataFrame {
+    const { inplace = true } = opts
+
+    const d = [...(data instanceof Series ? data.values : data)]
 
     if (d.length !== this.shape[1]) {
       throw new Error('length of row data must equal the number of columns')
     }
 
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+    const df: DataFrame = inplace ? this : this.copy()
 
     const rowIdx: number = findRow(df, row)
 
@@ -221,13 +210,14 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override at(
+  override set(
     row: IndexId,
     col: IndexId,
-    v: SeriesData,
-    inplace = true
-  ): BaseDataFrame {
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+    v: Cell,
+    opts: { inplace?: boolean } = {}
+  ): DataFrame {
+    const { inplace = true } = opts
+    const df: DataFrame = inplace ? this : this.copy()
 
     const rowIdx = findRow(df, row)
     const colIdx = findCol(df, col)
@@ -245,39 +235,44 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override setIndex(index: IndexFromType, inplace = true): BaseDataFrame {
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+  override setIndex(
+    index: IndexFromType,
+    opts: { inplace?: boolean } = {}
+  ): DataFrame {
+    const { inplace = true } = opts
+    const df: DataFrame = inplace ? this : this.copy()
 
     df._index = makeIndex(index, df.shape[0])
 
     return df
   }
 
-  override setIndexName(name: string, inplace: boolean = true): BaseDataFrame {
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+  override setIndexName(
+    name: string,
+    opts: { inplace?: boolean } = {}
+  ): DataFrame {
+    const { inplace = true } = opts
+    const df: DataFrame = inplace ? this : this.copy()
 
-    df._index.setName(name)
+    df._index.name = name
 
     return df
   }
 
-  override get index(): Index {
+  override get index(): Index<Cell> {
     return this._index
   }
 
-  // override get columns(): Index {
-  //   return this._columns
-  // }
-
-  override get columns(): readonly string[] {
-    return this._columns.strs
+  override get columns(): Index<Cell> {
+    return this._columns
   }
 
   override setColNames(
     index: IndexFromType,
-    inplace: boolean = true
-  ): BaseDataFrame {
-    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+    opts: { inplace?: boolean } = {}
+  ): DataFrame {
+    const { inplace = true } = opts
+    const df: DataFrame = inplace ? this : this.copy()
 
     if (index.length === df.shape[1]) {
       if (index instanceof Index) {
@@ -290,7 +285,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): BaseSeries[] {
+  override get cols(): Series<Cell>[] {
     return range(this.shape[1]).map(
       (c: number) =>
         new DataSeries(
@@ -313,14 +308,12 @@ export class DataFrame extends BaseDataFrame {
     return this.shape[0] * this.shape[1]
   }
 
-  override get values(): SeriesData[][] {
+  override get values(): Cell[][] {
     // return copy as we want dataframe to be immutable
     return this._data.map((row) => row.slice())
   }
 
-  override apply(
-    f: (v: SeriesData, row: number, col: number) => SeriesData
-  ): BaseDataFrame {
+  override apply(f: (v: Cell, row: number, col: number) => Cell): DataFrame {
     const data = this.map(f)
 
     const ret = new DataFrame({
@@ -333,7 +326,7 @@ export class DataFrame extends BaseDataFrame {
     return ret
   }
 
-  override map<T>(f: (v: SeriesData, row: number, col: number) => T): T[][] {
+  override map<T>(f: (v: Cell, row: number, col: number) => T): T[][] {
     return _map(this, f)
   }
 
@@ -343,7 +336,7 @@ export class DataFrame extends BaseDataFrame {
   //   return _rowApply(this, f)
   // }
 
-  override rowMap<T>(f: (row: SeriesData[], index: number) => T): T[] {
+  override rowMap<T>(f: (row: Cell[], index: number) => T): T[] {
     return _rowMap(this, f)
   }
 
@@ -351,14 +344,14 @@ export class DataFrame extends BaseDataFrame {
   //   return _colApply(this, f)
   // }
 
-  override colMap<T>(f: (col: SeriesData[], index: number) => T): T[] {
+  override colMap<T>(f: (col: Cell[], index: number) => T): T[] {
     return _colMap(this, f)
   }
 
   override iloc({
     rows,
     cols,
-  }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
+  }: { rows?: LocType; cols?: LocType } = {}): DataFrame {
     return _iloc(this, rows ?? ':', cols ?? ':')
   }
 
@@ -388,7 +381,7 @@ export class DataFrame extends BaseDataFrame {
   //   return _isin(this, rows, cols)
   // }
 
-  override get t(): BaseDataFrame {
+  override get t(): DataFrame {
     const ret = new DataFrame({
       name: this.name,
       data: _t(this._data),
@@ -399,7 +392,7 @@ export class DataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copy(): BaseDataFrame {
+  override copy(): DataFrame {
     return new DataFrame({
       name: this.name,
       data: this.values,
@@ -408,7 +401,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override replace(data: DataFrameInput): BaseDataFrame {
+  override copyReplaceData(data: DataFrameInput): DataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
@@ -422,7 +415,7 @@ export class DataFrame extends BaseDataFrame {
   }
 }
 
-export function _t(data: SeriesData[][]): SeriesData[][] {
+export function _t(data: Cell[][]): Cell[][] {
   return data[0]!.map((_, ci) => data.map((row) => row[ci]!))
 }
 
@@ -443,15 +436,12 @@ export function _t(data: SeriesData[][]): SeriesData[][] {
 
 function _map<T>(
   df: DataFrame,
-  f: (v: SeriesData, row: number, col: number) => T
+  f: (v: Cell, row: number, col: number) => T
 ): T[][] {
   return df._data.map((rowData, ri) => rowData.map((v, ci) => f(v, ri, ci)))
 }
 
-function _rowMap<T>(
-  df: DataFrame,
-  f: (row: SeriesData[], index: number) => T
-): T[] {
+function _rowMap<T>(df: DataFrame, f: (row: Cell[], index: number) => T): T[] {
   return df._data.map((row, ri) => f(row, ri))
 }
 
@@ -477,10 +467,7 @@ function _rowMap<T>(
  *            values in a column and index is the index of the column.
  * @returns   an m x 1 array of the output of f applied to each column.
  */
-function _colMap<T>(
-  df: DataFrame,
-  f: (col: SeriesData[], index: number) => T
-): T[] {
+function _colMap<T>(df: DataFrame, f: (col: Cell[], index: number) => T): T[] {
   return range(df._data[0]!.length).map((ci) => {
     const d = f(
       df._data.map((rowData) => rowData[ci]!),

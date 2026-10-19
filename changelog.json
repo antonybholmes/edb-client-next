@@ -3405,10 +3405,91 @@
         {
           "msg": "Added extendible fields to indexes",
           "date": "2026-10-16T20:45:59.641Z"
+        },
+        {
+          "msg": "Added reset to volcano plot settings",
+          "date": "2026-10-17T01:32:57.059Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-10-17T02:19:14.386Z"
+        },
+        {
+          "msg": "Revised auto label on volcano. Items sort. Double click on circles to label",
+          "date": "2026-10-17T04:34:19.283Z"
+        },
+        {
+          "msg": "Added deepmerge to handle migrating localstorage setting updates. Added more test cases and fixed some that failed.",
+          "date": "2026-10-17T14:05:43.963Z"
+        },
+        {
+          "msg": "Added types to indexes and series",
+          "date": "2026-10-17T18:04:07.980Z"
+        },
+        {
+          "msg": "Refining dataframe api for consistency and transition to better version of annotation dataframe",
+          "date": "2026-10-17T22:58:54.601Z"
+        },
+        {
+          "msg": "Refined volcano ui.",
+          "date": "2026-10-17T23:38:34.583Z"
+        },
+        {
+          "msg": "Volcano now has its own app.",
+          "date": "2026-10-18T01:53:35.443Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-10-14T13:33:59.714Z"
+  },
+  {
+    "version": "93.0.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Volcano now uses crosshair",
+          "date": "2026-10-18T02:07:13.797Z"
+        },
+        {
+          "msg": "Col-dataframe now properly uses columns of data rather than a 2D array",
+          "date": "2026-10-18T20:38:31.456Z"
+        },
+        {
+          "msg": "Refined coldataframe",
+          "date": "2026-10-18T22:42:49.236Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-10-18T23:43:20.991Z"
+        },
+        {
+          "msg": "Col-dataframe now adds index to series in cols(). Moved SeriesData to cell and renamed Cell.",
+          "date": "2026-10-19T13:42:46.798Z"
+        },
+        {
+          "msg": "Added power dialog to matcalc to complement log",
+          "date": "2026-10-19T14:51:42.684Z"
+        },
+        {
+          "msg": "Icons now support full color gradients",
+          "date": "2026-10-19T16:03:39.046Z"
+        },
+        {
+          "msg": "Simplified dataframe ui with better typing and use of opt args",
+          "date": "2026-10-19T18:11:40.071Z"
+        },
+        {
+          "msg": "Added log dialog",
+          "date": "2026-10-19T20:29:31.128Z"
+        },
+        {
+          "msg": "Fixing italics etc in some math notation in icons and labels",
+          "date": "2026-10-19T20:55:00.479Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-18T02:07:13.797Z"
   }
 ]

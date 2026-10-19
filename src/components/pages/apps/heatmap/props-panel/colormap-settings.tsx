@@ -1,0 +1,218 @@
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import type { ColorBarPos } from '@/components/plot/svg-props'
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/shadcn/ui/themed/baseui/accordion'
+import {
+  RadioGroup,
+  SideRadioGroupItem,
+} from '@/components/shadcn/ui/themed/baseui/radio-group'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { TEXT_BORDER } from '@/consts'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
+import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
+import { produce } from 'immer'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
+
+import { AxisPlotPropsPopover } from '@/components/plot/axes/props/axis-plot-props-popover'
+import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { useHeatmapContext } from '../heatmap-provider'
+
+export function ColormapSettingsPanel() {
+  const { displayProps, plot } = useHeatmapContext()
+  const { updatePlot } = useHistory()
+
+  return (
+    <AccordionItem value="colormap">
+      <AccordionTrigger
+        leftChildren={
+          <SmallSwitch
+            checked={displayProps.colorbar.show}
+            onCheckedChange={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.colorbar.show = v
+                })
+              )
+            }}
+          />
+        }
+      >
+        Colormap
+      </AccordionTrigger>
+      <AccordionContent>
+        {/* <AxesPropRow axes={['colorbar']} /> */}
+
+        <PropRow title="Axis">
+          <AxisPlotPropsPopover
+            plotAddress={{
+              plotId: plot.id,
+              groupId: 'cbar',
+              axisId: 'cbar',
+            }}
+            title="Colorbar"
+          />
+        </PropRow>
+
+        <PropRow title="Colormap">
+          <ColorMapMenu
+            cmap={getColorMap(displayProps.cmap.name)}
+
+            onChange={(cmap) =>
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.cmap = getCmapFromColorMap(cmap)
+                })
+              )
+            }
+          />
+        </PropRow>
+
+        <PropRow title="Max">
+          <NumericalInput
+            id="max"
+            value={displayProps.range[1]}
+            limit={[0.5, 100]}
+            step={0.5}
+            dp={1}
+            placeholder="Max..."
+            className="rounded-theme"
+            onNumChanged={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.range = [-v, v]
+                })
+              )
+            }}
+          />
+        </PropRow>
+
+        <PropRow title="Position">
+          <RadioGroup
+            value={displayProps.colorbar.position}
+            disabled={!displayProps.colorbar.show}
+            onValueChange={(v) =>
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.colorbar.position = v as ColorBarPos
+                })
+              )
+            }
+            className="flex flex-row justify-start gap-x-1"
+          >
+            {/* <SideRadioGroupItem
+                      value="Off"
+                      currentValue={displayProps.colorbar.position}
+                      className="w-5"
+                    /> */}
+            <SideRadioGroupItem
+              value="right"
+              title="Right"
+              currentValue={displayProps.colorbar.position}
+              disabled={!displayProps.colorbar.show}
+              className="w-5.5"
+            />
+
+            <SideRadioGroupItem
+              value="bottom"
+              title="Bottom"
+              currentValue={displayProps.colorbar.position}
+              disabled={!displayProps.colorbar.show}
+              className="w-5.5"
+            />
+          </RadioGroup>
+        </PropRow>
+
+        <PropRow title="Size">
+          <DoubleNumericalInput
+            v1={displayProps.colorbar.size.w}
+            v2={displayProps.colorbar.size.h}
+            inputCls="rounded-theme"
+            limit={[1, 1000]}
+            dp={0}
+            onNumChanged1={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.colorbar.size.w = v
+                })
+              )
+            }}
+            onNumChanged2={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.colorbar.size.h = v
+                })
+              )
+            }}
+          />
+        </PropRow>
+
+        <CheckPropRow
+          title={TEXT_BORDER}
+          checked={displayProps.colorbar.stroke.show}
+          disabled={!displayProps.colorbar.show}
+          onCheckedChange={(v) => {
+            updatePlot(
+              produce(plot, (draft) => {
+                draft.props.colorbar.stroke.show = v
+              })
+            )
+          }}
+        >
+          <StrokeButton
+            colors={[
+              {
+                color: displayProps.colorbar.stroke.value,
+                opacity: displayProps.colorbar.stroke.opacity,
+                onColorChange: ({ color, opacity, width, dasharray, show }) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.colorbar.stroke.value = color
+                      draft.props.colorbar.stroke.opacity = opacity ?? 1
+                      draft.props.colorbar.stroke.show =
+                        show ?? draft.props.colorbar.stroke.show
+                      draft.props.colorbar.stroke.width =
+                        width ?? draft.props.colorbar.stroke.width
+                      draft.props.colorbar.stroke.dasharray =
+                        dasharray ?? draft.props.colorbar.stroke.dasharray
+                    })
+                  )
+                },
+              },
+            ]}
+
+            title="Colorbar Outline"
+
+            disabled={
+              !displayProps.colorbar.show || !displayProps.colorbar.stroke.show
+            }
+          />
+
+          {/* <NumericalInput
+                      id="colorbar-stroke-width"
+                      value={displayProps.colorbar.stroke.width}
+                      disabled={
+                        !displayProps.colorbar.show ||
+                        !displayProps.colorbar.stroke.show
+                      }
+                      placeholder="Stroke..."
+                      className="rounded-theme"
+                      onNumChanged={v => {
+                        updatePlot(
+                          produce(plot, draft => {
+                            draft.props.colorbar.stroke.width = v
+                          }),
+                          { file: plotAddr }
+                        )
+                      }}
+                    /> */}
+        </CheckPropRow>
+      </AccordionContent>
+    </AccordionItem>
+  )
+}

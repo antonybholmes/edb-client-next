@@ -2,15 +2,15 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   kmeans,
-  log,
   meanFilter,
   medianFilter,
   rowMean,
   rowMedian,
   rowStdev,
-  rowZScore,
   stdevFilter,
-} from '@/lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/utils/dataframe-utils'
+import { log } from '@/lib/dataframe/utils/log'
+import { rowZScore } from '@/lib/dataframe/utils/zscore'
 type HistoryAddStep = (description: string, sheets: BaseDataFrame[]) => void
 
 export function dfKmeans(
@@ -61,7 +61,7 @@ export function dfTranspose(
     return null
   }
 
-  df = df.t.setName('Transpose')
+  df = df.t.setName('Transpose') as BaseDataFrame
 
   addStep(df.name, [df])
 
@@ -90,8 +90,9 @@ export function dfStdev(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowStdev(df)
 
-  df = df.copy()
-  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd, true)
+  df = df.copy() as AnnotationDataFrame
+
+  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd)
 
   //df.setCol('Row Stdev', sd, true)
 
@@ -107,7 +108,7 @@ export function dfStdevFilter(
     return null
   }
 
-  df = stdevFilter(df, top)
+  df = stdevFilter(df, top) as BaseDataFrame
 
   addStep(df.name, [df])
   return df
@@ -120,7 +121,7 @@ export function dfMean(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowMean(df)
 
-  df = df.copy().setCol('Row Mean', sd, true)
+  df = df.copy().setCol('Row Mean', sd) as BaseDataFrame
 
   addStep(df.name, [df])
 }
@@ -134,7 +135,7 @@ export function dfMeanFilter(
     return null
   }
 
-  df = meanFilter(df, top)
+  df = meanFilter(df, top) as BaseDataFrame
 
   addStep(df.name, [df])
 
@@ -148,7 +149,7 @@ export function dfMedian(df: BaseDataFrame | null, addStep: HistoryAddStep) {
 
   const sd = rowMedian(df)
 
-  df = df.copy().setCol('Row Median', sd, true)
+  df = df.copy().setCol('Row Median', sd) as BaseDataFrame
 
   addStep(df.name, [df])
 }
@@ -162,7 +163,7 @@ export function dfMedianFilter(
     return null
   }
 
-  df = medianFilter(df, top)
+  df = medianFilter(df, top) as BaseDataFrame
 
   addStep(df.name, [df])
 

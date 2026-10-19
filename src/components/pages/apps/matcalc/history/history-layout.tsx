@@ -72,9 +72,8 @@ export function HistoryLayout({ children }: IProps) {
             historySidebarOpen(false)
           }
         }}
-        className="flex flex-col text-xs overflow-hidden min-h-0"
+        className="flex flex-col text-xs overflow-hidden min-h-0 mr-1"
       >
-        {/* <BaseCol className="mx-2 mb-2 p-2 rounded-xl bg-background/75 hover:bg-background trans-color grow border border-border/30 hover:border-border/50 gap-y-2 h-full"> */}
         <VCenterRow className="justify-between gap-x-2 h-8 px-1">
           <h2 className="font-medium">History</h2>
           <VCenterRow className="gap-x-2">
@@ -87,7 +86,6 @@ export function HistoryLayout({ children }: IProps) {
                 </IconToggle> */}
 
             <LinkButton
-              // ripple={false}
               onClick={() => {
                 openDialog({
                   type: 'warning',
@@ -109,7 +107,7 @@ export function HistoryLayout({ children }: IProps) {
           </VCenterRow>
         </VCenterRow>
 
-        <BaseCol className="p-2 rounded-xl bg-background/75 hover:bg-background trans-color grow border border-border/30">
+        <BaseCol className="p-2 rounded-xl bg-background grow border border-border/30 mb-2">
           <VScrollPanel className="h-full">
             <HistoryTabs />
           </VScrollPanel>

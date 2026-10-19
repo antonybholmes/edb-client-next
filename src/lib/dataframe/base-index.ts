@@ -1,24 +1,40 @@
 import type { IndexMapFunc, Shape } from '.'
-import { cellNum, cellStr } from './cell'
-import { Fields } from './fields'
-import type { SeriesData } from './series-data'
 
-export abstract class BaseIndex extends Fields {
-  constructor(name: string = '') {
-    super(name)
+import { Cell, cellNum, cellStr } from './cell'
+
+export abstract class BaseIndex<T extends Cell> {
+  private _name: string
+
+  constructor(opts: { name?: string } = {}) {
+    const { name = '' } = opts
+    this._name = name
+  }
+
+  /**
+   * Returns the name of the index.
+   */
+  get name(): string {
+    return this._name
+  }
+
+  /**
+   * Sets the name of the index.
+   */
+  set name(name: string) {
+    this._name = name
   }
 
   /**
    * Returns all values in the index.
    */
-  abstract get values(): SeriesData[]
+  abstract get values(): readonly T[]
 
   /**
    * Returns the value at a given position in the index.
    *
    * @param index the position to get
    */
-  abstract at(index: number): SeriesData
+  abstract at(index: number): T
 
   /**
    * Sets the value at a given position in the index.
@@ -26,14 +42,14 @@ export abstract class BaseIndex extends Fields {
    * @param index the position to set
    * @param value the value to set
    */
-  abstract set(index: number, value: SeriesData): void
+  abstract set(index: number, value: T): void
 
   map<T>(f: IndexMapFunc<T>): T[] {
     return _map(this, f)
   }
 
   /**
-   * Return the values as strings
+   * Return the values of the index as strings
    */
   get strs(): readonly string[] {
     return this.values.map((v) => cellStr(v))
@@ -89,9 +105,13 @@ export abstract class BaseIndex extends Fields {
     return this.nums.filter((v) => !isNaN(v))
   }
 
-  abstract [Symbol.iterator](): Iterator<SeriesData>
+  abstract copy(): BaseIndex<T>
+
+  abstract entries(): IterableIterator<[number, T]>
+
+  abstract [Symbol.iterator](): IterableIterator<T>
 }
 
-function _map<T>(index: BaseIndex, f: IndexMapFunc<T>): T[] {
+function _map<T>(index: BaseIndex<Cell>, f: IndexMapFunc<T>): T[] {
   return index.values.map((x, i) => f(x, i))
 }

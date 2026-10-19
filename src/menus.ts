@@ -9,6 +9,7 @@ import ANNOTATE_APP from './components/pages/apps/genomic/annotate/manifest.json
 import DNA_APP from './components/pages/apps/genomic/dna/manifest.json'
 import OVERLAP_APP from './components/pages/apps/genomic/overlap/manifest.json'
 import REV_COMP_APP from './components/pages/apps/genomic/rev-comp/manifest.json'
+import HEATMAP_APP from './components/pages/apps/heatmap/manifest.json'
 import HUBS_APP from './components/pages/apps/hubs/manifest.json'
 import MATCALC_APP from './components/pages/apps/matcalc/manifest.json'
 import NETWORK_APP from './components/pages/apps/network/manifest.json'
@@ -19,6 +20,7 @@ import ONCOPLOT_APP from './components/pages/apps/ngs/wgs/oncoplot/manifest.json
 import VARIANTS_APP from './components/pages/apps/ngs/wgs/variants/manifest.json'
 import SANKEY_APP from './components/pages/apps/sankey/manifest.json'
 import VENN_APP from './components/pages/apps/venn/manifest.json'
+import VOLCANO_APP from './components/pages/apps/volcano/manifest.json'
 
 export interface IAppHeaderLink {
   name: string
@@ -26,7 +28,8 @@ export interface IAppHeaderLink {
   description: string
   slug?: string
   mode?: string
-  color?: string
+  color?: string | string[]
+  color2?: string
 }
 
 export interface IHeaderLink {
@@ -41,6 +44,11 @@ export const HEADER_LINKS: IHeaderLink[] = [
       {
         ...MATCALC_APP,
         slug: '/apps/matcalc',
+        mode: 'prod',
+      },
+      {
+        ...HEATMAP_APP,
+        slug: '/apps/heatmap',
         mode: 'prod',
       },
       {
@@ -78,6 +86,11 @@ export const HEADER_LINKS: IHeaderLink[] = [
       {
         ...NETWORK_APP,
         slug: '/apps/network',
+        mode: 'prod',
+      },
+      {
+        ...VOLCANO_APP,
+        slug: '/apps/volcano',
         mode: 'prod',
       },
     ],

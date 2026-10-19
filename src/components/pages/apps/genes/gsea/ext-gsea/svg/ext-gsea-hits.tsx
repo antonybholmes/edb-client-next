@@ -12,7 +12,7 @@ import {
   IRankedGene,
   type IGeneSet,
 } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { useAxis } from '@/components/plot/axes/axes-store'
+import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'

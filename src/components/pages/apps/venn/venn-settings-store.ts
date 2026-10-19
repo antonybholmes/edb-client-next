@@ -15,7 +15,7 @@ import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { RadiusScaleMode } from '../matcalc/apps/heatmap/svg/cell-svg'
+import { RadiusScaleMode } from '../heatmap/svg/cell-svg'
 
 export const PLOT_W = 600
 

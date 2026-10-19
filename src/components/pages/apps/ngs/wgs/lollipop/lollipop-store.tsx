@@ -2,16 +2,16 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { range } from '@/lib/math/range'
 import { create } from 'zustand'
 
-import { useAxes } from '@/components/plot/axes/axes-store'
 import {
   createAxis,
   getAxisTicks,
   setAxisTicks,
 } from '@/components/plot/axes/axis'
+import { useAxes } from '@/components/plot/axes/plot-axes'
 import { ITickItem } from '@/components/plot/axes/svg-axis-props'
 import { makeUuid } from '@/lib/id'
 import { useEffect } from 'react'
-import { IBlock } from '../../../matcalc/apps/heatmap/heatmap-settings'
+import { IBlock } from '../../../heatmap/heatmap-settings'
 import { useLollipopSettings } from './lollipop-settings-store'
 import { aaSet, aaSum, newAAStats, type ILollipopStats } from './lollipop-stats'
 import {

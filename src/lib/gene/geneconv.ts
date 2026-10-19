@@ -5,7 +5,7 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { capitalCase } from '@/lib/text/capital-case'
 
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
-import type { SeriesData } from '../dataframe/series-data'
+import type { Cell } from '../dataframe/cell'
 
 export type Species = 'human' | 'mouse' | 'fly' | 'worm' | 'yeast'
 
@@ -79,7 +79,7 @@ export async function createGeneConvTable(
 
   const data = res.data.conversions
 
-  const table: SeriesData[][] = []
+  const table: Cell[][] = []
 
   for (const [ri, row] of df.values.entries()) {
     const conv = data[ri]!
@@ -101,7 +101,7 @@ export async function createGeneConvTable(
 
   const speciesHeader = capitalCase(toSpecies)
 
-  const header: string[] = df.columns.concat([
+  const header: string[] = df.colNames.concat([
     `${speciesHeader} Gene Symbol`,
     `${speciesHeader} Entrez`,
     `${speciesHeader} Ensembl`,

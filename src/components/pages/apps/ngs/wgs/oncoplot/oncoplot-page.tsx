@@ -192,7 +192,7 @@ function OncoplotPage() {
 
       const table = new DataFrameReader().keepDefaultNA(false).read(lines)
 
-      table.setName('Variants', true)
+      table.setName('Variants')
 
       setGenesFromTable(table)
 

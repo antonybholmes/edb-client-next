@@ -1,21 +1,14 @@
-import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
-import { cn } from '@/lib/shadcn-utils'
+import { ICON_CLS } from '@/interfaces/icon-props'
+import { CenterRow } from '../layout/center-row'
 
-export function TransposeIcon({
-  size = 'w-3.5',
-  stroke = 'stroke-foreground',
-  //fill = "fill-theme/75",
-  className,
-}: IIconProps) {
+export function TransposeIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      className={cn(ICON_CLS, size, stroke, className)}
+    <CenterRow
+      className={ICON_CLS}
+      style={{ fontFamily: 'serif', fontSize: size }}
     >
-      <path d="M19,26H14V24h5a5.0055,5.0055,0,0,0,5-5V14h2v5A7.0078,7.0078,0,0,1,19,26Z" />
-      <path d="M8,30H4a2.0023,2.0023,0,0,1-2-2V14a2.0023,2.0023,0,0,1,2-2H8a2.0023,2.0023,0,0,1,2,2V28A2.0023,2.0023,0,0,1,8,30ZM4,14V28H8V14Z" />
-      <path d="M28,10H14a2.0023,2.0023,0,0,1-2-2V4a2.0023,2.0023,0,0,1,2-2H28a2.0023,2.0023,0,0,1,2,2V8A2.0023,2.0023,0,0,1,28,10ZM14,4V8H28V4Z" />
-    </svg>
+      <i className="font-bold">A</i>
+      <sup style={{ fontSize: size * 0.7 }}>T</sup>
+    </CenterRow>
   )
 }

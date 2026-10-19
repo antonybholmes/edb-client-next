@@ -15,7 +15,7 @@ import {
 
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { findCols, findRows } from '@/lib/dataframe/dataframe-utils'
+import { findCols, findRows } from '@/lib/dataframe/utils/dataframe-utils'
 import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { useSearchFilters } from '@/stores/search-filter-store'
@@ -32,6 +32,7 @@ import { TrashIcon } from '@/components/icons/trash-icon'
 import { CenterRow } from '@/components/layout/center-row'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { getTabName, useTabs } from '@/components/tabs/tab-provider'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { useStableId } from '@/hooks/stable-id'
 import { BetweenHorizonalStart } from 'lucide-react'
@@ -96,13 +97,13 @@ export function FilterPropsPanel() {
         caseSensitive: settings.rows.caseSensitive,
         matchEntireCell: settings.rows.matchEntireCell,
         keepOrder: settings.rows.keepOrder,
-      }).setName('Row Filter')
+      }).setName('Row Filter') as BaseDataFrame
     } else {
       df = findCols(sheets[0] as BaseDataFrame, queries, {
         caseSensitive: settings.cols.caseSensitive,
         matchEntireCell: settings.cols.matchEntireCell,
         keepOrder: settings.cols.keepOrder,
-      }).setName('Col Filter')
+      }).setName('Col Filter') as BaseDataFrame
     }
 
     if (df.size > 0) {
@@ -142,32 +143,56 @@ export function FilterPropsPanel() {
       <CenterRow className="relative">
         <SafariTabs id={tabsId} defaultWidth={4} />
 
-        <button
-          onClick={() => {
-            openDialog({
-              type: 'warning',
-              payload: {
-                title: 'Clear filter',
-                content: 'Are you sure you want to clear the filter?',
-                callback: (response) => {
-                  if (response === TEXT_OK) {
-                    setText('')
-
-                    if (filterMode.includes('Rows')) {
-                      resetRowFilters()
-                    } else {
-                      resetColFilters()
+        <VCenterRow className="absolute right-0 top-1/2 -translate-y-1/2 gap-x-2">
+          <ToolbarIconButton
+            // ripple={false}
+            onClick={() =>
+              openFilesDialog({
+                onFileChange: (files) => {
+                  onTextFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
                     }
-                  }
+                    if (files.length > 0) {
+                      setText(files[0]!.text)
+                    }
+                  })
                 },
-              },
-            })
-          }}
-          className="text-xs group absolute right-0 top-1/2 -translate-y-1/2"
-          title={TEXT_CLEAR}
-        >
-          <TrashIcon />
-        </button>
+              })
+            }
+            className="fill-foreground"
+            title="Open list of Ids from file"
+          >
+            <UploadIcon />
+          </ToolbarIconButton>
+
+          <button
+            onClick={() => {
+              openDialog({
+                type: 'warning',
+                payload: {
+                  title: 'Clear filter',
+                  content: 'Are you sure you want to clear the filter?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      setText('')
+
+                      if (filterMode.includes('Rows')) {
+                        resetRowFilters()
+                      } else {
+                        resetColFilters()
+                      }
+                    }
+                  },
+                },
+              })
+            }}
+            className="text-xs group"
+            title={TEXT_CLEAR}
+          >
+            <TrashIcon />
+          </button>
+        </VCenterRow>
       </CenterRow>
 
       <ResizablePanelGroup orientation="vertical" className="grow mt-4">
@@ -211,60 +236,6 @@ export function FilterPropsPanel() {
           className="grow flex flex-col gap-y-3 overflow-hidden"
           id="filter"
         >
-          <VCenterRow>
-            <Button
-              size="icon"
-              // ripple={false}
-              onClick={() =>
-                openFilesDialog({
-                  onFileChange: (files) => {
-                    onTextFileChange(files, ({ success, files }) => {
-                      if (!success) {
-                        return
-                      }
-                      if (files.length > 0) {
-                        setText(files[0]!.text)
-                      }
-                    })
-                  },
-                })
-              }
-              className="fill-foreground"
-              title="Open list of Ids from file"
-            >
-              <UploadIcon />
-            </Button>
-
-            {/* <ToolbarSeparator /> */}
-
-            {/* <ToggleGroup
-              variant="outline"
-              rounded="none"
-              value={[filterMode]}
-              onValueChange={(v) => {
-                setFilterMode(v[0] ?? 'Rows')
-              }}
-              //rounded="none"
-              className="gap-x-px"
-            >
-              <GroupToggle
-                value="Rows"
-                className="w-12"
-                aria-label="Filter rows"
-              >
-                Rows
-              </GroupToggle>
-
-              <GroupToggle
-                value="Cols"
-                className="w-12"
-                aria-label="Filter columns"
-              >
-                Cols
-              </GroupToggle>
-            </ToggleGroup> */}
-          </VCenterRow>
-
           <BaseCol className="justify-between gap-y-2 shrink-0">
             <Checkbox
               checked={

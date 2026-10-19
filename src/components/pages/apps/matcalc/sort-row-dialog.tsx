@@ -5,7 +5,10 @@ import type { ISelectionRange } from '@/providers/selection-range-provider'
 import { Checkbox } from '@/themed/baseui/check-box'
 
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { colMean, getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
+import {
+  colMean,
+  getColIdxFromGroup,
+} from '@/lib/dataframe/utils/dataframe-utils'
 import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
 

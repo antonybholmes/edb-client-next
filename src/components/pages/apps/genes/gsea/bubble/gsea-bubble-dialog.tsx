@@ -39,7 +39,7 @@ function findNESCol(df: BaseDataFrame) {
 
   console.log('Finding NES column in dataframe:', df.columns)
 
-  const cols = df.columns.filter((c) => c.toUpperCase().includes('NES'))
+  const cols = df.colNames.filter((c) => c.toUpperCase().includes('NES'))
 
   if (cols.length === 0) {
     return 'NES'
@@ -53,7 +53,7 @@ function findSizeCol(df: BaseDataFrame | null) {
     return 'Size'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase().includes('size'))
+  const cols = df.colNames.filter((c) => c.toLowerCase().includes('size'))
 
   if (cols.length === 0) {
     return 'Size'
@@ -67,7 +67,9 @@ function findPValueCol(df: BaseDataFrame | null) {
     return 'q'
   }
 
-  const cols = df.columns.filter((c) => c.toLowerCase().startsWith('fdr q-val'))
+  const cols = df.colNames.filter((c) =>
+    c.toLowerCase().startsWith('fdr q-val')
+  )
 
   if (cols.length === 0) {
     return 'q'
@@ -81,7 +83,7 @@ function findGroupCol(df: BaseDataFrame | null) {
     return 'Group'
   }
 
-  const cols = df.columns.filter((c) =>
+  const cols = df.colNames.filter((c) =>
     c.toLowerCase().match(/.*(group|cluster).*/)
   )
 
@@ -272,7 +274,7 @@ export function GseaBubbleDialog({
     >
       <ActionDialogRow title="NES">
         <SelectList onValueChange={setNESCol} value={nesCol} w="lg">
-          {df?.columns
+          {df?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -285,7 +287,7 @@ export function GseaBubbleDialog({
 
       <ActionDialogRow title="Size">
         <SelectList onValueChange={setSizeCol} value={sizeCol} w="lg">
-          {df?.columns
+          {df?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -298,7 +300,7 @@ export function GseaBubbleDialog({
 
       <ActionDialogRow title="P-value">
         <SelectList onValueChange={setPValueCol} value={pValueCol} w="lg">
-          {df?.columns
+          {df?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (
@@ -316,7 +318,7 @@ export function GseaBubbleDialog({
           w="lg"
           format={(v) => v as string}
         >
-          {df?.columns
+          {df?.colNames
             .filter((name) => name !== '')
             .slice(0, MAX_COLS)
             .map((name, ni) => (

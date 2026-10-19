@@ -1,4 +1,4 @@
-import { PlotMarginPopover } from '@/components/plot/axes/plot/plot-margin-popover'
+import { PlotMarginPopover } from '@/components/plot/axes/props/plot-margin-popover'
 import { produce } from 'immer'
 import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings'
 

@@ -1,10 +1,10 @@
 {
   "name": "Matcalc",
-  "description": "Tabular data analysis.",
+  "description": "Scientific graphing and statistics.",
   "color": "#40bf80",
-  "version": "50.8.6",
+  "version": "52.0.2",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-10-16T20:45:58.685Z",
-  "hash": "7a138d35161c7271ac51b9ecd124288c6118a01458a58a093e84b4c7de26d8e8",
-  "build": 2162
+  "modified": "2026-10-19T20:54:59.546Z",
+  "hash": "0b2c78568b1427775443454895816d1ffe3311b819c9fbb7c72c895110f17dcc",
+  "build": 2192
 }

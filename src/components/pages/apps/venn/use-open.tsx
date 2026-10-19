@@ -18,15 +18,11 @@ export function useOpen() {
 
     const sep = name.endsWith('csv') ? ',' : '\t'
 
-    //console.log('sep', sep, lines)
-
     const table = new DataFrameReader()
       .delimiter(sep)
       .indexCols(0)
       .colNames(1)
       .read(lines).t
-
-    console.log('t', table.shape)
 
     const lists = rangeMap((ri) => {
       const id = (ri + 1).toString()
@@ -39,29 +35,6 @@ export function useOpen() {
     }, table.shape[0])
 
     setVennLists(lists)
-
-    // setListTextMap(
-    //   new Map(
-    //     table.values.map((r, ri) => [ri, r.map((c) => c.toString()).join('\n')])
-    //   )
-    // )
-
-    //resolve({ ...table, name: file.name })
-
-    // historyDispatch({
-    //   type: "reset",
-    //   title: `Load ${name}`,
-    //   df: table.setName(truncate(name, { length: 16 })),
-    // })
-
-    // historyState.current = {
-    //   step: 0,
-    //   history: [{ title: `Load ${name}`, df: [table.setName(name)] }],
-    // }
-
-    //setShowLoadingDialog(false)
-
-    // setShowFileMenu(false)
   }
 
   function openDataframe(df: BaseDataFrame) {
@@ -73,29 +46,6 @@ export function useOpen() {
         return makeVennList(id, df.index.str(ri), df.row(ri).strs)
       }, df.shape[0])
     )
-
-    // setListTextMap(
-    //   new Map(
-    //     table.values.map((r, ri) => [ri, r.map((c) => c.toString()).join('\n')])
-    //   )
-    // )
-
-    //resolve({ ...table, name: file.name })
-
-    // historyDispatch({
-    //   type: "reset",
-    //   title: `Load ${name}`,
-    //   df: table.setName(truncate(name, { length: 16 })),
-    // })
-
-    // historyState.current = {
-    //   step: 0,
-    //   history: [{ title: `Load ${name}`, df: [table.setName(name)] }],
-    // }
-
-    //setShowLoadingDialog(false)
-
-    // setShowFileMenu(false)
   }
 
   return {

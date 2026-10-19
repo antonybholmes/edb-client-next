@@ -1,5 +1,5 @@
 import { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { IHeatMapSettings } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-settings'
+import { IHeatMapSettings } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { ITextFileOpen } from '@/components/pages/open-files'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
@@ -13,7 +13,7 @@ import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { AxisRecord } from '@/components/plot/axes/svg-axis-props'
 
 import { IExtGseaPlot } from '../../../genes/gsea/ext-gsea/ext-gsea-provider'
-import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
+import { IVolcanoDisplayOptions } from '../../../volcano/volcano-plot-svg'
 import { IUndoState } from './history-manager'
 import { IBasePlot } from './plot'
 

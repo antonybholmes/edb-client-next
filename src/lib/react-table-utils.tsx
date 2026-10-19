@@ -1,7 +1,6 @@
 import { range } from '@/lib/math/range'
 
-import { cellStr, getExcelColName } from './dataframe/cell'
-import { SeriesData } from './dataframe/series-data'
+import { Cell, cellStr, getExcelColName } from './dataframe/cell'
 
 export interface IReactTableCol {
   id?: string
@@ -53,7 +52,7 @@ export function makeReactTableExcelIndexCell(row: number) {
   return makeReactTableIndexCell(row + 1)
 }
 
-export function makeReactTableCells(row: SeriesData[], dp: number = 4) {
+export function makeReactTableCells(row: Cell[], dp: number = 4) {
   return Object.fromEntries(
     row.map((c, ci) => [`col${ci}`, cellStr(c, { dp })])
   )
