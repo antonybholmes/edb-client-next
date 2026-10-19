@@ -460,6 +460,11 @@ export function useNetworkD3Sim() {
 
           return !node || node.view !== 'hidden' ? 'visible' : 'hidden'
         })
+        .attr('display', (d) => {
+          const node = renderNodeMap.get(d.id)
+
+          return node?.view === 'hidden' ? 'none' : null
+        })
     },
     [radiusMap, nodeColorMap, renderNodeMap, networkSettings]
   )
@@ -572,6 +577,17 @@ export function useNetworkD3Sim() {
           )
             ? 'visible'
             : 'hidden'
+        )
+        .attr('display', (d) =>
+          !getIsNodeLabelled(
+            d,
+            userLabelSet,
+            networkSettings.plot.nodes.labels.showAll,
+            networkSettings.plot.nodes.view.labelled.on,
+            userData.labels.mode
+          )
+            ? 'none'
+            : null
         )
     },
     [
