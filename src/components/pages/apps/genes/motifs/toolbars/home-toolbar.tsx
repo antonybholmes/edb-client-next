@@ -1,4 +1,4 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import {
   GroupToggle,
   ToggleGroup,
@@ -28,7 +28,7 @@ export function HomeToolbar() {
             saveAs('motifs')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

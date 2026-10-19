@@ -1,8 +1,8 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import {
   Select,
   SelectContent,
@@ -17,6 +17,7 @@ import {
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { TEXT_SAVE_IMAGE } from '@/consts'
 import { useMessages } from '@/providers/message-provider'
 import { produce } from 'immer'
 import APP_INFO from '../manifest.json'
@@ -41,7 +42,7 @@ export function HomeToolbar() {
         />
 
         <ToolbarIconButton
-          title="Save image"
+          title={TEXT_SAVE_IMAGE}
           onClick={() => {
             //save("txt")
             sendMessage({
@@ -52,7 +53,7 @@ export function HomeToolbar() {
             })
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

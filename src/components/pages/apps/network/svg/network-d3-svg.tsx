@@ -5,7 +5,6 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgRect } from '@/components/plot/svg-rect'
-import { IS_DEV_MODE } from '@/consts'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
 import { truncate } from '@/lib/text/text'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
@@ -32,6 +31,7 @@ export function NetworkD3SvgContent() {
   const { settings } = useNetworkSettings()
   const {
     settings: userData,
+
     updateSettings: updateUserData,
     userLabelSet,
   } = useUserData()
@@ -224,7 +224,7 @@ export function NetworkD3SvgContent() {
         //showLines: false,
         content: (
           <>
-            {IS_DEV_MODE && <strong>{node.id}</strong>}
+            <strong>Node: {node.id}</strong>
             {Object.entries(node.data)
               .sort(([key1], [key2]) => key1.localeCompare(key2))
               .map(([key, value], i) => (
@@ -250,6 +250,23 @@ export function NetworkD3SvgContent() {
     ]
   )
 
+  const onPointerClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!currentNode) {
+        return
+      }
+
+      updateUserData(
+        produce(userData, (draft) => {
+          draft.currentNode = currentNode
+        })
+      )
+
+      e.stopPropagation()
+    },
+    [updateUserData, userData, currentNode]
+  )
+
   const onPointerDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       if (!currentNode) {
@@ -258,21 +275,16 @@ export function NetworkD3SvgContent() {
 
       const inUserData = labelsInNodeIds(currentNode, userLabelSet)
 
-      if (inUserData) {
-        updateUserData(
-          produce(userData, (draft) => {
-            draft.labels.ids = userData.labels.ids.filter(
-              (id) => id !== currentNode.nodeId
-            )
-          })
-        )
-      } else {
-        updateUserData(
-          produce(userData, (draft) => {
-            draft.labels.ids = [...userData.labels.ids, currentNode.nodeId]
-          })
-        )
-      }
+      const ids = inUserData
+        ? userData.labels.ids.filter((id) => id !== currentNode.id)
+        : [...userData.labels.ids, currentNode.id]
+
+      updateUserData(
+        produce(userData, (draft) => {
+          draft.labels.ids = ids
+          draft.currentNode = currentNode
+        })
+      )
 
       e.stopPropagation()
     },
@@ -384,6 +396,7 @@ export function NetworkD3SvgContent() {
       size={size}
       onPointerMove={onPointerMove}
       onPointerLeave={hideCrosshair}
+      onClick={onPointerClick}
       onDoubleClick={onPointerDoubleClick}
     >
       <SvgG id="network" />

@@ -1,4 +1,4 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
@@ -18,7 +18,7 @@ export function HomeToolbar() {
             saveAs('umap')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
     </>

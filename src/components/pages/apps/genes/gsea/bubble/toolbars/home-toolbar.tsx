@@ -1,4 +1,4 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
@@ -66,7 +66,7 @@ export function HomeToolbar() {
             saveAs('gsea-bubble')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

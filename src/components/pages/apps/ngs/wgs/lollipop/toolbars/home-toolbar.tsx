@@ -5,6 +5,7 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { LollipopCountIcon } from '../lollipop-count-icon'
@@ -36,7 +37,7 @@ export function HomeToolbar() {
         />
 
         <ToolbarIconButton
-          aria-label="Save image"
+          aria-label={TEXT_SAVE_IMAGE}
           onClick={() => {
             saveAs('lollipop')
           }}

@@ -47,6 +47,7 @@ export interface ITextAreaProps
   labelChildren?: ReactNode
   lines?: string[]
   textareaCls?: UndefStr
+  topChildren?: ReactNode
   onTextChange?: (v: string) => void
   onTextChanged?: (v: string) => void
   onLinesChange?: (v: string[]) => void
@@ -72,6 +73,7 @@ export function Textarea({
   labelChildren,
   variant,
   w,
+  topChildren,
   onChange,
   onTextChange,
   onTextChanged,
@@ -104,6 +106,7 @@ export function Textarea({
         setFocus(false)
       }}
     >
+      {topChildren && topChildren}
       <textarea
         id={id}
         disabled={disabled}
