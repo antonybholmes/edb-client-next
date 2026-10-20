@@ -25,6 +25,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { makeUuid } from '@/lib/id'
+import { clamp } from '@/lib/math/clamp'
 import { ILim } from '@/lib/math/math'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
@@ -200,8 +201,6 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
 interface IProps {
   size?: string
   sizeFunc?: (x: number) => number
-
-  //displayOptions?: IVolcanoDisplayOptions
 }
 
 export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
@@ -223,7 +222,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
   const { ref: svgRef } = useSVG()
 
-  const { settings } = useVolcanoSettings()
+  const { settings, cmap } = useVolcanoSettings()
 
   const displayOptions: IVolcanoDisplayOptions = plot
     ? (plot! as IVolcanoPlot).props
@@ -235,19 +234,26 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     ? -Math.log10(settings.thresholds.pvalue.threshold)
     : settings.thresholds.pvalue.threshold
 
-  function getColor(
-    logFc: number,
-    logP: number,
-    isLabel: boolean
-  ): IPaintProps {
-    let color = settings.dots.color
+  function getColor(logFc: number, logP: number, isLabel: boolean): string {
+    let color = settings.dots.color.value
+
+    // goes from -x to x so only care about the positive side for color scaling
+    const xMax = logFc > 0 ? xax.domain[1] : Math.abs(xax.domain[0])
+
+    // each side of the x-axis is normalized separately for color scaling
+    const normX = settings.thresholds.color.gradient.on
+      ? clamp(Math.abs(logFc) / xMax, { min: 0, max: 0.5 })
+      : 0.5
+
+    console.log('normX:', normX, xMax)
+
+    const highlightColor = cmap.getHexColor(
+      logFc > 0 ? 0.5 + normX : 0.5 - normX
+    )
 
     if (settings.labels.color.on) {
       if (isLabel) {
-        color =
-          logFc < 0
-            ? settings.thresholds.logFc.neg.fill
-            : settings.thresholds.logFc.pos.fill
+        color = highlightColor
       }
     } else {
       if (settings.thresholds.pvalue.show && settings.thresholds.logFc.show) {
@@ -255,10 +261,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           logP > thresholdLogP &&
           Math.abs(logFc) > settings.thresholds.logFc.threshold
         ) {
-          color =
-            logFc < 0
-              ? settings.thresholds.logFc.neg.fill
-              : settings.thresholds.logFc.pos.fill
+          color = highlightColor
         }
       } else {
         if (
@@ -266,10 +269,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           (settings.thresholds.logFc.show &&
             Math.abs(logFc) > settings.thresholds.logFc.threshold)
         ) {
-          color =
-            logFc < 0
-              ? settings.thresholds.logFc.neg.fill
-              : settings.thresholds.logFc.pos.fill
+          color = highlightColor
         }
       }
     }
@@ -293,12 +293,30 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     })
   }
 
+  const labelSet = useMemo(
+    () => new Set<string>(displayLabels.map((x) => x.toLowerCase())),
+    [displayLabels]
+  )
+
+  console.log(labelSet)
+
   const points = useMemo(
     () =>
       (plot?.volcano.entries ?? []).map((e, i) => ({
+        index: i,
         x: e.log2foldChange,
         y: e.logpvalue,
       })),
+    // .sort((a, b) => {
+    //   const aInLabelSet = labelSet.has(
+    //     plot.volcano.entries[a.index]!.id.toLowerCase()
+    //   )
+
+    //   const bInLabelSet = labelSet.has(
+    //     plot.volcano.entries[b.index]!.id.toLowerCase()
+    //   )
+    //   return (bInLabelSet ? 1 : 0) - (aInLabelSet ? 1 : 0)
+    // }),
     [plot?.volcano.entries]
   )
 
@@ -313,11 +331,15 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     const height = innerHeight + MARGIN.top + MARGIN.bottom
 
     // matching is case insensitive
-    const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
 
     const labelIdx = (plot?.volcano.entries ?? [])
       .map((v, vi) => ({ index: vi, value: v.id.toLowerCase() }))
       .filter((v) => labelSet.has(v.value))
+      .map((v) => v.index)
+
+    const nonLabelIdx = (plot?.volcano.entries ?? [])
+      .map((v, vi) => ({ index: vi, value: v.id.toLowerCase() }))
+      .filter((v) => !labelSet.has(v.value))
       .map((v) => v.index)
 
     const xaf = axisDomainToRangeFunc(xax!)
@@ -329,11 +351,63 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const svg = (
       <>
+        <SvgMargin margin={MARGIN}>
+          {nonLabelIdx.map((i) => {
+            const p = points[i]!
+            const x1 = xaf(p.x)
+            const y1 = yaf(p.y)
+            const r = plot.volcano.entries[i]!.size
+              ? sizeFunc(plot.volcano.entries[i]!.size)
+              : settings.dots.size
+
+            const color = settings.dots.color.value
+
+            return (
+              <SvgCircle
+                cx={x1}
+                cy={y1}
+                r={r}
+                fill={color}
+                key={i}
+                onPointerEnter={() =>
+                  handleVariantEnter(i, {
+                    x: x1 + MARGIN.left,
+                    y: y1 + MARGIN.top,
+                  })
+                }
+                onPointerLeave={hideCrosshair}
+                onDoubleClick={() => {
+                  const label = plot.volcano.entries[i]!.id
+                  if (
+                    displayLabels
+                      .map((x) => x.toLowerCase())
+                      .includes(label.toLowerCase())
+                  ) {
+                    setLabels(
+                      displayLabels.filter(
+                        (x) => x.toLowerCase() !== label.toLowerCase()
+                      )
+                    )
+                  } else {
+                    setLabels([...displayLabels, label].sort())
+                  }
+                }}
+              />
+            )
+          })}
+        </SvgMargin>
+
         <SvgMargin margin={MARGIN} id="labels">
           {labelIdx.map((i) => {
             const p = points[i]!
             const x1 = xaf(p.x)
             const y1 = yaf(p.y)
+
+            const color = getColor(
+              p.x,
+              p.y,
+              labelSet.has(plot.volcano.entries[i]!.id.toLowerCase())
+            )
 
             const r = plot.volcano.entries[i]!.size
               ? sizeFunc(plot.volcano.entries[i]!.size)
@@ -341,6 +415,37 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
             return (
               <g key={`label-group-${i}-${renderId.current}`}>
+                <SvgCircle
+                  cx={x1}
+                  cy={y1}
+                  r={r}
+                  fill={color}
+                  key={i}
+                  onPointerEnter={() =>
+                    handleVariantEnter(i, {
+                      x: x1 + MARGIN.left,
+                      y: y1 + MARGIN.top,
+                    })
+                  }
+                  onPointerLeave={hideCrosshair}
+                  onDoubleClick={() => {
+                    const label = plot.volcano.entries[i]!.id
+                    if (
+                      displayLabels
+                        .map((x) => x.toLowerCase())
+                        .includes(label.toLowerCase())
+                    ) {
+                      setLabels(
+                        displayLabels.filter(
+                          (x) => x.toLowerCase() !== label.toLowerCase()
+                        )
+                      )
+                    } else {
+                      setLabels([...displayLabels, label].sort())
+                    }
+                  }}
+                />
+
                 {settings.labels.connector.type === 'elbow'
                   ? elbowConnector(i, p, r, xaf, yaf, settings)
                   : straightConnector(i, p, r, xaf, yaf, settings)}
@@ -364,57 +469,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           })}
         </SvgMargin>
 
-        <SvgMargin margin={MARGIN}>
-          {points.map((p, xi) => {
-            const x1 = xaf(p.x)
-            const y1 = yaf(p.y)
-            const r = plot.volcano.entries[xi]!.size
-              ? sizeFunc(plot.volcano.entries[xi]!.size)
-              : settings.dots.size
-
-            const color = getColor(
-              p.x,
-              p.y,
-              labelSet.has(plot.volcano.entries[xi]!.id.toLowerCase())
-            )
-
-            return (
-              <SvgCircle
-                cx={x1}
-                cy={y1}
-                r={r}
-                fp={color}
-                //opacity={displayOptions.dots.opacity}
-                key={xi}
-
-                onPointerEnter={() =>
-                  handleVariantEnter(xi, {
-                    x: x1 + MARGIN.left,
-                    y: y1 + MARGIN.top,
-                  })
-                }
-                onPointerLeave={hideCrosshair}
-                onDoubleClick={() => {
-                  const label = plot.volcano.entries[xi]!.id
-                  if (
-                    displayLabels
-                      .map((x) => x.toLowerCase())
-                      .includes(label.toLowerCase())
-                  ) {
-                    setLabels(
-                      displayLabels.filter(
-                        (x) => x.toLowerCase() !== label.toLowerCase()
-                      )
-                    )
-                  } else {
-                    setLabels([...displayLabels, label].sort())
-                  }
-                }}
-              />
-            )
-          })}
-        </SvgMargin>
-
         {settings.thresholds.pvalue.line.show && (
           <SvgMargin margin={MARGIN}>
             <SvgLine
@@ -432,7 +486,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
             <SvgRect
               width={innerWidth}
               height={innerHeight}
-
               sp={displayOptions.border}
             />
           </SvgMargin>
@@ -443,7 +496,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           pos={{ x: MARGIN.left, y: MARGIN.top }}
           tickSize={displayOptions.axes.yaxis.tickSize}
           strokeWidth={displayOptions.axes.yaxis.stroke.width}
-
           color={displayOptions.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
@@ -451,11 +503,11 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           pos={{ x: MARGIN.left, y: MARGIN.top + innerHeight }}
           tickSize={displayOptions.axes.xaxis.tickSize}
           strokeWidth={displayOptions.axes.xaxis.stroke.width}
-
           color={displayOptions.axes.xaxis.stroke.value}
         />
       </>
     )
+
     return { svg, width, height }
   }, [
     plot,
@@ -466,17 +518,10 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     displayLabels,
     sizeFunc,
     settings,
+    labelSet,
   ])
 
-  return (
-    <SvgZoomCanvas
-      size={{ w: width, h: height }}
-
-      //shapeRendering={SVG_CRISP_EDGES}
-    >
-      {svg}
-    </SvgZoomCanvas>
-  )
+  return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }
 
 export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {

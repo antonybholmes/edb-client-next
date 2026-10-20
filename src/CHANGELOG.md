@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Volcano now uses colormap. Labelled nodes are drawn on top of others to make visualization better.
 - Added rocket heatmap.
 - Refined volcano UI.
 - Fixing italics etc in some math notation in icons and labels.

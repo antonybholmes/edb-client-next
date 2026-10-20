@@ -130,6 +130,12 @@ export class ColorMap {
     ]
   }
 
+  /**
+   * Gets the interpolated RGBA color for a given normalized value.
+   *
+   * @param v The normalized value between 0 and 1 for which to get the color.
+   * @returns The interpolated RGBA color corresponding to the value.
+   */
   getRGBAColor(v: number): IRGBA {
     let t = clamp(v, DEFAULT_LIMIT) // Math.max(0, Math.min(1, v))
 
@@ -155,8 +161,14 @@ export class ColorMap {
     return color
   }
 
+  /**
+   * Gets the hex color for a given normalized value, optionally keeping the alpha channel.
+   *
+   * @param v The normalized value between 0 and 1 for which to get the color.
+   * @param keepAlpha Whether to keep the alpha channel in the returned hex color.
+   * @returns The hex color corresponding to the value, optionally without the alpha channel.
+   */
   getHexColor(v: number, keepAlpha: boolean = true): string {
-    //console.log('v', v)
     let ret = rgba2hex(this.getRGBAColor(v))
 
     if (!keepAlpha) {
@@ -843,6 +855,7 @@ export type ColorMapName =
   | 'inferno'
   | 'plasma'
   | 'magma'
+  | 'rocket'
 
 export function getColorMap(name: string | ICmap): ColorMap {
   if (typeof name === 'string') {

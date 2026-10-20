@@ -3494,6 +3494,10 @@
         {
           "msg": "Added rocket heatmap",
           "date": "2026-10-20T21:03:03.869Z"
+        },
+        {
+          "msg": "Volcano now uses colormap. Labelled nodes are drawn on top of others to make visualization better",
+          "date": "2026-10-20T22:57:39.180Z"
         }
       ]
     },

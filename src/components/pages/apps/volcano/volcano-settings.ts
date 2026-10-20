@@ -8,8 +8,9 @@ import {
   IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
+import { ColorMap, getColorMap, type ICmap } from '@/lib/color/colormap'
 import { deepMerge } from '@/lib/deepmerge'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -38,10 +39,16 @@ export interface IVolcanoSettings {
         fill: IPaintProps
       }
     }
+    color: {
+      gradient: {
+        on: boolean
+      }
+      cmap: ICmap
+    }
   }
   margin: IMarginProps
   //scale: number
-  cmap: string
+
   preprocess: {
     applyLog2FC: boolean
     applyMinusLog10P: boolean
@@ -77,10 +84,14 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
         fill: { ...DEFAULT_COLOR_PROPS, value: '#ff0000' },
       },
     },
+    color: {
+      gradient: { on: false },
+      cmap: { name: 'bwr-v2', reversed: false },
+    },
   },
   margin: { ...MARGIN },
   //scale: 1,
-  cmap: 'bwr-v2',
+
   preprocess: {
     applyLog2FC: false,
     applyMinusLog10P: true,
@@ -126,6 +137,7 @@ export const useVolcanoSettingsStore = create<IVolcanoSettingsStore>()(
 
 export function useVolcanoSettings(): {
   settings: IVolcanoSettingsStore
+  cmap: ColorMap
   updateSettings: (settings: IVolcanoSettingsStore) => void
   resetSettings: () => void
 } {
@@ -134,12 +146,18 @@ export function useVolcanoSettings(): {
     (state) => state.updateSettings
   )
 
+  const cmap = useMemo(
+    () => getColorMap(settings.thresholds.color.cmap),
+    [settings.thresholds.color.cmap]
+  )
+
   const resetSettings = useCallback(() => {
     updateSettings({ ...DEFAULT_SETTINGS })
   }, [updateSettings])
 
   return {
     settings,
+    cmap,
     updateSettings,
     resetSettings,
   }

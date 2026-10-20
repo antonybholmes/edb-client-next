@@ -23,6 +23,7 @@ import { StraightConnectorIcon } from '@/components/icons/shapes/straight-connec
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
 import {
@@ -31,10 +32,12 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { getCmapFromColorMap } from '@/lib/color/colormap'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { BetweenHorizonalStart, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { ColorMapMenu } from '../matcalc/color-map-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from '../matcalc/manifest.json'
 import { useVolcanoContext } from './volcano-provider'
@@ -51,7 +54,7 @@ export function VolcanoDisplayPropsPanel() {
 
   const { plot, displayLabels, highlightedLabels, setLabels } =
     useVolcanoContext()
-  const { settings, updateSettings, resetSettings } = useVolcanoSettings()
+  const { settings, cmap, updateSettings, resetSettings } = useVolcanoSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot?.props ?? {
     ...DEFAULT_VOLCANO_PROPS,
@@ -421,7 +424,7 @@ export function VolcanoDisplayPropsPanel() {
               />
             </CheckPropRow>
 
-            <PropRow title="Fold Change Colors" contentCls="gap-x-2">
+            {/* <PropRow title="Fold Change Colors" contentCls="gap-x-2">
               <FillButton
                 colors={[
                   {
@@ -457,7 +460,7 @@ export function VolcanoDisplayPropsPanel() {
 
                 title="Points &ge; 0"
               />
-            </PropRow>
+            </PropRow> */}
 
             <CheckPropRow
               title="P-value Line"
@@ -513,6 +516,30 @@ export function VolcanoDisplayPropsPanel() {
                 ]}
               />
             </CheckPropRow>
+            <PropRow title="Colors" contentCls="gap-x-2">
+              <Checkbox
+                checked={settings.thresholds.color.gradient.on}
+                onCheckedChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.thresholds.color.gradient.on = v
+                    })
+                  )
+                }
+              >
+                Gradient
+              </Checkbox>
+              <ColorMapMenu
+                cmap={cmap}
+                onChange={(cmap) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.thresholds.color.cmap = getCmapFromColorMap(cmap)
+                    })
+                  )
+                }
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
@@ -553,7 +580,7 @@ export function VolcanoDisplayPropsPanel() {
                     type: 'warning',
                     payload: {
                       title: APP_INFO.name,
-                      content: 'Are you sure you want to reset all settings?',
+                      content: 'Are you sure you want to clear labels?',
                       callback: (response) => {
                         if (response === TEXT_OK) {
                           setText('')
@@ -617,7 +644,7 @@ export function VolcanoDisplayPropsPanel() {
                 }}
               />
             </PropRow>
-            <PropRow title="Connector">
+            <PropRow title="Connector" contentCls="gap-x-3">
               <StrokeButton
                 title="Line Style"
                 colors={[

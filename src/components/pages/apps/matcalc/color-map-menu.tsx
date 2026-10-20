@@ -204,11 +204,7 @@ export function ColorMapMenu({
   )
 }
 
-export function ColorMapToolbarMenu({
-  cmap = BWR_CMAP_V2,
-
-  onChange,
-}: IProps) {
+export function ColorMapToolbarMenu({ cmap = BWR_CMAP_V2, onChange }: IProps) {
   const [open, setOpen] = useState(false)
 
   function _onChange(cmap: ColorMap) {

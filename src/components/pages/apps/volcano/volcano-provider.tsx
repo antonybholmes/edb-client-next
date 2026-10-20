@@ -51,20 +51,6 @@ export function VolcanoProvider({
   const { settings } = useVolcanoSettings()
   const { addAxes } = useAxes()
 
-  // const sheet = useMemo(
-  //   () => plot!.dataframes['main'] as BaseDataFrame,
-  //   [plot!.dataframes['main']]
-  // )
-
-  // const labels = useMemo(() => sheet.index.strs, [sheet])
-
-  // const data = useMemo(() => {
-  //   const xdata = getNumCol(sheet, findCol(sheet, plot.props.axes.xaxis.name))
-  //   const ydata = getNumCol(sheet, findCol(sheet, displayProps.axes.yaxis.name))
-
-  //   return { x: xdata, y: ydata }
-  // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
-
   const thresholdLogP = settings.preprocess.applyMinusLog10P
     ? -Math.log10(settings.thresholds.pvalue.threshold)
     : settings.thresholds.pvalue.threshold
