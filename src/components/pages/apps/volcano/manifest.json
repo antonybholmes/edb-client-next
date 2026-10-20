@@ -8,9 +8,9 @@
     "#a12424",
     "#400b0b"
   ],
-  "version": "2.0.2",
+  "version": "2.0.4",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-19T22:18:44.906Z",
-  "hash": "ff38a4f782b9995be5da829dabb82e7cbeb0c0d8b0a30c54e0f3a08627568d51",
-  "build": 18
+  "modified": "2026-10-20T01:52:12.856Z",
+  "hash": "7cdef7e5a3ca88451a6b9e2f93aba2c807e07a4481390c2471a3b70df9801d6e",
+  "build": 20
 }

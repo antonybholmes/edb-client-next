@@ -13,7 +13,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,
@@ -59,7 +59,7 @@ export function HomeToolbar() {
             saveAs('ext-gsea')
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

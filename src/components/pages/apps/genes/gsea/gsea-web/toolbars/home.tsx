@@ -1,5 +1,5 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import {
   onBinaryFileChange,
   openFilesDialog,
@@ -44,7 +44,7 @@ export function HomeToolbar() {
             saveAs('gsea')
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

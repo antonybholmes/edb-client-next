@@ -8,11 +8,9 @@ import { HCenterRow } from '../layout/h-center-row'
 
 interface IToolbarColButtonProps extends ComponentProps<typeof Button> {
   icon?: ReactNode
-  //largeIcon?: React.ReactNode
 }
 
-//group-data-[ribbon=single]:w-toolbar-button
-const TOOLBAR_COL_BUTTON_CLS = `relative flex gap-y-1
+const TOOLBAR_COL_BUTTON_CLS = `relative flex gap-y-1.5
   group-data-[ribbon=single]:h-toolbar-button
   group-data-[ribbon=classic]:flex-col 
   group-data-[ribbon=classic]:w-large-toolbar-button-width 

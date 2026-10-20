@@ -3,7 +3,7 @@
   "description": "Information about Experiments web client.",
   "version": "3.4.4",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-10-14T13:33:58.766Z",
-  "hash": "62ea5dae6b4a0a2172bf2a8073652c741b0aad3bb4d7f0cc5589161cd8b3d69e",
-  "build": 102
+  "modified": "2026-10-20T01:52:12.844Z",
+  "hash": "82874e9f3d21b430a5d4eafe7b8c7270d17b31d83049e88f62989764c0af1eb0",
+  "build": 104
 }

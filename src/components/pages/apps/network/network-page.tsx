@@ -116,7 +116,7 @@ export function NetworkPage() {
 
   useEffect(() => {
     if (status === 'running') {
-      messageId.current = addIndicator('Simulation running')
+      messageId.current = addIndicator('Graph generating...')
     } else {
       if (messageId.current) {
         remove(messageId.current)

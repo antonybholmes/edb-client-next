@@ -14,7 +14,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VolcanoDialog } from '../volcano-dialog'
 
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 
 export function HomeToolbar() {
@@ -48,7 +48,7 @@ export function HomeToolbar() {
             saveAs('volcano')
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

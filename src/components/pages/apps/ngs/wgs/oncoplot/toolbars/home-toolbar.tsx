@@ -2,7 +2,7 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import {
   Select,
   SelectContent,
@@ -53,7 +53,7 @@ export function HomeToolbar() {
             })
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

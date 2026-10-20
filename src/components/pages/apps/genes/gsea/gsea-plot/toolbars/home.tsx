@@ -6,7 +6,7 @@ import {
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,
@@ -58,7 +58,7 @@ export function HomeToolbar() {
             saveAs('gsea')
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

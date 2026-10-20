@@ -66,7 +66,7 @@ export function ModuleButtonLink({
       onPointerLeave={() => setHover(false)}
       {...props}
     >
-      <CenterCol className="grow relative">{children}</CenterCol>
+      <CenterCol className="grow relative gap-y-1">{children}</CenterCol>
     </BaseLink>
   )
 }
@@ -105,7 +105,7 @@ export function HeaderLinks({
             }
             title={module.description}
           >
-            <AppIcon appInfo={module} />
+            <AppIcon appInfo={module} size={3} />
             <p className="text-[0.7rem] text-center truncate">{module.name}</p>
           </ModuleButtonLink>
         </li>

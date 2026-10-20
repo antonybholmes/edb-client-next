@@ -91,6 +91,7 @@ export function NodesDisplayPropsPanel() {
                 className="text-xs"
                 size="xs"
                 pad="sm"
+                rounded="sm"
                 variant="app-theme"
                 onClick={() =>
                   updateUserData(
@@ -209,7 +210,7 @@ export function NodesDisplayPropsPanel() {
               className="flex flex-col gap-y-1.5"
               collapsible={true}
             >
-              <span className="font-semibold">Current Node</span>
+              <span className="font-medium">Current Node</span>
               <Textarea value={currentNodeText} readOnly className="h-1" />
             </ResizablePanel>
           </ResizablePanelGroup>
