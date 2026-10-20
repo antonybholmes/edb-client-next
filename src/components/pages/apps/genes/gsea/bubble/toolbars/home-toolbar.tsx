@@ -1,4 +1,4 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { useHistory } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'

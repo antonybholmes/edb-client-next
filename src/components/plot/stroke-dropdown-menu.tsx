@@ -212,8 +212,7 @@ export function StrokeDropdownMenu({
               <DropdownMenuItem
                 onClick={() => {
                   color0.onColorChange?.({
-                    color: color0.color,
-                    opacity,
+                    ...color0,
                     dasharray: '0',
                     show: true,
                   })
@@ -225,7 +224,7 @@ export function StrokeDropdownMenu({
               <DropdownMenuItem
                 onClick={() => {
                   color0.onColorChange?.({
-                    color: color0.color,
+                    ...color0,
                     opacity,
                     dasharray: '2',
                     show: true,
@@ -238,7 +237,7 @@ export function StrokeDropdownMenu({
               <DropdownMenuItem
                 onClick={() => {
                   color0.onColorChange?.({
-                    color: color0.color,
+                    ...color0,
                     opacity,
                     dasharray: '8',
                     show: true,
@@ -271,6 +270,7 @@ export function ThemeColors({ cp }: { cp: IColorPickerProps }) {
                   presetColor={presetColor}
                   onClick={() => {
                     cp.onColorChange?.({
+                      ...cp,
                       color: presetColor,
                       opacity: 1,
                       show: true,
@@ -310,6 +310,7 @@ export function StandardColors({
                   presetColor={presetColor}
                   onClick={() => {
                     cp.onColorChange?.({
+                      ...cp,
                       color: presetColor,
                       opacity: 1,
                       show: true,
@@ -331,6 +332,7 @@ export function StandardColors({
 
                   onClick={() => {
                     cp.onColorChange?.({
+                      ...cp,
                       color: c.color,
                       opacity: cp.opacity ?? 1,
                       show: true,
@@ -349,8 +351,7 @@ export function StandardColors({
         <DropdownMenuItem
           onClick={() => {
             cp.onColorChange?.({
-              color: cp.color,
-              opacity: cp.opacity,
+              ...cp,
               show: false,
             })
           }}
@@ -376,7 +377,6 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
             cp,
 
             callback: (color) => {
-              console.log('color', color)
               addCustomColor(color.color, color.opacity ?? 1)
               cp.onColorChange?.({
                 ...color,

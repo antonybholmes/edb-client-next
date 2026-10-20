@@ -1,6 +1,6 @@
 import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
-import { SvgBase } from '../plot/svg-base'
+import { SvgBase } from '../../plot/svg-base'
 
 export function ArrowUpWideShortIcon({
   size = 'w-4',

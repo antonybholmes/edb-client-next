@@ -1,4 +1,4 @@
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'

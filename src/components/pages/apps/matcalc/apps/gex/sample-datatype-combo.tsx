@@ -1,10 +1,10 @@
+import { ChevronUpDownIcon } from '@/components/icons/arrows/chevron-up-down-icon'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
   triggerVariants,
 } from '@/components/shadcn/ui/themed/baseui/popover'
-import { ChevronUpDownIcon } from '@/icons/chevron-up-down-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import {

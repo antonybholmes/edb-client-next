@@ -6,7 +6,7 @@ import { TEXT_SEARCH } from '@/consts'
 import { useStableId } from '@/hooks/stable-id'
 import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
-import { CloseIcon } from './icons/close-icon'
+import { CloseIcon } from './icons/computer/close-icon'
 import { SearchIcon } from './icons/search-icon'
 import {
   Input,

@@ -4,7 +4,7 @@ import { DEFAULT_VOLCANO_PROPS } from './volcano-plot-svg'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { type IVolcanoDisplayOptions } from '@/components/pages/apps/volcano/volcano-plot-svg'
 import { PropsPanel } from '@/components/props-panel'
-import { TEXT_CLEAR, TEXT_OK, TEXT_RESET, TEXT_SHOW } from '@/consts'
+import { TEXT_CLEAR, TEXT_OK, TEXT_RESET, TEXT_UPDATE } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { textToLines } from '@/lib/text/lines'
 import {
@@ -18,14 +18,19 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { useDialogs } from '@/components/dialogs/dialogs'
 
+import { ElbowConnectorIcon } from '@/components/icons/shapes/elbow-connector-icon'
+import { StraightConnectorIcon } from '@/components/icons/shapes/straight-connector-icon'
 import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/baseui/percent-slider'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { BetweenHorizonalStart, Tags } from 'lucide-react'
@@ -35,15 +40,12 @@ import APP_INFO from '../matcalc/manifest.json'
 import { useVolcanoContext } from './volcano-provider'
 import { useVolcanoSettings } from './volcano-settings'
 
+const TABS = ['plot', 'thresholds', 'labels']
+
 export function VolcanoDisplayPropsPanel() {
   const { open: openDialog } = useDialogs()
 
-  const [tabs, setTabs] = useState<string[]>([
-    'plot',
-    'fold-change',
-    'p-value',
-    'labels',
-  ])
+  const [tabs, setTabs] = useState<string[]>(TABS)
 
   const { updatePlot } = useHistory()
 
@@ -309,21 +311,36 @@ export function VolcanoDisplayPropsPanel() {
             </PropRow>
 
             <PropRow title="Dots" contentCls="gap-x-2">
-              {' '}
               <FillButton
                 colors={[
                   {
-                    color: displayProps.dots.color,
-                    onColorChange: ({ color }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.dots.color = color
+                    color: settings.dots.color.value,
+                    onColorChange: ({ color, opacity }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.dots.color.value = color
+                          draft.dots.color.opacity = opacity
                         })
                       ),
                   },
                 ]}
               />
-              <NumericalInput
+              <NumSlider
+                min={1}
+                max={50}
+
+                value={settings.dots.size}
+
+                dp={0}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.dots.size = v
+                    })
+                  )
+                }}
+              />
+              {/* <NumericalInput
                 h="toolbar"
                 id="size"
                 value={displayProps.dots.size}
@@ -336,7 +353,7 @@ export function VolcanoDisplayPropsPanel() {
                     })
                   )
                 }}
-              />
+              /> */}
             </PropRow>
 
             <CheckPropRow
@@ -373,16 +390,16 @@ export function VolcanoDisplayPropsPanel() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="fold-change">
-          <AccordionTrigger>Fold change</AccordionTrigger>
+        <AccordionItem value="thresholds">
+          <AccordionTrigger>Thresholds</AccordionTrigger>
           <AccordionContent>
             <CheckPropRow
-              title="Filter"
-              checked={settings.logFc.show}
+              title="Fold Change Filter"
+              checked={settings.thresholds.logFc.show}
               onCheckedChange={(v) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.logFc.show = v
+                    draft.thresholds.logFc.show = v
                   })
                 )
               }}
@@ -390,29 +407,31 @@ export function VolcanoDisplayPropsPanel() {
               <NumericalInput
                 id="max"
                 h="toolbar"
-                value={settings.logFc.threshold}
+                value={settings.thresholds.logFc.threshold}
                 dp={2}
                 placeholder="Max..."
 
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.logFc.threshold = v
+                      draft.thresholds.logFc.threshold = v
                     })
                   )
                 }}
               />
             </CheckPropRow>
 
-            <PropRow title="Highlight" contentCls="gap-x-2">
+            <PropRow title="Fold Change Colors" contentCls="gap-x-2">
               <FillButton
                 colors={[
                   {
-                    color: settings.logFc.neg.fill.value,
-                    onColorChange: ({ color }) =>
+                    color: settings.thresholds.logFc.neg.fill.value,
+                    opacity: settings.thresholds.logFc.neg.fill.opacity,
+                    onColorChange: ({ color, opacity }) =>
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.logFc.neg.fill.value = color
+                          draft.thresholds.logFc.neg.fill.value = color
+                          draft.thresholds.logFc.neg.fill.opacity = opacity
                         })
                       ),
                   },
@@ -424,11 +443,13 @@ export function VolcanoDisplayPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: settings.logFc.pos.fill.value,
-                    onColorChange: ({ color }) =>
+                    color: settings.thresholds.logFc.pos.fill.value,
+                    opacity: settings.thresholds.logFc.pos.fill.opacity,
+                    onColorChange: ({ color, opacity }) =>
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.logFc.pos.fill.value = color
+                          draft.thresholds.logFc.pos.fill.value = color
+                          draft.thresholds.logFc.pos.fill.opacity = opacity
                         })
                       ),
                   },
@@ -437,19 +458,14 @@ export function VolcanoDisplayPropsPanel() {
                 title="Points &ge; 0"
               />
             </PropRow>
-          </AccordionContent>
-        </AccordionItem>
 
-        <AccordionItem value="p-value">
-          <AccordionTrigger>P-value</AccordionTrigger>
-          <AccordionContent>
             <CheckPropRow
-              title="Threshold"
-              checked={settings.pvalue.show}
+              title="P-value Line"
+              checked={settings.thresholds.pvalue.show}
               onCheckedChange={(v) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.pvalue.show = v
+                    draft.thresholds.pvalue.show = v
                   })
                 )
               }}
@@ -460,28 +476,43 @@ export function VolcanoDisplayPropsPanel() {
                 step={0.001}
                 //inputW="sm"
 
-                value={settings.pvalue.threshold}
+                value={settings.thresholds.pvalue.threshold}
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.pvalue.threshold = v
+                      draft.thresholds.pvalue.threshold = v
                     })
                   )
                 }}
               />
+              <StrokeButton
+                colors={[
+                  {
+                    color: settings.thresholds.pvalue.line.value,
+                    width: settings.thresholds.pvalue.line.width,
+                    opacity: settings.thresholds.pvalue.line.opacity,
+                    dasharray: settings.thresholds.pvalue.line.dasharray,
+                    show: settings.thresholds.pvalue.line.show,
+                    onColorChange: ({
+                      color,
+                      width,
+                      dasharray,
+                      show,
+                      opacity,
+                    }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.thresholds.pvalue.line.value = color
+                          draft.thresholds.pvalue.line.width = width
+                          draft.thresholds.pvalue.line.dasharray = dasharray
+                          draft.thresholds.pvalue.line.show = show
+                          draft.thresholds.pvalue.line.opacity = opacity
+                        })
+                      ),
+                  },
+                ]}
+              />
             </CheckPropRow>
-
-            <CheckPropRow
-              title="Line"
-              checked={settings.pvalue.line.show}
-              onCheckedChange={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.pvalue.line.show = v
-                  })
-                )
-              }}
-            />
           </AccordionContent>
         </AccordionItem>
 
@@ -492,12 +523,12 @@ export function VolcanoDisplayPropsPanel() {
               <VCenterRow className="gap-x-0.5">
                 <ToolbarButton
                   variant="app-theme"
-                  aria-label="Add labels to plot"
+                  title="Add labels to plot"
                   onClick={() => addLabels()}
                 >
-                  {TEXT_SHOW}
+                  {TEXT_UPDATE}
                 </ToolbarButton>
-                <ToolbarIconButton
+                <ToolbarButton
                   title="Auto Label"
                   onClick={() => {
                     setText(highlightedLabels.join('\n'))
@@ -505,13 +536,15 @@ export function VolcanoDisplayPropsPanel() {
                   }}
                 >
                   <Tags size={18} />
-                </ToolbarIconButton>
-                <ToolbarIconButton
+                  <span>Auto</span>
+                </ToolbarButton>
+                <ToolbarButton
                   title="Organize Labels"
                   onClick={() => declutterY()}
                 >
                   <BetweenHorizonalStart size={18} />
-                </ToolbarIconButton>
+                  <span>Organize</span>
+                </ToolbarButton>
               </VCenterRow>
 
               <LinkButton
@@ -560,7 +593,7 @@ export function VolcanoDisplayPropsPanel() {
               <NumSlider
                 value={settings.labels.offset.x}
                 min={0}
-                max={100}
+                max={200}
                 onNumChange={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -574,7 +607,7 @@ export function VolcanoDisplayPropsPanel() {
               <NumSlider
                 value={settings.labels.offset.y}
                 min={0}
-                max={100}
+                max={200}
                 onNumChange={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -583,6 +616,61 @@ export function VolcanoDisplayPropsPanel() {
                   )
                 }}
               />
+            </PropRow>
+            <PropRow title="Connector">
+              <StrokeButton
+                title="Line Style"
+                colors={[
+                  {
+                    color: settings.labels.connector.stroke.value,
+                    width: settings.labels.connector.stroke.width,
+                    opacity: settings.labels.connector.stroke.opacity,
+                    dasharray: settings.labels.connector.stroke.dasharray,
+                    show: settings.labels.connector.stroke.show,
+                    onColorChange: ({
+                      color,
+                      width,
+                      dasharray,
+                      show,
+                      opacity,
+                    }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.labels.connector.stroke.value = color
+                          draft.labels.connector.stroke.width = width
+                          draft.labels.connector.stroke.dasharray = dasharray
+                          draft.labels.connector.stroke.show = show
+                          draft.labels.connector.stroke.opacity = opacity
+                        })
+                      ),
+                  },
+                ]}
+              />
+
+              <ToggleGroup
+                variant="outline"
+                size="toolbar"
+                value={[settings.labels.connector.type]}
+                onValueChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.labels.connector.type = v[0] as 'straight' | 'elbow'
+                    })
+                  )
+                }}
+                className="gap-x-px"
+              >
+                <GroupToggle
+                  key="straight"
+                  value="straight"
+                  title="Straight Connector"
+                >
+                  <StraightConnectorIcon />
+                </GroupToggle>
+                <GroupToggle key="elbow" value="elbow" title="Elbow Connector">
+                  <ElbowConnectorIcon />
+                </GroupToggle>
+              </ToggleGroup>
             </PropRow>
           </AccordionContent>
         </AccordionItem>

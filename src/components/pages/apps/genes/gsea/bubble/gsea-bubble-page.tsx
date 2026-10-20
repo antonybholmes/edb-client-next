@@ -26,11 +26,11 @@ import {
   TEXT_SAVE_TABLE,
 } from '@/consts'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileIcon } from '@/icons/file-icon'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import {
   ResizablePanel,
@@ -45,7 +45,7 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'

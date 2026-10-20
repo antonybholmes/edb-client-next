@@ -1,10 +1,10 @@
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IClassProps } from '@/interfaces/class-props'
 import { type IDivProps } from '@/interfaces/div-props'

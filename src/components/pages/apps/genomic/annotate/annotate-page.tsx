@@ -16,7 +16,7 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import { useEffect, useState } from 'react'
@@ -30,9 +30,9 @@ import {
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'

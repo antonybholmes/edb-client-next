@@ -1,4 +1,4 @@
-import { FontColorIcon } from '@/components/icons/font-color-icon'
+import { FontColorIcon } from '@/components/icons/computer/font-color-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'

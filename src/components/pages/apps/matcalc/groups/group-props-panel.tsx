@@ -40,7 +40,7 @@ import {
 } from '../../../../sortable-item'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'

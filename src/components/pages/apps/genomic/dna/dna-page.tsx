@@ -15,7 +15,7 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 
 import { useEffect, useState } from 'react'
 
@@ -31,8 +31,8 @@ import { UploadIcon } from '@/icons/upload-icon'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { FileIcon } from '@/icons/file-icon'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'

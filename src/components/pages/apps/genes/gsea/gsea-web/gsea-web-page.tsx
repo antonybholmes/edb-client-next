@@ -8,7 +8,7 @@ import {
   type IBinaryFileOpen,
 } from '@/components/pages/open-files'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
@@ -36,12 +36,12 @@ import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { ThemeLink } from '@/components/link/theme-link'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { BoolSearchQuery } from '@/lib/search'

@@ -6,7 +6,7 @@ import {
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,

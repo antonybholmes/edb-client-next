@@ -18,7 +18,7 @@ import {
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
-import { FileIcon } from '@/icons/file-icon'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import {
   AnnotationDataFrame,
   type ISharedAnnotationDataFrame,

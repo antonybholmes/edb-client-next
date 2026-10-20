@@ -2,7 +2,7 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { CommaIcon } from '@/components/icons/comma-icon'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import {
   onTextFileChange,
   openFilesDialog,

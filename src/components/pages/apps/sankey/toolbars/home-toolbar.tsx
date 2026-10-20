@@ -1,6 +1,6 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import {
   onTextFileChange,

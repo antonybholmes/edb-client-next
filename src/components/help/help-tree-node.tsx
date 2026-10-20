@@ -2,7 +2,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 
 import { createContext, useContext, useState } from 'react'
-import { ChevronRightIcon } from '../icons/chevron-right-icon'
+import { ChevronRightIcon } from '../icons/arrows/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
 
 export type ITopicMap = { [key: string]: ITopicMap }

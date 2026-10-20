@@ -3,7 +3,7 @@ import { OptionalDropdownButton } from '@/components/toolbar/optional-dropdown-b
 import { useSeqBrowserDialogs } from './seq-browser-dialogs'
 import { useTracks } from './tracks-store'
 
-import { OpenIcon } from '@/components/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 import {
   onTextFileChange,
   openFilesDialog,

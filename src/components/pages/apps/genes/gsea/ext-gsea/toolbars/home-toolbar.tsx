@@ -13,7 +13,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,

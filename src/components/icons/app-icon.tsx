@@ -134,7 +134,7 @@ export function AppIcon({
         ref.current,
         {
           opacity: hover ? 1 : 0.7,
-          scale: hover ? borderSize : 1,
+          scale: hover ? borderSize * 0.85 : 1,
           //borderRadius: hover ? '2rem' : '1.5rem',
           duration: 0.5,
           ease: 'back.out',

@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { type ReactNode } from 'react'
 import { ToolbarIconButton } from '../../../toolbar/toolbar-icon-button'

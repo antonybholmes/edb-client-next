@@ -19,7 +19,7 @@ import { IconButton } from '@/themed/icon-button'
 import { produce } from 'immer'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import {
   onTextFileChange,

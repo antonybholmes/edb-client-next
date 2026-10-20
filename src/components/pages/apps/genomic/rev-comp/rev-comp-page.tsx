@@ -20,8 +20,8 @@ import {
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { cn } from '@/lib/shadcn-utils'
 
@@ -31,8 +31,8 @@ import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
-import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { httpFetch } from '@/lib/http/http-fetch'

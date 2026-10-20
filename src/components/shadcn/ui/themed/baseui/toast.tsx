@@ -1,4 +1,4 @@
-import { CloseIcon } from '@/components/icons/close-icon'
+import { CloseIcon } from '@/components/icons/computer/close-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { TEXT_CLOSE } from '@/consts'
 import type { IChildrenProps } from '@/interfaces/children-props'

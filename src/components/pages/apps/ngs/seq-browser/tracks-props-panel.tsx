@@ -18,7 +18,7 @@ import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { SelectAll } from '@/components/select-all'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'

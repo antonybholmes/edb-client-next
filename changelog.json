@@ -3486,6 +3486,10 @@
         {
           "msg": "Fixing italics etc in some math notation in icons and labels",
           "date": "2026-10-19T20:55:00.479Z"
+        },
+        {
+          "msg": "Refined volcano UI",
+          "date": "2026-10-20T20:56:39.367Z"
         }
       ]
     },

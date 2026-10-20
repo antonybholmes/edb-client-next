@@ -31,7 +31,7 @@ import { GenesetDialog } from './geneset-dialog'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'

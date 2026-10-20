@@ -5,7 +5,7 @@ import {
 } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 import { IconButton } from '@/themed/icon-button'
-import { ChevronRightIcon } from '../icons/chevron-right-icon'
+import { ChevronRightIcon } from '../icons/arrows/chevron-right-icon'
 import type { IButtonProps } from '../shadcn/ui/themed/baseui/button'
 
 /**

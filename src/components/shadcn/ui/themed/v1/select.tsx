@@ -4,7 +4,7 @@ import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
-import { ChevronRightIcon } from '@/components/icons/chevron-right-icon'
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {

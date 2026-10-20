@@ -66,18 +66,22 @@ export function VolcanoProvider({
   // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
-    ? -Math.log10(settings.pvalue.threshold)
-    : settings.pvalue.threshold
+    ? -Math.log10(settings.thresholds.pvalue.threshold)
+    : settings.thresholds.pvalue.threshold
 
   function getShouldLabel(logFc: number, logP: number): boolean {
-    if (settings.pvalue.show && settings!.logFc.show) {
-      if (logP > thresholdLogP && Math.abs(logFc) > settings!.logFc.threshold) {
+    if (settings.thresholds.pvalue.show && settings!.thresholds.logFc.show) {
+      if (
+        logP > thresholdLogP &&
+        Math.abs(logFc) > settings!.thresholds.logFc.threshold
+      ) {
         return true
       }
     } else {
       if (
-        (settings.pvalue.show && logP > thresholdLogP) ||
-        (settings!.logFc.show && Math.abs(logFc) > settings!.logFc.threshold)
+        (settings.thresholds.pvalue.show && logP > thresholdLogP) ||
+        (settings!.thresholds.logFc.show &&
+          Math.abs(logFc) > settings!.thresholds.logFc.threshold)
       ) {
         return true
       }

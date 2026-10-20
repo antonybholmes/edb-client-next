@@ -1,8 +1,8 @@
 import { getUrlFriendlyTag, redirect } from '@/lib/http/urls'
 import { CornerDownRight } from 'lucide-react'
 import { Fragment } from 'react'
-import { ChevronRightIcon } from '../icons/chevron-right-icon'
-import { FolderIcon } from '../icons/folder-icon'
+import { ChevronRightIcon } from '../icons/arrows/chevron-right-icon'
+import { FolderIcon } from '../icons/computer/folder-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { BaseLink } from '../link/base-link'
 

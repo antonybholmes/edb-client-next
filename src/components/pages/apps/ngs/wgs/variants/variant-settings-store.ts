@@ -12,10 +12,10 @@ import {
   COLOR_BLACK,
   COLOR_CORNFLOWER_BLUE,
   COLOR_GRAY,
-  COLOR_LIGHTGRAY,
   COLOR_MEDIUM_SEA_GREEN,
   COLOR_ORANGE,
   COLOR_RED,
+  COLOR_SILVER,
 } from '@/lib/color/color'
 import {
   parseGenomicLocation,
@@ -206,7 +206,7 @@ const DEFAULT_HEATMAPS: Record<PredefinedCMAP, ICMAP> = {
       {
         id: '019ce432-b2ce-7c1d-bdc0-1fb8c3aca6a3',
         name: 'Other',
-        color: COLOR_LIGHTGRAY,
+        color: COLOR_SILVER,
       },
       {
         id: '019ce432-b2ce-7d75-a009-80856e648295',
@@ -242,7 +242,7 @@ const DEFAULT_HEATMAPS: Record<PredefinedCMAP, ICMAP> = {
       {
         id: '019ce432-b2ce-7618-bff0-371dd613c6e3',
         name: 'INS',
-        color: COLOR_LIGHTGRAY,
+        color: COLOR_SILVER,
       },
       {
         id: '019ce432-b2ce-735a-a2a5-08350b6f370a',

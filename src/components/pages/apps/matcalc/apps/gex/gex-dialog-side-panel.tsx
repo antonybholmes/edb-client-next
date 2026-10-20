@@ -1,4 +1,4 @@
-import { ChevronUpDownIcon } from '@/components/icons/chevron-up-down-icon'
+import { ChevronUpDownIcon } from '@/components/icons/arrows/chevron-up-down-icon'
 import {
   Popover,
   PopoverContent,
