@@ -704,6 +704,40 @@ export const YELLOW_ORANGE_RED_CMAP: ColorMap = new ColorMap(
   ]
 )
 
+export const ROCKET_CMAP: ColorMap = new ColorMap('rocket', 'Rocket', [
+  '#0d0a21',
+  '#180f29',
+  '#241432',
+  '#30173a',
+  '#3c1a42',
+  '#481c48',
+  '#541e4e',
+  '#611f53',
+  '#6e1f57',
+  '#7b1f59',
+  '#891e5b',
+  '#971c5b',
+  '#a4195b',
+  '#b21758',
+  '#bf1654',
+  '#cb1b4f',
+  '#d62449',
+  '#df2f44',
+  '#e73d3f',
+  '#ec4c3e',
+  '#f05c42',
+  '#f26b49',
+  '#f47a54',
+  '#f58860',
+  '#f5966c',
+  '#f6a37a',
+  '#f6b089',
+  '#f6bc99',
+  '#f7c9aa',
+  '#f8d4bc',
+  '#f9e0cd',
+])
+
 //createColorMap({
 //  cmap: [
 //    { index: 0, rgba: [255, 255, 255, 1] },
@@ -773,6 +807,7 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
   [INFERNO_CMAP.id]: INFERNO_CMAP,
   [PLASMA_CMAP.id]: PLASMA_CMAP,
   [MAGMA_CMAP.id]: MAGMA_CMAP,
+  [ROCKET_CMAP.id]: ROCKET_CMAP,
 }
 
 export const COLOR_MAP_MENU = [
@@ -787,6 +822,7 @@ export const COLOR_MAP_MENU = [
       PLASMA_CMAP,
       INFERNO_CMAP,
       MAGMA_CMAP,
+      ROCKET_CMAP,
       YELLOW_ORANGE_RED_CMAP,
     ],
   },

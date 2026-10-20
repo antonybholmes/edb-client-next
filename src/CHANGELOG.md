@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added rocket heatmap.
 - Refined volcano UI.
 - Fixing italics etc in some math notation in icons and labels.
 - Added log dialog.

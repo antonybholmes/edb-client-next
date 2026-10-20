@@ -293,10 +293,11 @@
     "abbr": "Vc",
     "description": "Volcano plots",
     "color": [
-      "#ffa904",
-      "#ee7b06",
-      "#a12424",
-      "#400b0b"
+      "#000004",
+      "#51127C",
+      "#B73779",
+      "#FC8961",
+      "#FCFDBF"
     ],
     "version": "2.0.4",
     "copyright": "© 2026 Antony Holmes",
