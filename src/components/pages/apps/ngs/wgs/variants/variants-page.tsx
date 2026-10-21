@@ -17,8 +17,8 @@ import { useEffect, useState } from 'react'
 
 import { formatChr } from '@/lib/genomic/dna'
 
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -31,8 +31,8 @@ import { makeUuid } from '@/lib/id'
 
 import { type ITab } from '@/components/tabs/tab-provider'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import type { ISaveAsFileType, ISaveAsResponse } from '@/dialogs/save-as-dialog'
-import { FileIcon } from '@/icons/file-icon'
 
 import { ClientLayout } from '@/app/client-layout'
 import { AppInfoButton } from '@/components/header/app-info-button'

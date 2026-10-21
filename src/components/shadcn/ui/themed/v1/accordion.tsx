@@ -1,5 +1,5 @@
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'

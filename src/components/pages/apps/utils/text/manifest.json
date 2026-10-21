@@ -1,10 +1,10 @@
 {
   "name": "Text",
   "description": "A basic text editor.",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "color": "#000000",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-14T13:33:58.772Z",
-  "hash": "d2a4faa05b5502704e6ee7f784c4fafba8d20056751ee9646e3ad5df6a682f84",
-  "build": 18
+  "modified": "2026-10-20T20:56:38.416Z",
+  "hash": "81dbac7bfc81b6c43ca57f867813994e9609da300709998efaaf0920f197f35e",
+  "build": 20
 }

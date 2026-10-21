@@ -16,11 +16,12 @@ import { KMeans } from '../../math/kmeans'
 import { AnnotationDataFrame } from '../annotation-dataframe'
 import { DataFrame } from '../dataframe'
 
-import { DataIndex, strs } from '..'
+import { strs } from '..'
 import { vfill } from '../../fill'
 import { where } from '../../math/where'
 import { BaseTable } from '../base-table'
 import type { Cell, IndexId } from '../cell'
+import { DataIndex } from '../data-index'
 import { DataFrameWriter, type IDataFrameWriterOpts } from '../dataframe-writer'
 
 export type AxisDim = 0 | 1
@@ -410,10 +411,10 @@ export function kmeans(
 
   const { assignments } = k.fit(df.values as Point[])
 
-  const ret = df.copy() as AnnotationDataFrame
+  const ret = df.copy()
 
   // we use use clusters starting from 1
-  ret.rowObs.setCol(
+  ret.setRowObs(
     'Cluster',
     assignments.map((c) => `c${c + 1}`)
   )

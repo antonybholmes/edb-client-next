@@ -1,5 +1,5 @@
 import { LoadingSpinnerGradient } from '@/components/alerts/loading-spinner-gradient'
-import { CloseIcon } from '@/icons/close-icon'
+import { CloseIcon } from '@/components/icons/computer/close-icon'
 import { ErrorIcon } from '@/icons/error-icon'
 import { WarningIcon } from '@/icons/warning-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'

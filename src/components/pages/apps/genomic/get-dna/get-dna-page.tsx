@@ -9,7 +9,7 @@ import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import { MenuButton } from '@/toolbar/menu-button'
 
-import { FileLinesIcon } from '@/icons/file-lines-icon'
+import { FileLinesIcon } from '@/components/icons/computer/file-lines-icon'
 
 import {
   FILE_MENU_ITEM_DESC_CLS,

@@ -1,6 +1,6 @@
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TEXT_DOWNLOAD_AS_PNG, TEXT_DOWNLOAD_AS_SVG } from '@/consts'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { SaveIcon } from '@/icons/save-icon'
 import { useSVG } from '@/providers/svg-provider'
 import { ToolbarOptionalDropdownButton } from './toolbar-optional-dropdown-button'

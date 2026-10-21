@@ -5,7 +5,7 @@ import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-
 import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
 import { useEffect } from 'react'
-import { VolcanoDisplayPropsPanel } from './volcano-display-props-panel'
+import { VolcanoDisplayPropsPanel } from './props/volcano-display-props-panel'
 
 const ID = 'volcano-props-panel'
 

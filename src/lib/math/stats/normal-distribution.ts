@@ -1,4 +1,4 @@
-import { erf } from './erf'
+import { erf } from '../erf'
 
 const SQRT2 = 1.414213562370951
 //const TWO_PI = 6.283185307179586

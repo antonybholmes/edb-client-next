@@ -1,18 +1,15 @@
-import {
-  DataIndex,
-  Index,
-  makeIndex,
-  type IIndexOptions,
-  type IndexFromType,
-} from '.'
+import { Index, type IIndexOptions, type IndexFromType } from '.'
 import { BaseIndex } from './base-index'
 import type { Cell } from './cell'
 
-export type SeriesFromType = Series<Cell> | IndexFromType
+export type SeriesFromType = Series<Cell, Cell> | IndexFromType
 
 export const DEFAULT_INDEX_NAME = 'Index'
 
-export abstract class Series<T extends Cell> extends BaseIndex<T> {
+export abstract class Series<
+  I extends Cell,
+  T extends Cell,
+> extends BaseIndex<T> {
   constructor(opts: IIndexOptions = {}) {
     super(opts)
   }
@@ -20,101 +17,24 @@ export abstract class Series<T extends Cell> extends BaseIndex<T> {
   /**
    * Returns the index associated with this series
    */
-  abstract get index(): Index<T>
+  abstract get index(): Index<I>
 
-  abstract setIndex(index: IndexFromType, inplace: boolean): Series<T>
+  abstract setIndex(
+    index: IndexFromType,
+    opts?: { inplace?: boolean }
+  ): Series<Cell, T>
 
   get uniq(): T[] {
     return [...new Set(this.values)].sort()
   }
 
-  abstract set(index: number, v: T): Series<T>
+  abstract set(index: number, v: T): Series<I, T>
 
-  abstract filter(idx: number[]): Series<T>
+  abstract filter(idx: number[]): Series<I, T>
 
-  abstract copy(): Series<T>
+  abstract copy(): Series<I, T>
 }
 
 export interface ISeriesOptions extends IIndexOptions {
   index?: IndexFromType
-}
-
-export class DataSeries<T extends Cell> extends Series<T> {
-  _data: T[]
-
-  _index: Index<T>
-
-  constructor(data: SeriesFromType, options: ISeriesOptions = {}) {
-    const { index } = options
-    super(options)
-
-    this._data = [...data] as T[]
-    this._index = makeIndex(index, data.length) as Index<T>
-  }
-
-  override get index(): Index<T> {
-    return this._index
-  }
-
-  override setIndex(
-    index: IndexFromType,
-    inplace: boolean = false
-  ): DataSeries<T> {
-    const series: DataSeries<T> = inplace
-      ? this
-      : (this.copy() as DataSeries<T>)
-
-    series._index = makeIndex(index, series.length) as Index<T>
-
-    return series
-  }
-
-  override get values(): T[] {
-    return [...this._data]
-  }
-
-  override at(index: number): T {
-    return this._data[index]!
-  }
-
-  override set(index: number, v: T): DataSeries<T> {
-    this._data[index] = v
-    return this
-  }
-
-  override get length() {
-    return this._data.length
-  }
-
-  override filter(idx: number[]): DataSeries<T> {
-    return new DataSeries(
-      idx.map((i) => this._data[i]!),
-      { name: this.name, index: this._index.filter(idx) }
-    )
-  }
-
-  override copy(): DataSeries<T> {
-    return new DataSeries([...this._data], {
-      name: this.name,
-      index: this._index.copy(),
-    })
-  }
-
-  override [Symbol.iterator](): IterableIterator<T> {
-    return this._data[Symbol.iterator]()
-  }
-
-  override entries(): IterableIterator<[number, T]> {
-    return this._data.entries()
-  }
-}
-
-export const EMPTY_SERIES = new DataSeries([])
-
-export function indexToSeries(index: BaseIndex<Cell>): DataSeries<Cell> {
-  return new DataSeries(index.values, { name: index.name })
-}
-
-export function seriesToIndex(series: Series<Cell>): Index<Cell> {
-  return new DataIndex(series.values, { name: series.name })
 }

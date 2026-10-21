@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 
 import { TEXT_DELETE, TEXT_OK } from '@/consts'
 
-import { DeleteIcon } from '@/icons/delete-icon'
+import { DeleteIcon } from '@/components/icons/computer/delete-icon'
 
 import {
   filesToDataFrames,

@@ -3486,10 +3486,71 @@
         {
           "msg": "Fixing italics etc in some math notation in icons and labels",
           "date": "2026-10-19T20:55:00.479Z"
+        },
+        {
+          "msg": "Refined volcano UI",
+          "date": "2026-10-20T20:56:39.367Z"
+        },
+        {
+          "msg": "Added rocket heatmap",
+          "date": "2026-10-20T21:03:03.869Z"
+        },
+        {
+          "msg": "Volcano now uses colormap. Labelled nodes are drawn on top of others to make visualization better",
+          "date": "2026-10-20T22:57:39.180Z"
+        },
+        {
+          "msg": "Volcano plot order adjusted to put colored dots on top",
+          "date": "2026-10-21T02:25:36.995Z"
+        },
+        {
+          "msg": "Refined volcano UI with support for custom colors or heatmaps and more intuitive button names",
+          "date": "2026-10-21T14:51:53.786Z"
+        },
+        {
+          "msg": "Volcano now supports margins",
+          "date": "2026-10-21T17:44:29.072Z"
+        },
+        {
+          "msg": "Added test for mann-whitney and fixed bug",
+          "date": "2026-10-21T17:54:39.181Z"
+        },
+        {
+          "msg": "Created stats folder for math functions",
+          "date": "2026-10-21T17:56:57.234Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-10-18T02:07:13.797Z"
+  },
+  {
+    "version": "93.2.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Annotationdataframe now has api to set col and row vars",
+          "date": "2026-10-21T20:12:19.694Z"
+        },
+        {
+          "msg": "Adding null support to dataframes for missing data",
+          "date": "2026-10-21T20:31:58.902Z"
+        },
+        {
+          "msg": "Refined dataframe api",
+          "date": "2026-10-21T21:27:02.698Z"
+        },
+        {
+          "msg": "Added empty dataframe and series support",
+          "date": "2026-10-21T21:50:22.068Z"
+        },
+        {
+          "msg": "Fixed volcano not using index col when loading text file",
+          "date": "2026-10-21T21:58:27.853Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-21T20:12:19.694Z"
   }
 ]

@@ -14,7 +14,7 @@ import { produce } from 'immer'
 
 import { useEffect, useState } from 'react'
 
-import { FileImageIcon } from '@/icons/file-image-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
@@ -35,7 +35,7 @@ import { makeUuid } from '@/lib/id'
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/themed/icon-button'
 import {
@@ -52,8 +52,8 @@ import { ClusterPropsPanel } from './cluster-props-panel'
 import APP_INFO from './manifest.json'
 import { PlotsPropsPanel } from './plots-props-panel'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import { ExportIcon } from '@/components/icons/export-icon'
-import { FileIcon } from '@/components/icons/file-icon'
 
 import { ClientLayout } from '@/app/client-layout'
 import { useDialogs } from '@/components/dialogs/dialogs'

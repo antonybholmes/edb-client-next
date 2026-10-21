@@ -18,10 +18,10 @@ import {
   TEXT_EXPORT,
 } from '@/consts'
 
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import {
   ResizablePanel,
@@ -116,7 +116,7 @@ export function NetworkPage() {
 
   useEffect(() => {
     if (status === 'running') {
-      messageId.current = addIndicator('Simulation running')
+      messageId.current = addIndicator('Graph generating...')
     } else {
       if (messageId.current) {
         remove(messageId.current)

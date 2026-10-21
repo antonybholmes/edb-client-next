@@ -2,7 +2,7 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { CommaIcon } from '@/components/icons/comma-icon'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import {
   onTextFileChange,
   openFilesDialog,
@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { VolcanoDialog } from '../../volcano/volcano-dialog'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useOpenFiles } from '../hooks/open'
@@ -121,17 +121,22 @@ export function HomeToolbar() {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <ToolbarColSmallButton
+              <ToolbarColButton
                 title="Create Chart"
-                icon={<ChartNoAxesCombined size={18} />}
+                icon={
+                  <>
+                    <ChartNoAxesCombined size={18} />
+                    <span>Chart</span>
+                  </>
+                }
               >
                 <ChartNoAxesCombined size={20} />
                 <span>Chart</span>
                 <ChevronDown
                   size={12}
-                  className="absolute bottom-0 opacity-50 left-1/2 -translate-x-1/2"
+                  className="absolute bottom-0.5 opacity-50 left-1/2 -translate-x-1/2"
                 />
-              </ToolbarColSmallButton>
+              </ToolbarColButton>
             }
           />
           <DropdownMenuContent>

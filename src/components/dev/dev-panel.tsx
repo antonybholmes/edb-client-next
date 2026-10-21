@@ -1,6 +1,6 @@
 import { randId } from '@/lib/id'
 import { useEffect, useRef, useState } from 'react'
-import { CloseIcon } from '../icons/close-icon'
+import { CloseIcon } from '../icons/computer/close-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { ActionsDevPanel } from '../pages/apps/matcalc/history/actions-dev-panel'
 import { HistoryDevPanel } from '../pages/apps/matcalc/history/history-dev-panel'

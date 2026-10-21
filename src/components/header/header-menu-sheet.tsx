@@ -4,7 +4,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
 import { ThemeLink } from '@/components/link/theme-link'
 
-import { CloseIcon } from '@/icons/close-icon'
+import { CloseIcon } from '@/components/icons/computer/close-icon'
 import type { ILinkProps } from '@/interfaces/link-props'
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'

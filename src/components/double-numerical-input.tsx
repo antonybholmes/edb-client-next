@@ -2,7 +2,7 @@ import { useStableId } from '@/hooks/stable-id'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { type ReactNode } from 'react'
-import { CloseIcon } from './icons/close-icon'
+import { CloseIcon } from './icons/computer/close-icon'
 import type { IInputProps } from './shadcn/ui/themed/baseui/input'
 import { NumericalInput } from './shadcn/ui/themed/numerical-input'
 

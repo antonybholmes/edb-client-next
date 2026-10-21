@@ -1,6 +1,6 @@
 import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
-import { CenterCol } from '../layout/center-col'
+import { CenterCol } from '../../layout/center-col'
 
 export function FontColorIcon({
   size = 'w-5 h-5',

@@ -20,9 +20,9 @@ import {
   SelectTrigger,
 } from '@/themed/baseui/select'
 
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import APP_INFO from './manifest.json'
 
 import { useKeyDownListener } from '@/hooks/keydown-listener'

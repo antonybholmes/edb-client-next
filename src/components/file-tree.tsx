@@ -3,7 +3,7 @@ import type { IClassProps } from '@/interfaces/class-props'
 import { present } from '@/lib/dom-utils'
 import { File, FolderOpen, SquareMinus, SquarePlus } from 'lucide-react'
 import { createContext, useContext, useState, type ReactNode } from 'react'
-import { ChevronRightIcon } from './icons/chevron-right-icon'
+import { ChevronRightIcon } from './icons/arrows/chevron-right-icon'
 import { VCenterRow } from './layout/v-center-row'
 import type { ITab } from './tabs/tab-provider'
 

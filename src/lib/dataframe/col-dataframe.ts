@@ -8,22 +8,24 @@ import {
   whereStrStartsWith,
 } from '../math/where'
 import { BaseDataFrame } from './base-dataframe'
-import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
-import type { Cell, IndexId } from './cell'
 import {
-  DataIndex,
+  BaseTable,
+  IDataFrameOptions,
+  LocType,
+  shape,
+  TableInput,
+} from './base-table'
+import type { Cell, IndexId } from './cell'
+import { DataIndex } from './data-index'
+import { DataSeries, seriesToIndex } from './data-series'
+import {
+  EmptyNumIndex,
   Index,
-  NumInfIndex,
   Shape,
   shapesEqual,
   type IndexFromType,
 } from './index'
-import {
-  DataSeries,
-  Series,
-  seriesToIndex,
-  type SeriesFromType,
-} from './series'
+import { Series, type SeriesFromType } from './series'
 
 /**
  * A column oriented dataframe where the data is stored as a map of column name to series.
@@ -41,6 +43,10 @@ export class ColDataFrame extends BaseDataFrame {
 
     if (data.length === 0) {
       throw new Error('data must be a non empty array or array of series')
+    }
+
+    if (data instanceof BaseTable) {
+      data = data.cols
     }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
@@ -63,7 +69,7 @@ export class ColDataFrame extends BaseDataFrame {
     if (isSeries) {
       // array of series to be made column wise
 
-      this._data = (data as Series<Cell>[]).map((s: Series<Cell>) =>
+      this._data = (data as Series<Cell, Cell>[]).map((s: Series<Cell, Cell>) =>
         seriesToIndex(s)
       )
     } else if (isIndex) {
@@ -96,7 +102,7 @@ export class ColDataFrame extends BaseDataFrame {
     if (index) {
       this._index = index instanceof Index ? index : new DataIndex(index)
     } else {
-      this._index = new NumInfIndex(this._data[0]!.length)
+      this._index = new EmptyNumIndex(this._data[0]!.length)
     }
 
     if (columns) {
@@ -176,7 +182,7 @@ export class ColDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): Series<Cell> {
+  override col(c: IndexId): Series<Cell, Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -210,7 +216,7 @@ export class ColDataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     if (typeof row === 'string') {
       throw new Error('invalid row')
     }
@@ -228,7 +234,7 @@ export class ColDataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | Series<Cell>,
+    data: Cell[] | Series<Cell, Cell>,
     opts: { inplace?: boolean } = {}
   ): ColDataFrame {
     if (typeof row === 'string') {
@@ -294,7 +300,7 @@ export class ColDataFrame extends BaseDataFrame {
     return [this._data[0]!.length, this._data.length]
   }
 
-  override get cols(): Series<Cell>[] {
+  override get cols(): Series<Cell, Cell>[] {
     return this.colNames.map(
       (c, ci) =>
         new DataSeries(this._data[ci]!, {
@@ -379,7 +385,7 @@ export class ColDataFrame extends BaseDataFrame {
     rows,
     cols,
   }: { rows?: LocType; cols?: LocType } = {}): ColDataFrame {
-    let rowIdx = _ilocDim(new NumInfIndex(this.shape[0]), rows)
+    let rowIdx = _ilocDim(new EmptyNumIndex(this.shape[0]), rows)
     let colIdx = _ilocDim(this.columns, cols)
 
     const data = new Array(rowIdx.length) as Cell[][]
@@ -473,7 +479,7 @@ export class ColDataFrame extends BaseDataFrame {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): ColDataFrame {
+  override copyReplaceData(data: TableInput): ColDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

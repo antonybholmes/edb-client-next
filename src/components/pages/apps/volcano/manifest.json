@@ -3,14 +3,14 @@
   "abbr": "Vc",
   "description": "Volcano plots",
   "color": [
-    "#ffa904",
-    "#ee7b06",
-    "#a12424",
-    "#400b0b"
+    "#51127C",
+    "#B73779",
+    "#FC8961",
+    "#FCFDBF"
   ],
-  "version": "2.0.2",
+  "version": "2.0.6",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-19T22:18:44.906Z",
-  "hash": "ff38a4f782b9995be5da829dabb82e7cbeb0c0d8b0a30c54e0f3a08627568d51",
-  "build": 18
+  "modified": "2026-10-21T21:58:26.936Z",
+  "hash": "dd613d3bf40af3f78b3097194adb5a0c42f8adeaacedb807eb7e8729ff4783c5",
+  "build": 34
 }

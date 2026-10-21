@@ -1,81 +1,119 @@
 import {
+  DEFAULT_COLOR_PROPS,
   DEFAULT_DASH_PROPS,
   DEFAULT_FILL_PROPS,
+  DEFAULT_MARGIN,
+  DEFAULT_STROKE_PROPS,
   IMarginProps,
   IPaintProps,
   IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import { useCallback } from 'react'
+import { ColorMap, getColorMap, type ICmap } from '@/lib/color/colormap'
+import { deepMerge } from '@/lib/deepmerge'
+import { useCallback, useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v12`
-
-const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
+const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v14`
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
 
 export interface IVolcanoSettings {
-  pvalue: {
-    show: boolean
-    threshold: number
-    line: IStrokeProps
+  thresholds: {
+    pvalue: {
+      show: boolean
+      threshold: number
+      line: IStrokeProps
+    }
+    logFc: {
+      show: boolean
+      threshold: number
+    }
   }
-  logFc: {
-    show: boolean
-    threshold: number
-
+  colors: {
+    mode: 'colors' | 'colormap'
     neg: {
       fill: IPaintProps
     }
     pos: {
       fill: IPaintProps
     }
+    gradient: {
+      on: boolean
+    }
+    cmap: ICmap
+    onlyLabeled: boolean
   }
-  margin: IMarginProps
-  //scale: number
-  cmap: string
+  plot: {
+    margin: IMarginProps
+  }
+
   preprocess: {
     applyLog2FC: boolean
     applyMinusLog10P: boolean
   }
   labels: {
     auto: boolean
-    color: { on: boolean }
+    //color: { on: boolean }
     offset: { x: number; y: number }
+
+    connector: {
+      type: 'straight' | 'elbow'
+      stroke: IStrokeProps
+    }
   }
+  dots: { fill: IPaintProps; stroke: IStrokeProps; size: number }
 }
 
 const DEFAULT_SETTINGS: IVolcanoSettings = {
-  pvalue: {
-    show: true,
-    threshold: 0.05,
-    line: { ...DEFAULT_DASH_PROPS, show: true },
+  thresholds: {
+    pvalue: {
+      show: true,
+      threshold: 0.05,
+      line: { ...DEFAULT_DASH_PROPS, show: true },
+    },
+    logFc: {
+      show: true,
+      threshold: 1,
+    },
   },
-  logFc: {
-    show: true,
-    threshold: 1,
 
+  colors: {
+    mode: 'colors',
     neg: {
-      fill: { ...DEFAULT_FILL_PROPS, value: '#0000ff' },
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#0000ff' },
     },
     pos: {
-      fill: { ...DEFAULT_FILL_PROPS, value: '#ff0000' },
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#ff0000' },
     },
+    gradient: { on: true },
+    cmap: { name: 'bwr', reversed: false },
+    onlyLabeled: false,
   },
-  margin: { ...MARGIN },
-  //scale: 1,
-  cmap: 'bwr-v2',
+  plot: {
+    margin: { ...DEFAULT_MARGIN },
+  },
+
   preprocess: {
     applyLog2FC: false,
     applyMinusLog10P: true,
   },
   labels: {
     auto: true,
-    color: { on: false },
+
     offset: { x: 20, y: 20 },
+
+    connector: {
+      type: 'straight',
+      stroke: { ...DEFAULT_STROKE_PROPS, opacity: 0.25 },
+    },
+  },
+  dots: {
+    fill: { ...DEFAULT_FILL_PROPS, opacity: 0.5, value: '#d9d9d9' },
+    stroke: { ...DEFAULT_STROKE_PROPS, show: false },
+    size: 3,
   },
 }
 
@@ -97,12 +135,14 @@ export const useVolcanoSettingsStore = create<IVolcanoSettingsStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      merge: (persisted, current) => deepMerge(current, persisted),
     }
   )
 )
 
 export function useVolcanoSettings(): {
   settings: IVolcanoSettingsStore
+  cmap: ColorMap
   updateSettings: (settings: IVolcanoSettingsStore) => void
   resetSettings: () => void
 } {
@@ -111,12 +151,18 @@ export function useVolcanoSettings(): {
     (state) => state.updateSettings
   )
 
+  const cmap = useMemo(
+    () => getColorMap(settings.colors.cmap),
+    [settings.colors.cmap]
+  )
+
   const resetSettings = useCallback(() => {
     updateSettings({ ...DEFAULT_SETTINGS })
   }, [updateSettings])
 
   return {
     settings,
+    cmap,
     updateSettings,
     resetSettings,
   }

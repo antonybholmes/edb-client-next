@@ -365,12 +365,12 @@ export function DisplayPropsPanel() {
                 title="Color"
                 colors={[
                   {
-                    color: settings.dots.color,
+                    color: settings.dots.value,
                     allowNoColor: false,
                     onColorChange: ({ color }) =>
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.dots.color = color
+                          draft.dots.value = color
                         })
                       ),
                   },

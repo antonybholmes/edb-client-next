@@ -18,7 +18,7 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { useQuery } from '@tanstack/react-query'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
-import { CenterRow } from '@/components/layout/center-row'
+import { CenterCol } from '@/components/layout/center-col'
 import { IS_DEV_MODE } from '@/consts'
 import { useBreakpointSizeObserver } from '@/hooks/resize-observer'
 import { formatString } from '@/lib/text/format-string'
@@ -63,7 +63,7 @@ export function InfoPage({ children }: IChildrenProps) {
           className="w-9/10 md:w-3/4 lg:w-1/2 2xl:w-1/3 mx-auto gap-y-12 mt-16"
         >
           <Card className="text-sm w-full" shadow="xl" rounded="2xl">
-            <VCenterRow className="gap-x-4 py-2">
+            <VCenterRow className="gap-x-4 pt-2">
               <BaseImage
                 src="/favicon.svg"
                 width={512}
@@ -125,7 +125,7 @@ export function InfoPage({ children }: IChildrenProps) {
             <BaseCol className="gap-y-1">
               <p className="font-semibold">{config.name}</p>
               <p>{formatString(config.copyright)}</p>
-              <CenterRow className="gap-x-4 mt-4">
+              <CenterCol className="gap-2 mt-2">
                 <BaseLink
                   href={config.author.github}
                   aria-label="Visit GitHub repository"
@@ -143,7 +143,7 @@ export function InfoPage({ children }: IChildrenProps) {
                 >
                   antonyholmes.dev
                 </ThemeLink>
-              </CenterRow>
+              </CenterCol>
             </BaseCol>
           </Card>
 

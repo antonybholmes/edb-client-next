@@ -7,7 +7,7 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
@@ -20,7 +20,7 @@ import {
   TEXT_SAVE_AS,
 } from '@/consts'
 
-import { FileImageIcon } from '@/icons/file-image-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 
 import { useEffect, useState } from 'react'
 
@@ -40,8 +40,8 @@ import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { FileIcon } from '@/icons/file-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'

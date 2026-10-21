@@ -20,7 +20,7 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 
 import { useContext, useEffect, useState } from 'react'
 
@@ -38,8 +38,8 @@ import { UploadIcon } from '@/icons/upload-icon'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { DeleteIcon } from '@/icons/delete-icon'
-import { FileIcon } from '@/icons/file-icon'
+import { DeleteIcon } from '@/components/icons/computer/delete-icon'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import { getFormattedShape } from '@/lib/dataframe/utils/dataframe-utils'
 
 import { ClientLayout } from '@/app/client-layout'

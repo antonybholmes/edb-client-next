@@ -4,14 +4,13 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/baseui/select'
 
-import { DataFrame } from '@/lib/dataframe/dataframe'
 import { filterNA, subset, zip } from '@/lib/dataframe/utils/dataframe-utils'
-import { range } from '@/lib/math/range'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { LogSpan } from '@/components/log-span'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -119,39 +118,33 @@ export function VolcanoDialog({
       : foldChanges
 
     // label
-    const idxUp = pvalues
-      .map((v, vi) => [v, vi] as [number, number])
-      .filter((v) => v[0] < 0.05 && (foldChanges[v[1]] as number) >= 0)
-      .map((v) => v[1])
-    const idxDown = pvalues
-      .map((v, vi) => [v, vi] as [number, number])
-      .filter((v) => v[0] < 0.05 && (foldChanges[v[1]] as number) < 0)
-      .map((v) => v[1])
+    // const idxUp = pvalues
+    //   .map((v, vi) => [v, vi] as [number, number])
+    //   .filter((v) => v[0] < 0.05 && (foldChanges[v[1]] as number) >= 0)
+    //   .map((v) => v[1])
 
-    const labels = range(foldChanges.length).map(() => 0.5)
+    // const idxDown = pvalues
+    //   .map((v, vi) => [v, vi] as [number, number])
+    //   .filter((v) => v[0] < 0.05 && (foldChanges[v[1]] as number) < 0)
+    //   .map((v) => v[1])
 
-    for (const i of idxUp) {
-      labels[i] = 1
-    }
+    // const labels = range(foldChanges.length).map(() => 0.5)
 
-    for (const i of idxDown) {
-      labels[i] = 0
-    }
+    // for (const i of idxUp) {
+    //   labels[i] = 1
+    // }
 
-    const ids = subset(df.index.strs, idx)
+    // for (const i of idxDown) {
+    //   labels[i] = 0
+    // }
+
+    const labels = subset(df.index.strs, idx)
 
     const logpvalues = data.applyLog10ToPValue
       ? (pvalues as number[]).map((v) =>
           v > 0 ? -Math.log10(v) : MAX_NEG_LOG10_P
         )
       : pvalues
-
-    const vdf = new DataFrame({
-      name: 'Volcano',
-      data: zip(log2foldChanges, logpvalues, labels),
-      index: subset(df.index.values, idx),
-      columns: ['Log2 fold change', '-log10 p-value', 'Label'],
-    })
 
     updateSettings(
       produce(settings, (draft) => {
@@ -161,9 +154,10 @@ export function VolcanoDialog({
     )
 
     const plot = newVolcanoPlot('Volcano', {
-      entries: zip(ids, log2foldChanges, logpvalues).map(
-        ([id, log2fc, logp]) => ({
-          id: id as string,
+      entries: zip(labels, log2foldChanges, logpvalues).map(
+        ([label, log2fc, logp]) => ({
+          id: makeUuid(),
+          label: label as string,
           log2foldChange: log2fc as number,
           logpvalue: logp as number,
         })

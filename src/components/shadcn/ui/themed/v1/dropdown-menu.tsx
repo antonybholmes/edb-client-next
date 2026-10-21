@@ -1,9 +1,9 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { DotFilledIcon } from '@radix-ui/react-icons'
 
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { CheckIcon } from '@/icons/check-icon'
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 import { ROUNDED_CLS } from '@/theme'

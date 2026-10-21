@@ -91,16 +91,12 @@ export function StrokeButton({
 
 function OutlineIcon({ cp }: { cp: IColorPickerProps }) {
   return (
-    <CenterRow className="flex flex-row items-start justify-center relative h-5 w-5 grow-0 shrink-0 ">
-      <Pencil
-        size={16}
-        strokeWidth={1.5}
-        className="z-10 ml-0.5 mt-0.5 fill-white"
-      />
-      <span className="absolute top-1 left-px h-2.5 w-3/5 z-0 border border-foreground rounded-xs"></span>
+    <CenterRow className="flex flex-row items-start justify-center relative aspect-square h-5 w-5 grow-0 shrink-0 ">
+      <Pencil size={14} strokeWidth={2} className="z-10 ml-0.5 fill-white" />
+      <span className="absolute   left-px h-2.5 w-3/5 z-0 border border-foreground rounded-xs"></span>
 
       <span
-        className="absolute bottom-0 h-1.25 w-9/10 z-0 border border-foreground rounded-xs"
+        className="absolute bottom-0 h-1.5 w-9/10 z-0 border border-foreground rounded-xs"
         style={{
           backgroundColor:
             cp.show === undefined || cp.show ? cp.color : 'transparent',
@@ -212,8 +208,7 @@ export function StrokeDropdownMenu({
               <DropdownMenuItem
                 onClick={() => {
                   color0.onColorChange?.({
-                    color: color0.color,
-                    opacity,
+                    ...color0,
                     dasharray: '0',
                     show: true,
                   })
@@ -225,7 +220,7 @@ export function StrokeDropdownMenu({
               <DropdownMenuItem
                 onClick={() => {
                   color0.onColorChange?.({
-                    color: color0.color,
+                    ...color0,
                     opacity,
                     dasharray: '2',
                     show: true,
@@ -238,7 +233,7 @@ export function StrokeDropdownMenu({
               <DropdownMenuItem
                 onClick={() => {
                   color0.onColorChange?.({
-                    color: color0.color,
+                    ...color0,
                     opacity,
                     dasharray: '8',
                     show: true,
@@ -271,6 +266,7 @@ export function ThemeColors({ cp }: { cp: IColorPickerProps }) {
                   presetColor={presetColor}
                   onClick={() => {
                     cp.onColorChange?.({
+                      ...cp,
                       color: presetColor,
                       opacity: 1,
                       show: true,
@@ -310,6 +306,7 @@ export function StandardColors({
                   presetColor={presetColor}
                   onClick={() => {
                     cp.onColorChange?.({
+                      ...cp,
                       color: presetColor,
                       opacity: 1,
                       show: true,
@@ -331,6 +328,7 @@ export function StandardColors({
 
                   onClick={() => {
                     cp.onColorChange?.({
+                      ...cp,
                       color: c.color,
                       opacity: cp.opacity ?? 1,
                       show: true,
@@ -349,8 +347,7 @@ export function StandardColors({
         <DropdownMenuItem
           onClick={() => {
             cp.onColorChange?.({
-              color: cp.color,
-              opacity: cp.opacity,
+              ...cp,
               show: false,
             })
           }}
@@ -376,7 +373,6 @@ export function MoreColors({ cp }: { cp: IColorPickerProps }) {
             cp,
 
             callback: (color) => {
-              console.log('color', color)
               addCustomColor(color.color, color.opacity ?? 1)
               cp.onColorChange?.({
                 ...color,

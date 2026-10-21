@@ -1,9 +1,28 @@
 # Changelog
 
+## 93.2.0 (Oct, 2026)
+
+### Changed
+
+- Fixed volcano not using index col when loading text file.
+- Added empty dataframe and series support.
+- Refined dataframe api.
+- Adding null support to dataframes for missing data.
+- Annotationdataframe now has api to set col and row vars.
+
+
 ## 93.0.0 (Oct, 2026)
 
 ### Changed
 
+- Created stats folder for math functions.
+- Added test for mann-whitney and fixed bug.
+- Volcano now supports margins.
+- Refined volcano UI with support for custom colors or heatmaps and more intuitive button names.
+- Volcano plot order adjusted to put colored dots on top.
+- Volcano now uses colormap. Labelled nodes are drawn on top of others to make visualization better.
+- Added rocket heatmap.
+- Refined volcano UI.
 - Fixing italics etc in some math notation in icons and labels.
 - Added log dialog.
 - Simplified dataframe ui with better typing and use of opt args.

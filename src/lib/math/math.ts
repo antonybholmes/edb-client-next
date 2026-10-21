@@ -1,4 +1,5 @@
 export const PI = Math.PI
+export const TWO_PI = 2 * PI
 export const MAX_SAFE_INTEGER = BigInt(Number.MAX_SAFE_INTEGER)
 
 export const DEG_TO_RAD = PI / 180

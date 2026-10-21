@@ -18,10 +18,10 @@ import {
   TEXT_EXPORT,
 } from '@/consts'
 
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import {
   ResizablePanel,
@@ -42,7 +42,6 @@ import { useSVG } from '@/providers/svg-provider'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
@@ -140,7 +139,7 @@ export function HeatmapPage() {
     openFile(`Z Test`, {
       mode: 'set',
       groupRows,
-      sheets: [table.setName('Z Test') as AnnotationDataFrame],
+      sheets: [table.setName('Z Test')],
     })
   }
 

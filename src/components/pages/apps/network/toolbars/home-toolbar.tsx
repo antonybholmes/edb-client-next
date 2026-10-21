@@ -12,7 +12,7 @@ import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import {
   GroupToggle,
   ToggleGroup,
@@ -62,7 +62,7 @@ export function HomeToolbar() {
             saveAs('network')
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
@@ -75,8 +75,8 @@ export function HomeToolbar() {
             openCustomDialog(NetworkDialog, {})
           }}
         >
-          <PlayIcon variant="app-theme" />
-          {TEXT_PLOT}
+          <PlayIcon variant="app-theme" size={22} />
+          <span>{TEXT_PLOT}</span>
         </ToolbarColSmallButton>
         <ToolbarCol>
           <ToolbarRow>

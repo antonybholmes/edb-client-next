@@ -9,7 +9,7 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
-import { FileImageIcon } from '@/icons/file-image-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 
 import { useEffect, useState } from 'react'
 
@@ -21,6 +21,7 @@ import {
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 import {
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
@@ -29,7 +30,6 @@ import {
   TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
 } from '@/consts'
-import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
@@ -46,10 +46,10 @@ import { ClientLayout } from '@/app/client-layout'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import { BaseRow } from '@/components/layout/base-row'
 import { useToolbarTabs, type ITab } from '@/components/tabs/tab-provider'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/utils/dataframe-utils'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'

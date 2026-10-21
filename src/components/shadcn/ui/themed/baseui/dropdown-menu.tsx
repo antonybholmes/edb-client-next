@@ -1,7 +1,7 @@
 import { Menu as DropdownMenuPrimitive } from '@base-ui/react/menu'
 
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 import { ROUNDED_CLS } from '@/theme'

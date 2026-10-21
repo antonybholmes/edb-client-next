@@ -3,18 +3,18 @@ import { range } from '@/lib/math/range'
 import { makeCell } from './cell'
 
 import { BaseDataFrame, findCol, findRow } from './base-dataframe'
-import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
-import type { Cell, IndexId } from './cell'
 import {
-  Index,
-  makeColumns,
-  makeIndex,
-  Shape,
-  shapesEqual,
-  StringIndex,
-  type IndexFromType,
-} from './index'
-import { DataSeries, Series, type SeriesFromType } from './series'
+  BaseTable,
+  IDataFrameOptions,
+  LocType,
+  shape,
+  TableInput,
+} from './base-table'
+import type { Cell, IndexId } from './cell'
+import { makeColumns, makeIndex, StringIndex } from './data-index'
+import { DataSeries } from './data-series'
+import { Index, Shape, shapesEqual, type IndexFromType } from './index'
+import { Series, type SeriesFromType } from './series'
 
 /**
  * A column oriented dataframe where the data is stored as a map of column name to series.
@@ -35,18 +35,9 @@ export class ColFrame extends BaseDataFrame {
       throw new Error('data must be a non empty array or array of series')
     }
 
-    //let cols: Index | null = null
-
-    // if we supply columns as index clone as is
-
-    // if (columns) {
-    //   if (columns instanceof Index) {
-    //     cols = columns.copy()
-    //   } else {
-    //     // create index
-    //     cols = new DataIndex(columns)
-    //   }
-    // }
+    if (data instanceof BaseTable) {
+      data = data.cols
+    }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
     const isSeries = data.some((d: unknown) => d instanceof Series)
@@ -62,11 +53,13 @@ export class ColFrame extends BaseDataFrame {
 
       if (!columns) {
         columns = new StringIndex(
-          data.map((c: unknown) => (c as Series<Cell>).name)
+          data.map((c: unknown) => (c as Series<Cell, Cell>).name)
         )
       }
 
-      this._data = data.map((c: unknown) => [...(c as Series<Cell>).values])
+      this._data = data.map((c: unknown) => [
+        ...(c as Series<Cell, Cell>).values,
+      ])
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -169,7 +162,7 @@ export class ColFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): Series<Cell> {
+  override col(c: IndexId): Series<Cell, Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -205,7 +198,7 @@ export class ColFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -228,7 +221,7 @@ export class ColFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | Series<Cell>,
+    data: Cell[] | Series<Cell, Cell>,
     opts: { inplace?: boolean } = {}
   ): ColFrame {
     const d = data instanceof Series ? data.values : data
@@ -330,7 +323,7 @@ export class ColFrame extends BaseDataFrame {
     return this._columns
   }
 
-  override get cols(): Series<Cell>[] {
+  override get cols(): Series<Cell, Cell>[] {
     const colNames = this.colNames
 
     return colNames.map(
@@ -532,7 +525,7 @@ export class ColFrame extends BaseDataFrame {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): BaseDataFrame {
+  override copyReplaceData(data: TableInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

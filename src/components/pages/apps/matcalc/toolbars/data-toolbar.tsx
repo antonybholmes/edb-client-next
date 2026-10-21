@@ -315,7 +315,7 @@ export function DataToolbar() {
             const df = (
               sheets[0] as AnnotationDataFrame
             ).copy() as AnnotationDataFrame
-            df.rowObs.setCol('Row Stdev', sd)
+            df.setRowObs('Row Stdev', sd)
 
             //df.setCol('Row Stdev', sd, true)
 

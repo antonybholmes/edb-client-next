@@ -1,6 +1,6 @@
-import { normalDistributionPDF } from './normal-distribution'
 import { iqr } from './quartile'
 import { populationStd } from './stats'
+import { normalDistributionPDF } from './stats/normal-distribution'
 import { sum } from './sum'
 
 const EST_POW = -0.2 //-1 / 5
@@ -62,9 +62,9 @@ export class KDE {
     }
 
     return y.map(
-      yi =>
+      (yi) =>
         this._A *
-        sum(this._x.map(xi => this._kernel((yi - xi) / this._bandwidth)))
+        sum(this._x.map((xi) => this._kernel((yi - xi) / this._bandwidth)))
     )
   }
 }

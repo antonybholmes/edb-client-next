@@ -7,7 +7,9 @@ import { AxisBottomSvg, AxisLeftSvg } from '../../../plot/axes/svg-axis'
 
 import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import {
+  DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
+  IPaintProps,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
 
@@ -16,19 +18,20 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { axisDomainToRangeFunc, axisLength } from '@/components/plot/axes/axis'
 import { useAxis } from '@/components/plot/axes/plot-axes'
+import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgPath } from '@/components/plot/svg-path'
 import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { makeUuid } from '@/lib/id'
+import { clamp } from '@/lib/math/clamp'
 import { ILim } from '@/lib/math/math'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import { useVolcanoContext } from './volcano-provider'
-import { useVolcanoSettings } from './volcano-settings'
-
-const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
+import { IVolcanoSettings, useVolcanoSettings } from './volcano-settings'
 
 export interface IDisplayAxis {
   name: string
@@ -61,10 +64,8 @@ export interface IScatterDisplayOptions {
   //cmap: ColorMapName
   //scale: number
 
-  dots: {
-    color: string
+  dots: IPaintProps & {
     size: number
-    opacity: number
   }
 
   labels: {
@@ -83,8 +84,9 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
   },
   padding: 10,
   dots: {
+    ...DEFAULT_FILL_PROPS,
     size: 2,
-    color: COLOR_BLACK,
+
     opacity: 0.75,
   },
   //cmap: 'bwr-v2',
@@ -176,8 +178,9 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
 
   //scale: 1,
   dots: {
+    ...DEFAULT_FILL_PROPS,
     size: 3,
-    color: '#d9d9d9',
+
     opacity: 0.75,
   },
   labels: {
@@ -196,8 +199,6 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
 interface IProps {
   size?: string
   sizeFunc?: (x: number) => number
-
-  //displayOptions?: IVolcanoDisplayOptions
 }
 
 export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
@@ -219,7 +220,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
   const { ref: svgRef } = useSVG()
 
-  const { settings } = useVolcanoSettings()
+  const { settings, cmap } = useVolcanoSettings()
 
   const displayOptions: IVolcanoDisplayOptions = plot
     ? (plot! as IVolcanoPlot).props
@@ -228,49 +229,97 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
   const { showCrosshair, hideCrosshair } = useCrosshair()
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
-    ? -Math.log10(settings.pvalue.threshold)
-    : settings.pvalue.threshold
+    ? -Math.log10(settings.thresholds.pvalue.threshold)
+    : settings.thresholds.pvalue.threshold
 
-  function getColor(
+  const labelSet = useMemo(
+    () => new Set<string>(displayLabels.map((x) => x.toLowerCase())),
+    [displayLabels]
+  )
+
+  const points = useMemo(
+    () =>
+      (plot?.volcano.entries ?? []).map((e, i) => ({
+        index: i,
+        x: e.log2foldChange,
+        y: e.logpvalue,
+      })),
+
+    [plot?.volcano.entries]
+  )
+
+  const { minX, maxX } = useMemo(() => {
+    const xs = points.map((p) => p.x)
+    return {
+      minX: Math.min(...xs),
+      maxX: Math.max(...xs),
+    }
+  }, [points])
+
+  function dotIsColored(
     logFc: number,
     logP: number,
-    isLabel: boolean,
-    props: IVolcanoDisplayOptions
-  ) {
-    let color = props.dots.color
+    isLabeled: boolean
+  ): boolean {
+    // if we are only showing colored dots for labeled points
+    // and this point is not labeled, it should not be colored
+    if (settings.colors.onlyLabeled && !isLabeled) {
+      return false
+    }
 
-    if (settings.labels.color.on) {
-      if (isLabel) {
-        color =
-          logFc < 0
-            ? settings.logFc.neg.fill.value
-            : settings.logFc.pos.fill.value
+    if (!settings.thresholds.pvalue.show && !settings.thresholds.logFc.show) {
+      return true
+    }
+
+    if (settings.thresholds.pvalue.show && settings.thresholds.logFc.show) {
+      return (
+        logP > thresholdLogP &&
+        Math.abs(logFc) > settings.thresholds.logFc.threshold
+      )
+    }
+
+    return (
+      (settings.thresholds.pvalue.show && logP > thresholdLogP) ||
+      (settings.thresholds.logFc.show &&
+        Math.abs(logFc) > settings.thresholds.logFc.threshold)
+    )
+  }
+
+  function getDotColor(
+    logFc: number,
+    logP: number,
+    isLabeled: boolean
+  ): { color: string; isColored: boolean } {
+    let color = settings.dots.fill.value
+    const isColored = dotIsColored(logFc, logP, isLabeled)
+
+    if (settings.colors.mode === 'colormap') {
+      // goes from -x to x so only care about the positive side for color scaling
+      const max = logFc > 0 ? maxX : Math.abs(minX)
+
+      // each side of the x-axis is normalized separately for color scaling
+      const normX = settings.colors.gradient.on
+        ? clamp(Math.abs(logFc) / max, { min: 0, max: 0.5 })
+        : 0.5
+
+      const highlightColor = cmap.getHexColor(
+        logFc > 0 ? 0.5 + normX : 0.5 - normX
+      )
+
+      if (isColored) {
+        color = highlightColor
       }
     } else {
-      if (settings.pvalue.show && settings.logFc.show) {
-        if (
-          logP > thresholdLogP &&
-          Math.abs(logFc) > settings.logFc.threshold
-        ) {
-          color =
-            logFc < 0
-              ? settings.logFc.neg.fill.value
-              : settings.logFc.pos.fill.value
-        }
-      } else {
-        if (
-          (settings.pvalue.show && logP > thresholdLogP) ||
-          (settings.logFc.show && Math.abs(logFc) > settings.logFc.threshold)
-        ) {
-          color =
-            logFc < 0
-              ? settings.logFc.neg.fill.value
-              : settings.logFc.pos.fill.value
+      if (isColored) {
+        if (logFc > 0) {
+          color = settings.colors.pos.fill.value
+        } else {
+          color = settings.colors.neg.fill.value
         }
       }
     }
 
-    return color
+    return { color, isColored }
   }
 
   function handleVariantEnter(row: number, p: IPos) {
@@ -281,22 +330,13 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
       screenPos: screenP,
       content: (
         <>
-          <span className="font-semibold">{`${plot.volcano.entries[row]!.id}`}</span>
+          <span className="font-semibold">{`${plot.volcano.entries[row]!.label}`}</span>
           <span>{`${xax.title}: ${cellStr(points[row]!.x)}`}</span>
           <span>{`${yax.title}: ${cellStr(points[row]!.y)}`}</span>
         </>
       ),
     })
   }
-
-  const points = useMemo(
-    () =>
-      (plot?.volcano.entries ?? []).map((e, i) => ({
-        x: e.log2foldChange,
-        y: e.logpvalue,
-      })),
-    [plot?.volcano.entries]
-  )
 
   const { svg, width, height } = useMemo(() => {
     if (!plot || !xax || !yax) {
@@ -305,16 +345,51 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const innerWidth = axisLength(xax)
     const innerHeight = axisLength(yax)
-    const width = innerWidth + MARGIN.left + MARGIN.right
-    const height = innerHeight + MARGIN.top + MARGIN.bottom
+    const width =
+      innerWidth + settings.plot.margin.left + settings.plot.margin.right
+    const height =
+      innerHeight + settings.plot.margin.top + settings.plot.margin.bottom
 
-    // matching is case insensitive
-    const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
+    const renderSortedPoints = (plot?.volcano.entries ?? [])
+      .map((entry, i) => {
+        const p = points[i]!
+        const entryIsLabel = labelSet.has(entry.label.toLowerCase())
 
-    const labelIdx = (plot?.volcano.entries ?? [])
-      .map((v, vi) => ({ index: vi, value: v.id.toLowerCase() }))
-      .filter((v) => labelSet.has(v.value))
-      .map((v) => v.index)
+        const { isColored: isColoredEntry, color } = getDotColor(
+          p.x,
+          p.y,
+          entryIsLabel
+        )
+
+        return {
+          ...p,
+          color,
+          isColored: isColoredEntry,
+          isLabel: entryIsLabel,
+        }
+      })
+      .sort((a, b) => {
+        // if a is a label and b is not, it should come last
+        // so that labels are rendered on top of non-label points
+        if (a.isLabel && !b.isLabel) {
+          return 1
+        }
+
+        // if b is a label and a is not, it should come first
+        if (!a.isLabel && b.isLabel) {
+          return -1
+        }
+
+        // if neither are labels push colored points last
+        // so they are rendered on top of non-colored points
+        if (a.isColored && !b.isColored) {
+          return 1
+        }
+        if (!a.isColored && b.isColored) {
+          return -1
+        }
+        return 0
+      })
 
     const xaf = axisDomainToRangeFunc(xax!)
     const yaf = axisDomainToRangeFunc(yax!)
@@ -325,39 +400,31 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const svg = (
       <>
-        <SvgMargin margin={MARGIN}>
-          {points.map((p, xi) => {
+        <SvgMargin margin={settings.plot.margin}>
+          {renderSortedPoints.map((p) => {
             const x1 = xaf(p.x)
             const y1 = yaf(p.y)
-            const r = plot.volcano.entries[xi]!.size
-              ? sizeFunc(plot.volcano.entries[xi]!.size)
-              : displayOptions.dots.size
-
-            const color = getColor(
-              p.x,
-              p.y,
-              labelSet.has(plot.volcano.entries[xi]!.id.toLowerCase()),
-              displayOptions
-            )
+            const entry = plot.volcano.entries[p.index]!
+            const r = entry.size ? sizeFunc(entry.size) : settings.dots.size
 
             return (
-              <circle
+              <SvgCircle
                 cx={x1}
                 cy={y1}
                 r={r}
-                fill={color}
-                opacity={displayOptions.dots.opacity}
-                key={xi}
-
+                fill={p.color}
+                sp={settings.dots.stroke}
+                key={p.index}
                 onPointerEnter={() =>
-                  handleVariantEnter(xi, {
-                    x: x1 + MARGIN.left,
-                    y: y1 + MARGIN.top,
+                  handleVariantEnter(p.index, {
+                    x: x1 + settings.plot.margin.left,
+                    y: y1 + settings.plot.margin.top,
                   })
                 }
                 onPointerLeave={hideCrosshair}
                 onDoubleClick={() => {
-                  const label = plot.volcano.entries[xi]!.id
+                  const label = entry.label
+
                   if (
                     displayLabels
                       .map((x) => x.toLowerCase())
@@ -369,6 +436,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
                       )
                     )
                   } else {
+                    console.log('Adding label:', label)
                     setLabels([...displayLabels, label].sort())
                   }
                 }}
@@ -377,67 +445,90 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           })}
         </SvgMargin>
 
-        <SvgMargin margin={MARGIN}>
-          {labelIdx.map((i) => {
-            const p = points[i]!
-            const x1 = xaf(p.x)
-            const y1 = yaf(p.y)
-            const r = plot.volcano.entries[i]!.size
-              ? sizeFunc(plot.volcano.entries[i]!.size)
-              : displayOptions.dots.size
+        <SvgMargin margin={settings.plot.margin} id="labels">
+          {renderSortedPoints
+            .filter((idx) => idx.isLabel)
+            .map(({ index }) => {
+              const p = points[index]!
+              const x1 = xaf(p.x)
+              const y1 = yaf(p.y)
+              const entry = plot.volcano.entries[index]!
 
-            return (
-              <g key={`label-group-${i}-${renderId.current}`}>
-                <SvgLine
-                  id={`label-line-${i}`}
-                  x1={x1 + (p.x >= 0 ? r + 1 : -(r + 1))}
-                  y1={y1 - r - 1}
-                  x2={
-                    x1 +
-                    (p.x >= 0
-                      ? r + settings.labels.offset.x - 1
-                      : -(r + settings.labels.offset.x - 1))
+              const r = entry.size ? sizeFunc(entry.size) : settings.dots.size
+
+              return (
+                <g key={`label-group-${index}-${renderId.current}`}>
+                  {/* <SvgCircle
+                  cx={x1}
+                  cy={y1}
+                  r={r}
+                  fill={color}
+                  key={i}
+                  onPointerEnter={() =>
+                    handleVariantEnter(i, {
+                      x: x1 + settings.plot.margin.left,
+                      y: y1 + settings.plot.margin.top,
+                    })
                   }
-                  y2={y1 - r - settings.labels.offset.y + 1}
-                  s={displayOptions.labels.line}
-                />
-                <SvgText
-                  id={`label-text-${i}`}
-                  x={
-                    x1 +
-                    (p.x >= 0
-                      ? r + settings.labels.offset.x
-                      : -(r + settings.labels.offset.x))
-                  }
-                  y={y1 - r - settings.labels.offset.y}
-                  fill={displayOptions.labels.color}
-                  textAnchor={p.x >= 0 ? 'start' : 'end'}
-                >
-                  {plot.volcano.entries[i]!.id}
-                </SvgText>
-              </g>
-            )
-          })}
+                  onPointerLeave={hideCrosshair}
+                  onDoubleClick={() => {
+                    const label = entry.label
+                    if (
+                      displayLabels
+                        .map((x) => x.toLowerCase())
+                        .includes(label.toLowerCase())
+                    ) {
+                      setLabels(
+                        displayLabels.filter(
+                          (x) => x.toLowerCase() !== label.toLowerCase()
+                        )
+                      )
+                    } else {
+                      setLabels([...displayLabels, label].sort())
+                    }
+                  }}
+                /> */}
+
+                  {settings.labels.connector.type === 'elbow'
+                    ? elbowConnector(index, p, r, xaf, yaf, settings)
+                    : straightConnector(index, p, r, xaf, yaf, settings)}
+
+                  <SvgText
+                    id={`label-text-${index}`}
+                    x={
+                      x1 +
+                      (p.x >= 0
+                        ? settings.labels.offset.x + 2
+                        : -settings.labels.offset.x - 2)
+                    }
+                    y={y1 - settings.labels.offset.y}
+                    fill={displayOptions.labels.color}
+                    textAnchor={p.x >= 0 ? 'start' : 'end'}
+                  >
+                    {entry.label}
+                  </SvgText>
+                </g>
+              )
+            })}
         </SvgMargin>
 
-        {settings.pvalue.line.show && (
-          <SvgMargin margin={MARGIN}>
+        {settings.thresholds.pvalue.line.show && (
+          <SvgMargin margin={settings.plot.margin}>
             <SvgLine
               x1={xaf(xax!.domain[0])}
               y1={yThreshold}
               x2={xaf(xax!.domain[1])}
               y2={yThreshold}
-              s={settings.pvalue.line}
+              s={settings.thresholds.pvalue.line}
             />
           </SvgMargin>
         )}
 
         {displayOptions.border.show && (
-          <SvgMargin margin={MARGIN}>
+          <SvgMargin margin={settings.plot.margin}>
             <SvgRect
               width={innerWidth}
               height={innerHeight}
-
               sp={displayOptions.border}
             />
           </SvgMargin>
@@ -445,22 +536,24 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
         <AxisLeftSvg
           ax={yax}
-          pos={{ x: MARGIN.left, y: MARGIN.top }}
+          pos={{ x: settings.plot.margin.left, y: settings.plot.margin.top }}
           tickSize={displayOptions.axes.yaxis.tickSize}
           strokeWidth={displayOptions.axes.yaxis.stroke.width}
-
           color={displayOptions.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
           ax={xax}
-          pos={{ x: MARGIN.left, y: MARGIN.top + innerHeight }}
+          pos={{
+            x: settings.plot.margin.left,
+            y: settings.plot.margin.top + innerHeight,
+          }}
           tickSize={displayOptions.axes.xaxis.tickSize}
           strokeWidth={displayOptions.axes.xaxis.stroke.width}
-
           color={displayOptions.axes.xaxis.stroke.value}
         />
       </>
     )
+
     return { svg, width, height }
   }, [
     plot,
@@ -471,17 +564,10 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     displayLabels,
     sizeFunc,
     settings,
+    labelSet,
   ])
 
-  return (
-    <SvgZoomCanvas
-      size={{ w: width, h: height }}
-
-      //shapeRendering={SVG_CRISP_EDGES}
-    >
-      {svg}
-    </SvgZoomCanvas>
-  )
+  return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }
 
 export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
@@ -489,5 +575,67 @@ export function VolcanoPlotSvg({ sizeFunc = (x: number) => x }: IProps) {
     <CrosshairProvider>
       <VolcanoPlotContent sizeFunc={sizeFunc} />
     </CrosshairProvider>
+  )
+}
+
+function straightConnector(
+  index: number,
+  p: IPos,
+  r: number,
+  xaf: (x: number) => number,
+  yaf: (y: number) => number,
+  settings: IVolcanoSettings
+) {
+  const x1 = xaf(p.x)
+  const y1 = yaf(p.y)
+
+  const angle = Math.atan2(settings.labels.offset.y, settings.labels.offset.x)
+
+  const cx = Math.cos(angle) * (r + 2)
+  const cy = Math.sin(angle) * (r + 2)
+
+  return (
+    <SvgLine
+      id={`label-line-${index}`}
+      x1={x1 + (p.x >= 0 ? cx : -cx)}
+      y1={y1 - cy}
+      x2={
+        x1 + (p.x >= 0 ? settings.labels.offset.x : -settings.labels.offset.x)
+      }
+      y2={y1 - settings.labels.offset.y}
+      s={settings.labels.connector.stroke}
+    />
+  )
+}
+
+function elbowConnector(
+  index: number,
+  p: IPos,
+  r: number,
+  xaf: (x: number) => number,
+  yaf: (y: number) => number,
+  settings: IVolcanoSettings
+) {
+  const x1 = xaf(p.x)
+  const y1 = yaf(p.y)
+
+  const xs = x1 + (p.x >= 0 ? r + 2 : -(r + 2))
+  const ys = y1
+
+  const x2 =
+    x1 + (p.x >= 0 ? settings.labels.offset.x : -settings.labels.offset.x)
+
+  const y2 = y1 - settings.labels.offset.y
+
+  const midX = (xs + x2) / 2
+
+  const pathStr = `M ${xs} ${ys} L ${midX} ${ys} L ${midX} ${y2} L ${x2} ${y2}`
+
+  return (
+    <SvgPath
+      id={`label-line-${index}`}
+      d={pathStr}
+      sp={settings.labels.connector.stroke}
+    />
   )
 }

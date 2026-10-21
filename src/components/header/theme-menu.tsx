@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
+import { ComputerIcon } from '@/components/icons/computer/computer'
 import { SunIcon } from '@/components/icons/sun-icon'
-import { ComputerIcon } from '@/icons/computer'
 import { MoonIcon } from '@/icons/moon-icon'
 import { Button } from '@/themed/baseui/button'
 

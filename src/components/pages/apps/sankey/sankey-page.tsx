@@ -22,11 +22,11 @@ import {
   TEXT_SAVE_TABLE,
 } from '@/consts'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileIcon } from '@/icons/file-icon'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import {
   ResizablePanel,
@@ -41,7 +41,7 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
@@ -55,7 +55,6 @@ import { useHistory } from '../matcalc/history/history-provider/history-provider
 import { useSave } from '../matcalc/hooks/save'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
@@ -160,7 +159,7 @@ export function SankeyPage() {
     const table = new DataFrameReader().indexCols(0).read(lines)
 
     openFile(`Sankey Test`, {
-      sheets: [table.setName('Sankey Test') as AnnotationDataFrame],
+      sheets: [table.setName('Sankey Test')],
     })
   }
 

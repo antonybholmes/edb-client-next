@@ -82,7 +82,7 @@ export function drawUmap(
         const x1 = xaf(p.x)
         const y1 = yaf(p.y)
 
-        let color: string = displayProps.dots.color
+        let color: string = displayProps.dots.value
 
         //const hueIndex = xi % hue.length
 

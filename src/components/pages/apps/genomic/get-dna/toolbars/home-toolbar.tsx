@@ -7,7 +7,7 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 
 import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { fetchDNA, IDNA } from '@/lib/genomic/dna'

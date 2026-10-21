@@ -14,7 +14,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VolcanoDialog } from '../volcano-dialog'
 
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 
 export function HomeToolbar() {
@@ -35,7 +35,7 @@ export function HomeToolbar() {
                   if (!success) {
                     return
                   }
-                  openDataFrames(files, { indexCols: 0 })
+                  openDataFrames(files, { indexCols: 1 })
                 })
               },
             })
@@ -48,7 +48,7 @@ export function HomeToolbar() {
             saveAs('volcano')
           }}
         >
-          <DownloadImageIcon />
+          <DownloadIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

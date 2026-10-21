@@ -2,18 +2,12 @@ import { range } from '@/lib/math/range'
 import { BaseDataFrame, findCol, findCols, findRow } from './base-dataframe'
 import { makeCell } from './cell'
 
-import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import { IDataFrameOptions, LocType, shape, TableInput } from './base-table'
 import type { Cell, IndexId } from './cell'
-import {
-  DataIndex,
-  Index,
-  makeColumns,
-  makeIndex,
-  shapesEqual,
-  type IndexFromType,
-  type Shape,
-} from './index'
-import { DataSeries, Series, type SeriesFromType } from './series'
+import { DataIndex, makeColumns, makeIndex } from './data-index'
+import { DataSeries } from './data-series'
+import { Index, shapesEqual, type IndexFromType, type Shape } from './index'
+import { Series, type SeriesFromType } from './series'
 
 export class DataFrame extends BaseDataFrame {
   _index: Index<Cell>
@@ -121,7 +115,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): Series<Cell> {
+  override col(c: IndexId): Series<Cell, Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -160,7 +154,7 @@ export class DataFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -175,7 +169,7 @@ export class DataFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | Series<Cell>,
+    data: Cell[] | Series<Cell, Cell>,
     opts: { inplace?: boolean } = {}
   ): DataFrame {
     const { inplace = true } = opts
@@ -285,7 +279,7 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): Series<Cell>[] {
+  override get cols(): Series<Cell, Cell>[] {
     return range(this.shape[1]).map(
       (c: number) =>
         new DataSeries(
@@ -302,10 +296,6 @@ export class DataFrame extends BaseDataFrame {
       this._index.length,
       this._columns.length, // ._data.length > 0 ? this._data[0]!.length : 0,
     ]
-  }
-
-  override get length(): number {
-    return this.shape[0] * this.shape[1]
   }
 
   override get values(): Cell[][] {
@@ -401,7 +391,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): DataFrame {
+  override copyReplaceData(data: TableInput): DataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

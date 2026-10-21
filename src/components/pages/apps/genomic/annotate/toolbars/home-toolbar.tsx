@@ -1,6 +1,6 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { useGenomes } from '@/components/edb/genome'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import { openFilesDialog } from '@/components/pages/open-files'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'

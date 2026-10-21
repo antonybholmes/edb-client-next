@@ -3,7 +3,7 @@ import {
   API_PATHWAY_COLLECTIONS_URL,
   API_PATHWAY_GENES_URL,
 } from '@/components/edb/edb'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import {
   ICollection,

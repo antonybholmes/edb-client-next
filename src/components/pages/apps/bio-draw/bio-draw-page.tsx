@@ -7,7 +7,7 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
-import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
+import { ArrowRightArrowLeftIcon } from '@/components/icons/arrows/arrow-right-arrow-left-icon'
 import { getDataFrameInfo } from '@/lib/dataframe/utils/dataframe-utils'
 
 import { useEffect, useState } from 'react'
@@ -29,6 +29,8 @@ import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 
+import { FileIcon } from '@/components/icons/computer/file-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import {
@@ -36,8 +38,6 @@ import {
   ToggleButtonTriggers,
 } from '@/components/toggle-buttons'
 import { ExportIcon } from '@/icons/export-icon'
-import { FileIcon } from '@/icons/file-icon'
-import { FileImageIcon } from '@/icons/file-image-icon'
 import { SaveIcon } from '@/icons/save-icon'
 import { BaseCol } from '@/layout/base-col'
 import { BaseRow } from '@/layout/base-row'
@@ -60,7 +60,7 @@ import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { ClientLayout } from '@/app/client-layout'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 import { useAppInfo } from '@/components/edb/edb-settings'

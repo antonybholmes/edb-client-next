@@ -2,7 +2,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { useEffect, useState } from 'react'
-import { CloseIcon } from '../icons/close-icon'
+import { CloseIcon } from '../icons/computer/close-icon'
 import { HCenterRow } from '../layout/h-center-row'
 import { VCenterRow } from '../layout/v-center-row'
 

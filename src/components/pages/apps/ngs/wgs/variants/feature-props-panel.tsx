@@ -41,12 +41,6 @@ export function FeaturePropsPanel() {
         <TabsContent value="colormap">
           <ColormapPropsPanel />
         </TabsContent>
-
-        {/* <TabsList className="py-1">
-          <TabsTrigger value="colormap" className="grow" variant="sidebar">
-            Colormap
-          </TabsTrigger>
-        </TabsList> */}
       </Tabs>
       <OutlookTabs id="wgs-variants-feature-props-panel" className="pb-1" />
     </BaseCol>

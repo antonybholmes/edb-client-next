@@ -7,12 +7,12 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
 import { TEXT_DOWNLOAD_AS_PNG, TEXT_OPEN_FILE } from '@/consts'
 
-import { FileImageIcon } from '@/icons/file-image-icon'
+import { FileImageIcon } from '@/components/icons/computer/file-image-icon'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 

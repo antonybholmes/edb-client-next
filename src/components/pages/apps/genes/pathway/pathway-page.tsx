@@ -18,7 +18,7 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { OpenIcon } from '@/icons/open-icon'
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
@@ -39,7 +39,7 @@ import { useEffect, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { FileIcon } from '@/icons/file-icon'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'

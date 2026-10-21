@@ -18,12 +18,11 @@ import {
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 
-import { FileIcon } from '@/icons/file-icon'
+import { FileIcon } from '@/components/icons/computer/file-icon'
 import {
   AnnotationDataFrame,
   type ISharedAnnotationDataFrame,
 } from '@/lib/dataframe/annotation-dataframe'
-import { DataFrame } from '@/lib/dataframe/dataframe'
 import { friendlyFilename } from '@/lib/path'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -40,6 +39,7 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { ColDataFrame } from '@/lib/dataframe/col-dataframe'
 import { formatString } from '@/lib/text/format-string'
 import { useFooter } from '@/providers/footer-provider'
 import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
@@ -92,12 +92,12 @@ export function TablePage() {
       if (sharedData) {
         const parsedData: ISharedAnnotationDataFrame = JSON.parse(sharedData)
 
-        const rowObs = new DataFrame({
+        const rowObs = new ColDataFrame({
           data: parsedData.rowObs.data,
           columns: parsedData.rowObs.columns,
         })
 
-        const colVars = new DataFrame({
+        const colVars = new ColDataFrame({
           data: parsedData.colVars.data,
           columns: parsedData.colVars.columns,
         })

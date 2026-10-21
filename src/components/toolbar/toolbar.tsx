@@ -11,6 +11,7 @@ import { type IAppInfo } from '@/lib/app-info'
 
 import type { TabsProps } from '@radix-ui/react-tabs'
 
+import { ChevronRightIcon } from '@/components/icons/arrows/chevron-right-icon'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -24,7 +25,6 @@ import {
   DropdownMenuTrigger,
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import { SplitIcon } from '@/icons/split-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { Button } from '@/themed/baseui/button'

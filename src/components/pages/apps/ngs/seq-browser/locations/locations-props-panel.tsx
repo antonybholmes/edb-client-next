@@ -1,10 +1,10 @@
+import { OpenIcon } from '@/components/icons/computer/open-icon'
 import {
   onTextFileChange,
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { TEXT_OK } from '@/consts'
-import { OpenIcon } from '@/icons/open-icon'
 import { PlusIcon } from '@/icons/plus-icon'
 import { IconButton } from '@/themed/icon-button'
 import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
@@ -14,7 +14,7 @@ import { downloadJson } from '@/lib/download-utils'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { SortableItem } from '@/components/sortable-item'

@@ -7,7 +7,7 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react'
-import { CloseIcon } from './icons/close-icon'
+import { CloseIcon } from './icons/computer/close-icon'
 
 export const CONTAINER_CLS = cn(
   'flex flex-row h-button-md px-1 gap-x-2 overflow-hidden justify-between disabled:cursor-not-allowed disabled:opacity-50 rounded-theme ring-inset',

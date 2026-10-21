@@ -2,33 +2,22 @@ import { vfill, vfill2d } from '../fill'
 import { BaseDataFrame, findCol, findRow } from './base-dataframe'
 import {
   BaseTable,
-  DataFrameInput,
   DEFAULT_COLUMN_NAMES,
   DEFAULT_SHEET_NAME,
   findInSeries,
   IDataFrameOptions,
   LocType,
   shape,
+  TableInput,
 } from './base-table'
 import { getExcelColName } from './cell'
 import { ColDataFrame } from './col-dataframe'
 
 import type { Cell, IndexId } from './cell'
-import {
-  DataIndex,
-  Index,
-  makeColumns,
-  makeIndex,
-  shapesEqual,
-  type IndexFromType,
-  type Shape,
-} from './index'
-import {
-  DataSeries,
-  DEFAULT_INDEX_NAME,
-  Series,
-  type SeriesFromType,
-} from './series'
+import { DataIndex, makeColumns, makeIndex } from './data-index'
+import { DataSeries } from './data-series'
+import { Index, shapesEqual, type IndexFromType, type Shape } from './index'
+import { DEFAULT_INDEX_NAME, Series, type SeriesFromType } from './series'
 
 export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
   rowObs?: BaseDataFrame | undefined
@@ -90,6 +79,48 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.name
   }
 
+  /**
+   * Sets meta data for columns in the dataframe.
+   *
+   * @param col The column identifier in the colVars table to set
+   * @param data The data to set for the specified column
+   * @param opts Options for setting the column, including whether to do it inplace
+   * @returns The updated AnnotationDataFrame instance.
+   */
+  setColVar(
+    col: IndexId,
+    data: SeriesFromType,
+    opts?: { inplace?: boolean }
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts ?? {}
+    const df = inplace ? this : this.copy()
+
+    df._colVars.setCol(col, data)
+
+    return df
+  }
+
+  /**
+   * Sets meta data for rows in the dataframe.
+   *
+   * @param row The row identifier in the rowObs table to set
+   * @param data The data to set for the specified row
+   * @param opts Options for setting the row, including whether to do it inplace
+   * @returns The updated AnnotationDataFrame instance.
+   */
+  setRowObs(
+    row: IndexId,
+    data: SeriesFromType,
+    opts?: { inplace?: boolean }
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts ?? {}
+    const df = inplace ? this : this.copy()
+
+    df._rowObs.setCol(row, data)
+
+    return df
+  }
+
   override setCol(
     col: IndexId,
     data: SeriesFromType,
@@ -107,7 +138,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(col: IndexId): Series<Cell> {
+  override col(col: IndexId): Series<Cell, Cell> {
     const colData = this._colVars.col(DEFAULT_COLUMN_NAMES)
 
     const colIdx = findInSeries(colData, col)
@@ -141,7 +172,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.get(rowIdx, colIdx)
   }
 
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     // col 0 of row meta data is always the index label
     // so we can use that to find the row index
     // then we can just return the row from the main dataframe
@@ -231,12 +262,12 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const df = inplace ? this : this.copy()
 
     df._data.setColNames(index)
-    df.colVars.setCol(0, index)
+    df._colVars.setCol(0, index)
 
     return df
   }
 
-  override get cols(): readonly Series<Cell>[] {
+  override get cols(): readonly Series<Cell, Cell>[] {
     return this._data.cols
   }
 
@@ -295,7 +326,9 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override rowApply(f: (row: Cell[], index: number) => Cell): Series<Cell> {
+  override rowApply(
+    f: (row: Cell[], index: number) => Cell
+  ): Series<Cell, Cell> {
     return this._data.rowApply(f)
   }
 
@@ -315,7 +348,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.max()
   }
 
-  override get t(): BaseDataFrame {
+  override get t(): AnnotationDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.t.values,
@@ -339,7 +372,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copyReplaceData(data: DataFrameInput): AnnotationDataFrame {
+  override copyReplaceData(data: TableInput): AnnotationDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
