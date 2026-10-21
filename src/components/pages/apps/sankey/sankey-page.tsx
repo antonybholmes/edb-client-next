@@ -55,7 +55,6 @@ import { useHistory } from '../matcalc/history/history-provider/history-provider
 import { useSave } from '../matcalc/hooks/save'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
@@ -160,7 +159,7 @@ export function SankeyPage() {
     const table = new DataFrameReader().indexCols(0).read(lines)
 
     openFile(`Sankey Test`, {
-      sheets: [table.setName('Sankey Test') as AnnotationDataFrame],
+      sheets: [table.setName('Sankey Test')],
     })
   }
 

@@ -45,7 +45,6 @@ import { UploadIcon } from '@/icons/upload-icon'
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { type ITab } from '@/components/tabs/tab-provider'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
@@ -267,7 +266,7 @@ export function MatcalcPage() {
     openFile(`Z Test`, {
       //mode: 'append',
       groupRows,
-      sheets: [table.setName('Z Test') as AnnotationDataFrame],
+      sheets: [table.setName('Z Test')],
     })
   }
 
@@ -281,11 +280,11 @@ export function MatcalcPage() {
     //resolve({ ...table, name: file.name })
 
     // openBranch(`Load "Deseq Test"`, [
-    //   table.setName('Deseq Test') as AnnotationDataFrame,
+    //   table.setName('Deseq Test'),
     // ])
 
     openFile(`Deseq Test`, {
-      sheets: [table.setName('Deseq Test') as AnnotationDataFrame],
+      sheets: [table.setName('Deseq Test')],
     })
   }
 
@@ -299,11 +298,11 @@ export function MatcalcPage() {
     //resolve({ ...table, name: file.name })
 
     // openBranch(`Load "Deseq Test"`, [
-    //   table.setName('Deseq Test') as AnnotationDataFrame,
+    //   table.setName('Deseq Test') ,
     // ])
 
     openFile(`GSEA Bubble`, {
-      sheets: [table.setName('GSEA Bubble') as AnnotationDataFrame],
+      sheets: [table.setName('GSEA Bubble')],
     })
   }
 
@@ -315,7 +314,7 @@ export function MatcalcPage() {
     const table = new DataFrameReader().read(lines)
 
     openFile(`Sankey Test`, {
-      sheets: [table.setName('Sankey Test') as AnnotationDataFrame],
+      sheets: [table.setName('Sankey Test')],
     })
   }
 
@@ -327,7 +326,7 @@ export function MatcalcPage() {
     const table = new DataFrameReader().indexCols(0).read(lines)
 
     openFile(`Test locations`, {
-      sheets: [table.setName('Test Locations') as AnnotationDataFrame],
+      sheets: [table.setName('Test Locations')],
     })
   }
 
@@ -339,7 +338,7 @@ export function MatcalcPage() {
     const table = new DataFrameReader().read(lines)
 
     openFile(`Gene Test`, {
-      sheets: [table.setName('Gene Test') as AnnotationDataFrame],
+      sheets: [table.setName('Gene Test')],
     })
   }
 
@@ -351,7 +350,7 @@ export function MatcalcPage() {
     const table = new DataFrameReader().read(lines)
 
     openFile(`Box Test`, {
-      sheets: [table.setName('Box Test') as AnnotationDataFrame],
+      sheets: [table.setName('Box Test')],
     })
   }
 
@@ -379,7 +378,7 @@ export function MatcalcPage() {
     openFile(`Ext GSEA Test`, {
       groupRows,
       genesets,
-      sheets: [table.setName('Ext GSEA Test') as AnnotationDataFrame],
+      sheets: [table.setName('Ext GSEA Test')],
     })
   }
 

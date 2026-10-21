@@ -56,7 +56,6 @@ import { useSVG } from '@/providers/svg-provider'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
@@ -216,7 +215,7 @@ export function GseaBubblePage() {
     const table = new DataFrameReader().indexCols(1).read(lines)
 
     openFile(`GSEA Bubble Test`, {
-      sheets: [table.setName('GSEA Bubble Test') as AnnotationDataFrame],
+      sheets: [table.setName('GSEA Bubble Test')],
       mode: 'set',
     })
   }

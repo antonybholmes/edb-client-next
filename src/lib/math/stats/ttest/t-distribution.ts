@@ -1,3 +1,7 @@
+import { PI, TWO_PI } from '../../math'
+
+const G = 7
+
 // Lanczos approximation (g = 7, n = 9)
 const LANCZOS = [
   0.99999999999980993, 676.5203681218851, -1259.1392167224028,
@@ -9,19 +13,19 @@ const LANCZOS = [
 export function lnGamma(x: number): number {
   if (x < 0.5) {
     // reflection formula
-    return Math.log(Math.PI / Math.sin(Math.PI * x)) - lnGamma(1 - x)
+    return Math.log(PI / Math.sin(PI * x)) - lnGamma(1 - x)
   }
 
   x -= 1
 
   let a = LANCZOS[0]!
-  const t = x + 7.5
+  const t = x + G + 0.5
 
   for (let i = 1; i < LANCZOS.length; ++i) {
     a += LANCZOS[i]! / (x + i)
   }
 
-  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a)
+  return 0.5 * Math.log(TWO_PI) + (x + 0.5) * Math.log(t) - t + Math.log(a)
 }
 
 // Continued fraction for the incomplete beta function (modified Lentz)

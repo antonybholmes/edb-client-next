@@ -410,10 +410,10 @@ export function kmeans(
 
   const { assignments } = k.fit(df.values as Point[])
 
-  const ret = df.copy() as AnnotationDataFrame
+  const ret = df.copy()
 
   // we use use clusters starting from 1
-  ret.rowObs.setCol(
+  ret.setRowObs(
     'Cluster',
     assignments.map((c) => `c${c + 1}`)
   )

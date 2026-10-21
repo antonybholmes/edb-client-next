@@ -493,7 +493,7 @@ export async function filesToDataFrames(
           .colNames(isBed ? 0 : colNames)
           .indexCols(isBed ? 0 : indexCols)
           .read(lines)
-          .setName(name) as AnnotationDataFrame
+          .setName(name)
       }
 
       if (isBed) {
@@ -501,7 +501,7 @@ export async function filesToDataFrames(
           ...['chr', 'start', 'end'],
           //...range(table.shape[1] - 3).map(i => `data ${i + 1}`),
           ...vfill('', table.shape[1] - 3),
-        ]) as AnnotationDataFrame
+        ])
       }
 
       if (table) {

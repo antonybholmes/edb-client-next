@@ -90,6 +90,48 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.name
   }
 
+  /**
+   * Sets meta data for columns in the dataframe.
+   *
+   * @param col The column identifier in the colVars table to set
+   * @param data The data to set for the specified column
+   * @param opts Options for setting the column, including whether to do it inplace
+   * @returns The updated AnnotationDataFrame instance.
+   */
+  setColVar(
+    col: IndexId,
+    data: SeriesFromType,
+    opts?: { inplace?: boolean }
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts ?? {}
+    const df = inplace ? this : this.copy()
+
+    df._colVars.setCol(col, data)
+
+    return df
+  }
+
+  /**
+   * Sets meta data for rows in the dataframe.
+   *
+   * @param row The row identifier in the rowObs table to set
+   * @param data The data to set for the specified row
+   * @param opts Options for setting the row, including whether to do it inplace
+   * @returns The updated AnnotationDataFrame instance.
+   */
+  setRowObs(
+    row: IndexId,
+    data: SeriesFromType,
+    opts?: { inplace?: boolean }
+  ): AnnotationDataFrame {
+    const { inplace = true } = opts ?? {}
+    const df = inplace ? this : this.copy()
+
+    df._rowObs.setCol(row, data)
+
+    return df
+  }
+
   override setCol(
     col: IndexId,
     data: SeriesFromType,
@@ -315,7 +357,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.max()
   }
 
-  override get t(): BaseDataFrame {
+  override get t(): AnnotationDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
       data: this._data.t.values,

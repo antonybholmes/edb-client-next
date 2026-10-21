@@ -1,5 +1,12 @@
 # Changelog
 
+## 93.2.0 (Oct, 2026)
+
+### Changed
+
+- Annotationdataframe now has api to set col and row vars.
+
+
 ## 93.0.0 (Oct, 2026)
 
 ### Changed

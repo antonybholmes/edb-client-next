@@ -21,7 +21,6 @@ import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
-import { DataFrame } from '@/lib/dataframe/dataframe'
 
 import { Textarea } from '@/themed/textarea'
 
@@ -40,6 +39,7 @@ import {
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { appsConfig } from '@/config/apps'
+import { ColDataFrame } from '@/lib/dataframe/col-dataframe'
 import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'
 import { useHistory } from '../../history/history-provider/history-provider'
@@ -275,11 +275,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
     ].sort()
 
     if (types.length > 0) {
-      setSampleDataTypes([
-        //...DEFAULT_SAMPLE_DATA_TYPES,
-
-        ...types,
-      ])
+      setSampleDataTypes([...types])
 
       if (types.includes('COO')) {
         // pick something we know people are interested in
@@ -449,7 +445,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         }
       })
 
-      const rowObs = new DataFrame({
+      const rowObs = new ColDataFrame({
         data: geneData,
         columns: rowObsCols,
       })
@@ -461,36 +457,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         name: `${selectedDatasets[0]!.name} ${exprType}`,
       })
 
-      //df.setIndexName('Genes', true)
-
-      // add alternative names
-
-      // if (settings.apps.gex.addAltNames) {
-      //   // max number of alt names we might be adding
-      //   const maxAltNameCount = Math.max(
-      //     ...searchResults
-      //       .map(datasetResult =>
-      //         datasetMap
-      //           .get(datasetResult.dataset)!
-      //           .samples.map(sample => sample.altNames.length)
-      //       )
-      //       .flat()
-      //   )
-
-      //   for (let i = 0; i < maxAltNameCount; i++) {
-      //     const labels = searchResults
-      //       .map(datasetResult =>
-      //         datasetMap
-      //           .get(datasetResult.dataset)!
-      //           .samples.map(sample =>
-      //             sample.altNames.length > i ? sample.altNames[i]! : ''
-      //           )
-      //       )
-      //       .flat()
-
-      //     df.colMetaData.setCol(`Alt Name ${i + 1}`, labels, true)
-      //   }
-      // }
+      console.log(df, columns, rowObs)
 
       // add the sample meta data
 
@@ -514,7 +481,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           )
           .flat()
 
-        df.colVars.setCol(datatype, labels)
+        df.setColVar(datatype, labels)
       }
 
       let groups: IClusterGroup[] = []
@@ -602,7 +569,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       openFile(df.name + ' GEX', {
         sheets: [df],
         groupRows: [
-          newGroupRow({ groups, name: groupSampleDataType[0] ?? 'GEX' }),
+          newGroupRow({ name: groupSampleDataType[0] ?? 'GEX', groups }),
         ],
       })
 
@@ -732,7 +699,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               </ActionDialogRow>
 
               <ActionCheckRow
-                title="Add sample info to column names"
+                text="Add sample info to column names"
                 checked={settings.apps.gex.addSampleMetadataToColumns}
                 onCheckedChange={(v) => {
                   updateSettings(
@@ -744,7 +711,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               />
 
               <ActionCheckRow
-                title="Add alternative names to columns"
+                text="Add alternative names to columns"
                 checked={settings.apps.gex.addAltNames}
                 onCheckedChange={(v) => {
                   updateSettings(
@@ -783,7 +750,8 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               </ActionDialogRow>
 
               <ActionCheckRow
-                title="Use official gene symbol"
+                title="Genes"
+                text="Use official gene symbol"
                 info="Use the official gene symbol in place of the original symbol if available."
                 checked={settings.apps.gex.useOfficialGeneSymbol}
                 onCheckedChange={(v) => {

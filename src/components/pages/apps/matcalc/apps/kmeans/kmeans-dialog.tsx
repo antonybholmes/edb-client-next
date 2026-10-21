@@ -126,34 +126,26 @@ export function KmeansDialog({
     let clusters: number[]
 
     if (settings.apps.kmeans.clusterRows) {
-      ;[df, clusters] = kmeans(
-        df as AnnotationDataFrame,
-        settings.apps.kmeans.clusters,
-        distFunc
-      )
+      ;[df, clusters] = kmeans(df, settings.apps.kmeans.clusters, distFunc)
 
       if (settings.apps.kmeans.sortByCluster) {
         const idx = argsort(clusters)
 
-        df = df.iloc({ rows: idx }) as AnnotationDataFrame
+        df = df.iloc({ rows: idx })
       }
     }
 
     if (settings.apps.kmeans.clusterCols) {
-      ;[df, clusters] = kmeans(
-        df.t as AnnotationDataFrame,
-        settings.apps.kmeans.clusters,
-        distFunc
-      )
+      ;[df, clusters] = kmeans(df.t, settings.apps.kmeans.clusters, distFunc)
 
-      df = df.t as AnnotationDataFrame
+      df = df.t
 
       if (settings.apps.kmeans.sortByCluster) {
         //const clusters = df.colMetaData.col('Cluster').values as string[]
 
         const idx = argsort(clusters)
 
-        df = df.iloc({ cols: idx }) as AnnotationDataFrame
+        df = df.iloc({ cols: idx })
       }
     }
 
