@@ -89,7 +89,7 @@ export function drawScatter(
         const x1 = xaf(p.x)
         const y1 = yaf(p.y)
 
-        let color: string = displayProps.dots.color
+        let color: string = displayProps.dots.value
 
         if (typeof palette === 'string') {
           color = palette

@@ -3523,5 +3523,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-10-18T02:07:13.797Z"
+  },
+  {
+    "version": "93.2.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Annotationdataframe now has api to set col and row vars",
+          "date": "2026-10-21T20:12:19.694Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-21T20:12:19.694Z"
   }
 ]

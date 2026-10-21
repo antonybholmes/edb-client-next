@@ -13,6 +13,7 @@ type CellByKind = {
   string: string
   date: Date
   boolean: boolean
+  null: null
 }
 
 export type IndexId = CellByKind['number' | 'string']
@@ -40,8 +41,8 @@ export type CellArray = {
  */
 export function makeCell(v: Cell, keepDefaultNA: boolean = true): Cell {
   // if empty return empty string
-  if (!v) {
-    return ''
+  if (v === null || v === undefined) {
+    return null
   }
 
   // non strings are returned as their original type
@@ -110,6 +111,10 @@ export function cellStr(cell: Cell, options: ICellStrOpts = {}): string {
     locale = DEFAULT_LOCALE,
   } = options
 
+  if (cell === null || cell === undefined) {
+    return defaultValue
+  }
+
   if (typeof cell === 'number') {
     if (Number.isNaN(cell)) {
       return defaultValue
@@ -131,6 +136,10 @@ export function cellStr(cell: Cell, options: ICellStrOpts = {}): string {
  * @returns A number representation of the cell or NaN if the value is not a number.
  */
 export function cellNum(cell: Cell): number {
+  if (cell === null || cell === undefined) {
+    return NaN
+  }
+
   const t = typeof cell
 
   let ret: number = NaN

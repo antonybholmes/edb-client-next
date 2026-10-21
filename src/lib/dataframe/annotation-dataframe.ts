@@ -273,7 +273,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     const df = inplace ? this : this.copy()
 
     df._data.setColNames(index)
-    df.colVars.setCol(0, index)
+    df._colVars.setCol(0, index)
 
     return df
   }
