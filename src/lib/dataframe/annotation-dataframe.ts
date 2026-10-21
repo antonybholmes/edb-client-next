@@ -30,7 +30,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   _colVars: BaseDataFrame
 
   constructor(options: IAnnotationDataFrameOptions = {}) {
-    const { name = '', index, columns, data, rowObs, colVars } = options
+    const { name = '', index, columns, rowObs, colVars } = options
 
     super({ name })
 

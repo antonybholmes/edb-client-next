@@ -3539,6 +3539,10 @@
         {
           "msg": "Refined dataframe api",
           "date": "2026-10-21T21:27:02.698Z"
+        },
+        {
+          "msg": "Added empty dataframe and series support",
+          "date": "2026-10-21T21:50:22.068Z"
         }
       ]
     },

@@ -1,7 +1,7 @@
-import { BaseDataFrame, findCol } from './base-dataframe'
+import { BaseDataFrame } from './base-dataframe'
 
 import { LocType } from './base-table'
-import type { Cell, IndexId } from './cell'
+import type { Cell } from './cell'
 import { EmptySeries } from './empty-series'
 import { EmptyNumIndex, ExcelIndex, Index, type Shape } from './index'
 import { Series } from './series'
@@ -28,13 +28,7 @@ export class EmptyDataFrame extends BaseDataFrame {
     return this
   }
 
-  override col(c: IndexId): Series<number, Cell> {
-    const idx = findCol(this, c)
-
-    if (idx === -1) {
-      throw new Error(`${c} is an invalid column`)
-    }
-
+  override col(): Series<number, Cell> {
     return new EmptySeries(this.shape[0])
   }
 

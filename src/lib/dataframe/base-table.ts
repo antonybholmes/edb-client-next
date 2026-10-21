@@ -234,12 +234,7 @@ export abstract class BaseTable {
     return this.t.rowMap(f)
   }
 
-  iloc({}: {
-    rows?: LocType
-    cols?: LocType
-  } = {}): BaseTable {
-    return this
-  }
+  abstract iloc({}: { rows?: LocType; cols?: LocType }): BaseTable
 
   abstract max(): number
 

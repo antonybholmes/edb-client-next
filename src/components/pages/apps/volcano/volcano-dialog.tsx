@@ -153,8 +153,6 @@ export function VolcanoDialog({
       })
     )
 
-    console.log(labels)
-
     const plot = newVolcanoPlot('Volcano', {
       entries: zip(labels, log2foldChanges, logpvalues).map(
         ([label, log2fc, logp]) => ({

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixed volcano not using index col when loading text file.
 - Added empty dataframe and series support.
 - Refined dataframe api.
 - Adding null support to dataframes for missing data.
