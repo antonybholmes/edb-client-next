@@ -3514,6 +3514,10 @@
         {
           "msg": "Added test for mann-whitney and fixed bug",
           "date": "2026-10-21T17:54:39.181Z"
+        },
+        {
+          "msg": "Created stats folder for math functions",
+          "date": "2026-10-21T17:56:57.234Z"
         }
       ]
     },

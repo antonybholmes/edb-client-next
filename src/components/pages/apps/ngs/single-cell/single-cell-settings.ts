@@ -2,6 +2,7 @@ import { DEFAULT_COLORBAR_SIZE } from '@/components/pages/apps/heatmap/heatmap-s
 
 import {
   DEFAULT_COLOR_PROPS,
+  DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN,
   DEFAULT_STROKE_PROPS,
   type IMarginProps,
@@ -226,11 +227,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
     },
   },
 
-  dots: {
-    size: 2,
-    color: DOT_GRAY,
-    opacity: 1,
-  },
+  dots: { ...DEFAULT_FILL_PROPS, value: DOT_GRAY, size: 2 },
   genome: { ...GENOMES[0]! },
   search: '',
   //scale: 1,
