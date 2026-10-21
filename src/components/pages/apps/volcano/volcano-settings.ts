@@ -31,20 +31,21 @@ export interface IVolcanoSettings {
     logFc: {
       show: boolean
       threshold: number
-
-      neg: {
-        fill: IPaintProps
-      }
-      pos: {
-        fill: IPaintProps
-      }
     }
-    color: {
-      gradient: {
-        on: boolean
-      }
-      cmap: ICmap
+  }
+  colors: {
+    mode: 'colors' | 'colormap'
+    neg: {
+      fill: IPaintProps
     }
+    pos: {
+      fill: IPaintProps
+    }
+    gradient: {
+      on: boolean
+    }
+    cmap: ICmap
+    onlyLabeled: boolean
   }
   margin: IMarginProps
   //scale: number
@@ -55,7 +56,7 @@ export interface IVolcanoSettings {
   }
   labels: {
     auto: boolean
-    color: { on: boolean }
+    //color: { on: boolean }
     offset: { x: number; y: number }
 
     connector: {
@@ -76,18 +77,20 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
     logFc: {
       show: true,
       threshold: 1,
+    },
+  },
 
-      neg: {
-        fill: { ...DEFAULT_COLOR_PROPS, value: '#0000ff' },
-      },
-      pos: {
-        fill: { ...DEFAULT_COLOR_PROPS, value: '#ff0000' },
-      },
+  colors: {
+    mode: 'colors',
+    neg: {
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#0000ff' },
     },
-    color: {
-      gradient: { on: false },
-      cmap: { name: 'bwr', reversed: false },
+    pos: {
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#ff0000' },
     },
+    gradient: { on: true },
+    cmap: { name: 'bwr', reversed: false },
+    onlyLabeled: false,
   },
   margin: { ...MARGIN },
   //scale: 1,
@@ -98,7 +101,7 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
   },
   labels: {
     auto: true,
-    color: { on: false },
+
     offset: { x: 20, y: 20 },
 
     connector: {
@@ -147,8 +150,8 @@ export function useVolcanoSettings(): {
   )
 
   const cmap = useMemo(
-    () => getColorMap(settings.thresholds.color.cmap),
-    [settings.thresholds.color.cmap]
+    () => getColorMap(settings.colors.cmap),
+    [settings.colors.cmap]
   )
 
   const resetSettings = useCallback(() => {

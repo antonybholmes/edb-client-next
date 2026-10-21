@@ -3502,6 +3502,10 @@
         {
           "msg": "Volcano plot order adjusted to put colored dots on top",
           "date": "2026-10-21T02:25:36.995Z"
+        },
+        {
+          "msg": "Refined volcano UI with support for custom colors or heatmaps and more intuitive button names",
+          "date": "2026-10-21T14:51:53.786Z"
         }
       ]
     },

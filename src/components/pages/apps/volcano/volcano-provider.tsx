@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -11,6 +12,7 @@ import { useVolcanoSettings } from './volcano-settings'
 import { createAxis } from '@/components/plot/axes/axis'
 import { useAxes } from '@/components/plot/axes/plot-axes'
 import { range } from '@/lib/math/range'
+import { produce } from 'immer'
 import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
 
@@ -21,6 +23,7 @@ export interface VolcanoPropsContextType {
   highlightedLabels: string[]
   displayLabels: string[]
   setLabels(labels: string[]): void
+  addHighlightedLabels(): void
 }
 
 export const VolcanoContext = createContext<
@@ -46,9 +49,11 @@ export function VolcanoProvider({
 }) {
   const [manualLabels, setManualLabels] = useState<string[]>([])
 
+  const { settings, updateSettings } = useVolcanoSettings()
+
   const volcano = plot?.volcano
   const displayOptions = useMemo(() => plot?.props, [plot?.props])
-  const { settings } = useVolcanoSettings()
+
   const { addAxes } = useAxes()
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
@@ -121,14 +126,35 @@ export function VolcanoProvider({
     ])
   }, [displayOptions?.axes])
 
-  const displayLabels = useMemo(
-    () => (settings.labels.auto ? highlightedLabels : manualLabels),
-    [settings.labels.auto, highlightedLabels, manualLabels]
-  )
+  useEffect(() => {
+    if (settings.labels.auto) {
+      setManualLabels(highlightedLabels)
+    }
+  }, [settings.labels.auto, highlightedLabels])
 
-  const setLabels = (labels: string[]) => {
-    setManualLabels(labels)
-  }
+  // const displayLabels = useMemo(
+  //   () => (settings.labels.auto ? highlightedLabels : manualLabels),
+  //   [settings.labels.auto, highlightedLabels, manualLabels]
+  // )
+
+  /**
+   * Automatically set manual labels to the highlighted labels
+   */
+  const addHighlightedLabels = useCallback(() => {
+    setManualLabels(highlightedLabels)
+  }, [setManualLabels, highlightedLabels])
+
+  const setLabels = useCallback(
+    (labels: string[]) => {
+      setManualLabels(labels)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.labels.auto = false
+        })
+      )
+    },
+    [setManualLabels, updateSettings, settings]
+  )
 
   return (
     <VolcanoContext.Provider
@@ -136,8 +162,9 @@ export function VolcanoProvider({
         displayProps: plot?.props,
         plot,
         highlightedLabels,
-        displayLabels,
+        displayLabels: manualLabels,
         setLabels,
+        addHighlightedLabels,
       }}
     >
       {children}
