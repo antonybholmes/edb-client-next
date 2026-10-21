@@ -89,7 +89,7 @@ export function VolcanoProvider({
     const values =
       volcano?.entries
         .filter((_v, i) => idx.has(i))
-        .map((l) => l.id.toString())
+        .map((l) => l.label.toString())
         .sort() ?? []
 
     return values

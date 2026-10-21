@@ -45,6 +45,7 @@ export interface IVolcano {
 
   entries: readonly {
     id: string
+    label: string
     log2foldChange: number
     logpvalue: number
     size?: number

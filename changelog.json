@@ -3498,6 +3498,10 @@
         {
           "msg": "Volcano now uses colormap. Labelled nodes are drawn on top of others to make visualization better",
           "date": "2026-10-20T22:57:39.180Z"
+        },
+        {
+          "msg": "Volcano plot order adjusted to put colored dots on top",
+          "date": "2026-10-21T02:25:36.995Z"
         }
       ]
     },

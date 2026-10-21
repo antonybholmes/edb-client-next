@@ -86,7 +86,7 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
     },
     color: {
       gradient: { on: false },
-      cmap: { name: 'bwr-v2', reversed: false },
+      cmap: { name: 'bwr', reversed: false },
     },
   },
   margin: { ...MARGIN },

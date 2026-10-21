@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Volcano plot order adjusted to put colored dots on top.
 - Volcano now uses colormap. Labelled nodes are drawn on top of others to make visualization better.
 - Added rocket heatmap.
 - Refined volcano UI.

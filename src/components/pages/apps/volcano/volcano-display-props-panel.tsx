@@ -54,6 +54,7 @@ export function VolcanoDisplayPropsPanel() {
 
   const { plot, displayLabels, highlightedLabels, setLabels } =
     useVolcanoContext()
+
   const { settings, cmap, updateSettings, resetSettings } = useVolcanoSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot?.props ?? {
@@ -181,7 +182,7 @@ export function VolcanoDisplayPropsPanel() {
     const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
 
     const labelIdx = (plot?.volcano.entries ?? [])
-      .map((v, vi) => ({ index: vi, value: v.id }))
+      .map((v, vi) => ({ index: vi, value: v.label }))
       .filter((v) => labelSet.has((v.value as string).toLowerCase()))
       .map((v) => v.index)
 
@@ -681,6 +682,10 @@ export function VolcanoDisplayPropsPanel() {
                 onValueChange={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
+                      if (v[0] !== 'straight' && v[0] !== 'elbow') {
+                        return
+                      }
+
                       draft.labels.connector.type = v[0] as 'straight' | 'elbow'
                     })
                   )
