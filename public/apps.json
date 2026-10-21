@@ -145,9 +145,9 @@
     "color": "#40bf80",
     "version": "52.0.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-21T17:44:28.092Z",
-    "hash": "42f14c1fa23eef3ba53fbcda17b86983df1a462961a3e04a195859606bc99ffc",
-    "build": 2202
+    "modified": "2026-10-21T17:56:56.258Z",
+    "hash": "d02cf2a24de480e7a60810515d64bb5eef2c1ca69c59d152fe9af0fb00f0e79b",
+    "build": 2204
   },
   {
     "name": "Motifs",
@@ -235,9 +235,9 @@
     "color": "#9966ff",
     "version": "26.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-20T20:56:38.415Z",
-    "hash": "10d1017c86ea121db34772e82da4bb37cb8e3159accf89c7cd40d28449b572aa",
-    "build": 902
+    "modified": "2026-10-21T17:56:56.259Z",
+    "hash": "cf8ac584f4f38dcba9b74f8bf1b6c0caea355ec22f0bb86f13341ec2febede15",
+    "build": 904
   },
   {
     "name": "Table",

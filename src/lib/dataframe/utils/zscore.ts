@@ -1,4 +1,4 @@
-import { ZScore } from '@/lib/math/zscore'
+import { ZScore } from '@/lib/math/stats/zscore'
 import { BaseDataFrame } from '../base-dataframe'
 
 export function zscore(df: BaseDataFrame): BaseDataFrame {

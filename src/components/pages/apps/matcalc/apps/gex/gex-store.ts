@@ -1,5 +1,5 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
-import type { IMannWhitneyUResult } from '@/lib/math/mann-whitney'
+import type { IMannWhitneyUResult } from '@/lib/math/stats/mann-whitney'
 import type { UndefStr } from '@/lib/text/text'
 
 export type GexType =

@@ -1,4 +1,4 @@
-import { mean } from './mean'
+import { mean } from '../mean'
 import { normSF } from './normal-distribution'
 
 export interface IMannWhitneyUResult {

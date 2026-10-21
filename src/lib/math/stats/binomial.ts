@@ -1,5 +1,5 @@
-import { factorialBigInt } from './factorial'
-import { MAX_SAFE_INTEGER } from './math'
+import { factorialBigInt } from '../factorial'
+import { MAX_SAFE_INTEGER } from '../math'
 
 export function lnBinomial(n: number, k: number): number {
   //return lnFactorial(n) - lnFactorial(k) - lnFactorial(n - k)

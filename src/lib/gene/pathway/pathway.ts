@@ -9,8 +9,8 @@ import {
 import { argsort } from '../../math/argsort'
 
 import { minusLog10 } from '@/lib/math/logs'
-import { Hypergeometric } from '../../math/hypgeometric'
 import { range } from '../../math/range'
+import { Hypergeometric } from '../../math/stats/hypgeometric'
 import { sum } from '../../math/sum'
 
 export const GENES_IN_UNIVERSE = 42577 //45956
