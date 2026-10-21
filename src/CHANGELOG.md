@@ -4,6 +4,7 @@
 
 ### Changed
 
+- gsea plot now has margin support.
 - Added margin support to ext gsea.
 - Fixed volcano not using index col when loading text file.
 - Added empty dataframe and series support.

@@ -7,7 +7,6 @@ import {
   ScrollAccordion,
 } from '@/themed/baseui/accordion'
 
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { LinkButton } from '@/themed/link-button'
@@ -18,7 +17,9 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { produce } from 'immer'
 
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { useGseaSettings } from '../gsea-settings'
 import APP_INFO from '../manifest.json'
 import { GeneProps } from './gene-props'
@@ -65,16 +66,38 @@ export function GseaPlotDisplayPropsPanel() {
         <AccordionItem value="page">
           <AccordionTrigger>Page</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Margins">
+            <PropRow title="Size" contentCls="gap-x-2">
               <MarginPopover />
+              <DoubleNumericalInput
+                h="toolbar"
+                v1={settings.es.axes.x.length}
+                placeholder="Width"
+                limit={[1, 1000]}
+                dp={0}
+                onNumChange1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.axes.x.length = v
+                    })
+                  )
+                }}
+                v2={settings.es.axes.y.length}
+                onNumChange2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.axes.y.length = v
+                    })
+                  )
+                }}
+              />
             </PropRow>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="enrichment-plot">
           <AccordionTrigger
-            rightChildren={
-              <Switch
+            leftChildren={
+              <SmallSwitch
                 title="Show"
                 checked={settings.es.show}
                 onCheckedChange={(state) => {
@@ -180,8 +203,8 @@ export function GseaPlotDisplayPropsPanel() {
         </AccordionItem>
         <AccordionItem value="genes-plot">
           <AccordionTrigger
-            rightChildren={
-              <Switch
+            leftChildren={
+              <SmallSwitch
                 title="Show"
                 checked={settings.genes.show}
                 onCheckedChange={(state) => {
@@ -203,8 +226,8 @@ export function GseaPlotDisplayPropsPanel() {
 
         <AccordionItem value="rank-plot">
           <AccordionTrigger
-            rightChildren={
-              <Switch
+            leftChildren={
+              <SmallSwitch
                 title="Show"
                 checked={settings.ranking.show}
                 onCheckedChange={(state) => {

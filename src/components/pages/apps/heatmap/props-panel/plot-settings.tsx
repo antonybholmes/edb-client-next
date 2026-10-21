@@ -114,7 +114,7 @@ export function PlotSettingsPanel() {
           />
         </PropRow>
 
-        <PropRow title="Grid">
+        <PropRow title="Grid" contentCls="gap-x-2">
           <VCenterRow>
             <StrokeButton
               colors={[
@@ -188,9 +188,10 @@ export function PlotSettingsPanel() {
                 })
               )
             }}
+            size="toolbar"
             className="gap-x-0.5"
             variant="outline"
-            pad="none"
+            aspect="icon"
           >
             <GroupToggle value="heatmap" title="Heatmap">
               <Square size={16} />

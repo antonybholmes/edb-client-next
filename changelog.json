@@ -3551,6 +3551,10 @@
         {
           "msg": "Added margin support to ext gsea",
           "date": "2026-10-21T22:39:11.220Z"
+        },
+        {
+          "msg": "gsea plot now has margin support",
+          "date": "2026-10-21T22:45:45.052Z"
         }
       ]
     },

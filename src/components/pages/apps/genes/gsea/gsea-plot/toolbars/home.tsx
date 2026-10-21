@@ -22,6 +22,7 @@ import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
+import { MarginPopover } from '../display-props/margin-popover'
 import { useGseaSettings } from '../gsea-settings'
 import { useGsea } from '../gsea-store'
 
@@ -63,28 +64,32 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size">
-        <DoubleNumericalInput
-          h="toolbar"
-          v1={settings.es.axes.x.length}
-          placeholder="Width"
-          limit={[1, 1000]}
-          dp={0}
-          onNumChange1={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.es.axes.x.length = v
-              })
-            )
-          }}
-          v2={settings.es.axes.y.length}
-          onNumChange2={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.es.axes.y.length = v
-              })
-            )
-          }}
-        />
+        <ToolbarCol>
+          <DoubleNumericalInput
+            h="toolbar"
+            v1={settings.es.axes.x.length}
+            placeholder="Width"
+            limit={[1, 1000]}
+            dp={0}
+            onNumChange1={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.es.axes.x.length = v
+                })
+              )
+            }}
+            v2={settings.es.axes.y.length}
+            onNumChange2={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.es.axes.y.length = v
+                })
+              )
+            }}
+          />
+
+          <MarginPopover />
+        </ToolbarCol>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Options" className="gap-x-1">
