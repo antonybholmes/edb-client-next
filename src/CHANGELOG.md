@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added test for mann-whitney and fixed bug.
 - Volcano now supports margins.
 - Refined volcano UI with support for custom colors or heatmaps and more intuitive button names.
 - Volcano plot order adjusted to put colored dots on top.

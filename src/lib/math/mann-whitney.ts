@@ -24,62 +24,23 @@ export function mannWhitneyU(
   alternative: 'less' | 'greater' | 'two-sided' = 'two-sided',
   continuity = true
 ): IMannWhitneyUResult {
-  // const n1 = xs.length
-  // const n2 = ys.length
-
-  // pool and rank
-  // const obs = numSort([...xs, ...ys])
-  // const ranks = range(1, obs.length + 1)
-  // const n = obs.length
-
-  // let tied: number[] = [ranks[0]!]
-  // let currentValue: number = obs[0]!
-  // const ties: number[][] = []
-
-  // const rankMap: Map<number, number> = new Map<number, number>()
-
-  // for (let i = 1; i < n; ++i) {
-  //   if (obs[i] !== currentValue) {
-  //     // since all current values are the same, calc mean
-  //     // mean of all values that are the same in a block
-  //     // and store it.
-  //     rankMap.set(currentValue, mean(tied))
-
-  //     ties.push(tied)
-
-  //     tied = []
-  //     currentValue = obs[i]!
-  //   }
-
-  //   tied.push(ranks[i]!)
-  // }
-
-  // end case
-  // rankMap.set(currentValue, mean(tied))
-
-  // const r1 = sum(xs.map(x => rankMap.get(x)!))
-  //const r2 = sum(ys.map(y => rankMap.get(y)!))
   const n1 = xs.length
   const n2 = ys.length
   const n = n1 + n2
   const n1n2 = n1 * n2
   const mu = 0.5 * n1n2
 
-  // const u1 = r1 - 0.5 * (n1 * (n1 + 1))
-  // const u2 = n1 * n2 - u1
-
   // Combine the two groups and create a list of all values with their group labels
+  // and sort them by their values
   let combined = [
     ...xs.map((val) => ({ value: val, group: 1 })),
     ...ys.map((val) => ({ value: val, group: 2 })),
-  ]
-
-  // Sort the combined values by their actual values
-  combined.sort((a, b) => a.value - b.value)
+  ].sort((a, b) => a.value - b.value)
 
   // Assign ranks to the sorted combined values
   let ranks = []
   let currentRank = 1
+
   for (let i = 0; i < combined.length; i++) {
     if (i > 0 && combined[i]!.value !== combined[i - 1]!.value) {
       currentRank = i + 1
@@ -105,7 +66,7 @@ export function mannWhitneyU(
     const m = mean(ranks)
 
     for (const rank of ranks) {
-      adjustedRanks.set(rank, m!)
+      adjustedRanks.set(rank, m)
     }
   }
 
@@ -136,7 +97,14 @@ export function mannWhitneyU(
   const U2 = n1n2 - U1 // rankSum2 - (n2 * (n2 + 1)) / 2
 
   // since u1 + u2 = n1n2, we take the largest value in case either u1 or u2 are 0
-  const U = Math.max(U1, U2)
+  //const U = Math.max(U1, U2)
+
+  const U =
+    alternative === 'greater'
+      ? U1
+      : alternative === 'less'
+        ? U2
+        : Math.max(U1, U2)
 
   // all ties > 1 i.e. actual tied ranks
   // const tie_term = sum(
