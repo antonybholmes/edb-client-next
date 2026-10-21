@@ -2,6 +2,7 @@ import {
   DEFAULT_COLOR_PROPS,
   DEFAULT_DASH_PROPS,
   DEFAULT_FILL_PROPS,
+  DEFAULT_MARGIN,
   DEFAULT_STROKE_PROPS,
   IMarginProps,
   IPaintProps,
@@ -15,9 +16,7 @@ import { useCallback, useMemo } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v12`
-
-const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
+const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v14`
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
 
@@ -47,8 +46,9 @@ export interface IVolcanoSettings {
     cmap: ICmap
     onlyLabeled: boolean
   }
-  margin: IMarginProps
-  //scale: number
+  plot: {
+    margin: IMarginProps
+  }
 
   preprocess: {
     applyLog2FC: boolean
@@ -64,7 +64,7 @@ export interface IVolcanoSettings {
       stroke: IStrokeProps
     }
   }
-  dots: { color: IPaintProps; size: number }
+  dots: { fill: IPaintProps; stroke: IStrokeProps; size: number }
 }
 
 const DEFAULT_SETTINGS: IVolcanoSettings = {
@@ -92,8 +92,9 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
     cmap: { name: 'bwr', reversed: false },
     onlyLabeled: false,
   },
-  margin: { ...MARGIN },
-  //scale: 1,
+  plot: {
+    margin: { ...DEFAULT_MARGIN },
+  },
 
   preprocess: {
     applyLog2FC: false,
@@ -110,7 +111,8 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
     },
   },
   dots: {
-    color: { ...DEFAULT_FILL_PROPS, opacity: 0.5, value: '#d9d9d9' },
+    fill: { ...DEFAULT_FILL_PROPS, opacity: 0.5, value: '#d9d9d9' },
+    stroke: { ...DEFAULT_STROKE_PROPS, show: false },
     size: 3,
   },
 }

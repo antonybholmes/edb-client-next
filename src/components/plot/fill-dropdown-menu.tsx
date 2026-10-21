@@ -81,12 +81,12 @@ export function FillButton({
 
 export function FillIcon({ cp }: { cp: IColorPickerProps }) {
   return (
-    <CenterRow className="flex flex-row items-center justify-center  relative h-5.5 w-5 grow-0 shrink-0">
-      <PaintBucket size={16} strokeWidth={1.5} className="z-10" />
+    <CenterRow className="flex flex-row items-start justify-center relative w-5 aspect-square grow-0 shrink-0">
+      <PaintBucket size={14} strokeWidth={2} className="z-10" />
 
       {(cp.show === undefined || cp.show) && (
         <span
-          className="absolute bottom-0 h-1 w-9/10 z-0 rounded-xs"
+          className="absolute bottom-0 h-1.5 w-9/10 z-0 rounded-xs border border-foreground"
           style={{ backgroundColor: cp.color, opacity: cp.opacity }}
         />
       )}

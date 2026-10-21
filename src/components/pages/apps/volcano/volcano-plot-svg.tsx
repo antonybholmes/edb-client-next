@@ -33,8 +33,6 @@ import { IVolcanoPlot } from '../matcalc/history/history-provider/history-types'
 import { useVolcanoContext } from './volcano-provider'
 import { IVolcanoSettings, useVolcanoSettings } from './volcano-settings'
 
-const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
-
 export interface IDisplayAxis {
   name: string
   domain: ILim
@@ -234,6 +232,30 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     ? -Math.log10(settings.thresholds.pvalue.threshold)
     : settings.thresholds.pvalue.threshold
 
+  const labelSet = useMemo(
+    () => new Set<string>(displayLabels.map((x) => x.toLowerCase())),
+    [displayLabels]
+  )
+
+  const points = useMemo(
+    () =>
+      (plot?.volcano.entries ?? []).map((e, i) => ({
+        index: i,
+        x: e.log2foldChange,
+        y: e.logpvalue,
+      })),
+
+    [plot?.volcano.entries]
+  )
+
+  const { minX, maxX } = useMemo(() => {
+    const xs = points.map((p) => p.x)
+    return {
+      minX: Math.min(...xs),
+      maxX: Math.max(...xs),
+    }
+  }, [points])
+
   function dotIsColored(
     logFc: number,
     logP: number,
@@ -243,6 +265,10 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     // and this point is not labeled, it should not be colored
     if (settings.colors.onlyLabeled && !isLabeled) {
       return false
+    }
+
+    if (!settings.thresholds.pvalue.show && !settings.thresholds.logFc.show) {
+      return true
     }
 
     if (settings.thresholds.pvalue.show && settings.thresholds.logFc.show) {
@@ -264,16 +290,16 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     logP: number,
     isLabeled: boolean
   ): { color: string; isColored: boolean } {
-    let color = settings.dots.color.value
+    let color = settings.dots.fill.value
     const isColored = dotIsColored(logFc, logP, isLabeled)
 
     if (settings.colors.mode === 'colormap') {
       // goes from -x to x so only care about the positive side for color scaling
-      const xMax = logFc > 0 ? xax.domain[1] : Math.abs(xax.domain[0])
+      const max = logFc > 0 ? maxX : Math.abs(minX)
 
       // each side of the x-axis is normalized separately for color scaling
       const normX = settings.colors.gradient.on
-        ? clamp(Math.abs(logFc) / xMax, { min: 0, max: 0.5 })
+        ? clamp(Math.abs(logFc) / max, { min: 0, max: 0.5 })
         : 0.5
 
       const highlightColor = cmap.getHexColor(
@@ -312,22 +338,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
     })
   }
 
-  const labelSet = useMemo(
-    () => new Set<string>(displayLabels.map((x) => x.toLowerCase())),
-    [displayLabels]
-  )
-
-  const points = useMemo(
-    () =>
-      (plot?.volcano.entries ?? []).map((e, i) => ({
-        index: i,
-        x: e.log2foldChange,
-        y: e.logpvalue,
-      })),
-
-    [plot?.volcano.entries]
-  )
-
   const { svg, width, height } = useMemo(() => {
     if (!plot || !xax || !yax) {
       return { svg: null, width: 0, height: 0 }
@@ -335,8 +345,10 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const innerWidth = axisLength(xax)
     const innerHeight = axisLength(yax)
-    const width = innerWidth + MARGIN.left + MARGIN.right
-    const height = innerHeight + MARGIN.top + MARGIN.bottom
+    const width =
+      innerWidth + settings.plot.margin.left + settings.plot.margin.right
+    const height =
+      innerHeight + settings.plot.margin.top + settings.plot.margin.bottom
 
     const renderSortedPoints = (plot?.volcano.entries ?? [])
       .map((entry, i) => {
@@ -388,7 +400,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const svg = (
       <>
-        <SvgMargin margin={MARGIN}>
+        <SvgMargin margin={settings.plot.margin}>
           {renderSortedPoints.map((p) => {
             const x1 = xaf(p.x)
             const y1 = yaf(p.y)
@@ -401,11 +413,12 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
                 cy={y1}
                 r={r}
                 fill={p.color}
+                sp={settings.dots.stroke}
                 key={p.index}
                 onPointerEnter={() =>
                   handleVariantEnter(p.index, {
-                    x: x1 + MARGIN.left,
-                    y: y1 + MARGIN.top,
+                    x: x1 + settings.plot.margin.left,
+                    y: y1 + settings.plot.margin.top,
                   })
                 }
                 onPointerLeave={hideCrosshair}
@@ -432,7 +445,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
           })}
         </SvgMargin>
 
-        <SvgMargin margin={MARGIN} id="labels">
+        <SvgMargin margin={settings.plot.margin} id="labels">
           {renderSortedPoints
             .filter((idx) => idx.isLabel)
             .map(({ index }) => {
@@ -453,8 +466,8 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
                   key={i}
                   onPointerEnter={() =>
                     handleVariantEnter(i, {
-                      x: x1 + MARGIN.left,
-                      y: y1 + MARGIN.top,
+                      x: x1 + settings.plot.margin.left,
+                      y: y1 + settings.plot.margin.top,
                     })
                   }
                   onPointerLeave={hideCrosshair}
@@ -500,7 +513,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
         </SvgMargin>
 
         {settings.thresholds.pvalue.line.show && (
-          <SvgMargin margin={MARGIN}>
+          <SvgMargin margin={settings.plot.margin}>
             <SvgLine
               x1={xaf(xax!.domain[0])}
               y1={yThreshold}
@@ -512,7 +525,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
         )}
 
         {displayOptions.border.show && (
-          <SvgMargin margin={MARGIN}>
+          <SvgMargin margin={settings.plot.margin}>
             <SvgRect
               width={innerWidth}
               height={innerHeight}
@@ -523,14 +536,17 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
         <AxisLeftSvg
           ax={yax}
-          pos={{ x: MARGIN.left, y: MARGIN.top }}
+          pos={{ x: settings.plot.margin.left, y: settings.plot.margin.top }}
           tickSize={displayOptions.axes.yaxis.tickSize}
           strokeWidth={displayOptions.axes.yaxis.stroke.width}
           color={displayOptions.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
           ax={xax}
-          pos={{ x: MARGIN.left, y: MARGIN.top + innerHeight }}
+          pos={{
+            x: settings.plot.margin.left,
+            y: settings.plot.margin.top + innerHeight,
+          }}
           tickSize={displayOptions.axes.xaxis.tickSize}
           strokeWidth={displayOptions.axes.xaxis.stroke.width}
           color={displayOptions.axes.xaxis.stroke.value}

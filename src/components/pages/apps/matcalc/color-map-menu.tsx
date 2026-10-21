@@ -29,12 +29,12 @@ export const BUTTON_CLS = cn(
 
 export function ColorMapMenuIcon({ cmap }: { cmap: ColorMap }) {
   return (
-    <HCenterCol className="relative w-6 h-6 aspect-square">
-      <SwatchBook className="relative z-10" size={16} strokeWidth={1.5} />
+    <HCenterCol className="relative w-5 h-5 aspect-square">
+      <SwatchBook className="relative z-10" size={14} strokeWidth={2} />
       <ColorMapIcon
         cmap={cmap}
-        aspect="aspect-3/1"
-        className="absolute bottom-0 w-5 border border-foreground/80 rounded-xs"
+
+        className="absolute bottom-0 w-9/10 h-1.5 border border-foreground/80 rounded-xs"
       />
     </HCenterCol>
   )

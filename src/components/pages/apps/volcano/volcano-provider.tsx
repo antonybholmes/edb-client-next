@@ -137,13 +137,6 @@ export function VolcanoProvider({
   //   [settings.labels.auto, highlightedLabels, manualLabels]
   // )
 
-  /**
-   * Automatically set manual labels to the highlighted labels
-   */
-  const addHighlightedLabels = useCallback(() => {
-    setManualLabels(highlightedLabels)
-  }, [setManualLabels, highlightedLabels])
-
   const setLabels = useCallback(
     (labels: string[]) => {
       setManualLabels(labels)
@@ -155,6 +148,13 @@ export function VolcanoProvider({
     },
     [setManualLabels, updateSettings, settings]
   )
+
+  /**
+   * Automatically set manual labels to the highlighted labels
+   */
+  const addHighlightedLabels = useCallback(() => {
+    setLabels(highlightedLabels)
+  }, [setLabels, highlightedLabels])
 
   return (
     <VolcanoContext.Provider
