@@ -29,7 +29,8 @@ import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { GeneProps } from '../gsea-plot/display-props/gene-props'
-import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
+import { MarginPopover } from '../gsea-plot/display-props/margin-popover'
+import { useGseaSettings } from '../gsea-plot/gsea-settings'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
 
@@ -87,7 +88,8 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Width">
+            <PropRow title="Width" contentCls="gap-x-2">
+              <MarginPopover />
               <NumericalInput
                 id="width"
                 value={settings.es.axes.x.length}

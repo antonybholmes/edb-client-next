@@ -22,7 +22,7 @@ import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 import { useGsea } from '../gsea-store'
 
 export function HomeToolbar() {

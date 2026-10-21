@@ -9,7 +9,7 @@ import { useAxis } from '@/components/plot/axes/plot-axes'
 import { SvgG } from '@/components/plot/svg-g'
 import { SvgText } from '@/components/plot/svg-text'
 import { memo, useMemo } from 'react'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 
 export const RankingSvg = memo(function RankingSvg({
   plotId,

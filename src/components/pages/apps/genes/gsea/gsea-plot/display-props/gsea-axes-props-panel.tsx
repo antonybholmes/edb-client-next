@@ -1,6 +1,6 @@
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 import { GseaGraphAxesPropsPanel } from './gsea-graph-axes-props-panel'
 
 export function GseaAxesPropsPanel() {

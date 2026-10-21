@@ -1,6 +1,6 @@
 import { PlotMarginPopover } from '@/components/plot/axes/props/plot-margin-popover'
 import { produce } from 'immer'
-import { useGseaSettings } from './gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 
 export function MarginPopover() {
   const { settings, updateSettings } = useGseaSettings()

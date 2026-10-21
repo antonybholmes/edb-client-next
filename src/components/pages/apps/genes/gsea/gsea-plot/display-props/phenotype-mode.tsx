@@ -4,7 +4,7 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { produce } from 'immer'
 import { ComponentProps } from 'react'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 
 export function PhenotypeModeList({
   variant = 'toolbar',

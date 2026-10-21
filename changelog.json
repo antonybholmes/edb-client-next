@@ -3547,6 +3547,10 @@
         {
           "msg": "Fixed volcano not using index col when loading text file",
           "date": "2026-10-21T21:58:27.853Z"
+        },
+        {
+          "msg": "Added margin support to ext gsea",
+          "date": "2026-10-21T22:39:11.220Z"
         }
       ]
     },

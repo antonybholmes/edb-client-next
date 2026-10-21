@@ -8,7 +8,7 @@ import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/genese
 import { IDBEntity } from '@/interfaces/db-entity'
 import { useMemo } from 'react'
 import { create } from 'zustand'
-import { useGseaSettings } from './gsea-settings-store'
+import { useGseaSettings } from './gsea-settings'
 
 export const MAX_NEG_LOG10_P = 50
 

@@ -18,11 +18,11 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { produce } from 'immer'
 
-import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 import APP_INFO from '../manifest.json'
 import { GeneProps } from './gene-props'
+import { MarginPopover } from './margin-popover'
 
 export function GseaPlotDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
