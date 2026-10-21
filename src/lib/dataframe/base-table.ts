@@ -5,12 +5,8 @@ import { Index, type IndexFromType, type Shape } from '.'
 import { makeUuid } from '../id'
 import { whereStrStartsWith } from '../math/where'
 import { Cell, cellStr, IndexId } from './cell'
-import {
-  DataSeries,
-  ISeriesOptions,
-  Series,
-  type SeriesFromType,
-} from './series'
+import { DataSeries } from './data-series'
+import { ISeriesOptions, Series, type SeriesFromType } from './series'
 
 // The default name of a sheet and useful for checking if
 // table has been properly initialized with real data
@@ -26,7 +22,7 @@ export type SheetId = string | number
 
 export type DataFrameInput =
   | readonly Index<Cell>[]
-  | readonly Series<Cell>[]
+  | readonly Series<Cell, Cell>[]
   | readonly Cell[]
   | readonly Cell[][]
 
@@ -124,7 +120,7 @@ export abstract class BaseTable {
     opts?: { inplace?: boolean }
   ): BaseTable
 
-  abstract col(col: IndexId): Series<Cell>
+  abstract col(col: IndexId): Series<Cell, Cell>
 
   colValues(c: IndexId): readonly Cell[] {
     return this.col(c).values
@@ -144,7 +140,7 @@ export abstract class BaseTable {
 
   abstract get values(): readonly Cell[][]
 
-  abstract row(row: IndexId): Series<Cell>
+  abstract row(row: IndexId): Series<Cell, Cell>
 
   rowValues(c: IndexId): readonly Cell[] {
     return this.row(c).values
@@ -175,7 +171,7 @@ export abstract class BaseTable {
     opts?: { inplace?: boolean }
   ): BaseTable
 
-  abstract get cols(): readonly Series<Cell>[]
+  abstract get cols(): readonly Series<Cell, Cell>[]
 
   abstract get shape(): Shape
 
@@ -221,7 +217,7 @@ export abstract class BaseTable {
     return this.values.map((row, ri) => f(row, ri))
   }
 
-  rowApply(f: ApplyRowFunc): Series<Cell> {
+  rowApply(f: ApplyRowFunc): Series<Cell, Cell> {
     const data = this.rowMap(f)
 
     return new DataSeries(data)
@@ -297,7 +293,7 @@ function dfToStr(df: BaseTable, options: IDFToStrOpts = {}): string {
  * @returns
  */
 export function findInSeries(
-  series: Series<Cell>,
+  series: Series<Cell, Cell>,
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {
@@ -324,7 +320,7 @@ export function shape(data: DataFrameInput): Shape {
       )
     }
 
-    return [(data[0] as Series<Cell>).length, data.length]
+    return [(data[0] as Series<Cell, Cell>).length, data.length]
   }
 
   // single seriesdata

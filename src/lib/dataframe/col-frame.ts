@@ -5,16 +5,10 @@ import { makeCell } from './cell'
 import { BaseDataFrame, findCol, findRow } from './base-dataframe'
 import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
 import type { Cell, IndexId } from './cell'
-import {
-  Index,
-  makeColumns,
-  makeIndex,
-  Shape,
-  shapesEqual,
-  StringIndex,
-  type IndexFromType,
-} from './index'
-import { DataSeries, Series, type SeriesFromType } from './series'
+import { makeColumns, makeIndex, StringIndex } from './data-index'
+import { DataSeries } from './data-series'
+import { Index, Shape, shapesEqual, type IndexFromType } from './index'
+import { Series, type SeriesFromType } from './series'
 
 /**
  * A column oriented dataframe where the data is stored as a map of column name to series.
@@ -62,11 +56,13 @@ export class ColFrame extends BaseDataFrame {
 
       if (!columns) {
         columns = new StringIndex(
-          data.map((c: unknown) => (c as Series<Cell>).name)
+          data.map((c: unknown) => (c as Series<Cell, Cell>).name)
         )
       }
 
-      this._data = data.map((c: unknown) => [...(c as Series<Cell>).values])
+      this._data = data.map((c: unknown) => [
+        ...(c as Series<Cell, Cell>).values,
+      ])
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -169,7 +165,7 @@ export class ColFrame extends BaseDataFrame {
     return df
   }
 
-  override col(c: IndexId): Series<Cell> {
+  override col(c: IndexId): Series<Cell, Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -205,7 +201,7 @@ export class ColFrame extends BaseDataFrame {
    * @param row
    * @returns
    */
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     const idx = findRow(this, row)
 
     if (idx === -1) {
@@ -228,7 +224,7 @@ export class ColFrame extends BaseDataFrame {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | Series<Cell>,
+    data: Cell[] | Series<Cell, Cell>,
     opts: { inplace?: boolean } = {}
   ): ColFrame {
     const d = data instanceof Series ? data.values : data
@@ -330,7 +326,7 @@ export class ColFrame extends BaseDataFrame {
     return this._columns
   }
 
-  override get cols(): Series<Cell>[] {
+  override get cols(): Series<Cell, Cell>[] {
     const colNames = this.colNames
 
     return colNames.map(

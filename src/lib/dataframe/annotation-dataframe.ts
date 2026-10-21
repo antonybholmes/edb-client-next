@@ -14,21 +14,10 @@ import { getExcelColName } from './cell'
 import { ColDataFrame } from './col-dataframe'
 
 import type { Cell, IndexId } from './cell'
-import {
-  DataIndex,
-  Index,
-  makeColumns,
-  makeIndex,
-  shapesEqual,
-  type IndexFromType,
-  type Shape,
-} from './index'
-import {
-  DataSeries,
-  DEFAULT_INDEX_NAME,
-  Series,
-  type SeriesFromType,
-} from './series'
+import { DataIndex, makeColumns, makeIndex } from './data-index'
+import { DataSeries } from './data-series'
+import { Index, shapesEqual, type IndexFromType, type Shape } from './index'
+import { DEFAULT_INDEX_NAME, Series, type SeriesFromType } from './series'
 
 export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
   rowObs?: BaseDataFrame | undefined
@@ -149,7 +138,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override col(col: IndexId): Series<Cell> {
+  override col(col: IndexId): Series<Cell, Cell> {
     const colData = this._colVars.col(DEFAULT_COLUMN_NAMES)
 
     const colIdx = findInSeries(colData, col)
@@ -183,7 +172,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._data.get(rowIdx, colIdx)
   }
 
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     // col 0 of row meta data is always the index label
     // so we can use that to find the row index
     // then we can just return the row from the main dataframe
@@ -278,7 +267,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return df
   }
 
-  override get cols(): readonly Series<Cell>[] {
+  override get cols(): readonly Series<Cell, Cell>[] {
     return this._data.cols
   }
 
@@ -337,7 +326,9 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override rowApply(f: (row: Cell[], index: number) => Cell): Series<Cell> {
+  override rowApply(
+    f: (row: Cell[], index: number) => Cell
+  ): Series<Cell, Cell> {
     return this._data.rowApply(f)
   }
 

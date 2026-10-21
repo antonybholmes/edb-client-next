@@ -140,7 +140,7 @@ export function findCols(
  * @returns
  */
 export function findInSeries(
-  series: Series<Cell>,
+  series: Series<Cell, Cell>,
   row: IndexId,
   opts: { caseInsensitive?: boolean } = {}
 ): number[] {

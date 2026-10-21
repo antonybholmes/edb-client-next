@@ -3531,6 +3531,10 @@
         {
           "msg": "Annotationdataframe now has api to set col and row vars",
           "date": "2026-10-21T20:12:19.694Z"
+        },
+        {
+          "msg": "Adding null support to dataframes for missing data",
+          "date": "2026-10-21T20:31:58.902Z"
         }
       ]
     },

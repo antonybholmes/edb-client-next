@@ -15,16 +15,16 @@ import {
   shape,
 } from './base-table'
 import type { Cell, IndexId } from './cell'
+import { DataIndex, StringIndex } from './data-index'
+import { DataSeries } from './data-series'
 import {
-  DataIndex,
+  EmptyNumIndex,
   Index,
   IndexFromType,
-  NumInfIndex,
   Shape,
   shapesEqual,
-  StringIndex,
 } from './index'
-import { DataSeries, Series, type SeriesFromType } from './series'
+import { Series, type SeriesFromType } from './series'
 
 // export interface IColTableOptions extends ISeriesOptions {
 //   index?: Index<SeriesData>
@@ -89,11 +89,13 @@ export class ColTable extends BaseTable {
 
       if (!columns) {
         columns = new StringIndex(
-          data.map((c: unknown) => (c as Series<Cell>).name)
+          data.map((c: unknown) => (c as Series<Cell, Cell>).name)
         )
       }
 
-      this._data = (data as Series<Cell>[]).map((c: Series<Cell>) => c.index)
+      this._data = (data as Series<Cell, Cell>[]).map(
+        (c: Series<Cell, Cell>) => c.index
+      )
     } else if (isIndex) {
       // array of series to be made column wise
 
@@ -122,7 +124,7 @@ export class ColTable extends BaseTable {
     }
   }
 
-  override get cols(): Series<Cell>[] {
+  override get cols(): Series<Cell, Cell>[] {
     return this._data.map((c) => new DataSeries(c))
   }
 
@@ -155,7 +157,7 @@ export class ColTable extends BaseTable {
     return df
   }
 
-  override col(c: IndexId): Series<Cell> {
+  override col(c: IndexId): Series<Cell, Cell> {
     const idx = findCol(this, c)
 
     if (idx === -1) {
@@ -217,7 +219,7 @@ export class ColTable extends BaseTable {
    * @param row
    * @returns
    */
-  override row(row: IndexId): Series<Cell> {
+  override row(row: IndexId): Series<Cell, Cell> {
     if (typeof row === 'string') {
       throw new Error('invalid row')
     }
@@ -233,7 +235,7 @@ export class ColTable extends BaseTable {
 
   override setRow(
     row: IndexId,
-    data: Cell[] | Series<Cell>,
+    data: Cell[] | Series<Cell, Cell>,
     opts: { inplace?: boolean } = {}
   ): ColTable {
     if (typeof row === 'string') {
@@ -346,8 +348,8 @@ export class ColTable extends BaseTable {
     rows,
     cols,
   }: { rows?: LocType; cols?: LocType } = {}): BaseTable {
-    let rowIdx = _ilocDim(new NumInfIndex(this.shape[0]), rows)
-    let colIdx = _ilocDim(new NumInfIndex(this.shape[1]), cols)
+    let rowIdx = _ilocDim(new EmptyNumIndex(this.shape[0]), rows)
+    let colIdx = _ilocDim(new EmptyNumIndex(this.shape[1]), cols)
 
     const data = new Array(rowIdx.length) as Cell[][]
 

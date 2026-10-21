@@ -1,6 +1,7 @@
-import { DataIndex, ExcelIndex, Index, IndexFromType, NumInfIndex } from '.'
+import { EmptyNumIndex, ExcelIndex, Index, IndexFromType } from '.'
 import { BaseIndex } from './base-index'
 import { Cell, cellStr } from './cell'
+import { DataIndex } from './data-index'
 import { FieldRecord } from './multi-field'
 
 export const DEFAULT_NAME = 'index'
@@ -16,7 +17,7 @@ export class Annotations {
   private _indexCreator: () => Index<Cell>
 
   constructor(size: number, opts: { indexCreator?: () => Index<Cell> } = {}) {
-    const { indexCreator = () => new NumInfIndex() } = opts
+    const { indexCreator = () => new EmptyNumIndex() } = opts
     this._size = size
     this._indexCreator = indexCreator
   }

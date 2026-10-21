@@ -16,11 +16,12 @@ import { KMeans } from '../../math/kmeans'
 import { AnnotationDataFrame } from '../annotation-dataframe'
 import { DataFrame } from '../dataframe'
 
-import { DataIndex, strs } from '..'
+import { strs } from '..'
 import { vfill } from '../../fill'
 import { where } from '../../math/where'
 import { BaseTable } from '../base-table'
 import type { Cell, IndexId } from '../cell'
+import { DataIndex } from '../data-index'
 import { DataFrameWriter, type IDataFrameWriterOpts } from '../dataframe-writer'
 
 export type AxisDim = 0 | 1
