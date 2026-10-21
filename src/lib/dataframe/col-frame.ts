@@ -3,7 +3,13 @@ import { range } from '@/lib/math/range'
 import { makeCell } from './cell'
 
 import { BaseDataFrame, findCol, findRow } from './base-dataframe'
-import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import {
+  BaseTable,
+  IDataFrameOptions,
+  LocType,
+  shape,
+  TableInput,
+} from './base-table'
 import type { Cell, IndexId } from './cell'
 import { makeColumns, makeIndex, StringIndex } from './data-index'
 import { DataSeries } from './data-series'
@@ -29,18 +35,9 @@ export class ColFrame extends BaseDataFrame {
       throw new Error('data must be a non empty array or array of series')
     }
 
-    //let cols: Index | null = null
-
-    // if we supply columns as index clone as is
-
-    // if (columns) {
-    //   if (columns instanceof Index) {
-    //     cols = columns.copy()
-    //   } else {
-    //     // create index
-    //     cols = new DataIndex(columns)
-    //   }
-    // }
+    if (data instanceof BaseTable) {
+      data = data.cols
+    }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
     const isSeries = data.some((d: unknown) => d instanceof Series)
@@ -528,7 +525,7 @@ export class ColFrame extends BaseDataFrame {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): BaseDataFrame {
+  override copyReplaceData(data: TableInput): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

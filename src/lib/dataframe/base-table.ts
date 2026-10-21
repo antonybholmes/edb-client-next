@@ -20,14 +20,15 @@ export type LocType = string | number | (number | string)[]
 
 export type SheetId = string | number
 
-export type DataFrameInput =
+export type TableInput =
+  | BaseTable
   | readonly Index<Cell>[]
   | readonly Series<Cell, Cell>[]
   | readonly Cell[]
   | readonly Cell[][]
 
 export interface IDataFrameOptions extends ISeriesOptions {
-  data?: DataFrameInput
+  data?: TableInput
   columns?: IndexFromType | undefined
   //indexName?: string
 }
@@ -97,7 +98,7 @@ export abstract class BaseTable {
    * @param data
    * @returns
    */
-  abstract copyReplaceData(data: DataFrameInput): BaseTable
+  abstract copyReplaceData(data: TableInput): BaseTable
 
   colName(index: number): string {
     return this.cols[index].name
@@ -310,11 +311,11 @@ export function findInSeries(
  * @param data
  * @returns
  */
-export function shape(data: DataFrameInput): Shape {
+export function shape(data: TableInput): Shape {
   const isSeries = data[0] instanceof Series
 
   if (isSeries) {
-    if (!data.every((d) => d instanceof Series)) {
+    if (!(data as unknown[]).every((d) => d instanceof Series)) {
       throw new Error(
         'All columns must be a series if the first column is a series'
       )

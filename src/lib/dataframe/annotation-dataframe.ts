@@ -2,13 +2,13 @@ import { vfill, vfill2d } from '../fill'
 import { BaseDataFrame, findCol, findRow } from './base-dataframe'
 import {
   BaseTable,
-  DataFrameInput,
   DEFAULT_COLUMN_NAMES,
   DEFAULT_SHEET_NAME,
   findInSeries,
   IDataFrameOptions,
   LocType,
   shape,
+  TableInput,
 } from './base-table'
 import { getExcelColName } from './cell'
 import { ColDataFrame } from './col-dataframe'
@@ -30,7 +30,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   _colVars: BaseDataFrame
 
   constructor(options: IAnnotationDataFrameOptions = {}) {
-    const { name = '', index, columns, rowObs, colVars } = options
+    const { name = '', index, columns, data, rowObs, colVars } = options
 
     super({ name })
 
@@ -372,7 +372,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return ret
   }
 
-  override copyReplaceData(data: DataFrameInput): AnnotationDataFrame {
+  override copyReplaceData(data: TableInput): AnnotationDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

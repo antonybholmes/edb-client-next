@@ -2,7 +2,7 @@ import { range } from '@/lib/math/range'
 import { BaseDataFrame, findCol, findCols, findRow } from './base-dataframe'
 import { makeCell } from './cell'
 
-import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import { IDataFrameOptions, LocType, shape, TableInput } from './base-table'
 import type { Cell, IndexId } from './cell'
 import { DataIndex, makeColumns, makeIndex } from './data-index'
 import { DataSeries } from './data-series'
@@ -391,7 +391,7 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): DataFrame {
+  override copyReplaceData(data: TableInput): DataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

@@ -3535,6 +3535,10 @@
         {
           "msg": "Adding null support to dataframes for missing data",
           "date": "2026-10-21T20:31:58.902Z"
+        },
+        {
+          "msg": "Refined dataframe api",
+          "date": "2026-10-21T21:27:02.698Z"
         }
       ]
     },

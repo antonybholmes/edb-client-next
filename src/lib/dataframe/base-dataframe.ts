@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { rangeMap } from '@/lib/math/range'
 
 import { Index, type IndexFromType } from '.'
@@ -30,13 +28,6 @@ export abstract class BaseDataFrame extends BaseTable {
    */
   abstract copy(): BaseDataFrame
 
-  override iloc({
-    rows,
-    cols,
-  }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
-    return this
-  }
-
   abstract setIndex(
     index: IndexFromType,
     opts?: { inplace?: boolean }
@@ -48,6 +39,8 @@ export abstract class BaseDataFrame extends BaseTable {
   ): BaseDataFrame
 
   abstract get index(): Index<Cell>
+
+  abstract iloc({}: { rows?: LocType; cols?: LocType }): BaseDataFrame
 
   rowName(index: number): string {
     return cellStr(this.index.at(index))

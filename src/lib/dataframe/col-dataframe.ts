@@ -8,7 +8,13 @@ import {
   whereStrStartsWith,
 } from '../math/where'
 import { BaseDataFrame } from './base-dataframe'
-import { DataFrameInput, IDataFrameOptions, LocType, shape } from './base-table'
+import {
+  BaseTable,
+  IDataFrameOptions,
+  LocType,
+  shape,
+  TableInput,
+} from './base-table'
 import type { Cell, IndexId } from './cell'
 import { DataIndex } from './data-index'
 import { DataSeries, seriesToIndex } from './data-series'
@@ -37,6 +43,10 @@ export class ColDataFrame extends BaseDataFrame {
 
     if (data.length === 0) {
       throw new Error('data must be a non empty array or array of series')
+    }
+
+    if (data instanceof BaseTable) {
+      data = data.cols
     }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
@@ -469,7 +479,7 @@ export class ColDataFrame extends BaseDataFrame {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): ColDataFrame {
+  override copyReplaceData(data: TableInput): ColDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }

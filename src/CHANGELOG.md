@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added empty dataframe and series support.
 - Refined dataframe api.
 - Adding null support to dataframes for missing data.
 - Annotationdataframe now has api to set col and row vars.

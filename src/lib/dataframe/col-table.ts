@@ -9,10 +9,10 @@ import {
 } from '../math/where'
 import {
   BaseTable,
-  DataFrameInput,
   IDataFrameOptions,
   LocType,
   shape,
+  TableInput,
 } from './base-table'
 import type { Cell, IndexId } from './cell'
 import { DataIndex, StringIndex } from './data-index'
@@ -52,6 +52,10 @@ export class ColTable extends BaseTable {
 
     if (data.length === 0) {
       throw new Error('data must be a non empty array or array of series')
+    }
+
+    if (data instanceof BaseTable) {
+      data = data.cols
     }
 
     //let cols: Index | null = null
@@ -437,7 +441,7 @@ export class ColTable extends BaseTable {
     })
   }
 
-  override copyReplaceData(data: DataFrameInput): ColTable {
+  override copyReplaceData(data: TableInput): ColTable {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
     }
