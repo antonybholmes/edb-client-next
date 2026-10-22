@@ -2,11 +2,12 @@ import { PlotMarginPopover } from '@/components/plot/axes/props/plot-margin-popo
 import { produce } from 'immer'
 import { useHeatmapSettings } from '../heatmap-settings'
 
-export function MarginPopover() {
+export function MarginPopover({ button }: { button?: 'flat' | 'simple' }) {
   const { settings, updateSettings } = useHeatmapSettings()
 
   return (
     <PlotMarginPopover
+      button={button}
       margin={settings.plot.margin}
       updateMargin={(margin) =>
         updateSettings(

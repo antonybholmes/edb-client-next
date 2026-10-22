@@ -14,6 +14,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
+import { useHeatmapSettings } from '../heatmap-settings'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -36,6 +37,7 @@ export interface PlotSettingsPanelProps {
 
 export function PlotSettingsPanel() {
   const { displayProps, plot } = useHeatmapContext()
+  const { settings, updateSettings } = useHeatmapSettings()
   const { updatePlot } = useHistory()
 
   return (
@@ -78,21 +80,21 @@ export function PlotSettingsPanel() {
 
         <PropRow title="Cell">
           <DoubleNumericalInput
-            v1={displayProps.blockSize.w}
-            v2={displayProps.blockSize.h}
+            v1={settings.blockSize.w}
+            v2={settings.blockSize.h}
             inputCls="rounded-theme"
             dp={0}
             onNumChanged1={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.blockSize.w = v
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.blockSize.w = v
                 })
               )
             }}
             onNumChanged2={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.blockSize.h = v
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.blockSize.h = v
                 })
               )
             }}

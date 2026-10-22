@@ -67,7 +67,7 @@ function HeatMapSvgContent() {
 
   const displayOptions = plot.props
 
-  const blockSize = displayOptions.blockSize
+  const blockSize = useMemo(() => settings.blockSize, [settings.blockSize])
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
 
@@ -138,7 +138,7 @@ function HeatMapSvgContent() {
         : 0)
 
     return { top, left, bottom, right }
-  }, [displayOptions])
+  }, [displayOptions, settings])
 
   const xgaps = useMemo(
     () => new CellGaps(displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]),
@@ -522,7 +522,7 @@ function HeatMapSvgContent() {
     )
 
     return { svg, width, height }
-  }, [cf, displayOptions, groupRows, cax])
+  }, [cf, displayOptions, settings, groupRows, cax])
 
   return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }

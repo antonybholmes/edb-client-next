@@ -12,14 +12,20 @@ import { TEXT_PLOT, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 
 import { DownloadImageIcon } from '@/components/icons/computer/download-image-icon'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { produce } from 'immer'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useMatcalcDialogs } from '../../matcalc/matcalc-dialogs'
+import { useHeatmapSettings } from '../heatmap-settings'
+import { MarginPopover } from '../props-panel/margin-popover'
 
 export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
   const { addPlots } = useHistory()
-
+  const { settings, updateSettings } = useHeatmapSettings()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
   return (
@@ -69,6 +75,44 @@ export function HomeToolbar() {
           <PlayIcon variant="app-theme" />
           {TEXT_PLOT}
         </ToolbarColSmallButton>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
+        <ToolbarCol>
+          <ToolbarRow title="Width" titleCls="w-10">
+            <NumericalInput
+              h="toolbar"
+              value={settings.blockSize.w}
+              placeholder="Width"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.blockSize.w = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow title="Height" titleCls="w-10">
+            <NumericalInput
+              h="toolbar"
+              value={settings.blockSize.h}
+              placeholder="Row Height"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.blockSize.h = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+        </ToolbarCol>
+        <MarginPopover button="flat" />
       </ToolbarTabGroup>
     </>
   )

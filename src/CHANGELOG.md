@@ -4,6 +4,7 @@
 
 ### Changed
 
+- heatmap now uses some saved settings.
 - heatmap now supports margin.
 - Bug fixes and updates.
 - gsea plot now has margin support.
