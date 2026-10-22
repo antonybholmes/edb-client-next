@@ -178,7 +178,8 @@ export function NetworkDisplayPropsPanel() {
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Size">
-              <span className="w-3 text-center">W</span>
+              <MarginPopover />
+              <span className="ml-2 w-3 text-center">W</span>
               <NumericalInput
                 w="xs"
                 value={settings.plot.size.w}
@@ -209,9 +210,6 @@ export function NetworkDisplayPropsPanel() {
                   )
                 }}
               />
-            </PropRow>
-            <PropRow title="Margin">
-              <MarginPopover />
             </PropRow>
 
             <PropRow title="Border">

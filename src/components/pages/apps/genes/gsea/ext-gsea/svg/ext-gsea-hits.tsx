@@ -23,7 +23,7 @@ import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { getColorMapFromSettings } from '../../gsea-plot/svg/hits-svg'
 import { IExtGseaPlotResult } from '../ext-gsea-provider'
 

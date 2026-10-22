@@ -9,7 +9,7 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { produce } from 'immer'
 import { ListFilter } from 'lucide-react'
 import { useState } from 'react'
-import { useGseaSettings } from './gsea-settings-store'
+import { useGseaSettings } from './gsea-settings'
 import { useGsea } from './gsea-store'
 
 export function GeneSetFilter() {

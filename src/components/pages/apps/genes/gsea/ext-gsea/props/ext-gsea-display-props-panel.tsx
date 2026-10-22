@@ -26,12 +26,14 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
-import { ColorMapMenu } from '../../../matcalc/color-map-menu'
-import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
-import { GeneProps } from '../gsea-plot/display-props/gene-props'
-import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
-import { useExtGseaContext } from './ext-gsea-provider'
-import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
+import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
+import { useHistory } from '../../../../matcalc/history/history-provider/history-provider'
+import { GeneProps } from '../../gsea-plot/display-props/gene-props'
+
+import { useGseaSettings } from '../../gsea-plot/gsea-settings'
+import { useExtGseaContext } from '../ext-gsea-provider'
+import { DEFAULT_EXT_GSEA_SETTINGS } from '../ext-gsea-settings'
+import { MarginPopover } from './margin-popover'
 
 export function ExtGseaDisplayPropsPanel() {
   // const { plotsState, historyDispatch } = useContext(PlotsContext)
@@ -87,7 +89,8 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Width">
+            <PropRow title="Width" contentCls="gap-x-2">
+              <MarginPopover />
               <NumericalInput
                 id="width"
                 value={settings.es.axes.x.length}

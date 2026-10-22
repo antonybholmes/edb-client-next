@@ -1,6 +1,6 @@
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
 import { GseaBubbleDisplayPropsPanel } from '../bubble/props/gsea-bubble-display-props-panel'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 import { GseaPlotDisplayPropsPanel } from './gsea-plot-display-props-panel'
 
 export function GseaDisplayPropsPanel() {

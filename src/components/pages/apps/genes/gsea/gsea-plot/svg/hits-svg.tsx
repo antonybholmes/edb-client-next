@@ -16,7 +16,7 @@ import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
 import { useCrosshair } from '@/providers/crosshair-provider'
 import { useSVG } from '@/providers/svg-provider'
-import { IGseaDisplayProps, useGseaSettings } from '../gsea-settings-store'
+import { IGseaDisplayProps, useGseaSettings } from '../gsea-settings'
 import { IGseaTableResult, useGseaData } from '../gsea-store'
 
 export function getColorMapFromSettings(

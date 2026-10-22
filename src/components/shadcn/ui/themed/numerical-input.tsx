@@ -173,6 +173,7 @@ export function NumericalInput({
       onNumChange?.(v)
 
       if (triggerChanged) {
+        console.trace()
         onNumChanged?.(v)
       }
     }
@@ -219,9 +220,11 @@ export function NumericalInput({
   }
 
   function stopUpdating() {
-    if (timeoutRef.current) {
-      clearInterval(timeoutRef.current)
+    if (!timeoutRef.current) {
+      return
     }
+
+    clearInterval(timeoutRef.current)
 
     timeoutRef.current = null
 
@@ -300,7 +303,7 @@ export function NumericalInput({
 
           onPointerDown={() => startUpdating(-step)}
           onPointerUp={stopUpdating}
-          onPointerLeave={stopUpdating}
+          //onPointerLeave={stopUpdating}
           onKeyDown={(e) => handleKeyDown(e, -step)}
           onKeyUp={handleKeyUp}
           aria-label="Decrease value"

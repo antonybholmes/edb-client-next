@@ -6,6 +6,7 @@ import { type IClusterFrame } from '@/lib/math/hcluster'
 import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
+  useHeatmapSettings,
 } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { SvgHColorBar, SvgVColorBar } from '@/components/plot/svg-color-bar'
 import { GridSvg } from './cell-svg'
@@ -54,6 +55,7 @@ export function HeatMapSvg() {
 
 function HeatMapSvgContent() {
   const { plot, rowLeaves, colLeaves } = useHeatmapContext()
+  const { settings } = useHeatmapSettings()
 
   const cf = plot.dataframes['main'] as IClusterFrame
 
@@ -65,7 +67,7 @@ function HeatMapSvgContent() {
 
   const displayOptions = plot.props
 
-  const blockSize = displayOptions.blockSize
+  const blockSize = useMemo(() => settings.blockSize, [settings.blockSize])
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
 
@@ -77,7 +79,7 @@ function HeatMapSvgContent() {
 
   const margin: IMarginProps = useMemo(() => {
     const left =
-      displayOptions.padding +
+      settings.plot.margin.left +
       (cf.rowTree &&
       displayOptions.tree.row.show &&
       displayOptions.tree.row.position === 'left'
@@ -89,6 +91,7 @@ function HeatMapSvgContent() {
         : 0)
 
     const right =
+      settings.plot.margin.right +
       (displayOptions.labels.row.show &&
       displayOptions.labels.row.position === 'right'
         ? rowLabelsMetaW + displayOptions.padding
@@ -108,7 +111,7 @@ function HeatMapSvgContent() {
         : 0)
 
     const top =
-      displayOptions.padding +
+      settings.plot.margin.top +
       (cf.colTree &&
       displayOptions.tree.col.show &&
       displayOptions.tree.col.position === 'top'
@@ -124,7 +127,7 @@ function HeatMapSvgContent() {
         : 0)
 
     const bottom =
-      displayOptions.padding +
+      settings.plot.margin.bottom +
       displayOptions.labels.col.width +
       (displayOptions.legend.show && displayOptions.legend.position === 'bottom'
         ? 2 * legendBlockSize + displayOptions.padding
@@ -135,7 +138,7 @@ function HeatMapSvgContent() {
         : 0)
 
     return { top, left, bottom, right }
-  }, [displayOptions])
+  }, [displayOptions, settings])
 
   const xgaps = useMemo(
     () => new CellGaps(displayOptions.gaps.cols, blockSize.w, dfMain.shape[1]),
@@ -519,7 +522,7 @@ function HeatMapSvgContent() {
     )
 
     return { svg, width, height }
-  }, [cf, displayOptions, groupRows, cax])
+  }, [cf, displayOptions, settings, groupRows, cax])
 
   return <SvgZoomCanvas size={{ w: width, h: height }}>{svg}</SvgZoomCanvas>
 }

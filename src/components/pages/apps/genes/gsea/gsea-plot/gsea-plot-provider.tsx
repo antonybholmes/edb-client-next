@@ -5,7 +5,7 @@ import { IPlotAxes, useAxes } from '@/components/plot/axes/plot-axes'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { ILim } from '@/lib/math/math'
 import { IRankedGene, sortRankedGenes } from './geneset'
-import { useGseaSettings } from './gsea-settings-store'
+import { useGseaSettings } from './gsea-settings'
 import { IGseaTableResult, useGseaInUse } from './gsea-store'
 
 type GseaPlotContext = {

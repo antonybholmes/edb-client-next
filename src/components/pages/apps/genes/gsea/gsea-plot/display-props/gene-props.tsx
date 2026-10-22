@@ -16,7 +16,7 @@ import {
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 
 export function GeneProps() {
   const { settings, updateSettings } = useGseaSettings()

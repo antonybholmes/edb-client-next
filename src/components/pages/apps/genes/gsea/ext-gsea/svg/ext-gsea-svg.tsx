@@ -8,9 +8,10 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { IDim } from '@/interfaces/dim'
 import { IPos } from '@/interfaces/pos'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
-import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { crossingIndex, RankingSvg } from '../../gsea-plot/svg/ranking-svg'
 import { IExtGseaPlotResult, useExtGseaContext } from '../ext-gsea-provider'
+import { useExtGseaSettings } from '../ext-gsea-settings'
 import { ExtGseaEsSvgPlot } from './ext-gsea-es-svg'
 import { ExtGseaGenesSvgPlot } from './ext-gsea-hits'
 import { ExtGseaTitleSvg } from './title-svg'
@@ -95,6 +96,7 @@ const ExtGseaSvgPlot = memo(function ExtGseaSvgPlot({
 
 export function ExtGseaSvgContent() {
   const { results } = useExtGseaContext()
+  const { settings } = useExtGseaSettings()
   const { settings: gseaSettings } = useGseaSettings()
 
   const innerPlotSize: IDim = useMemo(() => {
@@ -115,12 +117,12 @@ export function ExtGseaSvgContent() {
     return {
       w:
         innerPlotSize.w +
-        gseaSettings.plot.margin.left +
-        gseaSettings.plot.margin.right,
+        settings.plot.margin.left +
+        settings.plot.margin.right,
       h:
         innerPlotSize.h +
-        gseaSettings.plot.margin.top +
-        gseaSettings.plot.margin.bottom,
+        settings.plot.margin.top +
+        settings.plot.margin.bottom,
     }
   }, [innerPlotSize, gseaSettings])
 
@@ -154,8 +156,8 @@ export function ExtGseaSvgContent() {
       }
     }
 
-    return <SvgMargin margin={gseaSettings.plot.margin}>{elems}</SvgMargin>
-  }, [results, plotSize, gseaSettings.page.columns, gseaSettings.plot.margin])
+    return <SvgMargin margin={settings.plot.margin}>{elems}</SvgMargin>
+  }, [results, plotSize, gseaSettings.page.columns, settings.plot.margin])
 
   return <SvgZoomCanvas size={pageSize}>{svg}</SvgZoomCanvas>
 }

@@ -3547,6 +3547,34 @@
         {
           "msg": "Fixed volcano not using index col when loading text file",
           "date": "2026-10-21T21:58:27.853Z"
+        },
+        {
+          "msg": "Added margin support to ext gsea",
+          "date": "2026-10-21T22:39:11.220Z"
+        },
+        {
+          "msg": "gsea plot now has margin support",
+          "date": "2026-10-21T22:45:45.052Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-10-21T23:05:05.355Z"
+        },
+        {
+          "msg": "heatmap now supports margin",
+          "date": "2026-10-22T01:30:54.485Z"
+        },
+        {
+          "msg": "heatmap now uses some saved settings",
+          "date": "2026-10-22T01:40:21.940Z"
+        },
+        {
+          "msg": "Ext gsea now uses own margin that is more generous than the original gsea plot",
+          "date": "2026-10-22T21:47:29.931Z"
+        },
+        {
+          "msg": "Refined toolbar UI",
+          "date": "2026-10-22T21:53:30.730Z"
         }
       ]
     },

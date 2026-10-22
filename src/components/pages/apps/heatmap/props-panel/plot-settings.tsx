@@ -14,6 +14,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
+import { useHeatmapSettings } from '../heatmap-settings'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
@@ -25,6 +26,7 @@ import { Circle, Square } from 'lucide-react'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { IHeatMapPlot } from '../../matcalc/history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
+import { MarginPopover } from './margin-popover'
 
 export interface PlotSettingsPanelProps {
   displayProps: IHeatMapSettings
@@ -35,6 +37,7 @@ export interface PlotSettingsPanelProps {
 
 export function PlotSettingsPanel() {
   const { displayProps, plot } = useHeatmapContext()
+  const { settings, updateSettings } = useHeatmapSettings()
   const { updatePlot } = useHistory()
 
   return (
@@ -60,6 +63,7 @@ export function PlotSettingsPanel() {
           />
           <Input
             id="title-text"
+            h="toolbar"
             value={displayProps.title.text}
             disabled={!displayProps.title.show}
             placeholder="Title..."
@@ -77,21 +81,22 @@ export function PlotSettingsPanel() {
 
         <PropRow title="Cell">
           <DoubleNumericalInput
-            v1={displayProps.blockSize.w}
-            v2={displayProps.blockSize.h}
+            v1={settings.blockSize.w}
+            v2={settings.blockSize.h}
+            h="toolbar"
             inputCls="rounded-theme"
             dp={0}
             onNumChanged1={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.blockSize.w = v
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.blockSize.w = v
                 })
               )
             }}
             onNumChanged2={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.blockSize.h = v
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.blockSize.h = v
                 })
               )
             }}
@@ -101,6 +106,7 @@ export function PlotSettingsPanel() {
         <PropRow title="Padding">
           <NumericalInput
             id="padding"
+            h="toolbar"
             value={displayProps.padding}
             placeholder="Padding..."
             className="rounded-theme"
@@ -114,7 +120,11 @@ export function PlotSettingsPanel() {
           />
         </PropRow>
 
-        <PropRow title="Grid">
+        <PropRow title="Margin">
+          <MarginPopover />
+        </PropRow>
+
+        <PropRow title="Grid" contentCls="gap-x-2">
           <VCenterRow>
             <StrokeButton
               colors={[
@@ -188,9 +198,10 @@ export function PlotSettingsPanel() {
                 })
               )
             }}
+            size="toolbar"
             className="gap-x-0.5"
             variant="outline"
-            pad="none"
+            aspect="icon"
           >
             <GroupToggle value="heatmap" title="Heatmap">
               <Square size={16} />

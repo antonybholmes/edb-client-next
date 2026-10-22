@@ -11,7 +11,7 @@ import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { SvgText } from '@/components/plot/svg-text'
 import { argmax } from '@/lib/math/math'
 import { memo, useMemo } from 'react'
-import { useGseaSettings } from '../gsea-settings-store'
+import { useGseaSettings } from '../gsea-settings'
 import { IGseaTableResult } from '../gsea-store'
 import { getColorMapFromSettings } from './hits-svg'
 

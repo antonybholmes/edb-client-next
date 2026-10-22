@@ -4,6 +4,13 @@
 
 ### Changed
 
+- Refined toolbar UI.
+- Ext gsea now uses own margin that is more generous than the original gsea plot.
+- heatmap now uses some saved settings.
+- heatmap now supports margin.
+- Bug fixes and updates.
+- gsea plot now has margin support.
+- Added margin support to ext gsea.
 - Fixed volcano not using index col when loading text file.
 - Added empty dataframe and series support.
 - Refined dataframe api.

@@ -35,6 +35,7 @@ export function CellSettingsPanel() {
           }}
         >
           <NumericalInput
+            h="toolbar"
             id="cell-dp"
             value={displayProps.cells.values.dp}
             limit={[0, 10]}
@@ -65,6 +66,7 @@ export function CellSettingsPanel() {
           }}
         >
           <NumericalInput
+            h="toolbar"
             id="cell-filter"
             value={displayProps.cells.values.filter.value}
             limit={[0, 10000]}

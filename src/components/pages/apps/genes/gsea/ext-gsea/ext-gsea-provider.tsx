@@ -32,7 +32,7 @@ import { IDBEntity } from '@/interfaces/db-entity'
 import { makeUuid } from '@/lib/id'
 import { max } from '@/lib/math/math'
 import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
-import { useGseaSettings } from '../gsea-plot/gsea-settings-store'
+import { useGseaSettings } from '../gsea-plot/gsea-settings'
 
 export interface IExtGseaPlotResult extends IDBEntity {
   scores: IRankedGene[]

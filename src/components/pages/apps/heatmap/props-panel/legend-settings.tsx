@@ -136,6 +136,7 @@ export function LegendSettingsPanel() {
                 })
               )
             }}
+            h="toolbar"
           />
         </CheckPropRow>
 

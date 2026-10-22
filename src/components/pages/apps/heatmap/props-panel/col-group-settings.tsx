@@ -40,6 +40,7 @@ export function ColGroupsSettingsPanel() {
       <AccordionContent>
         <PropRow title={TEXT_HEIGHT}>
           <NumericalInput
+            h="toolbar"
             title="Height"
             disabled={!displayProps.groups.show}
             value={displayProps.groups.height}

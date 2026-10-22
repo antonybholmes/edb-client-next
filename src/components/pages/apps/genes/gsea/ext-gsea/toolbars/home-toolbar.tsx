@@ -22,7 +22,8 @@ import {
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
-import { useGseaSettings } from '../../gsea-plot/gsea-settings-store'
+import { MarginPopover } from '../../gsea-plot/display-props/margin-popover'
+import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 
 export function HomeToolbar() {
@@ -77,38 +78,62 @@ export function HomeToolbar() {
       </ToolbarTabGroup> */}
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
-        <ToolbarRow title="Width">
-          <NumericalInput
-            h="toolbar"
-            value={gseaSettings.es.axes.x.length}
-            placeholder="Width"
-            limit={[1, 1000]}
-            dp={0}
-            onNumChange={(v) => {
-              updateGseaSettings(
-                produce(gseaSettings, (draft) => {
-                  draft.es.axes.x.length = v
-                })
-              )
-            }}
-          />
-        </ToolbarRow>
-        <ToolbarRow title="ES Height">
-          <NumericalInput
-            h="toolbar"
-            value={gseaSettings.es.axes.y.length}
-            placeholder="Height"
-            limit={[1, 1000]}
-            dp={0}
-            onNumChange={(v) => {
-              updateGseaSettings(
-                produce(gseaSettings, (draft) => {
-                  draft.es.axes.y.length = v
-                })
-              )
-            }}
-          />
-        </ToolbarRow>
+        <ToolbarCol>
+          <ToolbarRow title="Width" smallTitle="W" titleCls="w-10">
+            <NumericalInput
+              h="toolbar"
+              value={gseaSettings.es.axes.x.length}
+              placeholder="Width"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.es.axes.x.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow title="Height" smallTitle="H" titleCls="w-10">
+            <NumericalInput
+              h="toolbar"
+              value={gseaSettings.es.axes.y.length}
+              placeholder="Height"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.es.axes.y.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+        </ToolbarCol>
+        <ToolbarCol>
+          <ToolbarRow title="Columns" smallTitle="Cols">
+            <NumericalInput
+              value={gseaSettings.page.columns}
+
+              placeholder="Opacity"
+              limit={[1, 100]}
+              step={1}
+              onNumChanged={(v) => {
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.page.columns = v
+                  })
+                )
+              }}
+              h="toolbar"
+            />
+          </ToolbarRow>
+          <ToolbarRow>
+            <MarginPopover button="flat" />
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
       <ToolbarTabGroup title={TEXT_OPTIONS}>
         <ToolbarCol>

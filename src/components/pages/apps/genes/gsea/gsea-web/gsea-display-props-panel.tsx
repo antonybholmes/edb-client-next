@@ -24,9 +24,9 @@ import { Slider } from '@/components/shadcn/ui/themed/baseui/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 
-import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { MarginPopover } from '../gsea-plot/display-props/margin-popover'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 

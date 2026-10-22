@@ -32,6 +32,7 @@ import {
   SortBy,
   useGseaBubbleSettings,
 } from '../../gsea-plot/bubble/gsea-bubble-settings'
+import { MarginPopover } from '../../gsea-plot/bubble/props/margin-popover'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
 
 export function HomeToolbar() {
@@ -93,38 +94,41 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
-        <ToolbarRow title="Width">
-          <NumericalInput
-            h="toolbar"
-            value={settings.axes.x.length}
-            placeholder="Width"
-            limit={[1, 1000]}
-            dp={0}
-            onNumChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.axes.x.length = v
-                })
-              )
-            }}
-          />
-        </ToolbarRow>
-        <ToolbarRow title="Row Height">
-          <NumericalInput
-            h="toolbar"
-            value={settings.axes.y.rowHeight}
-            placeholder="Row Height"
-            limit={[1, 1000]}
-            dp={0}
-            onNumChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.axes.y.rowHeight = v
-                })
-              )
-            }}
-          />
-        </ToolbarRow>
+        <ToolbarCol>
+          <ToolbarRow title="Width" titleCls="w-10" smallTitle="W">
+            <NumericalInput
+              h="toolbar"
+              value={settings.axes.x.length}
+              placeholder="Width"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.x.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow title="Height" titleCls="w-10" smallTitle="H">
+            <NumericalInput
+              h="toolbar"
+              value={settings.axes.y.rowHeight}
+              placeholder="Row Height"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.y.rowHeight = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+        </ToolbarCol>
+        <MarginPopover button="flat" />
       </ToolbarTabGroup>
       <ToolbarTabGroup title={TEXT_OPTIONS} className="gap-x-2">
         <ToolbarCol>

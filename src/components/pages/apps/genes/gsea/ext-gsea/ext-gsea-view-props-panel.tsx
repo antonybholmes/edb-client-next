@@ -4,8 +4,8 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { Move3D, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../../matcalc/data/outlook-tabs'
-import { ExtGseaDisplayPropsPanel } from './ext-gsea-display-props-panel'
 import { GseaGraphAxesPropsPanel } from './gsea-graph-axes-props-panel'
+import { ExtGseaDisplayPropsPanel } from './props/ext-gsea-display-props-panel'
 
 const ID = 'ext-gsea-view-props-panel'
 

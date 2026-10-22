@@ -5,9 +5,9 @@
     "#ff5050",
     "#0000ff"
   ],
-  "version": "20.0.4",
+  "version": "20.0.6",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-21T20:12:18.636Z",
-  "hash": "4c6bc6f483b34a4e1d9e4a568339b2c239dc8869691403326854aae62c09c860",
-  "build": 20
+  "modified": "2026-10-22T21:53:29.861Z",
+  "hash": "a27da2d360d3b726b0b1db74d9476b1153bca39740388b897a3c4cc622d02faa",
+  "build": 30
 }
