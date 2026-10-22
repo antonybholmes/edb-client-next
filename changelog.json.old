@@ -3567,6 +3567,10 @@
         {
           "msg": "heatmap now uses some saved settings",
           "date": "2026-10-22T01:40:21.940Z"
+        },
+        {
+          "msg": "Ext gsea now uses own margin that is more generous than the original gsea plot",
+          "date": "2026-10-22T21:47:29.931Z"
         }
       ]
     },

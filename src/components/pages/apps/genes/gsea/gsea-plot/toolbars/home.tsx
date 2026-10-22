@@ -1,4 +1,3 @@
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import {
   onBinaryFileChange,
   openFilesDialog,
@@ -65,37 +64,45 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Plot Size">
         <ToolbarCol>
-          <DoubleNumericalInput
-            h="toolbar"
-            v1={settings.es.axes.x.length}
-            placeholder="Width"
-            limit={[1, 1000]}
-            dp={0}
-            onNumChange1={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.es.axes.x.length = v
-                })
-              )
-            }}
-            v2={settings.es.axes.y.length}
-            onNumChange2={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.es.axes.y.length = v
-                })
-              )
-            }}
-          />
-
-          <MarginPopover button="flat" />
+          <ToolbarRow title="Width" smallTitle="W" titleCls="w-10">
+            <NumericalInput
+              h="toolbar"
+              value={settings.es.axes.x.length}
+              placeholder="Width"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.es.axes.x.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow title="Height" smallTitle="H" titleCls="w-10">
+            <NumericalInput
+              h="toolbar"
+              value={settings.es.axes.y.length}
+              placeholder="Height"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.es.axes.y.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
         </ToolbarCol>
+        <MarginPopover button="flat" />
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Options" className="gap-x-1">
         <ToolbarCol className="gap-x-1">
-          <ToolbarRow>
-            Columns
+          <ToolbarRow title="Columns" smallTitle="Cols">
             <NumericalInput
               value={settings.page.columns}
               h="toolbar"

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined toolbar UI.
 - Ext gsea now uses own margin that is more generous than the original gsea plot.
 - heatmap now uses some saved settings.
 - heatmap now supports margin.

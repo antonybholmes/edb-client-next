@@ -95,7 +95,7 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
         <ToolbarCol>
-          <ToolbarRow title="Width" titleCls="w-10">
+          <ToolbarRow title="Width" titleCls="w-10" smallTitle="W">
             <NumericalInput
               h="toolbar"
               value={settings.axes.x.length}
@@ -111,7 +111,7 @@ export function HomeToolbar() {
               }}
             />
           </ToolbarRow>
-          <ToolbarRow title="Height" titleCls="w-10">
+          <ToolbarRow title="Height" titleCls="w-10" smallTitle="H">
             <NumericalInput
               h="toolbar"
               value={settings.axes.y.rowHeight}
