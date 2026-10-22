@@ -79,7 +79,7 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
         <ToolbarCol>
-          <ToolbarRow title="Width" titleCls="w-10">
+          <ToolbarRow title="Width" smallTitle="W" titleCls="w-10">
             <NumericalInput
               h="toolbar"
               value={gseaSettings.es.axes.x.length}
@@ -95,7 +95,7 @@ export function HomeToolbar() {
               }}
             />
           </ToolbarRow>
-          <ToolbarRow title="Height" titleCls="w-10">
+          <ToolbarRow title="Height" smallTitle="H" titleCls="w-10">
             <NumericalInput
               h="toolbar"
               value={gseaSettings.es.axes.y.length}
@@ -113,6 +113,23 @@ export function HomeToolbar() {
           </ToolbarRow>
         </ToolbarCol>
         <ToolbarCol>
+          <ToolbarRow title="Columns" smallTitle="Cols">
+            <NumericalInput
+              value={gseaSettings.page.columns}
+
+              placeholder="Opacity"
+              limit={[1, 100]}
+              step={1}
+              onNumChanged={(v) => {
+                updateGseaSettings(
+                  produce(gseaSettings, (draft) => {
+                    draft.page.columns = v
+                  })
+                )
+              }}
+              h="toolbar"
+            />
+          </ToolbarRow>
           <ToolbarRow>
             <MarginPopover button="flat" />
           </ToolbarRow>

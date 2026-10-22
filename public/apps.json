@@ -43,11 +43,11 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.4.6",
+    "version": "2.4.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-22T01:49:25.980Z",
-    "hash": "a8fcf249a423b2efc0eb78c813219c3f286b1152213acb5a3602297d0072a801",
-    "build": 1068
+    "modified": "2026-10-22T21:47:29.023Z",
+    "hash": "29d4f92ddbc453a2a53864b580da091ccb3a2af78904b417c7116f0da5259ac8",
+    "build": 1070
   },
   {
     "name": "Get DNA",
@@ -300,8 +300,8 @@
     ],
     "version": "2.0.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-21T21:58:26.936Z",
-    "hash": "dd613d3bf40af3f78b3097194adb5a0c42f8adeaacedb807eb7e8729ff4783c5",
-    "build": 34
+    "modified": "2026-10-22T21:47:29.029Z",
+    "hash": "1da6171edc3ba439228c370b4d471f2ece6ef40fc65526769e2e85e36bd016e0",
+    "build": 36
   }
 ]

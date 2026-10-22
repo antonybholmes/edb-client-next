@@ -1,7 +1,6 @@
 'use client'
 
 import { useReducedMotion } from '@/hooks/reduced-motion'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import type { IDivProps } from '@/interfaces/div-props'
 import type { IAppInfo } from '@/lib/app-info'
 import { linspace } from '@/lib/math/linspace'
@@ -10,7 +9,7 @@ import { capitalCase } from '@/lib/text/capital-case'
 import type { IAppHeaderLink } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
 import gsap from 'gsap'
-import { CSSProperties, useMemo, useRef, useState } from 'react'
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { CenterCol } from '../layout/center-col'
 import { CenterRow } from '../layout/center-row'
 import { BaseLink } from '../link/base-link'
@@ -111,7 +110,7 @@ export function AppIcon({
   const bgRef = useRef<HTMLSpanElement>(null)
   const { reducedMotion } = useReducedMotion()
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     if (!animate || reducedMotion || !ref.current || !bgRef.current) {
       return
     }
@@ -119,22 +118,22 @@ export function AppIcon({
     gsap
       .timeline()
 
-      .to(
-        bgRef.current,
-        {
-          opacity: hover ? 0.2 : 0.1,
-          scale: hover ? 1 : borderSize,
-          //borderRadius: hover ? '2rem' : '1.5rem',
-          duration: 1,
-          ease: 'back.out',
-        },
-        0
-      )
+      // .to(
+      //   bgRef.current,
+      //   {
+      //     opacity: hover ? 0.2 : 0.1,
+      //     scale: hover ? 1 : borderSize,
+      //     //borderRadius: hover ? '2rem' : '1.5rem',
+      //     duration: 1,
+      //     ease: 'back.out',
+      //   },
+      //   0
+      // )
       .to(
         ref.current,
         {
-          opacity: hover ? 1 : 0.7,
-          scale: hover ? borderSize * 0.85 : 1,
+          //opacity: hover ? 1 : 0.7,
+          scale: hover ? 1.1 : 1,
           //borderRadius: hover ? '2rem' : '1.5rem',
           duration: 1,
           ease: 'back.out',
@@ -203,15 +202,15 @@ export function AppIcon({
         ref={bgRef}
         className={cn(APP_BG_CLS, 'z-0 opacity-10')}
         style={{
-          width: `${innerSize}rem`,
-          height: `${innerSize}rem`,
+          width: `${size}rem`,
+          height: `${size}rem`,
           backgroundColor: bgColor,
         }}
       />
 
       <span
         ref={ref}
-        className={cn(APP_BG_CLS, 'opacity-80 z-10')}
+        className={cn(APP_BG_CLS, 'z-10')}
 
         style={
           {

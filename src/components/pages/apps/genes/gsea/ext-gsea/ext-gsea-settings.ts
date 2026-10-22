@@ -1,6 +1,7 @@
 import {
   DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
+  IMarginProps,
   type IPaintProps,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
@@ -9,9 +10,12 @@ import { COLOR_CORNFLOWER_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v24`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v28`
 
 export interface IExtGseaSettings {
+  plot: {
+    margin: IMarginProps
+  }
   phenotypes: {
     p1: {
       name: string
@@ -45,6 +49,9 @@ export interface IExtGseaSettings {
 }
 
 export const DEFAULT_EXT_GSEA_SETTINGS: IExtGseaSettings = {
+  plot: {
+    margin: { top: 50, right: 100, bottom: 50, left: 100 },
+  },
   phenotypes: {
     p1: {
       name: '',

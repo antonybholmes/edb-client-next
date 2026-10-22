@@ -240,6 +240,10 @@ export function VolcanoDisplayPropsPanel() {
     return items // ax/ay = original anchor, x/y = final position
   }
 
+  if (!plot) {
+    return null
+  }
+
   return (
     <PropsPanel>
       <VCenterRow className="justify-end mb-1">

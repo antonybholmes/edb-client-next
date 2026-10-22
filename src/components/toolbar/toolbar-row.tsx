@@ -17,22 +17,36 @@ export const TOOLBAR_ROW_CLS = 'min-h-toolbar-button shrink-0'
 export function ToolbarRow({
   ref,
   title,
+  smallTitle,
   titleCls,
   className,
   gap = 'gap-x-1',
   children,
   ...props
-}: IDivProps & { title?: string; gap?: string; titleCls?: string }) {
-  //const { settings } = useEdbSettings()
-  //const ribbon = settings.toolbars.ribbon.style
-
-  // if (ribbon === 'single') {
-  //   return children
-  // }
+}: IDivProps & {
+  title?: string
+  smallTitle?: string
+  gap?: string
+  titleCls?: string
+}) {
+  if (!smallTitle) {
+    smallTitle = title
+  }
 
   return (
     <VCenterRow className={cn(TOOLBAR_ROW_CLS, gap, className)} {...props}>
-      {title && <span className={titleCls}>{title}</span>}
+      {title && (
+        <span className={cn('group-data-[ribbon=single]:hidden', titleCls)}>
+          {title}
+        </span>
+      )}
+
+      {smallTitle && (
+        <span className={'hidden group-data-[ribbon=single]:inline-flex'}>
+          {smallTitle}
+        </span>
+      )}
+
       {children}
     </VCenterRow>
   )

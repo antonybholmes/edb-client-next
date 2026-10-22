@@ -26,13 +26,14 @@ import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
-import { ColorMapMenu } from '../../../matcalc/color-map-menu'
-import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
-import { GeneProps } from '../gsea-plot/display-props/gene-props'
-import { MarginPopover } from '../gsea-plot/display-props/margin-popover'
-import { useGseaSettings } from '../gsea-plot/gsea-settings'
-import { useExtGseaContext } from './ext-gsea-provider'
-import { DEFAULT_EXT_GSEA_SETTINGS } from './ext-gsea-settings'
+import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
+import { useHistory } from '../../../../matcalc/history/history-provider/history-provider'
+import { GeneProps } from '../../gsea-plot/display-props/gene-props'
+
+import { useGseaSettings } from '../../gsea-plot/gsea-settings'
+import { useExtGseaContext } from '../ext-gsea-provider'
+import { DEFAULT_EXT_GSEA_SETTINGS } from '../ext-gsea-settings'
+import { MarginPopover } from './margin-popover'
 
 export function ExtGseaDisplayPropsPanel() {
   // const { plotsState, historyDispatch } = useContext(PlotsContext)
