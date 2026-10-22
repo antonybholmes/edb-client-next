@@ -123,9 +123,9 @@ export function AppIcon({
         bgRef.current,
         {
           opacity: hover ? 0.2 : 0.1,
-          //scale: hover ? 1.2 : 1,
+          scale: hover ? 1 : borderSize,
           //borderRadius: hover ? '2rem' : '1.5rem',
-          duration: 0.8,
+          duration: 1,
           ease: 'back.out',
         },
         0
@@ -136,7 +136,7 @@ export function AppIcon({
           opacity: hover ? 1 : 0.7,
           scale: hover ? borderSize * 0.85 : 1,
           //borderRadius: hover ? '2rem' : '1.5rem',
-          duration: 0.5,
+          duration: 1,
           ease: 'back.out',
         },
         0
@@ -203,8 +203,8 @@ export function AppIcon({
         ref={bgRef}
         className={cn(APP_BG_CLS, 'z-0 opacity-10')}
         style={{
-          width: `${size}rem`,
-          height: `${size}rem`,
+          width: `${innerSize}rem`,
+          height: `${innerSize}rem`,
           backgroundColor: bgColor,
         }}
       />

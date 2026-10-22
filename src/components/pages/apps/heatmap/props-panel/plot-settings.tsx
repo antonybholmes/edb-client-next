@@ -25,6 +25,7 @@ import { Circle, Square } from 'lucide-react'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { IHeatMapPlot } from '../../matcalc/history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
+import { MarginPopover } from './margin-popover'
 
 export interface PlotSettingsPanelProps {
   displayProps: IHeatMapSettings
@@ -112,6 +113,10 @@ export function PlotSettingsPanel() {
               )
             }}
           />
+        </PropRow>
+
+        <PropRow title="Margin">
+          <MarginPopover />
         </PropRow>
 
         <PropRow title="Grid" contentCls="gap-x-2">

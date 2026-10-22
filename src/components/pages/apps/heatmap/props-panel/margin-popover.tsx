@@ -1,9 +1,9 @@
 import { PlotMarginPopover } from '@/components/plot/axes/props/plot-margin-popover'
 import { produce } from 'immer'
-import { useGseaBubbleSettings } from '../gsea-plot/bubble/gsea-bubble-settings'
+import { useHeatmapSettings } from '../heatmap-settings'
 
 export function MarginPopover() {
-  const { settings, updateSettings } = useGseaBubbleSettings()
+  const { settings, updateSettings } = useHeatmapSettings()
 
   return (
     <PlotMarginPopover

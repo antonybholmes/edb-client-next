@@ -50,7 +50,7 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Volcano">
+      <ToolbarTabGroup title="Heatmap">
         <ToolbarColSmallButton
           icon={<PlayIcon variant="app-theme" />}
           title={TEXT_PLOT}

@@ -8,7 +8,7 @@ import type { IClusterFrame } from '@/lib/math/hcluster'
 import { produce } from 'immer'
 
 import { PropRow } from '@/components/dialogs/prop-row'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { ITEM_REGEX } from '@/consts'
 import { numSort } from '@/lib/math/math'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
@@ -29,6 +29,17 @@ export function GapSettingsPanel() {
       <AccordionTrigger>Gaps</AccordionTrigger>
       <AccordionContent>
         <PropRow title="Rows">
+          <NumSlider
+            value={displayProps.gaps.rows.size}
+
+            onNumChange={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.gaps.rows.size = v
+                })
+              )
+            }}
+          />
           <Input
             value={numSort([...new Set(displayProps.gaps.rows.indexes)]).join(
               '; '
@@ -43,23 +54,20 @@ export function GapSettingsPanel() {
             }}
             w="sm"
           />
-          <NumericalInput
-            value={displayProps.gaps.rows.size}
-            limit={[0, 1000]}
-            dp={0}
-            step={1}
-            onNumChange={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.gaps.rows.size = v
-                })
-              )
-            }}
-            w="xs"
-          />
         </PropRow>
 
         <PropRow title="Columns">
+          <NumSlider
+            value={displayProps.gaps.cols.size}
+
+            onNumChange={(v) => {
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.props.gaps.cols.size = v
+                })
+              )
+            }}
+          />
           <Input
             value={numSort([...new Set(displayProps.gaps.cols.indexes)]).join(
               '; '
@@ -73,20 +81,6 @@ export function GapSettingsPanel() {
               )
             }}
             w="sm"
-          />
-          <NumericalInput
-            value={displayProps.gaps.cols.size}
-            limit={[0, 1000]}
-            dp={0}
-            step={1}
-            onNumChange={(v) => {
-              updatePlot(
-                produce(plot, (draft) => {
-                  draft.props.gaps.cols.size = v
-                })
-              )
-            }}
-            w="xs"
           />
         </PropRow>
       </AccordionContent>

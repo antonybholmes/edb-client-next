@@ -12,6 +12,7 @@ import {
   DEFAULT_TEXT_PROPS,
   IFontProps,
   ILabelProps,
+  IMarginProps,
   IStrokeProps,
   ITextProps,
   LegendPos,
@@ -25,7 +26,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { ICellGaps } from './svg/cell-gaps'
 import { RadiusScaleMode } from './svg/cell-svg'
 
-const SETTINGS_KEY = `${config.appId}:heatmap-settings-v2`
+const SETTINGS_KEY = `${config.appId}:heatmap:settings:v2`
 
 export interface IBlock {
   w: number
@@ -73,6 +74,9 @@ export interface IDot {
 
 export interface IHeatMapSettings {
   title: ITextProps & { text: string; offset: number }
+  plot: {
+    margin: IMarginProps
+  }
   cells: {
     values: {
       color: string
@@ -92,7 +96,7 @@ export interface IHeatMapSettings {
   actions: {
     show: boolean
   }
-  //margin: IMarginProps
+
   upperTriangular: boolean
   showDiagonal: boolean
   blockSize: IBlock
@@ -176,7 +180,9 @@ export interface IHeatMapSettings {
 }
 
 export const DEFAULT_HEATMAP_PROPS: IHeatMapSettings = {
-  //margin: { top: 20, right: 20, bottom: 20, left: 20 },
+  plot: {
+    margin: { top: 50, right: 50, bottom: 50, left: 50 },
+  },
   blockSize: BLOCK_SIZE,
   grid: {
     ...DEFAULT_STROKE_PROPS,
@@ -335,17 +341,14 @@ export const useGseaSettingsStore = create<IHeatmapSettingsStore>()(
 export function useHeatmapSettings(): {
   settings: IHeatMapSettings
   updateSettings: (settings: Partial<IHeatMapSettings>) => void
-  reset: () => void
-  hasHydrated: boolean
+  resetSettings: () => void
 } {
   const settings = useGseaSettingsStore((state) => state)
   const updateSettings = useGseaSettingsStore((state) => state.updateSettings)
-  const hasHydrated = useGseaSettingsStore((state) => state.hasHydrated)
 
-  function reset() {
-    console.log('resetting useGseaSettings to default')
+  function resetSettings() {
     updateSettings({ ...DEFAULT_HEATMAP_PROPS })
   }
 
-  return { settings, updateSettings, reset, hasHydrated }
+  return { settings, updateSettings, resetSettings }
 }

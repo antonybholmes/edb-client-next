@@ -33,7 +33,6 @@ import { produce } from 'immer'
 import { useState } from 'react'
 import { ColorMapMenu } from '../../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../../bubble/gsea-bubble-dialog'
-import { MarginPopover } from '../../../bubble/margin-popover'
 import { useGseaBubbleContext } from '../gsea-bubble-provider'
 import {
   Mode,
@@ -41,6 +40,7 @@ import {
   SortBy,
   useGseaBubbleSettings,
 } from '../gsea-bubble-settings'
+import { MarginPopover } from './margin-popover'
 
 const TABS = ['plot', 'style', 'statistics', 'bubbles', 'size', 'groups']
 
@@ -93,13 +93,14 @@ export function GseaBubbleDisplayPropsPanel() {
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Size">
+            <PropRow title="Size" contentCls="gap-x-2">
+              <MarginPopover />
               <DoubleNumericalInput
                 id="size"
                 v1={settings.axes.x.length}
                 v2={settings.axes.y.rowHeight}
                 placeholder="Size..."
-
+                h="toolbar"
                 dp={0}
                 inc={1}
                 limit={[1, 1000]}
@@ -119,36 +120,9 @@ export function GseaBubbleDisplayPropsPanel() {
                   )
                 }}
               />
-
-              {/* <NumericalInput
-                value={settings.axes.x.length}
-
-                limit={[1, 1000]}
-                dp={0}
-                onNumChanged={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      console.log('Updating x-axis length to', v)
-                      draft.axes.x.length = v
-                    })
-                  )
-                }}
-              /> */}
             </PropRow>
 
-            {/* <NumericalPropRow
-              title="Row Height"
-              value={settings.axes.y.rowHeight}
-              onNumChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.y.rowHeight = v
-                  })
-                )
-              }}
-            /> */}
-
-            <PropRow title="Layout">
+            <PropRow title="Layout" contentCls="gap-x-2">
               <StrokeButton
                 title="Border"
                 colors={[
@@ -169,9 +143,9 @@ export function GseaBubbleDisplayPropsPanel() {
                   },
                 ]}
               />
-              <MarginPopover />
 
               <NumericalInput
+                h="toolbar"
                 title="Grid Cols"
                 value={settings.page.grid.cols}
                 onNumChanged={(v) => {
@@ -184,7 +158,6 @@ export function GseaBubbleDisplayPropsPanel() {
               />
             </PropRow>
 
-            {/* <AxesPropRow /> */}
             <PropRow title="Axes">
               <AxesDisplayPropsPopover plots={axes} />
             </PropRow>
@@ -196,6 +169,7 @@ export function GseaBubbleDisplayPropsPanel() {
           <AccordionContent>
             <PropRow title="Mode">
               <SelectList
+                variant="toolbar"
                 items={MODE_ITEMS}
                 onValueChange={(v) =>
                   updateSettings(
@@ -258,6 +232,7 @@ export function GseaBubbleDisplayPropsPanel() {
             />
             <PropRow title="NES Limit">
               <DoubleNumericalInput
+                h="toolbar"
                 id="x-limit"
                 v1={settings.axes.x.domain[0]}
                 v2={settings.axes.x.domain[1]}
@@ -293,6 +268,7 @@ export function GseaBubbleDisplayPropsPanel() {
             <PropRow title="Max P-value">
               <NumericalInput
                 id="size"
+                h="toolbar"
                 value={settings.scale.p.range[1]}
                 placeholder="Size..."
                 dp={0}
@@ -314,6 +290,7 @@ export function GseaBubbleDisplayPropsPanel() {
           <AccordionContent>
             <PropRow title={TEXT_SORT}>
               <SelectList
+                variant="toolbar"
                 items={SORT_BY_ITEMS}
                 onValueChange={(v) =>
                   updateSettings(
@@ -422,6 +399,7 @@ export function GseaBubbleDisplayPropsPanel() {
             <PropRow title="Max">
               <NumericalInput
                 id="size"
+                h="toolbar"
                 value={settings.size.maxSize}
                 placeholder="Size..."
                 dp={0}
@@ -450,6 +428,7 @@ export function GseaBubbleDisplayPropsPanel() {
                 )
               }}
               w="md"
+              h="toolbar"
             />
 
             {/* <PropRow title="Colorbar">
