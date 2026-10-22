@@ -22,9 +22,10 @@ import {
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
-import { MarginPopover } from '../../gsea-plot/display-props/margin-popover'
+
 import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { useExtGseaSettings } from '../ext-gsea-settings'
+import { MarginPopover } from '../props/margin-popover'
 
 export function HomeToolbar() {
   const { settings, updateSettings } = useExtGseaSettings()
