@@ -114,7 +114,7 @@ export function HomeToolbar() {
         </ToolbarCol>
         <ToolbarCol>
           <ToolbarRow>
-            <MarginPopover />
+            <MarginPopover button="flat" />
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>

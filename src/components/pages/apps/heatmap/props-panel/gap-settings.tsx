@@ -53,6 +53,7 @@ export function GapSettingsPanel() {
               )
             }}
             w="sm"
+            h="toolbar"
           />
         </PropRow>
 
@@ -81,6 +82,7 @@ export function GapSettingsPanel() {
               )
             }}
             w="sm"
+            h="toolbar"
           />
         </PropRow>
       </AccordionContent>

@@ -123,6 +123,7 @@ export function RowLabelsSettingsPanel() {
 
         <PropRow title="Width">
           <NumericalInput
+            h="toolbar"
             id="row-label-size"
             value={displayProps.labels.row.width}
             disabled={!displayProps.labels.row.show}

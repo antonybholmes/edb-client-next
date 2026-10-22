@@ -63,6 +63,7 @@ export function PlotSettingsPanel() {
           />
           <Input
             id="title-text"
+            h="toolbar"
             value={displayProps.title.text}
             disabled={!displayProps.title.show}
             placeholder="Title..."
@@ -82,6 +83,7 @@ export function PlotSettingsPanel() {
           <DoubleNumericalInput
             v1={settings.blockSize.w}
             v2={settings.blockSize.h}
+            h="toolbar"
             inputCls="rounded-theme"
             dp={0}
             onNumChanged1={(v) => {
@@ -104,6 +106,7 @@ export function PlotSettingsPanel() {
         <PropRow title="Padding">
           <NumericalInput
             id="padding"
+            h="toolbar"
             value={displayProps.padding}
             placeholder="Padding..."
             className="rounded-theme"

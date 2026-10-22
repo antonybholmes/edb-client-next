@@ -128,7 +128,7 @@ export function HomeToolbar() {
             />
           </ToolbarRow>
         </ToolbarCol>
-        <MarginPopover />
+        <MarginPopover button="flat" />
       </ToolbarTabGroup>
       <ToolbarTabGroup title={TEXT_OPTIONS} className="gap-x-2">
         <ToolbarCol>

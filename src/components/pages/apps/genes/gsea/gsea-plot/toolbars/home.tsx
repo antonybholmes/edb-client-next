@@ -88,7 +88,7 @@ export function HomeToolbar() {
             }}
           />
 
-          <MarginPopover />
+          <MarginPopover button="flat" />
         </ToolbarCol>
       </ToolbarTabGroup>
 

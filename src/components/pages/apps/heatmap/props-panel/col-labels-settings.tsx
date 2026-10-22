@@ -105,6 +105,7 @@ export function ColLabelsSettingsPanel() {
 
         <PropRow title="Width">
           <NumericalInput
+            h="toolbar"
             id="col-label-size"
             value={displayProps.labels.col.width}
             disabled={!displayProps.labels.col.show}
