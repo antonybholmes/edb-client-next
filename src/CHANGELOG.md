@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Margin now uses num sliders.
 - Refined toolbar UI.
 - Ext gsea now uses own margin that is more generous than the original gsea plot.
 - heatmap now uses some saved settings.

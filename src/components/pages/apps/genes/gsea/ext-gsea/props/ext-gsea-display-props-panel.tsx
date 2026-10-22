@@ -23,13 +23,13 @@ import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { useHistory } from '../../../../matcalc/history/history-provider/history-provider'
 import { GeneProps } from '../../gsea-plot/display-props/gene-props'
 
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { useExtGseaContext } from '../ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from '../ext-gsea-settings'
@@ -258,7 +258,7 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="genes-in-genesets">
           <AccordionTrigger
             leftChildren={
-              <Checkbox
+              <SmallSwitch
                 checked={settings.genes.stroke.show}
                 onCheckedChange={(v) =>
                   updateSettings(
@@ -371,7 +371,7 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="ranked-genes">
           <AccordionTrigger
             leftChildren={
-              <Checkbox
+              <SmallSwitch
                 checked={settings.ranking.show}
                 onCheckedChange={(v) =>
                   updateSettings(
