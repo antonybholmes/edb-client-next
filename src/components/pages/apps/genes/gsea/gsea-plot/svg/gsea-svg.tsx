@@ -205,8 +205,13 @@ function GseaSvgContent() {
   // fresh object literals on every GseaSvgContent render
   const innerPlotSize = useMemo(
     () => ({
-      w: settings.es.axes.x.length,
+      w:
+        settings.graph.margin.left +
+        settings.graph.margin.right +
+        settings.es.axes.x.length,
       h:
+        settings.graph.margin.top +
+        settings.graph.margin.bottom +
         settings.es.axes.y.length +
         (settings.genes.show
           ? settings.plot.gap.y + settings.genes.height
@@ -215,15 +220,7 @@ function GseaSvgContent() {
           ? settings.plot.gap.y + settings.ranking.axes.y.length
           : 0),
     }),
-    [
-      settings.es.axes.x.length,
-      settings.es.axes.y.length,
-      settings.genes.show,
-      settings.genes.height,
-      settings.ranking.show,
-      settings.ranking.axes.y.length,
-      settings.plot.gap.y,
-    ]
+    [settings]
   )
 
   const plotSize = useMemo(
@@ -266,13 +263,15 @@ function GseaSvgContent() {
 
         return (
           <SvgG pos={pos} key={`plot-${index + 1}`}>
-            <GseaPlot
-              key={pathway.id}
-              pathway={pathway}
-              index={index}
-              pos={pos}
-              innerPlotSize={innerPlotSize}
-            />
+            <SvgMargin margin={settings.graph.margin} id="graph-margin">
+              <GseaPlot
+                key={pathway.id}
+                pathway={pathway}
+                index={index}
+                pos={pos}
+                innerPlotSize={innerPlotSize}
+              />
+            </SvgMargin>
           </SvgG>
         )
       }),

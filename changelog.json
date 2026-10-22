@@ -3579,6 +3579,10 @@
         {
           "msg": "Margin now uses num sliders",
           "date": "2026-10-22T22:19:18.813Z"
+        },
+        {
+          "msg": "gsea plot now has inner margin for each graph to allow for spacing",
+          "date": "2026-10-22T23:08:54.910Z"
         }
       ]
     },

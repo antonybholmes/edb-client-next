@@ -333,7 +333,7 @@ export function GseaPlotPage() {
                 >
                   <HCenterRow className="pb-2">
                     <ToggleGroup
-                      className="text-xs gap-x-px"
+                      className="text-xs bg-muted/50 p-0.5 rounded-full"
                       value={[settings.view.tab]}
                       onValueChange={(v) => {
                         updateSettings(
@@ -343,7 +343,8 @@ export function GseaPlotPage() {
                         )
                       }}
                       rounded="full"
-                      variant="app-theme"
+                      variant="flat"
+                      size="sm"
                     >
                       <GroupToggle value="graph" className="w-18">
                         Graph

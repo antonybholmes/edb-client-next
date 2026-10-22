@@ -3575,6 +3575,10 @@
         {
           "msg": "Refined toolbar UI",
           "date": "2026-10-22T21:53:30.730Z"
+        },
+        {
+          "msg": "Margin now uses num sliders",
+          "date": "2026-10-22T22:19:18.813Z"
         }
       ]
     },
