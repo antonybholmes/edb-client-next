@@ -1,5 +1,12 @@
 # Changelog
 
+## 93.4.0 (Oct, 2026)
+
+### Changed
+
+- Added pointer cursor to network nodes to better indicate they are clickable.
+
+
 ## 93.2.0 (Oct, 2026)
 
 ### Changed

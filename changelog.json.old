@@ -3611,6 +3611,10 @@
         {
           "msg": "Volcano can now remember some axis settings",
           "date": "2026-10-23T20:51:29.666Z"
+        },
+        {
+          "msg": "Added network session store for data that doesnt need saving between sessions",
+          "date": "2026-10-23T21:30:05.330Z"
         }
       ]
     },

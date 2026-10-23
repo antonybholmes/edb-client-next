@@ -3620,5 +3620,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-10-21T20:12:19.694Z"
+  },
+  {
+    "version": "93.4.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Added pointer cursor to network nodes to better indicate they are clickable",
+          "date": "2026-10-23T21:33:59.415Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-23T21:33:59.415Z"
   }
 ]
