@@ -1,4 +1,3 @@
-import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import {
   onTextFileChange,
   openFilesDialog,
@@ -10,6 +9,7 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { ITEM_REGEX, TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { DownloadImageIcon } from '@/components/icons/computer/download-image-icon'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import {
@@ -57,7 +57,7 @@ export function HomeToolbar() {
             saveAs('venn')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

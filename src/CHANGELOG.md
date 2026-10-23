@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Use of download image icon in apps that only allow image saving.
 - Network now uses nano id since we can be working with a lot of nodes and edges.
 - Refined font api.
 - Volcano plot size now in settings.

@@ -45,9 +45,9 @@
     "color": "#006666",
     "version": "2.4.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.326Z",
-    "hash": "62863ea1f8d362336cd36cbd8f1c4c16cc650eba670f919b83346c1aee55206f",
-    "build": 1076
+    "modified": "2026-10-23T16:24:06.740Z",
+    "hash": "82e15bafad1d01683b76c7b3d7722abdcef6bb3c49232a49cb8ed2b5f1fb3d8b",
+    "build": 1078
   },
   {
     "name": "Get DNA",
@@ -64,9 +64,9 @@
     "color": "#4169E1",
     "version": "1.4.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.325Z",
-    "hash": "e74d2bf60cd6963db89c8ca2e3208ee018fad90952b33ecd3fc02a8af1cfe201",
-    "build": 112
+    "modified": "2026-10-23T16:24:06.740Z",
+    "hash": "c43a6d0a57aa90520b9b96bdfafaa5954b8f0cbc7119d8c1b1f4cfc830d7d52d",
+    "build": 114
   },
   {
     "name": "GSEA Plot",
@@ -74,9 +74,9 @@
     "color": "#ffb366",
     "version": "25.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.327Z",
-    "hash": "fc87cd9cba3124db85d35c13f7c0310746700dd0b65f5c5b196a333f72b7c99d",
-    "build": 1072
+    "modified": "2026-10-23T16:24:06.741Z",
+    "hash": "9eed93b10cfeaedd7cabcc2c9aefd6dd755e1e4dadca80821ee17a16b36cdf30",
+    "build": 1074
   },
   {
     "name": "GSEA Web",
@@ -92,8 +92,8 @@
     "name": "Heatmap",
     "description": "Create heatmaps of tabular data",
     "color": [
-      "#ff5050",
-      "#0000ff"
+      "#0000ff",
+      "#ff5050"
     ],
     "version": "20.0.6",
     "copyright": "© 2026 Antony Holmes",
@@ -135,9 +135,9 @@
     "color": "#DA70D6",
     "version": "29.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.332Z",
-    "hash": "8291fed54a10d2248a8d1a6bbd2f7968180162c32a303b46be3c0796f66aaaaf",
-    "build": 1164
+    "modified": "2026-10-23T16:24:06.745Z",
+    "hash": "39634b4cef26fd5a9ae66e789eacd1212d833cd59c53374946df4ff43ab02b2e",
+    "build": 1166
   },
   {
     "name": "Matcalc",
@@ -155,9 +155,9 @@
     "color": "#009933",
     "version": "48.6.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-20T20:56:38.411Z",
-    "hash": "d3dc9dee50c7a0171b061239b9c1368b37550d82c7a0379379eff027d38a32a3",
-    "build": 1034
+    "modified": "2026-10-23T16:24:06.741Z",
+    "hash": "db4cd6c75a7df6424a1915159380eda29f0da23c3346b6c70eaec626d0d8f74d",
+    "build": 1036
   },
   {
     "name": "Network",
@@ -165,9 +165,9 @@
     "color": "#4169E1",
     "version": "1.6.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.330Z",
-    "hash": "00c7616c3b2e31b1f5dd857149a00c61c26333aa0931ce4e4288d7e26e36ca03",
-    "build": 176
+    "modified": "2026-10-23T16:24:06.744Z",
+    "hash": "1a2b9d7aab71642ca1a460766e06bb514977586c1f55e8a8881b627100d00cd2",
+    "build": 178
   },
   {
     "name": "Oncoplot",
@@ -175,9 +175,9 @@
     "color": "#ff99cc",
     "version": "30.4.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.332Z",
-    "hash": "e824d7d5c33db0a629149d027f370008ae5bd401d389b1b8b61ac66f86df8b3f",
-    "build": 1182
+    "modified": "2026-10-23T16:24:06.745Z",
+    "hash": "7177bedf2c93948fb6852cfa51fe0e10da41569f2e9aa161459120a7146a0d1a",
+    "build": 1184
   },
   {
     "name": "Overlap",
@@ -225,9 +225,9 @@
     "color": "#FF0000",
     "version": "32.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.331Z",
-    "hash": "13768fc9923a78f44b2c4e0ab493bad920aff1a7081644eaec9714e1ca3d8bda",
-    "build": 1194
+    "modified": "2026-10-23T16:24:06.744Z",
+    "hash": "8c2e8710121ffe694038d6828d39866012e27211b1f683b360f017a10e65d79b",
+    "build": 1196
   },
   {
     "name": "Single Cell",
@@ -284,9 +284,9 @@
     "color": "#00008B",
     "version": "26.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.333Z",
-    "hash": "00be0d9afe88de845f4570c9757c518e82d6c39e24e1fc30b9e40089c7249e62",
-    "build": 1000
+    "modified": "2026-10-23T16:24:06.746Z",
+    "hash": "a4292631cdab574e081cccba31e4b7f8ea1672b9eb4e2fd8f5b63104c594cdab",
+    "build": 1002
   },
   {
     "name": "Volcano",

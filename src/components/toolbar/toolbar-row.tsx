@@ -29,7 +29,7 @@ export function ToolbarRow({
   gap?: string
   titleCls?: string
 }) {
-  if (!smallTitle) {
+  if (smallTitle === undefined) {
     smallTitle = title
   }
 
