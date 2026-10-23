@@ -32,7 +32,7 @@ export function GeneSetFilter() {
         //onEscapeKeyDown={() => setOpen(false)}
         //onInteractOutside={() => setOpen(false)}
         //align="end"
-        className="px-3 py-3 gap-y-2"
+        className="px-3 py-3 gap-y-1"
       >
         <h2 className="font-bold">Phenotypes</h2>
 
@@ -64,7 +64,7 @@ export function GeneSetFilter() {
         >
           <NumericalInput
             value={settings.genesets.filters.nes.value}
-            h="md"
+            h="toolbar"
             placeholder="NES"
             limit={[0, 100]}
             step={0.01}
@@ -93,7 +93,7 @@ export function GeneSetFilter() {
         >
           <NumericalInput
             value={settings.genesets.filters.q.value}
-            h="md"
+            h="toolbar"
             placeholder="FDR q-value"
             limit={[0, 1]}
             step={0.0001}
