@@ -3603,6 +3603,10 @@
         {
           "msg": "Use of download image icon in apps that only allow image saving",
           "date": "2026-10-23T16:24:07.716Z"
+        },
+        {
+          "msg": "Matcalc has more responsive UI and some more colorful icons",
+          "date": "2026-10-23T20:21:47.586Z"
         }
       ]
     },

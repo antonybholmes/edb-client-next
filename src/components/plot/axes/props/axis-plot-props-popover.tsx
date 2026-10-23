@@ -7,6 +7,7 @@ import {
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { Move3d } from 'lucide-react'
 import { ReactNode, useState } from 'react'
+import { IAxis } from '../axis'
 import { IPlotAddress } from '../plot-axes'
 import { AxisPlotPropsPanel } from './axis-plot-props-panel'
 
@@ -14,10 +15,12 @@ export function AxisPlotPropsPopover({
   title,
   button = 'simple',
   plotAddress,
+  callback,
 }: {
   title: string
   button?: 'flat' | 'simple'
   plotAddress: IPlotAddress
+  callback?: (axis: IAxis) => void
 }) {
   const [open, setOpen] = useState(false)
 
@@ -59,7 +62,11 @@ export function AxisPlotPropsPopover({
       {trigger}
 
       <PopoverContent className="gap-y-1 w-60">
-        <AxisPlotPropsPanel title={title} plotAddress={plotAddress} />
+        <AxisPlotPropsPanel
+          title={title}
+          plotAddress={plotAddress}
+          callback={callback}
+        />
       </PopoverContent>
     </Popover>
   )
