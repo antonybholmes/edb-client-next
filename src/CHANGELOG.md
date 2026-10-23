@@ -1,9 +1,17 @@
 # Changelog
 
+## 93.4.0 (Oct, 2026)
+
+### Changed
+
+- Added pointer cursor to network nodes to better indicate they are clickable.
+
+
 ## 93.2.0 (Oct, 2026)
 
 ### Changed
 
+- Added network session store for data that doesnt need saving between sessions.
 - Volcano can now remember some axis settings.
 - Matcalc has more responsive UI and some more colorful icons.
 - Use of download image icon in apps that only allow image saving.

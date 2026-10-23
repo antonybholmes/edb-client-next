@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useUserSessionData } from '../network-user-session-data'
 
 import { SvgMargin } from '@/components/plot/svg-margin'
 
@@ -31,10 +32,12 @@ export function NetworkD3SvgContent() {
   const { settings } = useNetworkSettings()
   const {
     settings: userData,
-
     updateSettings: updateUserData,
     userLabelSet,
   } = useUserData()
+
+  const { settings: userSessionData, updateSettings: updateUserSessionData } =
+    useUserSessionData()
 
   const {
     network,
@@ -256,15 +259,15 @@ export function NetworkD3SvgContent() {
         return
       }
 
-      updateUserData(
-        produce(userData, (draft) => {
+      updateUserSessionData(
+        produce(userSessionData, (draft) => {
           draft.currentNode = currentNode
         })
       )
 
       e.stopPropagation()
     },
-    [updateUserData, userData, currentNode]
+    [updateUserSessionData, userSessionData, currentNode]
   )
 
   const onPointerDoubleClick = useCallback(
@@ -282,13 +285,18 @@ export function NetworkD3SvgContent() {
       updateUserData(
         produce(userData, (draft) => {
           draft.labels.ids = ids
+        })
+      )
+
+      updateUserSessionData(
+        produce(userSessionData, (draft) => {
           draft.currentNode = currentNode
         })
       )
 
       e.stopPropagation()
     },
-    [userLabelSet, updateUserData, userData, currentNode]
+    [userLabelSet, updateUserSessionData, userSessionData, currentNode]
   )
 
   //   const svg = (

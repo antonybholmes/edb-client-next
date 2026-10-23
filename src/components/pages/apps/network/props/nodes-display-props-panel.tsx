@@ -23,11 +23,13 @@ import { useEffect, useState } from 'react'
 import APP_INFO from '../manifest.json'
 import { useNetwork } from '../network'
 import { useUserData } from '../network-user-data'
+import { useUserSessionData } from '../network-user-session-data'
 import { GroupItem } from './group-props-panel'
 
 export function NodesDisplayPropsPanel() {
   const { settings, updateSettings } = useNetworkSettings()
   const { settings: userData, updateSettings: updateUserData } = useUserData()
+  const { settings: userSessionData } = useUserSessionData()
   const { setGroups, groups } = useNetwork()
   const { open: openDialog } = useDialogs()
 
@@ -46,11 +48,11 @@ export function NodesDisplayPropsPanel() {
   }, [userData.labels])
 
   useEffect(() => {
-    if (userData.currentNode) {
+    if (userSessionData.currentNode) {
       setCurrentNodeText(
-        [`Node: ${userData.currentNode.id}`]
+        [`Node: ${userSessionData.currentNode.id}`]
           .concat(
-            Object.entries(userData.currentNode.data)
+            Object.entries(userSessionData.currentNode.data)
               .sort(([key1], [key2]) => key1.localeCompare(key2))
               .map(([key, value]) => `${key}: ${value}`)
           )
@@ -59,7 +61,7 @@ export function NodesDisplayPropsPanel() {
     } else {
       setCurrentNodeText('')
     }
-  }, [userData.currentNode])
+  }, [userSessionData.currentNode])
 
   // const debounceText = useDebounce(text)
 

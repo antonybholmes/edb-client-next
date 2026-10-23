@@ -8,9 +8,9 @@
     "#FC8961",
     "#FCFDBF"
   ],
-  "version": "2.0.8",
+  "version": "2.2.0",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-23T20:51:28.746Z",
-  "hash": "fabba47788862c8bb44d7465950f00530dd716d6075a556ae4bb3e54f2591d48",
-  "build": 48
+  "modified": "2026-10-23T21:30:04.448Z",
+  "hash": "2cf9962fb6adbc99e601fd5280d52aa85145022ff11770567053e731421d0259",
+  "build": 50
 }

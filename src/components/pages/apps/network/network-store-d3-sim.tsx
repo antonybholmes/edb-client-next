@@ -465,6 +465,7 @@ export function useNetworkD3Sim() {
 
           return node?.view === 'hidden' ? 'none' : null
         })
+        .attr('cursor', 'pointer')
     },
     [radiusMap, nodeColorMap, renderNodeMap, networkSettings]
   )
