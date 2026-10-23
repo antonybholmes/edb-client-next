@@ -1,3 +1,4 @@
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { SwitchPropRow } from '@/components/dialogs/switch-prop-row'
 import { FontPopover } from '@/components/plot/font/font-popover'
@@ -69,7 +70,7 @@ export function TickPlotPropsPopover({
             })
           }}
         >
-          <FontPopover
+          {/* <FontPopover
             fonts={[
               {
                 title: `${title} ${capitalCase(which)} Tick Labels`,
@@ -87,10 +88,10 @@ export function TickPlotPropsPopover({
                   }),
               },
             ]}
-          />
+          /> */}
         </SwitchPropRow>
 
-        <SwitchPropRow
+        <CheckPropRow
           title="Ticks"
           tooltip="Specify the tick values using semicolons (e.g., 1; 2; 3) or use 'auto' for automatic ticks. Use a-b for ranges, e.g. 1-5;6;7"
           checked={axis.ticks[which].style.line.show}
@@ -121,10 +122,11 @@ export function TickPlotPropsPopover({
               })
             }}
             w="lg"
+            h="toolbar"
           />
-        </SwitchPropRow>
+        </CheckPropRow>
 
-        <SwitchPropRow
+        <CheckPropRow
           title="Labels"
           tooltip="Specify the tick labels using semicolons (e.g., 1; 2; 3)"
           checked={axis.ticks[which].style.labels.show}
@@ -136,6 +138,26 @@ export function TickPlotPropsPopover({
             })
           }}
         >
+          <FontPopover
+            fonts={[
+              {
+                title: `${title} ${capitalCase(which)} Tick Labels`,
+                textProps: ticks.style.labels,
+                showRotation: true,
+                update: (f) =>
+                  updateAxis(plotAddress, {
+                    ticks: produce(axis.ticks, (draft) => {
+                      draft[which].style.labels = Object.assign(
+                        {},
+                        draft[which].style.labels,
+                        f
+                      )
+                    }),
+                  }),
+              },
+            ]}
+          />
+
           <Input
             value={items
               .map((v) => v?.label?.trim() ?? '')
@@ -149,8 +171,9 @@ export function TickPlotPropsPopover({
               })
             }}
             w="lg"
+            h="toolbar"
           />
-        </SwitchPropRow>
+        </CheckPropRow>
 
         <PropRow title="Size / Offset">
           <NumericalInput
@@ -167,6 +190,7 @@ export function TickPlotPropsPopover({
                 }),
               })
             }}
+            h="toolbar"
           />
 
           <NumericalInput
@@ -179,6 +203,7 @@ export function TickPlotPropsPopover({
                 }),
               })
             }}
+            h="toolbar"
           />
         </PropRow>
         <PropRow title="Label Offset">
@@ -192,6 +217,7 @@ export function TickPlotPropsPopover({
                 }),
               })
             }}
+            h="toolbar"
           />
         </PropRow>
       </PopoverContent>

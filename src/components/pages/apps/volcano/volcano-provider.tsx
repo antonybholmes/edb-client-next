@@ -104,11 +104,21 @@ export function VolcanoProvider({
       return
     }
 
+    // const minX = Math.min(
+    //   ...(volcano?.entries ?? []).map((p) => p.log2foldChange)
+    // )
+    // const maxX = Math.max(
+    //   ...(volcano?.entries ?? []).map((p) => p.log2foldChange)
+    // )
+    // const minY = Math.min(...(volcano?.entries ?? []).map((p) => p.logpvalue))
+    // const maxY = Math.max(...(volcano?.entries ?? []).map((p) => p.logpvalue))
+
     const xax = createAxis({
       id: 'x',
       title: settings.axes.xaxis.name,
       length: settings.axes.xaxis.length,
-      autoDomain: settings.axes.xaxis.domain,
+      domain: settings.axes.xaxis.domain,
+      autoDomain: true,
     })
 
     const yax = createAxis({
@@ -116,7 +126,8 @@ export function VolcanoProvider({
       title: settings.axes.yaxis.name,
       direction: 'y',
       length: settings.axes.yaxis.length,
-      autoDomain: settings.axes.yaxis.domain,
+      domain: settings.axes.yaxis.domain,
+      autoDomain: true,
     })
 
     console.log('Creating axes for volcano plot')

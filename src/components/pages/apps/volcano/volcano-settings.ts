@@ -89,20 +89,19 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
 
       domain: [-20, 20],
       length: 500,
-      ticks: [],
-      tickLabels: [],
-      tickSize: 4,
-
-      stroke: { ...DEFAULT_STROKE_PROPS },
+      //ticks: [],
+      //tickLabels: [],
+      //tickSize: 4,
+      //stroke: { ...DEFAULT_STROKE_PROPS },
     },
     yaxis: {
       name: '-log10 p-value',
       domain: [0, 10],
       length: 400,
-      ticks: [],
-      tickLabels: [],
-      tickSize: 4,
-      stroke: { ...DEFAULT_STROKE_PROPS },
+      //ticks: [],
+      //tickLabels: [],
+      //tickSize: 4,
+      // stroke: { ...DEFAULT_STROKE_PROPS },
     },
   },
   colors: {

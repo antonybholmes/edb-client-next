@@ -3591,6 +3591,10 @@
         {
           "msg": "Volcano plot size now in settings",
           "date": "2026-10-23T02:32:39.637Z"
+        },
+        {
+          "msg": "Refined font api",
+          "date": "2026-10-23T15:26:25.869Z"
         }
       ]
     },

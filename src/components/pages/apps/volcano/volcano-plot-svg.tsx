@@ -37,20 +37,20 @@ export interface IDisplayAxis {
   name: string
   domain: ILim
   length: number
-  ticks: number[]
-  tickLabels: string[]
-  tickSize: number
-  stroke: IStrokeProps
+  //ticks: number[]
+  //tickLabels: string[]
+  //tickSize: number
+  //stroke: IStrokeProps
 }
 
 export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
   name: '',
   domain: [-20, 20],
   length: 600,
-  ticks: [],
-  tickLabels: [],
-  tickSize: 4,
-  stroke: { ...DEFAULT_STROKE_PROPS, width: 2 },
+  //ticks: [],
+  //tickLabels: [],
+  //tickSize: 4,
+  //stroke: { ...DEFAULT_STROKE_PROPS, width: 2 },
 }
 
 export interface IScatterDisplayOptions {
@@ -509,9 +509,9 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
         <AxisLeftSvg
           ax={yax}
           pos={{ x: settings.plot.margin.left, y: settings.plot.margin.top }}
-          tickSize={settings.axes.yaxis.tickSize}
-          strokeWidth={settings.axes.yaxis.stroke.width}
-          color={settings.axes.yaxis.stroke.value}
+          //tickSize={settings.axes.yaxis.tickSize}
+          // strokeWidth={settings.axes.yaxis.stroke.width}
+          //color={settings.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
           ax={xax}
@@ -519,9 +519,9 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
             x: settings.plot.margin.left,
             y: settings.plot.margin.top + innerHeight,
           }}
-          tickSize={settings.axes.xaxis.tickSize}
-          strokeWidth={settings.axes.xaxis.stroke.width}
-          color={settings.axes.xaxis.stroke.value}
+          //tickSize={settings.axes.xaxis.tickSize}
+          //strokeWidth={settings.axes.xaxis.stroke.width}
+          //color={settings.axes.xaxis.stroke.value}
         />
       </>
     )

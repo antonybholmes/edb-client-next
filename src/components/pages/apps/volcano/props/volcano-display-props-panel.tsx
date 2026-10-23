@@ -20,7 +20,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 
 import { ElbowConnectorIcon } from '@/components/icons/shapes/elbow-connector-icon'
 import { StraightConnectorIcon } from '@/components/icons/shapes/straight-connector-icon'
-import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
+import { AxisPlotPropsPopover } from '@/components/plot/axes/props/axis-plot-props-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
@@ -297,26 +297,46 @@ export function VolcanoDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Axes">
+            <PropRow title="Axes" contentCls="gap-x-2">
               {plot && (
-                <AxesDisplayPropsPopover
-                  plots={[
-                    {
-                      id: plot.id,
-                      title: 'Volcano Plot',
-                      groups: [
-                        {
-                          id: 'volcano',
-                          title: 'Volcano',
-                          axes: [
-                            { id: 'x', title: 'X-axis' },
-                            { id: 'y', title: 'Y-axis' },
-                          ],
-                        },
-                      ],
-                    },
-                  ]}
-                />
+                <>
+                  {/* <AxesDisplayPropsPopover
+                    plots={[
+                      {
+                        id: plot.id,
+                        title: 'Volcano Plot',
+                        groups: [
+                          {
+                            id: 'volcano',
+                            title: 'Volcano',
+                            axes: [
+                              { id: 'x', title: 'X-axis' },
+                              { id: 'y', title: 'Y-axis' },
+                            ],
+                          },
+                        ],
+                      },
+                    ]}
+                  /> */}
+
+                  <AxisPlotPropsPopover
+                    title="X-axis"
+                    plotAddress={{
+                      plotId: plot.id,
+                      groupId: 'volcano',
+                      axisId: 'x',
+                    }}
+                  />
+
+                  <AxisPlotPropsPopover
+                    title="Y-axis"
+                    plotAddress={{
+                      plotId: plot.id,
+                      groupId: 'volcano',
+                      axisId: 'y',
+                    }}
+                  />
+                </>
               )}
             </PropRow>
 

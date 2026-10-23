@@ -10,7 +10,6 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
-import { TEXT_SHOW } from '@/consts'
 import type { UndefStr } from '@/lib/text/text'
 import { produce } from 'immer'
 import {
@@ -299,7 +298,7 @@ export function FontUI({
   //let titleNode: ReactNode | null = null
 
   if (view === 'multi-line' && showEnabled && !title) {
-    title = TEXT_SHOW
+    title = 'Font'
   }
 
   // if (showEnabled) {
