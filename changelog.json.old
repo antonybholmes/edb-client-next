@@ -3607,6 +3607,10 @@
         {
           "msg": "Matcalc has more responsive UI and some more colorful icons",
           "date": "2026-10-23T20:21:47.586Z"
+        },
+        {
+          "msg": "Volcano can now remember some axis settings",
+          "date": "2026-10-23T20:51:29.666Z"
         }
       ]
     },

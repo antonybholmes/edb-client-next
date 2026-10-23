@@ -170,9 +170,9 @@
     "color": "#4169E1",
     "version": "1.6.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T17:56:02.616Z",
-    "hash": "c0bbf554cf323aa1ab2280cd637ff7e28133f562cf1e5053d0b7403fb7128868",
-    "build": 180
+    "modified": "2026-10-23T21:30:04.444Z",
+    "hash": "ea41549125b34121618b24ca0f487f766950af1afd21e3966b438a43a2613ec1",
+    "build": 182
   },
   {
     "name": "Oncoplot",
@@ -305,10 +305,10 @@
       "#FC8961",
       "#FCFDBF"
     ],
-    "version": "2.0.8",
+    "version": "2.2.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T20:51:28.746Z",
-    "hash": "fabba47788862c8bb44d7465950f00530dd716d6075a556ae4bb3e54f2591d48",
-    "build": 48
+    "modified": "2026-10-23T21:30:04.448Z",
+    "hash": "2cf9962fb6adbc99e601fd5280d52aa85145022ff11770567053e731421d0259",
+    "build": 50
   }
 ]

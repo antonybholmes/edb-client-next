@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added network session store for data that doesnt need saving between sessions.
 - Volcano can now remember some axis settings.
 - Matcalc has more responsive UI and some more colorful icons.
 - Use of download image icon in apps that only allow image saving.

@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { INode } from './network'
 
 const SETTINGS_KEY = `${config.appId}:app:network:user-data:v8`
 
@@ -20,7 +19,6 @@ interface IUserDataLabels {
 export interface IUserDataSettings {
   groups: IUserDataGroups
   labels: IUserDataLabels
-  currentNode: INode | null
 }
 
 const DEFAULT_SETTINGS: IUserDataSettings = {
@@ -28,7 +26,6 @@ const DEFAULT_SETTINGS: IUserDataSettings = {
     colors: {},
   },
   labels: { ids: [], mode: 'partial' },
-  currentNode: null,
 }
 
 export interface IUserDataStore extends IUserDataSettings {
@@ -37,7 +34,7 @@ export interface IUserDataStore extends IUserDataSettings {
   updateLabels: (settings: IUserDataLabels) => void
 }
 
-export const useNetworkSettingsStore = create<IUserDataStore>()(
+export const useUserDataStore = create<IUserDataStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
@@ -73,14 +70,10 @@ export function useUserData(): {
   settings: IUserDataStore
   updateSettings: (settings: IUserDataSettings) => void
   userLabelSet: Set<string>
-  currentNode: INode | null
 } {
-  const settings = useNetworkSettingsStore((state) => state)
-  const currentNode = useNetworkSettingsStore((state) => state.currentNode)
+  const settings = useUserDataStore((state) => state)
 
-  const updateSettings = useNetworkSettingsStore(
-    (state) => state.updateSettings
-  )
+  const updateSettings = useUserDataStore((state) => state.updateSettings)
 
   const userLabelSet = useMemo(
     () =>
@@ -96,6 +89,5 @@ export function useUserData(): {
     settings,
     updateSettings,
     userLabelSet,
-    currentNode,
   }
 }
