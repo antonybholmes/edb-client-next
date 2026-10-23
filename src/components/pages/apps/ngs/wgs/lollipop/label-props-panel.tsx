@@ -28,7 +28,7 @@ import { TrashIcon } from '@/icons/trash-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { Button } from '@/themed/baseui/button'
@@ -115,7 +115,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                 setLabels([
                   ...labels,
                   {
-                    id: makeUuid(),
+                    id: newUuid(),
                     name: `${protein?.sequence[0] ?? ''}1`,
                     start: 1,
                     color: DEFAULT_FEATURE_COLOR,
@@ -188,7 +188,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                 const v = parseInt(s.trim())
 
                 return {
-                  id: makeUuid(),
+                  id: newUuid(),
                   name: `${protein?.sequence[v - 1] ?? ''}${v}`,
                   start: v,
                   color: COLOR_BLACK,

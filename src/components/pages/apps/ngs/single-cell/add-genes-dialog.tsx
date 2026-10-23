@@ -7,7 +7,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { API_SCRNA_DATASETS_URL } from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { truncate } from '@/lib/text/text'
 import { queryClient } from '@/qcp'
@@ -72,7 +72,7 @@ export function AddGenesDialog({ onResponse }: IModalProps) {
       // if we found genes for this signature, make a geneset
       if (newGenes.length > 0) {
         const geneset = {
-          id: makeUuid(),
+          id: newUuid(),
           name: truncate(newGenes.map((g) => g.geneSymbol).join(',')),
           genes: newGenes,
           mode: settings.gex.useGlobalRange

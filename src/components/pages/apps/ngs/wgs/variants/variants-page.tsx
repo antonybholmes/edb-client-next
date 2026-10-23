@@ -27,7 +27,7 @@ import {
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 
 import { type ITab } from '@/components/tabs/tab-provider'
 
@@ -140,10 +140,10 @@ export function VariantsPage() {
     switch (settings.variants.colorBy) {
       case 'dataset':
         cmap = {
-          id: makeUuid(),
+          id: newUuid(),
           name: 'Dataset',
           colors: datasets.map((d, di) => ({
-            id: makeUuid(),
+            id: newUuid(),
             name: d.name,
             color: TAB10_PALETTE[di % TAB10_PALETTE.length]!,
           })),

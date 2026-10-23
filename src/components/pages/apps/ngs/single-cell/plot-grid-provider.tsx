@@ -6,7 +6,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { API_SCRNA_DATASETS_URL } from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { findCenter } from '@/lib/math/centroid'
 import { mean } from '@/lib/math/mean'
@@ -122,7 +122,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         if (geneset.mode === 'clusters') {
           const plot: IUmapPlot = {
             ...geneset,
-            id: makeUuid(),
+            id: newUuid(),
             name: geneset.name,
             //clusters: store.clusterInfo.clusters, //.slice(0, 2),
 
@@ -203,7 +203,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
         const plot: IUmapPlot = {
           ...geneset,
-          id: makeUuid(),
+          id: newUuid(),
 
           name: useMean
             ? truncate(

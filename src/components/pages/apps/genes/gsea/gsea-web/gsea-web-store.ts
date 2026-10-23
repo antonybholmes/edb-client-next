@@ -1,5 +1,5 @@
 import type { IBinaryFileOpen } from '@/components/pages/open-files'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 import type { IRankedGene } from '../gsea-plot/geneset'
@@ -126,7 +126,7 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
           const log10q = getGseaLog10q(q)
 
           const report: IGseaTableResult = {
-            id: makeUuid(),
+            id: newUuid(),
             name,
             phen,
             size: Number(tokens[sizeIdx]!),

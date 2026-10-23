@@ -1,7 +1,7 @@
 import { TEXT_CANCEL } from '@/consts'
 import type { ISaveAsFileType, ISaveAsResponse } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import type { ComponentType, ReactNode } from 'react'
 import { create } from 'zustand'
@@ -133,7 +133,7 @@ export const useDialogStore = create<IDialogStore>((set) => {
     Component: ComponentType<ICustomDialogProps<T>>,
     payload: T
   ) {
-    const id = makeUuid()
+    const id = newUuid()
 
     const dialog: ICustomDialog = {
       id,
@@ -158,7 +158,7 @@ export const useDialogStore = create<IDialogStore>((set) => {
     stack: [], //{ type: 'none', id: makeUuid(), time: Date.now() },
 
     open: (d) => {
-      const id = makeUuid()
+      const id = newUuid()
       const dialog = { ...d, id, time: Date.now() }
 
       set((state) => ({

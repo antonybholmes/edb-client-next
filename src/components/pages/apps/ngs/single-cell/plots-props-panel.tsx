@@ -23,7 +23,7 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { DropdownButton } from '@/components/toolbar/dropdown-button'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { Settings2 } from 'lucide-react'
 import { TRACK_ITEM_BUTTONS_CLS } from '../../ngs/seq-browser/track-items/seq-track-item'
@@ -139,7 +139,7 @@ export function PlotsPropsPanel() {
               updateSettings(
                 produce(settings, (draft) => {
                   draft.genesets.push({
-                    id: makeUuid(),
+                    id: newUuid(),
                     name: 'Clusters',
                     genes: [],
                     mode: 'clusters',

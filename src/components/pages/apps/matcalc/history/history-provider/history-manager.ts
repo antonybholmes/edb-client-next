@@ -1,5 +1,5 @@
 import { findIndexEx } from '@/lib/collections'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { applyPatches, produceWithPatches, type Patch } from 'immer'
 export const MAX_HISTORY_ITEMS = 1000
 
@@ -44,7 +44,7 @@ function createHistoryEntry<T>(
   payload: { state?: T; patches?: Patch[]; inversePatches?: Patch[] }
 ): IHistoryEntry<T> {
   return {
-    id: makeUuid(),
+    id: newUuid(),
     name,
     description,
     createdAt: Date.now(),

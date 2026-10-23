@@ -13,7 +13,7 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_DOWNLOAD, TEXT_FILE } from '@/consts'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { capitalizeFirstWord } from '@/lib/text/capital-case'
 import { useFooter } from '@/providers/footer-provider'
 import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
@@ -43,7 +43,7 @@ export function HomeToolbar() {
 
     runAnnotate(
       {
-        id: makeUuid(),
+        id: newUuid(),
         df: (sheets[0] as BaseDataFrame).values,
         columns: (sheets[0] as BaseDataFrame).colNames,
         assembly: gtf.assembly,

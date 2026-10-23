@@ -27,7 +27,7 @@ import { SvgText } from '@/components/plot/svg-text'
 import { fill } from '@/lib/fill'
 import { locStr } from '@/lib/genomic/genomic'
 import { newGenomicLocation } from '@/lib/genomic/genomic-location'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cumsum } from '@/lib/math/cumsum'
 import { zeros } from '@/lib/math/zeros'
 import { useSVG } from '@/providers/svg-provider'
@@ -264,7 +264,7 @@ export function TracksViewSvg({ style }: ISVGProps) {
         setLocations(
           produce(locations, (draft) => {
             draft[column.current.col] = {
-              id: makeUuid(),
+              id: newUuid(),
               search: locStr(newLocation),
               ...newLocation,
             }
@@ -506,7 +506,7 @@ export function TracksViewSvg({ style }: ISVGProps) {
               setLocation: (location) => {
                 const newLocations = produce(locations, (draft) => {
                   draft[li] = {
-                    id: makeUuid(),
+                    id: newUuid(),
                     search: locStr(location),
                     ...location,
                   }

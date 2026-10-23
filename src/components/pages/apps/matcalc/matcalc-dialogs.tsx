@@ -7,7 +7,7 @@ import type { ModalResponse } from '@/components/dialogs/ok-cancel-dialog'
 import { TEXT_OK } from '@/consts'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import type { ISelectionRange } from '@/providers/selection-range-provider'
 import { create } from 'zustand'
 import type { IParseOptions, ITextFileOpen } from '../../open-files'
@@ -114,7 +114,7 @@ export const useMatcalcDialogStore = create<IMatcalcDialogStore>((set) => ({
   stack: [], //{ type: 'none', id: makeUuid(), time: Date.now() },
 
   open: (d: InputDialog) => {
-    const id = makeUuid()
+    const id = newUuid()
     const dialog = { ...d, id, time: Date.now() }
 
     set((state) => ({

@@ -1,7 +1,7 @@
 import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from '../../apps/boxplot/boxplot-plot-svg'
 
@@ -28,7 +28,7 @@ export function newHeatMapPlot(
   } = opts
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
     style: 'heatmap',
     name,
     dataframes,
@@ -59,7 +59,7 @@ export function newBoxPlot(
   } = opts
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
 
     style,
     name,
@@ -91,7 +91,7 @@ export function newVolcanoPlot(
   } = opts
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
     style,
     name,
     volcano,
@@ -112,7 +112,7 @@ export interface IHistoryFileDesc {
 
 export function newHistoryFile(name: string): IDBEntity {
   return {
-    id: makeUuid(),
+    id: newUuid(),
     name,
     createdAt: new Date().toISOString(),
   }

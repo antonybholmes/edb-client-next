@@ -38,7 +38,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { getCSRFToken } from '@/components/edb/auth/csrf'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrHeaders } from '@/lib/http/urls'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Input } from '@/themed/baseui/input'
 import { Toast } from '@base-ui/react/toast'
 import { useForm } from 'react-hook-form'
@@ -115,7 +115,7 @@ export function UpdatePasswordPage() {
       data.password1.length < MIN_PASSWORD_LENGTH
     ) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: TEXT_MIN_PASSWORD_LENGTH,
         type: 'destructive',
       })
@@ -138,13 +138,13 @@ export function UpdatePasswordPage() {
 
       if (data.password1.length === 0) {
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: 'You have switched to passwordless login',
           description: 'Look for a passwordless email when you sign in.',
         })
       } else {
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: 'Your password was updated',
           description: 'Please use your new password to sign in.',
         })
@@ -153,7 +153,7 @@ export function UpdatePasswordPage() {
       //setResetLinkSent(true)
     } catch (error) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: error as string,
         type: 'destructive',
       })

@@ -39,7 +39,7 @@ import {
 import { bearerHeaders, redirect } from '@/lib/http/urls'
 
 import { httpFetch } from '@/lib/http/http-fetch'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Button } from '@/themed/baseui/button'
 import { Input } from '@/themed/baseui/input'
 import { Toast } from '@base-ui/react/toast'
@@ -80,7 +80,7 @@ export function UpdateEmailPage() {
       })
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Your email address was updated',
         description: 'Please use your new email address to sign in.',
         type: 'success',
@@ -91,7 +91,7 @@ export function UpdateEmailPage() {
       }, FORWARD_DELAY_MS)
     } catch (error) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: error as string,
         type: 'destructive',
       })

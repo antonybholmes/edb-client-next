@@ -3,7 +3,7 @@ import {
   type ApplyToDialog,
   type IDialogCloser,
 } from '@/components/dialogs/dialogs'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { create } from 'zustand'
 
 import { AddGenesDialog } from './add-genes-dialog'
@@ -60,7 +60,7 @@ export const useSingleCellDialogStore = create<ISingleCellDialogStore>(
     stack: [],
 
     open: (d) => {
-      const id = makeUuid()
+      const id = newUuid()
       const dialog = { ...d, id, time: Date.now() }
 
       set((state) => ({

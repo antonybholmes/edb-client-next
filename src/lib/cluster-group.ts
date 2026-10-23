@@ -1,6 +1,6 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { randomHexColor } from './color/color'
-import { makeUuid } from './id'
+import { newUuid } from './id'
 
 // export interface IBaseClusterGroup {
 //   name: string
@@ -52,7 +52,7 @@ export function makeNewGroup(
 ): IClusterGroup {
   return {
     version: 2,
-    id: makeUuid(),
+    id: newUuid(),
     name,
     search,
     exactMatch,
@@ -72,7 +72,7 @@ export function newGroupRow(
   { groups = [], name = 'Groups' } = {} as IGroupRowProps
 ): IClusterGroupRow {
   return {
-    id: makeUuid(),
+    id: newUuid(),
     name,
     groups,
   }
@@ -84,7 +84,7 @@ export function makeClusterFile(
 ): IClusterGroupRowFile {
   return {
     version: 2,
-    id: makeUuid(),
+    id: newUuid(),
     name,
     groupRows,
   }

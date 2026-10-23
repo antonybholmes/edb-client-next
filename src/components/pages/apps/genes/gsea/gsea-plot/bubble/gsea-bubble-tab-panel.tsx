@@ -1,5 +1,5 @@
 import { TAB10_PALETTE } from '@/lib/color/palette'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textJoin } from '@/lib/text/text'
 import { useEffect } from 'react'
 import { IGseaBubble, useGsea } from '../gsea-store'
@@ -18,11 +18,11 @@ export function GseaBubbleTabPanel() {
         const genesets = inUseReports.filter((r) => r.phen === phen)
 
         const bubble: IGseaBubble = {
-          id: makeUuid(),
+          id: newUuid(),
           name: phen,
           groups: [
             {
-              id: makeUuid(),
+              id: newUuid(),
               show: true,
               name: 'default',
               color: TAB10_PALETTE[0],
@@ -40,11 +40,11 @@ export function GseaBubbleTabPanel() {
 
     if (settings.phenotypes.merge) {
       const mergedBubble: IGseaBubble = {
-        id: makeUuid(),
+        id: newUuid(),
         name: textJoin(inUsePhenotypes),
         groups: [
           {
-            id: makeUuid(),
+            id: newUuid(),
             show: true,
             name: 'default',
             color: TAB10_PALETTE[0],

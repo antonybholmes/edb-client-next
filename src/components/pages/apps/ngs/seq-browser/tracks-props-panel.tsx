@@ -14,7 +14,7 @@ import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { PropsPanel } from '@/components/props-panel'
 import { TrashIcon } from '@/icons/trash-icon'
 import { indexBed } from '@/lib/genomic/bed'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -246,7 +246,7 @@ export function TracksPropsPanel() {
                 const bed: ILocalBedTrack = {
                   type: 'LocalBED',
                   name: file.name,
-                  id: makeUuid(),
+                  id: newUuid(),
                   displayOptions: {
                     ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
                   },
@@ -274,7 +274,7 @@ export function TracksPropsPanel() {
               const displayBigWig: ILocalBigWigTrack = {
                 type: 'LocalBigWig',
                 name: file.name,
-                id: makeUuid(),
+                id: newUuid(),
                 scale: 'Count',
 
                 reader: new BigWigReader(bw),
@@ -304,7 +304,7 @@ export function TracksPropsPanel() {
               const bed: ILocalBigBedTrack = {
                 type: 'LocalBigBed',
                 name: file.name,
-                id: makeUuid(),
+                id: newUuid(),
                 displayOptions: {
                   ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
                 },

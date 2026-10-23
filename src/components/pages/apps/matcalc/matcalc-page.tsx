@@ -76,7 +76,7 @@ import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
 import { usePasteText } from '@/hooks/paste-text'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { GseaBubbleProvider } from '../genes/gsea/gsea-plot/bubble/gsea-bubble-provider'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
@@ -373,7 +373,7 @@ export function MatcalcPage() {
       '/data/test/extgsea/genesets.json'
     )
 
-    const groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
+    const groupRows = [{ id: newUuid(), name: 'Groups', groups }]
 
     openFile(`Ext GSEA Test`, {
       groupRows,

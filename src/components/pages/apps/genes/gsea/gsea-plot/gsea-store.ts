@@ -1,6 +1,6 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import type { IBinaryFileOpen } from '@/components/pages/open-files'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
@@ -205,7 +205,7 @@ export const useGseaStore = create<IGseaStore>()((set) => ({
           const log10q = getGseaLog10q(q)
 
           const report: IGseaTableResult = {
-            id: makeUuid(),
+            id: newUuid(),
             name,
             phen,
             size: Number(tokens[sizeIdx]!),

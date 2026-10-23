@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import { randomHexColor } from '@/lib/color/color'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useEffect } from 'react'
 
 import { createAxis } from '@/components/plot/axes/axis'
@@ -62,7 +62,7 @@ export const useOncoplotStore = create<IOncoplotStore>((set) => ({
       const genes = [...new Set(df.col('Gene')?.strs)].sort()
 
       const genesInUse: IOncoGene[] = genes.map((g) => ({
-        id: makeUuid(),
+        id: newUuid(),
         name: g,
         color: randomHexColor(),
         show: true,

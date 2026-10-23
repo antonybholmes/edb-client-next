@@ -26,7 +26,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -239,7 +239,7 @@ export function GexMetadataDialog({
   async function fetchMetadata() {
     if (!technology) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Gene Expression',
         description: 'You must select a platform.',
         type: 'destructive',
@@ -254,7 +254,7 @@ export function GexMetadataDialog({
 
     if (selectedDatasets.length === 0) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Gene Expression',
         description: 'You must select a dataset.',
         type: 'destructive',

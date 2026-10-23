@@ -1,6 +1,6 @@
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import { pathJoin } from './history-provider/history-actions'
 import { useFiles } from './history-provider/history-contexts'
@@ -17,7 +17,7 @@ export function HistoryAppTree({
 
   const tree: ITab = useMemo(() => {
     const filesTab: ITab = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Files',
       type: 'folder',
       children: [],

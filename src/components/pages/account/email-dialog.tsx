@@ -17,7 +17,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { bearerHeaders } from '@/lib/http/urls'
 
 import { httpFetch } from '@/lib/http/http-fetch'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -91,14 +91,14 @@ export function EmailDialog({
       })
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title:
           'Please check your email for a link to change your email address',
         type: 'success',
       })
     } catch (error) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: error as string,
         type: 'destructive',
       })

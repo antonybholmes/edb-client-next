@@ -57,7 +57,7 @@ import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import APP_INFO from './manifest.json'
 import { UsersDialogsRoot, useUserDialogs } from './users-dialogs'
@@ -407,7 +407,7 @@ export function AdminUsersPage() {
       await loadUsers()
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'User updated',
       })
     } catch (err) {

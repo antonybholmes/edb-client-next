@@ -3,7 +3,7 @@ import {
   type ApplyToDialog,
   type IDialogCloser,
 } from '@/components/dialogs/dialogs'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { create } from 'zustand'
 
 import { ClinicalDialog } from './clinical-dialog'
@@ -46,28 +46,28 @@ interface ISingleCellDialogStore {
   clear: () => void
 }
 
-export const useOncoplotDialogStore = create<ISingleCellDialogStore>(set => ({
+export const useOncoplotDialogStore = create<ISingleCellDialogStore>((set) => ({
   stack: [],
 
-  open: d => {
-    const id = makeUuid()
+  open: (d) => {
+    const id = newUuid()
     const dialog = { ...d, id, time: Date.now() }
 
-    set(state => ({
+    set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
     }))
 
     return {
       id,
       close: () =>
-        set(state => ({
-          stack: state.stack.filter(d => d.id !== id),
+        set((state) => ({
+          stack: state.stack.filter((d) => d.id !== id),
         })),
     }
   },
   bringToFront: (id: string) =>
-    set(state => {
-      const dialog = state.stack.find(d => d.id === id)
+    set((state) => {
+      const dialog = state.stack.find((d) => d.id === id)
 
       if (!dialog) {
         return state
@@ -75,22 +75,22 @@ export const useOncoplotDialogStore = create<ISingleCellDialogStore>(set => ({
 
       return {
         stack: [
-          ...state.stack.filter(d => d.id !== id),
+          ...state.stack.filter((d) => d.id !== id),
           { ...dialog, time: Date.now() },
         ],
       }
     }),
   close: (id: string) =>
-    set(state => ({
+    set((state) => ({
       // if id is provided, remove that dialog. If not, remove the top dialog.
-      stack: state.stack.filter(d => d.id !== id),
+      stack: state.stack.filter((d) => d.id !== id),
     })),
   clear: () => set({ stack: [] }),
 }))
 
 export function useOncoplotDialogs() {
-  const open = useOncoplotDialogStore(s => s.open)
-  const close = useOncoplotDialogStore(s => s.close)
+  const open = useOncoplotDialogStore((s) => s.open)
+  const close = useOncoplotDialogStore((s) => s.close)
 
   return { open, close }
 }
@@ -123,8 +123,8 @@ function DialogRenderer({
 }
 
 export function OncoplotDialogsRoot() {
-  const stack = useOncoplotDialogStore(s => s.stack)
-  const close = useOncoplotDialogStore(s => s.close)
+  const stack = useOncoplotDialogStore((s) => s.stack)
+  const close = useOncoplotDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
   if (!dialog) {

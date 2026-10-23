@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Network now uses nano id since we can be working with a lot of nodes and edges.
 - Refined font api.
 - Volcano plot size now in settings.
 - Ext gsea now supports margins around each plot.

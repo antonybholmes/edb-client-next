@@ -24,7 +24,7 @@ import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { clamp } from '@/lib/math/clamp'
 import { ILim } from '@/lib/math/math'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
@@ -204,7 +204,7 @@ interface IProps {
 export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
   const { plot, displayLabels, setLabels } = useVolcanoContext()
 
-  const renderId = useRef(makeUuid())
+  const renderId = useRef(newUuid())
 
   const { axis: xax } = useAxis({
     plotId: plot?.id ?? '',
@@ -399,7 +399,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const yThreshold = yaf(thresholdLogP)
 
-    renderId.current = makeUuid()
+    renderId.current = newUuid()
 
     const svg = (
       <>

@@ -2,7 +2,7 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { cellStr } from '@/lib/dataframe/cell'
 
 import { range } from '@/lib/math/range'
-import { makeUuid } from '../id'
+import { newUuid } from '../id'
 import { zip } from '../utils'
 import { formatChr } from './dna'
 import {
@@ -44,7 +44,7 @@ export class GenLoc {
     this._strand = strand
     // create a unique id for this location which consists of
     // location and a uuid to ensure uniqueness
-    this._id = `${this._chr}|${this._start}|${this._end}|${this._strand}|${makeUuid()}`
+    this._id = `${this._chr}|${this._start}|${this._end}|${this._strand}|${newUuid()}`
   }
 
   /**

@@ -7,7 +7,7 @@ import { COLOR_BLACK } from '@/lib/color/color'
 import { getColorMap } from '@/lib/color/colormap'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newNanoId, newUuid } from '@/lib/id'
 import { DEFAULT_LIMIT, ILimit } from '@/lib/math/limit'
 import { min } from '@/lib/math/math'
 import { useMemo } from 'react'
@@ -191,7 +191,7 @@ export function dataframesToNetwork(
 
   const nodes: INode[] = labels.map((label, i) => {
     const node = {
-      id: makeUuid(),
+      id: newNanoId(),
       nodeId: nodeIds[i].trim(), // + '::' + groups[i].trim() + '::' + names[i].trim(),
       label,
       size: sizes[i],
@@ -225,7 +225,7 @@ export function dataframesToNetwork(
 
   const edges: IEdge[] = sources.map((source, si) => {
     return {
-      id: makeUuid(),
+      id: newNanoId(),
       source: nodeMap.get(fixName(source))?.id ?? '',
       target: nodeMap.get(fixName(targets[si]))?.id ?? '',
       strength: strengths[si] ?? 0,
@@ -235,7 +235,7 @@ export function dataframesToNetwork(
   const uniqueGroups: IGroup[] = [...new Set(groups)]
     .sort()
     .map((g, index) => ({
-      id: makeUuid(),
+      id: newUuid(),
       name: g,
       show: true,
       color:
@@ -255,7 +255,7 @@ export function dataframesToNetwork(
 
   const network = {
     network: {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Network',
       nodes,
       nodeMap: idNodeMap,
@@ -409,7 +409,7 @@ export const useNetworkStore = create<INetworkStore>()((set, get) => ({
       Math.ceil(strengthLim.max / stepSizeStrength) * stepSizeStrength
 
     set({
-      network: { ...network, id: makeUuid() },
+      network: { ...network, id: newUuid() },
 
       nodes: {
         metricLim1,

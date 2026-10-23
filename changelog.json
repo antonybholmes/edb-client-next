@@ -3595,6 +3595,10 @@
         {
           "msg": "Refined font api",
           "date": "2026-10-23T15:26:25.869Z"
+        },
+        {
+          "msg": "Network now uses nano id since we can be working with a lot of nodes and edges",
+          "date": "2026-10-23T16:07:28.314Z"
         }
       ]
     },

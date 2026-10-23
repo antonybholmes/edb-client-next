@@ -17,7 +17,7 @@ import {
   COLOR_RED,
 } from '@/lib/color/color'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { produce } from 'immer'
 
 import { createAxis, IAxis } from '@/components/plot/axes/axis'
@@ -515,7 +515,7 @@ export interface ITrackGroup {
 
 export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
   return {
-    id: makeUuid(),
+    id: newUuid(),
     type: 'Track Group',
     name: tracks[0]!.name,
     tracks: [...tracks],

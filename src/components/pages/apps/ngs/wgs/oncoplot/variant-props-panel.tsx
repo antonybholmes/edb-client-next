@@ -5,7 +5,7 @@ import { TEXT_NAME, TEXT_OK, TEXT_RESET, TEXT_UNLABELLED } from '@/consts'
 import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Button } from '@/themed/baseui/button'
 import { Input } from '@/themed/baseui/input'
 
@@ -153,7 +153,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                 setMutations(
                   produce(mutations, (draft) => {
                     draft.push({
-                      id: makeUuid(),
+                      id: newUuid(),
                       name: 'New mutation',
                       color: randomHexColor(),
                       aliases: [],

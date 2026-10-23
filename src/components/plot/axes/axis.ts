@@ -1,4 +1,4 @@
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { ILimit } from '@/lib/math/limit'
 import type { ILim } from '@/lib/math/math'
 import { range as numRange } from '@/lib/math/range'
@@ -87,7 +87,7 @@ export function createAxis(
     tickParams,
     format,
   } = opts
-  id = id ?? makeUuid()
+  id = id ?? newUuid()
 
   let ret: IAxis = {
     ...structuredClone(config),

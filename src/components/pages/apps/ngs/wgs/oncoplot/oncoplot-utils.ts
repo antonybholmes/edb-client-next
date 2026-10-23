@@ -23,7 +23,7 @@ import {
   newGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { NA } from '@/lib/text/text'
@@ -1200,7 +1200,7 @@ function getNewMutations(
       mutationsInUse.push(m)
 
       newMutations.push({
-        id: makeUuid(),
+        id: newUuid(),
         name: m,
         color: randomHexColor(),
         aliases: [],

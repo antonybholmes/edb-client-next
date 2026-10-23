@@ -1,5 +1,5 @@
 import { IDBEntity } from '../../../../../../interfaces/db-entity'
-import { makeUuid } from '../../../../../../lib/id'
+import { newUuid } from '../../../../../../lib/id'
 import { IGeneSet, IRankedGene } from '../gsea-plot/geneset'
 import { ExtGSEA } from './ext-gsea'
 import { IExtGseaPlotResult } from './ext-gsea-provider'
@@ -26,13 +26,13 @@ export function viperToGsea(
 
   for (const tf of viper.tfs) {
     const gs1: IGeneSet = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Activated',
       genes: tf.targets.pos,
       //color: COLOR_RED,
     }
     const gs2: IGeneSet = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Repressed',
       genes: tf.targets.neg,
       //color: COLOR_CORNFLOWER_BLUE,

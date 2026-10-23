@@ -5,7 +5,7 @@ import { IRemoteBigWigTrack, type ISeqTrack } from '../tracks-provider'
 
 import { IDBEntity } from '@/interfaces/db-entity'
 import { randomHexColor } from '@/lib/color/color'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { IDBPDatabase, openDB } from 'idb'
 
 let dbPromise: Promise<IDBPDatabase> | undefined
@@ -34,7 +34,7 @@ export function makeNewHub(
 ): IHub {
   return {
     version: 2,
-    id: makeUuid(),
+    id: newUuid(),
     name,
     color,
     tracks: [],

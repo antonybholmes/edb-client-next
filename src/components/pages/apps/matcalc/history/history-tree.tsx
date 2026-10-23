@@ -2,7 +2,7 @@ import { useAppInfo } from '@/components/edb/edb-settings'
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useIsMounted } from '@/hooks/mounted'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import { pathJoin } from './history-provider/history-actions'
 import { useFiles } from './history-provider/history-contexts'
@@ -21,14 +21,14 @@ export function HistoryTree({
 
   const tree: ITab = useMemo(() => {
     const appTab: ITab = {
-      id: makeUuid(),
+      id: newUuid(),
       name: appInfo?.name ?? 'Default',
       type: 'folder',
       children: [],
     }
 
     const filesTab: ITab = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Files',
       type: 'folder',
       children: [],
@@ -44,7 +44,7 @@ export function HistoryTree({
       }
 
       const sheetsTab: ITab = {
-        id: makeUuid(),
+        id: newUuid(),
 
         name: 'Sheets',
         type: 'folder',
@@ -52,7 +52,7 @@ export function HistoryTree({
       }
 
       const plotsTab: ITab = {
-        id: makeUuid(),
+        id: newUuid(),
 
         name: 'Plots',
         type: 'folder',

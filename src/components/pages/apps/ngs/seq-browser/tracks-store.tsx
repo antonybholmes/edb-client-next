@@ -27,7 +27,7 @@ import {
   parseGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import {
@@ -150,7 +150,7 @@ export const useTracksStore = create<ITracksStore>()((set) => ({
   trackDb: [],
   locations: useSeqBrowserStore.getState().locations.map((l) => ({
     ...l,
-    id: makeUuid(),
+    id: newUuid(),
     search: locStr(l),
   })),
   binSizes: [100],
@@ -164,13 +164,13 @@ export const useTracksStore = create<ITracksStore>()((set) => ({
       if (loc instanceof GenLoc) {
         locations.push({
           ...toGenomicLocation(loc),
-          id: makeUuid(),
+          id: newUuid(),
           search: locStr(toGenomicLocation(loc)),
         })
       } else if (isGenomicLocation(loc)) {
         locations.push({
           ...(loc as IGenomicLocation),
-          id: makeUuid(),
+          id: newUuid(),
           search: locStr(loc as IGenomicLocation),
         })
       } else if (typeof loc === 'string') {
@@ -179,7 +179,7 @@ export const useTracksStore = create<ITracksStore>()((set) => ({
           if (LOC_REGEX.test(loc)) {
             locations.push({
               ...parseGenomicLocation(loc),
-              id: makeUuid(),
+              id: newUuid(),
               search: locStr(parseGenomicLocation(loc)),
             })
             continue
@@ -199,7 +199,7 @@ export const useTracksStore = create<ITracksStore>()((set) => ({
             const l = features[0]!.loc
             locations.push({
               ...newGenomicLocation(l.chr, l.start, l.end),
-              id: makeUuid(),
+              id: newUuid(),
               search: loc,
             })
           }

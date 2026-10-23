@@ -9,7 +9,7 @@ import {
 } from '../svg-props'
 
 import { TEXT_DEFAULT } from '@/consts'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { DeepPartial } from '@/lib/utils'
 import { deepmerge } from 'deepmerge-ts'
 
@@ -129,7 +129,7 @@ export const DEFAULT_AXIS_CONFIG: IAxisConfig = {
 export function newAxisConfig(
   config: DeepPartial<IAxisConfig> = {}
 ): IAxisConfig {
-  return deepmerge({ ...DEFAULT_AXIS_CONFIG, id: makeUuid() }, config)
+  return deepmerge({ ...DEFAULT_AXIS_CONFIG, id: newUuid() }, config)
 }
 
 export interface IAxisCollection extends IDBEntity {

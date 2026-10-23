@@ -30,7 +30,7 @@ import {
   medianFilter,
   stdevFilter,
 } from '@/lib/dataframe/utils/dataframe-utils'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Checkbox } from '@/themed/baseui/check-box'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
@@ -244,7 +244,7 @@ export function HeatMapDialog({
     }
 
     const cf: IClusterFrame = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Heatmap Cluster Frame',
       rowTree: rowC,
       colTree: colC,

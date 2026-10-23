@@ -23,7 +23,6 @@ import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { produce } from 'immer'
-import { RotateCw } from 'lucide-react'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { FontToolbarGroup } from '../../utils/text/toolbars/font-toolbar-group'
 import { NetworkDialog } from '../network-dialog'
@@ -34,7 +33,7 @@ export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
   const { settings, updateSettings } = useNetworkSettings()
-  const { autoFit, runSim } = useNetworkD3Sim()
+  const { autoFit } = useNetworkD3Sim()
 
   const { openCustom: openCustomDialog } = useDialogs()
 
@@ -79,13 +78,55 @@ export function HomeToolbar() {
           <span>{TEXT_PLOT}</span>
         </ToolbarColSmallButton>
         <ToolbarCol>
-          <ToolbarRow>
+          {/* <ToolbarRow>
             <ToolbarIconButton onClick={() => runSim()} title="Run Simulation">
               <RotateCw size={16} />
             </ToolbarIconButton>
-          </ToolbarRow>
+          </ToolbarRow> */}
           <ToolbarRow>
             <ToolbarButton onClick={() => autoFit()}>Auto Fit</ToolbarButton>
+          </ToolbarRow>
+        </ToolbarCol>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
+        <ToolbarCol>
+          <ToolbarRow title="Width" smallTitle="W" titleCls="w-10">
+            <NumericalInput
+              w="xxs"
+              h="toolbar"
+
+              value={settings.plot.size.w}
+              placeholder="Width"
+              limit={[1, 5000]}
+              dp={0}
+              onNumChanged={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.size.w = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow title="Height" smallTitle="H" titleCls="w-10">
+            <NumericalInput
+              w="xxs"
+              h="toolbar"
+              value={settings.plot.size.h}
+              placeholder="Height"
+              limit={[1, 5000]}
+              dp={0}
+
+              onNumChange={(v) => {
+                console.log('New height value:', v)
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.plot.size.h = v
+                  })
+                )
+              }}
+            />
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>
@@ -147,50 +188,6 @@ export function HomeToolbar() {
               )
             }}
           />
-        </ToolbarCol>
-      </ToolbarTabGroup>
-
-      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
-        <ToolbarCol>
-          <ToolbarRow>
-            <span className="w-3 text-center">W</span>
-            <NumericalInput
-              w="xxs"
-              h="toolbar"
-
-              value={settings.plot.size.w}
-              placeholder="Width"
-              limit={[1, 5000]}
-              dp={0}
-              onNumChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.size.w = v
-                  })
-                )
-              }}
-            />
-          </ToolbarRow>
-          <ToolbarRow>
-            <span className="w-3 text-center">H</span>
-            <NumericalInput
-              w="xxs"
-              h="toolbar"
-              value={settings.plot.size.h}
-              placeholder="Height"
-              limit={[1, 5000]}
-              dp={0}
-
-              onNumChange={(v) => {
-                console.log('New height value:', v)
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.size.h = v
-                  })
-                )
-              }}
-            />
-          </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>
     </>

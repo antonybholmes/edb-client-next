@@ -1,7 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { IPos } from '@/interfaces/pos'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
@@ -52,7 +52,7 @@ export const useTooltipStore = create<ITooltipStore>()((set, get) => {
   return {
     tooltip: null,
     showTooltip: (t) => {
-      const tooltip = { id: makeUuid(), ...t }
+      const tooltip = { id: newUuid(), ...t }
       // Cancel any pending tooltip frame before showing a new tooltip
       cancelPendingFrame()
 

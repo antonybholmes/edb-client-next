@@ -27,7 +27,7 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentSheets,
@@ -69,7 +69,7 @@ export function DataPanel() {
   // }, [dfTabs])
 
   useEffect(() => {
-    setFooter({ id: makeUuid(), component: FooterDFSize })
+    setFooter({ id: newUuid(), component: FooterDFSize })
   }, [setFooter])
 
   useEffect(() => {

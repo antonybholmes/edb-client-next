@@ -21,7 +21,7 @@ import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
 import { getCSRFToken } from '@/components/edb/auth/csrf'
 import { csfrHeaders } from '@/lib/http/urls'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -107,14 +107,14 @@ export function PasswordCard() {
       })
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Your password was updated',
         type: 'success',
         description: 'An email will be sent to your address.',
       })
     } catch (err) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Your password could not be updated',
         type: 'destructive',
         description: 'Please try again later.',
