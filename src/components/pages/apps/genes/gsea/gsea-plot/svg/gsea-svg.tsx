@@ -238,10 +238,6 @@ function GseaSvgContent() {
     ]
   )
 
-  if (pathways.length === 0) {
-    return null
-  }
-
   const rows = Math.ceil(pathways.length / settings.page.columns)
 
   const pageSize: IDim = {
