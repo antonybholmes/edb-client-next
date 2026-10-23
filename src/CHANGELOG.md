@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added pointer cursor to network nodes to better indicate they are clickable.
 
 
