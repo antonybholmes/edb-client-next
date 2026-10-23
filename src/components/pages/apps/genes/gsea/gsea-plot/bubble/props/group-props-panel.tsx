@@ -157,6 +157,18 @@ export function GroupPropsPanel() {
             })
           )
         }
+      ></CheckPropRow>
+      <CheckPropRow
+        title="Labels"
+
+        checked={settings.groups.font.show}
+        onCheckedChange={(state) =>
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.groups.font.show = state
+            })
+          )
+        }
       >
         <FontPopover
           fonts={[
@@ -191,18 +203,6 @@ export function GroupPropsPanel() {
           ]}
         />
       </CheckPropRow>
-      <CheckPropRow
-        title="Labels"
-
-        checked={settings.groups.font.show}
-        onCheckedChange={(state) =>
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.groups.font.show = state
-            })
-          )
-        }
-      />
       <CheckPropRow
         title="Separate Borders"
         checked={settings.groups.border.separate.on}
