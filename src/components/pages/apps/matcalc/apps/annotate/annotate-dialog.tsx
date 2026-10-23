@@ -20,7 +20,7 @@ import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { capitalizeFirstWord } from '@/lib/text/capital-case'
 import { useAnnotations } from '../../../genomic/annotate/annotate-store'
 import { useAnnotateWorker } from '../../../genomic/annotate/annotate-worker'
@@ -60,7 +60,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
 
     runAnnotate(
       {
-        id: makeUuid(),
+        id: newUuid(),
         df: df.values,
         columns: df.colNames,
         col,

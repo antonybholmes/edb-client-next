@@ -2,7 +2,7 @@ import { randomHexColor } from '@/lib/color/color'
 
 import type { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import type { IGeneSetFile } from './pathway'
 
@@ -20,7 +20,7 @@ export async function loadGMT(file: IGeneSetFile): Promise<IGeneSet[]> {
       const tokens = line.split('\t')
 
       geneSets.push({
-        id: makeUuid(),
+        id: newUuid(),
         //type: 'geneset',
         name: tokens[0]!,
         genes: tokens.slice(2).map((g) => ({ name: g, score: 1 })),

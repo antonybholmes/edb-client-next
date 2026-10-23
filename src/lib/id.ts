@@ -18,13 +18,13 @@ export const NANOID12 = customAlphabet(NANO_ID_ALPHABET, 12)
 export const UUIDV7 = () => v7() //crypto.randomUUID()
 
 // Generate a unique identifier
-export const makeUuid = () => UUIDV7()
+export const newUuid = () => UUIDV7()
 
-export function makeUUIDv4(): string {
+export function newUUIDv4(): string {
   return v4()
 }
 
-export const makeNanoId = () => NANOID6()
+export const newNanoId = () => NANOID12() //NANOID6()
 
 /**
  * Generates a UUID v7 string.
@@ -44,16 +44,16 @@ export const makeNanoId = () => NANOID6()
 //   return NANOID12()
 // }
 
-// export function makeNanoId(length: number = 12): string {
-//   if (length === 12) {
-//     return makeUuid()
-//   }
+export function makeNanoId(length: number = 12): string {
+  if (length === 12) {
+    return newNanoId()
+  }
 
-//   return customAlphabet(NANO_ID_ALPHABET, length)() //nanoIdGen12()
-// }
+  return customAlphabet(NANO_ID_ALPHABET, length)() //nanoIdGen12()
+}
 
 export function makeTimeNanoId(): string {
-  return Date.now().toString(36) + NANOID6()
+  return Date.now().toString(36) + newNanoId()
 }
 
 // export function makeRandId(): string {
@@ -74,9 +74,9 @@ export function randId(prefix: string): string {
 }
 
 export function randNanoId(prefix: string): string {
-  return `${prefix}${ID_DELIMITER}${makeUuid()}`
+  return `${prefix}${ID_DELIMITER}${newUuid()}`
 }
 
 export function randUUIDv7Id(prefix: string): string {
-  return `${prefix}${ID_DELIMITER}${makeUuid()}`
+  return `${prefix}${ID_DELIMITER}${newUuid()}`
 }

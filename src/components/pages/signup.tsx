@@ -34,7 +34,7 @@ import { Input } from '@/themed/baseui/input'
 import { useForm } from 'react-hook-form'
 import { HCenterCol } from '../layout/h-center-col'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import {
   MIN_PASSWORD_LENGTH,
@@ -74,7 +74,7 @@ export function SignUpPage({ allowPassword = false }: ISignupProps) {
 
     if (!settings.passwordless && data.password1.length < MIN_PASSWORD_LENGTH) {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Password too short',
         description: TEXT_MIN_PASSWORD_LENGTH,
         type: 'destructive',
@@ -95,7 +95,7 @@ export function SignUpPage({ allowPassword = false }: ISignupProps) {
       })
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Your account was created',
         description: 'Please check your email to continue.',
         type: 'success',

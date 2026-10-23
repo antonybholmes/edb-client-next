@@ -3,7 +3,7 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { colZScore, rowZScore, zscore } from '@/lib/dataframe/utils/zscore'
 import { vfill, vfill2d } from '@/lib/fill'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { HCluster, IClusterFrame, IClusterTree } from '@/lib/math/hcluster'
 import { makeCombinations, transpose } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
@@ -94,7 +94,7 @@ export function makeVennList(
   }
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
     listId: id,
     name: name,
     items: _items,
@@ -128,7 +128,7 @@ export interface IVennOptions {
 const DEFAULT_SETTINGS: IVennOptions = {
   selectedItems: { name: '', items: [] },
   vennLists: VENN_LIST_IDS.map((id) => ({
-    id: makeUuid(),
+    id: newUuid(),
     listId: id,
     name: `List ${id}`,
 
@@ -520,7 +520,7 @@ export function useVenn(): IVennStore & {
       : undefined
 
     const cf: IClusterFrame = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Dot Plot Cluster Frame',
       rowTree: rowC,
       colTree: colC,

@@ -13,7 +13,7 @@ import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { useMessages } from '@/providers/message-provider'
 import { produce } from 'immer'
 import {
-  ChartNoAxesCombined,
+  ChartColumnBig,
   ChevronDown,
   DecimalsArrowLeft,
   DecimalsArrowRight,
@@ -31,13 +31,21 @@ import {
   DropdownMenuTrigger,
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
+import { ToolbarClassicRow } from '@/components/toolbar/toolbar-classic-row'
 import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { ToolbarSingleRow } from '@/components/toolbar/toolbar-single-row'
 import { VolcanoDialog } from '../../volcano/volcano-dialog'
 import { pathJoin } from '../history/history-provider/history-actions'
 import { useOpenFiles } from '../hooks/open'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { TEXT_HEATMAP } from '../matcalc-page'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
+import { BoxPlotIcon } from './box-plot-icon'
+import { BubbleIcon } from './bubble-icon'
+import { DotHeatMapIcon } from './dot-heatmap-icon'
+import { HeatMapIcon } from './heatmap-icon'
+import { VolcanoIcon } from './volcano-icon'
 
 export function HomeToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
@@ -122,15 +130,15 @@ export function HomeToolbar() {
           <DropdownMenuTrigger
             render={
               <ToolbarColButton
-                title="Create Chart"
+                title="Create A Chart"
                 icon={
                   <>
-                    <ChartNoAxesCombined size={18} />
-                    <span>Chart</span>
+                    <ChartColumnBig size={18} />
+                    {/* <span>Chart</span> */}
                   </>
                 }
               >
-                <ChartNoAxesCombined size={20} />
+                <ChartColumnBig size={20} />
                 <span>Chart</span>
                 <ChevronDown
                   size={12}
@@ -141,10 +149,12 @@ export function HomeToolbar() {
           />
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => makeClusterMap(false)}>
-              Heatmap
+              <HeatMapIcon />
+              <span>Heatmap</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => makeDotPlot(false)}>
-              Dot Heatmap
+              <DotHeatMapIcon />
+              <span>Dot Heatmap</span>
             </DropdownMenuItem>
             <MenuSeparator />
             <DropdownMenuItem
@@ -156,7 +166,22 @@ export function HomeToolbar() {
                 })
               }}
             >
-              Volcano
+              <VolcanoIcon />
+              <span>Volcano</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                openMatcalcDialog({
+                  type: 'gsea-bubble-plot',
+                  payload: {
+                    callback: (plot) => _addPlots([plot]),
+                  },
+                })
+              }}
+            >
+              <BubbleIcon />
+              <span>GSEA Bubble</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -169,7 +194,8 @@ export function HomeToolbar() {
                 })
               }}
             >
-              Box
+              <BoxPlotIcon />
+              <span>Box</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -188,7 +214,38 @@ export function HomeToolbar() {
             >
               Sankey
             </DropdownMenuItem>
-            <DropdownMenuItem
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <ToolbarCol>
+          <ToolbarSingleRow>
+            <ToolbarIconButton
+              onClick={() => makeClusterMap(false)}
+              title="Heatmap"
+            >
+              <HeatMapIcon />
+            </ToolbarIconButton>
+            {/* <ToolbarIconButton
+              onClick={() => makeDotPlot(false)}
+              title="Dot Heatmap"
+            >
+              <DotHeatMapIcon />
+            </ToolbarIconButton> */}
+            <ToolbarIconButton
+              title="Volcano"
+              onClick={() => {
+                openCustomDialog(VolcanoDialog, {
+                  callback: (plot) => {
+                    _addPlots([plot])
+                  },
+                })
+              }}
+            >
+              <VolcanoIcon />
+            </ToolbarIconButton>
+
+            <ToolbarIconButton
+              title="GSEA Bubble"
               onClick={() => {
                 openMatcalcDialog({
                   type: 'gsea-bubble-plot',
@@ -198,24 +255,38 @@ export function HomeToolbar() {
                 })
               }}
             >
-              GSEA Bubble
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <BubbleIcon />
+            </ToolbarIconButton>
 
-        <ToolbarCol>
-          <ToolbarButton
-            onClick={() => makeClusterMap(false)}
-            aria-label={TEXT_HEATMAP}
-          >
-            {TEXT_HEATMAP}
-          </ToolbarButton>
-          {/* <ToolbarButton
+            <ToolbarIconButton
+              title="Box Plot"
+              onClick={() => {
+                openMatcalcDialog({
+                  type: 'box-whiskers',
+                  payload: {
+                    callback: (plot) => _addPlots([plot]),
+                  },
+                })
+              }}
+            >
+              <BoxPlotIcon />
+            </ToolbarIconButton>
+          </ToolbarSingleRow>
+          <ToolbarClassicRow>
+            <ToolbarButton
+              onClick={() => makeClusterMap(false)}
+              aria-label={TEXT_HEATMAP}
+            >
+              {TEXT_HEATMAP}
+            </ToolbarButton>
+
+            {/* <ToolbarButton
             onClick={() => makeDotPlot(false)}
             aria-label={TEXT_DOT_PLOT}
           >
             Dot
           </ToolbarButton> */}
+          </ToolbarClassicRow>
         </ToolbarCol>
         {/* <ToolbarCol>
           <ToolbarButton
@@ -304,7 +375,7 @@ export function HomeToolbar() {
         >
           <CommaIcon />
         </ToolbarIconButton>
-        <ToolbarCol>
+        <ToolbarRow>
           <ToolbarIconButton
             title="Decrease Decimal"
             onClick={() =>
@@ -329,7 +400,7 @@ export function HomeToolbar() {
           >
             <DecimalsArrowRight strokeWidth={1.5} size={20} />
           </ToolbarIconButton>
-        </ToolbarCol>
+        </ToolbarRow>
       </ToolbarTabGroup>
     </>
   )

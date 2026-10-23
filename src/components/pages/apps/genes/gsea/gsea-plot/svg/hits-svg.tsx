@@ -10,7 +10,7 @@ import { axisDomainToRangeFunc, IAxis } from '@/components/plot/axes/axis'
 import { SvgMouseRect } from '@/components/plot/svg-rect'
 import { IDim } from '@/interfaces/dim'
 import { screenToSvgPoint, svgPointToScreen } from '@/lib/graphics/svg'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { abs } from '@/lib/math/abs'
 import { max } from '@/lib/math/math'
 import { findNearest } from '@/lib/search'
@@ -29,7 +29,7 @@ export function getColorMapFromSettings(
 
   //we make a custom heatmap using the user specified colors
 
-  return new ColorMap(makeUuid(), 'user', [
+  return new ColorMap(newUuid(), 'user', [
     settings.genes.pos.value,
     COLOR_WHITE,
     settings.genes.neg.value,

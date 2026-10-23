@@ -19,7 +19,7 @@ import {
   DropdownMenuSubTrigger,
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import {
   Columns3,
   Dna,
@@ -186,7 +186,7 @@ export function NewTrackMenu() {
                   const track: IRulerTrack = {
                     type: 'Ruler',
                     name: 'Ruler',
-                    id: makeUuid(),
+                    id: newUuid(),
                     displayOptions: {
                       ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
                     },
@@ -209,7 +209,7 @@ export function NewTrackMenu() {
                   const track: IScaleTrack = {
                     type: 'Scale',
                     name: 'Scale',
-                    id: makeUuid(),
+                    id: newUuid(),
                     displayOptions: {
                       ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
                     },
@@ -232,7 +232,7 @@ export function NewTrackMenu() {
                   const track: IGeneTrack = {
                     type: 'Gene',
                     name: 'Genes',
-                    id: makeUuid(),
+                    id: newUuid(),
                     displayOptions: {
                       ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
                     },
@@ -255,7 +255,7 @@ export function NewTrackMenu() {
                   const track: ILocationTrack = {
                     type: 'Location',
                     name: 'Location',
-                    id: makeUuid(),
+                    id: newUuid(),
                     displayOptions: {
                       ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
                     },
@@ -278,7 +278,7 @@ export function NewTrackMenu() {
                   const track: ICytobandsTrack = {
                     type: 'Cytobands',
                     name: 'Cytobands',
-                    id: makeUuid(),
+                    id: newUuid(),
                     displayOptions: {
                       ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
                     },

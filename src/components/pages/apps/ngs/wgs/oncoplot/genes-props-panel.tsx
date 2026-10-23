@@ -4,7 +4,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { TEXT_NAME, TEXT_OK } from '@/consts'
 import { PlusIcon } from '@/icons/plus-icon'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Input } from '@/themed/baseui/input'
 
 import { SortableItem } from '@/components/sortable-item'
@@ -198,7 +198,7 @@ export function GenePropsPanel({ ref }: IDivProps) {
               setGenes(
                 produce(genes, (draft) => {
                   draft.push({
-                    id: makeUuid(),
+                    id: newUuid(),
                     name: 'New gene',
                     color: randomHexColor(),
                     show: true,

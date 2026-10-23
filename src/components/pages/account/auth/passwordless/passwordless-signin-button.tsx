@@ -10,7 +10,7 @@ import { Input } from '@/themed/baseui/input'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
 
@@ -72,7 +72,7 @@ export function PasswordlessSignInButton({
 
             if (res.data.message.includes('email')) {
               addToast({
-                id: makeUuid(),
+                id: newUuid(),
                 title: 'Please check your email',
                 description:
                   'We sent you an email containing a link you can use to sign in.',

@@ -2,7 +2,7 @@ import { FooterDFSize } from '@/components/pages/apps/matcalc/data/footer-df-siz
 import { ITab } from '@/components/tabs/tab-provider'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { IChildrenProps } from '@/interfaces/children-props'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import {
   createContext,
   useCallback,
@@ -98,7 +98,7 @@ export function FooterProvider({ children }: IChildrenProps) {
     ) => {
       const { slot = 'left' } = opts
 
-      const id = makeUuid()
+      const id = newUuid()
 
       add({ id, render: <RunningIndicator message={message} /> }, { slot })
 
@@ -108,7 +108,7 @@ export function FooterProvider({ children }: IChildrenProps) {
   )
 
   const addDFSize = useCallback(() => {
-    const id = makeUuid()
+    const id = newUuid()
 
     add({ id, component: FooterDFSize }, { slot: 'left' })
 

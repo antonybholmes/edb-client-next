@@ -2,7 +2,7 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { useRunning } from '@/components/toolbar/running-indicator'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { range } from '@/lib/math/range'
 import { useFooter } from '@/providers/footer-provider'
@@ -59,10 +59,10 @@ export function dfToViper(df: BaseDataFrame): IViper {
       { reverse: true, abs: true }
     ).map((i) => ({ ...neg[i], rank: i }))
 
-    return { id: makeUuid(), name: df.colName(tfi), targets: { pos, neg } }
+    return { id: newUuid(), name: df.colName(tfi), targets: { pos, neg } }
   })
 
-  return { id: makeUuid(), name: 'Viper', signature, tfs }
+  return { id: newUuid(), name: 'Viper', signature, tfs }
 }
 
 export function useViper() {

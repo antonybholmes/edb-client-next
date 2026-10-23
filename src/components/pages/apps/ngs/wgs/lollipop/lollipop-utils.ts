@@ -2,7 +2,7 @@ import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 
 import type { IBlock } from '@/components/pages/apps/heatmap/heatmap-settings'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 
 import {
   DEFAULT_BOLD_FONT_PROPS,
@@ -368,7 +368,7 @@ export const DEFAULT_DOMAIN_COLORS: IDomainColors = Object.freeze({
 
 export const DEFAULT_DOMAIN: IDomain = Object.freeze({
   ...DEFAULT_DOMAIN_COLORS,
-  id: makeUuid(),
+  id: newUuid(),
   name: '',
   start: 1,
   end: 10,

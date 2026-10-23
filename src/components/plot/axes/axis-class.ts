@@ -1,4 +1,4 @@
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { DeepPartial, definedProps } from '@/lib/utils'
@@ -60,7 +60,7 @@ export class Axis {
   }
 
   constructor(axis: IAxisConfig = DEFAULT_AXIS_CONFIG) {
-    this._id = makeUuid()
+    this._id = newUuid()
     this._clip = axis.clip
     this._title = axis.title
     this._ticks = structuredClone(axis.ticks)

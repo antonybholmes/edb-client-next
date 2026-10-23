@@ -20,7 +20,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 
 import { ElbowConnectorIcon } from '@/components/icons/shapes/elbow-connector-icon'
 import { StraightConnectorIcon } from '@/components/icons/shapes/straight-connector-icon'
-import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
+import { AxisPlotPropsPopover } from '@/components/plot/axes/props/axis-plot-props-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
@@ -276,47 +276,67 @@ export function VolcanoDisplayPropsPanel() {
               <MarginPopover />
               <DoubleNumericalInput
                 h="toolbar"
-                v1={displayProps.axes.xaxis.length}
-                v2={displayProps.axes.yaxis.length}
+                v1={settings.axes.xaxis.length}
+                v2={settings.axes.yaxis.length}
                 limit={[1, 1000]}
                 dp={0}
                 onNumChanged1={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.xaxis.length = v
                     })
                   )
                 }}
                 onNumChanged2={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.yaxis.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.yaxis.length = v
                     })
                   )
                 }}
               />
             </PropRow>
 
-            <PropRow title="Axes">
+            <PropRow title="Axes" contentCls="gap-x-2">
               {plot && (
-                <AxesDisplayPropsPopover
-                  plots={[
-                    {
-                      id: plot.id,
-                      title: 'Volcano Plot',
-                      groups: [
-                        {
-                          id: 'volcano',
-                          title: 'Volcano',
-                          axes: [
-                            { id: 'x', title: 'X-axis' },
-                            { id: 'y', title: 'Y-axis' },
-                          ],
-                        },
-                      ],
-                    },
-                  ]}
-                />
+                <>
+                  {/* <AxesDisplayPropsPopover
+                    plots={[
+                      {
+                        id: plot.id,
+                        title: 'Volcano Plot',
+                        groups: [
+                          {
+                            id: 'volcano',
+                            title: 'Volcano',
+                            axes: [
+                              { id: 'x', title: 'X-axis' },
+                              { id: 'y', title: 'Y-axis' },
+                            ],
+                          },
+                        ],
+                      },
+                    ]}
+                  /> */}
+
+                  <AxisPlotPropsPopover
+                    title="X-axis"
+                    plotAddress={{
+                      plotId: plot.id,
+                      groupId: 'volcano',
+                      axisId: 'x',
+                    }}
+                  />
+
+                  <AxisPlotPropsPopover
+                    title="Y-axis"
+                    plotAddress={{
+                      plotId: plot.id,
+                      groupId: 'volcano',
+                      axisId: 'y',
+                    }}
+                  />
+                </>
               )}
             </PropRow>
 

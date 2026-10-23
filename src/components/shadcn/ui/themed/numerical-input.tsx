@@ -173,7 +173,6 @@ export function NumericalInput({
       onNumChange?.(v)
 
       if (triggerChanged) {
-        console.trace()
         onNumChanged?.(v)
       }
     }

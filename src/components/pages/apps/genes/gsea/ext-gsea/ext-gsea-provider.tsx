@@ -29,7 +29,7 @@ import {
 } from './ext-gsea-settings'
 
 import { IDBEntity } from '@/interfaces/db-entity'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { max } from '@/lib/math/math'
 import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
 import { useGseaSettings } from '../gsea-plot/gsea-settings'
@@ -63,7 +63,7 @@ export function newExtGseaPlot(
   } = opts
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
     //path: '',
     style: 'ext-gsea',
     name,
@@ -184,15 +184,14 @@ export function ExtGseaProvider({
         tickParams: { which: 'minor', show: false },
       })
 
-      const xaxGenes = { ...xax }
-
       const yMax = max(abs(scores.map((e) => e.score)))
 
       const yaxSnr = createAxis({
         id: 'y',
         direction: 'y',
         title: 'SNR',
-        autoDomain: [-yMax, yMax],
+        domain: [-yMax, yMax],
+        autoDomain: true,
         length: settings.ranking.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })

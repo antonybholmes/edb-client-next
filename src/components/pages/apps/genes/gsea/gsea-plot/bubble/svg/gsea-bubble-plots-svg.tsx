@@ -6,7 +6,6 @@ import { SvgZoomCanvas } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 
 import { SvgG } from '@/components/plot/svg-g'
-import { DEFAULT_STROKE_PROPS } from '@/components/plot/svg-props'
 import { IPos } from '@/interfaces/pos'
 import { ILim } from '@/lib/math/math'
 import { CrosshairProvider } from '@/providers/crosshair-provider'
@@ -28,10 +27,10 @@ export const DEFAULT_GSEA_BUBBLE_PROPS: IGseaBubbleDisplayOptions = {
       name: 'Log2 fold change',
       domain: [-2, 2],
       length: 300,
-      ticks: [],
-      tickLabels: [],
-      tickSize: 4,
-      stroke: { ...DEFAULT_STROKE_PROPS },
+      //ticks: [],
+      //tickLabels: [],
+      //tickSize: 4,
+      //stroke: { ...DEFAULT_STROKE_PROPS },
     },
   },
 }

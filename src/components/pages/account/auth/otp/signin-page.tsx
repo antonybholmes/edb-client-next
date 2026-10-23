@@ -28,7 +28,7 @@ import { safeRedirect } from '@/components/edb/auth/edb-signin'
 import { isSafeRelativeUrl, useEdbSession } from '@/components/edb/auth/session'
 import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
@@ -99,7 +99,7 @@ export function SignInPage() {
       //setOTPSent(false)
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: config.name,
         description:
           'The sign in failed. Please check the one-time code and try again.',
@@ -147,14 +147,14 @@ export function SignInPage() {
         setOTPSent(true)
 
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: config.name,
           description:
             'If the email address is valid, you will receive a 6-digit code.',
         })
       } catch (error) {
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: 'We were unable to send you a code',
           description:
             error instanceof Error
@@ -288,7 +288,7 @@ export function SignInPage() {
                     }
                   } else {
                     addToast({
-                      id: makeUuid(),
+                      id: newUuid(),
                       title: config.name,
                       description: 'Please enter your email address.',
                       type: 'destructive',

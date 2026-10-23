@@ -9,7 +9,7 @@ import {
 } from '@/components/plot/axes/axis'
 import { useAxes } from '@/components/plot/axes/plot-axes'
 import { ITickItem } from '@/components/plot/axes/svg-axis-props'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useEffect } from 'react'
 import { IBlock } from '../../../heatmap/heatmap-settings'
 import { useLollipopSettings } from './lollipop-settings-store'
@@ -93,7 +93,7 @@ export const useLollipopStore = create<ILollipopStore>((set) => ({
 
       let domain: IDomain = {
         ...DEFAULT_DOMAIN,
-        id: makeUuid(),
+        id: newUuid(),
       }
 
       domain.name = name

@@ -9,7 +9,7 @@ import { useCurrentSheets } from '../../../matcalc/history/history-provider/hist
 
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { TAB10_PALETTE } from '@/lib/color/palette'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { produce } from 'immer'
 import { HistoryPlot } from '../../../matcalc/history/history-provider/history-types'
@@ -185,7 +185,7 @@ export function GseaBubbleDialog({
 
     const genesets: IGseaTableResult[] = names.map((name, i) => {
       return {
-        id: makeUuid(),
+        id: newUuid(),
         name,
         phen: '',
         size: sizes[i]!,
@@ -221,7 +221,7 @@ export function GseaBubbleDialog({
             TAB10_PALETTE[groups.length % TAB10_PALETTE.length]
 
           const group = {
-            id: makeUuid(),
+            id: newUuid(),
             show: true,
             name: groupName,
             color,
@@ -238,7 +238,7 @@ export function GseaBubbleDialog({
       }
     } else {
       groups.push({
-        id: makeUuid(),
+        id: newUuid(),
         show: true,
         name: 'default',
         color: TAB10_PALETTE[0],
@@ -247,7 +247,7 @@ export function GseaBubbleDialog({
     }
 
     const bubblePlot: IGseaBubble = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'GSEA Bubble',
       groups,
       nes: { label: nesCol },

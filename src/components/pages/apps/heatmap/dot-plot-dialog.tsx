@@ -23,7 +23,7 @@ import { WarningIcon } from '@/components/icons/warning-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cumulativeSteps } from '@/lib/math/quartile'
 import { formatNumber } from '@/lib/text/text'
 import { produce } from 'immer'
@@ -195,7 +195,7 @@ export function DotPlotDialog({
     }
 
     const cf: IClusterFrame = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Dot Plot Cluster Frame',
       rowTree: rowC,
       colTree: colC,
@@ -303,7 +303,7 @@ export function DotPlotDialog({
     }
 
     const cf: IClusterFrame = {
-      id: makeUuid(),
+      id: newUuid(),
       name: 'Dot Plot Cluster Frame',
       rowTree: rowC,
       colTree: colC,

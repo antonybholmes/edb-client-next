@@ -1,6 +1,6 @@
 // Inspired by react-hot-toast library
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useEffect, useState } from 'react'
 import type { IToast } from './toast'
 
@@ -129,7 +129,7 @@ export function dispatch(action: Action) {
 type Toast = Omit<IToast, 'id'>
 
 function toast({ ...props }: Toast) {
-  const id = makeUuid()
+  const id = newUuid()
 
   const update = (props: IToast) =>
     dispatch({

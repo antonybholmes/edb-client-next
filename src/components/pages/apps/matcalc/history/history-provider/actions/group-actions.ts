@@ -5,7 +5,7 @@ import {
   makeNewGroup,
 } from '@/lib/cluster-group'
 import { randomHexColor } from '@/lib/color/color'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { textJoin } from '@/lib/text/text'
 import { DEFAULT_FILE } from '../history-init'
@@ -123,7 +123,7 @@ export function openGroupFiles(files: ITextFileOpen[]): IClusterGroupRow[] {
       )
     }
 
-    groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
+    groupRows = [{ id: newUuid(), name: 'Groups', groups }]
   }
 
   return groupRows

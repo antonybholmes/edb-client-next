@@ -9,7 +9,7 @@ import { DEFAULT_PALETTE } from '@/lib/color/palette'
 
 import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
 import { IGenomicLocation } from '@/lib/genomic/genomic-location'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { BigBed, BigWig } from '@gmod/bbi'
 import { produce } from 'immer'
 import { create } from 'zustand'
@@ -124,7 +124,7 @@ export const useSeqBrowserDialogStore = create<ISeqBrowserDialogStore>(
     stack: [],
 
     open: (d) => {
-      const id = makeUuid()
+      const id = newUuid()
       const dialog = { ...d, id, time: Date.now() }
 
       set((state) => ({
@@ -485,7 +485,7 @@ function AddLocalFilesDialogRenderer({
               const displayBed: ILocalBedTrack = {
                 type: 'LocalBED',
                 name: file.name,
-                id: makeUuid(),
+                id: newUuid(),
                 displayOptions: {
                   ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
                   fill: { ...DEFAULT_COLOR_PROPS, value: data.color },

@@ -70,13 +70,10 @@ export function ViewToolbar() {
         </ToolbarColButton>
 
         <ToolbarCol>
-          <ToolbarRow>
+          <ToolbarRow title="Node Label" titleCls="w-16" smallTitle="">
             <FieldSelectList />
           </ToolbarRow>
-        </ToolbarCol>
-
-        <ToolbarCol>
-          <ToolbarRow>
+          <ToolbarRow title="Node View" titleCls="w-16" smallTitle="View">
             <SelectList
               items={NODE_VIEW_MODES}
               value={settings.plot.nodes.view.mode}
@@ -98,6 +95,9 @@ export function ViewToolbar() {
               ))}
             </SelectList>
           </ToolbarRow>
+        </ToolbarCol>
+
+        <ToolbarCol>
           <ToolbarRow>
             <ToolbarButton
               checked={settings.plot.nodes.view.labelled.on}
@@ -118,7 +118,7 @@ export function ViewToolbar() {
       </ToolbarTabGroup>
       <ToolbarTabGroup title="Edges">
         <ToolbarCol>
-          <ToolbarRow>
+          <ToolbarRow title="Edge View" titleCls="w-16" smallTitle="">
             <SelectList
               items={NODE_VIEW_MODES}
               value={settings.plot.edges.mode}

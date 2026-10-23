@@ -21,7 +21,7 @@ import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@/components/v-scroll-panel'
 import { appsConfig } from '@/config/apps'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { ArrowDownUp } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -88,7 +88,7 @@ export function DatasetPanel() {
         })
 
       return {
-        id: makeUuid(),
+        id: newUuid(),
         name: inst,
         //icon: <FolderIcon />,
         isOpen: true,

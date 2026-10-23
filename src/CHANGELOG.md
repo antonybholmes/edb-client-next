@@ -4,6 +4,14 @@
 
 ### Changed
 
+- Matcalc has more responsive UI and some more colorful icons.
+- Use of download image icon in apps that only allow image saving.
+- Network now uses nano id since we can be working with a lot of nodes and edges.
+- Refined font api.
+- Volcano plot size now in settings.
+- Ext gsea now supports margins around each plot.
+- gsea plot now has inner margin for each graph to allow for spacing.
+- Margin now uses num sliders.
 - Refined toolbar UI.
 - Ext gsea now uses own margin that is more generous than the original gsea plot.
 - heatmap now uses some saved settings.

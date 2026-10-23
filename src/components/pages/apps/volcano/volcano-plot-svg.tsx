@@ -24,7 +24,7 @@ import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { IPos } from '@/interfaces/pos'
 import { svgPointToScreen } from '@/lib/graphics/svg'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { clamp } from '@/lib/math/clamp'
 import { ILim } from '@/lib/math/math'
 import { CrosshairProvider, useCrosshair } from '@/providers/crosshair-provider'
@@ -37,20 +37,20 @@ export interface IDisplayAxis {
   name: string
   domain: ILim
   length: number
-  ticks: number[]
-  tickLabels: string[]
-  tickSize: number
-  stroke: IStrokeProps
+  //ticks: number[]
+  //tickLabels: string[]
+  //tickSize: number
+  //stroke: IStrokeProps
 }
 
 export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
   name: '',
   domain: [-20, 20],
   length: 600,
-  ticks: [],
-  tickLabels: [],
-  tickSize: 4,
-  stroke: { ...DEFAULT_STROKE_PROPS, width: 2 },
+  //ticks: [],
+  //tickLabels: [],
+  //tickSize: 4,
+  //stroke: { ...DEFAULT_STROKE_PROPS, width: 2 },
 }
 
 export interface IScatterDisplayOptions {
@@ -100,29 +100,29 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
   },
 }
 
-export function makeDefaultScatterProps(
-  xlim: ILim,
-  ylim: ILim
-): IScatterDisplayOptions {
-  let props: IScatterDisplayOptions = { ...DEFAULT_SCATTER_PROPS }
+// export function makeDefaultScatterProps(
+//   xlim: ILim,
+//   ylim: ILim
+// ): IScatterDisplayOptions {
+//   let props: IScatterDisplayOptions = { ...DEFAULT_SCATTER_PROPS }
 
-  props = {
-    ...props,
-    axes: {
-      ...props.axes,
-      xaxis: {
-        ...props.axes.xaxis,
-        domain: xlim,
-      },
-      yaxis: {
-        ...props.axes.yaxis,
-        domain: ylim,
-      },
-    },
-  }
+//   props = {
+//     ...props,
+//     axes: {
+//       ...props.axes,
+//       xaxis: {
+//         ...props.axes.xaxis,
+//         domain: xlim,
+//       },
+//       yaxis: {
+//         ...props.axes.yaxis,
+//         domain: ylim,
+//       },
+//     },
+//   }
 
-  return props
-}
+//   return props
+// }
 
 export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
   border: IStrokeProps
@@ -153,28 +153,28 @@ export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
 export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
   ...DEFAULT_SCATTER_PROPS,
   padding: 10,
-  axes: {
-    xaxis: {
-      name: 'Log2 fold change',
+  // axes: {
+  //   xaxis: {
+  //     name: 'Log2 fold change',
 
-      domain: [-20, 20],
-      length: 500,
-      ticks: [],
-      tickLabels: [],
-      tickSize: 4,
+  //     domain: [-20, 20],
+  //     length: 500,
+  //     ticks: [],
+  //     tickLabels: [],
+  //     tickSize: 4,
 
-      stroke: { ...DEFAULT_STROKE_PROPS },
-    },
-    yaxis: {
-      name: '-log10 p-value',
-      domain: [0, 10],
-      length: 400,
-      ticks: [],
-      tickLabels: [],
-      tickSize: 4,
-      stroke: { ...DEFAULT_STROKE_PROPS },
-    },
-  },
+  //     stroke: { ...DEFAULT_STROKE_PROPS },
+  //   },
+  //   yaxis: {
+  //     name: '-log10 p-value',
+  //     domain: [0, 10],
+  //     length: 400,
+  //     ticks: [],
+  //     tickLabels: [],
+  //     tickSize: 4,
+  //     stroke: { ...DEFAULT_STROKE_PROPS },
+  //   },
+  // },
 
   //scale: 1,
   dots: {
@@ -204,7 +204,7 @@ interface IProps {
 export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
   const { plot, displayLabels, setLabels } = useVolcanoContext()
 
-  const renderId = useRef(makeUuid())
+  const renderId = useRef(newUuid())
 
   const { axis: xax } = useAxis({
     plotId: plot?.id ?? '',
@@ -340,8 +340,11 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
   const { svg, width, height } = useMemo(() => {
     if (!plot || !xax || !yax) {
+      console.warn('Plot or axes not defined')
       return { svg: null, width: 0, height: 0 }
     }
+
+    console.log('Rendering volcano plot')
 
     const innerWidth = axisLength(xax)
     const innerHeight = axisLength(yax)
@@ -396,7 +399,7 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
     const yThreshold = yaf(thresholdLogP)
 
-    renderId.current = makeUuid()
+    renderId.current = newUuid()
 
     const svg = (
       <>
@@ -458,37 +461,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
               return (
                 <g key={`label-group-${index}-${renderId.current}`}>
-                  {/* <SvgCircle
-                  cx={x1}
-                  cy={y1}
-                  r={r}
-                  fill={color}
-                  key={i}
-                  onPointerEnter={() =>
-                    handleVariantEnter(i, {
-                      x: x1 + settings.plot.margin.left,
-                      y: y1 + settings.plot.margin.top,
-                    })
-                  }
-                  onPointerLeave={hideCrosshair}
-                  onDoubleClick={() => {
-                    const label = entry.label
-                    if (
-                      displayLabels
-                        .map((x) => x.toLowerCase())
-                        .includes(label.toLowerCase())
-                    ) {
-                      setLabels(
-                        displayLabels.filter(
-                          (x) => x.toLowerCase() !== label.toLowerCase()
-                        )
-                      )
-                    } else {
-                      setLabels([...displayLabels, label].sort())
-                    }
-                  }}
-                /> */}
-
                   {settings.labels.connector.type === 'elbow'
                     ? elbowConnector(index, p, r, xaf, yaf, settings)
                     : straightConnector(index, p, r, xaf, yaf, settings)}
@@ -537,9 +509,9 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
         <AxisLeftSvg
           ax={yax}
           pos={{ x: settings.plot.margin.left, y: settings.plot.margin.top }}
-          tickSize={displayOptions.axes.yaxis.tickSize}
-          strokeWidth={displayOptions.axes.yaxis.stroke.width}
-          color={displayOptions.axes.yaxis.stroke.value}
+          //tickSize={settings.axes.yaxis.tickSize}
+          // strokeWidth={settings.axes.yaxis.stroke.width}
+          //color={settings.axes.yaxis.stroke.value}
         />
         <AxisBottomSvg
           ax={xax}
@@ -547,9 +519,9 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
             x: settings.plot.margin.left,
             y: settings.plot.margin.top + innerHeight,
           }}
-          tickSize={displayOptions.axes.xaxis.tickSize}
-          strokeWidth={displayOptions.axes.xaxis.stroke.width}
-          color={displayOptions.axes.xaxis.stroke.value}
+          //tickSize={settings.axes.xaxis.tickSize}
+          //strokeWidth={settings.axes.xaxis.stroke.width}
+          //color={settings.axes.xaxis.stroke.value}
         />
       </>
     )

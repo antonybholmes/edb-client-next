@@ -1,4 +1,4 @@
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { ILimit } from '@/lib/math/limit'
 import type { ILim } from '@/lib/math/math'
 import { range as numRange } from '@/lib/math/range'
@@ -59,7 +59,10 @@ export function createAxis(
     length?: number
     domain?: ILim
     range?: ILim
-    autoDomain?: boolean | ILim
+    /**
+     * Adjust the domain to make it look nicer.
+     */
+    autoDomain?: boolean
     ticks?: number[] | ITickItem[]
     majorNumTicks?: number
     minorTicks?: number[] | ITickItem[]
@@ -87,7 +90,7 @@ export function createAxis(
     tickParams,
     format,
   } = opts
-  id = id ?? makeUuid()
+  id = id ?? newUuid()
 
   let ret: IAxis = {
     ...structuredClone(config),

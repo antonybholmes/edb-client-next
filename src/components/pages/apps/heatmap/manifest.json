@@ -1,13 +1,11 @@
 {
   "name": "Heatmap",
+  "abbr": "Hm",
   "description": "Create heatmaps of tabular data",
-  "color": [
-    "#ff5050",
-    "#0000ff"
-  ],
+  "color": ["#0000ff", "#ff5050"],
   "version": "20.0.6",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-10-22T21:53:29.861Z",
-  "hash": "a27da2d360d3b726b0b1db74d9476b1153bca39740388b897a3c4cc622d02faa",
-  "build": 30
+  "modified": "2026-10-23T16:07:27.328Z",
+  "hash": "0e806cf3563d052fb40d8956cdb7c8e043525c97c61b86ed1d56372cac899e17",
+  "build": 32
 }

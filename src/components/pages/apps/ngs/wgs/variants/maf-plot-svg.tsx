@@ -45,7 +45,8 @@ export function MAFPlotSVG() {
 
   let yax = createAxis({
     direction: 'y',
-    autoDomain: [0, maxY],
+    domain: [0, maxY],
+    autoDomain: true,
     length: plotHeight,
     title: 'MAF',
   })

@@ -13,7 +13,6 @@ import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/computer/download-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,
@@ -23,6 +22,7 @@ import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { getCmapFromColorMap, getColorMap } from '@/lib/color/colormap'
 
+import { DownloadImageIcon } from '@/components/icons/computer/download-image-icon'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { useExtGseaSettings } from '../ext-gsea-settings'
 import { MarginPopover } from '../props/margin-popover'
@@ -61,7 +61,7 @@ export function HomeToolbar() {
             saveAs('ext-gsea')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

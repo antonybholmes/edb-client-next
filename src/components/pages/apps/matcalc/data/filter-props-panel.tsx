@@ -16,7 +16,7 @@ import {
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { findCols, findRows } from '@/lib/dataframe/utils/dataframe-utils'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { useSearchFilters } from '@/stores/search-filter-store'
 
@@ -128,7 +128,7 @@ export function FilterPropsPanel() {
       }
     } else {
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: APP_INFO.name,
         description: `There were no ${
           filterMode.includes('Rows') ? 'rows' : 'columns'

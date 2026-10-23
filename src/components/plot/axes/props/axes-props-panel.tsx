@@ -28,7 +28,7 @@ export function AxesDisplayPropsPanel({ plots }: { plots: IDisplayPlot[] }) {
                             {gi > 0 && <ToolbarSeparator />}
                             <VCenterRow key={groupId} className="gap-x-1">
                               <span>{groupTitle}</span>
-                              <VCenterRow className="gap-x-1">
+                              <VCenterRow className="gap-x-2">
                                 {axes.map(({ id: axisId, title }) => (
                                   <AxisPlotPropsPopover
                                     key={axisId}

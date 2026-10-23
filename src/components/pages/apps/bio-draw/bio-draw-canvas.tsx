@@ -1,4 +1,4 @@
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { createRef, useRef, type RefObject } from 'react'
 import type { ExportHandle } from './bio-draw-utils'
 import { LipidSvg, type ILipid } from './components/lipid-svg'
@@ -12,7 +12,7 @@ export function BioDrawSvg() {
   )
 
   const lipid: ILipid = {
-    id: makeUuid(),
+    id: newUuid(),
     points: [],
   }
 

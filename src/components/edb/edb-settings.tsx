@@ -1,5 +1,5 @@
 import { IChildrenProps } from '@/interfaces/children-props'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { createContext, useCallback, useContext, useState } from 'react'
 import { create } from 'zustand'
@@ -199,7 +199,7 @@ export function useEdbSettings(): {
           c.color.toLowerCase() === color.toLowerCase() && c.opacity === opacity
       )
     ) {
-      newColors.push({ id: makeUuid(), color, opacity })
+      newColors.push({ id: newUuid(), color, opacity })
       if (newColors.length > MAX_CUSTOM_COLORS) {
         newColors.shift()
       }

@@ -16,7 +16,7 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/form'
 import { TEXT_SIGN_IN } from '@/consts'
 import { supabase } from '@/lib/auth/supabase'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Card, CardHeader, CardTitle } from '@/themed/card'
 
 import { config } from '@/config'
@@ -93,7 +93,7 @@ export function SupabaseSignIn() {
       //alert(error.message)
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: config.name,
         description: error.message,
         type: 'destructive',
@@ -102,7 +102,7 @@ export function SupabaseSignIn() {
       //alert('Check your email for a login link!')
 
       addToast({
-        id: makeUuid(),
+        id: newUuid(),
         title: 'Success',
         type: 'success',
         description: 'Check your email for a sign in link!',
@@ -129,7 +129,7 @@ export function SupabaseSignIn() {
 
       if (error) {
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: config.name,
           description: error.message,
           type: 'destructive',

@@ -23,6 +23,7 @@ import {
   COLOR_MEDIUM_SEA_GREEN,
   COLOR_RED,
 } from '@/lib/color/color'
+import { deepMerge } from '@/lib/deepmerge'
 
 interface IFilters {
   q: {
@@ -93,10 +94,14 @@ export interface IGseaDisplayProps {
   }
   plot: {
     margin: IMarginProps
+
     gap: {
       x: number
       y: number
     }
+  }
+  graph: {
+    margin: IMarginProps
   }
 
   ranking: {
@@ -141,12 +146,21 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   // },
   plot: {
     margin: { ...DEFAULT_MARGIN_SMALL, left: 80 },
+
     gap: {
       y: 15,
       x: 20,
     },
   },
-
+  graph: {
+    margin: {
+      ...DEFAULT_MARGIN_SMALL,
+      top: 20,
+      bottom: 20,
+      left: 20,
+      right: 20,
+    },
+  },
   es: {
     axes: {
       y: {
@@ -257,6 +271,10 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
       },
+      merge: (persisted, current) =>
+        // conform saved settings to the current shape: saved values win where
+        // key and type still match, defaults fill missing or invalid values
+        deepMerge(current, persisted),
     }
   )
 )

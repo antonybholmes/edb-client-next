@@ -28,7 +28,7 @@ export function SettingsCytobandPanel() {
           }}
           className="gap-x-0.5"
           variant="outline"
-          pad="none"
+          aspect="icon"
         >
           <GroupToggle value="rounded" title="Rounded">
             <Circle size={16} />

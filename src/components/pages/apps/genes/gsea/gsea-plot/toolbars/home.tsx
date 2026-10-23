@@ -5,7 +5,7 @@ import {
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { DownloadIcon } from '@/components/icons/computer/download-icon'
+import { DownloadImageIcon } from '@/components/icons/computer/download-image-icon'
 import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import {
   SelectItem,
@@ -58,7 +58,7 @@ export function HomeToolbar() {
             saveAs('gsea')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
@@ -118,20 +118,6 @@ export function HomeToolbar() {
               }}
               w="xxs"
             />
-            {/* <PhenotypeModeList /> */}
-            <ToolbarButton
-              checked={settings.phenotypes.mode !== 'normal'}
-              onClick={() => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.phenotypes.mode =
-                      draft.phenotypes.mode === 'normal' ? 'inverted' : 'normal'
-                  })
-                )
-              }}
-            >
-              Invert
-            </ToolbarButton>
           </ToolbarRow>
           <ToolbarRow>
             <ColorMapToolbarMenu
@@ -172,11 +158,26 @@ export function HomeToolbar() {
             </SelectList>
           </ToolbarRow>
         </ToolbarCol>
-        {/* <ToolbarCol>
+        <ToolbarCol>
           <ToolbarRow>
-            <AxesSettingsPropsPopover />
+            <ToolbarButton
+              checked={settings.phenotypes.mode !== 'normal'}
+              onClick={() => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.mode =
+                      draft.phenotypes.mode === 'normal' ? 'inverted' : 'normal'
+                  })
+                )
+              }}
+            >
+              Invert
+            </ToolbarButton>
           </ToolbarRow>
-        </ToolbarCol> */}
+          {/* <ToolbarRow>
+            <GraphMarginPopover />
+          </ToolbarRow> */}
+        </ToolbarCol>
       </ToolbarTabGroup>
 
       {/* <ToolbarTabGroup title="View">

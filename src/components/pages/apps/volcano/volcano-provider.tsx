@@ -19,7 +19,6 @@ import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
 export interface VolcanoPropsContextType {
   displayProps: IVolcanoDisplayOptions | null
   plot: IVolcanoPlot
-
   highlightedLabels: string[]
   displayLabels: string[]
   setLabels(labels: string[]): void
@@ -101,30 +100,47 @@ export function VolcanoProvider({
   }, [volcano?.entries, displayOptions, thresholdLogP])
 
   useEffect(() => {
+    if (!plot) {
+      return
+    }
+
+    // const minX = Math.min(
+    //   ...(volcano?.entries ?? []).map((p) => p.log2foldChange)
+    // )
+    // const maxX = Math.max(
+    //   ...(volcano?.entries ?? []).map((p) => p.log2foldChange)
+    // )
+    // const minY = Math.min(...(volcano?.entries ?? []).map((p) => p.logpvalue))
+    // const maxY = Math.max(...(volcano?.entries ?? []).map((p) => p.logpvalue))
+
     const xax = createAxis({
       id: 'x',
-      title: displayOptions?.axes.xaxis.name,
-      length: displayOptions?.axes.xaxis.length,
-      autoDomain: displayOptions?.axes.xaxis.domain,
+      title: settings.axes.xaxis.name,
+      length: settings.axes.xaxis.length,
+      domain: settings.axes.xaxis.domain,
+      autoDomain: true,
     })
 
     const yax = createAxis({
       id: 'y',
-      title: displayOptions?.axes.yaxis.name,
+      title: settings.axes.yaxis.name,
       direction: 'y',
-      length: displayOptions?.axes.yaxis.length,
-      autoDomain: displayOptions?.axes.yaxis.domain,
+      length: settings.axes.yaxis.length,
+      domain: settings.axes.yaxis.domain,
+      autoDomain: true,
     })
+
+    console.log('Creating axes for volcano plot')
 
     addAxes([
       {
-        plotId: plot?.id ?? '',
+        plotId: plot.id ?? '',
         groupId: 'volcano',
         axisIds: ['x', 'y'],
         axes: { x: xax, y: yax },
       },
     ])
-  }, [displayOptions?.axes])
+  }, [plot, settings])
 
   useEffect(() => {
     if (settings.labels.auto) {

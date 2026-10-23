@@ -1,10 +1,11 @@
 {
   "name": "Matcalc",
+  "abbr": "Mc",
   "description": "Scientific graphing and statistics.",
   "color": "#40bf80",
-  "version": "52.0.4",
+  "version": "52.0.6",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-10-21T20:12:18.638Z",
-  "hash": "bfb6bbadd6022086d005fba30692355444615e21aeea6be7022d413e332169bc",
-  "build": 2206
+  "modified": "2026-10-23T20:21:46.485Z",
+  "hash": "0908165d3ca18801760b5b97d43ab0a89327ad41b6592ac3e0a2b26727f16ba1",
+  "build": 2212
 }

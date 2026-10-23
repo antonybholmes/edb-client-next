@@ -206,7 +206,8 @@ export function BoxPlotSvg() {
     const globalYAxis = createAxis({
       direction: 'y',
       length: displayProps.plot!.h,
-      autoDomain: [Math.min(...values), Math.max(...values)],
+      domain: [Math.min(...values), Math.max(...values)],
+      autoDomain: true,
     })
 
     //

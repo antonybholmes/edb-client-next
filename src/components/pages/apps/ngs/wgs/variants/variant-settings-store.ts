@@ -22,7 +22,7 @@ import {
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -55,7 +55,7 @@ export interface ICMAP extends IDBEntity {
   colors: ICMAPColor[]
 }
 
-export const CMAP_NONE: ICMAP = { id: makeUuid(), name: 'None', colors: [] }
+export const CMAP_NONE: ICMAP = { id: newUuid(), name: 'None', colors: [] }
 
 export const CMAP_ORDER: { label: string; value: string }[] = [
   { label: 'None', value: 'none' },

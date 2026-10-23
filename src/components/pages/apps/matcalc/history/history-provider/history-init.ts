@@ -3,7 +3,7 @@
 import { ID_DEFAULT } from '@/consts'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { IHistoryEntry } from './history-manager'
 import { IHistoryData, IHistoryState } from './history-types'
 
@@ -32,7 +32,7 @@ export const DEFAULT_SHEET = DATAFRAME_100x26
 
 // that stores IHistoryState snapshots and patches for undo/redo functionality.
 export function init(): IHistoryData {
-  const id = makeUuid()
+  const id = newUuid()
 
   let state: IHistoryState = {
     id,
@@ -42,7 +42,7 @@ export function init(): IHistoryData {
   }
 
   const historyEntry: IHistoryEntry<IHistoryState> = {
-    id: makeUuid(),
+    id: newUuid(),
     name: 'Initialize history',
     description: '',
     createdAt: Date.now(),

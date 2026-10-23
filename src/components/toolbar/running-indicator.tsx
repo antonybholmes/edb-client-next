@@ -1,5 +1,5 @@
 import type { IChildrenProps } from '@/interfaces/children-props'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { useCallback } from 'react'
 import { create } from 'zustand'
@@ -28,7 +28,7 @@ const useRunningStore = create<IRunningStore>()((set) => ({
     set((state) => ({
       messages: {
         ...state.messages,
-        [id]: { id: makeUuid(), message, time: Date.now() },
+        [id]: { id: newUuid(), message, time: Date.now() },
       },
     }))
   },

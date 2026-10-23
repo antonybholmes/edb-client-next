@@ -2,7 +2,7 @@
 
 import { Index, type IndexFromType, type Shape } from '.'
 
-import { makeUuid } from '../id'
+import { newUuid } from '../id'
 import { whereStrStartsWith } from '../math/where'
 import { Cell, cellStr, IndexId } from './cell'
 import { DataSeries } from './data-series'
@@ -46,7 +46,7 @@ export abstract class BaseTable {
 
   constructor(opts: { name?: string } = {}) {
     const { name } = opts
-    this._id = makeUuid()
+    this._id = newUuid()
     this._name = name
   }
 

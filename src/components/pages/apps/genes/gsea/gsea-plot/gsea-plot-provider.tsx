@@ -93,7 +93,8 @@ export function GseaPlotProvider({ children }: IChildrenProps) {
       let yaxSnr = createAxis({
         direction: 'y',
         title: 'SNR',
-        autoDomain: ylim,
+        domain: ylim,
+        autoDomain: true,
         length: settings.ranking.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })

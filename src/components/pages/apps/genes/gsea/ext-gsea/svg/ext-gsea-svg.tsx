@@ -124,7 +124,7 @@ export function ExtGseaSvgContent() {
         settings.plot.margin.top +
         settings.plot.margin.bottom,
     }
-  }, [innerPlotSize, gseaSettings])
+  }, [innerPlotSize, settings])
 
   const pageSize: IDim = useMemo(() => {
     return {
@@ -144,7 +144,9 @@ export function ExtGseaSvgContent() {
 
       elems.push(
         <SvgG id={`ext-gsea-${result.id}`} key={result.id} pos={pos}>
-          <ExtGseaSvgPlot result={result} pos={pos} />
+          <SvgMargin margin={settings.plot.margin}>
+            <ExtGseaSvgPlot result={result} pos={pos} />
+          </SvgMargin>
         </SvgG>
       )
 
@@ -156,8 +158,8 @@ export function ExtGseaSvgContent() {
       }
     }
 
-    return <SvgMargin margin={settings.plot.margin}>{elems}</SvgMargin>
-  }, [results, plotSize, gseaSettings.page.columns, settings.plot.margin])
+    return elems
+  }, [results, plotSize, gseaSettings])
 
   return <SvgZoomCanvas size={pageSize}>{svg}</SvgZoomCanvas>
 }

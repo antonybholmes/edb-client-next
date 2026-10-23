@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 
 import { ColorMap, getColorMap } from '@/lib/color/colormap'
 import { argsort } from '@/lib/math/argsort'
@@ -115,7 +115,7 @@ export function newGseaBubblePlot(
   let { actions = [] } = opts
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
     style: 'gsea-bubble-plot',
     groupRows: [],
     actions,
@@ -255,7 +255,8 @@ export function GseaBubbleProvider({
       let xax = createAxis({
         id: 'x',
         title: plot.nes.label,
-        autoDomain: domain,
+        domain,
+        autoDomain: true,
         length: settings.axes.x.length,
       })
       xax = setAxisTickParams(xax, {

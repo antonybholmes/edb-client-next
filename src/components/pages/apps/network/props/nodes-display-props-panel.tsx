@@ -4,9 +4,10 @@ import { useNetworkSettings } from '../network-settings'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { Button } from '@/components/shadcn/ui/themed/baseui/button'
 import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -17,8 +18,9 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
-import { Broom, SearchCheck, Tags } from 'lucide-react'
+import { SearchCheck, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import APP_INFO from '../manifest.json'
 import { useNetwork } from '../network'
 import { useUserData } from '../network-user-data'
 import { GroupItem } from './group-props-panel'
@@ -76,8 +78,20 @@ export function NodesDisplayPropsPanel() {
     <PropsPanel className="gap-y-2 text-xs">
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel
+          id="current-node"
+          defaultSize="15%"
+          minSize="0%"
+          className="flex flex-col gap-y-1.5"
+          collapsible={true}
+        >
+          <span className="font-medium text-sm">Current Node</span>
+          <Textarea value={currentNodeText} readOnly className="h-1" />
+        </ResizablePanel>
+        <ThinVResizeHandle autoHide={false} />
+
+        <ResizablePanel
           id="network-nodes"
-          defaultSize="50%"
+          defaultSize="40%"
           minSize="0%"
           className="flex flex-col gap-y-1.5"
           collapsible={true}
@@ -85,7 +99,7 @@ export function NodesDisplayPropsPanel() {
           <PropRow
             title="Nodes"
             className="text-sm"
-            contentCls="text-xs gap-x-px"
+            contentCls="text-xs gap-x-2"
             leftChildren={
               <Button
                 className="text-xs"
@@ -109,74 +123,61 @@ export function NodesDisplayPropsPanel() {
                 }
                 title="Update Graph"
               >
-                {/* <RotateCw size={16} /> */}
                 Update
               </Button>
             }
           >
-            {/* <LinkButton
-              className="mr-5"
-              onClick={() =>
-                openDialog({
-                  type: 'warning',
-                  payload: {
-                    content: 'Are you sure you want to clear all the text?',
-                    callback: (r) => {
-                      if (r === TEXT_OK) {
-                        setText('')
-                      }
-                    },
-                  },
-                })
-              }
-            >
-              {TEXT_CLEAR}
-            </LinkButton> */}
+            <VCenterRow>
+              <Toggle
+                aspect="icon"
+                size="xs"
+                pressed={userData.labels.mode === 'exact'}
+                onPressedChange={(v) =>
+                  updateUserData(
+                    produce(userData, (draft) => {
+                      draft.labels.mode = v ? 'exact' : 'partial'
+                    })
+                  )
+                }
+                title="Exact Match"
+              >
+                <SearchCheck size={16} />
+              </Toggle>
 
-            <Toggle
-              aspect="icon"
-              size="xs"
-              pressed={userData.labels.mode === 'exact'}
-              onPressedChange={(v) =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.mode = v ? 'exact' : 'partial'
-                  })
-                )
-              }
-              title="Exact Match"
-            >
-              <SearchCheck size={16} />
-            </Toggle>
-
-            <Toggle
-              aspect="icon"
-              size="xs"
-              pressed={settings.plot.nodes.labels.showAll}
-              onPressedChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.plot.nodes.labels.showAll = v
-                  })
-                )
-              }
-              title="Show All Labels"
-            >
-              <Tags size={16} />
-            </Toggle>
-
-            <IconButton
+              <Toggle
+                aspect="icon"
+                size="xs"
+                pressed={settings.plot.nodes.labels.showAll}
+                onPressedChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.labels.showAll = v
+                    })
+                  )
+                }
+                title="Show All Labels"
+              >
+                <Tags size={16} />
+              </Toggle>
+            </VCenterRow>
+            <LinkButton
               //variant="app-theme"
-              size="icon-xs"
+              //size="icon-xs"
 
               onClick={() =>
                 openDialog({
                   type: 'warning',
                   payload: {
-                    content: 'Are you sure you want to clear all the text?',
+                    title: APP_INFO.name,
+                    content: 'Are you sure you want to clear all the entries?',
                     callback: (r) => {
                       if (r === TEXT_OK) {
                         setText('')
+                        updateUserData(
+                          produce(userData, (draft) => {
+                            draft.labels.ids = []
+                          })
+                        )
                       }
                     },
                   },
@@ -184,89 +185,15 @@ export function NodesDisplayPropsPanel() {
               }
               title={TEXT_CLEAR}
             >
-              <Broom size={16} />
-            </IconButton>
-          </PropRow>
-          <ResizablePanelGroup orientation="vertical">
-            <ResizablePanel
-              id="node-labels"
-              defaultSize="70%"
-              minSize="0%"
-              className="flex flex-col gap-y-1.5"
-              collapsible={true}
-            >
-              <Textarea
-                title="Node Label"
-                value={text}
-                onTextChange={(value) => setText(value)}
-              />
-            </ResizablePanel>
-            <ThinVResizeHandle autoHide={false} />
-
-            <ResizablePanel
-              id="current-node"
-              defaultSize="30%"
-              minSize="0%"
-              className="flex flex-col gap-y-1.5"
-              collapsible={true}
-            >
-              <span className="font-medium">Current Node</span>
-              <Textarea value={currentNodeText} readOnly className="h-1" />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-
-          {/* <VCenterRow className="gap-x-3">
-            <ToolbarButton
-              variant="app-theme"
-              onClick={() =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.ids = [
-                      ...new Set(
-                        text
-                          .split('\n')
-                          .map((x) => x.trim())
-                          .filter((x) => x.length > 0)
-                      ),
-                    ].sort()
-                  })
-                )
-              }
-            >
-              {TEXT_UPDATE}
-            </ToolbarButton>
-            <Checkbox
-              checked={userData.labels.mode === 'exact'}
-              onCheckedChange={(v) =>
-                updateUserData(
-                  produce(userData, (draft) => {
-                    draft.labels.mode = v ? 'exact' : 'partial'
-                  })
-                )
-              }
-            >
-              Exact Match
-            </Checkbox>
-          </VCenterRow> */}
-          {/* <VCenterRow>
-            <LinkButton
-              onClick={() =>
-                openDialog({
-                  type: 'warning',
-                  payload: {
-                    content: 'Are you sure you want to clear all the text?',
-                    callback: (r) => {
-                      if (r === TEXT_OK) {
-                        setText('')
-                      }
-                    },
-                  },
-                })
-              }
-            >
               {TEXT_CLEAR}
             </LinkButton>
-          </VCenterRow> */}
+          </PropRow>
+
+          <Textarea
+            title="Enter the id's of nodes to be highlighted"
+            value={text}
+            onTextChange={(value) => setText(value)}
+          />
         </ResizablePanel>
 
         <ThinVResizeHandle autoHide={false} />
@@ -274,7 +201,7 @@ export function NodesDisplayPropsPanel() {
         <ResizablePanel
           className="flex flex-col"
           id="network-groups"
-          defaultSize="50%"
+          defaultSize="45%"
           minSize="0%"
           collapsible={true}
         >

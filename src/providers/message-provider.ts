@@ -1,4 +1,4 @@
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useCallback } from 'react'
 import { create } from 'zustand'
 
@@ -34,7 +34,7 @@ export const useMessageStore = create<IMessageStore>()((set) => ({
       const next = [
         ...(state.messages[channel] ?? []),
         {
-          id: makeUuid(),
+          id: newUuid(),
           time: Date.now(),
           ...msg,
         },

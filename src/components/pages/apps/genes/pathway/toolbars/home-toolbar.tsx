@@ -26,7 +26,7 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 
 import { DEFAULT_SHEET_NAME } from '@/lib/dataframe/base-table'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { range } from '@/lib/math/range'
 import { sum } from '@/lib/math/sum'
 import { truncate } from '@/lib/text/text'
@@ -136,7 +136,7 @@ export function HomeToolbar() {
     // only keep genes in approved list
     const genesets: IGeneSet[] = range(df.shape[1]).map((col) => {
       return {
-        id: makeUuid(),
+        id: newUuid(),
         name: df.col(col).name.toString(),
         genes: df
           .col(col)

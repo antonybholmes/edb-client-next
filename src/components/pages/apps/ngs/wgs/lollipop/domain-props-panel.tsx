@@ -11,7 +11,7 @@ import {
 import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { Button } from '@/themed/baseui/button'
@@ -368,7 +368,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                   produce(features, (draft) => {
                     draft.push({
                       ...feature,
-                      id: makeUuid(),
+                      id: newUuid(),
                       name: `Feature ${features.length + 1}`,
                       start: 1,
                       end: Math.min(10, aaStats.length),

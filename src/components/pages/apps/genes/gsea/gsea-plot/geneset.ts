@@ -1,6 +1,6 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { randomHexColor } from '../../../../../../lib/color/color'
-import { makeUuid } from '../../../../../../lib/id'
+import { newUuid } from '../../../../../../lib/id'
 
 /**
  * Represents a gene and its associated score
@@ -96,7 +96,7 @@ export const EMPTY_GENE_SET: IGeneSet = {
 
 export function makeNewGeneset(name: string = 'Gene Set 1'): IGeneSet {
   return {
-    id: makeUuid(),
+    id: newUuid(),
     name,
     genes: [],
     color: randomHexColor(),

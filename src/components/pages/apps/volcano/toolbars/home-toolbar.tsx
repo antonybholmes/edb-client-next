@@ -15,14 +15,32 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { VolcanoDialog } from '../volcano-dialog'
 
 import { DownloadIcon } from '@/components/icons/computer/download-icon'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
+import { produce } from 'immer'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { MarginPopover } from '../props/margin-popover'
+import {
+  DEFAULT_VOLCANO_PROPS,
+  IVolcanoDisplayOptions,
+} from '../volcano-plot-svg'
+import { useVolcanoContext } from '../volcano-provider'
+import { useVolcanoSettings } from '../volcano-settings'
 
 export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles({ mode: 'set' })
   const { saveAs } = useSVG()
   const { addPlots } = useHistory()
+  const { settings, updateSettings } = useVolcanoSettings()
+  const { updatePlot } = useHistory()
 
+  const { plot } = useVolcanoContext()
   const { openCustom: openCustomDialog } = useDialogs()
+
+  const displayProps: IVolcanoDisplayOptions = plot?.props ?? {
+    ...DEFAULT_VOLCANO_PROPS,
+  }
 
   return (
     <>
@@ -67,6 +85,44 @@ export function HomeToolbar() {
           <PlayIcon variant="app-theme" />
           {TEXT_PLOT}
         </ToolbarColSmallButton>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
+        <ToolbarCol>
+          <ToolbarRow title="Width" titleCls="w-10" smallTitle="W">
+            <NumericalInput
+              h="toolbar"
+              value={settings.axes.xaxis.length}
+              placeholder="Width"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.xaxis.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+          <ToolbarRow title="Height" titleCls="w-10" smallTitle="H">
+            <NumericalInput
+              h="toolbar"
+              value={settings.axes.yaxis.length}
+              placeholder="Row Height"
+              limit={[1, 1000]}
+              dp={0}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.yaxis.length = v
+                  })
+                )
+              }}
+            />
+          </ToolbarRow>
+        </ToolbarCol>
+        <MarginPopover button="flat" />
       </ToolbarTabGroup>
     </>
   )

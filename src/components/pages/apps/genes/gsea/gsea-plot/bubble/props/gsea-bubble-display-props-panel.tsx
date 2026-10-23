@@ -14,7 +14,7 @@ import { CollapseIcon } from '@/components/icons/collapse-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { RadiusScaleModeSelectList } from '@/components/pages/apps/heatmap/props-panel/radius-scale-mode-selectlist'
 
-import { AxesDisplayPropsPopover } from '@/components/plot/axes/props/axes-groups-popover'
+import { AxisPlotPropsPopover } from '@/components/plot/axes/props/axis-plot-props-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
@@ -24,6 +24,10 @@ import {
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
 import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { TEXT_SORT } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
@@ -34,12 +38,7 @@ import { useState } from 'react'
 import { ColorMapMenu } from '../../../../../matcalc/color-map-menu'
 import { SORT_BY_ITEMS } from '../../../bubble/gsea-bubble-dialog'
 import { useGseaBubbleContext } from '../gsea-bubble-provider'
-import {
-  Mode,
-  MODE_ITEMS,
-  SortBy,
-  useGseaBubbleSettings,
-} from '../gsea-bubble-settings'
+import { SortBy, useGseaBubbleSettings } from '../gsea-bubble-settings'
 import { MarginPopover } from './margin-popover'
 
 const TABS = ['plot', 'style', 'statistics', 'bubbles', 'size', 'groups']
@@ -49,6 +48,8 @@ export function GseaBubbleDisplayPropsPanel() {
   const { plots } = useGseaBubbleContext()
   const [collapsed, setCollapsed] = useState(false)
   const [openTabs, setOpenTabs] = useState(TABS)
+
+  const plot = plots[0]
 
   const axes = plots
     .map((p) => ({
@@ -158,8 +159,20 @@ export function GseaBubbleDisplayPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Axes">
-              <AxesDisplayPropsPopover plots={axes} />
+            <PropRow title="Axes" contentCls="gap-x-2">
+              <AxisPlotPropsPopover
+                title="X-axis"
+                plotAddress={{ plotId: plot?.id, groupId: 'nes', axisId: 'x' }}
+              />
+              <AxisPlotPropsPopover
+                title="Colorbar-axis"
+                plotAddress={{
+                  plotId: 'cbar',
+                  groupId: 'cbar',
+                  axisId: 'cbar',
+                }}
+              />
+              {/* <AxesDisplayPropsPopover plots={axes} /> */}
             </PropRow>
           </AccordionContent>
         </AccordionItem>
@@ -168,7 +181,31 @@ export function GseaBubbleDisplayPropsPanel() {
           <AccordionTrigger>Style</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Mode">
-              <SelectList
+              <ToggleGroup
+                value={[settings.scale.mode]}
+                onValueChange={(v) => {
+                  if (v.length === 0) return
+
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.scale.mode = v[0] as 'nes' | 'p'
+                    })
+                  )
+                }}
+                className="gap-x-px"
+                variant="outline"
+                //aspect="icon"
+              >
+                <GroupToggle value="p" title="P-value" className="w-12">
+                  P-value
+                </GroupToggle>
+
+                <GroupToggle value="nes" title="NES" className="w-12">
+                  NES
+                </GroupToggle>
+              </ToggleGroup>
+
+              {/* <SelectList
                 variant="toolbar"
                 items={MODE_ITEMS}
                 onValueChange={(v) =>
@@ -186,7 +223,7 @@ export function GseaBubbleDisplayPropsPanel() {
                     {item.label}
                   </SelectItem>
                 ))}
-              </SelectList>
+              </SelectList> */}
             </PropRow>
             <CheckPropRow
               title="Merge Phenotypes"

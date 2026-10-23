@@ -18,7 +18,7 @@ export const APP_ICON_CLS = `relative rounded-full aspect-square shrink-0 grow-0
 
 const APP_CLS = cn(
   FOCUS_RING_CLS,
-  'flex flex-col shrink-0 w-full h-full justify-center items-center grow p-2 gap-y-4'
+  'flex flex-col shrink-0 w-full h-full justify-center items-center grow p-2 gap-y-2'
 )
 
 const APP_BG_CLS = cn(
@@ -28,7 +28,7 @@ const APP_BG_CLS = cn(
 
 export function AppTile({
   module,
-  size = 4,
+  size = 4.5,
 }: {
   module: IAppHeaderLink
   size?: number
@@ -223,11 +223,14 @@ export function AppIcon({
         }
       ></span>
 
-      <CenterRow className="relative z-20">
-        <span className="font-light text-white/90">
+      <CenterRow
+        className="relative z-20"
+        style={{ fontSize: `${Math.max(size / 4, 0.8)}rem` }}
+      >
+        <span className="font-bold text-white/90">
           {abbr[0]!.toUpperCase()}
         </span>
-        <span className="font-semibold text-white/90">{abbr.slice(1)}</span>
+        <span className="font-light text-white/90">{abbr.slice(1)}</span>
       </CenterRow>
 
       {children}

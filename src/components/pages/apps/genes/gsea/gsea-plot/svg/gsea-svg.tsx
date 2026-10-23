@@ -215,15 +215,7 @@ function GseaSvgContent() {
           ? settings.plot.gap.y + settings.ranking.axes.y.length
           : 0),
     }),
-    [
-      settings.es.axes.x.length,
-      settings.es.axes.y.length,
-      settings.genes.show,
-      settings.genes.height,
-      settings.ranking.show,
-      settings.ranking.axes.y.length,
-      settings.plot.gap.y,
-    ]
+    [settings]
   )
 
   const plotSize = useMemo(
@@ -251,6 +243,7 @@ function GseaSvgContent() {
   }
 
   const rows = Math.ceil(pathways.length / settings.page.columns)
+
   const pageSize: IDim = {
     w: plotSize.w * settings.page.columns,
     h: plotSize.h * rows,
@@ -266,28 +259,22 @@ function GseaSvgContent() {
 
         return (
           <SvgG pos={pos} key={`plot-${index + 1}`}>
-            <GseaPlot
-              key={pathway.id}
-              pathway={pathway}
-              index={index}
-              pos={pos}
-              innerPlotSize={innerPlotSize}
-            />
+            <SvgMargin margin={settings.graph.margin} id="graph-margin">
+              <GseaPlot
+                key={pathway.id}
+                pathway={pathway}
+                index={index}
+                pos={pos}
+                innerPlotSize={innerPlotSize}
+              />
+            </SvgMargin>
           </SvgG>
         )
       }),
     [pathways, settings.page.columns, plotSize, innerPlotSize]
   )
 
-  return (
-    <SvgZoomCanvas
-      size={pageSize}
-      //shapeRendering={SVG_CRISP_EDGES}
-      //className="absolute"
-    >
-      {svgPlots}
-    </SvgZoomCanvas>
-  )
+  return <SvgZoomCanvas size={pageSize}>{svgPlots}</SvgZoomCanvas>
 }
 
 export function GseaSvg() {

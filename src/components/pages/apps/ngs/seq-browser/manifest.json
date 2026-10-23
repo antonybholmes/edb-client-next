@@ -1,10 +1,10 @@
 {
   "name": "Seq Browser",
-  "description": "Plot NGS data and make figures.",
+  "description": "Plot Next Generation Sequencing Data.",
   "color": "#FF0000",
   "version": "32.6.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-10-20T20:56:38.414Z",
-  "hash": "70eff7ec6be491d6ca2b7d74921d3ae663f96ee88e8077513bda2b78878e70b7",
-  "build": 1192
+  "modified": "2026-10-23T18:11:11.838Z",
+  "hash": "ff5fea9d548db7e97f58f44fa3cd3bc66c3078f416341ec2419026b1e519bfa9",
+  "build": 1198
 }

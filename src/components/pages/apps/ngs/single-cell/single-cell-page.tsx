@@ -30,7 +30,7 @@ import {
   TEXT_SAVE_TABLE,
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
@@ -268,7 +268,7 @@ export function SingleCellPage() {
                     draft.genesets = [
                       ...draft.genesets,
                       ...selectedGenes.map((g) => ({
-                        id: makeUuid(),
+                        id: newUuid(),
                         name: g.geneSymbol,
                         genes: [g],
                         mode: 'global-gex' as GeneSetMode,

@@ -2,7 +2,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 
 import { useRunning } from '@/components/toolbar/running-indicator'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentGenesets,
@@ -70,7 +70,7 @@ export function useExtGsea() {
           ...newExtGseaPlot('Extended GSEA', {
             results: [
               {
-                id: makeUuid(),
+                id: newUuid(),
                 name: 'Extended GSEA',
                 scores,
                 gs1: gs1,

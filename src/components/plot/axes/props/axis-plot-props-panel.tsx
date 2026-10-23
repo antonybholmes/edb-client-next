@@ -28,34 +28,24 @@ export function AxisPlotPropsPanel({
         }}
       />
 
-      <SwitchPropRow
+      <PropRow
+        contentCls="gap-x-2"
         title="Title"
-        checked={axis.style.title.show}
-        onCheckedChange={(v) => {
-          updateAxis({
-            style: produce(axis.style, (draft) => {
-              draft.title.show = v
-            }),
-          })
-        }}
+        // checked={axis.style.title.show}
+        // onCheckedChange={(v) => {
+        //   updateAxis({
+        //     style: produce(axis.style, (draft) => {
+        //       draft.title.show = v
+        //     }),
+        //   })
+        // }}
       >
-        <Input
-          title="Title"
-          value={axis.title}
-          onTextChanged={(v) => {
-            updateAxis({
-              title: v,
-            })
-          }}
-          w="md"
-        />
-
         <FontPopover
           fonts={[
             {
               //title: `${title} Title Font`,
               textProps: axis.style.title,
-              showEnabled: false,
+              //showEnabled: false,
               update: (f) =>
                 updateAxis({
                   style: {
@@ -66,7 +56,19 @@ export function AxisPlotPropsPanel({
             },
           ]}
         />
-      </SwitchPropRow>
+
+        <Input
+          title="Title"
+          value={axis.title}
+          onTextChanged={(v) => {
+            updateAxis({
+              title: v,
+            })
+          }}
+          w="lg"
+          h="toolbar"
+        />
+      </PropRow>
 
       <PropRow title="Lim">
         <DoubleNumericalInput
@@ -99,8 +101,9 @@ export function AxisPlotPropsPanel({
               })
             )
           }}
+          h="toolbar"
         >
-          -
+          <span>to</span>
         </DoubleNumericalInput>
       </PropRow>
 
@@ -115,6 +118,7 @@ export function AxisPlotPropsPanel({
               range: [axis.range[0], v],
             })
           }}
+          h="toolbar"
         />
       </PropRow>
 

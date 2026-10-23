@@ -10,7 +10,7 @@ import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
 import { LogSpan } from '@/components/log-span'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -156,7 +156,7 @@ export function VolcanoDialog({
     const plot = newVolcanoPlot('Volcano', {
       entries: zip(labels, log2foldChanges, logpvalues).map(
         ([label, log2fc, logp]) => ({
-          id: makeUuid(),
+          id: newUuid(),
           label: label as string,
           log2foldChange: log2fc as number,
           logpvalue: logp as number,

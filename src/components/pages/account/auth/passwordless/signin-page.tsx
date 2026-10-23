@@ -7,13 +7,13 @@ import {
 
 import { jwtDecode } from 'jwt-decode'
 
+import { ClientLayout } from '@/app/client-layout'
 import { SignIn } from '@/components/pages/account/auth/passwordless/signin'
 import { CenterLayout } from '@/layouts/center-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { ClientLayout } from '@/app/client-layout'
 
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect } from 'react'
 import type { IRedirectUrlJwtPayload } from '../email/verify'
@@ -38,7 +38,7 @@ export function SignInPage() {
         })
 
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: 'Signed in',
           description: 'You are signed in.',
         })
@@ -54,7 +54,7 @@ export function SignInPage() {
       } catch {
         // we encounted a login error
         addToast({
-          id: makeUuid(),
+          id: newUuid(),
           title: 'Sign in error',
           description: 'We were not able to sign you in.',
           type: 'destructive',

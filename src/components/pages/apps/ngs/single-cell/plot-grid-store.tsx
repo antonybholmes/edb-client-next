@@ -7,7 +7,7 @@ import type { IDBEntity } from '@/interfaces/db-entity'
 import type { ColorMap } from '@/lib/color/colormap'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { findCenter } from '@/lib/math/centroid'
 import type { ILim } from '@/lib/math/math'
@@ -478,7 +478,7 @@ export function usePlotGrid() {
         if (geneset.mode === 'clusters') {
           const plot: IUmapPlot = {
             ...geneset,
-            id: makeUuid(),
+            id: newUuid(),
             name: geneset.name,
             //clusters: store.clusterInfo.clusters, //.slice(0, 2),
 
@@ -559,7 +559,7 @@ export function usePlotGrid() {
 
         const plot: IUmapPlot = {
           ...geneset,
-          id: makeUuid(),
+          id: newUuid(),
 
           name: useMean
             ? truncate(

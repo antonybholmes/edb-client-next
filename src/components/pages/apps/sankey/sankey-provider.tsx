@@ -1,6 +1,6 @@
 import { IPaintProps } from '@/components/plot/svg-props'
 import { IDBEntity } from '@/interfaces/db-entity'
-import { makeUuid } from '@/lib/id'
+import { newUuid } from '@/lib/id'
 import {
   createContext,
   useContext,
@@ -119,7 +119,7 @@ export function newSankeyPlot(
   }
 
   return {
-    id: makeUuid(),
+    id: newUuid(),
     style: 'sankey',
     name,
     nodes,
