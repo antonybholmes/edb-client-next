@@ -176,6 +176,7 @@ export function HomeToolbar() {
             </ToggleGroup>
           </ToolbarRow>
           <ColorMapMenu
+            button="flat"
             cmap={getColorMap(settings.plot.nodes.color.cmap)}
             onChange={(cmap) => {
               // store the cmap the user likes

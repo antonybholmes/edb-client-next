@@ -1,5 +1,6 @@
 {
   "name": "Oncoplot",
+  "abbr": "Op",
   "description": "Create oncoplots.",
   "color": "#ff99cc",
   "version": "30.4.0",

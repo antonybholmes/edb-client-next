@@ -1,5 +1,6 @@
 {
   "name": "DNA",
+  "abbr": "Dna",
   "description": "Get DNA sequences",
   "color": "#FF4500",
   "version": "20.6.6",

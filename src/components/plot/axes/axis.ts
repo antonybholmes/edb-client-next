@@ -59,6 +59,9 @@ export function createAxis(
     length?: number
     domain?: ILim
     range?: ILim
+    /**
+     * Adjust the domain to make it look nicer.
+     */
     autoDomain?: boolean
     ticks?: number[] | ITickItem[]
     majorNumTicks?: number

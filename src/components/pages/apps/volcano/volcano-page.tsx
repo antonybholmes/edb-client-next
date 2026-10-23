@@ -207,8 +207,6 @@ export function VolcanoPage() {
 export function VolcanoPlotPage() {
   const allPlots = useAllPlots()
 
-  console.log('All plots:', allPlots)
-
   return (
     <VolcanoProvider plot={allPlots[0] as IVolcanoPlot}>
       <VolcanoPage />

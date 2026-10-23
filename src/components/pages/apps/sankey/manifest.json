@@ -1,5 +1,6 @@
 {
   "name": "Sankey",
+  "abbr": "Sk",
   "description": "Create Sankey plots.",
   "color": "#ff9900",
   "version": "1.4.0",

@@ -184,15 +184,14 @@ export function ExtGseaProvider({
         tickParams: { which: 'minor', show: false },
       })
 
-      const xaxGenes = { ...xax }
-
       const yMax = max(abs(scores.map((e) => e.score)))
 
       const yaxSnr = createAxis({
         id: 'y',
         direction: 'y',
         title: 'SNR',
-        autoDomain: [-yMax, yMax],
+        domain: [-yMax, yMax],
+        autoDomain: true,
         length: settings.ranking.axes.y.length,
         tickParams: { which: 'minor', show: false },
       })

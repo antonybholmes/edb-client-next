@@ -255,7 +255,8 @@ export function GseaBubbleProvider({
       let xax = createAxis({
         id: 'x',
         title: plot.nes.label,
-        autoDomain: domain,
+        domain,
+        autoDomain: true,
         length: settings.axes.x.length,
       })
       xax = setAxisTickParams(xax, {

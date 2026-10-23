@@ -5,12 +5,13 @@ import { PlayIcon } from '@/components/icons/play-icon'
 import { openFilesDialog } from '@/components/pages/open-files'
 import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
-import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { TEXT_DOWNLOAD, TEXT_FILE } from '@/consts'
+import { TEXT_FILE } from '@/consts'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { newUuid } from '@/lib/id'
@@ -84,24 +85,24 @@ export function HomeToolbar() {
         />
         <ToolbarCol>
           <ToolbarRow>
-            <ToolbarColSmallButton
+            <ToolbarIconButton
               title="Download table to device"
               onClick={() => saveAs()}
-              icon={<DownloadIcon />}
             >
-              {TEXT_DOWNLOAD}
-            </ToolbarColSmallButton>
-          </ToolbarRow>
-          <ToolbarRow>
-            <ToolbarColSmallButton
-              title="Annotate locations"
-              onClick={annotate}
-              icon={<PlayIcon />}
-            >
-              Annotate
-            </ToolbarColSmallButton>
+              <DownloadIcon />
+            </ToolbarIconButton>
           </ToolbarRow>
         </ToolbarCol>
+      </ToolbarTabGroup>
+
+      <ToolbarTabGroup title="Annotate">
+        {' '}
+        <ToolbarRow>
+          <ToolbarButton title="Annotate locations" onClick={annotate}>
+            <PlayIcon />
+            <span>Annotate</span>
+          </ToolbarButton>
+        </ToolbarRow>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="TSS" className="gap-x-2">

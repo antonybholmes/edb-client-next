@@ -54,10 +54,10 @@ export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
 }
 
 export interface IScatterDisplayOptions {
-  // axes: {
-  //   xaxis: IDisplayAxis
-  //   yaxis: IDisplayAxis
-  // }
+  axes: {
+    xaxis: IDisplayAxis
+    yaxis: IDisplayAxis
+  }
 
   padding: number
 
@@ -78,10 +78,10 @@ export interface IScatterDisplayOptions {
 }
 
 export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
-  // axes: {
-  //   xaxis: { ...DEFAULT_AXIS_PROPS },
-  //   yaxis: { ...DEFAULT_AXIS_PROPS },
-  // },
+  axes: {
+    xaxis: { ...DEFAULT_AXIS_PROPS },
+    yaxis: { ...DEFAULT_AXIS_PROPS },
+  },
   padding: 10,
   dots: {
     ...DEFAULT_FILL_PROPS,

@@ -1,5 +1,6 @@
 {
   "name": "Heatmap",
+  "abbr": "Hm",
   "description": "Create heatmaps of tabular data",
   "color": ["#0000ff", "#ff5050"],
   "version": "20.0.6",

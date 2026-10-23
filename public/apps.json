@@ -3,11 +3,11 @@
     "name": "Annotate",
     "description": "Annotate genomic coordinates.",
     "color": "#FA8072",
-    "version": "20.8.2",
+    "version": "20.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.328Z",
-    "hash": "b9664fb85d3d12d981babda06563e7f36e89954eecc4af81f49ae369eb46a25d",
-    "build": 878
+    "modified": "2026-10-23T17:56:02.614Z",
+    "hash": "6cdfa76381d452b47aa21afe2ce1ad1fe3b36e18a0df6956d0df3b0ddc889544",
+    "build": 880
   },
   {
     "name": "Bio Draw",
@@ -30,6 +30,7 @@
   },
   {
     "name": "DNA",
+    "abbr": "Dna",
     "description": "Get DNA sequences",
     "color": "#FF4500",
     "version": "20.6.6",
@@ -43,11 +44,11 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "2.4.8",
+    "version": "2.6.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T16:24:06.740Z",
-    "hash": "82e15bafad1d01683b76c7b3d7722abdcef6bb3c49232a49cb8ed2b5f1fb3d8b",
-    "build": 1078
+    "modified": "2026-10-23T17:56:02.613Z",
+    "hash": "7ffa7f796109c72cc9a3c3f863adf044fe388ea6facea1cd4b79691d8277c659",
+    "build": 1080
   },
   {
     "name": "Get DNA",
@@ -74,9 +75,9 @@
     "color": "#ffb366",
     "version": "25.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:24:06.741Z",
-    "hash": "9eed93b10cfeaedd7cabcc2c9aefd6dd755e1e4dadca80821ee17a16b36cdf30",
-    "build": 1074
+    "modified": "2026-10-23T17:56:02.614Z",
+    "hash": "956bf2eded36d56b9238493d0668aa3984c381c77a4c9aa96118f416b013e601",
+    "build": 1076
   },
   {
     "name": "GSEA Web",
@@ -90,6 +91,7 @@
   },
   {
     "name": "Heatmap",
+    "abbr": "Hm",
     "description": "Create heatmaps of tabular data",
     "color": [
       "#0000ff",
@@ -131,6 +133,7 @@
   },
   {
     "name": "Lollipop",
+    "abbr": "Lp",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
     "version": "29.0.2",
@@ -141,13 +144,14 @@
   },
   {
     "name": "Matcalc",
+    "abbr": "Mc",
     "description": "Scientific graphing and statistics.",
     "color": "#40bf80",
-    "version": "52.0.4",
+    "version": "52.0.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.330Z",
-    "hash": "0ebbadba7b21bcc39ecfb4715ed54faf3f98b1dfeb7295c3cb8e262efcc30864",
-    "build": 2208
+    "modified": "2026-10-23T17:56:02.616Z",
+    "hash": "85a44f833b2697567baee13b0ffa1d60e2ef153de8a79cb16fb4071039675653",
+    "build": 2210
   },
   {
     "name": "Motifs",
@@ -161,16 +165,18 @@
   },
   {
     "name": "Network",
+    "abbr": "Nw",
     "description": "Beautiful network graphs.",
     "color": "#4169E1",
-    "version": "1.6.4",
+    "version": "1.6.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T16:24:06.744Z",
-    "hash": "1a2b9d7aab71642ca1a460766e06bb514977586c1f55e8a8881b627100d00cd2",
-    "build": 178
+    "modified": "2026-10-23T17:56:02.616Z",
+    "hash": "c0bbf554cf323aa1ab2280cd637ff7e28133f562cf1e5053d0b7403fb7128868",
+    "build": 180
   },
   {
     "name": "Oncoplot",
+    "abbr": "Op",
     "description": "Create oncoplots.",
     "color": "#ff99cc",
     "version": "30.4.0",
@@ -211,6 +217,7 @@
   },
   {
     "name": "Sankey",
+    "abbr": "Sk",
     "description": "Create Sankey plots.",
     "color": "#ff9900",
     "version": "1.4.0",
@@ -221,7 +228,7 @@
   },
   {
     "name": "Seq Browser",
-    "description": "Plot NGS data and make figures.",
+    "description": "Plot Next Generation Sequencing Data.",
     "color": "#FF0000",
     "version": "32.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
@@ -274,9 +281,9 @@
     "color": "#FA8072",
     "version": "26.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.332Z",
-    "hash": "b93a12785213928711023ad79e1bf0929268c21212eeb14b33d5df97ed79d978",
-    "build": 1062
+    "modified": "2026-10-23T17:56:02.618Z",
+    "hash": "2a089bb81926277ade4f032af6e675663956160666291f8d63fee8188c58fb6f",
+    "build": 1064
   },
   {
     "name": "Venn",
@@ -300,8 +307,8 @@
     ],
     "version": "2.0.8",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-23T16:07:27.333Z",
-    "hash": "df716b7525e39f3e64e4b1dff525d126aec7efaaed4e7e7502387b01480c8f63",
-    "build": 44
+    "modified": "2026-10-23T17:56:02.619Z",
+    "hash": "fc53fa3ceb1e018ab528961168dd263e819dd829ea39ed2ad5dd25dcc8aa4886",
+    "build": 46
   }
 ]

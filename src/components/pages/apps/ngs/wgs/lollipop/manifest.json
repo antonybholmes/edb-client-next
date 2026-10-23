@@ -1,5 +1,6 @@
 {
   "name": "Lollipop",
+  "abbr": "Lp",
   "description": "Create lollipop plots.",
   "color": "#DA70D6",
   "version": "29.0.2",

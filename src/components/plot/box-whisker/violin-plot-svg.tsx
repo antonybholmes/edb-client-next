@@ -49,7 +49,8 @@ export function ViolinPlotSvg({
       yax = createAxis({
         direction: 'y',
         length: height,
-        autoDomain: [0, Math.max(...data)],
+        domain: [0, Math.max(...data)],
+        autoDomain: true,
       })
     }
 

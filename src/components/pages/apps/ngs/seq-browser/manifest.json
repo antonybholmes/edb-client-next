@@ -1,6 +1,6 @@
 {
   "name": "Seq Browser",
-  "description": "Plot NGS data and make figures.",
+  "description": "Plot Next Generation Sequencing Data.",
   "color": "#FF0000",
   "version": "32.6.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
