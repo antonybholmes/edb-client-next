@@ -219,12 +219,13 @@ export function HomeToolbar() {
 
         <ToolbarCol>
           <ToolbarSingleRow>
-            <ToolbarIconButton
+            <ToolbarButton
               onClick={() => makeClusterMap(false)}
               title="Heatmap"
             >
               <HeatMapIcon />
-            </ToolbarIconButton>
+              <span>Heatmap</span>
+            </ToolbarButton>
             {/* <ToolbarIconButton
               onClick={() => makeDotPlot(false)}
               title="Dot Heatmap"

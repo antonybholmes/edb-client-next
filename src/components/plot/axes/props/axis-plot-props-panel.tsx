@@ -5,17 +5,25 @@ import { FontPopover } from '@/components/plot/font/font-popover'
 import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { produce } from 'immer'
+import { IAxis } from '../axis'
 import { IPlotAddress, useAxis } from '../plot-axes'
 import { TickPlotPropsPopover } from './tick-plot-props-popover'
 
 export function AxisPlotPropsPanel({
   plotAddress,
   title,
+  callback,
 }: {
   plotAddress: IPlotAddress
   title: string
+  callback?: (axis: IAxis) => void
 }) {
   const { axis, updateAxis } = useAxis(plotAddress)
+
+  function _updateAxis(axis: IAxis) {
+    updateAxis(axis)
+    callback?.(axis)
+  }
 
   return (
     <>
@@ -47,12 +55,11 @@ export function AxisPlotPropsPanel({
               textProps: axis.style.title,
               //showEnabled: false,
               update: (f) =>
-                updateAxis({
-                  style: {
-                    ...axis.style,
-                    title: Object.assign({}, axis.style.title, f),
-                  },
-                }),
+                _updateAxis(
+                  produce(axis, (draft) => {
+                    draft.style.title = Object.assign({}, draft.style.title, f)
+                  })
+                ),
             },
           ]}
         />
@@ -61,9 +68,11 @@ export function AxisPlotPropsPanel({
           title="Title"
           value={axis.title}
           onTextChanged={(v) => {
-            updateAxis({
-              title: v,
-            })
+            _updateAxis(
+              produce(axis, (draft) => {
+                draft.title = v
+              })
+            )
           }}
           w="lg"
           h="toolbar"
@@ -82,7 +91,7 @@ export function AxisPlotPropsPanel({
               return
             }
 
-            updateAxis(
+            _updateAxis(
               produce(axis, (draft) => {
                 draft.domain[0] = v
                 draft.ticks.major.items = undefined
@@ -94,7 +103,7 @@ export function AxisPlotPropsPanel({
               return
             }
 
-            updateAxis(
+            _updateAxis(
               produce(axis, (draft) => {
                 draft.domain[1] = v
                 draft.ticks.major.items = undefined
@@ -114,9 +123,11 @@ export function AxisPlotPropsPanel({
           limit={[1, 1000]}
           dp={0}
           onNumChanged={(v) => {
-            updateAxis({
-              range: [axis.range[0], v],
-            })
+            _updateAxis(
+              produce(axis, (draft) => {
+                draft.range[1] = v
+              })
+            )
           }}
           h="toolbar"
         />

@@ -344,8 +344,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
       return { svg: null, width: 0, height: 0 }
     }
 
-    console.log('Rendering volcano plot')
-
     const innerWidth = axisLength(xax)
     const innerHeight = axisLength(yax)
     const width =

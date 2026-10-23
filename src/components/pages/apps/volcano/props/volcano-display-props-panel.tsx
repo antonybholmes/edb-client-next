@@ -326,6 +326,16 @@ export function VolcanoDisplayPropsPanel() {
                       groupId: 'volcano',
                       axisId: 'x',
                     }}
+                    callback={(axis) => {
+                      // necessary to update the x-axis domain
+                      // in the settings so that on re-render
+                      // it does not revert to old settings
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.axes.xaxis.domain = axis.domain
+                        })
+                      )
+                    }}
                   />
 
                   <AxisPlotPropsPopover
@@ -334,6 +344,13 @@ export function VolcanoDisplayPropsPanel() {
                       plotId: plot.id,
                       groupId: 'volcano',
                       axisId: 'y',
+                    }}
+                    callback={(axis) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.axes.yaxis.domain = axis.domain
+                        })
+                      )
                     }}
                   />
                 </>

@@ -14,7 +14,7 @@ import { useSVG } from '@/providers/svg-provider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VolcanoDialog } from '../volcano-dialog'
 
-import { DownloadIcon } from '@/components/icons/computer/download-icon'
+import { DownloadImageIcon } from '@/components/icons/computer/download-image-icon'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
@@ -66,7 +66,7 @@ export function HomeToolbar() {
             saveAs('volcano')
           }}
         >
-          <DownloadIcon />
+          <DownloadImageIcon />
         </ToolbarIconButton>
       </ToolbarTabGroup>
 

@@ -130,8 +130,6 @@ export function VolcanoProvider({
       autoDomain: true,
     })
 
-    console.log('Creating axes for volcano plot')
-
     addAxes([
       {
         plotId: plot.id ?? '',
