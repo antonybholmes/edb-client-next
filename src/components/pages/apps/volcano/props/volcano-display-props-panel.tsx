@@ -327,7 +327,9 @@ export function VolcanoDisplayPropsPanel() {
                       axisId: 'x',
                     }}
                     callback={(axis) => {
-                      console.log(axis)
+                      // necessary to update the x-axis domain
+                      // in the settings so that on re-render
+                      // it does not revert to old settings
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.axes.xaxis.domain = axis.domain
