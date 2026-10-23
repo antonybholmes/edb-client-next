@@ -19,7 +19,6 @@ import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
 export interface VolcanoPropsContextType {
   displayProps: IVolcanoDisplayOptions | null
   plot: IVolcanoPlot
-
   highlightedLabels: string[]
   displayLabels: string[]
   setLabels(labels: string[]): void
@@ -101,30 +100,36 @@ export function VolcanoProvider({
   }, [volcano?.entries, displayOptions, thresholdLogP])
 
   useEffect(() => {
+    if (!plot) {
+      return
+    }
+
     const xax = createAxis({
       id: 'x',
-      title: displayOptions?.axes.xaxis.name,
-      length: displayOptions?.axes.xaxis.length,
-      autoDomain: displayOptions?.axes.xaxis.domain,
+      title: settings.axes.xaxis.name,
+      length: settings.axes.xaxis.length,
+      autoDomain: settings.axes.xaxis.domain,
     })
 
     const yax = createAxis({
       id: 'y',
-      title: displayOptions?.axes.yaxis.name,
+      title: settings.axes.yaxis.name,
       direction: 'y',
-      length: displayOptions?.axes.yaxis.length,
-      autoDomain: displayOptions?.axes.yaxis.domain,
+      length: settings.axes.yaxis.length,
+      autoDomain: settings.axes.yaxis.domain,
     })
+
+    console.log('Creating axes for volcano plot')
 
     addAxes([
       {
-        plotId: plot?.id ?? '',
+        plotId: plot.id ?? '',
         groupId: 'volcano',
         axisIds: ['x', 'y'],
         axes: { x: xax, y: yax },
       },
     ])
-  }, [displayOptions?.axes])
+  }, [plot, settings])
 
   useEffect(() => {
     if (settings.labels.auto) {

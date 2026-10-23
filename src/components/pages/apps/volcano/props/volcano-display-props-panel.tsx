@@ -276,21 +276,21 @@ export function VolcanoDisplayPropsPanel() {
               <MarginPopover />
               <DoubleNumericalInput
                 h="toolbar"
-                v1={displayProps.axes.xaxis.length}
-                v2={displayProps.axes.yaxis.length}
+                v1={settings.axes.xaxis.length}
+                v2={settings.axes.yaxis.length}
                 limit={[1, 1000]}
                 dp={0}
                 onNumChanged1={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.xaxis.length = v
                     })
                   )
                 }}
                 onNumChanged2={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.yaxis.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.yaxis.length = v
                     })
                   )
                 }}

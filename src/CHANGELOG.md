@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Volcano plot size now in settings.
 - Ext gsea now supports margins around each plot.
 - gsea plot now has inner margin for each graph to allow for spacing.
 - Margin now uses num sliders.

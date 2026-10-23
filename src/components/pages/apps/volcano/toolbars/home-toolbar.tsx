@@ -92,14 +92,14 @@ export function HomeToolbar() {
           <ToolbarRow title="Width" titleCls="w-10" smallTitle="W">
             <NumericalInput
               h="toolbar"
-              value={displayProps.axes.xaxis.length}
+              value={settings.axes.xaxis.length}
               placeholder="Width"
               limit={[1, 1000]}
               dp={0}
               onNumChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.axes.xaxis.length = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.xaxis.length = v
                   })
                 )
               }}
@@ -108,14 +108,14 @@ export function HomeToolbar() {
           <ToolbarRow title="Height" titleCls="w-10" smallTitle="H">
             <NumericalInput
               h="toolbar"
-              value={displayProps.axes.yaxis.length}
+              value={settings.axes.yaxis.length}
               placeholder="Row Height"
               limit={[1, 1000]}
               dp={0}
               onNumChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.axes.yaxis.length = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.yaxis.length = v
                   })
                 )
               }}

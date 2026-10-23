@@ -3587,6 +3587,10 @@
         {
           "msg": "Ext gsea now supports margins around each plot",
           "date": "2026-10-23T01:42:13.023Z"
+        },
+        {
+          "msg": "Volcano plot size now in settings",
+          "date": "2026-10-23T02:32:39.637Z"
         }
       ]
     },
