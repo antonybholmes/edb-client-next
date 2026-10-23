@@ -118,20 +118,6 @@ export function HomeToolbar() {
               }}
               w="xxs"
             />
-            {/* <PhenotypeModeList /> */}
-            <ToolbarButton
-              checked={settings.phenotypes.mode !== 'normal'}
-              onClick={() => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.phenotypes.mode =
-                      draft.phenotypes.mode === 'normal' ? 'inverted' : 'normal'
-                  })
-                )
-              }}
-            >
-              Invert
-            </ToolbarButton>
           </ToolbarRow>
           <ToolbarRow>
             <ColorMapToolbarMenu
@@ -172,11 +158,26 @@ export function HomeToolbar() {
             </SelectList>
           </ToolbarRow>
         </ToolbarCol>
-        {/* <ToolbarCol>
+        <ToolbarCol>
           <ToolbarRow>
-            <AxesSettingsPropsPopover />
+            <ToolbarButton
+              checked={settings.phenotypes.mode !== 'normal'}
+              onClick={() => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.mode =
+                      draft.phenotypes.mode === 'normal' ? 'inverted' : 'normal'
+                  })
+                )
+              }}
+            >
+              Invert
+            </ToolbarButton>
           </ToolbarRow>
-        </ToolbarCol> */}
+          {/* <ToolbarRow>
+            <GraphMarginPopover />
+          </ToolbarRow> */}
+        </ToolbarCol>
       </ToolbarTabGroup>
 
       {/* <ToolbarTabGroup title="View">

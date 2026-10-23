@@ -205,13 +205,8 @@ function GseaSvgContent() {
   // fresh object literals on every GseaSvgContent render
   const innerPlotSize = useMemo(
     () => ({
-      w:
-        settings.graph.margin.left +
-        settings.graph.margin.right +
-        settings.es.axes.x.length,
+      w: settings.es.axes.x.length,
       h:
-        settings.graph.margin.top +
-        settings.graph.margin.bottom +
         settings.es.axes.y.length +
         (settings.genes.show
           ? settings.plot.gap.y + settings.genes.height
@@ -248,6 +243,7 @@ function GseaSvgContent() {
   }
 
   const rows = Math.ceil(pathways.length / settings.page.columns)
+
   const pageSize: IDim = {
     w: plotSize.w * settings.page.columns,
     h: plotSize.h * rows,
@@ -278,15 +274,7 @@ function GseaSvgContent() {
     [pathways, settings.page.columns, plotSize, innerPlotSize]
   )
 
-  return (
-    <SvgZoomCanvas
-      size={pageSize}
-      //shapeRendering={SVG_CRISP_EDGES}
-      //className="absolute"
-    >
-      {svgPlots}
-    </SvgZoomCanvas>
-  )
+  return <SvgZoomCanvas size={pageSize}>{svgPlots}</SvgZoomCanvas>
 }
 
 export function GseaSvg() {

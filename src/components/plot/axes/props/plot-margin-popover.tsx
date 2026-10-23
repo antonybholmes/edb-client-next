@@ -43,65 +43,78 @@ export function PlotMarginPopover({
     <Popover>
       {trigger}
 
-      <PopoverContent className="gap-y-1 flex-col w-56" variant="content">
-        <PropRow title="Top">
-          <NumSlider
-            value={margin.top}
-            min={0}
-            max={1000}
-            onNumChange={(v) =>
-              updateMargin(
-                produce(margin, (draft) => {
-                  draft.top = v
-                })
-              )
-            }
-          />
-        </PropRow>
-        <PropRow title="Left">
-          <NumSlider
-            value={margin.left}
-            min={0}
-            max={1000}
-            onNumChange={(v) =>
-              updateMargin(
-                produce(margin, (draft) => {
-                  draft.left = v
-                })
-              )
-            }
-          />
-        </PropRow>
-        <PropRow title="Bottom">
-          <NumSlider
-            value={margin.bottom}
-            min={0}
-            max={1000}
-            onNumChange={(v) =>
-              updateMargin(
-                produce(margin, (draft) => {
-                  draft.bottom = v
-                })
-              )
-            }
-          />
-        </PropRow>
-        <PropRow title="Right">
-          <NumSlider
-            value={margin.right}
-            min={0}
-            max={1000}
-            onNumChange={(v) =>
-              updateMargin(
-                produce(margin, (draft) => {
-                  draft.right = v
-                })
-              )
-            }
-          />
-        </PropRow>
+      <PlotMarginContent margin={margin} updateMargin={updateMargin} />
+    </Popover>
+  )
+}
 
-        {/* <VCenterRow className="gap-x-1 justify-center">
+export function PlotMarginContent({
+  margin,
+  updateMargin,
+}: {
+  margin: IMarginProps
+  updateMargin: (margin: IMarginProps) => void
+}) {
+  return (
+    <PopoverContent className="gap-y-1 flex-col w-56" variant="content">
+      <PropRow title="Top">
+        <NumSlider
+          value={margin.top}
+          min={0}
+          max={1000}
+          onNumChange={(v) =>
+            updateMargin(
+              produce(margin, (draft) => {
+                draft.top = v
+              })
+            )
+          }
+        />
+      </PropRow>
+      <PropRow title="Left">
+        <NumSlider
+          value={margin.left}
+          min={0}
+          max={1000}
+          onNumChange={(v) =>
+            updateMargin(
+              produce(margin, (draft) => {
+                draft.left = v
+              })
+            )
+          }
+        />
+      </PropRow>
+      <PropRow title="Bottom">
+        <NumSlider
+          value={margin.bottom}
+          min={0}
+          max={1000}
+          onNumChange={(v) =>
+            updateMargin(
+              produce(margin, (draft) => {
+                draft.bottom = v
+              })
+            )
+          }
+        />
+      </PropRow>
+      <PropRow title="Right">
+        <NumSlider
+          value={margin.right}
+          min={0}
+          max={1000}
+          onNumChange={(v) =>
+            updateMargin(
+              produce(margin, (draft) => {
+                draft.right = v
+              })
+            )
+          }
+        />
+      </PropRow>
+
+      {/* <VCenterRow className="gap-x-1 justify-center">
           <NumericalInput
             title="Top"
             h="toolbar"
@@ -163,7 +176,6 @@ export function PlotMarginPopover({
             }
           />
         </VCenterRow> */}
-      </PopoverContent>
-    </Popover>
+    </PopoverContent>
   )
 }
