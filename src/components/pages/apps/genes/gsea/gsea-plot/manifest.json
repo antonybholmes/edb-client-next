@@ -1,6 +1,6 @@
 {
   "name": "GSEA Plot",
-  "description": "Format GSEA plots.",
+  "description": "Beautiful GSEA plots.",
   "color": "#ffb366",
   "version": "25.0.2",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
