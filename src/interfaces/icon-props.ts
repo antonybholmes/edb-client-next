@@ -8,17 +8,17 @@ export const ICON_CLS =
 
 export const VECTOR_ICON_CLS = cn(ICON_CLS, 'stroke-[1.5]')
 
-export const ICON_TRANSITION_FROM_CLS = `group-hover:opacity-0 group-hover:scale-70
-  group-focus-visible:opacity-0 group-focus-visible:scale-70 
-  group-data-[checked=true]:opacity-0 group-data-[checked=true]:scale-70
+export const ICON_TRANSITION_FROM_CLS = `group-hover:opacity-0
+  group-focus-visible:opacity-0 
+  group-data-[checked=true]:opacity-0
   transition-all duration-500 motion-reduce:duration-0 ease-out`
 
-export const ICON_TRANSITION_TO_CLS = `absolute opacity-0 scale-70 
-  group-focus-visible:opacity-100 group-focus-visible:scale-100
-  group-hover:opacity-100 group-hover:scale-100
-  group-data-[checked=true]:opacity-100 group-data-[checked=true]:scale-100
+export const ICON_TRANSITION_TO_CLS = `absolute opacity-0 
+  group-focus-visible:opacity-100
+  group-hover:opacity-100
+  group-data-[checked=true]:opacity-100
   left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-  transition-all duration-500 motion-reduce:duration-0 ease-out`
+  transition-all duration-1000 motion-reduce:duration-0 ease-out`
 
 export interface IIconProps extends ISVGProps {
   size?: string | number

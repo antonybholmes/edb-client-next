@@ -21,29 +21,15 @@ export function Header({
   children,
 }: IHeaderProps) {
   return (
-    <header className={cn('grid grid-cols-8 md:grid-cols-4 p-1.5', className)}>
-      <VCenterRow className="gap-x-1">
+    <header className={cn('grid grid-cols-8 md:grid-cols-4', className)}>
+      <VCenterRow id="header-left">
         <HeaderMenuGrid />
 
-        {/* <VCenterRow className="hidden md:flex gap-x-4 shrink-0">
-          <BaseLink
-            className={cn(
-              FOCUS_INSET_RING_CLS,
-              'hover:bg-muted/50 trans-color rounded-theme'
-            )}
-            href="/"
-            title={`${config.appName} Home`}
-          >
-            {showHomeIcon && <FavIcon />}
-          </BaseLink>
-        </VCenterRow> */}
-        <VCenterRow id="header-left" className="gap-x-1">
-          {leftHeaderChildren}
-        </VCenterRow>
+        {leftHeaderChildren}
       </VCenterRow>
 
       <VCenterRow
-        className="justify-center col-span-6 md:col-span-2 gap-x-1"
+        className="justify-center col-span-6 md:col-span-2"
         id="header-center"
       >
         {children}
@@ -51,7 +37,7 @@ export function Header({
 
       <VCenterRow
         id="header-right"
-        className="justify-start hidden md:flex flex-row-reverse gap-x-1"
+        className="justify-start hidden md:flex flex-row-reverse"
       >
         {headerRightChildren}
       </VCenterRow>

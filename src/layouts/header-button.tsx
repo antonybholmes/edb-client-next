@@ -3,8 +3,8 @@ import { Button, type IButtonProps } from '@/themed/baseui/button'
 export function HeaderButton({
   ref,
 
-  size = 'lg',
-  //rounded = 'none',
+  size = 'header',
+  rounded = 'none',
 
   className = '',
   children,
@@ -14,7 +14,7 @@ export function HeaderButton({
     <Button
       ref={ref}
       size={size}
-      //rounded={rounded}
+      rounded={rounded}
       // ripple={ripple}
 
       className={className}

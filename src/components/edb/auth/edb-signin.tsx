@@ -340,8 +340,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
 
   const { settings } = useEdbSettings()
   const { session } = useEdbAuth()
-  //const [, setSigninState] = useAtom(signinStateAtom)
-  //const { loginWithRedirect } = useAuth0()
+
   const { signOut } = useSignOut()
   const { open: openDialog } = useDialogs()
   const { setRedirect } = useEdbSession()
@@ -403,8 +402,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             <HeaderIconButton
               id="edb-signin-button"
               checked={open}
-              rounded="full"
-              // ripple={false}
+
               title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
             >
               {cachedUserInfo.pictureUrl ? (
@@ -418,12 +416,6 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                   {initials}
                 </span>
               )}
-              {/* <UserIcon
-              className={cn(
-                'w-5 h-5 aspect-square rounded-full overflow-hidden',
-                ICON_TRANSITION_TO_CLS
-              )}
-            /> */}
             </HeaderIconButton>
           }
         />
@@ -541,7 +533,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         checked={open}
         // ripple={false}
         title={TEXT_SIGN_IN}
-        rounded="full"
+        //rounded="full"
       >
         <UserIcon
           className={cn(

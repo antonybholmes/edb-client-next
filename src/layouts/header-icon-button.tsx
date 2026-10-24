@@ -2,8 +2,8 @@ import { Button, type IButtonProps } from '@/themed/baseui/button'
 
 export function HeaderIconButton({
   ref,
-  size = 'lg',
-  //rounded = 'theme',
+  size = 'header',
+  rounded = 'none',
   aspect = 'icon',
   pad = 'none',
   className = '',
@@ -14,7 +14,7 @@ export function HeaderIconButton({
     <Button
       ref={ref}
       size={size}
-      //rounded={rounded}
+      rounded={rounded}
       aspect={aspect}
       // ripple={ripple}
       pad={pad}

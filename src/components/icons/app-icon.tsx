@@ -28,19 +28,25 @@ const APP_BG_CLS = cn(
 
 export function AppTile({
   module,
-  size = 4.5,
+  size = 3.8,
 }: {
   module: IAppHeaderLink
   size?: number
 }) {
+  const [hover, setHover] = useState(false)
+
   return (
     <BaseLink
       aria-label={module.name}
       href={module.slug}
 
       className={APP_CLS}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
-      <AppIcon appInfo={module} size={size} animate={true} />
+      <AppIcon appInfo={module} size={size} animate={true} hover={hover} />
 
       <span className="text-xs text-center">{module.name}</span>
     </BaseLink>
@@ -92,8 +98,9 @@ export function AppTile({
 export function AppIcon({
   appInfo,
   size = 3,
-  borderSize = 1.3,
+  borderSize = 1.2,
   setHover,
+  hover,
   animate = false,
   className,
   children,
@@ -103,20 +110,27 @@ export function AppIcon({
   borderSize?: number
   appInfo: IAppInfo | IAppHeaderLink
   setHover?: (hover: boolean) => void
+  hover?: boolean
   animate?: boolean
 }) {
-  const [hover, _setHover] = useState(false)
+  const [_hover, _setHover] = useState(false)
   const ref = useRef<HTMLSpanElement>(null)
   const bgRef = useRef<HTMLSpanElement>(null)
   const { reducedMotion } = useReducedMotion()
 
   useEffect(() => {
-    if (!animate || reducedMotion || !ref.current || !bgRef.current) {
+    if (hover !== undefined) {
+      _setHover(hover)
+    }
+  }, [hover])
+
+  useEffect(() => {
+    if (!animate || reducedMotion || !ref.current) {
       return
     }
 
     gsap
-      .timeline()
+      //.timeline()
 
       // .to(
       //   bgRef.current,
@@ -129,18 +143,14 @@ export function AppIcon({
       //   },
       //   0
       // )
-      .to(
-        ref.current,
-        {
-          //opacity: hover ? 1 : 0.7,
-          scale: hover ? 1.1 : 1,
-          //borderRadius: hover ? '2rem' : '1.5rem',
-          duration: 1,
-          ease: 'back.out',
-        },
-        0
-      )
-  }, [hover, animate])
+      .to(ref.current, {
+        //opacity: hover ? 1 : 0.7,
+        scale: _hover ? borderSize : 1,
+        //borderRadius: hover ? '2rem' : '1.5rem',
+        duration: 1,
+        ease: 'back.out',
+      })
+  }, [_hover, animate])
 
   const abbr = useMemo(() => {
     if (appInfo.abbr) {
@@ -151,9 +161,9 @@ export function AppIcon({
     }
   }, [appInfo])
 
-  const bgColor = useMemo(() => {
-    return Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
-  }, [appInfo.color])
+  // const bgColor = useMemo(() => {
+  //   return Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
+  // }, [appInfo.color])
 
   const bgImage = useMemo(() => {
     if (!Array.isArray(appInfo.color)) {
@@ -198,7 +208,7 @@ export function AppIcon({
         onHover(false)
       }}
     >
-      <span
+      {/* <span
         ref={bgRef}
         className={cn(APP_BG_CLS, 'z-0 opacity-10')}
         style={{
@@ -206,7 +216,7 @@ export function AppIcon({
           height: `${size}rem`,
           backgroundColor: bgColor,
         }}
-      />
+      /> */}
 
       <span
         ref={ref}
@@ -221,11 +231,11 @@ export function AppIcon({
             backgroundImage: bgImage,
           } as CSSProperties
         }
-      ></span>
+      />
 
       <CenterRow
         className="relative z-20"
-        style={{ fontSize: `${Math.max(size / 4, 0.8)}rem` }}
+        //style={{ fontSize: `${Math.max(0.8, size * 0.3)}rem` }}
       >
         <span className="font-bold text-white/90">
           {abbr[0]!.toUpperCase()}

@@ -14,6 +14,7 @@ export function ButtonLink({
   variant,
   size,
   rounded,
+  aspect,
   ring,
   justify,
   items,
@@ -80,6 +81,7 @@ export function ButtonLink({
         items,
         size,
         rounded,
+        aspect,
         ring,
         flow,
         className: cn(
