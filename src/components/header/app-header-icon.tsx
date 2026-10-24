@@ -10,6 +10,9 @@ import { AppIcon } from '../icons/app-icon'
 import { HomeIcon } from '../icons/home-icon'
 import { ButtonLink } from '../link/button-link'
 
+const TIMELINE_DURATION = 0.4
+const TIMELINE_EASE = 'power1.out'
+
 export function AppHeaderIcon() {
   const { appInfo } = useAppInfo()
   const { reducedMotion } = useReducedMotion()
@@ -17,34 +20,65 @@ export function AppHeaderIcon() {
   const [hover, setHover] = useState(false)
   const iconRef = useRef<HTMLSpanElement>(null)
   const homeRef = useRef<HTMLSpanElement>(null)
+  const timelineRef = useRef<gsap.core.Timeline>(null)
 
   useEffect(() => {
-    if (reducedMotion || !iconRef.current || !homeRef.current) {
+    if (!appInfo || reducedMotion || !iconRef.current || !homeRef.current) {
       return
     }
 
-    gsap
-      .timeline()
+    const timeline = gsap
+      .timeline({ paused: true })
       .to(
         iconRef.current,
         {
-          opacity: hover ? 0 : 1,
-          y: hover ? '50%' : 0,
-          duration: 0.3,
-          ease: 'power1.out',
+          opacity: 0,
+          duration: TIMELINE_DURATION,
+          ease: TIMELINE_EASE,
         },
-        hover ? 0 : '<0.2'
+        0
+      )
+      .to(
+        iconRef.current,
+        {
+          y: '25%',
+          duration: TIMELINE_DURATION,
+          ease: TIMELINE_EASE,
+        },
+        '<0.1'
       )
       .to(
         homeRef.current,
         {
-          opacity: hover ? 1 : 0,
-          y: hover ? '50%' : 0,
-          duration: 0.3,
-          ease: 'power1.out',
+          y: '50%',
+          duration: TIMELINE_DURATION,
+          ease: TIMELINE_EASE,
         },
-        hover ? '<0.2' : 0
+        0
       )
+      .to(
+        homeRef.current,
+        {
+          opacity: 1,
+          duration: TIMELINE_DURATION,
+          ease: TIMELINE_EASE,
+        },
+        '<0.1'
+      )
+
+    timelineRef.current = timeline
+    return () => {
+      timeline.kill()
+      timelineRef.current = null
+    }
+  }, [appInfo, reducedMotion])
+
+  useEffect(() => {
+    if (hover) {
+      timelineRef.current?.play()
+    } else {
+      timelineRef.current?.reverse()
+    }
   }, [hover])
 
   if (!appInfo) {
@@ -67,7 +101,7 @@ export function AppHeaderIcon() {
     >
       <span
         ref={iconRef}
-        className="z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        className="z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
       >
         <AppIcon appInfo={appInfo} size={2.2} borderSize={0} />
       </span>
@@ -75,7 +109,7 @@ export function AppHeaderIcon() {
       {!reducedMotion && (
         <span
           ref={homeRef}
-          className="z-0 opacity-0 absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+          className="z-0 opacity-0 absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         >
           <HomeIcon
             stroke=""
