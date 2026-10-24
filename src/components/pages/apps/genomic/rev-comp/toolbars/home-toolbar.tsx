@@ -5,7 +5,6 @@ import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
@@ -14,8 +13,11 @@ import { useState } from 'react'
 import { useSave } from '../../../matcalc/hooks/save'
 
 import { FILE_FORMAT_JSON } from '@/components/dialogs/save-txt-dialog'
-import { Checkbox } from '@/components/shadcn/ui/themed/v1/check-box'
 
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 import { FASTA_FILE_TYPE, ISeq, REV_MAP, useRevComp } from '../rev-comp-store'
@@ -136,27 +138,34 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Convert">
-        <ToolbarButton title="Convert" onClick={applyRevComp}>
+      <ToolbarTabGroup title="Convert" className="gap-x-2">
+        <ToolbarColSmallButton
+          title="Convert"
+          onClick={applyRevComp}
+          icon={<PlayIcon />}
+        >
           <PlayIcon />
           <span>Convert</span>
-        </ToolbarButton>
-      </ToolbarTabGroup>
+        </ToolbarColSmallButton>
 
-      <ToolbarTabGroup title="Settings" className="gap-x-2 items-center">
-        <Checkbox
-          checked={modeRev}
-          onCheckedChange={(state) => setModeRev(state)}
-        >
-          Reverse
-        </Checkbox>
-
-        <Checkbox
-          checked={modeComp}
-          onCheckedChange={(state) => setModeComp(state)}
-        >
-          Complement
-        </Checkbox>
+        <ToolbarCol>
+          <ToolbarRow>
+            <Checkbox
+              checked={modeRev}
+              onCheckedChange={(state) => setModeRev(state)}
+            >
+              Reverse
+            </Checkbox>
+          </ToolbarRow>
+          <ToolbarRow>
+            <Checkbox
+              checked={modeComp}
+              onCheckedChange={(state) => setModeComp(state)}
+            >
+              Complement
+            </Checkbox>
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

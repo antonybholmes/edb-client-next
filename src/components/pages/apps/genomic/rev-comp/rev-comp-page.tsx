@@ -203,10 +203,9 @@ function RevCompPage() {
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
-          />
+          />{' '}
+          <ToolbarPanel />
         </Toolbar>
-
-        <ToolbarPanel />
 
         <ResizablePanelGroup
           orientation="vertical"

@@ -2,9 +2,9 @@
   "name": "Rev Comp",
   "description": "Reverse Complement DNA.",
   "color": "#808080",
-  "version": "19.0.0",
+  "version": "19.0.2",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-10-20T20:56:38.411Z",
-  "hash": "cb3f0e143c52e4362b116cc6e790501308c68f85f4a26087b98f27471c8cc184",
-  "build": 628
+  "modified": "2026-10-24T18:41:58.577Z",
+  "hash": "e19e88b8fbc16c087390f252eee663ef14d1b4a00da8c7b15b9c1b4053870bec",
+  "build": 630
 }

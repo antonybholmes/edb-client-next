@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Rev comp UI updated to match other apps.
 - Removal of line strech animations that use two lines trick and instead now uses one line.
 - Added grain to gradients. Refined gsap timelines for better reuse and performance.
 - Bug fixes and updates.
