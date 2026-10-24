@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@/hooks/reduced-motion'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
@@ -16,74 +17,73 @@ const LINE_CLS =
  * @param param0
  * @returns
  */
-export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
-  const { selectedPosition } = useTabIndicators() //groupId)
+export function TabIndicatorSelectedV({
+  w = 2,
+}: {
+  w?: number
+  color?: string | undefined
+}) {
+  const { selectedPosition } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
+
+  const { reducedMotion } = useReducedMotion() // assuming you have a hook named useReducedMotion
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want
   // to set duration to 0 so it appears instantly rather than animating
   // from 0 width to full width which looks odd. Also, if the width is going
   // from non-zero to zero, we want to set duration to 0 so it disappears instantly.
+
   const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
   const selectedLineRef1 = useRef<HTMLSpanElement>(null)
-  const selectedLineRef2 = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     const line1 = selectedLineRef1.current
-    const line2 = selectedLineRef2.current
 
-    if (!line1 || !line2) return
-
-    return () => gsap.killTweensOf([line1, line2])
-  }, [])
-
-  useEffect(() => {
-    if (
-      !selectedLineRef1.current ||
-      !selectedLineRef2.current ||
-      !selectedPosition
-    ) {
+    if (!line1 || !selectedPosition) {
       return
     }
 
-    const lines = [selectedLineRef1.current, selectedLineRef2.current]
-    gsap.killTweensOf(lines)
+    gsap.killTweensOf(line1)
 
-    if (previousSelectedPos.current) {
-      const fromTop = previousSelectedPos.current.y < selectedPosition.y
+    const h = selectedPosition.h as number
 
-      let y = fromTop
-        ? (selectedPosition.y as number) - 1.5 * (selectedPosition.h as number)
-        : (selectedPosition.y as number) + 1.5 * (selectedPosition.h as number)
-
-      if (
-        Math.abs(
-          (previousSelectedPos.current.y as number) -
-            (selectedPosition.y as number)
-        ) < Math.abs((y - (selectedPosition.y as number)) as number)
-      ) {
-        y = previousSelectedPos.current.y as number
+    if (!reducedMotion && previousSelectedPos.current) {
+      const edges = {
+        head: previousSelectedPos.current.y as number,
+        tail: previousSelectedPos.current.y as number,
       }
 
-      gsap.set(lines, {
-        y,
-        height: selectedPosition.h,
-      })
+      const render = () => {
+        const top = Math.min(edges.head, edges.tail)
+        const bottom = Math.max(edges.head, edges.tail) + h
+        gsap.set(line1, {
+          y: top,
+          height: bottom - top,
+          scaleY: selectedPosition.scale ?? 1,
+        })
+      }
 
-      gsap.to(lines, {
-        y: selectedPosition.y,
-        height: selectedPosition.h,
-        duration: 0.5,
-        scaleY: selectedPosition.scale ?? 1,
-        stagger: 0.1,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      })
+      gsap
+        .timeline({ onUpdate: render })
+        .to(edges, {
+          head: selectedPosition.y as number,
+          duration: 0.5,
+          ease: 'power3.out',
+        })
+        .to(
+          edges,
+          {
+            tail: selectedPosition.y as number,
+            duration: 0.5,
+            ease: 'power3.out',
+          },
+          0.1
+        )
     } else {
-      gsap.set(lines, {
+      gsap.set(line1, {
         y: selectedPosition.y,
-        height: selectedPosition.h,
+        height: h,
         scaleY: selectedPosition.scale ?? 1,
       })
     }
@@ -93,8 +93,13 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
 
   return (
     <>
-      <span ref={selectedLineRef1} className={LINE_CLS} style={{ width: w }} />
-      <span ref={selectedLineRef2} className={LINE_CLS} style={{ width: w }} />
+      <span
+        ref={selectedLineRef1}
+        className={LINE_CLS}
+        style={{
+          width: w,
+        }}
+      />
     </>
   )
 }
