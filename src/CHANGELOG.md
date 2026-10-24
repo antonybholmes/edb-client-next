@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added grain to gradients. Refined gsap timelines for better reuse and performance.
 - Bug fixes and updates.
 - Added pointer cursor to network nodes to better indicate they are clickable.
 

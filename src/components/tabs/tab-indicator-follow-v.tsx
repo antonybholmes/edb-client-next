@@ -30,31 +30,25 @@ export function TabIndicatorFollowV({
 
   const highlightLineRef = useRef<HTMLSpanElement>(null)
 
-  const timelineRef = useRef<GSAPTimeline | null>(null)
-
   useEffect(() => {
-    if (!highlightLineRef.current || !position) {
+    const line = highlightLineRef.current
+    if (!line || !position) {
       return
     }
 
-    if (timelineRef.current) {
-      timelineRef.current.kill()
+    const tween = gsap.to(line, {
+      y: position.y,
+      height: position.h,
+      scaleY: position.scale ?? 1,
+      duration: 0.8,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    })
+
+    return () => {
+      tween.kill()
     }
-
-    timelineRef.current = gsap.timeline().to(
-      highlightLineRef.current,
-      {
-        y: position.y,
-        height: position.h,
-        scaleY: position.scale || 1,
-        duration: 0.8,
-        ease: 'power3.out',
-      },
-      0
-    )
-
-    //previousPos.current = position
-  }, [position])
+  }, [position?.y, position?.h, position?.scale])
 
   if (!position) {
     return null

@@ -29,7 +29,14 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
   const selectedLineRef1 = useRef<HTMLSpanElement>(null)
   const selectedLineRef2 = useRef<HTMLSpanElement>(null)
 
-  const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
+  useEffect(() => {
+    const line1 = selectedLineRef1.current
+    const line2 = selectedLineRef2.current
+
+    if (!line1 || !line2) return
+
+    return () => gsap.killTweensOf([line1, line2])
+  }, [])
 
   useEffect(() => {
     if (
@@ -40,9 +47,8 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
       return
     }
 
-    if (selectedTimelineRef.current) {
-      selectedTimelineRef.current.kill()
-    }
+    const lines = [selectedLineRef1.current, selectedLineRef2.current]
+    gsap.killTweensOf(lines)
 
     if (previousSelectedPos.current) {
       const fromTop = previousSelectedPos.current.y < selectedPosition.y
@@ -60,31 +66,26 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
         y = previousSelectedPos.current.y as number
       }
 
-      selectedTimelineRef.current = gsap
-        .timeline()
-        .set([selectedLineRef1.current, selectedLineRef2.current], {
-          y,
-          height: selectedPosition.h,
-        })
+      gsap.set(lines, {
+        y,
+        height: selectedPosition.h,
+      })
 
-      selectedTimelineRef.current = gsap
-        .timeline()
-        .to([selectedLineRef1.current, selectedLineRef2.current], {
-          y: selectedPosition.y,
-          height: selectedPosition.h,
-          duration: 0.5,
-          scaleY: selectedPosition.scale || 1,
-          stagger: 0.1,
-          ease: 'power2.out',
-        })
+      gsap.to(lines, {
+        y: selectedPosition.y,
+        height: selectedPosition.h,
+        duration: 0.5,
+        scaleY: selectedPosition.scale ?? 1,
+        stagger: 0.1,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      })
     } else {
-      selectedTimelineRef.current = gsap
-        .timeline()
-        .set([selectedLineRef1.current, selectedLineRef2.current], {
-          y: selectedPosition.y,
-          height: selectedPosition.h,
-          scaleY: selectedPosition.scale ?? 1,
-        })
+      gsap.set(lines, {
+        y: selectedPosition.y,
+        height: selectedPosition.h,
+        scaleY: selectedPosition.scale ?? 1,
+      })
     }
 
     previousSelectedPos.current = selectedPosition

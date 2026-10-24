@@ -32,19 +32,12 @@ export function TabIndicatorSelectedH({
   const selectedLineRef1 = useRef<HTMLSpanElement>(null)
   const selectedLineRef2 = useRef<HTMLSpanElement>(null)
 
-  const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
-
   useEffect(() => {
-    if (
-      !selectedLineRef1.current ||
-      !selectedLineRef2.current ||
-      !selectedPosition
-    ) {
-      return
-    }
+    const line1 = selectedLineRef1.current
+    const line2 = selectedLineRef2.current
 
-    if (selectedTimelineRef.current) {
-      selectedTimelineRef.current.kill()
+    if (!line1 || !line2 || !selectedPosition) {
+      return
     }
 
     // if (previousSelectedPos.current) {
@@ -83,17 +76,19 @@ export function TabIndicatorSelectedH({
     //       ease: 'power2.out',
     //     })
     // } else {
-    selectedTimelineRef.current = gsap
-      .timeline()
-      .to([selectedLineRef1.current, selectedLineRef2.current], {
-        x: selectedPosition.x,
-        width: selectedPosition.w,
+    const tween = gsap.to([line1, line2], {
+      x: selectedPosition.x,
+      width: selectedPosition.w,
+      duration: 0.5,
+      scaleX: selectedPosition.scale ?? 1,
+      stagger: 0.1,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    })
 
-        duration: 0.5,
-        scaleX: selectedPosition.scale ?? 1,
-        stagger: 0.1,
-        ease: 'power2.out',
-      })
+    return () => {
+      tween.kill()
+    }
     //}
 
     //previousSelectedPos.current = selectedPosition

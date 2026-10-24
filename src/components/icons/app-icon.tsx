@@ -13,6 +13,7 @@ import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { CenterCol } from '../layout/center-col'
 import { CenterRow } from '../layout/center-row'
 import { BaseLink } from '../link/base-link'
+import { NoiseFilterIcon } from './noise-filter'
 
 export const APP_ICON_CLS = `relative rounded-full aspect-square shrink-0 grow-0`
 
@@ -25,6 +26,9 @@ const APP_BG_CLS = cn(
   'pointer-events-none absolute rounded-full aspect-square shrink-0 grow-0',
   'origin-center top-1/2 left-1/2 -translate-1/2 '
 )
+
+const DURATION = 0.4
+const EASE = 'power1.out'
 
 export function AppTile({
   module,
@@ -114,43 +118,51 @@ export function AppIcon({
   animate?: boolean
 }) {
   const [_hover, _setHover] = useState(false)
+  const isHovered = hover ?? _hover
+  const innerSize = borderSize !== 0 ? size / borderSize : size
+
   const ref = useRef<HTMLSpanElement>(null)
-  const bgRef = useRef<HTMLSpanElement>(null)
+  const noiseRef = useRef<SVGSVGElement>(null)
+  const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const { reducedMotion } = useReducedMotion()
 
   useEffect(() => {
-    if (hover !== undefined) {
-      _setHover(hover)
-    }
-  }, [hover])
-
-  useEffect(() => {
-    if (!animate || reducedMotion || !ref.current) {
+    if (!animate || reducedMotion || !ref.current || !noiseRef.current) {
       return
     }
 
-    gsap
-      //.timeline()
-
-      // .to(
-      //   bgRef.current,
-      //   {
-      //     opacity: hover ? 0.2 : 0.1,
-      //     scale: hover ? 1 : borderSize,
-      //     //borderRadius: hover ? '2rem' : '1.5rem',
-      //     duration: 1,
-      //     ease: 'back.out',
-      //   },
-      //   0
-      // )
+    const timeline = gsap.timeline({ paused: true })
+    timeline
       .to(ref.current, {
-        //opacity: hover ? 1 : 0.7,
-        scale: _hover ? borderSize : 1,
-        //borderRadius: hover ? '2rem' : '1.5rem',
-        duration: 1,
-        ease: 'back.out',
+        scale: borderSize,
+        duration: DURATION,
+        ease: EASE,
       })
-  }, [_hover, animate])
+      .to(
+        noiseRef.current,
+        {
+          scale: borderSize,
+          duration: DURATION,
+          ease: EASE,
+        },
+        0
+      )
+
+    timelineRef.current = timeline
+
+    return () => {
+      timeline.kill()
+      timelineRef.current = null
+    }
+  }, [animate, borderSize, reducedMotion])
+
+  useEffect(() => {
+    if (isHovered) {
+      timelineRef.current?.play()
+    } else {
+      timelineRef.current?.reverse()
+    }
+  }, [isHovered, animate, borderSize, reducedMotion])
 
   const abbr = useMemo(() => {
     if (appInfo.abbr) {
@@ -183,8 +195,6 @@ export function AppIcon({
     _setHover(hover)
     setHover?.(hover)
   }
-
-  const innerSize = borderSize !== 0 ? size / borderSize : size
 
   return (
     <CenterCol
@@ -233,8 +243,17 @@ export function AppIcon({
         }
       />
 
+      <NoiseFilterIcon
+        ref={noiseRef}
+        className="absolute w-full h-full z-20 rounded-full opacity-15"
+        style={{
+          width: `${innerSize}rem`,
+          height: `${innerSize}rem`,
+        }}
+      />
+
       <CenterRow
-        className="relative z-20"
+        className="relative z-30"
         //style={{ fontSize: `${Math.max(0.8, size * 0.3)}rem` }}
       >
         <span className="font-bold text-white/90">
