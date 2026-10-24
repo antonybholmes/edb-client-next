@@ -49,8 +49,6 @@ export function TabIndicatorSelectedV({
 
     const h = selectedPosition.h as number
 
-    console.log('Selected position:', selectedPosition)
-
     if (
       !reducedMotion &&
       previousSelectedPos.current?.y !== selectedPosition.y

@@ -50,6 +50,7 @@ function posChanged(
 
 interface ITabIndicatorContext {
   position: ITabIndicatorPos | undefined
+  prevPosition: ITabIndicatorPos | undefined
   selectedPosition: ITabIndicatorPos | undefined
   setPosition: (pos: Partial<ITabIndicatorPos> | undefined) => void
   setSelectedPosition: (pos: Partial<ITabIndicatorPos> | undefined) => void
@@ -69,6 +70,11 @@ export function TabIndicatorProvider({
   const [position, setPosition] = useState<ITabIndicatorPos | undefined>(
     undefined
   )
+
+  const [prevPosition, setPrevPosition] = useState<
+    ITabIndicatorPos | undefined
+  >(undefined)
+
   const [selectedPosition, setSelectedPosition] = useState<
     ITabIndicatorPos | undefined
   >(undefined)
@@ -85,13 +91,14 @@ export function TabIndicatorProvider({
     (pos: Partial<ITabIndicatorPos> | undefined) => {
       setPosition((prev) => {
         if (!pos) {
-          setPosition(undefined)
+          setPrevPosition(undefined)
           return undefined
         }
 
         const newPos = prev ? { ...prev, ...pos } : { ...DEFAULT_TAB, ...pos }
 
         if (posChanged(prev, newPos)) {
+          setPrevPosition(prev)
           return newPos
         }
 
@@ -122,6 +129,7 @@ export function TabIndicatorProvider({
     <TabIndicatorContext.Provider
       value={{
         position,
+        prevPosition,
         selectedPosition,
         setPosition: _setPosition,
         setSelectedPosition: _setSelectedPosition,
