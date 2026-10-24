@@ -5,6 +5,7 @@ import {
   useTabIndicators,
   type ITabIndicatorPos,
 } from './tab-indicator-provider'
+import { DURATION, EASE } from './tab-indicator-selected-h'
 
 const LINE_CLS =
   'absolute left-0 top-0 pointer-events-none select-none shrink-0 bg-app-theme z-10'
@@ -48,10 +49,15 @@ export function TabIndicatorSelectedV({
 
     const h = selectedPosition.h as number
 
-    if (!reducedMotion && previousSelectedPos.current) {
+    console.log('Selected position:', selectedPosition)
+
+    if (
+      !reducedMotion &&
+      previousSelectedPos.current?.y !== selectedPosition.y
+    ) {
       const edges = {
-        head: previousSelectedPos.current.y as number,
-        tail: previousSelectedPos.current.y as number,
+        head: previousSelectedPos.current?.y as number,
+        tail: previousSelectedPos.current?.y as number,
       }
 
       const render = () => {
@@ -68,38 +74,42 @@ export function TabIndicatorSelectedV({
         .timeline({ onUpdate: render })
         .to(edges, {
           head: selectedPosition.y as number,
-          duration: 0.5,
-          ease: 'power3.out',
+          duration: DURATION,
+          ease: EASE,
         })
         .to(
           edges,
           {
             tail: selectedPosition.y as number,
-            duration: 0.5,
-            ease: 'power3.out',
+            duration: DURATION,
+            ease: EASE,
           },
           0.1
         )
     } else {
-      gsap.set(line1, {
-        y: selectedPosition.y,
-        height: h,
-        scaleY: selectedPosition.scale ?? 1,
-      })
+      gsap
+        .timeline()
+        .set(line1, {
+          y: selectedPosition.y,
+          height: h,
+        })
+        .to(line1, {
+          scaleY: selectedPosition.scale ?? 1,
+          duration: DURATION,
+          ease: EASE,
+        })
     }
 
     previousSelectedPos.current = selectedPosition
   }, [selectedPosition?.y, selectedPosition?.h, selectedPosition?.scale])
 
   return (
-    <>
-      <span
-        ref={selectedLineRef1}
-        className={LINE_CLS}
-        style={{
-          width: w,
-        }}
-      />
-    </>
+    <span
+      ref={selectedLineRef1}
+      className={LINE_CLS}
+      style={{
+        width: w,
+      }}
+    />
   )
 }

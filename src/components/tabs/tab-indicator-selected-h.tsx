@@ -3,6 +3,9 @@ import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import { ITabIndicatorPos, useTabIndicators } from './tab-indicator-provider'
 
+export const EASE = 'power2.out'
+export const DURATION = 0.5
+
 const LINE_CLS =
   'absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none shrink-0'
 
@@ -45,10 +48,13 @@ export function TabIndicatorSelectedH({
 
     const w = selectedPosition.w as number
 
-    if (!reducedMotion && previousSelectedPos.current) {
+    if (
+      !reducedMotion &&
+      previousSelectedPos.current?.x !== selectedPosition.x
+    ) {
       const edges = {
-        head: previousSelectedPos.current.x as number,
-        tail: previousSelectedPos.current.x as number,
+        head: previousSelectedPos.current?.x as number,
+        tail: previousSelectedPos.current?.x as number,
       }
 
       const render = () => {
@@ -65,24 +71,30 @@ export function TabIndicatorSelectedH({
         .timeline({ onUpdate: render })
         .to(edges, {
           head: selectedPosition.x as number,
-          duration: 0.5,
-          ease: 'power3.out',
+          duration: DURATION,
+          ease: EASE,
         })
         .to(
           edges,
           {
             tail: selectedPosition.x as number,
-            duration: 0.5,
-            ease: 'power3.out',
+            duration: DURATION,
+            ease: EASE,
           },
           0.1
         )
     } else {
-      gsap.set(line1, {
-        x: selectedPosition.x,
-        width: w,
-        scaleX: selectedPosition.scale ?? 1,
-      })
+      gsap
+        .timeline()
+        .set(line1, {
+          x: selectedPosition.x,
+          width: w,
+        })
+        .to(line1, {
+          scaleX: selectedPosition.scale ?? 1,
+          duration: DURATION,
+          ease: EASE,
+        })
     }
 
     previousSelectedPos.current = selectedPosition

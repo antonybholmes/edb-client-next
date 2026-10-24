@@ -3636,6 +3636,10 @@
         {
           "msg": "Added grain to gradients. Refined gsap timelines for better reuse and performance",
           "date": "2026-10-24T13:52:45.118Z"
+        },
+        {
+          "msg": "Removal of line strech animations that use two lines trick and instead now uses one line",
+          "date": "2026-10-24T14:21:59.888Z"
         }
       ]
     },
