@@ -33,11 +33,7 @@ interface IProps extends ITabMenu, VariantProps<typeof toggleGroupVariants> {
   defaultWidth?: number
 }
 
-function _IosTabs({
-  id = 'ios-tabs',
-  maxNameLength = -1,
-  defaultWidth = 5,
-}: IProps) {
+function _IosTabs({ id, maxNameLength = -1, defaultWidth = 4.5 }: IProps) {
   const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
   const { selectedPosition, setSelectedPosition } = useTabIndicators()
 
@@ -45,6 +41,7 @@ function _IosTabs({
 
   const buttonsRef = useRef<HTMLElement[]>([])
   const [focus, setFocus] = useState(false)
+  const [hover, setHover] = useState(false)
 
   useEffect(() => {
     // if (!buttonsRef.current[selectedTabIndex] || !tabListRef.current) {
@@ -67,8 +64,9 @@ function _IosTabs({
       ...selectedPosition,
       x: `${selectedTabIndex * defaultWidth}rem`,
       w: `${defaultWidth}rem`,
+      scale: hover ? 1.1 : 1,
     })
-  }, [selectedTabIndex])
+  }, [selectedTabIndex, hover])
 
   return (
     <Tabs
@@ -77,15 +75,15 @@ function _IosTabs({
         setTab(v)
       }}
       orientation="horizontal"
-      className="bg-muted/40 rounded-full p-0.5 border border-border/30 text-xs"
+      className="bg-muted/40 rounded-full text-xs p-0.5"
     >
       <TabsList
         ref={tabListRef}
-
         data-focus={focus}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
-        className="relative overflow-hidden rounded-full"
+        onPointerEnter={() => setHover(true)}
+        onPointerLeave={() => setHover(false)}
         variant="default"
       >
         {tabs?.map((tab, ti) => {
@@ -113,7 +111,7 @@ function _IosTabs({
               }}
               className={cn(
                 FOCUS_INSET_RING_CLS,
-                'z-30 data-checked:font-semibold h-7'
+                'z-30 data-checked:font-semibold h-7.5 relative'
               )}
               style={{ width: `${defaultWidth}rem` }}
             >

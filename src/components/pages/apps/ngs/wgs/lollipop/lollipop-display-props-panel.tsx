@@ -44,7 +44,7 @@ import {
 } from './variants'
 
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -269,45 +269,44 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
 
             <AccordionItem value="x-axis">
               <AccordionTrigger
+                leftChildren={
+                  <SmallSwitch
+                    checked={displayProps.axes.x.show}
+                    onCheckedChange={(state) =>
+                      setDisplayProps(
+                        produce(displayProps, (draft) => {
+                          draft.axes.x.show = state
+                        })
+                      )
+                    }
+                  />
+                }
                 rightChildren={
-                  <>
-                    <FontPopover
-                      fonts={[
-                        {
-                          title: 'Axes Title',
-                          textProps: displayProps.axes.title,
-                          update: (font) =>
-                            setDisplayProps(
-                              produce(displayProps, (draft) => {
-                                draft.axes.title = font
-                              })
-                            ),
-                        },
+                  <FontPopover
+                    fonts={[
+                      {
+                        title: 'Axes Title',
+                        textProps: displayProps.axes.title,
+                        update: (font) =>
+                          setDisplayProps(
+                            produce(displayProps, (draft) => {
+                              draft.axes.title = font
+                            })
+                          ),
+                      },
 
-                        {
-                          title: 'Axes Labels',
-                          textProps: displayProps.axes.labels,
-                          update: (font) =>
-                            setDisplayProps(
-                              produce(displayProps, (draft) => {
-                                draft.axes.labels = font
-                              })
-                            ),
-                        },
-                      ]}
-                    />
-
-                    <Switch
-                      checked={displayProps.axes.x.show}
-                      onCheckedChange={(state) =>
-                        setDisplayProps(
-                          produce(displayProps, (draft) => {
-                            draft.axes.x.show = state
-                          })
-                        )
-                      }
-                    />
-                  </>
+                      {
+                        title: 'Axes Labels',
+                        textProps: displayProps.axes.labels,
+                        update: (font) =>
+                          setDisplayProps(
+                            produce(displayProps, (draft) => {
+                              draft.axes.labels = font
+                            })
+                          ),
+                      },
+                    ]}
+                  />
                 }
               >
                 X-Axis
@@ -331,19 +330,17 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
 
             <AccordionItem value="y-axis">
               <AccordionTrigger
-                rightChildren={
-                  <>
-                    <Switch
-                      checked={displayProps.axes.y.show}
-                      onCheckedChange={(state) =>
-                        setDisplayProps(
-                          produce(displayProps, (draft) => {
-                            draft.axes.y.show = state
-                          })
-                        )
-                      }
-                    />
-                  </>
+                leftChildren={
+                  <SmallSwitch
+                    checked={displayProps.axes.y.show}
+                    onCheckedChange={(state) =>
+                      setDisplayProps(
+                        produce(displayProps, (draft) => {
+                          draft.axes.y.show = state
+                        })
+                      )
+                    }
+                  />
                 }
               >
                 Y-Axis
@@ -378,33 +375,33 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
 
             <AccordionItem value="aa">
               <AccordionTrigger
+                leftChildren={
+                  <SmallSwitch
+                    checked={displayProps.seq.show}
+                    onCheckedChange={(state) =>
+                      setDisplayProps(
+                        produce(displayProps, (draft) => {
+                          draft.seq.show = state
+                        })
+                      )
+                    }
+                  />
+                }
                 rightChildren={
-                  <>
-                    <FontPopover
-                      fonts={[
-                        {
-                          title: 'Font',
-                          textProps: displayProps.seq.text,
-                          update: (font) =>
-                            setDisplayProps(
-                              produce(displayProps, (draft) => {
-                                draft.seq.text = font
-                              })
-                            ),
-                        },
-                      ]}
-                    />
-                    <Switch
-                      checked={displayProps.seq.show}
-                      onCheckedChange={(state) =>
-                        setDisplayProps(
-                          produce(displayProps, (draft) => {
-                            draft.seq.show = state
-                          })
-                        )
-                      }
-                    />
-                  </>
+                  <FontPopover
+                    fonts={[
+                      {
+                        title: 'Font',
+                        textProps: displayProps.seq.text,
+                        update: (font) =>
+                          setDisplayProps(
+                            produce(displayProps, (draft) => {
+                              draft.seq.text = font
+                            })
+                          ),
+                      },
+                    ]}
+                  />
                 }
               >
                 Amino Acids

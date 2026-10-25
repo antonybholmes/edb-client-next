@@ -42,7 +42,8 @@ export function TabIndicatorIosSelected() {
         width: selectedPosition.w,
         //height: selectedPosition.h,
         scale: selectedPosition.scale || 1,
-        duration: 0.6,
+        opacity: selectedPosition.scale !== 1 ? 0.8 : 1,
+        duration: 0.3,
         ease: 'back.out',
       },
       0
@@ -52,7 +53,7 @@ export function TabIndicatorIosSelected() {
   return (
     <span
       ref={selectedLineRef}
-      className="absolute left-0 top-0 z-20 h-full bg-muted/90 rounded-full pointer-events-none select-none"
+      className="absolute left-0 top-0 z-20 h-full bg-background shadow-md rounded-full pointer-events-none select-none"
       // style={{
       //   width: defaultWidth,
       // }}

@@ -93,9 +93,7 @@ export function DataToolbar() {
                 )
               }
             >
-              <span>
-                Apply <LogSpan />
-              </span>
+              <LogSpan />
             </DropdownMenuItem>
             <DropdownMenuItem
               aria-label="Log2(x+1)"
@@ -109,9 +107,7 @@ export function DataToolbar() {
                 )
               }
             >
-              <span>
-                Apply <LogSpan>x+1</LogSpan>
-              </span>
+              <LogSpan>x+1</LogSpan>
             </DropdownMenuItem>
             <DropdownMenuItem
               aria-label="Log10(x)"
@@ -125,9 +121,7 @@ export function DataToolbar() {
                 )
               }
             >
-              <span>
-                Apply <LogSpan base={10}>x</LogSpan>
-              </span>
+              <LogSpan base={10}>x</LogSpan>
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -142,9 +136,7 @@ export function DataToolbar() {
                 )
               }
             >
-              <span>
-                Apply <LogSpan base={10}>x+1</LogSpan>
-              </span>
+              <LogSpan base={10}>x+1</LogSpan>
             </DropdownMenuItem>
           </ToolbarOptionalDropdownButton>
 

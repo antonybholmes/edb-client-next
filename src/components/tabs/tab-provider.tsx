@@ -5,6 +5,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -215,7 +216,11 @@ export function getTabFromValue(
 interface ITabsContext {
   tabs: Record<string, ITabGroup>
   getTabs: (id: string) => ITabGroup
-  setTabs: (id: string, tabs: readonly ITab[]) => void
+  setTabs: (
+    id: string,
+    tabs: readonly ITab[],
+    opts?: { tab?: number | string }
+  ) => void
   setTab: (id: string, tab: number | string) => void
 }
 
@@ -234,7 +239,11 @@ export const useTabContext = () => {
   return ctx
 }
 
-export function useTabs(id: string) {
+export function useTabs(
+  id: string,
+  opts: { callback?: (tab: ITab) => void } = {}
+) {
+  const { callback } = opts
   const { getTabs, setTabs, setTab } = useTabContext()
 
   id = id ?? DEFAULT_GROUP_ID
@@ -249,9 +258,9 @@ export function useTabs(id: string) {
     [tabState]
   )
 
-  const setGroupsTab = useCallback(
-    (tabs: readonly ITab[]) => {
-      setTabs(id, tabs)
+  const setGroupTabs = useCallback(
+    (tabs: readonly ITab[], opts: { tab?: number | string } = {}) => {
+      setTabs(id, tabs, opts)
     },
     [id, setTabs]
   )
@@ -263,12 +272,18 @@ export function useTabs(id: string) {
     [id, setTab]
   )
 
+  useEffect(() => {
+    if (callback && selectedTab) {
+      callback(selectedTab)
+    }
+  }, [callback, selectedTab])
+
   return {
     selectedTab,
     tabs: tabState.tabs,
     selectedTabIndex: tabState.selectedTabIndex,
     setTab: setGroupTab,
-    setTabs: setGroupsTab,
+    setTabs: setGroupTabs,
   }
 }
 
@@ -289,44 +304,39 @@ export function TabProvider({ children }: IChildrenProps) {
 
   const getTabs = useCallback(
     (id: string) => {
-      //if (id in tabs) {
       return tabs[id] ?? { ...DEFAULT_TAB_GROUP, id }
     },
     [tabs]
   )
 
-  const _setTabs = useCallback((id: string, tabs: readonly ITab[]) => {
-    setTabs((prev) => {
-      let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+  const _setTabs = useCallback(
+    (id: string, tabs: readonly ITab[], opts?: { tab?: number | string }) => {
+      const { tab = 0 } = opts
 
-      return {
-        ...prev,
-        [id]: { ...currentTab, tabs, selectedTabIndex: 0 },
-      }
-    })
-  }, [])
+      setTabs((prev) => {
+        let currentTabGroup = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+
+        return {
+          ...prev,
+          [id]: {
+            ...currentTabGroup,
+            tabs,
+            selectedTabIndex: findTabIndex(tabs, tab),
+          },
+        }
+      })
+    },
+    []
+  )
 
   const _setTab = useCallback((id: string, tab: number | string) => {
     setTabs((prev) => {
-      let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+      let currentTabGroup = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
 
-      let index = 0
-
-      if (typeof tab === 'number') {
-        index = tab
-      } else if (typeof tab === 'string') {
-        const lt = tab.toLowerCase()
-
-        const idx = currentTab.tabs.findIndex(
-          (t) => t.id.toLowerCase() === lt || t.name?.toLowerCase() === lt
-        )
-        if (idx !== -1) {
-          index = idx
-        }
-      }
+      let index = findTabIndex(currentTabGroup.tabs, tab)
 
       // don't update the state if the selected tab index hasn't changed
-      if (index === currentTab.selectedTabIndex) {
+      if (index === currentTabGroup.selectedTabIndex) {
         return prev
       }
 
@@ -334,7 +344,7 @@ export function TabProvider({ children }: IChildrenProps) {
         ...prev,
         [id]: {
           id,
-          tabs: currentTab.tabs,
+          tabs: currentTabGroup.tabs,
           selectedTabIndex: index,
         },
       }
@@ -353,4 +363,19 @@ export function TabProvider({ children }: IChildrenProps) {
       {children}
     </TabsContext.Provider>
   )
+}
+
+function findTabIndex(tabs: readonly ITab[], tab: number | string) {
+  if (typeof tab === 'number') {
+    return tab
+  } else if (typeof tab === 'string') {
+    const lt = tab.toLowerCase()
+    const idx = tabs.findIndex(
+      (t) => t.id.toLowerCase() === lt || t.name?.toLowerCase() === lt
+    )
+    if (idx !== -1) {
+      return idx
+    }
+  }
+  return 0
 }

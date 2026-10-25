@@ -50,16 +50,13 @@ import Fuse from 'fuse.js'
 import { produce } from 'immer'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
-import {
-  GroupToggle,
-  ToggleGroup,
-} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 
+import { IosTabs } from '@/components/tabs/ios-tabs'
 import { useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
@@ -99,11 +96,42 @@ export function GseaPlotPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const { autoSave } = useSVG()
+
+  const { setTabs: setGseaTabs } = useTabs('gsea-tabs', {
+    callback: (tab: ITab) => {
+      if (tab.id === settings.view.tab) {
+        return
+      }
+
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.view.tab = tab.id as 'graph' | 'bubble'
+        })
+      )
+    },
+  })
+
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
+
+  useEffect(() => {
+    setGseaTabs(
+      [
+        {
+          id: 'graph',
+          name: 'Graph',
+        },
+        {
+          id: 'bubble',
+          name: 'Bubble',
+        },
+      ],
+      { tab: settings.view.tab }
+    )
+  }, [setGseaTabs])
 
   useEffect(() => {
     setToolbarTabs([
@@ -332,7 +360,7 @@ export function GseaPlotPage() {
                   }}
                 >
                   <HCenterRow className="pb-2">
-                    <ToggleGroup
+                    {/* <ToggleGroup
                       className="text-xs bg-muted/50 p-0.5 rounded-full"
                       value={[settings.view.tab]}
                       onValueChange={(v) => {
@@ -353,7 +381,9 @@ export function GseaPlotPage() {
                       <GroupToggle value="bubble" className="w-18">
                         Bubble
                       </GroupToggle>
-                    </ToggleGroup>
+                    </ToggleGroup> */}
+
+                    <IosTabs id="gsea-tabs" />
                   </HCenterRow>
                   <ExtScrollCard className="grow px-2 pb-2">
                     <Tabs

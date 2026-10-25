@@ -48,7 +48,11 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { FileIcon } from '@/components/icons/computer/file-icon'
 import { BaseRow } from '@/components/layout/base-row'
-import { useToolbarTabs, type ITab } from '@/components/tabs/tab-provider'
+import {
+  useTabs,
+  useToolbarTabs,
+  type ITab,
+} from '@/components/tabs/tab-provider'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/utils/dataframe-utils'
@@ -64,11 +68,8 @@ import { useOpen } from './use-open'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/baseui/tabs'
-import {
-  GroupToggle,
-  ToggleGroup,
-} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
+import { IosTabs } from '@/components/tabs/ios-tabs'
 import { usePasteText } from '@/hooks/paste-text'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { textToLines } from '@/lib/text/lines'
@@ -143,6 +144,20 @@ function VennPage() {
   const { settings: edbSettings } = useEdbSettings()
 
   const { sheets } = useCurrentSheets()
+
+  const { setTabs: setGseaTabs } = useTabs('venn', {
+    callback: (tab: ITab) => {
+      if (tab.id === settings.view.tab) {
+        return
+      }
+
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.view.tab = tab.id as 'circles' | 'heatmap'
+        })
+      )
+    },
+  })
 
   // function onFileChange(_message: string, files: FileList | null) {
   //   if (!files) {
@@ -232,6 +247,22 @@ function VennPage() {
       openFiles(files)
     })
   })
+
+  useEffect(() => {
+    setGseaTabs(
+      [
+        {
+          id: 'circles',
+          name: 'Circles',
+        },
+        {
+          id: 'heatmap',
+          name: 'Heatmap',
+        },
+      ],
+      { tab: settings.view.tab }
+    )
+  }, [setGseaTabs])
 
   // useEffect(() => {
   //   setSideTabs([
@@ -414,7 +445,7 @@ function VennPage() {
       </HeaderSlotPortal>
 
       <HeaderSlotPortal slot="header-center">
-        <ToggleGroup
+        {/* <ToggleGroup
           className="text-xs bg-muted/50 p-0.5 rounded-full"
           value={[settings.view.tab]}
           onValueChange={(v) => {
@@ -435,7 +466,9 @@ function VennPage() {
           <GroupToggle value="heatmap" className="w-18">
             Heatmap
           </GroupToggle>
-        </ToggleGroup>
+        </ToggleGroup> */}
+
+        <IosTabs id="venn" />
       </HeaderSlotPortal>
 
       <ShortcutLayout signinRequired={false}>
