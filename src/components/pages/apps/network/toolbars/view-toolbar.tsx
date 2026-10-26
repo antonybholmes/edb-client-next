@@ -4,6 +4,10 @@ import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/baseui/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
@@ -11,7 +15,7 @@ import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ZoomSelectList } from '@/components/toolbar/zoom-select-list'
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
-import { Fullscreen, Tags } from 'lucide-react'
+import { Blend, EyeOff, Fullscreen, Tags } from 'lucide-react'
 import { NodeViewMode, useNetworkSettings } from '../network-settings'
 import { FieldSelectList } from '../props/field-select-list'
 
@@ -50,7 +54,7 @@ export function ViewToolbar() {
         </ToolbarCol>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Nodes" className="gap-x-2">
+      <ToolbarTabGroup title="Nodes" className="gap-x-1">
         <ToolbarColButton
           title="Toggle Whether All Node Labels Are Shown"
           className="text-xs font-normal"
@@ -74,7 +78,32 @@ export function ViewToolbar() {
             <FieldSelectList />
           </ToolbarRow>
           <ToolbarRow title="Node View" titleCls="w-16" smallTitle="View">
-            <SelectList
+            <ToggleGroup
+              value={[settings.plot.nodes.view.mode]}
+              onValueChange={(v) => {
+                if (v[0]) {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.plot.nodes.view.mode = v[0] as NodeViewMode
+                    })
+                  )
+                }
+              }}
+              //className="border border-border/50 overflow-hidden rounded-theme"
+              size="toolbar"
+            >
+              <GroupToggle value="normal" className="px-2">
+                Normal
+              </GroupToggle>
+              <GroupToggle value="translucent" aspect="icon">
+                <Blend size={16} />
+              </GroupToggle>
+              <GroupToggle value="hidden" title="Hidden" aspect="icon">
+                <EyeOff size={16} />
+              </GroupToggle>
+            </ToggleGroup>
+
+            {/* <SelectList
               items={NODE_VIEW_MODES}
               value={settings.plot.nodes.view.mode}
               onValueChange={(value) => {
@@ -93,7 +122,7 @@ export function ViewToolbar() {
                   {position.label}
                 </SelectItem>
               ))}
-            </SelectList>
+            </SelectList> */}
           </ToolbarRow>
         </ToolbarCol>
 

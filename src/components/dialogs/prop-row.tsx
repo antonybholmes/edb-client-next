@@ -95,14 +95,17 @@ export function PropRow({
           gap,
           className: cn(
             'min-h-6 gap-x-4',
-            //info ? 'items-start pb-1' : 'items-center',
+
             className
           ),
         })}
       >
         {side === 'right' && (
           <VCenterRow className="gap-x-1">
-            <label className={cn({ 'font-medium': info })} title={htmlTooltip}>
+            <label
+              className={cn({ 'font-medium': info }, className)}
+              title={htmlTooltip}
+            >
               {title}
             </label>
             {tooltip && <InfoHoverCard>{tooltip}</InfoHoverCard>}

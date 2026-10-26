@@ -216,7 +216,6 @@ export function VolcanoDialog({
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 >
-                  Apply{' '}
                   <LogSpan base={2} minus={true}>
                     fold change
                   </LogSpan>
@@ -255,7 +254,6 @@ export function VolcanoDialog({
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 >
-                  Apply{' '}
                   <LogSpan base={10} minus={true}>
                     p-value
                   </LogSpan>
