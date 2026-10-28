@@ -23,7 +23,7 @@ const APP_CLS = cn(
 )
 
 const APP_BG_CLS = cn(
-  'pointer-events-none absolute  aspect-square shrink-0 grow-0',
+  'pointer-events-none absolute aspect-square shrink-0 grow-0',
   'origin-center top-1/2 left-1/2 -translate-1/2 inline-block'
 )
 

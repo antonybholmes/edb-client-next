@@ -1,9 +1,9 @@
 import { ColorMapMenu } from '@/components/pages/apps/matcalc/color-map-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
+import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
@@ -48,18 +48,20 @@ export function BubbleToolbar() {
               ))}
             </SelectList>
           </ToolbarRow>
-          <Checkbox
-            checked={settings.phenotypes.merge}
-            onCheckedChange={(v) => {
+          <Toggle
+            pressed={settings.phenotypes.merge}
+            onPressedChange={(v) => {
               updateSettings(
                 produce(settings, (draft) => {
                   draft.phenotypes.merge = v
                 })
               )
             }}
+            size="toolbar"
+            className="px-2"
           >
             Merge Phenotypes
-          </Checkbox>
+          </Toggle>
         </ToolbarCol>
         <ToolbarCol>
           <ColorMapMenu
@@ -77,8 +79,7 @@ export function BubbleToolbar() {
       </ToolbarTabGroup>
       <ToolbarTabGroup title="Bubbles" className="gap-x-2">
         <ToolbarCol>
-          <ToolbarRow>
-            <span>{TEXT_SORT}</span>
+          <ToolbarRow title={TEXT_SORT}>
             <SelectList
               items={SORT_BY_ITEMS}
               variant="toolbar"

@@ -10,12 +10,12 @@ import { ITEM_REGEX, TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { DownloadImageIcon } from '@/components/icons/computer/download-image-icon'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
 import { Input } from '@/components/shadcn/ui/themed/baseui/input'
 import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
+import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
@@ -62,11 +62,11 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Cluster" className="gap-x-2">
-        <ToolbarCol gap="gap-x-2">
+        <ToolbarCol>
           <ToolbarRow>
-            <Checkbox
-              checked={settings.heatmap.cluster.rows.on}
-              onCheckedChange={(checked) => {
+            <Toggle
+              pressed={settings.heatmap.cluster.rows.on}
+              onPressedChange={(checked) => {
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.heatmap.cluster.rows.on = checked as boolean
@@ -74,14 +74,16 @@ export function HomeToolbar() {
                 )
               }}
               title="Cluster Rows"
+              className="px-2"
+              size="toolbar"
             >
               Rows
-            </Checkbox>
+            </Toggle>
           </ToolbarRow>
           <ToolbarRow>
-            <Checkbox
-              checked={settings.heatmap.cluster.cols.on}
-              onCheckedChange={(checked) => {
+            <Toggle
+              pressed={settings.heatmap.cluster.cols.on}
+              onPressedChange={(checked) => {
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.heatmap.cluster.cols.on = checked as boolean
@@ -89,9 +91,11 @@ export function HomeToolbar() {
                 )
               }}
               title="Cluster Columns"
+              className="px-2"
+              size="toolbar"
             >
               Columns
-            </Checkbox>
+            </Toggle>
           </ToolbarRow>
         </ToolbarCol>
       </ToolbarTabGroup>

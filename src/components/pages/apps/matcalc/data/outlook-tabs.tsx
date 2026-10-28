@@ -17,6 +17,7 @@ import { IClassProps } from '@/interfaces/class-props'
 
 interface IShortcutProps extends IClassProps {
   id?: string
+  variant?: 'sidebar' | 'sidebar-theme'
   defaultHeight?: number
   showIcons?: boolean
   showLabels?: boolean
@@ -24,6 +25,7 @@ interface IShortcutProps extends IClassProps {
 
 function _OutlookTabs({
   id = 'side-tabs',
+  variant = 'sidebar',
   defaultHeight = 2.25,
   showIcons = true,
   showLabels = true,
@@ -126,7 +128,7 @@ function _OutlookTabs({
 
           return (
             <TabsTrigger
-              variant="sidebar"
+              variant={variant}
               value={tab.id}
               id={tab.id}
               key={tab.id}

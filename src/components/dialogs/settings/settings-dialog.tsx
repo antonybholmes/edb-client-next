@@ -162,7 +162,11 @@ export function SettingsDialog({
       overlayColor="trans"
     >
       <BaseCol className="p-3 py-4">
-        <OutlookTabs id="settings-dialog-tabs" className="text-xs" />
+        <OutlookTabs
+          id="settings-dialog-tabs"
+          className="text-xs"
+          variant="sidebar-theme"
+        />
       </BaseCol>
 
       <VScrollPanel className="grow">

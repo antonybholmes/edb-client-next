@@ -39,71 +39,71 @@ export function TabIndicatorSelectedH({
   const selectedLineRef1 = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    if (!selectedPosition) {
+    if (!selectedPosition || !selectedLineRef1.current) {
       return
     }
 
     const line1 = selectedLineRef1.current
 
-    if (!line1 || !selectedPosition) {
-      return
-    }
-
     gsap.killTweensOf(line1)
 
     const w = selectedPosition.w as number
 
-    if (
-      !reducedMotion &&
-      previousSelectedPos.current?.x !== selectedPosition.x
-    ) {
-      const edges = {
-        head: previousSelectedPos.current?.x as number,
-        tail: previousSelectedPos.current?.x as number,
-      }
+    if (!reducedMotion) {
+      if (previousSelectedPos.current?.x !== selectedPosition.x) {
+        const edges = {
+          head: previousSelectedPos.current?.x as number,
+          tail: previousSelectedPos.current?.x as number,
+        }
 
-      const render = () => {
-        const left = Math.min(edges.head, edges.tail)
-        const right = Math.max(edges.head, edges.tail) + w
-        gsap.set(line1, {
-          x: left,
-          width: right - left,
-          scaleX: selectedPosition.scale ?? 1,
-        })
-      }
+        const render = () => {
+          const left = Math.min(edges.head, edges.tail)
+          const right = Math.max(edges.head, edges.tail) + w
 
-      gsap
-        .timeline({ onUpdate: render })
-        .to(edges, {
-          head: selectedPosition.x as number,
-          duration: DURATION,
-          ease: EASE,
-        })
-        .to(
-          edges,
-          {
-            tail: selectedPosition.x as number,
+          gsap.set(line1, {
+            x: left,
+            width: right - left,
+            scaleX: selectedPosition.scale ?? 1,
+          })
+        }
+
+        gsap
+          .timeline({ onUpdate: render })
+          .to(edges, {
+            head: selectedPosition.x as number,
             duration: DURATION,
             ease: EASE,
-          },
-          0.1
-        )
-    } else {
-      gsap
-        .timeline()
-        .set(line1, {
-          x: selectedPosition.x,
-          width: w,
-        })
-        .to(line1, {
+          })
+          .to(
+            edges,
+            {
+              tail: selectedPosition.x as number,
+              duration: DURATION,
+              ease: EASE,
+            },
+            0.1
+          )
+      } else {
+        gsap.to(line1, {
           scaleX: selectedPosition.scale ?? 1,
           duration: DURATION,
           ease: EASE,
         })
+      }
+    } else {
+      gsap.set(line1, {
+        x: selectedPosition.x,
+        width: w,
+        scaleX: selectedPosition.scale ?? 1,
+      })
     }
-
     previousSelectedPos.current = selectedPosition
-  }, [selectedPosition?.x, selectedPosition?.w, selectedPosition?.scale])
+  }, [
+    selectedPosition?.x,
+    selectedPosition?.w,
+    selectedPosition?.scale,
+    reducedMotion,
+  ])
 
   return (
     <>

@@ -210,7 +210,6 @@ interface IProps extends IChildrenProps, ITabMenu {
   buttonClassName?: string
   maxNameLength?: number
   tabButtonProps?: VariantProps<typeof tabButtonVariants>
-  //selectedMouseOverSize?: SelectedMouseOverSize
   tabListCls?: string
 }
 

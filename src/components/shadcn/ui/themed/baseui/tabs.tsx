@@ -43,6 +43,11 @@ export const SIDEBAR_CLS = cn(
   'flex-row items-center px-2 h-10 data-active:bg-muted/50'
 )
 
+export const SIDEBAR_THEME_CLS = cn(
+  BASE_TRIGGER_CLS,
+  'flex-row items-center px-2 h-10 data-active:bg-app-theme/30'
+)
+
 export const PLAIN_CLS = cn(
   FOCUS_RING_CLS,
   'inline-flex items-center justify-center whitespace-nowrap py-1 px-2',
@@ -112,6 +117,7 @@ const triggerVariants = cva('relative', {
       plain: PLAIN_CLS,
       underline: UNDERLINE_CLS,
       sidebar: SIDEBAR_CLS,
+      'sidebar-theme': SIDEBAR_THEME_CLS,
       safari: SAFARI_CLS,
     },
     rounded: {

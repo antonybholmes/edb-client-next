@@ -135,7 +135,7 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
         // }}
         align="start"
         alignOffset={8}
-        className={cn(GLASS_CLS, 'text-xs flex flex-col ')}
+        className={cn(GLASS_CLS, 'text-xs flex flex-col')}
       >
         <HeaderLinks tab={tab} handleClick={() => setOpen(false)} />
 
