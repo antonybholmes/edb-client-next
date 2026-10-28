@@ -16,7 +16,8 @@
     "copyright": "© 2025-2026 Antony Holmes",
     "modified": "2026-10-23T16:07:27.325Z",
     "hash": "d71ee21ac8ae7aabc75ea635656fe64ce93cca44edae873210c0d4b7a3b17cf6",
-    "build": 570
+    "build": 570,
+    "color": "#000000"
   },
   {
     "name": "Convert",

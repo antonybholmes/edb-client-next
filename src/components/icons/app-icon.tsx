@@ -23,12 +23,12 @@ const APP_CLS = cn(
 )
 
 const APP_BG_CLS = cn(
-  'pointer-events-none absolute rounded-full aspect-square shrink-0 grow-0',
-  'origin-center top-1/2 left-1/2 -translate-1/2 '
+  'pointer-events-none absolute  aspect-square shrink-0 grow-0',
+  'origin-center top-1/2 left-1/2 -translate-1/2 inline-block'
 )
 
 const DURATION = 0.4
-const EASE = 'power1.out'
+const EASE = 'back2.out'
 
 export function AppTile({
   module,
@@ -237,7 +237,8 @@ export function AppIcon({
             width: `${innerSize}rem`,
             height: `${innerSize}rem`,
             //'--base-color': appInfo.color ?? 'lightslategray',
-
+            borderRadius: '45%',
+            //cornerShape: 'squircle',
             backgroundImage: bgImage,
           } as CSSProperties
         }
