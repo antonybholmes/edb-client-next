@@ -106,14 +106,12 @@ export function TabIndicatorSelectedH({
   ])
 
   return (
-    <>
-      <span
-        ref={selectedLineRef1}
-        className={LINE_CLS}
-        style={{
-          height: h,
-        }}
-      />
-    </>
+    <span
+      ref={selectedLineRef1}
+      className={LINE_CLS}
+      style={{
+        height: h,
+      }}
+    />
   )
 }

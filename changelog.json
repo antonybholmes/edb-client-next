@@ -3649,5 +3649,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-10-23T21:33:59.415Z"
+  },
+  {
+    "version": "2026.10.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Versioning switch to yyyy.mm.dd.build",
+          "date": "2026-10-29T01:22:29.345Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-29T01:22:29.345Z"
   }
 ]

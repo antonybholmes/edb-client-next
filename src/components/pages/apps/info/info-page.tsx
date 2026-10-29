@@ -83,9 +83,7 @@ export function InfoPage({ children }: IChildrenProps) {
             <AutoRowCol className="justify-between gap-4" breakpoint={400}>
               <BaseCol>
                 <p className="font-semibold">Web Client</p>
-                <p>
-                  Build {config.version}.{config.build}
-                </p>
+                <p>Build {config.version}</p>
                 {IS_DEV_MODE && <p>{config.hash.slice(0, 12)}</p>}
                 <p>
                   Updated {format(new Date(config.modified), 'MMM dd, yyyy')}

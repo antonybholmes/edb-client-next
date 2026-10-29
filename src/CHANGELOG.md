@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026.10.0 (Oct, 2026)
+
+### Changed
+
+- Versioning switch to yyyy.mm.dd.build.
+
+
 ## 93.4.0 (Oct, 2026)
 
 ### Changed

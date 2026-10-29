@@ -2,9 +2,9 @@
   "name": "Venn",
   "description": "Venn diagrams and overlap heatmaps.",
   "color": "#00008B",
-  "version": "26.8.6",
+  "version": "2026.10.28.1008",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-10-28T23:21:20.518Z",
+  "modified": "2026-10-29T01:14:54.150Z",
   "hash": "745ce3377660c89323f0fa365dddc17f8982cec6ead3632e2d0e0f8134d11e9b",
-  "build": 1006
+  "build": 1008
 }

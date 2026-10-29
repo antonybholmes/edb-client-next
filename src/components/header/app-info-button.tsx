@@ -30,9 +30,7 @@ export function AppInfoContent() {
         <span className="font-medium">{capitalCase(appInfo.description)}</span>
       )}
 
-      <span>
-        Build {appInfo?.version}.{appInfo?.build}
-      </span>
+      <span>Build {appInfo?.version}</span>
       {IS_DEV_MODE && <span>Snapshot {appInfo.hash.slice(0, 12)}</span>}
       <span>Updated {format(appInfo?.modified, 'MMM dd, yyyy')}</span>
 

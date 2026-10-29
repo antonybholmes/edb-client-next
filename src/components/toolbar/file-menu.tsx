@@ -82,9 +82,7 @@ function AppInfo() {
 
         <BaseCol className="gap-y-1">
           <p>{capitalCase(appInfo?.description)}</p>
-          <p>
-            Build {appInfo.version}.{appInfo.build}
-          </p>
+          <p>Build {appInfo.version}</p>
           <p>Updated {format(appInfo.modified, 'MMM dd, yyyy')}</p>
           {/* <p>{formatString(appInfo?.copyright)}</p> */}
         </BaseCol>

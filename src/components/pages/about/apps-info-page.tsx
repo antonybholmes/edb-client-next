@@ -27,7 +27,7 @@ export function AppsInfoPage() {
             <h1 className="text-base font-semibold">{app.name}</h1>
             <span>{app.description}</span>
             <span>
-              Build {app.version}.{app.build} ({app.hash.slice(0, 12)})
+              Build {app.version} ({app.hash.slice(0, 12)})
             </span>
             <span>
               Updated {format(new Date(app.modified), 'MMM dd, yyyy')}
