@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Versioning switch to yyyy.mm.dd.build.
 
 
