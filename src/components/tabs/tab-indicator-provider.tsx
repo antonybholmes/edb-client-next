@@ -37,8 +37,14 @@ function posChanged(
   a: ITabIndicatorPos | undefined,
   b: ITabIndicatorPos | undefined
 ): boolean {
-  if (a === b) return false
-  if (!a || !b) return true
+  if (a === b) {
+    return false
+  }
+
+  if (!a || !b) {
+    return true
+  }
+
   return (
     a.x !== b.x ||
     a.y !== b.y ||

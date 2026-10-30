@@ -35,8 +35,10 @@ export function TabIndicatorSelectedH({
   // from non-zero to zero, we want to set duration to 0 so it disappears instantly.
 
   const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
+  const edgesRef = useRef<{ head: number; tail: number } | null>(null)
 
   const selectedLineRef1 = useRef<HTMLSpanElement>(null)
+  const timelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
     if (!selectedPosition || !selectedLineRef1.current) {
@@ -44,60 +46,61 @@ export function TabIndicatorSelectedH({
     }
 
     const line1 = selectedLineRef1.current
-
-    gsap.killTweensOf(line1)
-
     const w = selectedPosition.w as number
+    const x = selectedPosition.x as number
 
-    if (!reducedMotion) {
-      if (previousSelectedPos.current?.x !== selectedPosition.x) {
-        const edges = {
-          head: previousSelectedPos.current?.x as number,
-          tail: previousSelectedPos.current?.x as number,
-        }
+    timelineRef.current?.kill()
+    timelineRef.current = null
 
-        const render = () => {
-          const left = Math.min(edges.head, edges.tail)
-          const right = Math.max(edges.head, edges.tail) + w
-
-          gsap.set(line1, {
-            x: left,
-            width: right - left,
-            scaleX: selectedPosition.scale ?? 1,
-          })
-        }
-
-        gsap
-          .timeline({ onUpdate: render })
-          .to(edges, {
-            head: selectedPosition.x as number,
-            duration: DURATION,
-            ease: EASE,
-          })
-          .to(
-            edges,
-            {
-              tail: selectedPosition.x as number,
-              duration: DURATION,
-              ease: EASE,
-            },
-            0.1
-          )
-      } else {
-        gsap.to(line1, {
-          scaleX: selectedPosition.scale ?? 1,
-          duration: DURATION,
-          ease: EASE,
-        })
-      }
-    } else {
+    if (reducedMotion || !previousSelectedPos.current) {
+      edgesRef.current = { head: x, tail: x }
       gsap.set(line1, {
-        x: selectedPosition.x,
+        x,
         width: w,
         scaleX: selectedPosition.scale ?? 1,
       })
+    } else {
+      let edges = edgesRef.current
+
+      if (edges === null) {
+        edges = { head: x, tail: x }
+        edgesRef.current = edges
+      }
+
+      const render = () => {
+        const left = Math.min(edges.head, edges.tail)
+        const right = Math.max(edges.head, edges.tail) + w
+
+        gsap.set(line1, {
+          x: left,
+          width: right - left,
+          scaleX: selectedPosition.scale ?? 1,
+        })
+      }
+
+      timelineRef.current = gsap
+        .timeline({ onUpdate: render })
+        .to(edges, {
+          head: x,
+          duration: DURATION,
+          ease: EASE,
+        })
+        .to(
+          edges,
+          {
+            tail: x,
+            duration: DURATION,
+            ease: EASE,
+          },
+          0.1
+        )
     }
     previousSelectedPos.current = selectedPosition
+
+    return () => {
+      timelineRef.current?.kill()
+      timelineRef.current = null
+    }
   }, [
     selectedPosition?.x,
     selectedPosition?.w,
