@@ -30,8 +30,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@gmod/bbi':
-        specifier: ^12.0.0
-        version: 12.0.0
+        specifier: ^12.2.0
+        version: 12.2.0
       '@hookform/resolvers':
         specifier: ^6.0.2
         version: 6.0.2(react-hook-form@7.91.0(@types/react@19.2.17)(react@19.3.1))(zod@4.6.7)
@@ -682,8 +682,8 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@gmod/bbi@12.0.0':
-    resolution: {integrity: sha512-2MogiH2Ic1nY8Ndam2NBYOnguGzs5XObQxGcunCxratvl5nkZj3L3Vwfm20rnVOUI63q0IIAZVOTbQu3N7p37w==}
+  '@gmod/bbi@12.2.0':
+    resolution: {integrity: sha512-eRgchEqwcalcXOg0u6BOtNV6HgL5KcxsjimY7xTsE6Rkxk929tw9m9Rb6IJ6XQYRCExGAlywWXp8nQ3K3lV6yQ==}
 
   '@gmod/shared-read-cache@2.1.0':
     resolution: {integrity: sha512-AyiUt0hiEGl7lWc1fuigbXR/RToIw3h72dalaRoSNau9WL9ux9rEfkcsXDYTgSDudehfAEQac1jTvn2zrfnELQ==}
@@ -5611,7 +5611,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@gmod/bbi@12.0.0':
+  '@gmod/bbi@12.2.0':
     dependencies:
       '@gmod/shared-read-cache': 2.1.0
       generic-filehandle2: 2.5.1

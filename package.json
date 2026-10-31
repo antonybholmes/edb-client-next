@@ -24,7 +24,7 @@
     "@dnd-kit/abstract": "^0.5.1",
     "@dnd-kit/helpers": "^0.5.1",
     "@dnd-kit/react": "^0.5.1",
-    "@gmod/bbi": "^12.0.0",
+    "@gmod/bbi": "^12.2.0",
     "@hookform/resolvers": "^6.0.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
