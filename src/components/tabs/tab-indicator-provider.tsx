@@ -124,7 +124,10 @@ export function TabIndicatorProvider({
             : { ...DEFAULT_TAB, ...pos }
           : undefined
 
-        if (!posChanged(prev, newPos)) return prev
+        if (!posChanged(prev, newPos)) {
+          return prev
+        }
+
         return newPos
       })
     },

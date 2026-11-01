@@ -11,6 +11,7 @@ import {
 } from '@/components/tabs/tab-indicator-provider'
 import { TabIndicatorSelectedV } from '@/components/tabs/tab-indicator-selected-v'
 
+import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import { cn } from '@/lib/shadcn-utils'
 import { useHistory } from './history-provider/history-provider'
 
@@ -127,7 +128,7 @@ function HistoryTabsContent() {
         })}
 
         <TabIndicatorSelectedV w={3} />
-        {/* <TabIndicatorFollowV /> */}
+        <TabIndicatorFollowV w={3} />
       </TabsList>
     </Tabs>
   )

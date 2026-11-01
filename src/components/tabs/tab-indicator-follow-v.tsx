@@ -19,7 +19,7 @@ export function TabIndicatorFollowV({
   groupId?: string
   w?: string | number
 }) {
-  const { position } = useTabIndicators() //groupId)
+  const { position, prevPosition } = useTabIndicators() //groupId)
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want
@@ -32,7 +32,18 @@ export function TabIndicatorFollowV({
 
   useEffect(() => {
     const line = highlightLineRef.current
+
     if (!line || !position) {
+      return
+    }
+
+    if (!prevPosition) {
+      gsap.set(line, {
+        y: position.y,
+        height: position.h,
+        scaleY: position.scale ?? 1,
+      })
+
       return
     }
 
@@ -40,15 +51,15 @@ export function TabIndicatorFollowV({
       y: position.y,
       height: position.h,
       scaleY: position.scale ?? 1,
-      duration: 0.8,
-      ease: 'power3.out',
+      duration: 0.5,
+      ease: 'power.out',
       overwrite: 'auto',
     })
 
     return () => {
       tween.kill()
     }
-  }, [position?.y, position?.h, position?.scale])
+  }, [position?.y, position?.h, position?.scale, prevPosition])
 
   if (!position) {
     return null
