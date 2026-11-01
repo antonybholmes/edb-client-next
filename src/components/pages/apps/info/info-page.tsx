@@ -120,7 +120,7 @@ export function InfoPage({ children }: IChildrenProps) {
             )}
 
             <LineSeparator />
-            <BaseCol className="gap-y-1">
+            <CenterCol>
               <p className="font-semibold">{config.name}</p>
               <p>{formatString(config.copyright)}</p>
               <CenterCol className="gap-2 mt-2">
@@ -142,7 +142,7 @@ export function InfoPage({ children }: IChildrenProps) {
                   antonyholmes.dev
                 </ThemeLink>
               </CenterCol>
-            </BaseCol>
+            </CenterCol>
           </Card>
 
           <BaseCol className="gap-y-2 text-sm w-full px-4">

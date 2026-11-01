@@ -4,7 +4,7 @@ import { type IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 
 import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
-import { HEADER_LINKS } from '@/menus'
+import { HEADER_LINKS, IAppHeaderLink } from '@/menus'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import type { ILinkProps } from '@/interfaces/link-props'
@@ -71,9 +71,29 @@ export function ModuleButtonLink({
   )
 }
 
+export function HeaderLink({ module }: { module: IAppHeaderLink }) {
+  const { settings } = useEdbSettings()
+
+  const [hover, setHover] = useState(false)
+
+  return (
+    <ModuleButtonLink
+      href={module.slug}
+      aria-label={module.name}
+      target={settings.apps.links.openInNewWindow ? BLANK_TARGET : undefined}
+      title={module.description}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <AppIcon appInfo={module} size={3} animate={true} hover={hover} />
+      <span className="text-[0.7rem] text-center truncate">{module.name}</span>
+    </ModuleButtonLink>
+  )
+}
+
 export function HeaderLinks({
   search,
-  handleClick,
+
   width,
   className,
 }: IHeaderLinksProps & { width: string; search?: string }) {
@@ -96,18 +116,7 @@ export function HeaderLinks({
     .map((module, moduleIndex) => {
       return (
         <li key={moduleIndex}>
-          <ModuleButtonLink
-            href={module.slug}
-            onClick={handleClick}
-            aria-label={module.name}
-            target={
-              settings.apps.links.openInNewWindow ? BLANK_TARGET : undefined
-            }
-            title={module.description}
-          >
-            <AppIcon appInfo={module} size={3} />
-            <p className="text-[0.7rem] text-center truncate">{module.name}</p>
-          </ModuleButtonLink>
+          <HeaderLink module={module} />
         </li>
       )
     })
