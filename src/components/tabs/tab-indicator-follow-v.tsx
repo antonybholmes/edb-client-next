@@ -47,7 +47,7 @@ export function TabIndicatorFollowV({
       return
     }
 
-    const tween = gsap.to(line, {
+    gsap.to(line, {
       y: position.y,
       height: position.h,
       scaleY: position.scale ?? 1,
@@ -55,10 +55,6 @@ export function TabIndicatorFollowV({
       ease: 'power.out',
       overwrite: 'auto',
     })
-
-    return () => {
-      tween.kill()
-    }
   }, [position?.y, position?.h, position?.scale, prevPosition])
 
   if (!position) {
@@ -66,16 +62,6 @@ export function TabIndicatorFollowV({
   }
 
   return (
-    <span
-      ref={highlightLineRef}
-      className={LINE_CLS}
-      // animate={{
-      //   x: tabIndicatorPos.x,
-      //   width: tabIndicatorPos.size,
-      // }}
-      style={{ width: w }}
-      //initial={false}
-      //transition={{ ease: 'easeOut', duration: 0.25 }}
-    />
+    <span ref={highlightLineRef} className={LINE_CLS} style={{ width: w }} />
   )
 }
