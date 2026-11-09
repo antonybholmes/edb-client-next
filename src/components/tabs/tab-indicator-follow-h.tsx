@@ -2,6 +2,8 @@ import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import { useTabIndicators } from './tab-indicator-provider'
 
+export const DURATION_S = 0.4
+
 /**
  * A horizontal line that can be used to follow the mouse
  * over tabs with animation both moving and resizing to the
@@ -36,7 +38,7 @@ export function TabIndicatorFollowH({ h = 2 }: { h?: number }) {
       x: position.x,
       width: position.w,
       scaleX: position.scale ?? 1,
-      duration: 0.5,
+      duration: DURATION_S,
       ease: 'power.out',
       overwrite: 'auto',
     })

@@ -1,5 +1,6 @@
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
+import { DURATION_S } from './tab-indicator-follow-h'
 import { useTabIndicators } from './tab-indicator-provider'
 
 const LINE_CLS =
@@ -51,7 +52,7 @@ export function TabIndicatorFollowV({
       y: position.y,
       height: position.h,
       scaleY: position.scale ?? 1,
-      duration: 0.5,
+      duration: DURATION_S,
       ease: 'power.out',
       overwrite: 'auto',
     })

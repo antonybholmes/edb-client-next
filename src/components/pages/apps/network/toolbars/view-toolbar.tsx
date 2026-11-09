@@ -95,10 +95,18 @@ export function ViewToolbar() {
               <GroupToggle value="normal" className="px-2">
                 Normal
               </GroupToggle>
-              <GroupToggle value="translucent" aspect="icon">
+              <GroupToggle
+                value="translucent"
+                aspect="icon"
+                title="Nodes Are Translucent"
+              >
                 <Blend size={16} />
               </GroupToggle>
-              <GroupToggle value="hidden" title="Hidden" aspect="icon">
+              <GroupToggle
+                value="hidden"
+                title="Nodes Are Hidden"
+                aspect="icon"
+              >
                 <EyeOff size={16} />
               </GroupToggle>
             </ToggleGroup>

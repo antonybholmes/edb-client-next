@@ -313,8 +313,6 @@ export function GseaBubbleProvider({
             ],
           })
 
-    console.log('cax2', cax)
-
     cax = setAxisTickParams(cax, {
       which: 'major',
       show: edbSettings.plots.axes.x.ticks.major.show,
@@ -331,8 +329,6 @@ export function GseaBubbleProvider({
       axisIds: [cax.id],
       axes: { [cax.id]: cax },
     })
-
-    console.log('cax', cax)
 
     addAxes(axes)
   }, [_plots, xlims, settings, edbSettings, globalXLim, addAxes])

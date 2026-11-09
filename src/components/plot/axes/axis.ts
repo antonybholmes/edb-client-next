@@ -103,8 +103,6 @@ export function createAxis(
     ret.range = [0, length]
   }
 
-  console.log('setting ticks1', ret)
-
   if (autoDomain !== undefined && autoDomain) {
     ret = autoAxisDomain(
       ret,
@@ -114,7 +112,6 @@ export function createAxis(
 
   if (ticks !== undefined) {
     ret = setAxisTicks(ret, ticks)
-    console.log('setting ticks xxx', ret)
   }
 
   if (minorTicks !== undefined) {
@@ -520,8 +517,6 @@ function makeTicks(
     if (typeof value !== 'number') {
       return value
     }
-
-    console.log('asdjaosjdojfojsdf', value, format(value))
 
     return {
       v: value,
