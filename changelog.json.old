@@ -3678,6 +3678,10 @@
         {
           "msg": "Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.",
           "date": "2026-11-09T16:40:47.292Z"
+        },
+        {
+          "msg": "Added more support for reduced motion",
+          "date": "2026-11-09T22:33:30.289Z"
         }
       ]
     },
