@@ -74,11 +74,11 @@
     "name": "GSEA Plot",
     "description": "Beautiful GSEA plots.",
     "color": "#ffb366",
-    "version": "2026.11.09.1088",
+    "version": "2026.11.09.1090",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-11-09T16:40:46.196Z",
-    "hash": "181235a5187f11114c4be097f4124c4123312b2cbd439128b33807dfc024b5ae",
-    "build": 1088
+    "modified": "2026-11-09T22:33:29.434Z",
+    "hash": "81261d6a867188fcc49f8710f7cc95a8a98f515cf8dea1fb1e5b56307cb81922",
+    "build": 1090
   },
   {
     "name": "GSEA Web",
@@ -169,11 +169,11 @@
     "abbr": "Nw",
     "description": "Beautiful network graphs.",
     "color": "#4169E1",
-    "version": "2026.10.28.188",
+    "version": "2026.11.09.190",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.140Z",
-    "hash": "d69052023a2a0bc0419f29a64aac936b318a87e44464ac5467339d578fbc0c8a",
-    "build": 188
+    "modified": "2026-11-09T22:33:29.437Z",
+    "hash": "fe28e6d9f6a03d77dd4c9b30d40af1a43dd6046d273a367e5ed569187cd94bd8",
+    "build": 190
   },
   {
     "name": "Oncoplot",

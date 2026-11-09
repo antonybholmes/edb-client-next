@@ -3674,6 +3674,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-11-01T17:20:31.064Z"
+        },
+        {
+          "msg": "Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.",
+          "date": "2026-11-09T16:40:47.292Z"
         }
       ]
     },

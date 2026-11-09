@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added more support for reduced motion.
 - Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.
 - Bug fixes and updates.
 

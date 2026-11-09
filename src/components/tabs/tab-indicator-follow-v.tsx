@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@/hooks/reduced-motion'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import { DURATION_S } from './tab-indicator-follow-h'
@@ -21,6 +22,7 @@ export function TabIndicatorFollowV({
   w?: string | number
 }) {
   const { position, prevPosition } = useTabIndicators() //groupId)
+  const { reducedMotion } = useReducedMotion()
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want
@@ -38,7 +40,7 @@ export function TabIndicatorFollowV({
       return
     }
 
-    if (!prevPosition) {
+    if (reducedMotion || !prevPosition) {
       gsap.set(line, {
         y: position.y,
         height: position.h,

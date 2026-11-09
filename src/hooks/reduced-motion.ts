@@ -8,12 +8,15 @@ export function useReducedMotion(): { reducedMotion: boolean } {
       if (typeof window !== 'undefined') {
         return window.matchMedia('(prefers-reduced-motion: reduce)').matches
       }
+
       return false
     }
   )
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') {
+      return
+    }
 
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 

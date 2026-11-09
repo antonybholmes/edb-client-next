@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@/hooks/reduced-motion'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import { useTabIndicators } from './tab-indicator-provider'
@@ -13,7 +14,9 @@ export const DURATION_S = 0.4
  * @returns
  */
 export function TabIndicatorFollowH({ h = 2 }: { h?: number }) {
-  const { position, prevPosition } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
+  const { position, prevPosition } = useTabIndicators()
+
+  const { reducedMotion } = useReducedMotion()
 
   const highlightedLineRef = useRef<HTMLSpanElement>(null)
 
@@ -24,7 +27,7 @@ export function TabIndicatorFollowH({ h = 2 }: { h?: number }) {
       return
     }
 
-    if (!prevPosition) {
+    if (reducedMotion || !prevPosition) {
       gsap.set(line, {
         x: position.x,
         width: position.w,
