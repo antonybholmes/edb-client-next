@@ -91,62 +91,72 @@ function updateAppVersion(dir: string) {
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
 
-  let currentBuild = parseInt(manifest.build || '-1', 10)
+  //let currentBuild = parseInt(manifest.build || '-1', 10)
   const currentHash = manifest.hash || ''
   const newHash = hashFolder(dir)
 
-  if (currentBuild < 1) {
-    currentBuild = parseInt(manifest.version.split('.')[3], 10)
-
-    console.warn(
-      `No build number found in manifest for ${dir}. Adding build number...`
-    )
-    manifest.version = manifest.version.split('.').slice(0, 3).join('.')
-    manifest.build = currentBuild
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
-    return
-  }
-
-  if (currentHash === '') {
-    // add the hash to the manifest if it doesn't exist
-    console.log(`Adding hash ${newHash} to manifest for ${dir}...`)
-    manifest.hash = newHash
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
-    return
-  }
-
-  if (currentHash === newHash) {
+  if (newHash === currentHash) {
     console.log(`No changes detected for ${dir}. Skipping version update.`)
     return
   }
 
-  console.log(`Updating version for ${dir}...`)
+  const today = new Date()
+  const major = today.getFullYear() // e.g., 2026
+  const minor = String(today.getMonth() + 1).padStart(2, '0') // e.g., "10" (Months are 0-11, so add 1)
+  const patch = String(today.getDate()).padStart(2, '0') // e.g., "28"
+
+  // if (currentBuild < 1) {
+  //   currentBuild = parseInt(manifest.version.split('.')[3], 10)
+
+  //   console.warn(
+  //     `No build number found in manifest for ${dir}. Adding build number...`
+  //   )
+  //   manifest.version = manifest.version.split('.').slice(0, 3).join('.')
+  //   manifest.build = currentBuild
+  //   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
+  //   return
+  // }
+
+  // if (currentHash === '') {
+  //   // add the hash to the manifest if it doesn't exist
+  //   console.log(`Adding hash ${newHash} to manifest for ${dir}...`)
+  //   manifest.hash = newHash
+  //   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
+  //   return
+  // }
+
+  // if (currentHash === newHash) {
+  //   console.log(`No changes detected for ${dir}. Skipping version update.`)
+  //   return
+  // }
+
+  // console.log(`Updating version for ${dir}...`)
 
   let build = parseInt(manifest.build, 10)
 
-  let [major, minor, patch] = manifest.version.split('.')
-  major = parseInt(major, 10)
-  minor = parseInt(minor, 10)
-  patch = parseInt(patch, 10)
+  // let [major, minor, patch] = manifest.version.split('.')
+  // major = parseInt(major, 10)
+  // minor = parseInt(minor, 10)
+  // patch = parseInt(patch, 10)
 
   build += INC
 
-  if (build % 10 === 0) {
-    patch += INC
+  // if (build % 10 === 0) {
+  //   patch += INC
 
-    if (patch % 10 === 0) {
-      patch = 0
-      minor += INC
+  //   if (patch % 10 === 0) {
+  //     patch = 0
+  //     minor += INC
 
-      if (minor % 10 === 0) {
-        minor = 0
-        major += INC
-      }
-    }
-  }
+  //     if (minor % 10 === 0) {
+  //       minor = 0
+  //       major += INC
+  //     }
+  //   }
+  // }
 
   manifest.build = build
-  manifest.version = `${major}.${minor}.${patch}`
+  manifest.version = `${major}.${minor}.${patch}.${build}`
   manifest.modified = new Date().toISOString()
   manifest.hash = newHash
 

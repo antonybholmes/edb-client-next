@@ -13,6 +13,7 @@ import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { CenterCol } from '../layout/center-col'
 import { CenterRow } from '../layout/center-row'
 import { BaseLink } from '../link/base-link'
+import { NoiseFilterIcon } from './noise-filter'
 
 export const APP_ICON_CLS = `relative rounded-full aspect-square shrink-0 grow-0`
 
@@ -22,25 +23,34 @@ const APP_CLS = cn(
 )
 
 const APP_BG_CLS = cn(
-  'pointer-events-none absolute rounded-full aspect-square shrink-0 grow-0',
-  'origin-center top-1/2 left-1/2 -translate-1/2 '
+  'pointer-events-none absolute aspect-square shrink-0 grow-0',
+  'origin-center top-1/2 left-1/2 -translate-1/2 inline-block'
 )
+
+const DURATION = 0.4
+const EASE = 'back2.out'
 
 export function AppTile({
   module,
-  size = 4.5,
+  size = 3.8,
 }: {
   module: IAppHeaderLink
   size?: number
 }) {
+  const [hover, setHover] = useState(false)
+
   return (
     <BaseLink
       aria-label={module.name}
       href={module.slug}
 
       className={APP_CLS}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
-      <AppIcon appInfo={module} size={size} animate={true} />
+      <AppIcon appInfo={module} size={size} animate={true} hover={hover} />
 
       <span className="text-xs text-center">{module.name}</span>
     </BaseLink>
@@ -92,8 +102,9 @@ export function AppTile({
 export function AppIcon({
   appInfo,
   size = 3,
-  borderSize = 1.3,
+  borderSize = 1.2,
   setHover,
+  hover,
   animate = false,
   className,
   children,
@@ -103,44 +114,55 @@ export function AppIcon({
   borderSize?: number
   appInfo: IAppInfo | IAppHeaderLink
   setHover?: (hover: boolean) => void
+  hover?: boolean
   animate?: boolean
 }) {
-  const [hover, _setHover] = useState(false)
+  const [_hover, _setHover] = useState(false)
+  const isHovered = hover ?? _hover
+  const innerSize = borderSize !== 0 ? size / borderSize : size
+
   const ref = useRef<HTMLSpanElement>(null)
-  const bgRef = useRef<HTMLSpanElement>(null)
+  const noiseRef = useRef<SVGSVGElement>(null)
+  const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const { reducedMotion } = useReducedMotion()
 
   useEffect(() => {
-    if (!animate || reducedMotion || !ref.current || !bgRef.current) {
+    if (!animate || reducedMotion || !ref.current || !noiseRef.current) {
       return
     }
 
-    gsap
-      .timeline()
-
-      // .to(
-      //   bgRef.current,
-      //   {
-      //     opacity: hover ? 0.2 : 0.1,
-      //     scale: hover ? 1 : borderSize,
-      //     //borderRadius: hover ? '2rem' : '1.5rem',
-      //     duration: 1,
-      //     ease: 'back.out',
-      //   },
-      //   0
-      // )
+    const timeline = gsap.timeline({ paused: true })
+    timeline
+      .to(ref.current, {
+        scale: borderSize,
+        duration: DURATION,
+        ease: EASE,
+      })
       .to(
-        ref.current,
+        noiseRef.current,
         {
-          //opacity: hover ? 1 : 0.7,
-          scale: hover ? 1.1 : 1,
-          //borderRadius: hover ? '2rem' : '1.5rem',
-          duration: 1,
-          ease: 'back.out',
+          scale: borderSize,
+          duration: DURATION,
+          ease: EASE,
         },
         0
       )
-  }, [hover, animate])
+
+    timelineRef.current = timeline
+
+    return () => {
+      timeline.kill()
+      timelineRef.current = null
+    }
+  }, [animate, borderSize, reducedMotion])
+
+  useEffect(() => {
+    if (isHovered) {
+      timelineRef.current?.play()
+    } else {
+      timelineRef.current?.reverse()
+    }
+  }, [isHovered, animate, borderSize, reducedMotion])
 
   const abbr = useMemo(() => {
     if (appInfo.abbr) {
@@ -151,9 +173,9 @@ export function AppIcon({
     }
   }, [appInfo])
 
-  const bgColor = useMemo(() => {
-    return Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
-  }, [appInfo.color])
+  // const bgColor = useMemo(() => {
+  //   return Array.isArray(appInfo.color) ? appInfo.color[0] : appInfo.color
+  // }, [appInfo.color])
 
   const bgImage = useMemo(() => {
     if (!Array.isArray(appInfo.color)) {
@@ -173,8 +195,6 @@ export function AppIcon({
     _setHover(hover)
     setHover?.(hover)
   }
-
-  const innerSize = borderSize !== 0 ? size / borderSize : size
 
   return (
     <CenterCol
@@ -198,7 +218,7 @@ export function AppIcon({
         onHover(false)
       }}
     >
-      <span
+      {/* <span
         ref={bgRef}
         className={cn(APP_BG_CLS, 'z-0 opacity-10')}
         style={{
@@ -206,7 +226,7 @@ export function AppIcon({
           height: `${size}rem`,
           backgroundColor: bgColor,
         }}
-      />
+      /> */}
 
       <span
         ref={ref}
@@ -217,15 +237,25 @@ export function AppIcon({
             width: `${innerSize}rem`,
             height: `${innerSize}rem`,
             //'--base-color': appInfo.color ?? 'lightslategray',
-
+            borderRadius: '45%',
+            //cornerShape: 'squircle',
             backgroundImage: bgImage,
           } as CSSProperties
         }
-      ></span>
+      />
+
+      <NoiseFilterIcon
+        ref={noiseRef}
+        className="absolute w-full h-full z-20 rounded-full opacity-15"
+        style={{
+          width: `${innerSize}rem`,
+          height: `${innerSize}rem`,
+        }}
+      />
 
       <CenterRow
-        className="relative z-20"
-        style={{ fontSize: `${Math.max(size / 4, 0.8)}rem` }}
+        className="relative z-30"
+        //style={{ fontSize: `${Math.max(0.8, size * 0.3)}rem` }}
       >
         <span className="font-bold text-white/90">
           {abbr[0]!.toUpperCase()}

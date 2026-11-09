@@ -138,7 +138,7 @@ export function HomeToolbar() {
                   </>
                 }
               >
-                <ChartColumnBig size={20} />
+                <ChartColumnBig size={20} strokeWidth={1.5} />
                 <span>Chart</span>
                 <ChevronDown
                   size={12}

@@ -5,8 +5,8 @@ import { useNetworkSettings } from '../network-settings'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { Button } from '@/components/shadcn/ui/themed/baseui/button'
 import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import {
   ResizablePanel,
@@ -18,7 +18,7 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { move } from '@dnd-kit/helpers'
 import { DragDropProvider } from '@dnd-kit/react'
-import { SearchCheck, Tags } from 'lucide-react'
+import { RotateCw, SearchCheck, Tags } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import APP_INFO from '../manifest.json'
 import { useNetwork } from '../network'
@@ -86,7 +86,7 @@ export function NodesDisplayPropsPanel() {
           className="flex flex-col gap-y-1.5"
           collapsible={true}
         >
-          <span className="font-medium text-sm">Current Node</span>
+          <span className="font-medium text-xs">Current Node</span>
           <Textarea value={currentNodeText} readOnly className="h-1" />
         </ResizablePanel>
         <ThinVResizeHandle autoHide={false} />
@@ -99,35 +99,36 @@ export function NodesDisplayPropsPanel() {
           collapsible={true}
         >
           <PropRow
-            title="Nodes"
-            className="text-sm"
-            contentCls="text-xs gap-x-2"
-            leftChildren={
-              <Button
-                className="text-xs"
-                size="xs"
-                pad="sm"
-                rounded="sm"
-                variant="app-theme"
-                onClick={() =>
-                  updateUserData(
-                    produce(userData, (draft) => {
-                      draft.labels.ids = [
-                        ...new Set(
-                          text
-                            .split('\n')
-                            .map((x) => x.trim())
-                            .filter((x) => x.length > 0)
-                        ),
-                      ].sort()
-                    })
-                  )
-                }
-                title="Update Graph"
-              >
-                Update
-              </Button>
+            title={
+              <VCenterRow className="gap-x-1 text-xs font-medium">
+                <IconButton
+                  className="text-xs"
+                  size="xs"
+                  rounded="sm"
+                  //variant="app-theme"
+                  onClick={() =>
+                    updateUserData(
+                      produce(userData, (draft) => {
+                        draft.labels.ids = [
+                          ...new Set(
+                            text
+                              .split('\n')
+                              .map((x) => x.trim())
+                              .filter((x) => x.length > 0)
+                          ),
+                        ].sort()
+                      })
+                    )
+                  }
+                  title="Update Graph"
+                >
+                  <RotateCw size={16} />
+                </IconButton>
+                <span>Nodes</span>
+              </VCenterRow>
             }
+
+            contentCls="text-xs gap-x-2"
           >
             <VCenterRow>
               <Toggle
@@ -207,7 +208,7 @@ export function NodesDisplayPropsPanel() {
           minSize="0%"
           collapsible={true}
         >
-          <PropRow title="Groups" className="text-sm" />
+          <PropRow title="Groups" className="font-medium" />
           <VScrollPanel className="grow">
             <DragDropProvider
               onDragEnd={(event) => {

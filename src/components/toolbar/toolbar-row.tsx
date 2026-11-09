@@ -20,7 +20,7 @@ export function ToolbarRow({
   smallTitle,
   titleCls,
   className,
-  gap = 'gap-x-0.5',
+  gap = 'gap-x-1',
   children,
   ...props
 }: IDivProps & {

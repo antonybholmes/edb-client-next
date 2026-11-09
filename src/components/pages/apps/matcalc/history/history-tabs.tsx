@@ -5,13 +5,13 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/baseui/tabs'
-import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import {
   TabIndicatorProvider,
   useTabIndicators,
 } from '@/components/tabs/tab-indicator-provider'
 import { TabIndicatorSelectedV } from '@/components/tabs/tab-indicator-selected-v'
 
+import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import { cn } from '@/lib/shadcn-utils'
 import { useHistory } from './history-provider/history-provider'
 
@@ -77,11 +77,10 @@ function HistoryTabsContent() {
       onValueChange={(v) => {
         seek(v)
       }}
-      //className="flex flex-col shrink-0"
+
       orientation="vertical"
     >
       <TabsList
-        //className={cn('relative shrink-0', className)}
         ref={tabListRef}
         onPointerLeave={() => {
           setTabPosition(undefined)
@@ -128,8 +127,8 @@ function HistoryTabsContent() {
           )
         })}
 
-        <TabIndicatorSelectedV />
-        <TabIndicatorFollowV />
+        <TabIndicatorSelectedV w={3} />
+        <TabIndicatorFollowV w={3} />
       </TabsList>
     </Tabs>
   )

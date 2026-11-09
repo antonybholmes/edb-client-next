@@ -200,11 +200,7 @@ export function ToolbarMenu({
           extMenus={extMenus}
         />
 
-        <UnderlineTabs
-          groupId={groupId}
-          tabListCls="gap-x-3"
-          //tabButtonProps={{ variant: TOOLBAR_TABS }}
-        >
+        <UnderlineTabs groupId={groupId} tabListCls="gap-x-3">
           <TabIndicatorFollowH />
           <TabIndicatorSelectedH />
         </UnderlineTabs>

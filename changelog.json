@@ -3628,10 +3628,60 @@
         {
           "msg": "Added pointer cursor to network nodes to better indicate they are clickable",
           "date": "2026-10-23T21:33:59.415Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-10-23T22:45:40.723Z"
+        },
+        {
+          "msg": "Added grain to gradients. Refined gsap timelines for better reuse and performance",
+          "date": "2026-10-24T13:52:45.118Z"
+        },
+        {
+          "msg": "Removal of line strech animations that use two lines trick and instead now uses one line",
+          "date": "2026-10-24T14:21:59.888Z"
+        },
+        {
+          "msg": "Rev comp UI updated to match other apps",
+          "date": "2026-10-24T18:42:00.733Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-10-23T21:33:59.415Z"
+  },
+  {
+    "version": "2026.10.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Versioning switch to yyyy.mm.dd.build",
+          "date": "2026-10-29T01:22:29.345Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-10-29T14:26:46.656Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-10-29T01:22:29.345Z"
+  },
+  {
+    "version": "2026.11.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-01T17:20:31.064Z"
+        },
+        {
+          "msg": "Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.",
+          "date": "2026-11-09T16:40:47.292Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-01T17:20:31.064Z"
   }
 ]

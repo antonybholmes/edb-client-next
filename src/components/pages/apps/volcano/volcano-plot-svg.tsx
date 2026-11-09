@@ -340,7 +340,6 @@ export function VolcanoPlotContent({ sizeFunc = (x: number) => x }: IProps) {
 
   const { svg, width, height } = useMemo(() => {
     if (!plot || !xax || !yax) {
-      console.warn('Plot or axes not defined')
       return { svg: null, width: 0, height: 0 }
     }
 

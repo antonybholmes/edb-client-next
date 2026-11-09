@@ -217,6 +217,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       'toolbar-dropdown': TOOLBAR_DROPDOWN_BUTTON_CLS,
       //'toolbar-icon': cn(TOOLBAR_BUTTON_W_CLS, TOOLBAR_BUTTON_H_CLS),
       lg: 'h-button-lg',
+      header: 'h-button-header',
       xl: BUTTON_XL_H_CLS,
       '2xl': BUTTON_XL_H_CLS,
       icon: cn(ICON_BUTTON_CLS, 'justify-center'),

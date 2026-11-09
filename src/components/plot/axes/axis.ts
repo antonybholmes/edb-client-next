@@ -103,8 +103,6 @@ export function createAxis(
     ret.range = [0, length]
   }
 
-  //ret.length = Math.abs(ret.range[1] - ret.range[0])
-
   if (autoDomain !== undefined && autoDomain) {
     ret = autoAxisDomain(
       ret,
@@ -245,6 +243,17 @@ export function getAxisFormatter(axis: IAxis, tickCount: number) {
         .domain(axis.domain)
         .range(axis.range)
         .tickFormat(tickCount, 'f')
+  }
+}
+
+export function getTickLabelFormatter(axis: IAxis) {
+  switch (axis.format?.type) {
+    case 'd3':
+      return d3.format(axis.format.specifier)
+    case 'fixed':
+      return d3.format(`.${axis.format.decimalPlaces}f`)
+    default:
+      return d3.format('')
   }
 }
 
@@ -502,7 +511,7 @@ function makeTicks(
     return []
   }
 
-  const format = getAxisFormatter(axis, ticks.length)
+  const format = getTickLabelFormatter(axis)
 
   return ticks.map((value) => {
     if (typeof value !== 'number') {

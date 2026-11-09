@@ -1,10 +1,10 @@
 {
   "name": "GSEA Plot",
-  "description": "Format GSEA plots.",
+  "description": "Beautiful GSEA plots.",
   "color": "#ffb366",
-  "version": "25.0.0",
+  "version": "2026.11.09.1088",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-10-23T18:11:11.829Z",
-  "hash": "9b021f2974ed0fb7196b2b72f7f38ebf4b6d28eeb7ec6b5282f712a030ab6fad",
-  "build": 1078
+  "modified": "2026-11-09T16:40:46.196Z",
+  "hash": "181235a5187f11114c4be097f4124c4123312b2cbd439128b33807dfc024b5ae",
+  "build": 1088
 }

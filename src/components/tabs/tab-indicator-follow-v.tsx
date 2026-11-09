@@ -1,5 +1,6 @@
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
+import { DURATION_S } from './tab-indicator-follow-h'
 import { useTabIndicators } from './tab-indicator-provider'
 
 const LINE_CLS =
@@ -19,7 +20,7 @@ export function TabIndicatorFollowV({
   groupId?: string
   w?: string | number
 }) {
-  const { position } = useTabIndicators() //groupId)
+  const { position, prevPosition } = useTabIndicators() //groupId)
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want
@@ -30,47 +31,38 @@ export function TabIndicatorFollowV({
 
   const highlightLineRef = useRef<HTMLSpanElement>(null)
 
-  const timelineRef = useRef<GSAPTimeline | null>(null)
-
   useEffect(() => {
-    if (!highlightLineRef.current || !position) {
+    const line = highlightLineRef.current
+
+    if (!line || !position) {
       return
     }
 
-    if (timelineRef.current) {
-      timelineRef.current.kill()
-    }
-
-    timelineRef.current = gsap.timeline().to(
-      highlightLineRef.current,
-      {
+    if (!prevPosition) {
+      gsap.set(line, {
         y: position.y,
         height: position.h,
-        scaleY: position.scale || 1,
-        duration: 0.8,
-        ease: 'power3.out',
-      },
-      0
-    )
+        scaleY: position.scale ?? 1,
+      })
 
-    //previousPos.current = position
-  }, [position])
+      return
+    }
+
+    gsap.to(line, {
+      y: position.y,
+      height: position.h,
+      scaleY: position.scale ?? 1,
+      duration: DURATION_S,
+      ease: 'power.out',
+      overwrite: 'auto',
+    })
+  }, [position?.y, position?.h, position?.scale, prevPosition])
 
   if (!position) {
     return null
   }
 
   return (
-    <span
-      ref={highlightLineRef}
-      className={LINE_CLS}
-      // animate={{
-      //   x: tabIndicatorPos.x,
-      //   width: tabIndicatorPos.size,
-      // }}
-      style={{ width: w }}
-      //initial={false}
-      //transition={{ ease: 'easeOut', duration: 0.25 }}
-    />
+    <span ref={highlightLineRef} className={LINE_CLS} style={{ width: w }} />
   )
 }

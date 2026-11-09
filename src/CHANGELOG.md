@@ -1,9 +1,29 @@
 # Changelog
 
+## 2026.11.0 (Nov, 2026)
+
+### Changed
+
+- Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.
+- Bug fixes and updates.
+
+
+## 2026.10.0 (Oct, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+- Versioning switch to yyyy.mm.dd.build.
+
+
 ## 93.4.0 (Oct, 2026)
 
 ### Changed
 
+- Rev comp UI updated to match other apps.
+- Removal of line strech animations that use two lines trick and instead now uses one line.
+- Added grain to gradients. Refined gsap timelines for better reuse and performance.
+- Bug fixes and updates.
 - Added pointer cursor to network nodes to better indicate they are clickable.
 
 

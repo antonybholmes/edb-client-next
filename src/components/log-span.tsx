@@ -5,8 +5,11 @@ export function LogSpan({
   base = 2,
   minus = false,
   fontSize = 14,
+  className,
   children = 'x',
 }: ComponentProps<'span'> & {
+  className?: string
+} & {
   fontSize?: number
   base?: string | number
   minus?: boolean
@@ -23,7 +26,7 @@ export function LogSpan({
   })
 
   return (
-    <span style={{ fontFamily: 'serif', fontSize }}>
+    <span style={{ fontFamily: 'serif', fontSize }} className={className}>
       {minus ? '-' : ''}log
       <sub style={{ fontSize: fontSize * 0.75 }}>{base}</sub>(
       {formattedChildren})

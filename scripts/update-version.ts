@@ -92,9 +92,14 @@ if (newHash !== currentHash) {
 
   const v = currentVersion.split('.')
 
-  let major = parseInt(v[0]!)
-  let minor = parseInt(v[1]!)
-  let patch = parseInt(v[2]!)
+  // let major = parseInt(v[0]!)
+  // let minor = parseInt(v[1]!)
+  // let patch = parseInt(v[2]!)
+
+  const today = new Date()
+  const major = today.getFullYear() // e.g., 2026
+  const minor = String(today.getMonth() + 1).padStart(2, '0') // e.g., "10" (Months are 0-11, so add 1)
+  const patch = String(today.getDate()).padStart(2, '0') // e.g., "28"
 
   console.log(`Current version: ${currentVersion}`)
   console.log(`Parsed version: major=${major}, minor=${minor}, patch=${patch}`)
@@ -105,29 +110,29 @@ if (newHash !== currentHash) {
   console.log(`Incrementing build from ${build} to ${build + INC}.`)
   build += INC
 
-  if (build % 10 === 0) {
-    console.log(`Build reached ${build}, incrementing patch to ${patch + INC}.`)
-    patch += INC
+  // if (build % 10 === 0) {
+  //   console.log(`Build reached ${build}, incrementing patch to ${patch + INC}.`)
+  //   patch += INC
 
-    if (patch % 10 === 0) {
-      console.log(
-        `Patch reached ${patch}, incrementing minor to ${minor + INC}, resetting patch to 0.`
-      )
-      patch = 0
-      minor += INC
+  //   if (patch % 10 === 0) {
+  //     console.log(
+  //       `Patch reached ${patch}, incrementing minor to ${minor + INC}, resetting patch to 0.`
+  //     )
+  //     patch = 0
+  //     minor += INC
 
-      if (minor % 10 === 0) {
-        console.log(
-          `Minor reached ${minor}, incrementing major to ${major + INC}, resetting minor to 0.`
-        )
-        minor = 0
-        major += INC
-      }
-    }
-  }
+  //     if (minor % 10 === 0) {
+  //       console.log(
+  //         `Minor reached ${minor}, incrementing major to ${major + INC}, resetting minor to 0.`
+  //       )
+  //       minor = 0
+  //       major += INC
+  //     }
+  //   }
+  // }
 
   // update version and modified date to latest file modification date
-  const newVersion = `${major}.${minor}.${patch}`
+  const newVersion = `${major}.${minor}.${patch}.${build}`
   //console.log(`New version: ${newVersion}`)
   info.version = newVersion
   info.build = build

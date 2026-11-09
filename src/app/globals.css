@@ -84,6 +84,7 @@
   --spacing-button-md: var(--size-button-md);
   --spacing-button-sm: var(--size-button-sm);
   --spacing-button-lg: var(--size-button-lg);
+  --spacing-button-header: var(--size-button-header);
 
   --spacing-toolbar-button: var(--size-toolbar-button);
   --spacing-large-toolbar-button-width: var(--size-large-toolbar-button-width);
@@ -164,6 +165,7 @@
   --size-button-md: 2rem;
   --size-button-sm: 1.5rem;
   --size-button-lg: 2.25rem;
+  --size-button-header: 2.8rem;
   --size-toolbar-button: 1.8rem;
 
   --size-large-toolbar-button-width: 3rem;

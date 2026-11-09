@@ -145,59 +145,57 @@ export function GseaPlotDisplayPropsPanel() {
             </PropRow>
 
             <PropRow title="Leading Edge">
-              <VCenterRow>
-                <StrokeButton
-                  colors={[
-                    {
-                      color: settings.es.leadingEdge.line.value,
-                      opacity: settings.es.leadingEdge.line.opacity,
-                      onColorChange: ({
-                        color,
-                        opacity,
-                        width,
-                        dasharray,
-                        show,
-                      }) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.leadingEdge.line.show =
-                              show ?? draft.es.leadingEdge.line.show
+              <StrokeButton
+                colors={[
+                  {
+                    color: settings.es.leadingEdge.line.value,
+                    opacity: settings.es.leadingEdge.line.opacity,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.es.leadingEdge.line.show =
+                            show ?? draft.es.leadingEdge.line.show
 
-                            draft.es.leadingEdge.line.value = color
-                            draft.es.leadingEdge.line.opacity = opacity ?? 1
-                            draft.es.leadingEdge.line.width =
-                              width ?? draft.es.leadingEdge.line.width
-                            draft.es.leadingEdge.line.dasharray =
-                              dasharray ?? draft.es.leadingEdge.line.dasharray
-                          })
-                        )
-                      },
+                          draft.es.leadingEdge.line.value = color
+                          draft.es.leadingEdge.line.opacity = opacity ?? 1
+                          draft.es.leadingEdge.line.width =
+                            width ?? draft.es.leadingEdge.line.width
+                          draft.es.leadingEdge.line.dasharray =
+                            dasharray ?? draft.es.leadingEdge.line.dasharray
+                        })
+                      )
                     },
-                  ]}
-                  title="Leading Edge Outline"
-                />
+                  },
+                ]}
+                title="Leading Edge Outline"
+              />
 
-                <FillButton
-                  colors={[
-                    {
-                      color: settings.es.leadingEdge.fill.value,
-                      opacity: settings.es.leadingEdge.fill.opacity,
-                      onColorChange: ({ color, opacity, show }) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.leadingEdge.fill.show =
-                              show ?? draft.es.leadingEdge.fill.show
+              <FillButton
+                colors={[
+                  {
+                    color: settings.es.leadingEdge.fill.value,
+                    opacity: settings.es.leadingEdge.fill.opacity,
+                    onColorChange: ({ color, opacity, show }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.es.leadingEdge.fill.show =
+                            show ?? draft.es.leadingEdge.fill.show
 
-                            draft.es.leadingEdge.fill.value = color
-                            draft.es.leadingEdge.fill.opacity = opacity ?? 1
-                          })
-                        )
-                      },
+                          draft.es.leadingEdge.fill.value = color
+                          draft.es.leadingEdge.fill.opacity = opacity ?? 1
+                        })
+                      )
                     },
-                  ]}
-                  title="Leading Edge Fill"
-                />
-              </VCenterRow>
+                  },
+                ]}
+                title="Leading Edge Fill"
+              />
             </PropRow>
           </AccordionContent>
         </AccordionItem>
