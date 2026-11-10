@@ -97,7 +97,7 @@ if (newHash !== currentHash) {
   // let patch = parseInt(v[2]!)
 
   const today = new Date()
-  const major = today.getFullYear() // e.g., 2026
+  const major = today.getFullYear().toString().slice(-2) // e.g.,  26
   const minor = String(today.getMonth() + 1).padStart(2, '0') // e.g., "10" (Months are 0-11, so add 1)
   const patch = String(today.getDate()).padStart(2, '0') // e.g., "28"
 
