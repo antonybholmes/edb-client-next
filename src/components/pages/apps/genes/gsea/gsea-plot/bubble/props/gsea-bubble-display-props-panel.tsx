@@ -467,37 +467,6 @@ export function GseaBubbleDisplayPropsPanel() {
               w="md"
               h="toolbar"
             />
-
-            {/* <PropRow title="Colorbar">
-              <RadioGroup
-                value={displayProps.colorbar.position}
-                disabled={!displayProps.colorbar.show}
-                onValueChange={(v) =>
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.colorbar.position = v as ColorBarPos
-                    })
-                  )
-                }
-                className="flex flex-row justify-start gap-x-1"
-              >
-                <SideRadioGroupItem
-                  value="right"
-                  title="Right"
-                  currentValue={displayProps.colorbar.position}
-                  disabled={!displayProps.colorbar.show}
-                  className="w-5.5"
-                />
-
-                <SideRadioGroupItem
-                  value="bottom"
-                  title="Bottom"
-                  currentValue={displayProps.colorbar.position}
-                  disabled={!displayProps.colorbar.show}
-                  className="w-5.5"
-                />
-              </RadioGroup>
-            </PropRow> */}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="groups">

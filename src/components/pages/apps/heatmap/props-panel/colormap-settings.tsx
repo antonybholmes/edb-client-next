@@ -105,11 +105,6 @@ export function ColormapSettingsPanel() {
             }
             className="flex flex-row justify-start gap-x-1"
           >
-            {/* <SideRadioGroupItem
-                      value="Off"
-                      currentValue={displayProps.colorbar.position}
-                      className="w-5"
-                    /> */}
             <SideRadioGroupItem
               value="right"
               title="Right"

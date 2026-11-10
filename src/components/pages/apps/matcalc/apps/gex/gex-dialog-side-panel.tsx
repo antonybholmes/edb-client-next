@@ -12,7 +12,6 @@ import {
 
 import { produce } from 'immer'
 
-import { ROOT_NODE } from '@/components/collapse-tree'
 import { DialogToolbar } from '@/components/dialogs/ok-cancel-dialog'
 import { BaseCol } from '@/components/layout/base-col'
 import { CenterRow } from '@/components/layout/center-row'
@@ -22,10 +21,13 @@ import {
 } from '@/components/shadcn/ui/themed/baseui/radio-group'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/baseui/skeleton'
 import { ITab } from '@/components/tabs/tab-provider'
-import { HardDrive } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { TruncateSpan } from '@/components/truncate-span'
+import { storeItem } from '@/lib/storage'
+import { ExternalLinkIcon, HardDrive } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset } from './gex-store'
+import { metadataToShared } from './gex-utils'
 
 export const GENOMES: readonly ITab[] = Object.freeze([
   { id: 'Human', name: 'Human' },
@@ -75,67 +77,58 @@ export function GexDialogSidePanel({
     return () => clearTimeout(timer)
   }, [institutions])
 
-  const treeRootTab = useMemo(() => {
-    //const lastHistoryAction = historyActions[historyActions.length - 1]!
+  // const treeRootTab = useMemo(() => {
+  //   //const lastHistoryAction = historyActions[historyActions.length - 1]!
 
-    const nodes: ITab[] = []
+  //   const nodes: ITab[] = []
 
-    for (const institution of institutions) {
-      const datasets = instituteMap.get(institution) ?? []
+  //   for (const institution of institutions) {
+  //     const datasets = instituteMap.get(institution) ?? []
 
-      if (datasets.length === 0) {
-        continue
-      }
+  //     if (datasets.length === 0) {
+  //       continue
+  //     }
 
-      const fileNode: ITab = {
-        id: institution,
-        name: institution, //'Sheet', //sheet?.name ?? `File ${fi + 1}`,
-        //icon: <FileSpreadsheet strokeWidth={1.5} size={18} />,
-        children: [],
-        // onClick: () => {
-        //   setSelectedPanelTab(sheet.id)
+  //     const fileNode: ITab = {
+  //       id: institution,
+  //       name: institution,
 
-        //   goto({ file, sheet })
-        // },
+  //       children: [],
 
-        // onDelete: () => {
-        //   removeFiles([{ file }]) //file.id], 'file')
-        // },
-        //type: 'file',
-      }
+  //     }
 
-      for (const [di, dataset] of datasets.entries()) {
-        const datasetNode: ITab = {
-          id: dataset.id,
-          name: dataset.name ?? `Dataset ${di + 1}`,
-          icon: (
-            <HardDrive
-              strokeWidth={1.5}
-              size={18}
-              className="group-data-[selected=true]:stroke-app-theme"
-            />
-          ),
-          onClick: () => {
-            setDataset(dataset)
+  //     for (const [di, dataset] of datasets.entries()) {
+  //       const datasetNode: ITab = {
+  //         id: dataset.id,
+  //         name: dataset.name ?? `Dataset ${di + 1}`,
+  //         icon: (
+  //           <HardDrive
+  //             strokeWidth={1.5}
+  //             size={18}
+  //             className="group-data-[selected=true]:stroke-app-theme"
+  //           />
+  //         ),
+  //         onClick: () => {
+  //           setDataset(dataset)
 
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.apps.gex.selectedDatasets = [dataset.id]
-              })
-            )
-          },
-        }
+  //           updateSettings(
+  //             produce(settings, (draft) => {
+  //               draft.apps.gex.selectedDatasets = [dataset.id]
+  //             })
+  //           )
+  //         },
+  //       }
 
-        fileNode.children.push(datasetNode)
-      }
-      nodes.push(fileNode)
-    }
+  //       fileNode.children.push(datasetNode)
+  //     }
+  //     nodes.push(fileNode)
+  //   }
 
-    return {
-      ...ROOT_NODE,
-      children: nodes,
-    }
-  }, [institutions, instituteMap])
+  //   return {
+  //     ...ROOT_NODE,
+  //     children: nodes,
+  //   }
+  // }, [institutions, instituteMap])
 
   if (showSkeleton) {
     return <SkeletonRows className="w-7/10 mx-auto" />
@@ -212,11 +205,7 @@ export function GexDialogSidePanel({
         </Popover>
       </DialogToolbar>
 
-      {/* <VScrollPanel className="grow">
-        <CollapseTree tab={treeRootTab} value={dataset?.id} showRoot={false} />
-      </VScrollPanel> */}
-
-      <ToggleGroup
+      {/* <ToggleGroup
         value={[dataset?.id ?? '']}
         onValueChange={(value) => {
           const v = value[0]
@@ -266,9 +255,9 @@ export function GexDialogSidePanel({
             </BaseCol>
           )
         })}
-      </ToggleGroup>
+      </ToggleGroup> */}
 
-      {/* <RadioGroup
+      <RadioGroup
         className="flex flex-col grow relative"
         value={dataset?.id}
         onValueChange={(v) => {
@@ -285,55 +274,60 @@ export function GexDialogSidePanel({
           }
         }}
       >
-        <ScrollAccordion
-          value={accordionValues}
+        {institutions.map((institution) => {
+          return (
+            <BaseCol key={institution} className="gap-y-1">
+              <h3 className="font-semibold text-xs mx-1">{institution}</h3>
 
-          variant="sidebar"
-        >
-          {institutions.map((institution) => {
-            return (
-              <SideAccordionItem
-                title={institution}
-                value={institution}
-                key={institution}
-              >
-                <ul className="flex flex-col">
-                  {instituteMap.get(institution)?.map((ds) => {
-                    return (
-                      <li
-                        key={ds.id}
-                        className="flex flex-row items-center justify-between gap-x-2"
+              <ul className="flex flex-col">
+                {instituteMap.get(institution)?.map((ds) => {
+                  return (
+                    <li
+                      key={ds.id}
+                      className="group flex flex-row items-center gap-x-2 hover:bg-muted/30 px-2 py-1 rounded-theme"
+                      data-selected={ds.id === dataset?.id}
+                    >
+                      <RadioGroupItem
+                        id={ds.id}
+                        value={ds.id}
+                        className="grow w-full"
                       >
-                        <RadioPropRow title={ds.name} value={ds.id}>
-                          <button
-                            title={`View metadata of ${ds.name}`}
-                            onClick={() => {
-                              const id = storeItem(
-                                'table-viewer',
-                                'data',
-                                JSON.stringify(metadataToShared(ds))
-                              )
+                        <HardDrive
+                          size={20}
+                          strokeWidth={2}
+                          className="group-data-[selected=true]:stroke-app-theme"
+                        />
+                        <TruncateSpan className="h-8 grow">
+                          {ds.name}
+                        </TruncateSpan>
+                        <button
+                          title={`View metadata of ${ds.name}`}
+                          onClick={() => {
+                            const id = storeItem(
+                              'table-viewer',
+                              'data',
+                              JSON.stringify(metadataToShared(ds))
+                            )
 
-                              window.open(
-                                `/apps/utils/table?key=${id}`,
-                                '_blank',
-                                'width=800,height=600'
-                              )
-                            }}
-                            className="opacity-30 hover:opacity-70"
-                          >
-                            <ExternalLinkIcon size={16} />
-                          </button>
-                        </RadioPropRow>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </SideAccordionItem>
-            )
-          })}
-        </ScrollAccordion>
-      </RadioGroup> */}
+                            window.open(
+                              `/apps/utils/table?key=${id}`,
+                              '_blank',
+                              'width=800,height=600'
+                            )
+                          }}
+                          className="opacity-30 hover:opacity-70"
+                        >
+                          <ExternalLinkIcon size={16} />
+                        </button>
+                      </RadioGroupItem>
+                    </li>
+                  )
+                })}
+              </ul>
+            </BaseCol>
+          )
+        })}
+      </RadioGroup>
     </BaseCol>
   )
 }

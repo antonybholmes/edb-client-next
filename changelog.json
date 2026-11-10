@@ -3651,7 +3651,7 @@
     "date": "2026-10-23T21:33:59.415Z"
   },
   {
-    "version": "2026.10.0",
+    "version": "26.10.0",
     "messages": {
       "Changed": [
         {
@@ -3668,7 +3668,7 @@
     "date": "2026-10-29T01:22:29.345Z"
   },
   {
-    "version": "2026.11.0",
+    "version": "26.11.0",
     "messages": {
       "Changed": [
         {
@@ -3708,6 +3708,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-11-10T18:16:52.479Z"
+        },
+        {
+          "msg": "UI update to gex",
+          "date": "2026-11-10T20:50:09.363Z"
         }
       ]
     },

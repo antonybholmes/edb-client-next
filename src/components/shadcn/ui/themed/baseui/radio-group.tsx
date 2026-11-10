@@ -1,7 +1,6 @@
 import { cn } from '@/lib/shadcn-utils'
 import { capitalCase } from '@/lib/text/capital-case'
 import { CENTERED_ROW_CLS, FOCUS_RING_CLS } from '@/theme'
-import { Field } from '@base-ui/react/field'
 import { Radio as RadioPrimitive } from '@base-ui/react/radio'
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group'
 
@@ -16,8 +15,8 @@ const RADIO_BUTTON_CLS = cn(
   FOCUS_RING_CLS,
   CENTERED_ROW_CLS,
   'aspect-square h-4.5 w-4.5 rounded-full bg-background border',
-  'data-unchecked:border-border hover:data-unchecked:border-ring',
-  'group-hover:data-unchecked:border-ring',
+  'data-unchecked:border-border hover:data-unchecked:border-app-theme',
+  'group-hover:data-unchecked:border-app-theme',
   'data-checked:border-transparent data-checked:bg-app-theme/80',
   'data-checked:hover:bg-app-theme shrink-0'
 )
@@ -50,14 +49,10 @@ export function RadioGroupItem({
 
   if (children) {
     ret = (
-      <Field.Root>
-        <Field.Label
-          className={cn('flex flex-row items-center gap-x-2', className)}
-        >
-          {ret}
-          {children}
-        </Field.Label>
-      </Field.Root>
+      <label className={cn('flex flex-row items-center gap-x-2', className)}>
+        {ret}
+        {children}
+      </label>
     )
   }
 

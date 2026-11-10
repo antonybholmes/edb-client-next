@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI update to gex.
 - Bug fixes and updates.
 
 
@@ -14,7 +15,7 @@
 - Bug fixes and updates.
 
 
-## 2026.11.0 (Nov, 2026)
+## 26.11.0 (Nov, 2026)
 
 ### Changed
 
@@ -23,7 +24,7 @@
 - Bug fixes and updates.
 
 
-## 2026.10.0 (Oct, 2026)
+## 26.10.0 (Oct, 2026)
 
 ### Changed
 

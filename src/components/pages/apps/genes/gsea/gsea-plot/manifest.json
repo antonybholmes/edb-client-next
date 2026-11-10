@@ -2,9 +2,9 @@
   "name": "GSEA Plot",
   "description": "Beautiful GSEA plots.",
   "color": "#ffb366",
-  "version": "2026.11.09.1090",
+  "version": "26.11.10.1092",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-11-09T22:33:29.434Z",
-  "hash": "81261d6a867188fcc49f8710f7cc95a8a98f515cf8dea1fb1e5b56307cb81922",
-  "build": 1090
+  "modified": "2026-11-10T20:50:08.347Z",
+  "hash": "1631ceb25cd4c74af7a3f6cc957e51df0ef2a017f6ca636194d8efae21db1da3",
+  "build": 1092
 }
