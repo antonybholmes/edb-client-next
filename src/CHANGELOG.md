@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixed setColNames not initializing opts correctly.
 - UI update to gex.
 - Bug fixes and updates.
 

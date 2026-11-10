@@ -3712,6 +3712,10 @@
         {
           "msg": "UI update to gex",
           "date": "2026-11-10T20:50:09.363Z"
+        },
+        {
+          "msg": "Fixed setColNames not initializing opts correctly",
+          "date": "2026-11-10T22:15:48.382Z"
         }
       ]
     },
