@@ -3651,7 +3651,7 @@
     "date": "2026-10-23T21:33:59.415Z"
   },
   {
-    "version": "2026.10.0",
+    "version": "26.10.0",
     "messages": {
       "Changed": [
         {
@@ -3668,7 +3668,7 @@
     "date": "2026-10-29T01:22:29.345Z"
   },
   {
-    "version": "2026.11.0",
+    "version": "26.11.0",
     "messages": {
       "Changed": [
         {
@@ -3678,10 +3678,48 @@
         {
           "msg": "Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.",
           "date": "2026-11-09T16:40:47.292Z"
+        },
+        {
+          "msg": "Added more support for reduced motion",
+          "date": "2026-11-09T22:33:30.289Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-11-01T17:20:31.064Z"
+  },
+  {
+    "version": "26.11.09",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-10T18:04:34.154Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-10T18:04:34.154Z"
+  },
+  {
+    "version": "26.11.10",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-10T18:16:52.479Z"
+        },
+        {
+          "msg": "UI update to gex",
+          "date": "2026-11-10T20:50:09.363Z"
+        },
+        {
+          "msg": "Fixed setColNames not initializing opts correctly",
+          "date": "2026-11-10T22:15:48.382Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-10T18:16:52.479Z"
   }
 ]

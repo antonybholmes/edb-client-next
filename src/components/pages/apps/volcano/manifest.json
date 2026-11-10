@@ -2,13 +2,8 @@
   "name": "Volcano",
   "abbr": "Vc",
   "description": "Volcano plots",
-  "color": [
-    "#51127C",
-    "#B73779",
-    "#FC8961",
-    "#FCFDBF"
-  ],
-  "version": "2026.11.03.56",
+  "color": ["#51127C", "#B73779", "#FC8961", "#FCFDBF"],
+  "version": "26.11.03.56",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
   "modified": "2026-11-04T03:14:09.632Z",
   "hash": "0a375e65d9a9963465f1f745f8a6afb585e91c065d09010af947d126d3802d39",

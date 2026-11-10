@@ -1,14 +1,31 @@
 # Changelog
 
-## 2026.11.0 (Nov, 2026)
+## 26.11.10 (Nov, 2026)
 
 ### Changed
 
+- Fixed setColNames not initializing opts correctly.
+- UI update to gex.
+- Bug fixes and updates.
+
+
+## 26.11.09 (Nov, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
+## 26.11.0 (Nov, 2026)
+
+### Changed
+
+- Added more support for reduced motion.
 - Simplified underline tabs UI animations. Refined tick labelling to better cope with ticks at non-integer positions, e.g. 2.5 is now 2.5 instead of rounding to 3.
 - Bug fixes and updates.
 
 
-## 2026.10.0 (Oct, 2026)
+## 26.10.0 (Oct, 2026)
 
 ### Changed
 

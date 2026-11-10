@@ -103,7 +103,7 @@ export function AppHeaderIcon() {
         ref={iconRef}
         className="z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
       >
-        <AppIcon appInfo={appInfo} size={2.2} borderSize={0} />
+        <AppIcon appInfo={appInfo} size={2} borderSize={0} />
       </span>
 
       {!reducedMotion && (

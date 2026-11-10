@@ -320,7 +320,7 @@ export class ColDataFrame extends BaseDataFrame {
 
   override setColNames(
     index: IndexFromType,
-    opts?: { inplace?: boolean }
+    opts: { inplace?: boolean } = {}
   ): ColDataFrame {
     if (index.length !== this._data.length) {
       throw new Error('columns length must match the number of columns in data')

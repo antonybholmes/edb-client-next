@@ -16,13 +16,14 @@ const info = JSON.parse(
   fs.readFileSync('./src/config/manifest.json', 'utf-8')
 ) as IAppInfo
 
-const v = info.version.split('.')
-const major = parseInt(v[0]!)
-const minor = parseInt(v[1]!)
+// remove the build number from the version
+const version = info.version.split('.').slice(0, 3).join('.')
+//const major = parseInt(v[0]!)
+//const minor = parseInt(v[1]!)
 //const patch = parseInt(v[2]!)
 //const build = info.build
 
-const version = `${major}.${minor}.0`
+//const version = `${major}.${minor}.0`
 
 const changelogFile = 'changelog.json'
 

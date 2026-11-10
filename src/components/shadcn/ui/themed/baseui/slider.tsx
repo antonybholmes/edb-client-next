@@ -1,5 +1,6 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { useNumDebounce } from '@/hooks/debounce'
+import { useReducedMotion } from '@/hooks/reduced-motion'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import {
@@ -40,6 +41,7 @@ export function Slider({
 }: IProps) {
   const [focus, setFocus] = useState(false)
   const [hover, setHover] = useState(false)
+  const { reducedMotion } = useReducedMotion()
 
   const thumbRef = useRef<HTMLDivElement | null>(null)
 
@@ -57,6 +59,17 @@ export function Slider({
 
   useEffect(() => {
     if (!thumbRef.current) {
+      return
+    }
+
+    if (reducedMotion) {
+      gsap.set(thumbRef.current, {
+        scale: hover ? 1.2 : 1,
+        opacity: hover ? 0.6 : 1,
+        ease: 'power2.out',
+        duration: 0.3,
+      })
+
       return
     }
 
