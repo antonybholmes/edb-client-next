@@ -1,6 +1,13 @@
 # Changelog
 
-## 2026,11,09,4250 (Nov, 2026)
+## 26.11.10 (Nov, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
+## 26.11.09 (Nov, 2026)
 
 ### Changed
 
