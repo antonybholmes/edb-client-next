@@ -55,7 +55,7 @@ export function TabIndicatorFollowV({
       height: position.h,
       scaleY: position.scale ?? 1,
       duration: DURATION_S,
-      ease: 'power.out',
+      ease: 'power1.out',
       overwrite: 'auto',
     })
   }, [position?.y, position?.h, position?.scale, prevPosition])

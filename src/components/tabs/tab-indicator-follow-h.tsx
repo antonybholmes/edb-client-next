@@ -42,7 +42,7 @@ export function TabIndicatorFollowH({ h = 2 }: { h?: number }) {
       width: position.w,
       scaleX: position.scale ?? 1,
       duration: DURATION_S,
-      ease: 'power.out',
+      ease: 'power1.out',
       overwrite: 'auto',
     })
   }, [position?.x, position?.w, position?.scale, position?.animate, h])

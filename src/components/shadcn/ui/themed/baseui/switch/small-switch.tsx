@@ -1,16 +1,10 @@
-import type { LeftRightPos } from '@/components/side'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { Field } from '@base-ui/react/field'
 import { Switch as SwitchPrimitive } from '@base-ui/react/switch'
 import gsap from 'gsap'
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ComponentProps,
-  type ReactNode,
-} from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { ISwitchProps } from './round-switch'
 
 // const THUMB_CLS =
 //   "pointer-events-none block h-4 w-4 rounded-full bg-background ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
@@ -51,12 +45,6 @@ const THUMB_CLS = cn(
   'backdrop-blur-sm',
   'left-[2px]'
 )
-
-export interface ISwitchProps extends ComponentProps<
-  typeof SwitchPrimitive.Root
-> {
-  side?: LeftRightPos
-}
 
 export function SmallSwitch({
   ref,

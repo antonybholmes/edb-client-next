@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import { ITabIndicatorPos, useTabIndicators } from './tab-indicator-provider'
 
-export const EASE = 'power.out'
+export const EASE = 'power1.out'
 export const DURATION = 0.4
 
 const LINE_CLS = `absolute left-0 bottom-0 z-10 

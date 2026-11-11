@@ -123,7 +123,7 @@ export function DisplayPropsPanel() {
         <AccordionItem value="colors">
           <AccordionTrigger>Base Colors</AccordionTrigger>
           <AccordionContent>
-            <VCenterRow className="gap-x-3 justify-center">
+            <VCenterRow className="gap-x-2">
               {BASE_IDS.map((base) => (
                 <FillDropdownMenu
                   key={base}

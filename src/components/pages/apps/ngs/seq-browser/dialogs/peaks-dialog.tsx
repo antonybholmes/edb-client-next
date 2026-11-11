@@ -48,7 +48,7 @@ import { IconButton } from '@/themed/icon-button'
 import { API_BEDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { DialogTitle } from '@/components/shadcn/ui/themed/baseui/dialog'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 import {

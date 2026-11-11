@@ -43,7 +43,7 @@ import {
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { LogSpan } from '@/components/log-span'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { log } from '@/lib/dataframe/utils/log'
 import { rowZScore } from '@/lib/dataframe/utils/zscore'
 import {

@@ -3721,5 +3721,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-10T18:16:52.479Z"
+  },
+  {
+    "version": "26.11.11",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Switch now supports variants and we default to a material switch instead of the older ios style",
+          "date": "2026-11-11T15:10:11.929Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-11T15:10:11.929Z"
   }
 ]

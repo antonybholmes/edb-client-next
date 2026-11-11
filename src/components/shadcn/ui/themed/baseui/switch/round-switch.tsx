@@ -48,7 +48,6 @@ const TOGGLE_CLS = cn(
 const THUMB_CLS = cn(
   'absolute pointer-events-none shrink-0',
   'cursor-pointer rounded-full bg-white z-10',
-  'backdrop-blur-sm',
   'left-[2px]'
 )
 
@@ -58,7 +57,7 @@ export interface ISwitchProps extends ComponentProps<
   side?: LeftRightPos
 }
 
-export function Switch({
+export function RoundSwitch({
   ref,
   checked = false,
   disabled = false,

@@ -10,7 +10,7 @@ import { produce } from 'immer'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -22,7 +22,7 @@ export function ColGroupsSettingsPanel() {
     <AccordionItem value="column-groups">
       <AccordionTrigger
         leftChildren={
-          <SmallSwitch
+          <Switch
             title={TEXT_SHOW}
             checked={displayProps.groups.show}
             onCheckedChange={(v) =>

@@ -73,7 +73,7 @@ export function SettingsPlotPanel() {
       <SwitchPropRow
         title="Titles"
         checked={settings.titles.show}
-        side="left"
+        //side="left"
         onCheckedChange={(state) => {
           updateSettings({
             ...settings,

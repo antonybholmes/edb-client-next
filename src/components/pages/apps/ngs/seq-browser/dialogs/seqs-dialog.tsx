@@ -43,7 +43,7 @@ import { useTracks } from '../tracks-store'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { normalizeAssemblyName } from '@/components/edb/genome'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { appsConfig } from '@/config/apps'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'

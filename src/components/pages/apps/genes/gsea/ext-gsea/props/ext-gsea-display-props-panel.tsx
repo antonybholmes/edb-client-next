@@ -29,7 +29,7 @@ import { ColorMapMenu } from '../../../../matcalc/color-map-menu'
 import { useHistory } from '../../../../matcalc/history/history-provider/history-provider'
 import { GeneProps } from '../../gsea-plot/display-props/gene-props'
 
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { useGseaSettings } from '../../gsea-plot/gsea-settings'
 import { useExtGseaContext } from '../ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_SETTINGS } from '../ext-gsea-settings'
@@ -258,7 +258,7 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="genes-in-genesets">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
                 checked={settings.genes.stroke.show}
                 onCheckedChange={(v) =>
                   updateSettings(
@@ -371,7 +371,7 @@ export function ExtGseaDisplayPropsPanel() {
         <AccordionItem value="ranked-genes">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
                 checked={settings.ranking.show}
                 onCheckedChange={(v) =>
                   updateSettings(

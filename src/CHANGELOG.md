@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.11.11 (Nov, 2026)
+
+### Changed
+
+- Switch now supports variants and we default to a material switch instead of the older ios style.
+
+
 ## 26.11.10 (Nov, 2026)
 
 ### Changed

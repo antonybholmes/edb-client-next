@@ -44,7 +44,7 @@ import {
 } from './variants'
 
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -270,7 +270,7 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
             <AccordionItem value="x-axis">
               <AccordionTrigger
                 leftChildren={
-                  <SmallSwitch
+                  <Switch
                     checked={displayProps.axes.x.show}
                     onCheckedChange={(state) =>
                       setDisplayProps(
@@ -331,7 +331,7 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
             <AccordionItem value="y-axis">
               <AccordionTrigger
                 leftChildren={
-                  <SmallSwitch
+                  <Switch
                     checked={displayProps.axes.y.show}
                     onCheckedChange={(state) =>
                       setDisplayProps(
@@ -376,7 +376,7 @@ export function LollipopDisplayPropsPanel({ ref }: IDivProps) {
             <AccordionItem value="aa">
               <AccordionTrigger
                 leftChildren={
-                  <SmallSwitch
+                  <Switch
                     checked={displayProps.seq.show}
                     onCheckedChange={(state) =>
                       setDisplayProps(

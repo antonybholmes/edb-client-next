@@ -19,7 +19,7 @@ import { produce } from 'immer'
 
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { useGseaSettings } from '../gsea-settings'
 import APP_INFO from '../manifest.json'
 import { GeneProps } from './gene-props'
@@ -97,7 +97,7 @@ export function GseaPlotDisplayPropsPanel() {
         <AccordionItem value="enrichment-plot">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
                 title="Show"
                 checked={settings.es.show}
                 onCheckedChange={(state) => {
@@ -202,7 +202,7 @@ export function GseaPlotDisplayPropsPanel() {
         <AccordionItem value="genes-plot">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
                 title="Show"
                 checked={settings.genes.show}
                 onCheckedChange={(state) => {
@@ -225,7 +225,7 @@ export function GseaPlotDisplayPropsPanel() {
         <AccordionItem value="rank-plot">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
                 title="Show"
                 checked={settings.ranking.show}
                 onCheckedChange={(state) => {

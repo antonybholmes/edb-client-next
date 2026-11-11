@@ -27,7 +27,7 @@ export function HamburgerIcon({
         {
           transform: 'translateY(-2px)',
           duration: 0.2,
-          ease: 'power.out',
+          ease: 'power1.out',
         },
         0
       )
@@ -39,7 +39,7 @@ export function HamburgerIcon({
           transformOrigin: '50% 50%',
           //attr: { y1: 12, y2: 12 },
           duration: 0.2,
-          ease: 'power.out',
+          ease: 'power1.out',
         },
         0
       )
@@ -48,7 +48,7 @@ export function HamburgerIcon({
         {
           transform: 'translateY(2px)',
           duration: 0.2,
-          ease: 'power.out',
+          ease: 'power1.out',
         },
         0
       )

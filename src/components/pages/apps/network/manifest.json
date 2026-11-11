@@ -3,9 +3,9 @@
   "abbr": "Nw",
   "description": "Beautiful network graphs.",
   "color": "#4169E1",
-  "version": "26.11.09.190",
+  "version": "26.11.11.192",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-11-09T22:33:29.437Z",
-  "hash": "fe28e6d9f6a03d77dd4c9b30d40af1a43dd6046d273a367e5ed569187cd94bd8",
-  "build": 190
+  "modified": "2026-11-11T15:10:11.042Z",
+  "hash": "12668ee6e51570ce9e174b751d7411ac01f6d3eeb92d4901dca0cccb4e0c7cf0",
+  "build": 192
 }

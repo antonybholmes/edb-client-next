@@ -11,7 +11,7 @@ import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
@@ -25,7 +25,6 @@ import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
 import { MarginPopover } from '../gsea-plot/display-props/margin-popover'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
@@ -338,7 +337,7 @@ export function GseaDisplayPropsPanel() {
           <AccordionTrigger
             rightChildren={
               <>
-                <SmallSwitch
+                <Switch
                   title="Show"
                   checked={settings.ranking.show}
                   onCheckedChange={(state) => {

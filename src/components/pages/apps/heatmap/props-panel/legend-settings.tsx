@@ -16,7 +16,7 @@ import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -28,7 +28,7 @@ export function LegendSettingsPanel() {
     <AccordionItem value="legend">
       <AccordionTrigger
         leftChildren={
-          <SmallSwitch
+          <Switch
             checked={displayProps.legend.show}
             onCheckedChange={(v) => {
               updatePlot(

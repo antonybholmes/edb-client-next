@@ -45,20 +45,20 @@
     "description": "Extended GSEA.",
     "abbr": "ExG",
     "color": "#006666",
-    "version": "26.10.28.1082",
+    "version": "26.11.11.1084",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.124Z",
-    "hash": "7ffa7f796109c72cc9a3c3f863adf044fe388ea6facea1cd4b79691d8277c659",
-    "build": 1082
+    "modified": "2026-11-11T15:10:11.035Z",
+    "hash": "257aef438f51b8ab6fe30e43176c2c98d14eed9e310b46eaa726151fca66a84d",
+    "build": 1084
   },
   {
     "name": "Get DNA",
     "description": "Get DNA for genomic locations.",
-    "version": "26.10.28.710",
+    "version": "26.11.11.712",
     "copyright": "© 2022-2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.130Z",
-    "hash": "04f1c5f077c8729546608599172bb104d699b233484a3485b71976b733a88d21",
-    "build": 710
+    "modified": "2026-11-11T15:10:11.037Z",
+    "hash": "8db570fa25335a1e43120045ad0213910c390c8069c3d1bd4b5f3da1dfc2ebfd",
+    "build": 712
   },
   {
     "name": "GSEA Bubble",
@@ -74,21 +74,21 @@
     "name": "GSEA Plot",
     "description": "Beautiful GSEA plots.",
     "color": "#ffb366",
-    "version": "26.11.10.1092",
+    "version": "26.11.11.1094",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-11-10T20:50:08.347Z",
-    "hash": "1631ceb25cd4c74af7a3f6cc957e51df0ef2a017f6ca636194d8efae21db1da3",
-    "build": 1092
+    "modified": "2026-11-11T15:10:11.036Z",
+    "hash": "b251826603c388f44d55612de3bcbf1b6ba70a63beae3517239305a49901aa0a",
+    "build": 1094
   },
   {
     "name": "GSEA Web",
     "description": "GSEA in a web app.",
     "color": "#4169E1",
-    "version": "26.10.28.148",
+    "version": "26.11.11.150",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.127Z",
-    "hash": "93d29d70709f839aacc2daa098e0149ffc85a003ec46ab2f6b881b916aea267c",
-    "build": 148
+    "modified": "2026-11-11T15:10:11.036Z",
+    "hash": "b2f30ee5237d811631557f0b85e57bd3c7d9a258bd73045f60fe31761fc6cabd",
+    "build": 150
   },
   {
     "name": "Heatmap",
@@ -98,11 +98,11 @@
       "#0000ff",
       "#ff5050"
     ],
-    "version": "26.11.10.36",
+    "version": "26.11.11.38",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-11-10T20:50:08.349Z",
-    "hash": "918a2e0497f9cad254d6029aa529a52d9be53c6ab459dfef0a7f2246804d2304",
-    "build": 36
+    "modified": "2026-11-11T15:10:11.038Z",
+    "hash": "d4c7b77e9541b1ed5c459b30f83296e9a825eb4663378eccbbee2c53b94b8d80",
+    "build": 38
   },
   {
     "name": "History Viewer",
@@ -137,11 +137,11 @@
     "abbr": "Lp",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
-    "version": "26.10.28.1170",
+    "version": "26.11.11.1172",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.146Z",
-    "hash": "eaaf519d38df368a3be583405fb95d703c549913d328801fd959d112752960da",
-    "build": 1170
+    "modified": "2026-11-11T15:10:11.044Z",
+    "hash": "1b6d6a61dde193bb3669a80058014aa479a20409183c703981f7a448f60963a6",
+    "build": 1172
   },
   {
     "name": "Matcalc",
@@ -158,22 +158,22 @@
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "26.10.28.1038",
+    "version": "26.11.11.1040",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.128Z",
-    "hash": "db4cd6c75a7df6424a1915159380eda29f0da23c3346b6c70eaec626d0d8f74d",
-    "build": 1038
+    "modified": "2026-11-11T15:10:11.037Z",
+    "hash": "4850c695e1af8cb347c2676ac6140b0e0984bf80061db7fb570e5b5b3d8a3e05",
+    "build": 1040
   },
   {
     "name": "Network",
     "abbr": "Nw",
     "description": "Beautiful network graphs.",
     "color": "#4169E1",
-    "version": "26.11.09.190",
+    "version": "26.11.11.192",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-11-09T22:33:29.437Z",
-    "hash": "fe28e6d9f6a03d77dd4c9b30d40af1a43dd6046d273a367e5ed569187cd94bd8",
-    "build": 190
+    "modified": "2026-11-11T15:10:11.042Z",
+    "hash": "12668ee6e51570ce9e174b751d7411ac01f6d3eeb92d4901dca0cccb4e0c7cf0",
+    "build": 192
   },
   {
     "name": "Oncoplot",
@@ -231,11 +231,11 @@
     "name": "Seq Browser",
     "description": "Plot Next Generation Sequencing Data.",
     "color": "#FF0000",
-    "version": "26.10.28.1200",
+    "version": "26.11.11.1202",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.143Z",
-    "hash": "ff5fea9d548db7e97f58f44fa3cd3bc66c3078f416341ec2419026b1e519bfa9",
-    "build": 1200
+    "modified": "2026-11-11T15:10:11.043Z",
+    "hash": "5364f695f9be41afe8cc420b91c98e952e1ddd7f4f0fd669c811d937418154ce",
+    "build": 1202
   },
   {
     "name": "Single Cell",
@@ -281,21 +281,21 @@
     "name": "Variants",
     "description": "WGS variant data explorer.",
     "color": "#FA8072",
-    "version": "26.10.28.1066",
+    "version": "26.11.11.1068",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.148Z",
-    "hash": "2a089bb81926277ade4f032af6e675663956160666291f8d63fee8188c58fb6f",
-    "build": 1066
+    "modified": "2026-11-11T15:10:11.045Z",
+    "hash": "9ae72295d45d03c2ee7a51dc7482d810072cf1542f1b8e2d337a66ea9f531bf9",
+    "build": 1068
   },
   {
     "name": "Venn",
     "description": "Venn diagrams and overlap heatmaps.",
     "color": "#00008B",
-    "version": "26.10.28.1008",
+    "version": "26.11.11.1010",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-10-29T01:14:54.150Z",
-    "hash": "745ce3377660c89323f0fa365dddc17f8982cec6ead3632e2d0e0f8134d11e9b",
-    "build": 1008
+    "modified": "2026-11-11T15:10:11.046Z",
+    "hash": "d78c6abf8020622edcdd2955e64fae37eaaef1b2ca65ff9c607c2cc44633e7ab",
+    "build": 1010
   },
   {
     "name": "Volcano",

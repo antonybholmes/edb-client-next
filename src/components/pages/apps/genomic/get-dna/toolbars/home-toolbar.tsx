@@ -9,7 +9,7 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
 import { DownloadIcon } from '@/components/icons/computer/download-icon'
 
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { fetchDNA, IDNA } from '@/lib/genomic/dna'
 import {
   IGenomicLocation,

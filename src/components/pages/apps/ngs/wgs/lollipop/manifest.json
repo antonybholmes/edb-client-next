@@ -3,9 +3,9 @@
   "abbr": "Lp",
   "description": "Create lollipop plots.",
   "color": "#DA70D6",
-  "version": "26.10.28.1170",
+  "version": "26.11.11.1172",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-10-29T01:14:54.146Z",
-  "hash": "eaaf519d38df368a3be583405fb95d703c549913d328801fd959d112752960da",
-  "build": 1170
+  "modified": "2026-11-11T15:10:11.044Z",
+  "hash": "1b6d6a61dde193bb3669a80058014aa479a20409183c703981f7a448f60963a6",
+  "build": 1172
 }
