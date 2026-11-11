@@ -3737,6 +3737,10 @@
         {
           "msg": "Material slider. Seq browser scale now uses settings rather than track props",
           "date": "2026-11-11T17:50:28.537Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-11T20:42:58.799Z"
         }
       ]
     },

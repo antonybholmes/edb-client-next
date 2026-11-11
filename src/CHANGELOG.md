@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined zoom slider.
 - Bug fixes and updates.
 - Material slider. Seq browser scale now uses settings rather than track props.
 - Added material slider.
