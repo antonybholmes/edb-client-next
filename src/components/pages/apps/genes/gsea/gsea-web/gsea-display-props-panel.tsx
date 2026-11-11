@@ -20,7 +20,7 @@ import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { Percent } from '@/components/percent'
-import { Slider } from '@/components/shadcn/ui/themed/baseui/slider'
+import { Slider } from '@/components/shadcn/ui/themed/baseui/slider/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 

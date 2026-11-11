@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added material slider.
 - Switch now supports variants and we default to a material switch instead of the older ios style.
 
 

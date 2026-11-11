@@ -11,8 +11,8 @@ import {
 import { useEffect, useState } from 'react'
 
 // import { Slider } from "../toolbar/slider"
+import { Slider } from '@/components/shadcn/ui/themed/baseui/slider/slider'
 import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
-import { Slider } from '@/themed/baseui/slider'
 
 import { useDebounceCallback } from '@/hooks/debounce'
 import { findNearest } from '@/lib/search'
@@ -56,6 +56,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         </ToolbarFooterButton>
 
         <Slider
+          variant="round"
           value={_index}
           min={0}
           max={levels.length - 1}

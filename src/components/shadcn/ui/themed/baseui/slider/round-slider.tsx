@@ -1,4 +1,3 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { useNumDebounce } from '@/hooks/debounce'
 import { useReducedMotion } from '@/hooks/reduced-motion'
 import { present } from '@/lib/dom-utils'
@@ -16,7 +15,9 @@ const THUMB_CLS = cn(
   'disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 
-interface IProps extends ComponentProps<typeof SliderPrimitive.Root> {
+export interface ISliderProps extends ComponentProps<
+  typeof SliderPrimitive.Root
+> {
   onNumChange?: (v: number) => void
   /**
    * Called after user stops changing the slider value for a certain
@@ -30,7 +31,7 @@ interface IProps extends ComponentProps<typeof SliderPrimitive.Root> {
   delayMs?: number
 }
 
-export function Slider({
+export function RoundSlider({
   value,
   delayMs = 300,
   onValueChange,
@@ -38,7 +39,7 @@ export function Slider({
   onNumChanged,
   className = '',
   ...props
-}: IProps) {
+}: ISliderProps) {
   const [focus, setFocus] = useState(false)
   const [hover, setHover] = useState(false)
   const { reducedMotion } = useReducedMotion()
@@ -138,32 +139,5 @@ export function Slider({
         </SliderPrimitive.Track>
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
-  )
-}
-
-export function SliderWithValue({
-  value,
-  className = '',
-  side = 'left',
-  dp = 0,
-  ...props
-}: ComponentProps<typeof SliderPrimitive.Root> & {
-  side?: 'left' | 'right'
-  dp?: number
-}) {
-  const v = Array.isArray(value) ? value[0] : value || 0
-
-  return (
-    <VCenterRow className="gap-x-2">
-      {side === 'left' && (
-        <span className="bg-muted/50 py-1 rounded-sm text-center min-w-10">
-          {v.toFixed(dp)}
-        </span>
-      )}
-      <Slider {...props} value={value} className={className} />
-      {side === 'right' && (
-        <span className="ml-2 min-w-8">{v.toFixed(dp)}</span>
-      )}
-    </VCenterRow>
   )
 }

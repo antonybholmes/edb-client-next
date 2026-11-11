@@ -12,7 +12,7 @@ import {
   type ComponentProps,
 } from 'react'
 import { Input } from './input'
-import { Slider } from './slider'
+import { Slider } from './slider/slider'
 
 type INumParser = (v: string) => number
 

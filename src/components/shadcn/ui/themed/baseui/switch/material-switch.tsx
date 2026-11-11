@@ -81,13 +81,14 @@ export function MaterialSwitch({
       })
     } else {
       gsap.to(thumbRef.current, {
-        //scale: hover ? 1.1 : 1,
+        scale: hover && !checked ? 1.1 : 1,
         transformOrigin: 'center',
         x: checked ? SHIFT : 0,
         width: checked ? 16 : 14,
         height: checked ? 16 : 14,
+
         duration: DURATION,
-        ease: 'back.out',
+        ease: 'power2.out',
       })
     }
 
