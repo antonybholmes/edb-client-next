@@ -1,3 +1,4 @@
+import { ITickItem } from '@/components/plot/axes/svg-axis-props'
 import { useNumDebounce } from '@/hooks/debounce'
 import { useReducedMotion } from '@/hooks/reduced-motion'
 import { present } from '@/lib/dom-utils'
@@ -15,6 +16,30 @@ const THUMB_CLS = cn(
   'disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 
+export const DEFAULT_SLIDER_TICKS: ITickItem[] = [
+  // {
+  //   v: 0,
+  //   label: '0',
+  // },
+  {
+    v: 0.25,
+    label: '25',
+  },
+
+  {
+    v: 0.5,
+    label: '50',
+  },
+  {
+    v: 0.75,
+    label: '75',
+  },
+  // {
+  //   v: 1,
+  //   label: '100',
+  // },
+]
+
 export interface ISliderProps extends ComponentProps<
   typeof SliderPrimitive.Root
 > {
@@ -29,6 +54,8 @@ export interface ISliderProps extends ComponentProps<
    */
   onNumChanged?: (v: number) => void
   delayMs?: number
+  ticks?: ITickItem[]
+  tickSize?: number
 }
 
 export function RoundSlider({

@@ -3733,6 +3733,10 @@
         {
           "msg": "Added material slider",
           "date": "2026-11-11T16:43:15.441Z"
+        },
+        {
+          "msg": "Material slider. Seq browser scale now uses settings rather than track props",
+          "date": "2026-11-11T17:50:28.537Z"
         }
       ]
     },

@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ISliderProps } from './round-slider'
 
 const THUMB_CLS = cn(
-  'h-6 w-[3px] shrink-0 rounded-full bg-app-theme/90 cursor-pointer'
+  'h-5 w-[4px] shrink-0 rounded-full bg-app-theme cursor-pointer'
 )
 
 export function MaterialSlider({
@@ -19,6 +19,8 @@ export function MaterialSlider({
   min = 0,
   max = 100,
   delayMs = 300,
+  ticks,
+  tickSize = 3,
   onValueChange,
   onNumChange,
   onNumChanged,
@@ -47,25 +49,27 @@ export function MaterialSlider({
   }, [value])
 
   useEffect(() => {
-    if (!thumbRef.current) {
+    if (!thumbRef.current || reducedMotion) {
       return
     }
 
-    if (reducedMotion) {
-      gsap.set(thumbRef.current, {
-        scaleY: hover ? 1.1 : 1,
-        opacity: hover ? 0.6 : 1,
-        ease: 'power2.out',
-        duration: 0.3,
-      })
+    // if (reducedMotion) {
+    //   gsap.set(thumbRef.current, {
+    //     //scaleY: hover ? 1.1 : 1,
+    //     //opacity: hover ? 0.6 : 1,
+    //     ease: 'power2.out',
+    //     duration: 0.3,
+    //   })
 
-      return
-    }
+    //   return
+    // }
 
     gsap.to(thumbRef.current, {
-      scaleY: hover ? 1.1 : 1,
+      //scaleX: hover ? 2 : 1,
+      zIndex: 50,
+      width: hover ? '8px' : '4px',
       //opacity: hover ? 0.6 : 1,
-      ease: 'power2.out',
+      ease: 'power3.out',
       duration: 0.3,
     })
   }, [hover])
@@ -130,12 +134,26 @@ export function MaterialSlider({
             data-focus={present(focus)}
             className={THUMB_CLS}
             aria-label="Slider control"
+            style={{ zIndex: 50 }}
           />
 
           <span
-            className="h-full bg-app-theme/20 absolute rounded-l-xs rounded-r-sm right-0"
+            className="h-full bg-app-theme/20 absolute z-0 rounded-l-xs rounded-r-sm right-0"
             style={{ width: `calc(${(1 - p) * 100}% - 6px)` }}
           />
+
+          {ticks &&
+            ticks.map((tick) => (
+              <span
+                key={tick.v}
+                className="absolute aspect-square rounded-full shrink-0 grow-0 z-10 top-1/2 -translate-y-1/2 bg-white"
+                style={{
+                  left: `calc(${tick.v * 100}% - ${tickSize / 2}px)`,
+                  width: tickSize,
+                  height: tickSize,
+                }}
+              />
+            ))}
         </SliderPrimitive.Track>
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>

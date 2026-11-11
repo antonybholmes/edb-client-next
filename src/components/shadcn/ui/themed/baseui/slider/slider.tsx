@@ -2,17 +2,18 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { Slider as SliderPrimitive } from '@base-ui/react/slider'
 import { type ComponentProps } from 'react'
 import { MaterialSlider } from './material-slider'
-import { ISliderProps, RoundSlider } from './round-slider'
+import { DEFAULT_SLIDER_TICKS, ISliderProps, RoundSlider } from './round-slider'
 
 export function Slider({
   variant = 'material',
+  ticks = DEFAULT_SLIDER_TICKS,
   ...props
 }: ISliderProps & { variant?: 'round' | 'material' }) {
   switch (variant) {
     case 'material':
-      return <MaterialSlider {...props} />
+      return <MaterialSlider ticks={ticks} {...props} />
     default:
-      return <RoundSlider {...props} />
+      return <RoundSlider ticks={ticks} {...props} />
   }
 }
 

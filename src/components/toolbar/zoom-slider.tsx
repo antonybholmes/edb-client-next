@@ -56,7 +56,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         </ToolbarFooterButton>
 
         <Slider
-          variant="round"
+          //variant="round"
           value={_index}
           min={0}
           max={levels.length - 1}

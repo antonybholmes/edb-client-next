@@ -10,7 +10,8 @@ import {
   useState,
   type ComponentRef,
 } from 'react'
-import type { ISwitchProps } from './baseui/switch/switch'
+
+import { ISwitchProps } from './baseui/switch/round-switch'
 import * as SwitchPrimitives from './baseui/switch/switch'
 
 // const THUMB_CLS =

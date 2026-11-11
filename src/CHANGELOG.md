@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Material slider. Seq browser scale now uses settings rather than track props.
 - Added material slider.
 - Switch now supports variants and we default to a material switch instead of the older ios style.
