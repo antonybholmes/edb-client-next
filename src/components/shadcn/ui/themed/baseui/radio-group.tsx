@@ -21,10 +21,19 @@ const RADIO_BUTTON_CLS = cn(
   'data-checked:hover:bg-app-theme shrink-0'
 )
 
+const MATERIAL_RADIO_BUTTON_CLS = cn(
+  FOCUS_RING_CLS,
+  CENTERED_ROW_CLS,
+  'aspect-square h-4.5 w-4.5 rounded-full bg-background border-2',
+  'data-unchecked:border-border hover:data-unchecked:border-app-theme',
+  'group-hover:data-unchecked:border-app-theme',
+  'data-checked:border-app-theme shrink-0'
+)
+
 export const Radio = RadioPrimitive.Root
 export const RadioGroup = RadioGroupPrimitive
 
-export function RadioGroupItem({
+export function RoundRadioGroupItem({
   ref,
   className = '',
   children,
@@ -57,6 +66,53 @@ export function RadioGroupItem({
   }
 
   return ret
+}
+
+export function MaterialRadioGroupItem({
+  ref,
+  className = '',
+  children,
+  title,
+  'aria-label': ariaLabel,
+  ...props
+}: ComponentProps<typeof Radio>) {
+  if (!ariaLabel) {
+    ariaLabel = title ?? String(props.value)
+  }
+
+  let ret: ReactNode = (
+    <Radio
+      className={MATERIAL_RADIO_BUTTON_CLS}
+      aria-label={ariaLabel}
+      title={title}
+      {...props}
+    >
+      <RadioPrimitive.Indicator className="aspect-square  w-2 rounded-full bg-app-theme" />
+    </Radio>
+  )
+
+  if (children) {
+    ret = (
+      <label className={cn('flex flex-row items-center gap-x-2', className)}>
+        {ret}
+        {children}
+      </label>
+    )
+  }
+
+  return ret
+}
+
+export function RadioGroupItem({
+  variant = 'material',
+  ...props
+}: ComponentProps<typeof Radio> & { variant?: 'round' | 'material' }) {
+  switch (variant) {
+    case 'material':
+      return <MaterialRadioGroupItem {...props} />
+    default:
+      return <RoundRadioGroupItem {...props} />
+  }
 }
 
 interface SideRadioGroupItemProps extends ComponentProps<typeof Radio> {

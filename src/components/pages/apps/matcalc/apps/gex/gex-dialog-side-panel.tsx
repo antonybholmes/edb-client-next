@@ -293,9 +293,9 @@ export function GexDialogSidePanel({
                         className="grow w-full"
                       >
                         <HardDrive
-                          size={20}
+                          size={24}
                           strokeWidth={2}
-                          className="group-data-[selected=true]:stroke-app-theme"
+                          //className="group-data-[selected=true]:stroke-app-theme"
                         />
                         <TruncateSpan className="h-8 grow">
                           {ds.name}

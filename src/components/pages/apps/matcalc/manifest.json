@@ -3,9 +3,9 @@
   "abbr": "Mc",
   "description": "Scientific graphing and statistics.",
   "color": "#40bf80",
-  "version": "26.11.10.2224",
+  "version": "26.11.11.2226",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-11-10T20:50:08.350Z",
-  "hash": "6d6c1dea84ccea36b6a61e9200bbded9a8c6fe6fadc5070d543253742edf74b5",
-  "build": 2224
+  "modified": "2026-11-11T17:50:27.602Z",
+  "hash": "19b118aa1db06ba605303b160595bfd404718e3aa2f784056baa6c0d84ce2035",
+  "build": 2226
 }

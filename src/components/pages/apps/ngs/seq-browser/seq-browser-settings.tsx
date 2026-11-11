@@ -25,7 +25,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import APP_INFO from './manifest.json'
 import type { BandStyle, GeneArrowStyle } from './tracks-provider'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v104`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v106`
 
 const DEFAULT_LOCATIONS = [
   parseGenomicLocation('chr3:187441954-187466041'),
@@ -94,7 +94,14 @@ export interface ISeqBrowserSettings {
         text: ITextProps
       }
     }
-    scale: { autoSize: boolean; bp: number }
+    scale: {
+      autoSize: boolean
+      bp: number
+      caps: {
+        show: boolean
+        height: number
+      }
+    }
     ruler: { autoSize: boolean; bp: number }
     genes: {
       labels: {
@@ -242,6 +249,10 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
     scale: {
       autoSize: true,
       bp: 5000,
+      caps: {
+        show: true,
+        height: 6,
+      },
     },
     ruler: {
       autoSize: true,

@@ -148,11 +148,11 @@
     "abbr": "Mc",
     "description": "Scientific graphing and statistics.",
     "color": "#40bf80",
-    "version": "26.11.10.2224",
+    "version": "26.11.11.2226",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-11-10T20:50:08.350Z",
-    "hash": "6d6c1dea84ccea36b6a61e9200bbded9a8c6fe6fadc5070d543253742edf74b5",
-    "build": 2224
+    "modified": "2026-11-11T17:50:27.602Z",
+    "hash": "19b118aa1db06ba605303b160595bfd404718e3aa2f784056baa6c0d84ce2035",
+    "build": 2226
   },
   {
     "name": "Motifs",
@@ -231,11 +231,11 @@
     "name": "Seq Browser",
     "description": "Plot Next Generation Sequencing Data.",
     "color": "#FF0000",
-    "version": "26.11.11.1202",
+    "version": "26.11.11.1204",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-11-11T15:10:11.043Z",
-    "hash": "5364f695f9be41afe8cc420b91c98e952e1ddd7f4f0fd669c811d937418154ce",
-    "build": 1202
+    "modified": "2026-11-11T17:50:27.603Z",
+    "hash": "acc1ee1dd040773c57283dbc5d53241658526ca99abdcc588e5c325f9166bbf3",
+    "build": 1204
   },
   {
     "name": "Single Cell",

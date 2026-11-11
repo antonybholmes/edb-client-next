@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ISliderProps } from './round-slider'
 
 const THUMB_CLS = cn(
-  'h-6 w-[3px] shrink-0 rounded-full bg-app-theme cursor-pointer'
+  'h-6 w-[3px] shrink-0 rounded-full bg-app-theme/90 cursor-pointer'
 )
 
 export function MaterialSlider({

@@ -241,20 +241,20 @@ export interface IScaleTrackDisplayOptions {
   autoSize: boolean
   bp: number
   height: number
-  caps: {
-    show: boolean
-    height: number
-  }
+  // caps: {
+  //   show: boolean
+  //   height: number
+  // }
   stroke: IStrokeProps
   text: ITextProps
 }
 
 export const DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS: IScaleTrackDisplayOptions = {
   height: 32,
-  caps: {
-    height: 6,
-    show: true,
-  },
+  // caps: {
+  //   height: 6,
+  //   show: true,
+  // },
   stroke: { ...DEFAULT_STROKE_PROPS },
   text: { ...DEFAULT_TEXT_PROPS },
   autoSize: true,

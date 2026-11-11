@@ -3729,6 +3729,10 @@
         {
           "msg": "Switch now supports variants and we default to a material switch instead of the older ios style",
           "date": "2026-11-11T15:10:11.929Z"
+        },
+        {
+          "msg": "Added material slider",
+          "date": "2026-11-11T16:43:15.441Z"
         }
       ]
     },
