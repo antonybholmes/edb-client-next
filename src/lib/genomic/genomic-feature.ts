@@ -11,7 +11,7 @@ export interface IGenomicFeature {
   symbol?: string
   transcript?: string // e.g. ENST00000380152
   isCanonical?: boolean
-  isLongest?: boolean
+  //isLongest?: boolean
   label?: string
   tssDist?: number
 

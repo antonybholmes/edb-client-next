@@ -745,6 +745,7 @@ function ExonsSvg({
           const x1 = xaf(exonLoc.start)
           const x2 = xaf(exonLoc.end)
           const w = Math.abs(x2 - x1)
+
           return (
             <rect
               id="exon"

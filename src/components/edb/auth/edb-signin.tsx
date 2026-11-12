@@ -412,7 +412,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                   className="rounded-full w-7 h-7"
                 />
               ) : (
-                <span className="rounded-full bg-theme/70 w-7 h-7 group-hover:bg-theme group-focus-visible:bg-theme group-data-[checked=true]:bg-theme trans-color aspect-square flex items-center justify-center text-xs font-semibold overflow-hidden text-background">
+                <span className="rounded-full bg-app-theme/70 w-7 h-7 group-hover:bg-theme group-focus-visible:bg-theme group-data-[checked=true]:bg-theme trans-color aspect-square flex items-center justify-center text-xs font-semibold overflow-hidden text-background">
                   {initials}
                 </span>
               )}

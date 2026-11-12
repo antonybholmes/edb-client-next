@@ -59,6 +59,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         }}
         step={1}
         className="w-20"
+        title="Set Zoom Level"
       />
 
       <VCenterRow className="gap-x-1">
