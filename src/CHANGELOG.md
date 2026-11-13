@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added some support for future use of msgpack.
 
 
