@@ -97,7 +97,7 @@ export async function createAnnotationTable(
     for (const g of ann.withinGenes) {
       geneIds.push(g.geneId!)
       geneSymbols.push(g.symbol!)
-      strands.push(g.loc.strand)
+      strands.push(g.strand)
       promLabels.push(g.label ?? '')
       tssDists.push(g.tssDist!)
     }
@@ -116,7 +116,7 @@ export async function createAnnotationTable(
         .map((g) => [
           g.geneId!,
           g.symbol!,
-          g.loc.strand!,
+          g.strand!,
           g.label ?? '',
           g.tssDist ?? 0,
         ])

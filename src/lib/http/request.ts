@@ -14,7 +14,7 @@ export interface IHttpRequest {
   getText(url: string, options: IFetchOptions): Promise<string>
   getJson<T>(url: string, options: IFetchOptions): Promise<T>
   postJson<T>(url: string, options: IFetchOptions): Promise<T>
-  postJson<T>(url: string, options: IFetchOptions): Promise<T>
+  //postMsgPack<T>(url: string, options: IFetchOptions): Promise<T>
 
   delete(url: string, options: IFetchOptions): Promise<Response>
 }
@@ -103,6 +103,28 @@ class FetchRequest implements IHttpRequest {
 
     return ret
   }
+
+  // async postMsgPack<T>(url: string, options: IFetchOptions = {}): Promise<T> {
+  //   let headers = options.headers ?? {}
+
+  //   headers['Accept'] ??= MIME_MSGPACK
+
+  //   const response = await this.post(url, {
+  //     ...options,
+  //     throwError: false,
+  //     headers,
+  //   })
+
+  //   const buffer = await response.arrayBuffer()
+
+  //   if (!response.ok) {
+  //     throw new ApiError('API Error', response.status)
+  //   }
+
+  //   const ret = decode(new Uint8Array(buffer)) as T
+
+  //   return ret
+  // }
 
   async post(url: string, options: IFetchOptions = {}): Promise<Response> {
     let {

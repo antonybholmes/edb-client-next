@@ -7,6 +7,7 @@ export const PATH_SEP = '/'
 export const REDIRECT_DELAY_MS = 2000
 
 export const MIME_JSON = 'application/json'
+export const MIME_MSGPACK = 'application/msgpack'
 
 export const HEADER_X_CSRF_TOKEN = 'X-CSRF-Token'
 
@@ -77,7 +78,7 @@ export function getUrlFriendlyImg(
 }
 
 export function getUrlFriendlyTags(tags: string[]): string[] {
-  return tags.map(tag => getUrlFriendlyTag(tag))
+  return tags.map((tag) => getUrlFriendlyTag(tag))
 }
 
 export function getSlug(path: string): string {
@@ -85,7 +86,7 @@ export function getSlug(path: string): string {
     .replace(/\.md$/, '')
     .replaceAll('\\', PATH_SEP)
     .split(PATH_SEP)
-    .map(p => getUrlFriendlyTag(p))
+    .map((p) => getUrlFriendlyTag(p))
     .join(PATH_SEP)
 }
 
@@ -114,7 +115,9 @@ export function makeGetUrl(
   if (params.length > 0) {
     return encodeURI(
       `${baseUrl}?${params
-        .map((po: IFieldMap) => Object.entries(po).map(p => `${p[0]}=${p[1]}`))
+        .map((po: IFieldMap) =>
+          Object.entries(po).map((p) => `${p[0]}=${p[1]}`)
+        )
         .flat()
         .join('&')}`
     )
@@ -331,7 +334,7 @@ export function fromBase64Url(str: string): string {
   const uint8Array = new Uint8Array(
     atob(base64Encoded)
       .split('')
-      .map(char => char.charCodeAt(0))
+      .map((char) => char.charCodeAt(0))
   )
 
   return new TextDecoder().decode(uint8Array)

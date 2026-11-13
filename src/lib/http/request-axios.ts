@@ -19,6 +19,15 @@ class AxiosRequest implements IHttpRequest {
     return res.data as T
   }
 
+  async postMsgPack<T>(url: string, options: IFetchOptions): Promise<T> {
+    const res = await axios.post(url, options?.body, {
+      headers: (options?.headers as RawAxiosRequestHeaders) ?? {},
+      withCredentials: options.withCredentials ?? false,
+    })
+
+    return res.data as T
+  }
+
   async getText(url: string, options: IFetchOptions): Promise<string> {
     const res = await axios.get(url, {
       headers: (options?.headers as RawAxiosRequestHeaders) ?? {},

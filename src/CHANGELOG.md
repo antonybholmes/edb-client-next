@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.11.13 (Nov, 2026)
+
+### Changed
+
+- Added some support for future use of msgpack.
+
+
 ## 26.11.12 (Nov, 2026)
 
 ### Changed

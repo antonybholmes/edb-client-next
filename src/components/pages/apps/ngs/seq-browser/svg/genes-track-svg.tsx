@@ -79,11 +79,11 @@ export function getGeneTrackHeight(
 
         // add an allowance for the label width
         if (settings.reverse) {
-          x1 = Math.floor(xaf(t.loc.end))
-          x2 = Math.floor(xaf(t.loc.start)) + (t.symbol?.length ?? 0) * CHAR_W
+          x1 = Math.floor(xaf(t.end))
+          x2 = Math.floor(xaf(t.start)) + (t.symbol?.length ?? 0) * CHAR_W
         } else {
-          x1 = Math.floor(xaf(t.loc.start)) - (t.symbol?.length ?? 0) * CHAR_W
-          x2 = Math.floor(xaf(t.loc.end))
+          x1 = Math.floor(xaf(t.start)) - (t.symbol?.length ?? 0) * CHAR_W
+          x2 = Math.floor(xaf(t.end))
         }
 
         x1 = Math.max(0, x1)
@@ -287,9 +287,9 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
               {gene.children
                 ?.filter((f) => f.type === 'transcript')
                 .map((transcript, ti) => {
-                  const transLoc = transcript.loc
-                  x1 = xaf(transLoc.start)
-                  x2 = xaf(transLoc.end)
+                  //const transLoc = transcript.loc
+                  x1 = xaf(transcript.start)
+                  x2 = xaf(transcript.end)
 
                   const arrowStart =
                     Math.round(
@@ -337,7 +337,7 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                             : settings.tracks.genes.exons.fill.value
                         }
                       >
-                        <title>{`${transcript.transcript}, strand ${transcript.loc.strand}`}</title>
+                        <title>{`${transcript.transcriptId}, strand ${transcript.strand}`}</title>
                       </rect>
 
                       <SvgG
@@ -362,8 +362,8 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                               textAnchor={settings.reverse ? 'start' : 'end'}
                               //fontWeight="bold"
                             >
-                              {`${transcript.symbol} ${settings.tracks.genes.labels.showGeneId ? `(${transcript.transcript})` : ''}`}
-                              <title>{`${transcript.symbol} (${transcript.transcript})`}</title>
+                              {`${gene.symbol} ${settings.tracks.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                              <title>{`${gene.symbol} (${transcript.transcriptId})`}</title>
                             </SvgText>
                           )}
 
@@ -376,7 +376,7 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                               return (
                                 <use
                                   key={`${x}`}
-                                  xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}`}
+                                  xlinkHref={`#${track.id}-arrow-${transcript.strand === '+' ? 'right' : 'left'}`}
                                   transform={`translate(${x},0)`}
                                 />
                               )
@@ -546,9 +546,9 @@ export function GenesStructureTrackSvg({
                       (f.isCanonical ?? false))
                 )
                 .map((transcript, ti) => {
-                  const transLoc = transcript.loc
-                  x1 = xaf(transLoc.start)
-                  x2 = xaf(transLoc.end)
+                  //const transLoc = transcript.loc
+                  x1 = xaf(transcript.start)
+                  x2 = xaf(transcript.end)
 
                   const exonCount =
                     transcript.children?.filter((f) => f.type === 'exon')
@@ -592,7 +592,7 @@ export function GenesStructureTrackSvg({
                         height={settings.tracks.genes.transcripts.height}
                         fill="white"
                       >
-                        <title>{`${transcript.transcript}, strand ${transcript.loc.strand}`}</title>
+                        <title>{`${transcript.transcriptId}, strand ${transcript.strand}`}</title>
                       </rect>
 
                       <SvgG
@@ -608,7 +608,7 @@ export function GenesStructureTrackSvg({
                             ti === 0) && (
                             <SvgG
                               id="end-arrow"
-                              transform={`translate(${gene.loc.strand === '+' ? x1 : x2}, 0) scale(${gene.loc.strand === '+' ? 1 : -1},1)`}
+                              transform={`translate(${gene.strand === '+' ? x1 : x2}, 0) scale(${gene.strand === '+' ? 1 : -1},1)`}
                             >
                               <polygon
                                 points={`0,0 0,-10 ${10 * sgn},-10 ${10 * sgn},-14 ${15 * sgn},-10 ${10 * sgn},-6 ${10 * sgn},-10 0,-10`}
@@ -646,8 +646,8 @@ export function GenesStructureTrackSvg({
                               textAnchor={settings.reverse ? 'start' : 'end'}
                               //fontWeight="bold"
                             >
-                              {`${transcript.symbol} ${settings.tracks.genes.labels.showGeneId ? `(${transcript.transcript})` : ''}`}
-                              <title>{`${transcript.symbol} (${transcript.transcript})`}</title>
+                              {`${gene.symbol} ${settings.tracks.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                              <title>{`${gene.symbol} (${transcript.transcriptId})`}</title>
                             </SvgText>
                           )}
 
@@ -660,7 +660,7 @@ export function GenesStructureTrackSvg({
                               return (
                                 <use
                                   key={`${x}`}
-                                  xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
+                                  xlinkHref={`#${track.id}-arrow-${transcript.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
                                   transform={`translate(${x},0)`}
                                 />
                               )
@@ -741,9 +741,9 @@ function ExonsSvg({
       {transcript.children
         ?.filter((f) => f.type === 'exon')
         .map((exon, ei) => {
-          const exonLoc = exon.loc
-          const x1 = xaf(exonLoc.start)
-          const x2 = xaf(exonLoc.end)
+          //const exonLoc = exon.loc
+          const x1 = xaf(exon.start)
+          const x2 = xaf(exon.end)
           const w = Math.abs(x2 - x1)
 
           return (
@@ -762,7 +762,7 @@ function ExonsSvg({
               stroke="none"
               key={ei}
             >
-              <title>{`${exon.transcript}, strand ${exon.loc.strand}, exon ${exon.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+              <title>{`${exon.transcriptId}, strand ${exon.strand}, exon ${exon.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
             </rect>
           )
         })}
@@ -797,9 +797,9 @@ function CDSSvg({
       {transcript.children
         ?.filter((f) => f.type === 'cds')
         .map((cds, ei) => {
-          const cdsLoc = cds.loc
-          const x1 = xaf(cdsLoc.start)
-          const x2 = xaf(cdsLoc.end)
+          // const cdsLoc = cds.loc
+          const x1 = xaf(cds.start)
+          const x2 = xaf(cds.end)
           const w = Math.abs(x2 - x1)
           return (
             <rect
@@ -817,7 +817,7 @@ function CDSSvg({
               stroke="none"
               key={ei}
             >
-              <title>{`${cds.transcript}, strand ${cds.loc.strand}, cds ${cds.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+              <title>{`${cds.transcriptId}, strand ${cds.strand}, cds ${cds.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
             </rect>
           )
         })}
@@ -852,9 +852,9 @@ function UTRSvg({
       {transcript.children
         ?.filter((f) => f.type === 'utr')
         .map((utr, ei) => {
-          const utrLoc = utr.loc
-          const x1 = xaf(utrLoc.start)
-          const x2 = xaf(utrLoc.end)
+          //const utrLoc = utr.loc
+          const x1 = xaf(utr.start)
+          const x2 = xaf(utr.end)
           const w = Math.abs(x2 - x1)
           return (
             <rect
@@ -872,7 +872,7 @@ function UTRSvg({
               stroke="none"
               key={ei}
             >
-              <title>{`${utr.transcript}, strand ${utr.loc.strand}, utr ${utr.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+              <title>{`${utr.transcriptId}, strand ${utr.strand}, utr ${utr.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
             </rect>
           )
         })}

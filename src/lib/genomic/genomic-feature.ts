@@ -2,20 +2,20 @@ import type { IGenomicLocation } from './genomic-location'
 
 export type Feature = 'gene' | 'transcript' | 'exon'
 
-export interface IGenomicFeature {
-  loc: IGenomicLocation
+export interface IGenomicFeature extends IGenomicLocation {
+  //loc: IGenomicLocation
   type: string // e.g. gene, transcript
   biotype: string // e.g protein coding
 
   geneId?: string // e.g. ENSG00000139618
   symbol?: string
-  transcript?: string // e.g. ENST00000380152
+  transcriptId?: string // e.g. ENST00000380152
   isCanonical?: boolean
   //isLongest?: boolean
   label?: string
   tssDist?: number
 
-  exon?: string // e.g. ENSE00003695731
+  exonId?: string // e.g. ENSE00003695731
   exonNumber?: number
   //children?: IGenomicFeature[]
   //transcripts?: IGenomicFeature[]

@@ -3763,5 +3763,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-12T23:48:50.466Z"
+  },
+  {
+    "version": "26.11.13",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Added some support for future use of msgpack",
+          "date": "2026-11-13T23:08:02.487Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-13T23:08:02.487Z"
   }
 ]
