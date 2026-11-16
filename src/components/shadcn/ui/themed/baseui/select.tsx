@@ -44,7 +44,7 @@ export const triggerVariants = cva(
         ),
         button: cn(BASE_FLAT_BUTTON_CLS, 'h-button rounded-theme'),
 
-        footer: cn(BASE_FLAT_BUTTON_CLS, 'h-button-xs'),
+        footer: cn(BASE_FLAT_BUTTON_CLS, 'h-button-sm'),
         header: cn(BASE_FLAT_BUTTON_CLS, 'h-button-header px-2 pl-3'),
         glass: '',
       },

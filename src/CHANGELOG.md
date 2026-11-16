@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.11.16 (Nov, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 26.11.14 (Nov, 2026)
 
 ### Changed
