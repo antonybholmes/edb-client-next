@@ -56,20 +56,20 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
       <SvgG pos={{ x: 0, y: track.displayOptions.height / 2 }}>
         <SvgLine x1={x1} x2={x2} s={track.displayOptions.stroke} />
 
-        {track.displayOptions.caps.show && (
+        {settings.tracks.scale.caps.show && (
           <SvgG id="caps">
             <SvgLine
               x1={x1}
               x2={x1}
-              y1={-track.displayOptions.caps.height}
-              y2={track.displayOptions.caps.height}
+              y1={-settings.tracks.scale.caps.height}
+              y2={settings.tracks.scale.caps.height}
               s={track.displayOptions.stroke}
             />
             <SvgLine
               x1={x2}
               x2={x2}
-              y1={-track.displayOptions.caps.height}
-              y2={track.displayOptions.caps.height}
+              y1={-settings.tracks.scale.caps.height}
+              y2={settings.tracks.scale.caps.height}
               s={track.displayOptions.stroke}
             />
           </SvgG>

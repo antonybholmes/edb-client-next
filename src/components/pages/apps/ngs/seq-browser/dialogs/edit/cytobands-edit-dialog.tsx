@@ -57,6 +57,7 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
                 updateSettings(newOptions)
               }}
               variant="outline"
+              aspect="icon"
             >
               <GroupToggle value="rounded" title="Rounded">
                 <Circle size={16} />
@@ -86,7 +87,8 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
           </ActionDialogRow>
 
           <ActionSwitchRow
-            title="Reduced labels"
+            title="Labels"
+            text="Reduce density"
             info="Reduces the number of labels shown to make figures look less cluttered."
 
             disabled={!settings.tracks.cytobands.labels.text.show}

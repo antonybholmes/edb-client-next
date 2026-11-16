@@ -7,7 +7,7 @@ import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 import type { ICheckboxProps } from '../shadcn/ui/themed/baseui/check-box'
 import { InfoHoverCard } from '../shadcn/ui/themed/baseui/hover-card'
-import { Switch } from '../shadcn/ui/themed/baseui/switch'
+import { Switch } from '../shadcn/ui/themed/baseui/switch/switch'
 import { DialogCardInfo } from './card/dialog-card'
 import { H_CLS } from './prop-row'
 

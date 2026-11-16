@@ -23,7 +23,7 @@ import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import {
   GroupToggle,
   ToggleGroup,
@@ -472,7 +472,7 @@ export function GseaBubbleDisplayPropsPanel() {
         <AccordionItem value="groups">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
                 title="Show"
                 checked={settings.groups.show}
                 onCheckedChange={(state) =>

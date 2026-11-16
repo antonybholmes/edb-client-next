@@ -24,7 +24,7 @@ import {
   Underline,
 } from 'lucide-react'
 import { SwitchPropRow } from '../../dialogs/switch-prop-row'
-import { Switch } from '../../shadcn/ui/themed/baseui/switch'
+import { Switch } from '../../shadcn/ui/themed/baseui/switch/switch'
 import {
   GroupToggle,
   ToggleGroup,

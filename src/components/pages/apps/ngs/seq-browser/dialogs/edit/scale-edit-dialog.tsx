@@ -7,6 +7,7 @@ import {
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { NumericalInput } from '@/themed/numerical-input'
@@ -88,30 +89,47 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
           <ActionCheckRow
             title="Caps"
 
-            checked={_track.displayOptions.caps.show}
+            checked={settings.tracks.scale.caps.show}
             onCheckedChange={(v) => {
-              const newTrack = produce(_track, (draft) => {
-                draft.displayOptions.caps.show = v
+              const newOptions = produce(settings, (draft) => {
+                draft.tracks.scale.caps.show = v
               })
 
-              onResponse?.(TEXT_OK, { group, track: newTrack })
-              setTrack(newTrack)
+              updateSettings(newOptions)
             }}
           >
-            <NumericalInput
-              value={_track.displayOptions.caps.height}
+            <NumSlider
+              value={settings.tracks.scale.caps.height}
+              min={1}
+              max={50}
+              onNumChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.tracks.scale.caps.height = v
+                  })
+                )
+              }}
+            />
+
+            {/* <NumericalInput
+              value={settings.tracks.scale.caps.height}
               placeholder="height"
               limit={[1, 1000]}
               onNumChange={(v) => {
-                const newTrack = produce(_track, (draft) => {
-                  draft.displayOptions.caps.height = v
-                })
+                // const newTrack = produce(settings, (draft) => {
+                //   draft.tracks.scale.caps.height = v
+                // })
 
-                onResponse?.(TEXT_OK, { group, track: newTrack })
-                setTrack(newTrack)
+                // onResponse?.(TEXT_OK, { group, track: newTrack })
+                // setTrack(newTrack)
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.tracks.scale.caps.height = v
+                  })
+                )
               }}
               w="sm"
-            />
+            /> */}
           </ActionCheckRow>
 
           <ActionCheckRow

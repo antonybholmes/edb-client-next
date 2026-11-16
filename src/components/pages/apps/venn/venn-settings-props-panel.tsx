@@ -142,18 +142,6 @@ export function VennSettingsPropsPanel() {
 
         <AccordionItem value="titles">
           <AccordionTrigger
-            // leftChildren={
-            //   <SmallSwitch
-            //     checked={settings.fonts.title.show}
-            //     onCheckedChange={(state) =>
-            //       updateSettings(
-            //         produce(settings, (draft) => {
-            //           draft.fonts.title.show = state
-            //         })
-            //       )
-            //     }
-            //   />
-            // }
             rightChildren={
               <FontPopover
                 fonts={[
@@ -285,18 +273,6 @@ export function VennSettingsPropsPanel() {
                 ]}
               />
             }
-            // leftChildren={
-            //   <SmallSwitch
-            //     checked={settings.fonts.percentages.show}
-            //     onCheckedChange={(state) =>
-            //       updateSettings(
-            //         produce(settings, (draft) => {
-            //           draft.fonts.percentages.show = state
-            //         })
-            //       )
-            //     }
-            //   />
-            // }
           >
             Percentages
           </AccordionTrigger>

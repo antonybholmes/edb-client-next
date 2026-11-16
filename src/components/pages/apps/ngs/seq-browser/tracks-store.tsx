@@ -56,6 +56,8 @@ export interface IGenomicFeatureSearch {
   features: IGenomicFeature[]
 }
 
+const DEFAULT_FORMAT = 'json'
+
 /**
  * The track types that represent signals, which can either be the
  * db format, or bigwigs
@@ -196,9 +198,9 @@ export const useTracksStore = create<ITracksStore>()((set) => ({
           const features: IGenomicFeature[] = res.data
 
           if (features.length > 0) {
-            const l = features[0]!.loc
+            const f = features[0]
             locations.push({
-              ...newGenomicLocation(l.chr, l.start, l.end),
+              ...newGenomicLocation(f.chr, f.start, f.end),
               id: newUuid(),
               search: loc,
             })
@@ -391,6 +393,7 @@ export function useTracks() {
       )
 
       const params: Record<string, string> = {
+        format: DEFAULT_FORMAT,
         canonical: settings.tracks.genes.canonical.only ? 'true' : 'false',
       }
 
@@ -400,12 +403,30 @@ export function useTracks() {
 
       url.search = new URLSearchParams(params).toString()
 
-      const res = await httpFetch.postJson<{ data: IGenomicFeatureSearch[] }>(
-        url.toString(),
-        {
-          body: { locations: locationStrs },
-        }
-      )
+      // const res = await httpFetch.postJson<{ data: IGenomicFeatureSearch[] }>(
+      //   url.toString(),
+      //   {
+      //     body: { locations: locationStrs },
+      //   }
+      // )
+
+      let res: { data: IGenomicFeatureSearch[] }
+
+      // if (params.format === 'msgpack') {
+      //   res = await httpFetch.postMsgPack<{
+      //     data: IGenomicFeatureSearch[]
+      //   }>(url.toString(), {
+      //     body: { locations: locationStrs },
+      //   })
+      // } else {
+      res = await httpFetch.postJson<{
+        data: IGenomicFeatureSearch[]
+      }>(url.toString(), {
+        body: { locations: locationStrs },
+      })
+      // }
+
+      console.log(res.data)
 
       return res.data
     },

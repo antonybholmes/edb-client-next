@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
-import { SmallSwitch } from '@/components/shadcn/ui/themed/baseui/small-switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { Toggle } from '@/components/shadcn/ui/themed/baseui/toggle'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
@@ -505,7 +505,8 @@ export function NetworkDisplayPropsPanel() {
         <AccordionItem value="legend">
           <AccordionTrigger
             leftChildren={
-              <SmallSwitch
+              <Switch
+                variant="material"
                 title="Show"
                 checked={settings.plot.legend.show}
                 onCheckedChange={(value) =>

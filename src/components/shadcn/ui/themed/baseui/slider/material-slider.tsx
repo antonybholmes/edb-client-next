@@ -1,4 +1,3 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { useNumDebounce } from '@/hooks/debounce'
 import { useReducedMotion } from '@/hooks/reduced-motion'
 import { present } from '@/lib/dom-utils'
@@ -8,37 +7,26 @@ import {
   SliderRootChangeEventDetails,
 } from '@base-ui/react/slider'
 import { gsap } from 'gsap'
-import { useEffect, useRef, useState, type ComponentProps } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ISliderProps } from './round-slider'
 
 const THUMB_CLS = cn(
-  'h-4 w-5 shrink-0 rounded-full',
-  'border border-border/80 bg-background select-none',
-  'disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
+  'h-5 w-[4px] shrink-0 rounded-full bg-app-theme cursor-pointer'
 )
 
-interface IProps extends ComponentProps<typeof SliderPrimitive.Root> {
-  onNumChange?: (v: number) => void
-  /**
-   * Called after user stops changing the slider value for a certain
-   * amount of time (default: 300ms) to prevent excessive calls
-   * while dragging the slider thumb.
-   *
-   * @param v
-   * @returns
-   */
-  onNumChanged?: (v: number) => void
-  delayMs?: number
-}
-
-export function Slider({
+export function MaterialSlider({
   value,
+  min = 0,
+  max = 100,
   delayMs = 300,
+  ticks,
+  tickSize = 3,
   onValueChange,
   onNumChange,
   onNumChanged,
   className = '',
   ...props
-}: IProps) {
+}: ISliderProps) {
   const [focus, setFocus] = useState(false)
   const [hover, setHover] = useState(false)
   const { reducedMotion } = useReducedMotion()
@@ -49,6 +37,9 @@ export function Slider({
     Array.isArray(value) ? value[0] : value || 0
   )
 
+  const range = max - min
+  const p = (_v - min) / range
+
   const prevValueRef = useRef<number>(_v)
   const debouncedV = useNumDebounce(_v, { delayMs })
 
@@ -58,25 +49,27 @@ export function Slider({
   }, [value])
 
   useEffect(() => {
-    if (!thumbRef.current) {
+    if (!thumbRef.current || reducedMotion) {
       return
     }
 
-    if (reducedMotion) {
-      gsap.set(thumbRef.current, {
-        scale: hover ? 1.2 : 1,
-        opacity: hover ? 0.6 : 1,
-        ease: 'power2.out',
-        duration: 0.3,
-      })
+    // if (reducedMotion) {
+    //   gsap.set(thumbRef.current, {
+    //     //scaleY: hover ? 1.1 : 1,
+    //     //opacity: hover ? 0.6 : 1,
+    //     ease: 'power2.out',
+    //     duration: 0.3,
+    //   })
 
-      return
-    }
+    //   return
+    // }
 
     gsap.to(thumbRef.current, {
-      scale: hover ? 1.2 : 1,
-      opacity: hover ? 0.6 : 1,
-      ease: 'power2.out',
+      //scaleX: hover ? 2 : 1,
+      zIndex: 50,
+      width: hover ? '8px' : '4px',
+      //opacity: hover ? 0.6 : 1,
+      ease: 'power3.out',
       duration: 0.3,
     })
   }, [hover])
@@ -102,7 +95,8 @@ export function Slider({
   return (
     <SliderPrimitive.Root
       value={_v}
-
+      min={min}
+      max={max}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       onPointerEnter={() => setHover(true)}
@@ -116,17 +110,23 @@ export function Slider({
     >
       <SliderPrimitive.Control
         className={cn(
-          'relative flex touch-none select-none flex-row items-center group min-h-5 shrink-0 min-w-20',
+          'relative flex touch-none select-none flex-row items-center group min-h-4 shrink-0 min-w-20 data-dragging:cursor-pointer',
           className
         )}
       >
         <SliderPrimitive.Track
           data-focus={present(focus)}
-          className="relative h-1 grow rounded-full bg-muted/70 data-focus:bg-muted group-hover:bg-muted trans-color"
+          className="relative h-3 grow"
         >
-          <SliderPrimitive.Indicator
+          {/* <SliderPrimitive.Indicator
             data-focus={present(focus)}
             className="h-1 bg-app-theme/70 rounded-full data-focus:bg-app-theme group-hover:bg-app-theme trans-color"
+          /> */}
+
+          <span
+            data-hover={present(hover)}
+            className="h-full bg-app-theme/70 data-hover:bg-app-theme absolute rounded-l-sm rounded-r-xs trans-color"
+            style={{ width: `calc(${p * 100}% - 6px)` }}
           />
 
           <SliderPrimitive.Thumb
@@ -134,36 +134,28 @@ export function Slider({
             data-focus={present(focus)}
             className={THUMB_CLS}
             aria-label="Slider control"
+            style={{ zIndex: 50 }}
           />
+
+          <span
+            className="h-full bg-app-theme/20 absolute z-0 rounded-l-xs rounded-r-sm right-0"
+            style={{ width: `calc(${(1 - p) * 100}% - 6px)` }}
+          />
+
+          {ticks &&
+            ticks.map((tick) => (
+              <span
+                key={tick.v}
+                className="absolute aspect-square rounded-full shrink-0 grow-0 z-10 top-1/2 -translate-y-1/2 bg-white"
+                style={{
+                  left: `calc(${tick.v * 100}% - ${tickSize / 2}px)`,
+                  width: tickSize,
+                  height: tickSize,
+                }}
+              />
+            ))}
         </SliderPrimitive.Track>
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
-  )
-}
-
-export function SliderWithValue({
-  value,
-  className = '',
-  side = 'left',
-  dp = 0,
-  ...props
-}: ComponentProps<typeof SliderPrimitive.Root> & {
-  side?: 'left' | 'right'
-  dp?: number
-}) {
-  const v = Array.isArray(value) ? value[0] : value || 0
-
-  return (
-    <VCenterRow className="gap-x-2">
-      {side === 'left' && (
-        <span className="bg-muted/50 py-1 rounded-sm text-center min-w-10">
-          {v.toFixed(dp)}
-        </span>
-      )}
-      <Slider {...props} value={value} className={className} />
-      {side === 'right' && (
-        <span className="ml-2 min-w-8">{v.toFixed(dp)}</span>
-      )}
-    </VCenterRow>
   )
 }

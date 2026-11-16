@@ -97,14 +97,14 @@ export function LocationAutocomplete({
               //if (item.geneSymbol) {
               //onTextChange?.(item.geneSymbol)
               //onTextChanged?.(item.geneSymbol)
-              onLocationChanged?.(item.loc)
+              onLocationChanged?.(item)
               //}
             }}
           >
             <SearchIcon />
             <span className="grow text-left">{item.symbol}</span>
             <span className="text-right text-foreground/30 text-xs truncate">
-              {locStr(item.loc)}
+              {locStr(item)}
             </span>
           </button>
         </li>

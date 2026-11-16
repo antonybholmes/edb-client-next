@@ -283,14 +283,6 @@ export function DropdownMenuCheckboxItem({
 
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
         {c.length > 1 && c[1]}
-
-        {/* {checked ? (
-          <DropdownMenuPrimitive.ItemIndicator>
-            <CheckIcon w="w-3.5 h-3.5" stroke="" style={{ strokeWidth: 3 }} />
-          </DropdownMenuPrimitive.ItemIndicator>
-        ) : (
-          <>{c.length > 2 && c[0]}</>
-        )} */}
       </span>
     </DropdownMenuPrimitive.CheckboxItem>
   )

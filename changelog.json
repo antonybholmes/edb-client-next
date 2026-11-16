@@ -3721,5 +3721,77 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-10T18:16:52.479Z"
+  },
+  {
+    "version": "26.11.11",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Switch now supports variants and we default to a material switch instead of the older ios style",
+          "date": "2026-11-11T15:10:11.929Z"
+        },
+        {
+          "msg": "Added material slider",
+          "date": "2026-11-11T16:43:15.441Z"
+        },
+        {
+          "msg": "Material slider. Seq browser scale now uses settings rather than track props",
+          "date": "2026-11-11T17:50:28.537Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-11T20:42:58.799Z"
+        },
+        {
+          "msg": "Refined zoom slider",
+          "date": "2026-11-11T20:45:02.613Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-11T15:10:11.929Z"
+  },
+  {
+    "version": "26.11.12",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-12T23:48:50.466Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-12T23:48:50.466Z"
+  },
+  {
+    "version": "26.11.13",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Added some support for future use of msgpack",
+          "date": "2026-11-13T23:08:02.487Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-13T23:38:11.309Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-13T23:08:02.487Z"
+  },
+  {
+    "version": "26.11.14",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-14T23:37:40.441Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-14T23:37:40.441Z"
   }
 ]

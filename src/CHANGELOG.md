@@ -1,5 +1,38 @@
 # Changelog
 
+## 26.11.14 (Nov, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
+## 26.11.13 (Nov, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+- Added some support for future use of msgpack.
+
+
+## 26.11.12 (Nov, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
+## 26.11.11 (Nov, 2026)
+
+### Changed
+
+- Refined zoom slider.
+- Bug fixes and updates.
+- Material slider. Seq browser scale now uses settings rather than track props.
+- Added material slider.
+- Switch now supports variants and we default to a material switch instead of the older ios style.
+
+
 ## 26.11.10 (Nov, 2026)
 
 ### Changed

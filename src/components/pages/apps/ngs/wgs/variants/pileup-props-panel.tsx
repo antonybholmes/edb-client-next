@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectList,
 } from '@/components/shadcn/ui/themed/baseui/select'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET, TEXT_SHOW } from '@/consts'

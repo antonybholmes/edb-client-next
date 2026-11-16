@@ -1,9 +1,9 @@
 {
   "name": "Get DNA",
   "description": "Get DNA for genomic locations.",
-  "version": "26.10.28.710",
+  "version": "26.11.11.712",
   "copyright": "(C) ${START_YEAR:2022} Antony Holmes",
-  "modified": "2026-10-29T01:14:54.130Z",
-  "hash": "04f1c5f077c8729546608599172bb104d699b233484a3485b71976b733a88d21",
-  "build": 710
+  "modified": "2026-11-11T15:10:11.037Z",
+  "hash": "8db570fa25335a1e43120045ad0213910c390c8069c3d1bd4b5f3da1dfc2ebfd",
+  "build": 712
 }

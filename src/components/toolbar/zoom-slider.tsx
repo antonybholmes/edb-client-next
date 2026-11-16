@@ -11,8 +11,8 @@ import {
 import { useEffect, useState } from 'react'
 
 // import { Slider } from "../toolbar/slider"
+import { Slider } from '@/components/shadcn/ui/themed/baseui/slider/slider'
 import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
-import { Slider } from '@/themed/baseui/slider'
 
 import { useDebounceCallback } from '@/hooks/debounce'
 import { findNearest } from '@/lib/search'
@@ -46,6 +46,22 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
 
   return (
     <VCenterRow className={cn('gap-x-1', className)}>
+      <Slider
+        variant="round"
+        value={_index}
+        min={0}
+        max={levels.length - 1}
+        onValueChange={(v) => {
+          const l = Array.isArray(v) ? v[0]! : v
+
+          _setIndex(l)
+          debouncedSetZoom(l)
+        }}
+        step={1}
+        className="w-20"
+        title="Set Zoom Level"
+      />
+
       <VCenterRow className="gap-x-1">
         <ToolbarFooterButton
           title="Zoom Out"
@@ -54,21 +70,7 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
         >
           <Minus className="w-4 h-4" strokeWidth={2} />
         </ToolbarFooterButton>
-
-        <Slider
-          value={_index}
-          min={0}
-          max={levels.length - 1}
-          onValueChange={(v) => {
-            const l = Array.isArray(v) ? v[0]! : v
-
-            _setIndex(l)
-            debouncedSetZoom(l)
-          }}
-          step={1}
-          className="w-20"
-        />
-
+        <ZoomSelect channel={channel} />{' '}
         <ToolbarFooterButton
           title="Zoom In"
           onClick={() => increaseZoom()}
@@ -77,8 +79,6 @@ export function ZoomSlider({ channel, className }: IZoomSliderProps) {
           <Plus className="w-4 h-4" strokeWidth={2} />
         </ToolbarFooterButton>
       </VCenterRow>
-
-      <ZoomSelect channel={channel} />
     </VCenterRow>
   )
 }

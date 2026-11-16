@@ -3,7 +3,7 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { StrokeButton } from '@/components/plot/stroke-dropdown-menu'
 import { BasicHoverCard } from '@/components/shadcn/ui/themed/baseui/hover-card'
-import { Switch } from '@/components/shadcn/ui/themed/baseui/switch'
+import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import {
   GroupToggle,
   ToggleGroup,
@@ -169,6 +169,7 @@ export function SettingsTracksPanel() {
             updateSettings(newOptions)
           }}
           variant="outline"
+          aspect="icon"
         >
           <GroupToggle value="rounded" title="Rounded">
             <Circle size={16} />

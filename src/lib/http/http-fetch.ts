@@ -43,6 +43,13 @@ class HttpFetch implements IHttpRequest {
     return this._backend.postJson<T>(url, options)
   }
 
+  // postMsgPack<T = unknown>(
+  //   url: string,
+  //   options: IFetchOptions = {}
+  // ): Promise<T> {
+  //   return this._backend.postMsgPack<T>(url, options)
+  // }
+
   delete(url: string, options: IFetchOptions = {}): Promise<Response> {
     return this._backend.delete(url, options)
   }
