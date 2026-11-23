@@ -118,7 +118,8 @@ export function MyAccountPage() {
   //const [account, setAccount] = useState<IAccount>({...DEFAULT_ACCOUNT})
   //const { token: csrf, fetchToken } = useCSRF()
   //const { signinMethod } = useEdbSignIn()
-  const { session, refreshSession, fetchUpdateToken } = useEdbAuth()
+  const { session, refreshSession, fetchUpdateToken, fetchAccessToken } =
+    useEdbAuth()
 
   //const [roles, setRoles] = useState<string[]>([])
   //const roles = useMemo(() => rolesFromAccessToken(accessToken), [accessToken])
@@ -136,6 +137,8 @@ export function MyAccountPage() {
   ])
 
   const [csrf, setCsrf] = useState('')
+
+  const [accessToken, setAccessToken] = useState('')
 
   const form = useForm({
     resolver: zodResolver(UserFormSchema),
@@ -171,7 +174,13 @@ export function MyAccountPage() {
       setCsrf(token)
     }
 
+    async function getAccessToken() {
+      const token = await fetchAccessToken()
+      setAccessToken(token)
+    }
+
     fetchToken()
+    getAccessToken()
   }, [])
 
   useEffect(() => {
@@ -187,7 +196,7 @@ export function MyAccountPage() {
     // refresh
 
     try {
-      const updateToken = await fetchUpdateToken()
+      //const updateToken = await fetchUpdateToken()
 
       const csrfToken = await getCSRFToken()
 
@@ -416,6 +425,25 @@ export function MyAccountPage() {
                     </FormItem>
                   )}
                 />
+
+                {IS_DEV_MODE && (
+                  <>
+                    <Label className="font-medium" htmlFor="apiKeys">
+                      Access Token
+                    </Label>
+
+                    <FormItem className="col-span-1 md:col-span-3">
+                      <Textarea
+                        id="accessToken"
+                        value={accessToken}
+                        readOnly
+                        //variant="underline"
+                        className="h-16"
+                        //{...field}
+                      />
+                    </FormItem>
+                  </>
+                )}
 
                 <Label className="font-medium" htmlFor="apiKeys">
                   API Keys

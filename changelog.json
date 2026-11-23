@@ -3806,5 +3806,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-16T23:41:03.537Z"
+  },
+  {
+    "version": "26.11.23",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-11-23T23:54:37.310Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-23T23:54:37.310Z"
   }
 ]

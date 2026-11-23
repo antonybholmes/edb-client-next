@@ -153,7 +153,7 @@ export interface IEdbAuthStore {
   refreshSession: () => Promise<IEdbSession | null>
   invalidateSession: () => void
   fetchSession: () => Promise<IEdbSession | null>
-  fetchAccessToken: (audience?: string) => Promise<string>
+  fetchAccessToken: (opts?: { audience?: string }) => Promise<string>
 }
 
 export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
@@ -394,8 +394,9 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
       withCredentials: true,
     })
 
-    const session = await fetchSession()
     setSignInMethod('auth0')
+
+    const session = await fetchSession()
 
     return session
   }
