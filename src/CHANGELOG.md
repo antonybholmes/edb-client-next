@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added support for listing jobs.
 
 
