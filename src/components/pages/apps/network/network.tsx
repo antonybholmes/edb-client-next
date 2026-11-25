@@ -1,4 +1,4 @@
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { IPos } from '@/interfaces/pos'
 
 import { autoTickInterval } from '@/components/plot/axes/axis'

@@ -1,4 +1,4 @@
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import type { IPos } from '@/interfaces/pos'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { DataFrame } from '@/lib/dataframe/dataframe'

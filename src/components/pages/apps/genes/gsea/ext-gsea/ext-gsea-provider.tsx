@@ -28,7 +28,7 @@ import {
   IExtGseaSettings,
 } from './ext-gsea-settings'
 
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { newUuid } from '@/lib/id'
 import { max } from '@/lib/math/math'
 import { IBasePlot } from '../../../matcalc/history/history-provider/plot'

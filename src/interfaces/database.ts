@@ -12,3 +12,9 @@ export interface IDBEntity {
   createdAt?: string // ISO 8601 UTC
   updatedAt?: string // ISO 8601 UTC
 }
+
+export interface IRecordStats {
+  count: number
+  pageSize: number
+  pages: number
+}

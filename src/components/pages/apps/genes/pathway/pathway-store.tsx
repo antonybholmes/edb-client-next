@@ -6,7 +6,7 @@ import { create } from 'zustand'
 
 import { API_PATHWAY_DATASETS_URL } from '@/components/edb/edb'
 import { TIME_5_MINUTES_MS } from '@/consts'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import { GENES_IN_UNIVERSE } from '@/lib/gene/pathway/pathway'
 
 export interface ICollectionInfo extends IDBEntity {

@@ -22,7 +22,7 @@ import { produce } from 'immer'
 
 import { createAxis, IAxis } from '@/components/plot/axes/axis'
 import type { IChildrenProps } from '@/interfaces/children-props'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import type { IGenomicFeature } from '@/lib/genomic/genomic-feature'
 import {

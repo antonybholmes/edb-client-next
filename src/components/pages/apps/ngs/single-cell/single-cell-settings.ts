@@ -10,7 +10,7 @@ import {
   type IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import type { IDim } from '@/interfaces/dim'
 import { getAppName } from '@/lib/app-info'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'

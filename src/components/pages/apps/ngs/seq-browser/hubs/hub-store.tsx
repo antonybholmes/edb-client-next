@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { create } from 'zustand'
 import { IRemoteBigWigTrack, type ISeqTrack } from '../tracks-provider'
 
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { randomHexColor } from '@/lib/color/color'
 import { newUuid } from '@/lib/id'
 import { IDBPDatabase, openDB } from 'idb'

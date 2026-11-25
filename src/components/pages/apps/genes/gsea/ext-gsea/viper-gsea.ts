@@ -1,4 +1,4 @@
-import { IDBEntity } from '../../../../../../interfaces/db-entity'
+import { IDBEntity } from '../../../../../../interfaces/database'
 import { newUuid } from '../../../../../../lib/id'
 import { IGeneSet, IRankedGene } from '../gsea-plot/geneset'
 import { ExtGSEA } from './ext-gsea'

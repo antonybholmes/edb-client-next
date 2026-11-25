@@ -7,7 +7,7 @@ import {
   type ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import {
   COLOR_BLACK,
   COLOR_CORNFLOWER_BLUE,

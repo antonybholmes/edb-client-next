@@ -10,7 +10,7 @@ import {
   type IPaintProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { produce } from 'immer'
 import { create } from 'zustand'

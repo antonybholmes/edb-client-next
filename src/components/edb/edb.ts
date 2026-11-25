@@ -4,7 +4,7 @@ import type { UndefNullStr } from '../../lib/text/text'
 
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
-import type { IDBEntity } from '../../interfaces/db-entity'
+import type { IDBEntity } from '../../interfaces/database'
 //import { CSRF_COOKIE_NAME } from './edb-auth'
 
 export interface INewUser extends IEdbUser {
@@ -280,6 +280,10 @@ export const API_GEX_TECHNOLOGIES_URL = `${API_GEX_URL}/technologies`
 //export const API_GEX_VALUE_TYPES_URL = `${API_GEX_URL}/types`
 export const API_GEX_DATASETS_URL = `${API_GEX_URL}/datasets`
 //export const API_GEX_EXPR_URL = `${API_GEX_URL}/expression`
+
+export const API_JOBS_URL = `${EDB_API_URL}/jobs`
+export const API_LIST_JOBS_URL = `${API_JOBS_URL}/list`
+export const API_JOB_COUNT_URL = `${API_JOBS_URL}/count`
 
 export const API_SCRNA_URL = `${EDB_API_URL}/modules/scrna`
 export const API_SCRNA_ASSEMBLIES_URL = `${API_SCRNA_URL}/assemblies`

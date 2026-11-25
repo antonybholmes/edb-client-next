@@ -1,5 +1,5 @@
 import type { IAxis } from '@/components/plot/axes/axis'
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { IClusterGroupRow } from '@/lib/cluster-group'
 
 export interface IBasePlot extends IDBEntity {

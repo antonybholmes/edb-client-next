@@ -18,7 +18,7 @@ import {
   type TopBottomPos,
 } from '@/components/plot/svg-props'
 import type { LeftRightPos } from '@/components/side'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import type { ILim } from '@/lib/math/math'
 import { deepFreeze } from '@/lib/utils'
 import type { ILollipopStats } from './lollipop-stats'

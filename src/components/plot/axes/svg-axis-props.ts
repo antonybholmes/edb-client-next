@@ -1,4 +1,4 @@
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { ILim } from '@/lib/math/math'
 import {
   DEFAULT_BOLD_TEXT_PROPS,

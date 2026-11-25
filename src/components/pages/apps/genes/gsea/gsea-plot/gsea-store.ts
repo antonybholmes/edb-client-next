@@ -5,7 +5,7 @@ import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
 import { IRankedGene } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { useMemo } from 'react'
 import { create } from 'zustand'
 import { useGseaSettings } from './gsea-settings'

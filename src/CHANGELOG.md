@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.11.25 (Nov, 2026)
+
+### Changed
+
+- Added support for listing jobs.
+
+
 ## 26.11.23 (Nov, 2026)
 
 ### Changed

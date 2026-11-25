@@ -1,7 +1,7 @@
 // The store is a datastore of files and an undo state
 
 import { ID_DEFAULT } from '@/consts'
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
 import { newUuid } from '@/lib/id'
 import { IHistoryEntry } from './history-manager'

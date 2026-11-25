@@ -1,7 +1,7 @@
 import { IGeneSet } from '@/components/pages/apps/genes/gsea/gsea-plot/geneset'
 import { IHeatMapSettings } from '@/components/pages/apps/heatmap/heatmap-settings'
 import { ITextFileOpen } from '@/components/pages/open-files'
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'

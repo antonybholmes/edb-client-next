@@ -1,5 +1,5 @@
 import { DEFAULT_HEATMAP_PROPS } from '@/components/pages/apps/heatmap/heatmap-settings'
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { newUuid } from '@/lib/id'
 import { produce } from 'immer'

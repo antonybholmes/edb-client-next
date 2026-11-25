@@ -2,9 +2,9 @@
   "name": "Seq Browser",
   "description": "Plot Next Generation Sequencing Data.",
   "color": "#FF0000",
-  "version": "26.11.13.1208",
+  "version": "26.11.25.1210",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-11-13T23:08:01.486Z",
-  "hash": "68d41b3e84f7b31d158b605e0546da6c30fd9f25bb356507d0027cb28fc4d49d",
-  "build": 1208
+  "modified": "2026-11-25T19:38:36.477Z",
+  "hash": "73ecffeacf8cc1324e84b30c25473db56356730d8d3f850dcc9990d28fbfbee2",
+  "build": 1210
 }

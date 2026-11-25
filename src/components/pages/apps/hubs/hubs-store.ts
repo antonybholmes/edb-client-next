@@ -1,5 +1,5 @@
 import { config } from '@/config'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -33,10 +33,10 @@ export interface IHubStore extends IHubOptions {
 
 export const useHubsStore = create<IHubStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_HUB_OPTIONS,
       updateSettings: (settings: Partial<IHubOptions>) => {
-        set(state => ({ ...state, ...settings }))
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -68,8 +68,8 @@ export function useHubs(): {
   updateSettings: (settings: Partial<IHubOptions>) => void
   resetSettings: () => void
 } {
-  const settings = useHubsStore(state => state)
-  const updateSettings = useHubsStore(state => state.updateSettings)
+  const settings = useHubsStore((state) => state)
+  const updateSettings = useHubsStore((state) => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_HUB_OPTIONS })
 
   return { settings, updateSettings, resetSettings }

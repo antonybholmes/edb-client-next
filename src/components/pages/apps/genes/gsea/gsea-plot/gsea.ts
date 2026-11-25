@@ -1,4 +1,4 @@
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import { abs } from '../../../../../../lib/math/abs'
 import { mean } from '../../../../../../lib/math/mean'
 import { fisherYatesShuffle } from '../../../../../../lib/math/random'

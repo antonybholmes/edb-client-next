@@ -1,5 +1,5 @@
 import { IPaintProps } from '@/components/plot/svg-props'
-import { IDBEntity } from '@/interfaces/db-entity'
+import { IDBEntity } from '@/interfaces/database'
 import { newUuid } from '@/lib/id'
 import {
   createContext,

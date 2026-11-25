@@ -3,7 +3,7 @@ import type { IPos } from '@/interfaces/pos'
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
 import { API_SCRNA_DATASETS_URL, API_SCRNA_URL } from '@/components/edb/edb'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import type { ColorMap } from '@/lib/color/colormap'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'

@@ -14,7 +14,7 @@ import {
 } from '@/components/plot/svg-props'
 import type { LeftRightPos } from '@/components/side'
 import { BIG0, BIG1 } from '@/consts'
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, randomHexColor } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'

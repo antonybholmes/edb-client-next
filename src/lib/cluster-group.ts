@@ -1,4 +1,4 @@
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import { randomHexColor } from './color/color'
 import { newUuid } from './id'
 

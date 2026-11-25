@@ -1,4 +1,4 @@
-import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IDBEntity } from '@/interfaces/database'
 import type { IMannWhitneyUResult } from '@/lib/math/stats/mann-whitney'
 import type { UndefStr } from '@/lib/text/text'
 

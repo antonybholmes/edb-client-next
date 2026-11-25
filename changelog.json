@@ -3819,5 +3819,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-23T23:54:37.310Z"
+  },
+  {
+    "version": "26.11.25",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Added support for listing jobs",
+          "date": "2026-11-25T19:38:37.378Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-25T19:38:37.378Z"
   }
 ]
