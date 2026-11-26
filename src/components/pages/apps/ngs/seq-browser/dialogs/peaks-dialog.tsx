@@ -17,11 +17,11 @@ import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 
 import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { appsConfig } from '@/config/apps'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { BoolSearchQuery } from '@/lib/search'
-import { Checkbox } from '@/themed/baseui/check-box'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 

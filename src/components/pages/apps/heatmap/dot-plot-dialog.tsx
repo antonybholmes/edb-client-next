@@ -40,7 +40,7 @@ import {
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
 import { LogSpan } from '@/components/log-span'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { useStableId } from '@/hooks/stable-id'
 import { log2 } from '@/lib/dataframe/utils/log'

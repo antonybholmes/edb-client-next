@@ -1,6 +1,6 @@
 import { MultiSelectIcon } from '@/components/icons/multi-select-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { TEXT_SELECT_ALL } from '@/consts'
 import type { IDivProps } from '@/interfaces/div-props'

@@ -11,6 +11,7 @@ import {
 } from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +26,6 @@ import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
 import { ScrollAccordion } from '@/themed/baseui/accordion'
-import { Checkbox } from '@/themed/baseui/check-box'
 
 import { ExternalLinkIcon } from '@/components/icons/external-link'
 import { PlusIcon } from '@/components/icons/plus-icon'

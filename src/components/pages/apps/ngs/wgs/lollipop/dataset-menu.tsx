@@ -1,4 +1,4 @@
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   Popover,
   PopoverContent,

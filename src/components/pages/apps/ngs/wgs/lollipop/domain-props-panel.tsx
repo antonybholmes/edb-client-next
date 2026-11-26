@@ -37,7 +37,7 @@ import {
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'

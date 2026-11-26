@@ -3836,5 +3836,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-25T19:38:37.378Z"
+  },
+  {
+    "version": "26.11.26",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Material checkbox",
+          "date": "2026-11-26T17:19:31.140Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-26T17:19:31.140Z"
   }
 ]

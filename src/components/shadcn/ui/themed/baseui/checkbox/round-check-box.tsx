@@ -29,7 +29,7 @@ export const CHECK_CLS = cn(
   'data-disabled:cursor-not-allowed data-disabled:opacity-60'
 )
 
-export function Checkbox({
+export function RoundCheckbox({
   ref,
   id = '',
   checked = false,
@@ -56,7 +56,7 @@ export function Checkbox({
       {...props}
     >
       <CheckboxPrimitive.Indicator>
-        <Check className="stroke-white" size={12} strokeWidth={3} />
+        <Check className="stroke-white" size={14} strokeWidth={3} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )

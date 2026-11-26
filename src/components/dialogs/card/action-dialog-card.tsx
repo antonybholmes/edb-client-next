@@ -1,6 +1,6 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { Switch } from '@/components/shadcn/ui/themed/baseui/switch/switch'
 import { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'

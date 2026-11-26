@@ -5,7 +5,7 @@ import { VCenterRow } from '../layout/v-center-row'
 import {
   Checkbox,
   type ICheckboxProps,
-} from '../shadcn/ui/themed/baseui/check-box'
+} from '../shadcn/ui/themed/baseui/checkbox/check-box'
 import { DialogCardInfo } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {

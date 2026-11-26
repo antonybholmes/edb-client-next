@@ -1,6 +1,6 @@
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   SelectItem,
   SelectList,

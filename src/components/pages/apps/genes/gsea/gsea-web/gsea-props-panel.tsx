@@ -1,7 +1,7 @@
 import { PropsPanel } from '@/components/props-panel'
 
 import { MultiSelectIcon } from '@/components/icons/multi-select-icon'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { SortableItem } from '@/components/sortable-item'

@@ -20,7 +20,7 @@ import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { newBoxPlot } from '../../history/history-provider/history-factories'
 import { HistoryPlot } from '../../history/history-provider/history-types'

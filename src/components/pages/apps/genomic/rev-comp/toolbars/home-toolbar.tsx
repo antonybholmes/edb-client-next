@@ -14,7 +14,7 @@ import { useSave } from '../../../matcalc/hooks/save'
 
 import { FILE_FORMAT_JSON } from '@/components/dialogs/save-txt-dialog'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColSmallButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'

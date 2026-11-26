@@ -3,7 +3,7 @@ import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   Label,
   LabelContainer,

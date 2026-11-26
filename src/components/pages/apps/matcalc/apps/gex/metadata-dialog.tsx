@@ -13,9 +13,9 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { queryClient } from '@/qcp'
 
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { TEXT_OK } from '@/consts'
 import { BaseCol } from '@/layout/base-col'
-import { Checkbox } from '@/themed/baseui/check-box'
 
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { useQuery } from '@tanstack/react-query'

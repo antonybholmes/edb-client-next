@@ -7,7 +7,7 @@ import {
   ScrollAccordion,
 } from '@/themed/baseui/accordion'
 
-import { Checkbox } from '@/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 
 import { PropsPanel } from '@/components/props-panel'
 

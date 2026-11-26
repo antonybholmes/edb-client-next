@@ -37,7 +37,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { appsConfig } from '@/config/apps'
 import { ColDataFrame } from '@/lib/dataframe/col-dataframe'
 import type { UndefStr } from '@/lib/text/text'

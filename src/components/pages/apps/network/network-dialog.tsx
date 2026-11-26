@@ -3,7 +3,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { ICustomDialogProps } from '@/components/dialogs/dialogs'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   RunningIndicator,

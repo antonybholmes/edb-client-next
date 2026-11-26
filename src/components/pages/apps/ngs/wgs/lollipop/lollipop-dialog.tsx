@@ -5,7 +5,7 @@ import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 import { useState } from 'react'
 
-import { Checkbox } from '@/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   Select,
   SelectContent,

@@ -24,6 +24,7 @@ import { HelpButton } from '@/help/help-button'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   getColIdxFromGroup,
   meanFilter,
@@ -31,7 +32,6 @@ import {
   stdevFilter,
 } from '@/lib/dataframe/utils/dataframe-utils'
 import { newUuid } from '@/lib/id'
-import { Checkbox } from '@/themed/baseui/check-box'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 

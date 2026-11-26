@@ -14,8 +14,8 @@ import { produce } from 'immer'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import type { MultiMode } from './oncoplot-utils'
 
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
-import { Checkbox } from '@/themed/baseui/check-box'
 
 export type OncoplotType = 'loconcoplot' | 'oncoplot'
 

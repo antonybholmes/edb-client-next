@@ -3,9 +3,9 @@
   "abbr": "Dna",
   "description": "Get DNA sequences",
   "color": "#FF4500",
-  "version": "26.10.28.834",
+  "version": "26.11.26.836",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-10-29T01:14:54.130Z",
-  "hash": "c7c528f9630518a005bf7616d81a5d541b6b0e8aaf74c54f43393b2ab9b71e96",
-  "build": 834
+  "modified": "2026-11-26T17:19:29.149Z",
+  "hash": "dde9d15f8590319ebbf3f6d6dc3f4c7c25cfba2378c0da915b0be8c73d2494f4",
+  "build": 836
 }

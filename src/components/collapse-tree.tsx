@@ -28,7 +28,7 @@ import { Ellipsis, File, Folder, FolderOpen } from 'lucide-react'
 import { useDialogs } from './dialogs/dialogs'
 import { CenterCol } from './layout/center-col'
 import { VCenterRow } from './layout/v-center-row'
-import { Checkbox } from './shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from './shadcn/ui/themed/baseui/checkbox/check-box'
 import { getTabName, type ITab, type OpenState } from './tabs/tab-provider'
 
 const DURATION_S = 0.2

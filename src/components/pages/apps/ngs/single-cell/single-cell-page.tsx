@@ -44,7 +44,7 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { ShowSideButton } from '../../../show-side-button'
 
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'

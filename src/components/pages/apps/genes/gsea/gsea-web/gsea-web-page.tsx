@@ -29,7 +29,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { Checkbox } from '@/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'

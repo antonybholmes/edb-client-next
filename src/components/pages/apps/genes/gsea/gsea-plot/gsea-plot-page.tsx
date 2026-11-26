@@ -27,7 +27,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { Checkbox } from '@/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 
 import { ClientLayout } from '@/app/client-layout'
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'

@@ -6,7 +6,7 @@ import {
   onTextFileChange,
   openFilesDialog,
 } from '@/components/pages/open-files'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import {
   GroupToggle,
   ToggleGroup,

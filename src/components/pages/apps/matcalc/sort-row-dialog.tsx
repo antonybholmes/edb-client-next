@@ -1,8 +1,8 @@
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { TEXT_CANCEL, TEXT_CLEAR, TEXT_OK } from '@/consts'
 import type { ISelectionRange } from '@/providers/selection-range-provider'
-import { Checkbox } from '@/themed/baseui/check-box'
 
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {

@@ -14,7 +14,7 @@ import {
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import {
   DRAG_HANDLE_APPEAR_CLS,

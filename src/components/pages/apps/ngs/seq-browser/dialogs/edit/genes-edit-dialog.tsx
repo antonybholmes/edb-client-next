@@ -15,7 +15,7 @@ import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { NumSlider } from '@/components/shadcn/ui/themed/baseui/num-slider'
 import {
   GroupToggle,

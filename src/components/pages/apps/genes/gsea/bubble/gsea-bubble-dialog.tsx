@@ -7,7 +7,7 @@ import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
 
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { newUuid } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'

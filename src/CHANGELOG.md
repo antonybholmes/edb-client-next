@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.11.26 (Nov, 2026)
+
+### Changed
+
+- Material checkbox.
+
+
 ## 26.11.25 (Nov, 2026)
 
 ### Changed

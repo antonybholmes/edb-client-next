@@ -23,7 +23,7 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { Checkbox } from '@/components/shadcn/ui/themed/baseui/check-box'
+import { Checkbox } from '@/components/shadcn/ui/themed/baseui/checkbox/check-box'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/baseui/dropdown-menu'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
