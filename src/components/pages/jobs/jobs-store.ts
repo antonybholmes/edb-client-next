@@ -10,6 +10,7 @@ export interface IJobFile {
 export interface IJob {
   id: string
   type: string
+  bucket?: string
   files?: IJobFile[]
   status: string
   createdAt: string

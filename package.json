@@ -20,7 +20,7 @@
     "@auth0/auth0-react": "^2.30.0",
     "@auth0/nextjs-auth0": "^4.33.0",
     "@base-ui/react": "^1.9.0",
-    "@clerk/react": "^6.19.5",
+    "@clerk/react": "^6.19.7",
     "@dnd-kit/abstract": "^0.5.3",
     "@dnd-kit/helpers": "^0.5.3",
     "@dnd-kit/react": "^0.5.3",
@@ -85,16 +85,16 @@
     "jszip": "^3.10.2",
     "jwt-decode": "^4.0.0",
     "loglevel": "^1.9.2",
-    "lucide-react": "^1.79.0",
+    "lucide-react": "^1.80.0",
     "nanoid": "^6.0.2",
     "next": "16.4.6",
     "react": "^19.3.1",
-    "react-colorful": "^5.8.1",
+    "react-colorful": "^5.8.2",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.3.1",
     "react-dropzone": "^20.2.1",
     "react-hook-form": "^7.92.0",
-    "react-resizable-panels": "^4.24.1",
+    "react-resizable-panels": "^4.24.3",
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-pretty-code": "^0.14.6",
@@ -142,6 +142,6 @@
     "tailwindcss": "^4.3.5",
     "typescript": "7",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.2"
   }
 }
