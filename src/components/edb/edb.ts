@@ -282,6 +282,7 @@ export const API_GEX_DATASETS_URL = `${API_GEX_URL}/datasets`
 //export const API_GEX_EXPR_URL = `${API_GEX_URL}/expression`
 
 export const API_JOBS_URL = `${EDB_API_URL}/jobs`
+export const API_LIST_JOB_FILES_URL = `${API_JOBS_URL}/files`
 export const API_LIST_JOBS_URL = `${API_JOBS_URL}/list`
 export const API_JOB_COUNT_URL = `${API_JOBS_URL}/count`
 

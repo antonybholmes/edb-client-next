@@ -16,3 +16,8 @@ export interface IJob {
   createdAt: string
   updatedAt: string
 }
+
+export interface IPreSignedUrl {
+  url: string
+  expiresAt: string
+}

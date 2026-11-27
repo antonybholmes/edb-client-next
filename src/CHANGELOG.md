@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.11.27 (Nov, 2026)
+
+### Changed
+
+- Added job file download link.
+
+
 ## 26.11.26 (Nov, 2026)
 
 ### Changed

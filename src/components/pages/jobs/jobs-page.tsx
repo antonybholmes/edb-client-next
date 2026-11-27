@@ -1,6 +1,10 @@
 'use client'
 
-import { API_JOB_COUNT_URL, API_LIST_JOBS_URL } from '@/components/edb/edb'
+import {
+  API_JOB_COUNT_URL,
+  API_LIST_JOB_FILES_URL,
+  API_LIST_JOBS_URL,
+} from '@/components/edb/edb'
 import { format, parseISO } from 'date-fns'
 import { useEffect, useRef, useState } from 'react'
 
@@ -12,10 +16,11 @@ import { ClientLayout } from '@/app/client-layout'
 
 import { CenterLayout } from '@/layouts/center-layout'
 
+import { TEXT_DOWNLOAD } from '@/consts'
 import { IRecordStats } from '@/interfaces/database'
 import { capitalCase } from '@/lib/text/capital-case'
 import { useQuery } from '@tanstack/react-query'
-import { IJob } from './jobs-store'
+import { IJob, IPreSignedUrl } from './jobs-store'
 
 export function JobsPage() {
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -148,7 +153,7 @@ export function JobsPage() {
                       <li key={file.id} className="flex flex-col">
                         <span>Filename: {file.filename}</span>
                         <span>Type: {file.type}</span>
-                        <span>Object Key: {file.objectKey}</span>
+
                         <span>
                           Created:{' '}
                           {format(
@@ -163,6 +168,46 @@ export function JobsPage() {
                             'MMM d, yyyy HH:mm:ss'
                           )}
                         </span>
+                        {job.type === 'output' && (
+                          <button
+                            onClick={async () => {
+                              try {
+                                const accessToken = await fetchAccessToken()
+
+                                if (!accessToken) {
+                                  return []
+                                }
+
+                                const res = await httpFetch.getJson<{
+                                  data: IPreSignedUrl
+                                }>(
+                                  API_LIST_JOB_FILES_URL +
+                                    '/' +
+                                    job.id +
+                                    '/download',
+                                  {
+                                    headers: bearerHeaders(accessToken),
+                                  }
+                                )
+
+                                const downloadUrl = res.data
+
+                                // force download
+                                const link = document.createElement('a')
+                                link.href = downloadUrl.url
+                                link.download = file.filename
+                                document.body.appendChild(link)
+                                link.click()
+                                document.body.removeChild(link)
+                              } catch (e) {
+                                console.error('gene search error', e)
+                                throw e
+                              }
+                            }}
+                          >
+                            {TEXT_DOWNLOAD}
+                          </button>
+                        )}
                       </li>
                     ))}
                   </ul>

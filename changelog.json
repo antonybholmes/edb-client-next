@@ -3861,5 +3861,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-11-26T17:19:31.140Z"
+  },
+  {
+    "version": "26.11.27",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Added job file download link",
+          "date": "2026-11-27T20:52:21.872Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-11-27T20:52:21.872Z"
   }
 ]
