@@ -2,10 +2,8 @@ import { cn } from '@/lib/shadcn-utils'
 import type { ReactNode } from 'react'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
-import {
-  Checkbox,
-  type ICheckboxProps,
-} from '../shadcn/ui/themed/baseui/checkbox/check-box'
+import { Checkbox } from '../shadcn/ui/themed/baseui/checkbox/check-box'
+import { ICheckboxProps } from '../shadcn/ui/themed/baseui/checkbox/round-check-box'
 import { DialogCardInfo } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {

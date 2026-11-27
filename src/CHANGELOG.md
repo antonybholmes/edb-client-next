@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added crispr jobs app.
 - Added crispr job app.
 - Material checkbox.

@@ -15,7 +15,6 @@ import { useCallback, useMemo } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { IDisplayAxis } from './volcano-plot-svg'
 
 const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v14`
 
@@ -50,10 +49,7 @@ export interface IVolcanoSettings {
   plot: {
     margin: IMarginProps
   }
-  axes: {
-    xaxis: IDisplayAxis
-    yaxis: IDisplayAxis
-  }
+
   preprocess: {
     applyLog2FC: boolean
     applyMinusLog10P: boolean
@@ -83,27 +79,7 @@ const DEFAULT_SETTINGS: IVolcanoSettings = {
       threshold: 1,
     },
   },
-  axes: {
-    xaxis: {
-      name: 'Log2 fold change',
 
-      domain: [-20, 20],
-      length: 500,
-      //ticks: [],
-      //tickLabels: [],
-      //tickSize: 4,
-      //stroke: { ...DEFAULT_STROKE_PROPS },
-    },
-    yaxis: {
-      name: '-log10 p-value',
-      domain: [0, 10],
-      length: 400,
-      //ticks: [],
-      //tickLabels: [],
-      //tickSize: 4,
-      // stroke: { ...DEFAULT_STROKE_PROPS },
-    },
-  },
   colors: {
     mode: 'colors',
     neg: {
