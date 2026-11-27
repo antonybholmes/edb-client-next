@@ -40,8 +40,8 @@ import { useEffect, useState } from 'react'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import APP_INFO from '../../matcalc/manifest.json'
+import { useVolcanoSettings } from '../crispr-settings'
 import { useVolcanoContext } from '../volcano-provider'
-import { useVolcanoSettings } from '../volcano-settings'
 import { MarginPopover } from './margin-popover'
 
 const TABS = ['plot', 'thresholds', 'colors', 'labels']

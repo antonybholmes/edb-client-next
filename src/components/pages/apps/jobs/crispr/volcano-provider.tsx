@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useVolcanoSettings } from './volcano-settings'
+import { useVolcanoSettings } from './crispr-settings'
 
 import { createAxis } from '@/components/plot/axes/axis'
 import { useAxes } from '@/components/plot/axes/plot-axes'

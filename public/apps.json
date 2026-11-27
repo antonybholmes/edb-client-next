@@ -38,11 +38,11 @@
       "#FC8961",
       "#FCFDBF"
     ],
-    "version": "26.11.26.4",
+    "version": "26.11.26.6",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-11-27T02:26:25.370Z",
-    "hash": "70eb3390fef9048d0ed231e163ed93569c79e5d407524e2d107045287b19345c",
-    "build": 4
+    "modified": "2026-11-27T02:32:05.221Z",
+    "hash": "7777d621e29fd48e9e36a34c2a3b1521fcc3838b803756e90e32e8abc7dd810b",
+    "build": 6
   },
   {
     "name": "DNA",

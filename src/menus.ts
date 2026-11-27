@@ -22,6 +22,8 @@ import SANKEY_APP from './components/pages/apps/sankey/manifest.json'
 import VENN_APP from './components/pages/apps/venn/manifest.json'
 import VOLCANO_APP from './components/pages/apps/volcano/manifest.json'
 
+import CRISPR_APP from './components/pages/apps/jobs/crispr/manifest.json'
+
 export interface IAppHeaderLink {
   name: string
   abbr?: string
@@ -95,7 +97,16 @@ export const HEADER_LINKS: IHeaderLink[] = [
       },
     ],
   },
-
+  {
+    name: 'Jobs',
+    apps: [
+      {
+        ...CRISPR_APP,
+        slug: '/apps/jobs/crispr',
+        mode: 'dev',
+      },
+    ],
+  },
   {
     name: 'Genes',
     apps: [

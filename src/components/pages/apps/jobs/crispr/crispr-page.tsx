@@ -51,8 +51,6 @@ import { useHistory } from '../../matcalc/history/history-provider/history-provi
 import { MatcalcDialogsRoot } from '../../matcalc/matcalc-dialogs'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { ViewToolbar } from './toolbars/view-toolbar'
-import { VolcanoPlotSvg } from './volcano-plot-svg'
-import { VolcanoPropsPanel } from './volcano-props-panel'
 
 export function CrisprPage() {
   const { setAppInfo } = useAppInfo()
@@ -175,9 +173,7 @@ export function CrisprPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <ExtScrollCard>
-                <VolcanoPlotSvg />
-              </ExtScrollCard>
+              <ExtScrollCard></ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel
@@ -189,8 +185,6 @@ export function CrisprPage() {
               <TabbedDataFrames className="relative grow overflow-hidden" />
             </ResizablePanel>
           </ResizablePanelGroup>
-
-          <VolcanoPropsPanel />
         </ResizableSidebar>
 
         <FooterSlotPortal slot="footer-right">
