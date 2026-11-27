@@ -1,0 +1,193 @@
+import {
+  DEFAULT_COLOR_PROPS,
+  DEFAULT_DASH_PROPS,
+  DEFAULT_FILL_PROPS,
+  DEFAULT_MARGIN,
+  DEFAULT_STROKE_PROPS,
+  IMarginProps,
+  IPaintProps,
+  IStrokeProps,
+} from '@/components/plot/svg-props'
+import { config } from '@/config'
+import { ColorMap, getColorMap, type ICmap } from '@/lib/color/colormap'
+import { deepMerge } from '@/lib/deepmerge'
+import { useCallback, useMemo } from 'react'
+
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { IDisplayAxis } from './volcano-plot-svg'
+
+const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v14`
+
+export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
+
+export interface IVolcanoSettings {
+  thresholds: {
+    pvalue: {
+      show: boolean
+      threshold: number
+      line: IStrokeProps
+    }
+    logFc: {
+      show: boolean
+      threshold: number
+    }
+  }
+  colors: {
+    mode: 'colors' | 'colormap'
+    neg: {
+      fill: IPaintProps
+    }
+    pos: {
+      fill: IPaintProps
+    }
+    gradient: {
+      on: boolean
+    }
+    cmap: ICmap
+    onlyLabeled: boolean
+  }
+  plot: {
+    margin: IMarginProps
+  }
+  axes: {
+    xaxis: IDisplayAxis
+    yaxis: IDisplayAxis
+  }
+  preprocess: {
+    applyLog2FC: boolean
+    applyMinusLog10P: boolean
+  }
+  labels: {
+    auto: boolean
+    //color: { on: boolean }
+    offset: { x: number; y: number }
+
+    connector: {
+      type: 'straight' | 'elbow'
+      stroke: IStrokeProps
+    }
+  }
+  dots: { fill: IPaintProps; stroke: IStrokeProps; size: number }
+}
+
+const DEFAULT_SETTINGS: IVolcanoSettings = {
+  thresholds: {
+    pvalue: {
+      show: true,
+      threshold: 0.05,
+      line: { ...DEFAULT_DASH_PROPS, show: true },
+    },
+    logFc: {
+      show: true,
+      threshold: 1,
+    },
+  },
+  axes: {
+    xaxis: {
+      name: 'Log2 fold change',
+
+      domain: [-20, 20],
+      length: 500,
+      //ticks: [],
+      //tickLabels: [],
+      //tickSize: 4,
+      //stroke: { ...DEFAULT_STROKE_PROPS },
+    },
+    yaxis: {
+      name: '-log10 p-value',
+      domain: [0, 10],
+      length: 400,
+      //ticks: [],
+      //tickLabels: [],
+      //tickSize: 4,
+      // stroke: { ...DEFAULT_STROKE_PROPS },
+    },
+  },
+  colors: {
+    mode: 'colors',
+    neg: {
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#0000ff' },
+    },
+    pos: {
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#ff0000' },
+    },
+    gradient: { on: true },
+    cmap: { name: 'bwr', reversed: false },
+    onlyLabeled: false,
+  },
+  plot: {
+    margin: { ...DEFAULT_MARGIN },
+  },
+
+  preprocess: {
+    applyLog2FC: false,
+    applyMinusLog10P: true,
+  },
+  labels: {
+    auto: true,
+
+    offset: { x: 20, y: 20 },
+
+    connector: {
+      type: 'straight',
+      stroke: { ...DEFAULT_STROKE_PROPS, opacity: 0.25 },
+    },
+  },
+  dots: {
+    fill: { ...DEFAULT_FILL_PROPS, opacity: 0.5, value: '#d9d9d9' },
+    stroke: { ...DEFAULT_STROKE_PROPS, show: false },
+    size: 3,
+  },
+}
+
+export interface IVolcanoSettingsStore extends IVolcanoSettings {
+  updateSettings: (settings: IVolcanoSettings) => void
+}
+
+export const useVolcanoSettingsStore = create<IVolcanoSettingsStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_SETTINGS,
+
+      updateSettings: (settings: IVolcanoSettings) => {
+        set({
+          ...settings,
+        })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+      merge: (persisted, current) => deepMerge(current, persisted),
+    }
+  )
+)
+
+export function useVolcanoSettings(): {
+  settings: IVolcanoSettingsStore
+  cmap: ColorMap
+  updateSettings: (settings: IVolcanoSettingsStore) => void
+  resetSettings: () => void
+} {
+  const settings = useVolcanoSettingsStore((state) => state)
+  const updateSettings = useVolcanoSettingsStore(
+    (state) => state.updateSettings
+  )
+
+  const cmap = useMemo(
+    () => getColorMap(settings.colors.cmap),
+    [settings.colors.cmap]
+  )
+
+  const resetSettings = useCallback(() => {
+    updateSettings({ ...DEFAULT_SETTINGS })
+  }, [updateSettings])
+
+  return {
+    settings,
+    cmap,
+    updateSettings,
+    resetSettings,
+  }
+}

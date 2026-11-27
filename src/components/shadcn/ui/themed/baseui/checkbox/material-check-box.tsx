@@ -1,12 +1,13 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox'
 
+import { useCounterEffect } from '@/hooks/update-effect'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
 import { Field } from '@base-ui/react/field'
 import gsap from 'gsap'
 import { Check } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { ICheckboxProps } from './round-check-box'
 
 export const CHECK_CLS = cn(
@@ -42,20 +43,9 @@ export function MaterialCheckbox({
   const checkRef = useRef<SVGSVGElement>(null)
   const ref = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => {
-    gsap
-      .timeline()
-      .to(
-        checkRef.current,
-        {
-          strokeDashoffset: checked ? 0 : -24,
-          duration: 0.2,
-          ease: EASE,
-          delay: checked ? 0.1 : 0,
-        },
-        0
-      )
-      .set(
+  useCounterEffect(
+    (counter) => {
+      const timeline = gsap.timeline().set(
         ref.current,
         {
           backgroundColor: checked ? 'var(--edb-app-theme)' : 'transparent',
@@ -63,27 +53,53 @@ export function MaterialCheckbox({
         },
         0
       )
-      .to(
-        rippleRef.current,
-        {
-          width: '3rem',
-          height: '3rem',
-          opacity: 0,
-          duration: 0.8,
-          ease: EASE,
-        },
-        0
-      )
-      .set(
-        rippleRef.current,
-        {
-          width: '0',
-          height: '0',
-          opacity: 1,
-        },
-        1
-      )
-  }, [checked])
+
+      if (counter > 0) {
+        timeline
+          .to(
+            checkRef.current,
+            {
+              strokeDashoffset: checked ? 0 : -24,
+              duration: 0.2,
+              ease: EASE,
+              delay: checked ? 0.1 : 0,
+            },
+            0
+          )
+          .to(
+            rippleRef.current,
+            {
+              width: '3rem',
+              height: '3rem',
+              opacity: 0,
+              duration: 1,
+              ease: EASE,
+            },
+            0
+          )
+          .set(
+            rippleRef.current,
+            {
+              width: '0',
+              height: '0',
+              opacity: 1,
+            },
+            1
+          )
+      } else {
+        timeline.set(
+          checkRef.current,
+          {
+            strokeDashoffset: checked ? 0 : -24,
+          },
+          0
+        )
+      }
+
+      return () => timeline.kill()
+    },
+    [checked]
+  )
 
   let ret: ReactNode = (
     <CheckboxPrimitive.Root

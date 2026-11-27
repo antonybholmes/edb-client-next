@@ -1,5 +1,7 @@
 import { DependencyList, EffectCallback, useEffect, useRef } from 'react'
 
+type UpdateEffectCallback = (counter: number) => void | (() => void)
+
 /**
  * A custom hook that runs an effect only on updates, not on the initial render.
  *
@@ -7,14 +9,24 @@ import { DependencyList, EffectCallback, useEffect, useRef } from 'react'
  * @param deps The dependency list that determines when the effect should run.
  */
 export function useUpdateEffect(effect: EffectCallback, deps: DependencyList) {
-  const isFirstRender = useRef(true)
+  useCounterEffect((counter) => {
+    if (counter > 0) {
+      effect()
+    }
+  }, deps)
+}
+
+export function useCounterEffect(
+  effect: UpdateEffectCallback,
+  deps: DependencyList
+) {
+  const counter = useRef(0)
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
+    const cleanup = effect(counter.current)
 
-    return effect()
+    counter.current += 1
+
+    return cleanup
   }, deps)
 }
