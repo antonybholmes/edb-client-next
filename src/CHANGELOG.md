@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added job file download link.
 
 
